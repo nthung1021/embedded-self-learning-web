@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 12: AUTOSAR_SWS_CANDriver | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Bit Stuffing</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR SRS CAN</a>
+                <a href="lesson-12.html" class="active">Bài 12: AUTOSAR SWS CAN Driver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 12: AUTOSAR_SWS_CANDriver</h1>
+
+                <p>
+                    Ở Bài 11, chúng ta đã tìm hiểu <strong>AUTOSAR_SRS_CAN</strong> và cách
+                    AUTOSAR mô tả các software requirements liên quan đến CAN.
+                    Bước tiếp theo là đi sâu hơn vào <strong>AUTOSAR_SWS_CANDriver</strong>.
+                </p>
+
+                <p>
+                    Nếu SRS trả lời câu hỏi
+                    <strong>"CAN software cần đáp ứng những requirement gì?"</strong>,
+                    thì SWS CAN Driver đi sâu vào việc đặc tả
+                    <strong>CAN Driver module, interfaces, APIs, behavior và configuration</strong>.
+                </p>
+
+                <div class="note">
+                    Có thể nhớ ngắn gọn:
+                    <strong>SRS nói CAN software cần làm gì;
+                        SWS CAN Driver đặc tả CAN Driver phải cung cấp interface và behavior như thế nào.</strong>
+                </div>
+
+                <h2>1. AUTOSAR_SWS_CANDriver là gì?</h2>
+
+                <p>
+                    <strong>SWS</strong> là viết tắt của
+                    <strong>Software Specification</strong>.
+                    AUTOSAR_SWS_CANDriver là tài liệu đặc tả module
+                    <strong>CAN Driver</strong> trong AUTOSAR Classic Platform.
+                </p>
+
+                <p>
+                    CAN Driver thuộc nhóm <strong>Microcontroller Drivers</strong> trong
+                    Basic Software (BSW), nằm rất gần CAN Controller hardware.
+                    AUTOSAR Classic Platform phân biệt Application, RTE và BSW;
+                    trong BSW có các nhóm abstraction và driver để tách phần mềm khỏi
+                    hardware cụ thể. :chatgpt-content-reference{index="1"}
+                </p>
+
+                <svg viewBox="0 0 700 390" role="img" aria-label="Vị trí của AUTOSAR CAN Driver trong Classic Platform"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="120" y="15" width="460" height="48" fill="rgba(224,168,0,.25)" />
+                        <rect x="120" y="78" width="460" height="48" fill="rgba(160,120,190,.25)" />
+                        <rect x="120" y="141" width="460" height="48" fill="rgba(46,139,87,.28)" />
+                        <rect x="80" y="204" width="540" height="72" fill="rgba(70,130,180,.25)" />
+                        <rect x="120" y="291" width="460" height="48" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="350" y="44">Application / SWC</text>
+                        <text x="350" y="107">RTE / Communication Stack</text>
+                        <text x="350" y="170">CanIf</text>
+                        <text x="350" y="232">CAN Driver</text>
+                        <text x="350" y="255">AUTOSAR SWS CAN Driver</text>
+                        <text x="350" y="321">CAN Controller Hardware</text>
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="350" y="70">↓</text>
+                        <text x="350" y="133">↓</text>
+                        <text x="350" y="196">↓</text>
+                        <text x="350" y="284">↓</text>
+                    </g>
+                </svg>
+
+                <p>
+                    SWS không phải implementation cụ thể của một vendor.
+                    Nó định nghĩa interface và behavior chuẩn để các implementation
+                    khác nhau có thể tuân theo cùng một AUTOSAR architecture.
+                </p>
+
+                <h2>2. SRS và SWS khác nhau thế nào?</h2>
+
+                <table>
+                    <tr>
+                        <th>SRS CAN</th>
+                        <th>SWS CAN Driver</th>
+                    </tr>
+                    <tr>
+                        <td>Software Requirements Specification</td>
+                        <td>Software Specification</td>
+                    </tr>
+                    <tr>
+                        <td>Tập trung vào requirements</td>
+                        <td>Tập trung vào specification của CAN Driver</td>
+                    </tr>
+                    <tr>
+                        <td>CAN software cần đáp ứng điều gì?</td>
+                        <td>CAN Driver cung cấp interface/behavior nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Mức requirement</td>
+                        <td>Mức module/interface specification</td>
+                    </tr>
+                    <tr>
+                        <td>Không phải source code</td>
+                        <td>Không phải source code implementation</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Hãy nhớ theo chuỗi:
+                    <strong>SRS → SWS → Vendor Implementation → Integration → Test</strong>.
+                </div>
+
+                <h2>3. CAN Driver cung cấp những loại interface nào?</h2>
+
+                <p>
+                    Có thể nhìn CAN Driver từ hai hướng:
+                    <strong>interface với module phía trên</strong> và
+                    <strong>interface với hardware/controller</strong>.
+                </p>
+
+                <svg viewBox="0 0 720 270" role="img" aria-label="CAN Driver interface boundary"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="50" y="85" width="170" height="65" fill="rgba(160,120,190,.25)" />
+                        <rect x="275" y="60" width="170" height="115" fill="rgba(46,139,87,.28)" />
+                        <rect x="500" y="85" width="170" height="65" fill="rgba(70,130,180,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="135" y="112">CanIf</text>
+                        <text x="135" y="132">Upper Layer</text>
+
+                        <text x="360" y="100">CAN Driver</text>
+                        <text x="360" y="122">AUTOSAR APIs</text>
+                        <text x="360" y="144">Callbacks / Notifications</text>
+
+                        <text x="585" y="112">CAN Controller</text>
+                        <text x="585" y="132">Hardware</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M225 117 L270 117" />
+                        <path d="M450 117 L495 117" />
+                    </g>
+
+                    <g font-size="10" fill="currentColor" text-anchor="middle">
+                        <text x="247" y="105">API</text>
+                        <text x="473" y="105">HW access</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Ở phía trên, CAN Driver cung cấp các service/function được AUTOSAR
+                    specification định nghĩa.
+                    Ở phía dưới, implementation của driver phải truy cập CAN Controller
+                    cụ thể của MCU.
+                </p>
+
+                <h2>4. Các API quan trọng của CAN Driver</h2>
+
+                <p>
+                    Khi học SWS CAN Driver, một trong những phần quan trọng nhất là
+                    hiểu các API chính và vai trò của chúng.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>API</th>
+                        <th>Mục đích</th>
+                    </tr>
+                    <tr>
+                        <td>Can_Init</td>
+                        <td>Khởi tạo CAN Driver với configuration.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_SetControllerMode</td>
+                        <td>Thay đổi mode của CAN Controller.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_GetControllerMode</td>
+                        <td>Đọc mode hiện tại của CAN Controller.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_Write</td>
+                        <td>Yêu cầu transmission thông qua Hardware Transmit Handle.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_GetControllerErrorState</td>
+                        <td>Đọc error state của controller.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_GetVersionInfo</td>
+                        <td>Lấy thông tin version của module khi được hỗ trợ/cấu hình.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_MainFunction_Write</td>
+                        <td>Thực hiện phần processing liên quan đến TX khi dùng polling.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_MainFunction_Read</td>
+                        <td>Thực hiện phần processing liên quan đến RX khi dùng polling.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_MainFunction_BusOff</td>
+                        <td>Xử lý bus-off polling khi cấu hình theo cơ chế này.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_MainFunction_Wakeup</td>
+                        <td>Xử lý wake-up polling khi được cấu hình.</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Không phải mọi API đều được sử dụng giống nhau trong mọi project.
+                    Một số function có thể phụ thuộc configuration,
+                    controller capability hoặc feature được enable.
+                </div>
+
+                <h2>5. Can_Init</h2>
+
+                <p>
+                    <strong>Can_Init()</strong> là một trong những API nền tảng của CAN Driver.
+                    Nó được sử dụng để initialize driver dựa trên configuration được cung cấp.
+                </p>
+
+                <pre><code>Can_Init(&amp;CanConfig);
+
+        |
+        +-- Controller configuration
+        |
+        +-- Hardware Objects
+        |
+        +-- Bit timing
+        |
+        +-- RX/TX configuration
+        |
+        +-- Interrupt / polling configuration
+        |
+        v
+   CAN Driver initialized</code></pre>
+
+                <p>
+                    Sau initialization, driver có configuration cần thiết để quản lý
+                    CAN Controller và các Hardware Object.
+                </p>
+
+                <p>
+                    Một điểm quan trọng là <strong>Can_Init không đồng nghĩa với việc
+                        CAN Controller đã bắt đầu truyền message trên bus</strong>.
+                    Initialization và controller mode là hai khái niệm cần phân biệt.
+                </p>
+
+                <h2>6. Controller Mode</h2>
+
+                <p>
+                    CAN Driver cần quản lý mode của CAN Controller.
+                    Trong AUTOSAR CAN Driver, controller có các trạng thái như
+                    <strong>STOPPED</strong>, <strong>STARTED</strong> và
+                    <strong>SLEEP</strong>.
+                </p>
+
+                <svg viewBox="0 0 720 260" role="img" aria-label="CAN Controller mode transitions"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="40" y="95" width="160" height="60" fill="rgba(224,168,0,.25)" />
+                        <rect x="280" y="95" width="160" height="60" fill="rgba(46,139,87,.28)" />
+                        <rect x="520" y="95" width="160" height="60" fill="rgba(70,130,180,.25)" />
+                    </g>
+
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="120" y="130">STOPPED</text>
+                        <text x="360" y="130">STARTED</text>
+                        <text x="600" y="130">SLEEP</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M200 125 L275 125" />
+                        <path d="M440 125 L515 125" />
+                        <path d="M515 145 C430 210 300 210 200 145" />
+                    </g>
+
+                    <g font-size="10" fill="currentColor" text-anchor="middle">
+                        <text x="237" y="113">SetControllerMode</text>
+                        <text x="477" y="113">SetControllerMode</text>
+                        <text x="360" y="220">Wake-up / mode transition</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Việc chuyển mode được yêu cầu thông qua:
+                </p>
+
+                <pre><code>Can_SetControllerMode(
+    Controller,
+    Transition
+);</code></pre>
+
+                <p>
+                    Ý tưởng quan trọng là upper layer không nên truy cập trực tiếp
+                    các register của CAN Controller để thay đổi mode.
+                    CAN Driver cung cấp abstraction để thực hiện việc này.
+                </p>
+
+                <h2>7. Can_GetControllerMode</h2>
+
+                <p>
+                    Sau khi yêu cầu thay đổi controller mode, phần mềm phía trên có thể cần
+                    biết controller hiện đang ở mode nào.
+                </p>
+
+                <pre><code>Can_GetControllerMode(
+    Controller,
+    &amp;ControllerMode
+);</code></pre>
+
+                <p>
+                    Đây là ví dụ đơn giản nhưng rất quan trọng về abstraction:
+                    application/upper layer không cần đọc trực tiếp register của MCU.
+                    Nó sử dụng interface của CAN Driver.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Không nên</th>
+                        <th>Nên</th>
+                    </tr>
+                    <tr>
+                        <td>Upper layer đọc CAN register trực tiếp</td>
+                        <td>Upper layer sử dụng AUTOSAR interface</td>
+                    </tr>
+                    <tr>
+                        <td>Phụ thuộc MCU cụ thể</td>
+                        <td>Phụ thuộc standardized driver interface</td>
+                    </tr>
+                    <tr>
+                        <td>Khó portability</td>
+                        <td>Dễ thay đổi hardware implementation hơn</td>
+                    </tr>
+                </table>
+
+                <h2>8. Can_Write và Transmission</h2>
+
+                <p>
+                    Một API đặc biệt quan trọng trong CAN Driver là
+                    <strong>Can_Write()</strong>.
+                    Đây là điểm mà transmission request đi vào CAN Driver.
+                </p>
+
+                <pre><code>Std_ReturnType Can_Write(
+    Can_HwHandleType Hth,
+    const Can_PduType* PduInfo
+);</code></pre>
+
+                <p>
+                    Về mặt tư duy, có thể hiểu:
+                </p>
+
+                <pre><code>CanIf
+  |
+  | Can_Write()
+  v
+CAN Driver
+  |
+  +-- Check HTH
+  +-- Check controller/resource
+  +-- Prepare TX hardware object
+  +-- Write to CAN Controller
+  |
+  v
+CAN Controller
+  |
+  v
+CAN Bus</code></pre>
+
+                <p>
+                    Driver không cần biết payload đang biểu diễn
+                    <strong>VehicleSpeed</strong>, <strong>EngineSpeed</strong> hay
+                    <strong>BrakeStatus</strong>.
+                    Nó chủ yếu xử lý thông tin cần thiết để đưa PDU tới CAN hardware.
+                </p>
+
+                <div class="note">
+                    <strong>Can_Write là ranh giới rất quan trọng:</strong>
+                    CanIf đưa transmission request xuống CAN Driver,
+                    còn CAN Driver chịu trách nhiệm thực hiện request ở mức hardware.
+                </div>
+
+                <h2>9. Can_PduType</h2>
+
+                <p>
+                    Để hiểu Can_Write, cần hiểu cấu trúc dữ liệu mà driver nhận được.
+                    Một PDU truyền CAN thường chứa các thông tin như identifier,
+                    length, data và software handle.
+                </p>
+
+                <pre><code>typedef struct
+{
+    Can_IdType       id;
+    PduInfoType      sdu;
+    PduIdType        swPduHandle;
+} Can_PduType;</code></pre>
+
+                <p>
+                    Tùy AUTOSAR version, typedef và thành phần liên quan có thể được định nghĩa
+                    theo specification tương ứng.
+                    Điều quan trọng về mặt kiến trúc là driver nhận được
+                    <strong>CAN identifier + payload information + handle/context</strong>
+                    cần thiết cho transmission.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thông tin</th>
+                        <th>Vai trò</th>
+                    </tr>
+                    <tr>
+                        <td>Identifier</td>
+                        <td>CAN ID của message.</td>
+                    </tr>
+                    <tr>
+                        <td>Length</td>
+                        <td>Số byte dữ liệu cần truyền.</td>
+                    </tr>
+                    <tr>
+                        <td>Data pointer</td>
+                        <td>Địa chỉ vùng dữ liệu.</td>
+                    </tr>
+                    <tr>
+                        <td>Software handle</td>
+                        <td>Giúp liên kết request với context của upper layer.</td>
+                    </tr>
+                </table>
+
+                <h2>10. HTH và Hardware Object</h2>
+
+                <p>
+                    <strong>HTH</strong> là Hardware Transmit Handle.
+                    Nó đại diện cho một transmit hardware object mà upper layer sử dụng
+                    khi yêu cầu CAN Driver truyền message.
+                </p>
+
+                <pre><code>CanIf
+  |
+  | HTH_0 + PDU
+  v
+CAN Driver
+  |
+  +-- HTH_0
+        |
+        +-- TX Mailbox 0
+        |
+        +-- CAN Controller</code></pre>
+
+                <p>
+                    HTH không nhất thiết tương ứng một cách đơn giản với một CAN ID.
+                    Mapping giữa HTH và hardware resource phụ thuộc configuration
+                    và CAN Controller.
+                </p>
+
+                <div class="note">
+                    Khi transmission không hoạt động,
+                    đừng chỉ kiểm tra CAN ID.
+                    Hãy kiểm tra cả <strong>HTH → Hardware Object → TX resource → Controller</strong>.
+                </div>
+
+                <h2>11. Return value của Can_Write</h2>
+
+                <p>
+                    Can_Write không đơn giản có nghĩa là
+                    <strong>"message đã xuất hiện trên CAN bus"</strong>.
+                    Return value chủ yếu cho biết request có được driver chấp nhận
+                    hay không tại thời điểm gọi API.
+                </p>
+
+                <pre><code>ret = Can_Write(HTH, &amp;Pdu);
+
+if (ret == E_OK)
+{
+    /* Transmission request accepted */
+}
+else
+{
+    /* Transmission request rejected */
+}</code></pre>
+
+                <p>
+                    Một request có thể bị từ chối nếu resource hoặc điều kiện cần thiết
+                    cho transmission chưa phù hợp.
+                </p>
+
+                <div class="note">
+                    Đây là một điểm rất quan trọng khi debug:
+                    <strong>E_OK của Can_Write không nên được hiểu đơn giản là
+                        "CAN frame đã được ACK trên bus".</strong>
+                    Request acceptance và transmission completion là các sự kiện khác nhau.
+                </div>
+
+                <h2>12. Transmission Confirmation</h2>
+
+                <p>
+                    Sau khi hardware xử lý transmission, upper layer cần nhận được
+                    thông tin confirmation theo architecture.
+                </p>
+
+                <svg viewBox="0 0 720 190" role="img" aria-label="CAN transmission confirmation flow"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="20" y="65" width="120" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="185" y="65" width="145" height="55" fill="rgba(46,139,87,.28)" />
+                        <rect x="375" y="65" width="145" height="55" fill="rgba(70,130,180,.25)" />
+                        <rect x="565" y="65" width="130" height="55" fill="rgba(224,168,0,.25)" />
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="80" y="97">CanIf</text>
+                        <text x="257" y="88">CAN Driver</text>
+                        <text x="257" y="106">TX processing</text>
+                        <text x="447" y="88">CAN Controller</text>
+                        <text x="447" y="106">TX complete</text>
+                        <text x="630" y="97">CanIf</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M140 92 L180 92" />
+                        <path d="M335 92 L370 92" />
+                        <path d="M525 92 L560 92" />
+                    </g>
+                </svg>
+
+                <p>
+                    Transmission confirmation là một event khác với việc
+                    upper layer gọi Can_Write().
+                    Điều này đặc biệt quan trọng trong hệ thống asynchronous,
+                    nơi request và completion xảy ra ở những thời điểm khác nhau.
+                </p>
+
+                <h2>13. Reception</h2>
+
+                <p>
+                    Ở chiều RX, CAN Driver nhận thông tin từ CAN Controller
+                    và thông báo lên CanIf.
+                </p>
+
+                <pre><code>CAN Bus
+   |
+   v
+CAN Controller
+   |
+   | RX event
+   v
+CAN Driver
+   |
+   | RxIndication
+   v
+CanIf
+   |
+   v
+PduR / COM
+   |
+   v
+Application</code></pre>
+
+                <p>
+                    Driver phải lấy thông tin từ Hardware Object và cung cấp
+                    các thông tin cần thiết cho upper layer.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thông tin RX</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td>CAN ID</td>
+                        <td>0x123</td>
+                    </tr>
+                    <tr>
+                        <td>DLC / data length</td>
+                        <td>8 bytes</td>
+                    </tr>
+                    <tr>
+                        <td>Payload</td>
+                        <td>Data bytes</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware Object</td>
+                        <td>HRH</td>
+                    </tr>
+                </table>
+
+                <h2>14. HRH và Receive Hardware Object</h2>
+
+                <p>
+                    <strong>HRH</strong> là Hardware Receive Handle.
+                    Nó đại diện cho receive hardware object được CAN Driver quản lý.
+                </p>
+
+                <pre><code>CAN Controller
+      |
+      +-- RX FIFO / Mailbox
+              |
+              v
+            HRH_0
+              |
+              v
+         CAN Driver
+              |
+              v
+            CanIf</code></pre>
+
+                <p>
+                    HRH có thể liên quan đến receive filtering và mapping của
+                    Hardware Object tùy controller/configuration.
+                </p>
+
+                <div class="note">
+                    TX thường được tư duy qua <strong>HTH</strong>,
+                    RX thường được tư duy qua <strong>HRH</strong>.
+                    Đây là hai khái niệm cần nhớ khi đọc CAN Driver configuration.
+                </div>
+
+                <h2>15. Interrupt và Polling</h2>
+
+                <p>
+                    CAN Driver có thể xử lý một số event theo
+                    <strong>interrupt</strong> hoặc <strong>polling</strong>,
+                    tùy configuration và implementation.
+                </p>
+
+                <svg viewBox="0 0 720 250" role="img" aria-label="CAN interrupt và polling processing"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="30" y="35" width="280" height="170" fill="rgba(46,139,87,.28)" />
+                        <rect x="410" y="35" width="280" height="170" fill="rgba(70,130,180,.25)" />
+                    </g>
+
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="170" y="60">Interrupt</text>
+                        <text x="550" y="60">Polling</text>
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="170" y="92">Hardware Event</text>
+                        <text x="170" y="122">↓</text>
+                        <text x="170" y="145">ISR</text>
+                        <text x="170" y="175">Driver Processing</text>
+
+                        <text x="550" y="92">Periodic Main Function</text>
+                        <text x="550" y="122">↓</text>
+                        <text x="550" y="145">Check Hardware Status</text>
+                        <text x="550" y="175">Driver Processing</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Với polling, driver thường cung cấp các
+                    <strong>Can_MainFunction_*</strong> phù hợp.
+                    Ví dụ có thể có processing cho Write, Read, Bus-Off hoặc Wakeup.
+                </p>
+
+                <p>
+                    Điều này cho phép architecture linh hoạt hơn:
+                    không phải mọi event đều bắt buộc phải được xử lý trực tiếp bằng ISR.
+                </p>
+
+                <h2>16. Can_MainFunction_Write</h2>
+
+                <p>
+                    Khi TX processing được cấu hình theo polling,
+                    CAN Driver có thể sử dụng main function để xử lý transmission-related events.
+                </p>
+
+                <pre><code>Periodic Task
+     |
+     +-- Can_MainFunction_Write()
+              |
+              +-- Check TX resources
+              +-- Process TX events
+              +-- Handle confirmation
+              |
+              v
+            CanIf</code></pre>
+
+                <p>
+                    Main function thường được scheduler/OS gọi theo chu kỳ được configuration.
+                    Vì vậy timing của main function có thể ảnh hưởng đến thời điểm
+                    driver xử lý event.
+                </p>
+
+                <h2>17. Can_MainFunction_Read</h2>
+
+                <p>
+                    Tương tự TX, RX có thể được xử lý bằng polling.
+                </p>
+
+                <pre><code>Periodic Task
+     |
+     +-- Can_MainFunction_Read()
+              |
+              +-- Check RX hardware object
+              +-- Read received message
+              +-- Process RX data
+              |
+              v
+            CanIf</code></pre>
+
+                <p>
+                    Khi debug RX delay, cần kiểm tra cả:
+                </p>
+
+                <ul>
+                    <li>CAN Controller đã nhận frame chưa.</li>
+                    <li>RX resource có chứa message không.</li>
+                    <li>Polling function có được gọi không.</li>
+                    <li>Polling period là bao nhiêu.</li>
+                    <li>Driver có xử lý đúng HRH không.</li>
+                    <li>CanIf có nhận được indication không.</li>
+                </ul>
+
+                <h2>18. Bus-Off Handling</h2>
+
+                <p>
+                    <strong>Bus-Off</strong> là một trạng thái quan trọng trong CAN.
+                    CAN Driver phải cung cấp cơ chế để xử lý/report trạng thái
+                    theo configuration và controller capability.
+                </p>
+
+                <pre><code>CAN Controller
+      |
+      | Bus-Off detected
+      v
+CAN Driver
+      |
+      +-- Interrupt processing
+      |       hoặc
+      +-- Can_MainFunction_BusOff()
+      |
+      v
+CanIf
+      |
+      v
+Upper Layer / Recovery Logic</code></pre>
+
+                <p>
+                    Một điểm quan trọng:
+                    CAN Driver không nên bị hiểu là module quyết định toàn bộ
+                    chiến lược recovery của ECU.
+                    Driver chịu trách nhiệm phần behavior thuộc driver,
+                    sau đó thông tin được đưa lên layer phù hợp.
+                </p>
+
+                <h2>19. Controller Error State</h2>
+
+                <p>
+                    CAN Driver cũng cần cung cấp thông tin về error state
+                    của CAN Controller.
+                </p>
+
+                <pre><code>Can_GetControllerErrorState(
+    Controller,
+    &amp;ErrorState
+);</code></pre>
+
+                <p>
+                    Error state của controller có thể được sử dụng để theo dõi
+                    tình trạng communication và hỗ trợ diagnostic/debugging.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thông tin</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Error state</td>
+                        <td>Trạng thái lỗi hiện tại của CAN Controller.</td>
+                    </tr>
+                    <tr>
+                        <td>Bus-Off</td>
+                        <td>Controller đã đi vào trạng thái bus-off.</td>
+                    </tr>
+                    <tr>
+                        <td>RX/TX event</td>
+                        <td>Event liên quan đến reception/transmission.</td>
+                    </tr>
+                    <tr>
+                        <td>Controller mode</td>
+                        <td>Trạng thái hoạt động của controller.</td>
+                    </tr>
+                </table>
+
+                <h2>20. Development Error và Runtime Error</h2>
+
+                <p>
+                    AUTOSAR phân biệt các loại error trong software behavior.
+                    Đây là một khái niệm quan trọng khi đọc SWS.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Loại</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Development Error</td>
+                        <td>Lỗi liên quan đến việc sử dụng API/configuration không đúng trong development.</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime Error</td>
+                        <td>Lỗi có thể xảy ra trong quá trình ECU đang chạy.</td>
+                    </tr>
+                    <tr>
+                        <td>Transient / Hardware event</td>
+                        <td>Event phát sinh từ controller hoặc communication environment.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Ví dụ, nếu một API được gọi với parameter không hợp lệ,
+                    đó có thể là vấn đề khác hoàn toàn so với việc CAN Controller
+                    phát hiện một communication error trên bus.
+                </p>
+
+                <div class="note">
+                    Khi debug AUTOSAR, luôn hỏi:
+                    <strong>Đây là lỗi do caller sử dụng API sai,
+                        lỗi configuration, lỗi software runtime hay hardware/communication error?</strong>
+                </div>
+
+                <h2>21. DET và Error Reporting</h2>
+
+                <p>
+                    CAN Driver có thể sử dụng các cơ chế AUTOSAR
+                    để report development errors khi được cấu hình hỗ trợ.
+                </p>
+
+                <pre><code>Caller
+   |
+   | Invalid API usage
+   v
+CAN Driver
+   |
+   | Development Error
+   v
+DET / Error Reporting
+   |
+   v
+Development / Debugging</code></pre>
+
+                <p>
+                    Điều này giúp developer phát hiện sớm các lỗi như
+                    parameter không hợp lệ hoặc sequence gọi API không đúng.
+                </p>
+
+                <p>
+                    Tuy nhiên, cần phân biệt error reporting của software
+                    với CAN bus error xảy ra ở communication level.
+                </p>
+
+                <h2>22. Configuration của CAN Driver</h2>
+
+                <p>
+                    SWS CAN Driver cũng đặc tả các cấu hình cần thiết
+                    để module hoạt động.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Configuration</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td>CAN Controller</td>
+                        <td>Controller number, hardware channel.</td>
+                    </tr>
+                    <tr>
+                        <td>Bit Timing</td>
+                        <td>Nominal timing và các thông số liên quan.</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware Objects</td>
+                        <td>HTH, HRH, mailbox/FIFO mapping.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN ID / filtering</td>
+                        <td>Receive filtering configuration.</td>
+                    </tr>
+                    <tr>
+                        <td>Processing mode</td>
+                        <td>Interrupt hoặc polling.</td>
+                    </tr>
+                    <tr>
+                        <td>Notification</td>
+                        <td>Callbacks/indications cần thiết.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN FD</td>
+                        <td>Configuration liên quan nếu controller hỗ trợ.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Configuration sau đó thường được xử lý bởi toolchain/generator
+                    của AUTOSAR project để tạo ra configuration data phù hợp với
+                    implementation của CAN Driver.
+                </p>
+
+                <h2>23. Pre-Compile, Link-Time và Post-Build Configuration</h2>
+
+                <p>
+                    AUTOSAR CAN Driver hỗ trợ các cơ chế configuration khác nhau tùy
+                    requirement và implementation.
+                    Đây là một khái niệm quan trọng trong MCAL.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Loại</th>
+                        <th>Ý tưởng</th>
+                    </tr>
+                    <tr>
+                        <td>Pre-Compile</td>
+                        <td>Configuration được xác định trước khi compile.</td>
+                    </tr>
+                    <tr>
+                        <td>Link-Time</td>
+                        <td>Configuration được xác định ở giai đoạn link.</td>
+                    </tr>
+                    <tr>
+                        <td>Post-Build</td>
+                        <td>Configuration có thể được lựa chọn/cung cấp sau khi build theo cơ chế được hỗ trợ.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Mục tiêu của các cơ chế này là cho phép ECU software
+                    có mức flexibility phù hợp với project.
+                </p>
+
+                <div class="note">
+                    Đừng nhầm "configuration" với "runtime application logic".
+                    Configuration xác định cách CAN Driver được thiết lập;
+                    runtime code thực hiện behavior dựa trên configuration đó.
+                </div>
+
+                <h2>24. CAN Driver và CAN FD</h2>
+
+                <p>
+                    Với controller hỗ trợ <strong>CAN FD</strong>,
+                    CAN Driver cần có configuration và behavior phù hợp
+                    với capability của controller.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Classic CAN</th>
+                        <th>CAN FD</th>
+                    </tr>
+                    <tr>
+                        <td>Payload tối đa 8 bytes</td>
+                        <td>Payload có thể lớn hơn 8 bytes</td>
+                    </tr>
+                    <tr>
+                        <td>Không có data phase tốc độ cao riêng</td>
+                        <td>Có thể sử dụng tốc độ cao hơn trong data phase</td>
+                    </tr>
+                    <tr>
+                        <td>Controller capability tương ứng</td>
+                        <td>Cần CAN FD-capable controller</td>
+                    </tr>
+                    <tr>
+                        <td>Driver xử lý configuration tương ứng</td>
+                        <td>Driver cần hỗ trợ configuration/behavior tương ứng</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Tuy nhiên, CAN Driver không tự "biến" một Classic CAN Controller
+                    thành CAN FD Controller.
+                    Hardware capability vẫn là yếu tố quyết định.
+                </p>
+
+                <h2>25. Main Functions và Scheduling</h2>
+
+                <p>
+                    Khi sử dụng polling, các main function của CAN Driver
+                    cần được gọi theo schedule phù hợp.
+                </p>
+
+                <pre><code>OS / Scheduler
+      |
+      +-- Periodic Task
+             |
+             +-- Can_MainFunction_Read()
+             |
+             +-- Can_MainFunction_Write()
+             |
+             +-- Can_MainFunction_BusOff()
+             |
+             +-- Can_MainFunction_Wakeup()</code></pre>
+
+                <p>
+                    Vì vậy, khi một CAN event bị delay,
+                    engineer cần kiểm tra không chỉ CAN Driver code mà còn
+                    <strong>OS scheduling và configuration của main function</strong>.
+                </p>
+
+                <h2>26. CAN Driver Callbacks / Notifications</h2>
+
+                <p>
+                    CAN Driver không hoạt động độc lập.
+                    Nó phải giao tiếp với upper layer thông qua các callback hoặc
+                    notification mechanism được architecture quy định.
+                </p>
+
+                <svg viewBox="0 0 720 240" role="img" aria-label="CAN Driver callbacks"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="35" y="80" width="145" height="60" fill="rgba(70,130,180,.25)" />
+                        <rect x="290" y="55" width="160" height="110" fill="rgba(46,139,87,.28)" />
+                        <rect x="540" y="80" width="145" height="60" fill="rgba(160,120,190,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="107" y="105">CAN Controller</text>
+                        <text x="107" y="125">Hardware Event</text>
+
+                        <text x="370" y="88">CAN Driver</text>
+                        <text x="370" y="112">TX / RX</text>
+                        <text x="370" y="134">Bus-Off / Error</text>
+
+                        <text x="612" y="105">CanIf</text>
+                        <text x="612" y="125">Notification</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M185 110 L285 110" />
+                        <path d="M455 110 L535 110" />
+                    </g>
+
+                    <g font-size="10" fill="currentColor" text-anchor="middle">
+                        <text x="235" y="98">event</text>
+                        <text x="495" y="98">callback / indication</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Điều này tạo thành một asynchronous flow:
+                </p>
+
+                <pre><code>Hardware Event
+      ↓
+CAN Driver
+      ↓
+Notification
+      ↓
+CanIf
+      ↓
+Communication Stack</code></pre>
+
+                <h2>27. CAN Driver và Hardware Abstraction</h2>
+
+                <p>
+                    Một trong những mục tiêu lớn của AUTOSAR là
+                    <strong>hardware independence</strong>.
+                    CAN Driver là một phần quan trọng để đạt được mục tiêu đó.
+                </p>
+
+                <p>
+                    Ví dụ hai MCU có CAN Controller khác nhau:
+                </p>
+
+                <pre><code>MCU A
+CAN Controller A
+      |
+      v
+CAN Driver Implementation A
+      |
+      v
+AUTOSAR CanIf
+
+
+MCU B
+CAN Controller B
+      |
+      v
+CAN Driver Implementation B
+      |
+      v
+AUTOSAR CanIf</code></pre>
+
+                <p>
+                    Phần hardware-specific bên dưới có thể khác nhau,
+                    nhưng interface với layer phía trên được chuẩn hóa theo AUTOSAR architecture.
+                </p>
+
+                <div class="note">
+                    Vì vậy CAN Driver không có nghĩa là
+                    <strong>một source code duy nhất chạy trên mọi MCU</strong>.
+                    Nó có nghĩa là các implementation khác nhau phải tuân theo
+                    interface/behavior được AUTOSAR specification quy định.
+                </div>
+
+                <h2>28. Một transmission hoàn chỉnh qua SWS CAN Driver</h2>
+
+                <p>
+                    Hãy ghép các API và concept đã học thành một flow hoàn chỉnh.
+                </p>
+
+                <pre><code>Application
+     |
+     v
+COM / PduR
+     |
+     v
+CanIf
+     |
+     | Can_Write()
+     v
+CAN Driver
+     |
+     +-- Validate request
+     +-- Identify HTH
+     +-- Access TX resource
+     +-- Write controller
+     |
+     v
+CAN Controller
+     |
+     +-- Arbitration
+     +-- Bit stuffing
+     +-- CRC
+     +-- ACK
+     |
+     v
+CAN Bus
+     |
+     v
+Transmission completed
+     |
+     v
+CAN Driver
+     |
+     v
+CanIf
+     |
+     v
+TX Confirmation</code></pre>
+
+                <div class="note">
+                    Đây là điểm kết nối kiến thức của các bài trước:
+                    <strong>CAN Driver không tự thực hiện arbitration hay bit stuffing bằng software.
+                        Driver điều khiển controller; controller thực hiện CAN protocol ở hardware.</strong>
+                </div>
+
+                <h2>29. Một reception hoàn chỉnh qua SWS CAN Driver</h2>
+
+                <pre><code>CAN Bus
+   |
+   v
+CAN Controller
+   |
+   +-- Receive frame
+   |
+   v
+Hardware Object / HRH
+   |
+   v
+CAN Driver
+   |
+   +-- Interrupt
+   |      hoặc
+   +-- Can_MainFunction_Read()
+   |
+   v
+RX processing
+   |
+   v
+CanIf
+   |
+   v
+PduR / COM
+   |
+   v
+Application</code></pre>
+
+                <p>
+                    Khi xảy ra vấn đề, engineer có thể trace từng bước
+                    thay vì kiểm tra ngẫu nhiên.
+                </p>
+
+                <h2>30. Debug Can_Write không thành công</h2>
+
+                <p>
+                    Giả sử application yêu cầu gửi CAN ID 0x200,
+                    nhưng transmission không xảy ra.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Step</th>
+                        <th>Cần kiểm tra</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Upper layer có thực sự gọi CanIf không?</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>CanIf có gọi Can_Write không?</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>HTH có đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Controller có ở STARTED mode không?</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>TX hardware resource có sẵn không?</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Can_Write trả về E_OK hay E_NOT_OK?</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Driver có ghi đúng hardware resource không?</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>CAN Controller có thực sự bắt đầu transmission không?</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>CAN Transceiver và physical bus có hoạt động không?</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>CAN analyzer có thấy frame không?</td>
+                    </tr>
+                </table>
+
+                <h2>31. Debug RX không nhận được message</h2>
+
+                <table>
+                    <tr>
+                        <th>Step</th>
+                        <th>Cần kiểm tra</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Frame có thực sự xuất hiện trên CAN bus không?</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>CAN Controller có nhận frame không?</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>RX filter có accept CAN ID không?</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>HRH có mapping đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>RX interrupt có được enable không?</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Can_MainFunction_Read có được gọi không?</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>CAN Driver có đọc Hardware Object không?</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>CanIf có nhận RxIndication không?</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>PDU có được route lên COM không?</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>COM/Application có xử lý signal đúng không?</td>
+                    </tr>
+                </table>
+
+                <h2>32. SWS CAN Driver và Unit Test</h2>
+
+                <p>
+                    SWS specification có thể được sử dụng làm cơ sở để xây dựng
+                    unit test và integration test.
+                </p>
+
+                <p>
+                    Ví dụ với <strong>Can_SetControllerMode()</strong>:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Test</th>
+                        <th>Input</th>
+                        <th>Expected Result</th>
+                    </tr>
+                    <tr>
+                        <td>Valid controller</td>
+                        <td>Valid controller + valid transition</td>
+                        <td>Mode transition được request đúng.</td>
+                    </tr>
+                    <tr>
+                        <td>Invalid controller</td>
+                        <td>Invalid controller ID</td>
+                        <td>Development error được xử lý theo configuration.</td>
+                    </tr>
+                    <tr>
+                        <td>Invalid transition</td>
+                        <td>Không phù hợp với state hiện tại</td>
+                        <td>Behavior theo specification.</td>
+                    </tr>
+                    <tr>
+                        <td>Mode verification</td>
+                        <td>Set mode → Get mode</td>
+                        <td>Controller state phù hợp expected behavior.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Với <strong>Can_Write()</strong>:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Test</th>
+                        <th>Input</th>
+                        <th>Expected Result</th>
+                    </tr>
+                    <tr>
+                        <td>Valid PDU</td>
+                        <td>Valid HTH + valid PDU</td>
+                        <td>Request được chấp nhận.</td>
+                    </tr>
+                    <tr>
+                        <td>Invalid HTH</td>
+                        <td>HTH không hợp lệ</td>
+                        <td>Error handling theo configuration/specification.</td>
+                    </tr>
+                    <tr>
+                        <td>Busy resource</td>
+                        <td>TX resource không available</td>
+                        <td>Driver xử lý theo behavior được đặc tả.</td>
+                    </tr>
+                    <tr>
+                        <td>Controller state</td>
+                        <td>Controller không ở state phù hợp</td>
+                        <td>Request được xử lý theo specification.</td>
+                    </tr>
+                </table>
+
+                <h2>33. SWS CAN Driver và Integration Test</h2>
+
+                <p>
+                    Unit test kiểm tra behavior của function/module.
+                    Integration test cần kiểm tra interaction giữa CAN Driver,
+                    CanIf, CAN Controller và hardware.
+                </p>
+
+                <pre><code>Integration Test
+
+CanIf
+  |
+  v
+CAN Driver
+  |
+  v
+CAN Controller
+  |
+  v
+CAN Analyzer / CAN Bus
+  |
+  v
+Observed Result
+
+Verify:
+    API behavior
+    + Controller state
+    + CAN frame
+    + ID
+    + DLC
+    + Data
+    + Timing
+    + Confirmation</code></pre>
+
+                <p>
+                    Đây là nơi requirement từ SWS được liên kết với
+                    test environment thực tế của automotive project.
+                </p>
+
+                <h2>34. Những điểm quan trọng cần nhớ về SWS CAN Driver</h2>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Cần nhớ</th>
+                    </tr>
+                    <tr>
+                        <td>Can_Init</td>
+                        <td>Initialize CAN Driver với configuration.</td>
+                    </tr>
+                    <tr>
+                        <td>Controller Mode</td>
+                        <td>Quản lý STARTED / STOPPED / SLEEP theo specification.</td>
+                    </tr>
+                    <tr>
+                        <td>Can_Write</td>
+                        <td>Transmission request từ upper layer.</td>
+                    </tr>
+                    <tr>
+                        <td>HTH</td>
+                        <td>Transmit Hardware Object handle.</td>
+                    </tr>
+                    <tr>
+                        <td>HRH</td>
+                        <td>Receive Hardware Object handle.</td>
+                    </tr>
+                    <tr>
+                        <td>RX</td>
+                        <td>Hardware → Driver → CanIf.</td>
+                    </tr>
+                    <tr>
+                        <td>TX</td>
+                        <td>CanIf → Driver → Hardware.</td>
+                    </tr>
+                    <tr>
+                        <td>Polling</td>
+                        <td>Can_MainFunction_* xử lý event theo schedule.</td>
+                    </tr>
+                    <tr>
+                        <td>Interrupt</td>
+                        <td>Hardware event có thể trigger ISR/notification.</td>
+                    </tr>
+                    <tr>
+                        <td>Bus-Off</td>
+                        <td>Driver xử lý/report trạng thái theo configuration.</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration</td>
+                        <td>Quyết định nhiều behavior của driver.</td>
+                    </tr>
+                </table>
+
+                <h2>35. SRS → SWS → CAN Driver Implementation</h2>
+
+                <p>
+                    Sau hai bài 11 và 12, có thể nối lại toàn bộ quá trình:
+                </p>
+
+                <svg viewBox="0 0 720 300" role="img" aria-label="Từ SRS đến SWS và implementation"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="70" y="35" width="150" height="60" fill="rgba(224,168,0,.25)" />
+                        <rect x="285" y="35" width="150" height="60" fill="rgba(160,120,190,.25)" />
+                        <rect x="500" y="35" width="150" height="60" fill="rgba(46,139,87,.28)" />
+
+                        <rect x="180" y="170" width="150" height="60" fill="rgba(70,130,180,.25)" />
+                        <rect x="390" y="170" width="150" height="60" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="145" y="60">SRS CAN</text>
+                        <text x="145" y="80">Requirements</text>
+
+                        <text x="360" y="60">SWS CAN Driver</text>
+                        <text x="360" y="80">Module Specification</text>
+
+                        <text x="575" y="60">Configuration</text>
+                        <text x="575" y="80">Project Setup</text>
+
+                        <text x="255" y="195">CAN Driver</text>
+                        <text x="255" y="215">Implementation</text>
+
+                        <text x="465" y="195">Test / Verification</text>
+                        <text x="465" y="215">Result</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M220 65 L280 65" />
+                        <path d="M435 65 L495 65" />
+                        <path d="M575 100 L465 165" />
+                        <path d="M360 100 L255 165" />
+                        <path d="M330 200 L385 200" />
+                    </g>
+                </svg>
+
+                <p>
+                    Đây là tư duy rất quan trọng trong automotive software:
+                    specification không đứng độc lập.
+                    Nó phải được trace tới implementation và verification.
+                </p>
+
+                <h2>36. Cách đọc AUTOSAR_SWS_CANDriver</h2>
+
+                <p>
+                    Khi bắt đầu đọc tài liệu SWS thật,
+                    không nên cố đọc từ trang đầu đến trang cuối và ghi nhớ tất cả.
+                    Có thể sử dụng chiến lược sau:
+                </p>
+
+                <ol>
+                    <li>Đọc mục Scope và Dependencies.</li>
+                    <li>Đọc Functional Specification.</li>
+                    <li>Đọc API list.</li>
+                    <li>Hiểu input/output của từng API.</li>
+                    <li>Đọc Error Handling.</li>
+                    <li>Đọc Configuration Specification.</li>
+                    <li>Trace requirement liên quan đến function.</li>
+                    <li>Chuyển requirement thành test case.</li>
+                </ol>
+
+                <div class="note">
+                    Với mục tiêu Junior Embedded Engineer,
+                    <strong>không cần học thuộc toàn bộ SWS CAN Driver</strong>.
+                    Quan trọng hơn là có thể mở specification,
+                    tìm đúng API/requirement và hiểu cách áp dụng nó vào task đang làm.
+                </div>
+
+                <h2>37. Ví dụ câu hỏi phỏng vấn</h2>
+
+                <p>
+                    Một số câu hỏi có thể gặp khi interviewer muốn kiểm tra
+                    hiểu biết về AUTOSAR CAN Driver:
+                </p>
+
+                <ul>
+                    <li>What is the purpose of AUTOSAR_SWS_CANDriver?</li>
+                    <li>What is the difference between SRS and SWS?</li>
+                    <li>What is the purpose of Can_Init?</li>
+                    <li>What is Can_Write used for?</li>
+                    <li>What is an HTH?</li>
+                    <li>What is an HRH?</li>
+                    <li>What is the difference between TX request and TX confirmation?</li>
+                    <li>How does CAN Driver receive a CAN message?</li>
+                    <li>What is the difference between interrupt and polling processing?</li>
+                    <li>How is Bus-Off handled?</li>
+                    <li>What is the purpose of Can_GetControllerMode?</li>
+                    <li>What is the purpose of Can_GetControllerErrorState?</li>
+                    <li>Why is CAN Driver hardware-dependent internally but standardized externally?</li>
+                </ul>
+
+                <h2>38. Một câu trả lời phỏng vấn ngắn</h2>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is AUTOSAR_SWS_CANDriver?"</strong>,
+                    có thể trả lời theo ba ý:
+                </p>
+
+                <ol>
+                    <li><strong>Purpose:</strong> đặc tả CAN Driver module trong AUTOSAR Classic Platform.</li>
+                    <li><strong>Interface:</strong> định nghĩa các API và interaction cần thiết cho controller, TX/RX,
+                        status và error handling.</li>
+                    <li><strong>Usage:</strong> làm cơ sở cho implementation, configuration, integration và
+                        verification.</li>
+                </ol>
+
+                <div class="note">
+                    <strong>
+                        "AUTOSAR_SWS_CANDriver specifies the CAN Driver module in the AUTOSAR
+                        Classic Platform. It defines the required interfaces and behavior for
+                        functions such as initialization, controller mode management,
+                        transmission, reception and error/status handling. The specification
+                        provides a standardized interface between the CAN communication stack
+                        and the hardware-specific CAN Controller implementation."
+                    </strong>
+                </div>
+
+                <h2>39. CAN Driver Scope sau khi học SWS</h2>
+
+                <p>
+                    Bài 10 giúp xác định scope của CAN Driver.
+                    Bài 12 giúp đi sâu hơn vào cách scope đó được biểu diễn
+                    thành module specification và APIs.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Bài 10</th>
+                        <th>Bài 12</th>
+                    </tr>
+                    <tr>
+                        <td>CAN Driver chịu trách nhiệm gì?</td>
+                        <td>CAN Driver cung cấp API nào để thực hiện responsibility đó?</td>
+                    </tr>
+                    <tr>
+                        <td>TX / RX</td>
+                        <td>Can_Write + RX processing + notifications</td>
+                    </tr>
+                    <tr>
+                        <td>Controller management</td>
+                        <td>Can_SetControllerMode / Can_GetControllerMode</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware Object</td>
+                        <td>HTH / HRH configuration và processing</td>
+                    </tr>
+                    <tr>
+                        <td>Error / status</td>
+                        <td>Error state, Bus-Off và reporting mechanisms</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration</td>
+                        <td>CAN Driver configuration specification</td>
+                    </tr>
+                </table>
+
+                <h2>40. CAN Driver trong toàn bộ communication stack</h2>
+
+                <pre><code>Application / SWC
+        |
+        v
+       RTE
+        |
+        v
+       COM
+        |
+        v
+      PduR
+        |
+        +---------> CanTp
+        |
+        v
+      CanIf
+        |
+        | AUTOSAR CAN Driver Interface
+        v
+   +-------------------+
+   |    CAN Driver     |
+   |                   |
+   | Can_Init          |
+   | Can_Write         |
+   | Controller Mode   |
+   | RX / TX Process   |
+   | Error / Status    |
+   | HTH / HRH         |
+   +-------------------+
+        |
+        v
+  CAN Controller
+        |
+        v
+  CAN Transceiver
+        |
+        v
+      CAN Bus</code></pre>
+
+                <p>
+                    Nhìn vào architecture này, có thể thấy rõ vai trò của SWS:
+                    nó đặc tả behavior và interface của khối
+                    <strong>CAN Driver</strong> trong architecture,
+                    thay vì mô tả application logic hay CAN signal semantics.
+                </p>
+
+                <h2>41. Checklist học SWS CAN Driver</h2>
+
+                <p>
+                    Sau khi học bài này, bạn nên có thể trả lời "có" cho các câu hỏi sau:
+                </p>
+
+                <ul>
+                    <li>Tôi hiểu SWS CAN Driver khác SRS CAN như thế nào.</li>
+                    <li>Tôi biết CAN Driver nằm ở đâu trong AUTOSAR BSW.</li>
+                    <li>Tôi biết mục đích của Can_Init.</li>
+                    <li>Tôi hiểu Controller Mode.</li>
+                    <li>Tôi hiểu mục đích của Can_SetControllerMode.</li>
+                    <li>Tôi hiểu mục đích của Can_GetControllerMode.</li>
+                    <li>Tôi hiểu Can_Write.</li>
+                    <li>Tôi hiểu HTH.</li>
+                    <li>Tôi hiểu HRH.</li>
+                    <li>Tôi phân biệt TX request và TX confirmation.</li>
+                    <li>Tôi hiểu RX flow từ CAN Controller lên CanIf.</li>
+                    <li>Tôi hiểu interrupt và polling.</li>
+                    <li>Tôi hiểu vai trò của Can_MainFunction_*.</li>
+                    <li>Tôi hiểu Bus-Off processing ở mức CAN Driver.</li>
+                    <li>Tôi hiểu controller error state.</li>
+                    <li>Tôi hiểu configuration ảnh hưởng tới driver như thế nào.</li>
+                    <li>Tôi có thể trace một CAN issue từ CanIf xuống CAN Controller.</li>
+                    <li>Tôi có thể chuyển một requirement thành test case.</li>
+                </ul>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>AUTOSAR_SWS_CANDriver</strong> là specification cho
+                    CAN Driver trong AUTOSAR Classic Platform.
+                    Nếu Bài 11 tập trung vào requirements của CAN,
+                    thì Bài 12 tập trung vào cách CAN Driver được đặc tả ở mức
+                    module, interface, API, behavior và configuration.
+                    <br><br>
+                    Những API/concept quan trọng cần nhớ gồm:
+                    <strong>
+                        Can_Init,
+                        Can_SetControllerMode,
+                        Can_GetControllerMode,
+                        Can_Write,
+                        HTH,
+                        HRH,
+                        RX/TX processing,
+                        Can_MainFunction_*,
+                        Bus-Off,
+                        Error State
+                    </strong>.
+                    <br><br>
+                    Có thể nhớ flow chính bằng chuỗi:
+                    <strong>
+                        CanIf → Can_Write → CAN Driver → HTH → CAN Controller → CAN Bus
+                    </strong>
+                    cho TX, và:
+                    <strong>
+                        CAN Bus → CAN Controller → HRH → CAN Driver → CanIf
+                    </strong>
+                    cho RX.
+                    <br><br>
+                    Quan trọng nhất:
+                    <strong>
+                        SWS CAN Driver không phải source code của CAN Driver.
+                        Nó là specification để các implementation/vendor khác nhau
+                        tuân theo một interface và behavior AUTOSAR thống nhất.
+                    </strong>
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-11.html">← Bài trước</a>
+                    <a class="btn" href="lesson-13.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

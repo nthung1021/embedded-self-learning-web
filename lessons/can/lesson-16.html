@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 16: DET và DEM | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html" class="active">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 16: DET và DEM</h1>
+
+                <p>
+                    Trong các bài trước, chúng ta đã tìm hiểu CAN Driver,
+                    CanIf, EcuM, OS, SchM và các module liên quan đến
+                    CAN communication trong AUTOSAR.
+                    Tuy nhiên, khi một BSW module gặp lỗi thì hệ thống cần
+                    một cơ chế để phát hiện, báo cáo và quản lý những lỗi đó.
+                </p>
+
+                <p>
+                    Hai module thường được nhắc tới trong context này là
+                    <strong>DET (Default Error Tracer)</strong> và
+                    <strong>DEM (Diagnostic Event Manager)</strong>.
+                    Mặc dù cả hai đều liên quan tới error handling,
+                    chúng có mục đích và phạm vi hoàn toàn khác nhau.
+                </p>
+
+                <div class="note">
+                    <strong>Ý tưởng chính:</strong>
+                    <br><br>
+                    <strong>DET</strong> dùng để báo cáo các development error
+                    trong quá trình phát triển và tích hợp BSW.
+                    <br>
+                    <strong>DEM</strong> quản lý diagnostic events và
+                    diagnostic trouble information ở runtime.
+                    <br><br>
+                    Có thể nhớ đơn giản:
+                    <br>
+                    <strong>DET → Developer / Development Error</strong>
+                    <br>
+                    <strong>DEM → Diagnostic Event / Vehicle Diagnosis</strong>
+                </div>
+
+                <h2>1. DET và DEM là gì?</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Tên đầy đủ</th>
+                            <th>Vai trò chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>DET</strong></td>
+                            <td>Default Error Tracer</td>
+                            <td>
+                                Báo cáo development errors từ BSW modules
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>DEM</strong></td>
+                            <td>Diagnostic Event Manager</td>
+                            <td>
+                                Quản lý diagnostic events và trạng thái lỗi
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Điểm quan trọng nhất là không nên coi DET và DEM
+                    là hai module thực hiện cùng một công việc.
+                </p>
+
+                <pre><code>Development / Integration
+        │
+        ▼
+      DET
+        │
+        ▼
+Development Error
+
+
+Runtime / Diagnosis
+        │
+        ▼
+      DEM
+        │
+        ▼
+Diagnostic Event
+        │
+        ▼
+Diagnostic / DTC handling</code></pre>
+
+                <h2>2. DET nằm ở đâu trong AUTOSAR?</h2>
+
+                <p>
+                    DET là một phần của BSW infrastructure.
+                    Các BSW modules có thể gọi DET để báo cáo những lỗi
+                    xảy ra do cách sử dụng module không hợp lệ hoặc
+                    vi phạm các điều kiện được định nghĩa trong specification.
+                </p>
+
+                <svg viewBox="0 0 900 500" role="img" aria-label="Vị trí của DET trong AUTOSAR"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="280" y="25" width="340" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="63" text-anchor="middle" font-size="20">
+                        Application / SWC
+                    </text>
+
+                    <rect x="180" y="125" width="540" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="170" text-anchor="middle" font-size="20">
+                        BSW Modules
+                    </text>
+
+                    <rect x="280" y="240" width="340" height="75" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="285" text-anchor="middle" font-size="21">
+                        DET
+                    </text>
+
+                    <rect x="280" y="360" width="340" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="405" text-anchor="middle" font-size="20">
+                        Development / Debug Tool
+                    </text>
+
+                    <line x1="450" y1="85" x2="450" y2="125" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="200" x2="450" y2="240" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="315" x2="450" y2="360" stroke="currentColor" stroke-width="2" />
+
+                    <text x="450" y="225" text-anchor="middle" font-size="15">
+                        Development Error Report
+                    </text>
+
+                </svg>
+
+                <p>
+                    DET thường được sử dụng để hỗ trợ developer trong quá trình
+                    development và integration. Nó đặc biệt hữu ích khi cần
+                    phát hiện một BSW API được gọi sai hoặc module đang ở
+                    trạng thái không hợp lệ.
+                </p>
+
+                <h2>3. Development Error là gì?</h2>
+
+                <p>
+                    Development error là lỗi liên quan tới việc sử dụng
+                    một BSW module không đúng theo điều kiện mà module đó
+                    yêu cầu.
+                </p>
+
+                <p>
+                    Ví dụ, một API yêu cầu module phải được initialize trước
+                    khi được gọi. Nếu code gọi API khi module vẫn ở trạng thái
+                    chưa initialize, module có thể phát hiện development error.
+                </p>
+
+                <pre><code>Application / BSW code
+        │
+        │ Call API
+        ▼
+   BSW Module
+        │
+        ├── Is API usage valid?
+        │
+        ├── Is module initialized?
+        │
+        └── Are parameters valid?
+        │
+        ▼
+   Development Error
+        │
+        ▼
+       DET</code></pre>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    DET chủ yếu giúp phát hiện vấn đề trong cách sử dụng
+                    hoặc tích hợp BSW module. Nó không phải là cơ chế
+                    quản lý DTC cho chẩn đoán vehicle.
+                </div>
+
+                <h2>4. DET Error Report</h2>
+
+                <p>
+                    Khi một BSW module phát hiện development error,
+                    module có thể report lỗi tới DET.
+                </p>
+
+                <p>
+                    Một error report thường gắn với các thông tin như:
+                </p>
+
+                <ul>
+                    <li>Module ID.</li>
+                    <li>Instance ID.</li>
+                    <li>API / Service ID.</li>
+                    <li>Error ID.</li>
+                </ul>
+
+                <p>
+                    Những thông tin này giúp developer xác định:
+                    module nào phát hiện lỗi, instance nào, API nào
+                    và loại lỗi gì.
+                </p>
+
+                <pre><code>DET Error Report
+
+Module ID
+    │
+    ├── Which BSW module?
+    │
+Instance ID
+    │
+    ├── Which instance?
+    │
+API / Service ID
+    │
+    ├── Which API?
+    │
+Error ID
+    │
+    └── What development error?</code></pre>
+
+                <h2>5. Ví dụ DET trong CAN Driver</h2>
+
+                <p>
+                    Hãy xét một ví dụ đơn giản với CAN Driver.
+                    Giả sử một API của CAN Driver yêu cầu
+                    <code>Can_Init()</code> phải được gọi trước.
+                </p>
+
+                <pre><code>Application
+     │
+     ▼
+Can_Write(...)
+     │
+     ▼
+CanDrv
+     │
+     ├── Driver initialized?
+     │
+     ├── YES → Continue
+     │
+     └── NO
+          │
+          ▼
+         DET
+          │
+          ▼
+   Development Error</code></pre>
+
+                <p>
+                    Trong trường hợp này, DET giúp developer phát hiện
+                    rằng CAN Driver đang được sử dụng không đúng lifecycle.
+                </p>
+
+                <p>
+                    Điều này rất hữu ích trong integration testing vì lỗi
+                    có thể được phát hiện ngay tại nơi API được gọi thay vì
+                    chỉ quan sát một triệu chứng CAN communication không hoạt động.
+                </p>
+
+                <h2>6. DET không phải là CAN Error Handler</h2>
+
+                <p>
+                    Một điểm rất dễ nhầm là nghĩ rằng DET sẽ xử lý tất cả
+                    các lỗi của CAN bus.
+                </p>
+
+                <p>
+                    Điều đó không đúng.
+                    DET không phải là module chịu trách nhiệm xử lý
+                    CAN protocol error, Bus-Off hoặc các vấn đề vật lý
+                    của CAN bus.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Vấn đề</th>
+                            <th>DET có xử lý trực tiếp không?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>API được gọi trước initialization</td>
+                            <td><strong>Có thể report qua DET</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Invalid parameter</td>
+                            <td><strong>Có thể report qua DET</strong></td>
+                        </tr>
+                        <tr>
+                            <td>CAN Bus-Off</td>
+                            <td><strong>Không phải responsibility chính</strong></td>
+                        </tr>
+                        <tr>
+                            <td>CAN physical wiring problem</td>
+                            <td><strong>Không</strong></td>
+                        </tr>
+                        <tr>
+                            <td>CAN protocol error</td>
+                            <td><strong>Không</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>7. DEM là gì?</h2>
+
+                <p>
+                    <strong>DEM (Diagnostic Event Manager)</strong> là module
+                    chịu trách nhiệm quản lý các diagnostic event trong ECU.
+                </p>
+
+                <p>
+                    Trong quá trình ECU hoạt động, một module có thể phát hiện
+                    một điều kiện bất thường. Điều kiện này có thể được report
+                    tới DEM dưới dạng một diagnostic event.
+                </p>
+
+                <pre><code>Runtime
+   │
+   ▼
+Monitor / BSW / SWC
+   │
+   │ Event detected
+   ▼
+  DEM
+   │
+   ├── Event status
+   ├── Debouncing
+   ├── Fault memory
+   └── Diagnostic information</code></pre>
+
+                <p>
+                    DEM vì vậy có vai trò khác DET:
+                    DEM phục vụ diagnostic management trong quá trình
+                    ECU vận hành và chẩn đoán.
+                </p>
+
+                <h2>8. Diagnostic Event là gì?</h2>
+
+                <p>
+                    Một <strong>Diagnostic Event</strong> đại diện cho
+                    một điều kiện lỗi hoặc bất thường mà hệ thống muốn
+                    theo dõi cho mục đích diagnostics.
+                </p>
+
+                <p>
+                    Ví dụ, một ECU có thể giám sát:
+                </p>
+
+                <ul>
+                    <li>CAN communication timeout.</li>
+                    <li>Sensor signal không hợp lệ.</li>
+                    <li>Communication error.</li>
+                    <li>ECU internal fault.</li>
+                    <li>Giá trị signal nằm ngoài phạm vi cho phép.</li>
+                </ul>
+
+                <p>
+                    Những điều kiện này có thể được monitor và report
+                    tới DEM tùy theo thiết kế hệ thống.
+                </p>
+
+                <pre><code>Monitor
+   │
+   ├── Condition OK
+   │       │
+   │       ▼
+   │   Event Passed
+   │
+   └── Condition Failed
+           │
+           ▼
+          DEM
+           │
+           ▼
+   Diagnostic Event Status</code></pre>
+
+                <h2>9. DET và DEM khác nhau như thế nào?</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>DET</th>
+                            <th>DEM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Mục đích</strong></td>
+                            <td>Development error reporting</td>
+                            <td>Diagnostic event management</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Thời điểm</strong></td>
+                            <td>Development / Integration</td>
+                            <td>Runtime / Diagnosis</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Đối tượng chính</strong></td>
+                            <td>Developer / Integrator</td>
+                            <td>Diagnostic system / Tester / Vehicle</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ví dụ</strong></td>
+                            <td>Invalid API usage</td>
+                            <td>Communication timeout</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DTC management</strong></td>
+                            <td>Không</td>
+                            <td>Có liên quan</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Runtime fault memory</strong></td>
+                            <td>Không phải mục tiêu chính</td>
+                            <td>Có</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Memory trick:</strong>
+                    <br><br>
+                    <strong>DET = "Developer made an integration/API usage mistake"</strong>
+                    <br>
+                    <strong>DEM = "ECU detected a diagnostic fault during operation"</strong>
+                </div>
+
+                <h2>10. DEM và Diagnostic Trouble Code</h2>
+
+                <p>
+                    Một khái niệm quan trọng khi học DEM là
+                    <strong>DTC (Diagnostic Trouble Code)</strong>.
+                </p>
+
+                <p>
+                    DEM quản lý diagnostic events và thông tin liên quan
+                    tới fault. Trong hệ thống diagnostics, event có thể
+                    được liên kết với một DTC theo configuration.
+                </p>
+
+                <pre><code>Fault Condition
+      │
+      ▼
+Diagnostic Event
+      │
+      ▼
+     DEM
+      │
+      ├── Event status
+      ├── Debouncing
+      ├── Fault information
+      │
+      ▼
+     DTC
+      │
+      ▼
+Diagnostic Services / Tester</code></pre>
+
+                <p>
+                    Vì vậy, không nên hiểu rằng mọi lỗi runtime đều
+                    tự động trở thành một DTC. Việc mapping event,
+                    status và DTC phụ thuộc vào diagnostic configuration
+                    của ECU.
+                </p>
+
+                <h2>11. DEM Event Status</h2>
+
+                <p>
+                    DEM không chỉ lưu một giá trị "error / no error".
+                    Diagnostic event có thể có nhiều trạng thái khác nhau
+                    trong quá trình monitor.
+                </p>
+
+                <p>
+                    Ví dụ về logic khái niệm:
+                </p>
+
+                <pre><code>Monitor
+   │
+   ├── Test passed
+   │       │
+   │       ▼
+   │   Event Passed
+   │
+   └── Test failed
+           │
+           ▼
+       Event Failed
+           │
+           ▼
+      DEM processing
+           │
+           ├── Update status
+           ├── Debounce
+           └── Store information</code></pre>
+
+                <p>
+                    Trong AUTOSAR DEM có nhiều status và cơ chế xử lý
+                    chi tiết hơn. Khi học ở mức CAN Driver integration,
+                    điều quan trọng trước tiên là hiểu rằng DEM theo dõi
+                    trạng thái của diagnostic event thay vì chỉ nhận
+                    một thông báo lỗi đơn giản.
+                </p>
+
+                <h2>12. Debouncing là gì?</h2>
+
+                <p>
+                    Trong thực tế, một điều kiện lỗi có thể xuất hiện
+                    trong thời gian rất ngắn và sau đó biến mất.
+                    Nếu hệ thống coi ngay lần xuất hiện đầu tiên là
+                    một fault thực sự, có thể xảy ra false detection.
+                </p>
+
+                <p>
+                    Vì vậy diagnostic event có thể sử dụng cơ chế
+                    <strong>debouncing</strong> để xác định khi nào
+                    một lỗi đủ điều kiện được coi là confirmed fault.
+                </p>
+
+                <svg viewBox="0 0 900 450" role="img" aria-label="DEM debouncing"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <line x1="80" y1="300" x2="830" y2="300" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="180" y1="275" x2="180" y2="325" stroke="currentColor" stroke-width="2" />
+                    <line x1="340" y1="275" x2="340" y2="325" stroke="currentColor" stroke-width="2" />
+                    <line x1="500" y1="275" x2="500" y2="325" stroke="currentColor" stroke-width="2" />
+                    <line x1="660" y1="275" x2="660" y2="325" stroke="currentColor" stroke-width="2" />
+
+                    <text x="170" y="255" font-size="16">
+                        Fail
+                    </text>
+                    <text x="330" y="255" font-size="16">
+                        Fail
+                    </text>
+                    <text x="490" y="255" font-size="16">
+                        Fail
+                    </text>
+                    <text x="650" y="255" font-size="16">
+                        Confirm
+                    </text>
+
+                    <path d="M180 200 L340 170 L500 140 L660 100" fill="none" stroke="currentColor" stroke-width="3" />
+
+                    <line x1="80" y1="130" x2="830" y2="130" stroke="currentColor" stroke-width="2"
+                        stroke-dasharray="8,6" />
+
+                    <text x="600" y="115" font-size="16">
+                        Confirmation threshold
+                    </text>
+
+                    <text x="85" y="380" font-size="16">
+                        Nhiều lần failure có thể được sử dụng để xác nhận fault.
+                    </text>
+
+                    <text x="85" y="410" font-size="16">
+                        Cơ chế cụ thể phụ thuộc diagnostic configuration.
+                    </text>
+
+                </svg>
+
+                <p>
+                    Debouncing có thể dựa trên số lần test, thời gian,
+                    counter hoặc cơ chế khác tùy configuration.
+                </p>
+
+                <h2>13. DEM và Fault Memory</h2>
+
+                <p>
+                    Một chức năng quan trọng của DEM là quản lý thông tin
+                    liên quan tới diagnostic event trong fault memory.
+                </p>
+
+                <pre><code>Diagnostic Event
+       │
+       ▼
+      DEM
+       │
+       ├── Event detected
+       ├── Debounce
+       ├── Confirmed fault
+       │
+       ▼
+Fault Memory
+       │
+       ├── Event status
+       ├── Diagnostic information
+       └── Related data</code></pre>
+
+                <p>
+                    Việc lưu trữ chính xác dữ liệu nào, khi nào lưu,
+                    khi nào clear và cách persistent storage được thực hiện
+                    phụ thuộc vào configuration và các module liên quan.
+                </p>
+
+                <h2>14. DEM và CAN Communication Error</h2>
+
+                <p>
+                    DEM có thể liên quan tới CAN communication diagnostics,
+                    nhưng cần phân biệt rõ:
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      │ Hardware / protocol status
+      ▼
+   CanDrv
+      │
+      ▼
+   CanIf / CanSM
+      │
+      │ Communication state / event
+      ▼
+    DEM
+      │
+      ▼
+Diagnostic information</code></pre>
+
+                <p>
+                    Ví dụ, một hệ thống có thể monitor việc mất communication
+                    với một ECU khác. Nếu message không xuất hiện trong
+                    khoảng thời gian yêu cầu, communication monitor có thể
+                    report một diagnostic event tới DEM.
+                </p>
+
+                <div class="note">
+                    <strong>Quan trọng:</strong>
+                    CAN Driver không phải lúc nào cũng trực tiếp gọi DEM
+                    cho mọi CAN error. Diagnostic event có thể được phát hiện
+                    và report bởi module phù hợp với diagnostic architecture
+                    của ECU.
+                </div>
+
+                <h2>15. Ví dụ: CAN Message Timeout</h2>
+
+                <p>
+                    Giả sử ECU yêu cầu một CAN message phải được nhận
+                    ít nhất một lần trong mỗi 100 ms.
+                </p>
+
+                <pre><code>Expected CAN Message
+        │
+        ▼
+Wait 100 ms
+        │
+        ├── Message received
+        │       │
+        │       ▼
+        │   Test Passed
+        │
+        └── Message missing
+                │
+                ▼
+          Communication Monitor
+                │
+                ▼
+               DEM
+                │
+                ▼
+        Diagnostic Event Status</code></pre>
+
+                <p>
+                    Nếu message bị mất chỉ một lần thì hệ thống chưa nhất thiết
+                    phải xác nhận ngay một fault. Diagnostic configuration
+                    có thể yêu cầu một số điều kiện hoặc số lần failure
+                    trước khi event được confirmed.
+                </p>
+
+                <h2>16. DET và DEM trong CAN Stack</h2>
+
+                <svg viewBox="0 0 900 600" role="img" aria-label="DET và DEM trong CAN stack"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="300" y="25" width="300" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="63" text-anchor="middle" font-size="20">
+                        Application / SWC
+                    </text>
+
+                    <rect x="300" y="120" width="300" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="158" text-anchor="middle" font-size="20">
+                        COM / PduR / CanIf
+                    </text>
+
+                    <rect x="300" y="215" width="300" height="60" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="253" text-anchor="middle" font-size="20">
+                        CanDrv
+                    </text>
+
+                    <rect x="300" y="310" width="300" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="348" text-anchor="middle" font-size="20">
+                        CAN Controller
+                    </text>
+
+                    <rect x="50" y="215" width="170" height="60" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="135" y="253" text-anchor="middle" font-size="20">
+                        DET
+                    </text>
+
+                    <rect x="680" y="215" width="170" height="60" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="765" y="253" text-anchor="middle" font-size="20">
+                        DEM
+                    </text>
+
+                    <rect x="680" y="350" width="170" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="765" y="388" text-anchor="middle" font-size="18">
+                        Diagnostic
+                    </text>
+
+                    <line x1="450" y1="85" x2="450" y2="120" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="180" x2="450" y2="215" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="275" x2="450" y2="310" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="300" y1="245" x2="220" y2="245" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="600" y1="245" x2="680" y2="245" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="765" y1="275" x2="765" y2="350" stroke="currentColor" stroke-width="2" />
+
+                    <text x="55" y="320" font-size="16">
+                        Development error
+                    </text>
+
+                    <text x="685" y="440" font-size="16">
+                        Diagnostic event / fault information
+                    </text>
+
+                </svg>
+
+                <p>
+                    Sơ đồ trên giúp phân biệt hai đường xử lý:
+                    DET phục vụ development error reporting,
+                    trong khi DEM phục vụ diagnostic event management.
+                </p>
+
+                <h2>17. Khi nào sử dụng DET?</h2>
+
+                <p>
+                    DET thường hữu ích khi developer muốn phát hiện lỗi
+                    trong quá trình phát triển hoặc integration.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>DET</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>API được gọi sai thứ tự</td>
+                            <td>Có thể report</td>
+                        </tr>
+                        <tr>
+                            <td>Module chưa initialized</td>
+                            <td>Có thể report</td>
+                        </tr>
+                        <tr>
+                            <td>Parameter không hợp lệ</td>
+                            <td>Có thể report</td>
+                        </tr>
+                        <tr>
+                            <td>Configuration không hợp lệ khi development</td>
+                            <td>Có thể liên quan</td>
+                        </tr>
+                        <tr>
+                            <td>Vehicle communication timeout</td>
+                            <td>Không phải mục tiêu chính</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>18. Khi nào sử dụng DEM?</h2>
+
+                <p>
+                    DEM phù hợp khi hệ thống cần quản lý một diagnostic event
+                    trong quá trình ECU hoạt động.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>DEM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN message timeout</td>
+                            <td>Có thể sử dụng</td>
+                        </tr>
+                        <tr>
+                            <td>Sensor signal failure</td>
+                            <td>Có thể sử dụng</td>
+                        </tr>
+                        <tr>
+                            <td>Communication monitoring fault</td>
+                            <td>Có thể sử dụng</td>
+                        </tr>
+                        <tr>
+                            <td>Runtime diagnostic event</td>
+                            <td>Có</td>
+                        </tr>
+                        <tr>
+                            <td>Invalid API parameter trong development</td>
+                            <td>Không phải mục tiêu chính</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>19. DET và DEM trong Development vs Runtime</h2>
+
+                <svg viewBox="0 0 900 500" role="img" aria-label="DET và DEM trong development và runtime"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="60" y="60" width="340" height="90" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="230" y="98" text-anchor="middle" font-size="21">
+                        Development / Integration
+                    </text>
+                    <text x="230" y="128" text-anchor="middle" font-size="17">
+                        API usage / parameter / state error
+                    </text>
+
+                    <rect x="500" y="60" width="340" height="90" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="670" y="98" text-anchor="middle" font-size="21">
+                        Runtime / Diagnosis
+                    </text>
+                    <text x="670" y="128" text-anchor="middle" font-size="17">
+                        Fault / diagnostic condition
+                    </text>
+
+                    <rect x="160" y="240" width="140" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="230" y="283" text-anchor="middle" font-size="21">
+                        DET
+                    </text>
+
+                    <rect x="600" y="240" width="140" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="670" y="283" text-anchor="middle" font-size="21">
+                        DEM
+                    </text>
+
+                    <rect x="510" y="390" width="320" height="65" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="670" y="430" text-anchor="middle" font-size="19">
+                        Diagnostic / DTC handling
+                    </text>
+
+                    <line x1="230" y1="150" x2="230" y2="240" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="670" y1="150" x2="670" y2="240" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="670" y1="310" x2="670" y2="390" stroke="currentColor" stroke-width="2" />
+
+                </svg>
+
+                <h2>20. DET có chạy trong Production ECU không?</h2>
+
+                <p>
+                    Trong một hệ thống AUTOSAR thực tế, việc DET có được
+                    enable và hoạt động như thế nào phụ thuộc vào build,
+                    configuration và mục đích của ECU.
+                </p>
+
+                <p>
+                    Trong development build, DET thường rất hữu ích để
+                    phát hiện integration errors. Trong production build,
+                    cơ chế development error reporting có thể được
+                    giới hạn hoặc disable tùy theo project.
+                </p>
+
+                <div class="note">
+                    <strong>Không nên kết luận:</strong>
+                    "DET luôn luôn chạy trong production" hoặc
+                    "DET luôn luôn bị loại bỏ trong production".
+                    Cách cấu hình thực tế phụ thuộc project và implementation.
+                </div>
+
+                <h2>21. DEM có thay thế DET không?</h2>
+
+                <p>
+                    Không.
+                </p>
+
+                <p>
+                    DET và DEM giải quyết hai loại vấn đề khác nhau.
+                    DEM không phải phiên bản runtime của DET và cũng
+                    không phải DET nâng cấp.
+                </p>
+
+                <pre><code>Invalid API usage
+       │
+       ▼
+      DET
+       │
+       ▼
+Development debugging
+
+
+Runtime diagnostic fault
+       │
+       ▼
+      DEM
+       │
+       ▼
+Diagnostic management</code></pre>
+
+                <h2>22. Ví dụ kết hợp DET và DEM</h2>
+
+                <p>
+                    Hãy xét một ECU có CAN communication.
+                    Trong quá trình development, developer có thể mắc
+                    một lỗi integration; trong runtime, ECU lại có thể
+                    phát hiện một communication fault.
+                </p>
+
+                <pre><code>CASE 1: Development Error
+
+Can_Write(...)
+      │
+      ├── Invalid usage
+      │
+      ▼
+     DET
+
+
+CASE 2: Runtime Diagnostic Fault
+
+Expected CAN message
+      │
+      ├── Timeout
+      │
+      ▼
+Communication Monitor
+      │
+      ▼
+     DEM</code></pre>
+
+                <p>
+                    Hai trường hợp đều là "error", nhưng bản chất khác nhau:
+                    một lỗi là development/integration error,
+                    lỗi còn lại là runtime diagnostic event.
+                </p>
+
+                <h2>23. Debug CAN với DET</h2>
+
+                <p>
+                    Nếu CAN Driver API không hoạt động như mong đợi,
+                    DET có thể là một trong những nơi đầu tiên cần kiểm tra
+                    trong development environment.
+                </p>
+
+                <pre><code>CAN API call
+     │
+     ▼
+CanDrv
+     │
+     ├── Initialized?
+     ├── Valid parameter?
+     ├── Valid state?
+     └── Valid configuration?
+     │
+     ├── YES
+     │     │
+     │     ▼
+     │   Continue
+     │
+     └── NO
+           │
+           ▼
+          DET
+           │
+           ▼
+     Check Error ID</code></pre>
+
+                <h2>24. Debug CAN với DEM</h2>
+
+                <p>
+                    Nếu CAN communication hoạt động nhưng ECU báo một
+                    diagnostic fault, DEM là một trong những thành phần
+                    quan trọng cần kiểm tra.
+                </p>
+
+                <pre><code>CAN Communication
+       │
+       ▼
+Communication Monitor
+       │
+       ├── PASS
+       │
+       └── FAIL
+            │
+            ▼
+           DEM
+            │
+            ├── Event status
+            ├── Debouncing
+            ├── Confirmation
+            │
+            ▼
+       Diagnostic status</code></pre>
+
+                <h2>25. DET và DEM trong CAN Debugging</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Triệu chứng</th>
+                            <th>Nên kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Can_Write() bị reject trong development</td>
+                            <td>DET / initialization / parameter / state</td>
+                        </tr>
+                        <tr>
+                            <td>CAN RX không hoạt động</td>
+                            <td>
+                                CanDrv, interrupt/polling, CanIf mapping,
+                                OS scheduling
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CAN communication timeout</td>
+                            <td>
+                                Communication monitor / DEM event
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DTC xuất hiện</td>
+                            <td>
+                                DEM event, status và diagnostic configuration
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>API được gọi trước initialization</td>
+                            <td>DET</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>26. DET, DEM và CanSM</h2>
+
+                <p>
+                    Một điểm quan trọng khi học CAN stack là phân biệt
+                    <strong>CanSM</strong> với <strong>DEM</strong>.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Responsibility</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>CanDrv</strong></td>
+                            <td>
+                                CAN Controller / hardware-level processing
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CanIf</strong></td>
+                            <td>
+                                CAN interface / abstraction
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CanSM</strong></td>
+                            <td>
+                                CAN network state management
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>DET</strong></td>
+                            <td>
+                                Development error reporting
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>DEM</strong></td>
+                            <td>
+                                Diagnostic event management
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ khi CAN Controller xảy ra Bus-Off,
+                    CanDrv xử lý controller-level event và thông báo
+                    lên tầng CAN stack. CanSM có thể quản lý communication
+                    state/recovery behavior. Nếu hệ thống cần theo dõi
+                    một điều kiện lỗi cho diagnostic purpose, diagnostic
+                    event có thể được report tới DEM theo architecture
+                    của ECU.
+                </p>
+
+                <h2>27. Một flow tổng hợp</h2>
+
+                <svg viewBox="0 0 900 650" role="img" aria-label="Flow tổng hợp DET DEM trong CAN stack"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="320" y="25" width="260" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="63" text-anchor="middle" font-size="20">
+                        CAN / ECU Runtime
+                    </text>
+
+                    <rect x="320" y="125" width="260" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="163" text-anchor="middle" font-size="20">
+                        CanDrv / CanIf
+                    </text>
+
+                    <rect x="100" y="250" width="260" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="230" y="293" text-anchor="middle" font-size="21">
+                        Development Error
+                    </text>
+
+                    <rect x="540" y="250" width="260" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="670" y="293" text-anchor="middle" font-size="21">
+                        Diagnostic Event
+                    </text>
+
+                    <rect x="100" y="400" width="260" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="230" y="443" text-anchor="middle" font-size="21">
+                        DET
+                    </text>
+
+                    <rect x="540" y="400" width="260" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="670" y="443" text-anchor="middle" font-size="21">
+                        DEM
+                    </text>
+
+                    <rect x="540" y="530" width="260" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="670" y="568" text-anchor="middle" font-size="19">
+                        Diagnostic / DTC
+                    </text>
+
+                    <line x1="450" y1="85" x2="450" y2="125" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="380" y1="185" x2="230" y2="250" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="520" y1="185" x2="670" y2="250" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="230" y1="320" x2="230" y2="400" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="670" y1="320" x2="670" y2="400" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="670" y1="470" x2="670" y2="530" stroke="currentColor" stroke-width="2" />
+
+                </svg>
+
+                <h2>28. Những điều không nên nhầm lẫn</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dễ nhầm</th>
+                            <th>Cách hiểu đúng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DET = Diagnostic Error Manager</td>
+                            <td>
+                                Không. DET là Default Error Tracer.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DEM = Development Error Manager</td>
+                            <td>
+                                Không. DEM là Diagnostic Event Manager.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DET quản lý DTC</td>
+                            <td>
+                                Không. DEM mới liên quan tới diagnostic event và DTC management.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DEM dùng để debug API misuse</td>
+                            <td>
+                                Không phải mục tiêu chính. Development error thường liên quan DET.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DET xử lý Bus-Off</td>
+                            <td>
+                                Không. Bus-Off thuộc CAN communication/controller handling.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DEM trực tiếp điều khiển CAN Controller</td>
+                            <td>
+                                Không. DEM quản lý diagnostic event.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Mọi CAN error đều phải đi qua DEM</td>
+                            <td>
+                                Không. Chỉ các diagnostic events được cấu hình/monitor phù hợp.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>29. Interview Perspective</h2>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is the difference between DET and DEM?"</strong>
+                </p>
+
+                <p>
+                    Có thể trả lời:
+                </p>
+
+                <pre><code>DET stands for Default Error Tracer.
+It is mainly used to report development errors,
+such as invalid API usage, invalid parameters,
+or calling a BSW module in an invalid state.
+
+DEM stands for Diagnostic Event Manager.
+It manages diagnostic events during runtime,
+including event status, fault handling and
+diagnostic information such as DTC-related data.</code></pre>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"Is DET used for CAN Bus-Off?"</strong>
+                </p>
+
+                <pre><code>DET is not the module responsible for
+handling CAN Bus-Off.
+
+Bus-Off is handled by the CAN communication
+stack and CAN state management.
+If the condition needs to be monitored as
+a diagnostic event, it may be reported to DEM
+according to the ECU diagnostic architecture.</code></pre>
+
+                <h2>30. Debug Checklist</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Câu hỏi</th>
+                            <th>Cần kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>API bị gọi sai?</td>
+                            <td>DET</td>
+                        </tr>
+                        <tr>
+                            <td>Module chưa initialized?</td>
+                            <td>DET / lifecycle / configuration</td>
+                        </tr>
+                        <tr>
+                            <td>Parameter không hợp lệ?</td>
+                            <td>DET</td>
+                        </tr>
+                        <tr>
+                            <td>CAN communication timeout?</td>
+                            <td>Monitor / DEM</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic event có được report?</td>
+                            <td>DEM</td>
+                        </tr>
+                        <tr>
+                            <td>Event có bị debounce?</td>
+                            <td>DEM configuration</td>
+                        </tr>
+                        <tr>
+                            <td>DTC có được cập nhật?</td>
+                            <td>DEM / diagnostic configuration</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Bus-Off?</td>
+                            <td>CanDrv / CanIf / CanSM trước, sau đó kiểm tra diagnostic path nếu cần</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>31. Memory Map</h2>
+
+                <svg viewBox="0 0 900 500" role="img" aria-label="Memory map DET và DEM"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="320" y="30" width="260" height="75" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="76" text-anchor="middle" font-size="23">
+                        Error / Fault
+                    </text>
+
+                    <rect x="60" y="170" width="220" height="80" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="170" y="218" text-anchor="middle" font-size="22">
+                        DET
+                    </text>
+
+                    <rect x="620" y="170" width="220" height="80" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="730" y="218" text-anchor="middle" font-size="22">
+                        DEM
+                    </text>
+
+                    <rect x="60" y="350" width="220" height="80" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="170" y="385" text-anchor="middle" font-size="19">
+                        Development
+                    </text>
+                    <text x="170" y="412" text-anchor="middle" font-size="16">
+                        Debug / Integration
+                    </text>
+
+                    <rect x="620" y="350" width="220" height="80" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="730" y="385" text-anchor="middle" font-size="19">
+                        Diagnostic
+                    </text>
+                    <text x="730" y="412" text-anchor="middle" font-size="16">
+                        Event / DTC
+                    </text>
+
+                    <line x1="450" y1="105" x2="170" y2="170" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="105" x2="730" y2="170" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="170" y1="250" x2="170" y2="350" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="730" y1="250" x2="730" y2="350" stroke="currentColor" stroke-width="2" />
+
+                </svg>
+
+                <div class="note">
+                    <strong>Memory trick:</strong>
+                    <br><br>
+                    <strong>DET → Default Error Tracer</strong>
+                    <br>
+                    <strong>Development Error → Debug / Integration</strong>
+                    <br><br>
+
+                    <strong>DEM → Diagnostic Event Manager</strong>
+                    <br>
+                    <strong>Diagnostic Event → Runtime / DTC</strong>
+                </div>
+
+                <h2>32. Tóm tắt</h2>
+
+                <div class="note">
+                    <br><br>
+
+                    <strong>DET (Default Error Tracer)</strong> dùng để
+                    report development errors từ các BSW modules.
+                    Những lỗi này thường liên quan tới invalid API usage,
+                    invalid parameters hoặc module state không hợp lệ.
+                    <br><br>
+
+                    DET chủ yếu hỗ trợ <strong>development và integration</strong>.
+                    Nó giúp developer tìm ra lỗi trong cách sử dụng hoặc
+                    tích hợp BSW module.
+                    <br><br>
+
+                    <strong>DEM (Diagnostic Event Manager)</strong> quản lý
+                    các diagnostic events trong quá trình ECU hoạt động.
+                    Nó có thể quản lý event status, debouncing, fault information
+                    và các thông tin liên quan tới DTC theo diagnostic configuration.
+                    <br><br>
+
+                    DET và DEM không thay thế cho nhau:
+                    <br><br>
+
+                    <strong>DET → Development Error</strong>
+                    <br>
+                    <strong>DEM → Diagnostic Event</strong>
+                    <br><br>
+
+                    Với CAN:
+                    <br><br>
+
+                    <strong>Invalid CanDrv API usage → DET</strong>
+                    <br>
+                    <strong>CAN communication diagnostic event → DEM</strong>
+                    <br><br>
+
+                    Cần nhớ rằng DET không phải CAN error handler,
+                    còn DEM không trực tiếp điều khiển CAN Controller.
+                    CAN communication errors vẫn phải được xử lý bởi
+                    các module phù hợp như CanDrv, CanIf và CanSM;
+                    chỉ khi có diagnostic event phù hợp thì event đó
+                    mới đi vào diagnostic path của DEM.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-15.html">← Bài trước</a>
+                    <a class="btn" href="lesson-17.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

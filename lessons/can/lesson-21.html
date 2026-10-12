@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 21: Set Baud-rate | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html" class="active">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 21: Set Baud-rate</h1>
+
+                <p>
+                    Trong CAN, <strong>baud-rate</strong> là một trong những tham số quan trọng nhất
+                    quyết định tốc độ truyền bit trên bus. Các ECU muốn giao tiếp đúng với nhau phải
+                    được cấu hình timing phù hợp để có thể lấy mẫu và giải mã bit CAN một cách chính xác.
+                </p>
+
+                <div class="note">
+                    <strong>Ý chính:</strong> Set baud-rate không đơn giản chỉ là đặt một con số như
+                    <code>500 kbit/s</code>. CAN Controller phải được cấu hình các tham số bit timing
+                    phù hợp để tạo ra tốc độ bit và điểm lấy mẫu mong muốn.
+                </div>
+
+                <h2>1. Baud-rate là gì?</h2>
+
+                <p>
+                    Baud-rate trong CAN thường được sử dụng để chỉ tốc độ truyền bit trên bus,
+                    ví dụ:
+                </p>
+
+                <ul>
+                    <li>125 kbit/s</li>
+                    <li>250 kbit/s</li>
+                    <li>500 kbit/s</li>
+                    <li>1 Mbit/s</li>
+                </ul>
+
+                <p>
+                    Ví dụ với tốc độ <strong>500 kbit/s</strong>, về mặt lý tưởng bus có tốc độ:
+                </p>
+
+                <pre><code>500,000 bit / second</code></pre>
+
+                <p>
+                    Tuy nhiên, CAN không truyền một bit bằng một khoảng thời gian cố định duy nhất
+                    mà chia mỗi bit thành nhiều <strong>time quanta</strong>. Vì vậy, baud-rate được
+                    tạo ra từ cấu hình bit timing của CAN Controller.
+                </p>
+
+                <h2>2. Tại sao CAN cần Set Baud-rate?</h2>
+
+                <p>
+                    Tất cả các node cùng giao tiếp trên một CAN bus cần có cấu hình timing tương thích.
+                    Nếu một ECU sử dụng timing khác quá nhiều so với các ECU còn lại, nó có thể không
+                    lấy mẫu đúng dữ liệu.
+                </p>
+
+                <pre><code>ECU A
+500 kbit/s
+    │
+    │
+    ├──────── CAN Bus ────────┤
+    │                         │
+ECU B                       ECU C
+500 kbit/s                  500 kbit/s
+    │                         │
+    └────── Timing phù hợp ───┘</code></pre>
+
+                <div class="note">
+                    Các node không nhất thiết phải có mọi tham số cấu hình giống nhau theo đúng từng
+                    con số nội bộ, nhưng phải tạo ra timing tương thích để giao tiếp ổn định.
+                </div>
+
+                <h2>3. Baud-rate và Bit Timing</h2>
+
+                <p>
+                    Một CAN bit được chia thành các phần thời gian. Mô hình cơ bản thường được biểu diễn:
+                </p>
+
+                <pre><code>                Một CAN Bit
+┌──────────┬──────────────┬──────────────┬──────────────┐
+│ Sync_Seg │ Prop_Seg     │ Phase_Seg1   │ Phase_Seg2   │
+└──────────┴──────────────┴──────────────┴──────────────┘
+                                      ↑
+                                Sample Point</code></pre>
+
+                <p>
+                    Các thành phần này được xây dựng từ các <strong>Time Quantum (TQ)</strong>.
+                </p>
+
+                <ul>
+                    <li><strong>Sync_Seg:</strong> phần đồng bộ hóa.</li>
+                    <li><strong>Prop_Seg:</strong> bù cho delay truyền tín hiệu và các delay liên quan.</li>
+                    <li><strong>Phase_Seg1:</strong> phần timing trước sample point.</li>
+                    <li><strong>Phase_Seg2:</strong> phần timing sau sample point.</li>
+                </ul>
+
+                <h2>4. Time Quantum (TQ)</h2>
+
+                <p>
+                    Time Quantum là đơn vị thời gian cơ bản được CAN Controller sử dụng để xây dựng
+                    một CAN bit.
+                </p>
+
+                <p>
+                    Nếu một bit được tạo bởi tổng cộng <strong>N TQ</strong>, thời gian của một bit
+                    có thể biểu diễn khái niệm:
+                </p>
+
+                <pre><code>Tbit = N × TQ</code></pre>
+
+                <p>
+                    Và tốc độ bit về mặt lý thuyết:
+                </p>
+
+                <pre><code>Bit Rate = 1 / Tbit</code></pre>
+
+                <p>
+                    Do đó:
+                </p>
+
+                <pre><code>Bit Rate = CAN Clock / (Prescaler × Total TQ per Bit)</code></pre>
+
+                <div class="note">
+                    Công thức cụ thể phụ thuộc kiến trúc CAN Controller và cách nhà sản xuất định nghĩa
+                    clock, prescaler và các thanh ghi bit timing.
+                </div>
+
+                <h2>5. Ví dụ tạo 500 kbit/s</h2>
+
+                <p>
+                    Giả sử CAN Controller có clock phù hợp và cấu hình:
+                </p>
+
+                <pre><code>CAN Clock          = 40 MHz
+Prescaler          = 5
+Total TQ per bit   = 16</code></pre>
+
+                <p>
+                    Khi đó:
+                </p>
+
+                <pre><code>TQ = Prescaler / CAN Clock
+   = 5 / 40 MHz
+   = 125 ns
+
+Tbit = 16 × 125 ns
+     = 2 µs
+
+Bit Rate = 1 / 2 µs
+         = 500 kbit/s</code></pre>
+
+                <p>
+                    Đây chỉ là ví dụ minh họa cách tính. Khi cấu hình một MCU cụ thể, cần sử dụng
+                    clock tree và quy tắc bit timing của CAN Controller tương ứng.
+                </p>
+
+                <h2>6. Sample Point</h2>
+
+                <p>
+                    <strong>Sample Point</strong> là vị trí trong một CAN bit tại đó CAN Controller
+                    lấy mẫu giá trị của bit.
+                </p>
+
+                <pre><code>Start of Bit
+     │
+     ▼
+┌────┬───────────────┬──────────────┐
+│Sync│ Prop + Phase1 │   Phase2     │
+└────┴───────────────┴──────────────┘
+                       ↑
+                  Sample Point</code></pre>
+
+                <p>
+                    Sample point thường được biểu diễn dưới dạng phần trăm thời gian của một bit.
+                    Ví dụ, nếu sample point là 80%, CAN Controller lấy mẫu gần cuối 80% đầu của bit.
+                </p>
+
+                <div class="note">
+                    Không nên hiểu sample point là một thông số độc lập hoàn toàn. Nó được tạo ra từ
+                    cách phân chia các segment trong tổng số Time Quantum của một bit.
+                </div>
+
+                <h2>7. Vì sao Sample Point quan trọng?</h2>
+
+                <p>
+                    Tín hiệu trên CAN bus cần thời gian để truyền từ node này tới node khác và có thể
+                    chịu ảnh hưởng bởi propagation delay, transceiver delay và các đặc tính vật lý
+                    khác.
+                </p>
+
+                <p>
+                    Vì vậy, vị trí lấy mẫu phải được chọn phù hợp để CAN Controller có khả năng xác định
+                    trạng thái của bus một cách đáng tin cậy.
+                </p>
+
+                <pre><code>Node A                                      Node B
+  │                                            │
+  │────────────── CAN Bus ────────────────────►│
+  │                                            │
+  │        propagation / hardware delay        │
+  │                                            │
+  └────────────────────────────────────────────┘
+                              ↓
+                         Sample Point</code></pre>
+
+                <h2>8. CAN Bit Timing Segments</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Segment</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sync_Seg</td>
+                            <td>Đồng bộ các node với sự thay đổi trên bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Prop_Seg</td>
+                            <td>Bù cho propagation delay và các delay liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Phase_Seg1</td>
+                            <td>Phần timing trước sample point và hỗ trợ resynchronization.</td>
+                        </tr>
+                        <tr>
+                            <td>Phase_Seg2</td>
+                            <td>Phần timing sau sample point.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>9. Resynchronization</h2>
+
+                <p>
+                    CAN sử dụng cơ chế đồng bộ lại timing trong quá trình truyền. Khi phát hiện cạnh
+                    đồng bộ phù hợp, CAN Controller có thể điều chỉnh timing trong giới hạn cho phép.
+                </p>
+
+                <p>
+                    Điều này giúp các node duy trì sự đồng bộ khi có sai lệch nhỏ về clock hoặc timing.
+                </p>
+
+                <div class="note">
+                    <strong>Quan trọng:</strong> Resynchronization không có nghĩa là các ECU có thể
+                    dùng baud-rate bất kỳ. Các node trên bus vẫn phải có bit timing tương thích.
+                </div>
+
+                <h2>10. Synchronization Jump Width (SJW)</h2>
+
+                <p>
+                    <strong>SJW</strong> là tham số liên quan đến mức điều chỉnh timing khi CAN
+                    Controller thực hiện resynchronization.
+                </p>
+
+                <pre><code>Phase_Seg1 ────────────────┐
+                           │
+                     Resynchronization
+                           │
+Phase_Seg2 ────────────────┘
+
+SJW → giới hạn mức điều chỉnh timing</code></pre>
+
+                <p>
+                    SJW thường được cấu hình theo đơn vị Time Quantum và bị giới hạn bởi quy tắc của
+                    CAN Controller.
+                </p>
+
+                <h2>11. Propagation Delay</h2>
+
+                <p>
+                    Khi một node thay đổi trạng thái trên CAN bus, tín hiệu cần thời gian để truyền
+                    qua bus và các phần tử vật lý.
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      ▼
+ Transceiver
+      │
+      ▼
+================ CAN Bus ================
+      │
+      ▼
+ Transceiver
+      │
+      ▼
+CAN Controller</code></pre>
+
+                <p>
+                    Delay này là một trong những lý do cần xem xét bit timing thay vì chỉ quan tâm đến
+                    con số baud-rate.
+                </p>
+
+                <h2>12. Baud-rate và Bus Length</h2>
+
+                <p>
+                    Tốc độ CAN càng cao thì yêu cầu về timing và chất lượng physical layer càng trở nên
+                    nghiêm ngặt hơn.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Baud-rate</th>
+                            <th>Đặc điểm khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>125 kbit/s</td>
+                            <td>Thường phù hợp với mạng cần tốc độ thấp hơn và có yêu cầu khoảng cách lớn hơn.</td>
+                        </tr>
+                        <tr>
+                            <td>250 kbit/s</td>
+                            <td>Mức tốc độ phổ biến trong nhiều hệ thống CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>500 kbit/s</td>
+                            <td>Mức tốc độ phổ biến trong automotive CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>1 Mbit/s</td>
+                            <td>Tốc độ cao, yêu cầu physical layer và timing chặt chẽ hơn.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    Không nên suy ra một bus CAN luôn có một bus length cố định cho từng baud-rate.
+                    Thiết kế thực tế còn phụ thuộc topology, cable, transceiver, termination,
+                    propagation delay và các yêu cầu của hệ thống.
+                </div>
+
+                <h2>13. CAN Clock và Baud-rate</h2>
+
+                <p>
+                    CAN Controller cần một clock nguồn để tạo ra Time Quantum.
+                </p>
+
+                <pre><code>MCU Clock
+    │
+    ▼
+CAN Peripheral Clock
+    │
+    ▼
+Prescaler
+    │
+    ▼
+Time Quantum
+    │
+    ▼
+Bit Timing Configuration
+    │
+    ▼
+CAN Baud-rate</code></pre>
+
+                <p>
+                    Vì vậy, khi baud-rate không đúng, cần kiểm tra không chỉ giá trị baud-rate được
+                    cấu hình mà cả clock nguồn và prescaler.
+                </p>
+
+                <h2>14. Set Baud-rate trong CAN Driver</h2>
+
+                <p>
+                    Trong AUTOSAR, baud-rate thường nằm trong cấu hình của CAN Controller.
+                    CAN Driver sử dụng cấu hình được tạo/generated để thiết lập CAN hardware.
+                </p>
+
+                <pre><code>CAN Configuration
+      │
+      ├── Controller
+      │
+      ├── Baud-rate
+      │
+      ├── Prescaler
+      │
+      ├── Bit Timing
+      │
+      ├── Sample Point
+      │
+      └── SJW
+             │
+             ▼
+        Can_Init()
+             │
+             ▼
+      CAN Controller HW</code></pre>
+
+                <div class="note">
+                    Trong AUTOSAR thực tế, cách cấu hình cụ thể phụ thuộc toolchain, MCU, CAN IP,
+                    AUTOSAR release và vendor implementation. Không nên giả định mọi vendor dùng
+                    cùng tên register hoặc cùng cấu trúc configuration.
+                </div>
+
+                <h2>15. Baud-rate được cấu hình khi nào?</h2>
+
+                <p>
+                    Trong một kiến trúc điển hình, baud-rate được cấu hình trong quá trình
+                    initialization của CAN Controller/driver.
+                </p>
+
+                <pre><code>ECU Startup
+    │
+    ▼
+MCU / Clock
+    │
+    ▼
+PORT / Interrupt
+    │
+    ▼
+Can_Init()
+    │
+    ▼
+CAN Controller Configuration
+    │
+    ├── Bit Timing
+    ├── Baud-rate
+    └── Controller settings
+    │
+    ▼
+Controller STARTED
+    │
+    ▼
+CAN Communication</code></pre>
+
+                <h2>16. Set Baud-rate không đồng nghĩa với Start Controller</h2>
+
+                <p>
+                    Đây là một điểm rất dễ nhầm khi học CAN Driver.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hoạt động</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Set bit timing / baud-rate</td>
+                            <td>Cấu hình tốc độ và timing của CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>Controller START</td>
+                            <td>Đưa controller vào trạng thái hoạt động để giao tiếp.</td>
+                        </tr>
+                        <tr>
+                            <td>Can_Write()</td>
+                            <td>Yêu cầu truyền một CAN L-PDU/message.</td>
+                        </tr>
+                        <tr>
+                            <td>Reception</td>
+                            <td>Controller nhận frame từ bus và thông báo lên tầng trên.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>17. Baud-rate và Controller State</h2>
+
+                <p>
+                    Bit timing thường được cấu hình ở thời điểm controller phù hợp với việc cấu hình
+                    hardware. Không nên coi việc thay đổi baud-rate là một thao tác đơn giản có thể
+                    thực hiện bất kỳ lúc nào trong khi controller đang giao tiếp.
+                </p>
+
+                <pre><code>UNINIT
+   │
+   ▼
+INIT
+   │
+   ▼
+STOPPED
+   │
+   │ configure / prepare
+   ▼
+STARTED
+   │
+   ▼
+CAN Communication</code></pre>
+
+                <div class="note">
+                    Trình tự và state cụ thể có thể khác tùy implementation. Hình trên là mô hình
+                    khái niệm để hiểu quan hệ giữa initialization, controller state và communication.
+                </div>
+
+                <h2>18. Có thể thay đổi Baud-rate khi CAN đang chạy không?</h2>
+
+                <p>
+                    Về mặt hệ thống, thay đổi baud-rate khi bus đang hoạt động là vấn đề cần được
+                    kiểm soát rất cẩn thận.
+                </p>
+
+                <p>
+                    Nếu một node đột ngột chuyển từ:
+                </p>
+
+                <pre><code>500 kbit/s
+      ↓
+250 kbit/s</code></pre>
+
+                <p>
+                    trong khi các node khác vẫn sử dụng 500 kbit/s, hai bên sẽ không còn timing
+                    tương thích.
+                </p>
+
+                <p>
+                    Vì vậy, thay đổi baud-rate thường phải được thực hiện trong một quy trình
+                    controlled configuration/reinitialization phù hợp với hệ thống.
+                </p>
+
+                <h2>19. Baud-rate không khớp giữa các ECU</h2>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>ECU A → 500 kbit/s
+ECU B → 500 kbit/s
+ECU C → 250 kbit/s
+
+        CAN BUS
+──────────┬──────────┬──────────
+          │          │
+         A          B          C
+      500k        500k       250k</code></pre>
+
+                <p>
+                    ECU C có thể không giải mã đúng frame từ các node còn lại.
+                    Điều này có thể dẫn đến lỗi communication và error frame.
+                </p>
+
+                <h2>20. Dấu hiệu Baud-rate sai</h2>
+
+                <p>
+                    Một số dấu hiệu thường gặp khi baud-rate hoặc bit timing không phù hợp:
+                </p>
+
+                <ul>
+                    <li>Không nhận được CAN frame.</li>
+                    <li>Transmission không thành công.</li>
+                    <li>Xuất hiện CAN error.</li>
+                    <li>Error counter tăng.</li>
+                    <li>Controller chuyển sang trạng thái lỗi.</li>
+                    <li>Bus communication không ổn định.</li>
+                    <li>ECU này giao tiếp được nhưng ECU khác không giao tiếp được.</li>
+                </ul>
+
+                <h2>21. Baud-rate đúng nhưng vẫn không giao tiếp được</h2>
+
+                <p>
+                    Không phải mọi lỗi CAN communication đều do baud-rate.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khả năng</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bit timing</td>
+                            <td>Sample point hoặc SJW không phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Clock</td>
+                            <td>CAN peripheral clock không đúng như assumption.</td>
+                        </tr>
+                        <tr>
+                            <td>Physical layer</td>
+                            <td>Termination, wiring hoặc transceiver có vấn đề.</td>
+                        </tr>
+                        <tr>
+                            <td>Configuration</td>
+                            <td>Controller/baudrate configuration sai.</td>
+                        </tr>
+                        <tr>
+                            <td>Message configuration</td>
+                            <td>Filter, HRH/HTH hoặc ID mapping sai.</td>
+                        </tr>
+                        <tr>
+                            <td>Software</td>
+                            <td>CAN Driver hoặc upper-layer configuration không đúng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>22. Debug Baud-rate</h2>
+
+                <p>
+                    Khi CAN không giao tiếp, có thể debug theo hướng từ dưới lên:
+                </p>
+
+                <pre><code>1. Check CAN clock
+       ↓
+2. Check baud-rate configuration
+       ↓
+3. Check prescaler / bit timing
+       ↓
+4. Check sample point / SJW
+       ↓
+5. Check CAN Controller state
+       ↓
+6. Check Transceiver
+       ↓
+7. Check CAN Bus / termination
+       ↓
+8. Check CAN frame / ID / filter
+       ↓
+9. Check upper-layer software</code></pre>
+
+                <h2>23. Dùng CAN Analyzer để kiểm tra Baud-rate</h2>
+
+                <p>
+                    Trong quá trình development và debugging, CAN analyzer có thể giúp kiểm tra
+                    communication trên bus.
+                </p>
+
+                <pre><code>ECU
+ │
+ │ CAN
+ ▼
+┌─────────────────┐
+│   CAN Analyzer  │
+│                 │
+│ Bit-rate        │
+│ CAN ID          │
+│ DLC             │
+│ Data            │
+│ Error           │
+└─────────────────┘</code></pre>
+
+                <p>
+                    Nếu analyzer được cấu hình đúng baud-rate và có thể quan sát frame, đây là một
+                    nguồn thông tin hữu ích để phân tích communication.
+                </p>
+
+                <h2>24. Ví dụ: Cấu hình 500 kbit/s</h2>
+
+                <p>
+                    Giả sử project yêu cầu:
+                </p>
+
+                <pre><code>Required CAN baud-rate = 500 kbit/s
+Sample Point          = 80%
+CAN Clock             = 40 MHz</code></pre>
+
+                <p>
+                    Kỹ sư cần chọn một cấu hình bit timing hợp lệ dựa trên CAN Controller cụ thể.
+                    Ví dụ khái niệm:
+                </p>
+
+                <pre><code>CAN Clock
+    │
+    ▼
+Prescaler
+    │
+    ▼
+Time Quantum
+    │
+    ├── Sync_Seg
+    ├── Prop_Seg
+    ├── Phase_Seg1
+    └── Phase_Seg2
+             │
+             ▼
+        Sample Point
+             │
+             ▼
+       500 kbit/s</code></pre>
+
+                <p>
+                    Không nên lấy trực tiếp các giá trị minh họa này làm register configuration cho
+                    một MCU cụ thể nếu chưa kiểm tra reference manual và CAN timing calculator của
+                    controller đó.
+                </p>
+
+                <h2>25. Baud-rate trong CAN-FD</h2>
+
+                <p>
+                    Với CAN-FD, cần phân biệt <strong>Nominal Bit Rate</strong> và
+                    <strong>Data Bit Rate</strong>.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông số</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Nominal Bit Rate</td>
+                            <td>Tốc độ của arbitration phase.</td>
+                        </tr>
+                        <tr>
+                            <td>Data Bit Rate</td>
+                            <td>Tốc độ của data phase khi CAN-FD chuyển sang tốc độ cao hơn.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <pre><code>CAN-FD Frame
+
+Arbitration Phase
+      │
+      │ Nominal Bit Rate
+      ▼
+┌───────────────────────┐
+│ Arbitration / Control │
+└───────────────────────┘
+             │
+             ▼
+       Data Phase
+             │
+             │ Data Bit Rate
+             ▼
+┌───────────────────────┐
+│        Data           │
+└───────────────────────┘</code></pre>
+
+                <div class="note">
+                    Vì vậy, khi nói "Set Baud-rate" trong CAN-FD cần xác định đang nói đến nominal
+                    bit timing hay data bit timing.
+                </div>
+
+                <h2>26. Baud-rate và AUTOSAR Configuration</h2>
+
+                <p>
+                    Trong AUTOSAR project, baud-rate thường là một phần của cấu hình CAN Controller.
+                    Configuration tool có thể cho phép kỹ sư chọn:
+                </p>
+
+                <ul>
+                    <li>CAN Controller.</li>
+                    <li>Baud-rate.</li>
+                    <li>Sample point.</li>
+                    <li>Prescaler.</li>
+                    <li>Time segments.</li>
+                    <li>SJW.</li>
+                    <li>Các tham số CAN-FD nếu controller hỗ trợ.</li>
+                </ul>
+
+                <p>
+                    Sau đó tool có thể generate configuration code cho CAN Driver.
+                </p>
+
+                <pre><code>Configuration Tool
+        │
+        │ Baud-rate / Bit Timing
+        ▼
+Generated Configuration
+        │
+        ▼
+AUTOSAR CAN Driver
+        │
+        ▼
+CAN Controller
+        │
+        ▼
+CAN Bus</code></pre>
+
+                <h2>27. Baud-rate và CAN-IF / CanSM</h2>
+
+                <p>
+                    CAN Driver chịu trách nhiệm phần cấu hình và điều khiển CAN Controller ở tầng
+                    thấp. Các module phía trên sử dụng abstraction của AUTOSAR để quản lý communication.
+                </p>
+
+                <pre><code>Application
+     │
+     ▼
+COM
+     │
+     ▼
+PduR
+     │
+     ▼
+CanIf
+     │
+     ▼
+CanSM
+     │
+     ▼
+CAN Driver
+     │
+     │ Bit Timing / Baud-rate
+     ▼
+CAN Controller
+     │
+     ▼
+CAN Transceiver
+     │
+     ▼
+CAN Bus</code></pre>
+
+                <p>
+                    Không nên hiểu rằng CanIf hoặc CanSM trực tiếp tạo baud-rate bằng cách ghi các
+                    thanh ghi bit timing của CAN Controller. Phần cấu hình hardware cụ thể thuộc
+                    trách nhiệm của CAN Driver/controller integration.
+                </p>
+
+                <h2>28. Các lỗi thường gặp khi Set Baud-rate</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lỗi</th>
+                            <th>Nguyên nhân có thể</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Không có frame</td>
+                            <td>Baud-rate không khớp với network.</td>
+                        </tr>
+                        <tr>
+                            <td>Communication không ổn định</td>
+                            <td>Bit timing hoặc physical layer không phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Không start được controller</td>
+                            <td>Configuration hoặc initialization có vấn đề.</td>
+                        </tr>
+                        <tr>
+                            <td>Error counter tăng</td>
+                            <td>Timing, wiring, transceiver hoặc bus có vấn đề.</td>
+                        </tr>
+                        <tr>
+                            <td>Chỉ một số ECU giao tiếp được</td>
+                            <td>Cấu hình network giữa các node không đồng nhất.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>29. Góc nhìn phỏng vấn</h2>
+
+                <p>
+                    Một số câu hỏi fresher có thể gặp:
+                </p>
+
+                <ul>
+                    <li>What is CAN baud-rate?</li>
+                    <li>Why do CAN nodes need compatible baud-rate?</li>
+                    <li>What is bit timing?</li>
+                    <li>What is a Time Quantum?</li>
+                    <li>What is Sample Point?</li>
+                    <li>What is SJW?</li>
+                    <li>What happens if two ECUs use different baud-rates?</li>
+                    <li>How would you debug a CAN communication problem?</li>
+                    <li>What is the difference between nominal and data bit rate in CAN-FD?</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Câu trả lời ngắn nên nhớ:</strong>
+                    CAN baud-rate defines the bit transmission speed on the CAN bus.
+                    In practice, the CAN Controller achieves this speed through bit-timing parameters
+                    such as prescaler, time segments, sample point and SJW. All communicating nodes
+                    need compatible timing to communicate reliably.
+                </div>
+
+                <h2>30. Memory Map</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Baud-rate</td>
+                            <td>Tốc độ truyền bit trên CAN bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Bit Timing</td>
+                            <td>Cách chia thời gian của một CAN bit.</td>
+                        </tr>
+                        <tr>
+                            <td>Time Quantum</td>
+                            <td>Đơn vị thời gian cơ bản để xây dựng CAN bit.</td>
+                        </tr>
+                        <tr>
+                            <td>Sync_Seg</td>
+                            <td>Segment dùng cho synchronization.</td>
+                        </tr>
+                        <tr>
+                            <td>Prop_Seg</td>
+                            <td>Bù propagation delay.</td>
+                        </tr>
+                        <tr>
+                            <td>Phase_Seg1</td>
+                            <td>Timing segment trước sample point.</td>
+                        </tr>
+                        <tr>
+                            <td>Phase_Seg2</td>
+                            <td>Timing segment sau sample point.</td>
+                        </tr>
+                        <tr>
+                            <td>Sample Point</td>
+                            <td>Thời điểm controller lấy mẫu bit.</td>
+                        </tr>
+                        <tr>
+                            <td>SJW</td>
+                            <td>Giới hạn điều chỉnh timing khi resynchronization.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Clock</td>
+                            <td>Nguồn clock để tạo timing.</td>
+                        </tr>
+                        <tr>
+                            <td>Prescaler</td>
+                            <td>Tham số chia clock để tạo Time Quantum.</td>
+                        </tr>
+                        <tr>
+                            <td>Nominal Bit Rate</td>
+                            <td>Tốc độ nominal, đặc biệt quan trọng trong CAN-FD arbitration phase.</td>
+                        </tr>
+                        <tr>
+                            <td>Data Bit Rate</td>
+                            <td>Tốc độ data phase trong CAN-FD.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>31. Tóm tắt</h2>
+
+                <p>
+                    <strong>Set Baud-rate</strong> là bước quan trọng trong cấu hình CAN Controller.
+                    Baud-rate xác định tốc độ truyền bit, nhưng để tạo ra tốc độ đó, CAN Controller
+                    phải được cấu hình các tham số <strong>bit timing</strong> phù hợp.
+                </p>
+
+                <pre><code>CAN Clock
+    │
+    ▼
+Prescaler
+    │
+    ▼
+Time Quantum
+    │
+    ▼
+Bit Timing
+    │
+    ├── Sync_Seg
+    ├── Prop_Seg
+    ├── Phase_Seg1
+    └── Phase_Seg2
+            │
+            ▼
+      Sample Point
+            │
+            ▼
+       Baud-rate
+            │
+            ▼
+      CAN Controller
+            │
+            ▼
+          CAN Bus</code></pre>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong> Khi debug CAN communication, đừng chỉ kiểm tra
+                    con số baud-rate. Hãy kiểm tra cả CAN clock, prescaler, bit timing, sample point,
+                    SJW, controller state, transceiver và physical CAN bus.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-20.html">← Bài trước</a>
+                    <a class="btn" href="lesson-22.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

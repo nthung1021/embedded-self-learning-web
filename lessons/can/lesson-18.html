@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 18: State Machine | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html" class="active">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 18: State Machine</h1>
+
+                <p>
+                    Trong CAN Driver, <strong>State Machine</strong> là cơ chế mô tả các trạng thái
+                    mà CAN Driver hoặc CAN Controller có thể đang ở, cũng như cách chúng chuyển
+                    từ trạng thái này sang trạng thái khác.
+                </p>
+
+                <p>
+                    Hiểu State Machine rất quan trọng vì nhiều API của AUTOSAR CAN Driver chỉ
+                    được phép gọi khi module đang ở một trạng thái phù hợp. Ví dụ,
+                    một controller phải được khởi tạo trước khi có thể sử dụng để truyền hoặc
+                    nhận dữ liệu.
+                </p>
+
+                <div class="note">
+                    <strong>Ý chính:</strong> State Machine trả lời ba câu hỏi:
+                    <strong>đang ở trạng thái nào?</strong>,
+                    <strong>sự kiện nào xảy ra?</strong> và
+                    <strong>sau sự kiện đó sẽ chuyển sang trạng thái nào?</strong>
+                </div>
+
+                <h2>1. State Machine là gì?</h2>
+
+                <p>
+                    State Machine (máy trạng thái) là một mô hình dùng để mô tả hành vi của
+                    một hệ thống dựa trên <strong>trạng thái hiện tại</strong> và
+                    <strong>sự kiện hoặc điều kiện xảy ra</strong>.
+                </p>
+
+                <p>
+                    Một State Machine cơ bản có thể được hiểu như sau:
+                </p>
+
+                <pre><code>Current State
+      +
+      |
+      | Event / Condition
+      v
+Transition
+      |
+      v
+Next State</code></pre>
+
+                <p>
+                    Ví dụ đơn giản, một thiết bị có thể có ba trạng thái:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>UNINIT</td>
+                            <td>Module chưa được khởi tạo.</td>
+                        </tr>
+                        <tr>
+                            <td>READY</td>
+                            <td>Module đã được khởi tạo và sẵn sàng hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <td>STOPPED</td>
+                            <td>Controller đang ở trạng thái không truyền/nhận CAN bình thường.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>2. Tại sao CAN Driver cần State Machine?</h2>
+
+                <p>
+                    CAN Driver không chỉ đơn giản là một tập hợp các hàm đọc và ghi thanh ghi.
+                    Driver phải quản lý trạng thái của controller và đảm bảo các thao tác được
+                    thực hiện đúng thời điểm.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Can_Init()
+     |
+     v
+Driver đã được initialize
+     |
+     v
+Controller được cấu hình
+     |
+     v
+Controller có thể chuyển sang trạng thái hoạt động
+     |
+     v
+Can_Write() / CAN communication</code></pre>
+
+                <p>
+                    Nếu chương trình cố gọi một API yêu cầu driver đã được khởi tạo trong khi
+                    driver vẫn đang ở trạng thái <code>UNINIT</code>, thao tác đó có thể không hợp lệ.
+                </p>
+
+                <div class="note">
+                    State Machine giúp phần mềm biết <strong>API nào được phép sử dụng</strong>
+                    trong từng thời điểm và giúp tránh các sequence sai trong quá trình vận hành.
+                </div>
+
+                <h2>3. State và Transition</h2>
+
+                <p>
+                    Có hai khái niệm quan trọng nhất trong State Machine:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                            <th>Ví dụ trong CAN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>State</td>
+                            <td>Trạng thái hiện tại của hệ thống.</td>
+                            <td>UNINIT, STOPPED, STARTED</td>
+                        </tr>
+                        <tr>
+                            <td>Event</td>
+                            <td>Sự kiện khiến hệ thống cần xử lý.</td>
+                            <td>Init, SetControllerMode, DeInit</td>
+                        </tr>
+                        <tr>
+                            <td>Transition</td>
+                            <td>Quá trình chuyển từ state này sang state khác.</td>
+                            <td>STOPPED → STARTED</td>
+                        </tr>
+                        <tr>
+                            <td>Condition</td>
+                            <td>Điều kiện để transition được phép xảy ra.</td>
+                            <td>Driver đã initialized</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>4. State Machine của CAN Driver</h2>
+
+                <p>
+                    Ở mức khái niệm, CAN Driver có thể được hình dung với lifecycle như sau:
+                </p>
+
+                <svg viewBox="0 0 760 230" role="img" aria-label="CAN Driver State Machine"
+                    style="width:100%;height:auto;max-width:760px">
+                    <defs>
+                        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L9,3 z" fill="currentColor"></path>
+                        </marker>
+                    </defs>
+
+                    <rect x="30" y="80" width="140" height="60" rx="8" stroke="currentColor" fill="none" />
+                    <text x="100" y="116" text-anchor="middle">UNINIT</text>
+
+                    <rect x="310" y="80" width="140" height="60" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="116" text-anchor="middle">INITIALIZED</text>
+
+                    <rect x="590" y="80" width="140" height="60" rx="8" stroke="currentColor" fill="none" />
+                    <text x="660" y="116" text-anchor="middle">DEINIT</text>
+
+                    <line x1="170" y1="110" x2="310" y2="110" stroke="currentColor" marker-end="url(#arrow)" />
+                    <text x="240" y="95" text-anchor="middle">Can_Init()</text>
+
+                    <line x1="450" y1="110" x2="590" y2="110" stroke="currentColor" marker-end="url(#arrow)" />
+                    <text x="520" y="95" text-anchor="middle">Can_DeInit()</text>
+                </svg>
+
+                <p>
+                    Đây là mô hình đơn giản hóa để hiểu lifecycle của driver. Trong hệ thống thực tế,
+                    controller còn có các trạng thái vận hành riêng và có thể có nhiều transition
+                    hơn.
+                </p>
+
+                <h2>5. Driver State và Controller State</h2>
+
+                <p>
+                    Đây là một điểm rất dễ nhầm khi học AUTOSAR CAN.
+                    <strong>Trạng thái của CAN Driver</strong> và
+                    <strong>trạng thái của CAN Controller</strong> không hoàn toàn giống nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đối tượng</th>
+                            <th>State Machine dùng để mô tả</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Driver</td>
+                            <td>Driver đã được initialize hay chưa.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Controller</td>
+                            <td>Controller đang ở trạng thái vận hành nào.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Interface / upper layer</td>
+                            <td>Trạng thái quản lý communication ở tầng phía trên.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Không nên đồng nhất:</strong>
+                    <code>Can_Init()</code> với việc controller ngay lập tức ở trạng thái
+                    <code>STARTED</code>. Init là lifecycle của driver; controller mode là
+                    một khái niệm khác.
+                </div>
+
+                <h2>6. Driver State: UNINIT</h2>
+
+                <p>
+                    <code>UNINIT</code> có thể hiểu là trạng thái driver chưa được khởi tạo.
+                    Đây là trạng thái thường tồn tại trước khi <code>Can_Init()</code> được thực hiện.
+                </p>
+
+                <pre><code>ECU Startup
+     |
+     v
+CAN Driver
+     |
+     v
+UNINIT
+     |
+     | Can_Init()
+     v
+INITIALIZED</code></pre>
+
+                <p>
+                    Khi đang ở trạng thái này, những API yêu cầu driver đã được initialize
+                    không nên được sử dụng như thể driver đã sẵn sàng.
+                </p>
+
+                <h2>7. Driver State: INITIALIZED</h2>
+
+                <p>
+                    Sau khi <code>Can_Init()</code> hoàn thành, driver đã có configuration và
+                    internal state cần thiết để phục vụ các thao tác tiếp theo.
+                </p>
+
+                <p>
+                    Có thể hình dung:
+                </p>
+
+                <pre><code>Configuration
+      |
+      v
+Can_Init()
+      |
+      +--> Driver configuration
+      +--> Controller configuration
+      +--> Hardware Object configuration
+      +--> Interrupt / polling configuration
+      +--> Internal driver state
+      |
+      v
+Driver initialized</code></pre>
+
+                <p>
+                    Tuy nhiên, controller có được phép truyền/nhận ngay hay không còn phụ thuộc
+                    vào controller mode và sequence của hệ thống.
+                </p>
+
+                <h2>8. Controller State</h2>
+
+                <p>
+                    Bên cạnh lifecycle của driver, mỗi CAN Controller còn có trạng thái vận hành.
+                    Ở mức khái niệm, các trạng thái thường được nhắc tới là:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Controller State</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>STOPPED</td>
+                            <td>Controller chưa hoạt động truyền/nhận CAN bình thường.</td>
+                        </tr>
+                        <tr>
+                            <td>STARTED</td>
+                            <td>Controller đang hoạt động và có thể tham gia communication.</td>
+                        </tr>
+                        <tr>
+                            <td>SLEEP</td>
+                            <td>Controller được đưa vào trạng thái low-power theo thiết kế hệ thống.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Tên state và chi tiết transition cần được đọc theo AUTOSAR release và
+                    implementation cụ thể.
+                </p>
+
+                <h2>9. STOPPED và STARTED</h2>
+
+                <p>
+                    Hai trạng thái này rất quan trọng khi làm việc với CAN Controller.
+                </p>
+
+                <pre><code>                 SetControllerMode(STARTED)
+        +--------------------------------------+
+        |                                      v
+   +----------+                         +-----------+
+   | STOPPED  |                         |  STARTED  |
+   +----------+                         +-----------+
+        ^                                      |
+        |                                      |
+        +--------------------------------------+
+                 SetControllerMode(STOPPED)</code></pre>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                </p>
+
+                <ul>
+                    <li><strong>STOPPED:</strong> controller chưa tham gia communication bình thường.</li>
+                    <li><strong>STARTED:</strong> controller có thể tham gia truyền và nhận CAN.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Điểm phỏng vấn:</strong>
+                    <code>Can_SetControllerMode()</code> dùng để yêu cầu thay đổi
+                    controller mode; nó không thay thế cho <code>Can_Init()</code>.
+                </div>
+
+                <h2>10. State Transition là gì?</h2>
+
+                <p>
+                    State Transition là quá trình hệ thống chuyển từ một trạng thái sang trạng thái
+                    khác khi một event hoặc condition phù hợp xảy ra.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Current State: STOPPED
+
+Event:
+SetControllerMode(STARTED)
+
+Condition:
+Driver initialized
+Hardware/configuration valid
+
+Result:
+STARTED</code></pre>
+
+                <p>
+                    Nếu điều kiện không hợp lệ, transition có thể không được thực hiện thành công
+                    hoặc hệ thống sẽ xử lý lỗi tùy implementation.
+                </p>
+
+                <h2>11. Init ảnh hưởng đến State Machine như thế nào?</h2>
+
+                <p>
+                    <code>Can_Init()</code> là một transition quan trọng trong lifecycle của driver.
+                </p>
+
+                <svg viewBox="0 0 760 260" role="img" aria-label="CAN Driver initialization transition"
+                    style="width:100%;height:auto;max-width:760px">
+                    <defs>
+                        <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L9,3 z" fill="currentColor"></path>
+                        </marker>
+                    </defs>
+
+                    <rect x="40" y="95" width="130" height="60" rx="8" stroke="currentColor" fill="none" />
+                    <text x="105" y="130" text-anchor="middle">UNINIT</text>
+
+                    <rect x="315" y="95" width="150" height="60" rx="8" stroke="currentColor" fill="none" />
+                    <text x="390" y="130" text-anchor="middle">INITIALIZED</text>
+
+                    <rect x="610" y="95" width="110" height="60" rx="8" stroke="currentColor" fill="none" />
+                    <text x="665" y="130" text-anchor="middle">READY</text>
+
+                    <line x1="170" y1="125" x2="315" y2="125" stroke="currentColor" marker-end="url(#arrow2)" />
+                    <text x="242" y="108" text-anchor="middle">Can_Init()</text>
+
+                    <line x1="465" y1="125" x2="610" y2="125" stroke="currentColor" marker-end="url(#arrow2)" />
+                    <text x="537" y="108" text-anchor="middle">Controller setup</text>
+                </svg>
+
+                <p>
+                    Lưu ý rằng <code>READY</code> trong sơ đồ chỉ là cách gọi mang tính khái niệm,
+                    không nhất thiết là tên enum/state chính thức trong implementation.
+                </p>
+
+                <h2>12. DeInit và State Machine</h2>
+
+                <p>
+                    <code>Can_DeInit()</code> thực hiện transition ngược lại ở lifecycle của driver:
+                    từ trạng thái đã initialize về trạng thái chưa initialize.
+                </p>
+
+                <pre><code>INITIALIZED
+     |
+     | Communication stopped / safe state
+     v
+Can_DeInit()
+     |
+     v
+UNINIT</code></pre>
+
+                <p>
+                    DeInit thường được thực hiện trong các lifecycle transition như shutdown,
+                    reconfiguration hoặc các tình huống đặc biệt được hệ thống cho phép.
+                </p>
+
+                <h2>13. State Machine tổng thể</h2>
+
+                <p>
+                    Ghép driver lifecycle và controller mode lại, ta có thể hình dung:
+                </p>
+
+                <pre><code>                 Can_Init()
+UNINIT ----------------------------> INITIALIZED
+                                        |
+                                        |
+                         Controller setup
+                                        |
+                                        v
+                                    STOPPED
+                                        |
+                                        | STARTED request
+                                        v
+                                    STARTED
+                                        |
+                                        | STOP request
+                                        v
+                                    STOPPED
+                                        |
+                                        |
+                         Safe shutdown / DeInit
+                                        |
+                                        v
+                                     UNINIT</code></pre>
+
+                <p>
+                    Đây là mô hình học tập giúp phân biệt hai lớp trạng thái:
+                    <strong>driver lifecycle</strong> và <strong>controller operational mode</strong>.
+                </p>
+
+                <h2>14. State Machine và Can_Write()</h2>
+
+                <p>
+                    Một API truyền dữ liệu như <code>Can_Write()</code> cần được gọi trong
+                    context phù hợp.
+                </p>
+
+                <pre><code>Can_Write()
+    |
+    +-- Driver initialized?
+    |       |
+    |       +-- NO  -> API usage không hợp lệ
+    |       |
+    |       +-- YES
+    |
+    +-- Controller / HTH hợp lệ?
+    |       |
+    |       +-- NO  -> lỗi
+    |       |
+    |       +-- YES
+    |
+    +-- Transmit request
+            |
+            v
+        CAN Hardware</code></pre>
+
+                <p>
+                    Vì vậy khi debug một vấn đề truyền CAN, không nên chỉ kiểm tra
+                    <code>Can_Write()</code>. Cần kiểm tra cả state của driver, controller,
+                    HTH và configuration.
+                </p>
+
+                <h2>15. State Machine và Receive</h2>
+
+                <p>
+                    Receive cũng phụ thuộc vào trạng thái của controller và cấu hình Hardware Object.
+                </p>
+
+                <pre><code>CAN Bus
+   |
+   v
+CAN Controller
+   |
+   | Controller active?
+   v
+Hardware Receive Object
+   |
+   v
+CAN Driver
+   |
+   v
+CanIf / Upper Layer</code></pre>
+
+                <p>
+                    Nếu controller chưa được đưa vào trạng thái phù hợp hoặc driver chưa được
+                    initialize, quá trình receive không thể hoạt động như communication bình thường.
+                </p>
+
+                <h2>16. State Machine và Interrupt</h2>
+
+                <p>
+                    Interrupt cũng liên quan đến state của module.
+                    Ví dụ, sau khi initialization, interrupt configuration có thể được thiết lập
+                    để xử lý các sự kiện CAN.
+                </p>
+
+                <pre><code>CAN Event
+    |
+    v
+Hardware Interrupt
+    |
+    v
+CAN Driver ISR / handling
+    |
+    +--> Tx event
+    +--> Rx event
+    +--> Error event
+    |
+    v
+Upper Layer Notification</code></pre>
+
+                <p>
+                    Khi driver đã DeInit, hệ thống phải đảm bảo không còn kỳ vọng driver xử lý
+                    communication event như trong trạng thái hoạt động.
+                </p>
+
+                <h2>17. State Machine và DET</h2>
+
+                <p>
+                    DET có thể giúp phát hiện những lỗi liên quan đến việc sử dụng API không đúng
+                    state trong development phase, tùy vào implementation và configuration.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>Vấn đề</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>API gọi trước Can_Init()</td>
+                            <td>Driver chưa được initialize.</td>
+                        </tr>
+                        <tr>
+                            <td>API gọi sau Can_DeInit()</td>
+                            <td>Driver đã trở về trạng thái chưa initialize.</td>
+                        </tr>
+                        <tr>
+                            <td>Controller mode request không phù hợp</td>
+                            <td>Transition có thể không hợp lệ.</td>
+                        </tr>
+                        <tr>
+                            <td>Configuration không hợp lệ</td>
+                            <td>State transition có thể thất bại hoặc bị từ chối.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    DET chủ yếu hỗ trợ phát hiện lỗi trong quá trình phát triển và kiểm thử.
+                    Không nên hiểu rằng mọi state transition lỗi đều tự động trở thành một DEM event.
+                </div>
+
+                <h2>18. State Machine và DEM</h2>
+
+                <p>
+                    DEM tập trung vào diagnostic event và lỗi runtime được hệ thống định nghĩa.
+                    Vì vậy State Machine và DEM có thể liên quan khi một lỗi state hoặc controller
+                    trở thành một điều kiện diagnostic cần theo dõi.
+                </p>
+
+                <pre><code>State Machine
+      |
+      | Unexpected condition
+      v
+Runtime Error
+      |
+      | Nếu được cấu hình thành diagnostic event
+      v
+DEM
+      |
+      v
+Diagnostic Information</code></pre>
+
+                <p>
+                    Tuy nhiên, không phải mọi transition sai đều mặc định tạo ra DEM event.
+                    Điều này phụ thuộc vào yêu cầu hệ thống và configuration.
+                </p>
+
+                <h2>19. Ví dụ: ECU Startup</h2>
+
+                <p>
+                    Hãy xem một flow startup đơn giản của ECU:
+                </p>
+
+                <pre><code>ECU Reset
+   |
+   v
+MCU / Clock / PORT / INTC
+   |
+   v
+OS / EcuM Startup
+   |
+   v
+Can_Init()
+   |
+   v
+CAN Driver Initialized
+   |
+   v
+Configure Controller
+   |
+   v
+Controller STOPPED
+   |
+   | Start request
+   v
+Controller STARTED
+   |
+   v
+CAN Communication</code></pre>
+
+                <p>
+                    Đây là sequence mang tính khái niệm. Startup list thực tế của ECU được quyết định
+                    bởi AUTOSAR configuration, generated code và kiến trúc project.
+                </p>
+
+                <h2>20. Ví dụ: ECU Shutdown</h2>
+
+                <p>
+                    Khi ECU chuẩn bị shutdown, hệ thống không nên đơn giản gọi
+                    <code>Can_DeInit()</code> ngay lập tức.
+                </p>
+
+                <pre><code>CAN Communication
+       |
+       v
+Stop communication
+       |
+       v
+Controller STOPPED / Safe state
+       |
+       v
+Upper layer shutdown
+       |
+       v
+Can_DeInit()
+       |
+       v
+Driver UNINIT
+       |
+       v
+ECU Shutdown</code></pre>
+
+                <p>
+                    Sequence cụ thể phụ thuộc vào hệ thống, nhưng nguyên tắc quan trọng là
+                    phải đưa communication về trạng thái an toàn trước khi deinitialize driver.
+                </p>
+
+                <h2>21. State Machine và CanIf</h2>
+
+                <p>
+                    CAN Driver không hoạt động độc lập. CAN Interface ở tầng phía trên cũng có
+                    state và logic quản lý communication.
+                </p>
+
+                <pre><code>Application
+     |
+     v
+COM / PduR
+     |
+     v
+CanIf
+     |
+     v
+CAN Driver
+     |
+     v
+CAN Controller
+     |
+     v
+CAN Bus</code></pre>
+
+                <p>
+                    Vì vậy khi debug một vấn đề communication, cần xác định lỗi nằm ở state của
+                    tầng nào thay vì chỉ nhìn vào CAN Driver.
+                </p>
+
+                <h2>22. Những lỗi State Machine thường gặp</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lỗi</th>
+                            <th>Nguyên nhân có thể</th>
+                            <th>Cách kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Can_Write không hoạt động</td>
+                            <td>Driver/controller chưa ở state phù hợp.</td>
+                            <td>Kiểm tra Init và controller mode.</td>
+                        </tr>
+                        <tr>
+                            <td>Controller không STARTED</td>
+                            <td>Mode request hoặc configuration có vấn đề.</td>
+                            <td>Kiểm tra SetControllerMode và callback/state.</td>
+                        </tr>
+                        <tr>
+                            <td>Receive không hoạt động</td>
+                            <td>Controller, interrupt hoặc HRH configuration.</td>
+                            <td>Kiểm tra state, interrupt và HRH.</td>
+                        </tr>
+                        <tr>
+                            <td>API bị gọi sau DeInit</td>
+                            <td>Sequence shutdown sai.</td>
+                            <td>Trace lifecycle và API call sequence.</td>
+                        </tr>
+                        <tr>
+                            <td>State không thay đổi</td>
+                            <td>Event không được xử lý hoặc hardware/configuration lỗi.</td>
+                            <td>Kiểm tra request, notification và register/state.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>23. Cách debug State Machine</h2>
+
+                <p>
+                    Khi gặp lỗi liên quan đến CAN state, có thể debug theo trình tự:
+                </p>
+
+                <pre><code>1. Driver đã Can_Init() chưa?
+             |
+             v
+2. Configuration có đúng không?
+             |
+             v
+3. Controller đang ở state nào?
+             |
+             v
+4. Có request chuyển state không?
+             |
+             v
+5. Transition có thành công không?
+             |
+             v
+6. Có notification / callback không?
+             |
+             v
+7. Có DET / diagnostic event không?
+             |
+             v
+8. Kiểm tra hardware và CAN bus</code></pre>
+
+                <h2>24. State Machine trong Debugger</h2>
+
+                <p>
+                    Trong project thực tế, debugger có thể được sử dụng để theo dõi biến state
+                    của driver/controller.
+                </p>
+
+                <pre><code>Breakpoint
+    |
+    v
+Can_Init()
+    |
+    +--> Check Driver State
+    |
+    v
+SetControllerMode()
+    |
+    +--> Check Requested Mode
+    |
+    +--> Check Current Mode
+    |
+    v
+CAN Communication
+    |
+    +--> Check Tx/Rx State
+    +--> Check Error State</code></pre>
+
+                <p>
+                    Nếu project có logging hoặc tracing, việc ghi lại
+                    <strong>Current State → Event → Next State</strong> sẽ giúp tìm lỗi nhanh hơn.
+                </p>
+
+                <h2>25. State Machine và Error Handling</h2>
+
+                <p>
+                    Một State Machine tốt không chỉ mô tả trạng thái bình thường mà còn phải
+                    xác định cách hệ thống phản ứng khi xảy ra lỗi.
+                </p>
+
+                <pre><code>STARTED
+   |
+   | CAN error
+   v
+Error Handling
+   |
+   +--> Recover
+   |
+   +--> Change controller state
+   |
+   +--> Report diagnostic event
+   |
+   +--> Wait for system recovery</code></pre>
+
+                <p>
+                    Cách xử lý cụ thể phụ thuộc vào kiến trúc CAN stack và yêu cầu của ECU.
+                </p>
+
+                <h2>26. Phân biệt Init, Start, Stop và DeInit</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thao tác</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Can_Init()</code></td>
+                            <td>Khởi tạo CAN Driver và internal configuration/state.</td>
+                        </tr>
+                        <tr>
+                            <td>Start Controller</td>
+                            <td>Đưa CAN Controller vào trạng thái hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <td>Stop Controller</td>
+                            <td>Đưa CAN Controller ra khỏi trạng thái hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Can_DeInit()</code></td>
+                            <td>Kết thúc lifecycle của CAN Driver, đưa driver về trạng thái chưa initialize.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Memory trick:</strong>
+                    <br>
+                    <code>Init = chuẩn bị Driver</code>
+                    <br>
+                    <code>Start = cho Controller hoạt động</code>
+                    <br>
+                    <code>Stop = dừng Controller</code>
+                    <br>
+                    <code>DeInit = kết thúc lifecycle của Driver</code>
+                </div>
+
+                <h2>27. Ví dụ thực tế dễ nhớ</h2>
+
+                <p>
+                    Hãy tưởng tượng CAN Driver giống như một chiếc xe:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CAN</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Can_Init()</td>
+                            <td>Chuẩn bị xe, kiểm tra và cấu hình các hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>STOPPED</td>
+                            <td>Xe đã sẵn sàng nhưng chưa chạy.</td>
+                        </tr>
+                        <tr>
+                            <td>STARTED</td>
+                            <td>Xe đang chạy.</td>
+                        </tr>
+                        <tr>
+                            <td>STOP</td>
+                            <td>Xe dừng lại.</td>
+                        </tr>
+                        <tr>
+                            <td>Can_DeInit()</td>
+                            <td>Kết thúc lifecycle và đưa hệ thống về trạng thái không sử dụng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ này chỉ nhằm giúp ghi nhớ khái niệm, không phải mô hình kỹ thuật chính thức
+                    của AUTOSAR.
+                </p>
+
+                <h2>28. Góc nhìn phỏng vấn</h2>
+
+                <div class="note">
+                    <strong>Câu hỏi:</strong> What is a State Machine in an AUTOSAR CAN Driver?
+                </div>
+
+                <p>
+                    Một câu trả lời phù hợp cho Fresher:
+                </p>
+
+                <blockquote>
+                    State Machine is a way to manage the different states of the CAN Driver and
+                    CAN Controller and define how they transition between states based on events
+                    or requests. For example, the CAN Driver should be initialized before the
+                    controller is used for communication, and the controller can be switched
+                    between stopped and started states depending on the system operation.
+                </blockquote>
+
+                <div class="note">
+                    <strong>Câu hỏi:</strong> What is the difference between Can_Init() and starting
+                    the CAN Controller?
+                </div>
+
+                <p>
+                    Có thể trả lời:
+                </p>
+
+                <blockquote>
+                    Can_Init() initializes the CAN Driver and its configuration, while starting the
+                    CAN Controller changes the controller's operational mode so that it can
+                    participate in CAN communication. They are related but represent different
+                    lifecycle and operational concepts.
+                </blockquote>
+
+                <div class="note">
+                    <strong>Câu hỏi:</strong> How would you debug a CAN communication issue related
+                    to state?
+                </div>
+
+                <p>
+                    Có thể trả lời theo thứ tự:
+                </p>
+
+                <pre><code>Check Can_Init()
+      ↓
+Check Driver State
+      ↓
+Check Controller State
+      ↓
+Check State Transition Request
+      ↓
+Check Configuration
+      ↓
+Check DET / Diagnostic Information
+      ↓
+Check CAN Hardware / Bus</code></pre>
+
+                <h2>29. Memory Map</h2>
+
+                <p>
+                    Có thể ghi nhớ bài này bằng chuỗi sau:
+                </p>
+
+                <pre><code>STATE MACHINE
+     |
+     +-- Driver Lifecycle
+     |      |
+     |      +-- UNINIT
+     |      +-- INITIALIZED
+     |      +-- DeInit
+     |
+     +-- Controller Mode
+     |      |
+     |      +-- STOPPED
+     |      +-- STARTED
+     |      +-- SLEEP
+     |
+     +-- Transition
+     |      |
+     |      +-- Event
+     |      +-- Condition
+     |      +-- Next State
+     |
+     +-- Debug
+            |
+            +-- Check Current State
+            +-- Check Request
+            +-- Check Configuration
+            +-- Check Error</code></pre>
+
+                <h2>30. Tóm tắt</h2>
+
+                <p>
+                    State Machine là một khái niệm quan trọng để hiểu cách CAN Driver và
+                    CAN Controller hoạt động theo từng trạng thái trong AUTOSAR.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Điều cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>State</td>
+                            <td>Trạng thái hiện tại của hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Transition</td>
+                            <td>Chuyển từ state này sang state khác.</td>
+                        </tr>
+                        <tr>
+                            <td>Can_Init()</td>
+                            <td>Khởi tạo CAN Driver.</td>
+                        </tr>
+                        <tr>
+                            <td>STOPPED</td>
+                            <td>Controller chưa hoạt động communication bình thường.</td>
+                        </tr>
+                        <tr>
+                            <td>STARTED</td>
+                            <td>Controller có thể tham gia CAN communication.</td>
+                        </tr>
+                        <tr>
+                            <td>Can_DeInit()</td>
+                            <td>Kết thúc lifecycle của CAN Driver.</td>
+                        </tr>
+                        <tr>
+                            <td>DET</td>
+                            <td>Có thể hỗ trợ phát hiện API/state usage sai trong development.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    Khi debug CAN, đừng chỉ hỏi “API có được gọi không?”.
+                    Hãy hỏi thêm: <strong>“Driver và Controller đang ở state nào,
+                        event nào đã xảy ra, và transition có thành công không?”</strong>
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-17.html">← Bài trước</a>
+                    <a class="btn" href="lesson-19.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

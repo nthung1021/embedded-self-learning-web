@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 29: Topology, Mapping và Communication | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html" class="active">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+            </aside>
+
+            <article class="content">
+                <h1>Bài 29: Topology, Mapping và Communication</h1>
+
+                <div class="note">
+                    <strong>Mục tiêu bài học:</strong>
+                    Hiểu cách các ECU được kết nối trong một CAN network, phân biệt
+                    <strong>Topology</strong>, <strong>Mapping</strong> và <strong>Communication</strong>,
+                    hiểu mối quan hệ giữa CAN Controller, CAN Channel, CAN Network, PDU,
+                    CAN ID và các AUTOSAR module, đồng thời biết cách kiểm tra mapping
+                    khi debug một hệ thống CAN.
+                </div>
+
+                <h2>1. Ba khái niệm cần phân biệt</h2>
+                <p>
+                    Khi làm việc với CAN trong automotive, ba khái niệm thường xuất hiện cùng nhau:
+                    <strong>Topology</strong>, <strong>Mapping</strong> và <strong>Communication</strong>.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Câu hỏi chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Topology</td>
+                            <td>Các ECU và network được kết nối với nhau như thế nào?</td>
+                        </tr>
+                        <tr>
+                            <td>Mapping</td>
+                            <td>Signal/PDU/ID/Controller/Channel được liên kết với nhau như thế nào?</td>
+                        </tr>
+                        <tr>
+                            <td>Communication</td>
+                            <td>Các ECU thực sự trao đổi dữ liệu với nhau như thế nào?</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <pre><code>TOPOLOGY
+    ↓
+ECU nào kết nối với network nào?
+
+MAPPING
+    ↓
+Data nào đi qua Controller / PDU / CAN ID nào?
+
+COMMUNICATION
+    ↓
+ECU nào gửi và ECU nào nhận data?</code></pre>
+
+                <h2>2. CAN Network là gì?</h2>
+                <p>
+                    Một <strong>CAN Network</strong> là tập hợp các CAN node cùng kết nối
+                    vào một CAN bus và sử dụng các quy tắc CAN để trao đổi message.
+                </p>
+
+                <pre><code>             CAN Network
+
+     +--------- CAN Bus ---------+
+     |             |             |
+     v             v             v
+   ECU A         ECU B         ECU C
+     |             |             |
+ CAN Controller CAN Controller CAN Controller</code></pre>
+
+                <p>
+                    Mỗi ECU có thể có một hoặc nhiều CAN Controller tùy thiết kế phần cứng.
+                    Các controller này có thể kết nối tới các CAN network/channel khác nhau.
+                </p>
+
+                <h2>3. CAN Node là gì?</h2>
+                <p>
+                    <strong>CAN Node</strong> là một thiết bị tham gia vào CAN network.
+                    Trong automotive, CAN node thường là một ECU hoặc một phần của ECU
+                    có khả năng giao tiếp với CAN bus.
+                </p>
+
+                <p>
+                    Một node thường bao gồm:
+                </p>
+
+                <ul>
+                    <li>MCU.</li>
+                    <li>CAN Controller.</li>
+                    <li>CAN Transceiver.</li>
+                    <li>CAN Driver.</li>
+                    <li>Các AUTOSAR BSW module liên quan.</li>
+                    <li>Application software.</li>
+                </ul>
+
+                <pre><code>+------------------------- ECU -------------------------+
+|                                                       |
+|  Application                                          |
+|       ↓                                               |
+|  AUTOSAR BSW                                           |
+|       ↓                                               |
+|  CAN Driver                                            |
+|       ↓                                               |
+|  CAN Controller                                        |
+|       ↓                                               |
+|  CAN Transceiver                                       |
++-------------------------------------------------------+
+                        |
+                        v
+                    CAN Bus</code></pre>
+
+                <h2>4. CAN Topology là gì?</h2>
+                <p>
+                    <strong>Topology</strong> mô tả cách các node được kết nối vật lý
+                    hoặc logic trong một network.
+                </p>
+
+                <p>
+                    Với CAN bus truyền thống, các node cùng chia sẻ một bus.
+                </p>
+
+                <pre><code>ECU A --------+
+             |
+ECU B --------+--------- CAN Bus
+             |
+ECU C --------+
+             |
+ECU D --------+</code></pre>
+
+                <p>
+                    Đây là điểm khác biệt quan trọng so với mô hình point-to-point:
+                    CAN bus cho phép nhiều node cùng kết nối vào một môi trường truyền chung.
+                </p>
+
+                <h2>5. Bus Topology</h2>
+                <p>
+                    CAN thường được triển khai theo dạng <strong>bus topology</strong>.
+                    Các node kết nối vào một đường bus chung.
+                </p>
+
+                <pre><code>Termination                         Termination
+    |                                   |
+    +===================================+
+    |          CAN Bus                  |
+    +===================================+
+       |           |           |
+      ECU A       ECU B       ECU C</code></pre>
+
+                <div class="note">
+                    Trong hệ thống thực tế, topology, chiều dài nhánh, vị trí node và
+                    termination phải phù hợp với physical-layer requirements của CAN.
+                    Không nên hiểu topology đơn giản chỉ là "nối tất cả dây lại với nhau".
+                </div>
+
+                <h2>6. Termination và Topology</h2>
+                <p>
+                    CAN bus thường sử dụng termination ở hai đầu của bus.
+                    Termination giúp kiểm soát phản xạ tín hiệu trên đường truyền.
+                </p>
+
+                <pre><code>        120Ω                         120Ω
+          |                            |
+          +============================+
+          |          CAN Bus           |
+          +============================+
+              |       |       |
+             ECU A   ECU B   ECU C</code></pre>
+
+                <p>
+                    Khi debug communication, termination không đúng có thể gây ra
+                    các vấn đề về tín hiệu và dẫn đến communication error hoặc Bus-Off.
+                </p>
+
+                <h2>7. Một ECU có thể có nhiều CAN Channel</h2>
+                <p>
+                    Một ECU không nhất thiết chỉ có một CAN network.
+                    Một MCU có thể có nhiều CAN Controller, và mỗi controller có thể
+                    được kết nối tới một CAN channel/network khác nhau.
+                </p>
+
+                <pre><code>                 ECU
+        +----------------------+
+        |                      |
+        | CAN Controller 0     |---- CAN Network A
+        |                      |
+        | CAN Controller 1     |---- CAN Network B
+        |                      |
+        | CAN Controller 2     |---- CAN Network C
+        |                      |
+        +----------------------+</code></pre>
+
+                <p>
+                    Đây là lý do cần phân biệt <strong>Controller</strong>,
+                    <strong>Channel</strong> và <strong>Network</strong>.
+                </p>
+
+                <h2>8. Controller, Channel và Network</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Controller</td>
+                            <td>Phần hardware xử lý CAN protocol/frame.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Channel</td>
+                            <td>Một communication path/logical channel được cấu hình trong hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Network</td>
+                            <td>Mạng CAN mà nhiều node cùng tham gia.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Tên gọi và cách mapping cụ thể có thể khác nhau giữa MCU,
+                    AUTOSAR configuration tool và project.
+                </p>
+
+                <h2>9. Mapping là gì?</h2>
+                <p>
+                    <strong>Mapping</strong> là quá trình liên kết các đối tượng
+                    communication với nhau để xác định dữ liệu đi qua phần cứng
+                    và software stack nào.
+                </p>
+
+                <p>
+                    Ví dụ, một application signal có thể được mapping theo chuỗi:
+                </p>
+
+                <pre><code>Application Signal
+       ↓
+      I-PDU
+       ↓
+   CAN PDU / CAN ID
+       ↓
+   CanIf PDU
+       ↓
+Hardware Object
+       ↓
+CAN Controller
+       ↓
+CAN Channel
+       ↓
+CAN Network</code></pre>
+
+                <h2>10. Tại sao Mapping quan trọng?</h2>
+                <p>
+                    Một CAN frame có thể xuất hiện trên bus hoàn toàn đúng về mặt
+                    physical signal nhưng application vẫn không nhận được dữ liệu.
+                </p>
+
+                <p>
+                    Một nguyên nhân phổ biến là <strong>mapping giữa các layer không đúng</strong>.
+                </p>
+
+                <pre><code>CAN Bus
+   |
+   v
+CAN Controller
+   |
+   v
+CAN Driver
+   |
+   v
+CanIf
+   |
+   X  Mapping sai
+   |
+   v
+Upper Layer
+   |
+   X
+Application không nhận data</code></pre>
+
+                <div class="note">
+                    Trong AUTOSAR, "message xuất hiện trên CAN analyzer"
+                    chưa đủ để kết luận software communication đã đúng.
+                    Cần kiểm tra cả PDU routing, HRH/HTH, CAN ID, notification
+                    và upper-layer mapping.
+                </div>
+
+                <h2>11. CAN ID Mapping</h2>
+                <p>
+                    CAN ID là một phần quan trọng trong communication mapping.
+                    Receiver thường dựa vào CAN ID và filter configuration để xác định
+                    frame nào cần được nhận.
+                </p>
+
+                <pre><code>CAN Frame
++--------------------------------+
+| CAN ID | DLC | Data | ...      |
++--------------------------------+
+    |
+    v
+CAN Controller
+    |
+    v
+Hardware Filter
+    |
+    v
+Matching CAN ID
+    |
+    v
+Receive Handling</code></pre>
+
+                <p>
+                    Nếu sender dùng CAN ID <code>0x100</code> nhưng receiver được cấu hình
+                    để nhận <code>0x200</code>, communication sẽ không hoạt động như mong đợi.
+                </p>
+
+                <h2>12. HRH và HTH</h2>
+                <p>
+                    Trong AUTOSAR CAN Driver, hai khái niệm thường gặp là
+                    <strong>HRH (Hardware Receive Handle)</strong> và
+                    <strong>HTH (Hardware Transmit Handle)</strong>.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Handle</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>HRH</td>
+                            <td>Đại diện cho cấu hình/hardware object dùng cho reception.</td>
+                        </tr>
+                        <tr>
+                            <td>HTH</td>
+                            <td>Đại diện cho cấu hình/hardware object dùng cho transmission.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cách triển khai cụ thể phụ thuộc CAN Controller và configuration,
+                    nhưng ý tưởng quan trọng là CAN Driver cần biết frame được nhận
+                    hoặc truyền thông qua hardware object nào.
+                </p>
+
+                <h2>13. Receive Mapping</h2>
+                <p>
+                    Khi một CAN frame đến ECU, dữ liệu cần đi qua nhiều bước
+                    trước khi application có thể sử dụng.
+                </p>
+
+                <pre><code>CAN Bus
+   |
+   v
+CAN Controller
+   |
+   | CAN ID match
+   v
+HRH / Receive Object
+   |
+   v
+CAN Driver
+   |
+   v
+CanIf
+   |
+   v
+PduR / COM / CanTp
+   |
+   v
+Application / DCM</code></pre>
+
+                <p>
+                    Đây là một trong những flow quan trọng nhất cần hiểu khi debug
+                    CAN reception trong AUTOSAR.
+                </p>
+
+                <h2>14. Transmit Mapping</h2>
+                <p>
+                    Chiều truyền dữ liệu có flow ngược lại.
+                </p>
+
+                <pre><code>Application
+   |
+   v
+COM / PduR / CanTp
+   |
+   v
+CanIf
+   |
+   v
+CAN Driver
+   |
+   v
+HTH / Transmit Object
+   |
+   v
+CAN Controller
+   |
+   v
+CAN Transceiver
+   |
+   v
+CAN Bus</code></pre>
+
+                <p>
+                    Nếu frame không xuất hiện trên bus, cần xác định frame đã dừng
+                    ở layer nào trong flow này.
+                </p>
+
+                <h2>15. Communication là gì?</h2>
+                <p>
+                    <strong>Communication</strong> là quá trình các node trao đổi
+                    thông tin thông qua CAN network.
+                </p>
+
+                <p>
+                    Một communication có thể được mô tả đơn giản:
+                </p>
+
+                <pre><code>ECU A
+  |
+  | Message
+  v
+CAN Bus
+  |
+  v
+ECU B
+  |
+  v
+Process Data</code></pre>
+
+                <p>
+                    Tuy nhiên trong hệ thống AUTOSAR, giữa application và CAN bus
+                    thường có nhiều software layer tham gia.
+                </p>
+
+                <h2>16. Sender và Receiver</h2>
+                <p>
+                    Trong CAN, sender gửi một CAN frame lên bus.
+                    Các node khác có thể nhận frame nếu frame phù hợp với filter
+                    và communication configuration của chúng.
+                </p>
+
+                <pre><code>                 CAN Bus
+                    |
+        +-----------+-----------+
+        |           |           |
+        v           v           v
+     ECU A       ECU B       ECU C
+    Sender      Receiver    Receiver
+                  |
+                  |
+              CAN ID match</code></pre>
+
+                <p>
+                    CAN không hoạt động theo kiểu sender phải chỉ định trực tiếp
+                    "gửi frame cho ECU B". CAN frame chủ yếu được xác định bằng
+                    CAN ID và các node quyết định frame nào chúng quan tâm.
+                </p>
+
+                <h2>17. CAN ID không phải địa chỉ ECU</h2>
+                <p>
+                    Đây là một điểm rất quan trọng.
+                    <strong>CAN ID không đơn giản là địa chỉ của ECU nhận.</strong>
+                </p>
+
+                <p>
+                    CAN ID xác định message/frame trên bus và tham gia vào arbitration.
+                    Receiver sử dụng CAN ID/filter để xác định frame cần xử lý.
+                </p>
+
+                <pre><code>CAN ID = 0x100
+
+          CAN Bus
+             |
+      +------+------+
+      |             |
+      v             v
+   ECU B         ECU C
+   Accept        Ignore
+   0x100         0x200
+      |
+      v
+ Process data</code></pre>
+
+                <h2>18. Một message có thể có nhiều receiver</h2>
+                <p>
+                    Vì CAN sử dụng cơ chế broadcast trên bus, nhiều node có thể
+                    cùng nhận một message nếu chúng được cấu hình để nhận CAN ID đó.
+                </p>
+
+                <pre><code>                 CAN Bus
+                    |
+             CAN ID = 0x120
+                    |
+          +---------+---------+
+          |         |         |
+          v         v         v
+        ECU B     ECU C     ECU D
+        Accept    Accept    Accept</code></pre>
+
+                <p>
+                    Đây là một đặc điểm quan trọng khi thiết kế automotive network.
+                </p>
+
+                <h2>19. Communication Matrix</h2>
+                <p>
+                    Trong automotive project, communication thường được mô tả
+                    bằng <strong>communication matrix</strong>.
+                </p>
+
+                <p>
+                    Communication matrix có thể chứa các thông tin như:
+                </p>
+
+                <ul>
+                    <li>Sender ECU.</li>
+                    <li>Receiver ECU.</li>
+                    <li>CAN Network.</li>
+                    <li>CAN ID.</li>
+                    <li>DLC.</li>
+                    <li>Cycle time.</li>
+                    <li>Signal.</li>
+                    <li>Signal length.</li>
+                    <li>Byte order.</li>
+                    <li>Scaling/offset.</li>
+                </ul>
+
+                <pre><code>+------------------------------------------------------+
+| Communication Matrix                                 |
++---------+----------+----------+------+---------------+
+| Sender  | Receiver | CAN ID   | DLC  | Signal        |
++---------+----------+----------+------+---------------+
+| ECU A   | ECU B    | 0x100    | 8    | EngineSpeed   |
+| ECU A   | ECU C    | 0x100    | 8    | EngineSpeed   |
+| ECU B   | ECU A    | 0x200    | 8    | VehicleSpeed  |
++---------+----------+----------+------+---------------+</code></pre>
+
+                <h2>20. Signal Mapping</h2>
+                <p>
+                    Một CAN message có thể chứa nhiều signal.
+                    Vì vậy cần mapping signal vào vị trí cụ thể trong payload.
+                </p>
+
+                <pre><code>CAN ID = 0x100
+
+Byte 0       Byte 1       Byte 2       Byte 3
++------------+------------+------------+------------+
+| Signal A   | Signal A   | Signal B   | Signal C   |
++------------+------------+------------+------------+
+
+        ↓
+Application Signals</code></pre>
+
+                <p>
+                    Signal mapping xác định vị trí bit/byte, kích thước,
+                    byte order và cách chuyển đổi raw value thành physical value.
+                </p>
+
+                <h2>21. Raw Data và Physical Value</h2>
+                <p>
+                    Dữ liệu trên CAN thường được truyền dưới dạng raw value.
+                    Application có thể cần chuyển raw value thành physical value.
+                </p>
+
+                <pre><code>CAN Payload
+     |
+     | Raw Value
+     v
++-------------------+
+| Scaling / Offset  |
++-------------------+
+     |
+     v
+Physical Value
+     |
+     v
+Application</code></pre>
+
+                <p>
+                    Ví dụ, một signal có thể sử dụng công thức dạng:
+                </p>
+
+                <pre><code>Physical Value = Raw Value × Factor + Offset</code></pre>
+
+                <p>
+                    Factor, offset, unit và range phụ thuộc communication specification
+                    của project.
+                </p>
+
+                <h2>22. Mapping từ Network xuống AUTOSAR</h2>
+                <p>
+                    Một communication specification có thể được ánh xạ xuống
+                    nhiều tầng trong AUTOSAR.
+                </p>
+
+                <pre><code>Communication Specification
+          |
+          v
+Signal
+          |
+          v
+I-PDU
+          |
+          v
+CAN PDU
+          |
+          v
+CanIf PDU
+          |
+          v
+CAN Driver
+          |
+          v
+Hardware Object
+          |
+          v
+CAN Controller
+          |
+          v
+CAN Network</code></pre>
+
+                <p>
+                    Mapping chính xác phụ thuộc communication stack và cấu hình project,
+                    nhưng đây là mô hình tư duy hữu ích để hiểu toàn bộ đường đi của data.
+                </p>
+
+                <h2>23. Mapping trong Reception</h2>
+
+                <pre><code>CAN Network
+     |
+     v
+CAN ID
+     |
+     v
+CAN Controller Filter
+     |
+     v
+HRH
+     |
+     v
+CAN Driver
+     |
+     v
+CanIf
+     |
+     v
+PduR / COM
+     |
+     v
+I-PDU
+     |
+     v
+Signal
+     |
+     v
+Application</code></pre>
+
+                <p>
+                    Khi application không nhận được signal, debug có thể đi ngược
+                    theo chính flow này.
+                </p>
+
+                <h2>24. Mapping trong Transmission</h2>
+
+                <pre><code>Application Signal
+     |
+     v
+Signal / I-PDU
+     |
+     v
+COM / PduR
+     |
+     v
+CanIf
+     |
+     v
+CAN Driver
+     |
+     v
+HTH
+     |
+     v
+CAN Controller
+     |
+     v
+CAN Bus
+     |
+     v
+Other ECU</code></pre>
+
+                <p>
+                    Nếu application đã cập nhật signal nhưng không thấy frame trên bus,
+                    cần kiểm tra từng bước trong transmission path.
+                </p>
+
+                <h2>25. Mapping giữa nhiều CAN Network</h2>
+                <p>
+                    Một ECU có thể là gateway giữa nhiều CAN network.
+                    Khi đó data từ network này có thể được chuyển sang network khác.
+                </p>
+
+                <pre><code>CAN Network A
+      |
+      v
++----------------+
+| Gateway ECU    |
+|                |
+| CAN Controller |
+|      0         |
++----------------+
+      |
+      | Routing
+      v
++----------------+
+| Gateway ECU    |
+|                |
+| CAN Controller |
+|      1         |
++----------------+
+      |
+      v
+CAN Network B</code></pre>
+
+                <p>
+                    Đây là một use case quan trọng của mapping và communication routing.
+                </p>
+
+                <h2>26. Gateway Communication</h2>
+                <p>
+                    Gateway có thể nhận message từ một CAN network và truyền hoặc
+                    route thông tin sang network khác.
+                </p>
+
+                <pre><code>Network A
+    |
+    | CAN ID 0x100
+    v
+Gateway ECU
+    |
+    | Routing / Mapping
+    v
+Network B
+    |
+    | CAN ID 0x200
+    v
+Target ECU</code></pre>
+
+                <p>
+                    CAN ID ở hai network không nhất thiết phải giống nhau.
+                    Điều quan trọng là gateway phải có routing/mapping phù hợp.
+                </p>
+
+                <h2>27. Topology và Gateway</h2>
+                <p>
+                    Trong một vehicle network lớn, có thể có nhiều CAN network
+                    phục vụ các domain hoặc chức năng khác nhau.
+                </p>
+
+                <pre><code>                 Vehicle Network
+                        |
+          +-------------+-------------+
+          |                           |
+          v                           v
+      CAN Network A              CAN Network B
+          |                           |
+     +----+----+                 +----+----+
+     |    |    |                 |    |    |
+    ECU  ECU  ECU               ECU  ECU  ECU
+          \                           /
+           \                         /
+            +------ Gateway --------+</code></pre>
+
+                <p>
+                    Gateway giúp các network khác nhau trao đổi thông tin theo
+                    routing rules được thiết kế.
+                </p>
+
+                <h2>28. Communication Timing</h2>
+                <p>
+                    Communication không chỉ quan tâm dữ liệu nào được truyền,
+                    mà còn quan tâm <strong>khi nào</strong> dữ liệu được truyền.
+                </p>
+
+                <p>
+                    Một CAN message có thể được cấu hình để:
+                </p>
+
+                <ul>
+                    <li>Truyền theo chu kỳ.</li>
+                    <li>Truyền khi có event.</li>
+                    <li>Truyền theo sự thay đổi của signal.</li>
+                    <li>Truyền theo request từ upper layer.</li>
+                </ul>
+
+                <pre><code>Periodic Communication
+
+Time →
+|----10ms----|----10ms----|----10ms----|
+     Frame         Frame         Frame
+
+Event Communication
+
+Event
+  |
+  v
+Transmit Frame
+  |
+  |
+Next Event
+  |
+  v
+Transmit Frame</code></pre>
+
+                <h2>29. Topology + Mapping + Communication</h2>
+                <p>
+                    Ba khái niệm có thể kết hợp thành một flow hoàn chỉnh:
+                </p>
+
+                <pre><code>
+                 TOPOLOGY
+                     |
+                     v
+       ECU A ---- CAN Network ---- ECU B
+                     |
+                     v
+                  MAPPING
+                     |
+                     v
+ Signal → PDU → CAN ID → Controller → Hardware Object
+                     |
+                     v
+               COMMUNICATION
+                     |
+                     v
+              CAN Frame on Bus
+                     |
+                     v
+              Receiver ECU
+                     |
+                     v
+        Filter → PDU → Signal → Application
+</code></pre>
+
+                <p>
+                    Đây là cách nhìn rất hữu ích khi chuyển từ kiến thức CAN cơ bản
+                    sang CAN communication trong automotive project.
+                </p>
+
+                <h2>30. Ví dụ tổng hợp: ECU A gửi Engine Speed</h2>
+                <p>
+                    Giả sử ECU A đo được Engine Speed và cần gửi cho ECU B và ECU C.
+                </p>
+
+                <pre><code>Application ECU A
+        |
+        | Engine Speed
+        v
+Signal
+        |
+        v
+I-PDU
+        |
+        v
+CAN ID = 0x100
+        |
+        v
+CAN Controller
+        |
+        v
+CAN Bus
+      /   \
+     /     \
+    v       v
+ ECU B    ECU C
+ Receiver Receiver</code></pre>
+
+                <p>
+                    ECU B và ECU C có thể cùng nhận message nếu configuration
+                    của chúng chấp nhận CAN ID tương ứng.
+                </p>
+
+                <h2>31. Ví dụ tổng hợp: Debug không nhận được message</h2>
+                <p>
+                    Giả sử ECU A nói rằng nó đã gửi message, nhưng ECU B không nhận được.
+                    Có thể debug theo flow:
+                </p>
+
+                <pre><code>
+ECU A Application
+       |
+       v
+Transmission request?
+       |
+       v
+CanIf / CAN Driver?
+       |
+       v
+CAN Controller?
+       |
+       v
+Frame xuất hiện trên CAN Bus?
+       |
+       +---- NO → Debug TX path
+       |
+       +---- YES
+              |
+              v
+        CAN ID đúng?
+              |
+              v
+        ECU B Filter?
+              |
+              v
+        HRH mapping?
+              |
+              v
+        CanIf notification?
+              |
+              v
+        PduR / COM?
+              |
+              v
+        Signal mapping?
+              |
+              v
+        Application ECU B
+</code></pre>
+
+                <h2>32. Debug bằng CAN Analyzer</h2>
+                <p>
+                    CAN analyzer là công cụ rất hữu ích để xác định vấn đề nằm
+                    ở network hay software.
+                </p>
+
+                <p>
+                    Nếu CAN analyzer thấy frame:
+                </p>
+
+                <ul>
+                    <li>CAN physical communication có khả năng đang hoạt động.</li>
+                    <li>Kiểm tra CAN ID.</li>
+                    <li>Kiểm tra DLC.</li>
+                    <li>Kiểm tra payload.</li>
+                    <li>Kiểm tra cycle time.</li>
+                    <li>Kiểm tra sender.</li>
+                </ul>
+
+                <p>
+                    Nếu CAN analyzer không thấy frame, cần tập trung vào transmission path
+                    từ application xuống CAN Controller và physical bus.
+                </p>
+
+                <h2>33. Common Mapping Mistakes</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lỗi</th>
+                            <th>Hậu quả</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sai CAN ID</td>
+                            <td>Receiver không match frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Sai Controller mapping</td>
+                            <td>Frame đi qua CAN channel không mong muốn.</td>
+                        </tr>
+                        <tr>
+                            <td>Sai HRH</td>
+                            <td>Reception không được xử lý đúng.</td>
+                        </tr>
+                        <tr>
+                            <td>Sai HTH</td>
+                            <td>Transmission không sử dụng đúng hardware object.</td>
+                        </tr>
+                        <tr>
+                            <td>Sai PDU mapping</td>
+                            <td>Data không tới đúng upper layer.</td>
+                        </tr>
+                        <tr>
+                            <td>Sai signal mapping</td>
+                            <td>Raw data được decode sai.</td>
+                        </tr>
+                        <tr>
+                            <td>Sai cycle time</td>
+                            <td>Communication timing không đúng yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Sai network mapping</td>
+                            <td>ECU giao tiếp nhầm CAN network.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>34. Góc nhìn phỏng vấn</h2>
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is the difference between topology and mapping?"</strong>,
+                    có thể trả lời:
+                </p>
+
+                <div class="note">
+                    <strong>Sample answer:</strong>
+                    Topology describes how ECUs and CAN networks are physically or logically
+                    connected. Mapping describes how communication objects such as signals,
+                    PDUs, CAN IDs, hardware objects and controllers are associated with each
+                    other. Communication is the actual data exchange that happens through
+                    that topology and mapping.
+                </div>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"How would you debug if a CAN message is visible on the bus
+                        but the application does not receive it?"</strong>, có thể trả lời:
+                </p>
+
+                <div class="note">
+                    I would first verify the CAN ID and payload on the bus. Then I would
+                    check the receiver's CAN controller filter, HRH and CAN Driver notification.
+                    After that, I would trace the PDU routing through CanIf and PduR or COM,
+                    and finally verify signal mapping and the application reception.
+                </div>
+
+                <h2>35. Memory Map — Topology, Mapping và Communication</h2>
+
+                <pre><code>CAN NETWORK
+│
+├── TOPOLOGY
+│   ├── ECU / Node
+│   ├── CAN Bus
+│   ├── CAN Network
+│   ├── CAN Controller
+│   ├── CAN Transceiver
+│   └── Termination
+│
+├── MAPPING
+│   ├── Signal
+│   ├── I-PDU
+│   ├── CAN PDU
+│   ├── CAN ID
+│   ├── HRH
+│   ├── HTH
+│   ├── Controller
+│   └── Channel
+│
+├── COMMUNICATION
+│   ├── Sender
+│   ├── Receiver
+│   ├── Broadcast
+│   ├── Cycle Time
+│   ├── Event Transmission
+│   └── Gateway Routing
+│
+└── DEBUG
+    ├── CAN Analyzer
+    ├── CAN ID
+    ├── Filter
+    ├── PDU Mapping
+    ├── Signal Mapping
+    ├── HRH / HTH
+    └── CAN Driver / CanIf / PduR / COM</code></pre>
+
+                <h2>36. Tóm tắt</h2>
+                <p>
+                    <strong>Topology, Mapping và Communication</strong> là ba khái niệm
+                    liên kết chặt chẽ khi xây dựng một CAN network trong automotive.
+                </p>
+
+                <p>
+                    <strong>Topology</strong> cho biết các ECU và network được kết nối
+                    như thế nào. <strong>Mapping</strong> xác định dữ liệu, PDU, CAN ID,
+                    hardware object và controller được liên kết ra sao.
+                    <strong>Communication</strong> là quá trình dữ liệu thực sự được
+                    truyền và nhận trên network.
+                </p>
+
+                <pre><code>TOPOLOGY
+ECU A ───── CAN Network ───── ECU B
+                    |
+                    v
+                 MAPPING
+                    |
+                    v
+Signal → PDU → CAN ID → Controller → HW Object
+                    |
+                    v
+              COMMUNICATION
+                    |
+                    v
+               CAN Frame
+                    |
+                    v
+                Receiver
+                    |
+                    v
+          PDU → Signal → Application</code></pre>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    Khi debug CAN communication, hãy luôn đặt câu hỏi theo thứ tự:
+                    <strong>ECU có nằm trên đúng network không? → Data có được mapping đúng không?
+                        → Frame có thực sự được truyền/nhận trên bus không? → PDU và signal có đi
+                        đúng qua AUTOSAR stack không?</strong>
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-28.html">← Bài trước</a>
+                    <a class="btn" href="lesson-30.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

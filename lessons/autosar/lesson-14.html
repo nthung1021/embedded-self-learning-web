@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 14: Chi tiết tầng Runtime Environment | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+            <a href="lesson-13.html">Bài 13: Chi tiết tầng Application Software</a>
+            <a href="lesson-14.html" class="active" aria-current="page">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+            <a href="index.html">← Tất cả bài học AUTOSAR</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 14: Chi tiết tầng Runtime Environment</h1>
+
+            <p>
+                Trong Bài 5, chúng ta đã tìm hiểu RTE ở mức tổng quan và biết rằng
+                RTE nằm giữa Application Software và Basic Software. Trong bài này,
+                chúng ta sẽ đi sâu hơn vào cách RTE thực hiện vai trò trung gian
+                đó và cách Application Software sử dụng RTE để giao tiếp với các
+                thành phần khác.
+            </p>
+
+            <p>
+                RTE là một trong những thành phần quan trọng nhất của AUTOSAR
+                Classic vì nó tạo ra lớp giao tiếp giữa <strong>Software Component
+                (SWC)</strong> và phần còn lại của hệ thống.
+            </p>
+
+            <div class="note">
+                <strong>Ý tưởng chính:</strong>
+                Application Software tập trung vào logic chức năng, trong khi RTE
+                cung cấp cơ chế để logic đó giao tiếp với các SWC khác, với
+                Basic Software và với các Service mà hệ thống cung cấp.
+            </div>
+
+
+            <h2>1. RTE là gì?</h2>
+
+            <p>
+                <strong>Runtime Environment (RTE)</strong> là lớp phần mềm nằm
+                giữa Application Software và Basic Software trong AUTOSAR Classic.
+            </p>
+
+            <pre><code>┌──────────────────────────────┐
+│     Application Software     │
+│                              │
+│   SWC A     SWC B     SWC C  │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│             RTE              │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│      Basic Software (BSW)    │
+└──────────────┬───────────────┘
+               │
+               ▼
+            Hardware</code></pre>
+
+            <p>
+                RTE không phải là nơi chứa toàn bộ application logic.
+                Logic chức năng vẫn nằm trong SWC.
+            </p>
+
+            <p>
+                RTE chủ yếu cung cấp <strong>cơ chế giao tiếp và kết nối</strong>
+                để các thành phần Application Software có thể hoạt động trong
+                kiến trúc AUTOSAR.
+            </p>
+
+
+            <h2>2. Tại sao AUTOSAR cần RTE?</h2>
+
+            <p>
+                Nếu không có lớp trung gian, Application Software có thể phải
+                biết rất nhiều chi tiết về cách dữ liệu được truyền hoặc cách
+                Service bên dưới được triển khai.
+            </p>
+
+            <p>
+                Ví dụ, một Application SWC cần dữ liệu tốc độ xe. Nếu Application
+                phải tự biết dữ liệu đó đến từ CAN, LIN hay một nguồn khác thì
+                Application sẽ bị phụ thuộc vào cơ chế truyền thông.
+            </p>
+
+            <pre><code>Application SWC
+      │
+      ├── Biết CAN?
+      ├── Biết LIN?
+      ├── Biết Driver?
+      └── Biết Hardware?
+           │
+           ▼
+       Phức tạp hơn</code></pre>
+
+            <p>
+                Với RTE, Application có thể tập trung vào dữ liệu và chức năng
+                mà nó cần:
+            </p>
+
+            <pre><code>Application SWC
+      │
+      │ yêu cầu / trao đổi dữ liệu
+      ▼
+     RTE
+      │
+      │ xử lý kết nối
+      ▼
+BSW / SWC khác / Service</code></pre>
+
+            <p>
+                Vì vậy, RTE giúp <strong>tách Application Software khỏi cách
+                giao tiếp và triển khai phía dưới</strong>.
+            </p>
+
+
+            <h2>3. RTE không phải là một lớp "logic chức năng"</h2>
+
+            <p>
+                Một hiểu nhầm phổ biến là coi RTE như nơi xử lý logic của ECU.
+                Thực tế, logic chức năng vẫn thuộc về Application Software.
+            </p>
+
+            <pre><code>Application SWC
+      │
+      │ "Nếu tốc độ > X thì khóa cửa"
+      │
+      ▼
+   Application Logic
+
+      │
+      ▼
+
+      RTE
+      │
+      │ Cung cấp cơ chế giao tiếp
+      ▼
+
+      BSW</code></pre>
+
+            <p>
+                RTE không quyết định xe có nên khóa cửa hay không.
+                Application SWC mới là nơi chứa quyết định đó.
+            </p>
+
+            <p>
+                RTE giúp đưa dữ liệu cần thiết đến SWC và đưa kết quả của SWC
+                đến nơi cần sử dụng.
+            </p>
+
+
+            <h2>4. RTE và Software Component</h2>
+
+            <p>
+                RTE được thiết kế dựa trên các giao tiếp được mô tả giữa các
+                Software Component.
+            </p>
+
+            <pre><code>             Application Software
+
+      ┌──────────────┐
+      │    SWC A     │
+      └──────┬───────┘
+             │
+             │
+             ▼
+      ┌──────────────┐
+      │     RTE      │
+      └──────┬───────┘
+             │
+             │
+             ▼
+      ┌──────────────┐
+      │    SWC B     │
+      └──────────────┘</code></pre>
+
+            <p>
+                Nếu SWC A cần gửi dữ liệu cho SWC B, Application code không
+                cần trực tiếp gọi code nội bộ của SWC B.
+            </p>
+
+            <p>
+                Thay vào đó, giao tiếp được định nghĩa thông qua các Port và
+                Interface, sau đó RTE cung cấp cơ chế thực hiện kết nối đó.
+            </p>
+
+
+            <h2>5. RTE và Port</h2>
+
+            <p>
+                Trong bài trước, chúng ta đã biết Port là điểm giao tiếp của SWC.
+                RTE sử dụng các định nghĩa giao tiếp đó để kết nối các thành phần.
+            </p>
+
+            <pre><code>SWC A
+┌──────────────┐
+│              │
+│ Output Port  ├──────┐
+│              │      │
+└──────────────┘      │
+                      ▼
+                     RTE
+                      │
+                      ▼
+               Input Port
+┌──────────────┐      │
+│              │◄─────┘
+│    SWC B     │
+│              │
+└──────────────┘</code></pre>
+
+            <p>
+                Vì vậy, khi phân tích một kết nối trong AUTOSAR, có thể suy nghĩ
+                theo chuỗi:
+            </p>
+
+            <pre><code>SWC
+ ↓
+Port
+ ↓
+Interface
+ ↓
+RTE
+ ↓
+Port
+ ↓
+SWC</code></pre>
+
+
+            <h2>6. RTE và Sender/Receiver</h2>
+
+            <p>
+                Một trong những trường hợp phổ biến nhất RTE xử lý là giao tiếp
+                <strong>Sender/Receiver</strong>.
+            </p>
+
+            <p>
+                Ví dụ SWC A gửi trạng thái cửa:
+            </p>
+
+            <pre><code>Door Status SWC
+       │
+       │ DoorStatus
+       ▼
+     RTE
+       │
+       ▼
+Interior Light SWC
+       │
+       │ DoorStatus
+       ▼
+Application Logic</code></pre>
+
+            <p>
+                SWC gửi dữ liệu được gọi là Sender, còn SWC sử dụng dữ liệu
+                được gọi là Receiver.
+            </p>
+
+            <p>
+                Application không cần trực tiếp quản lý toàn bộ cơ chế truyền
+                dữ liệu giữa hai SWC. RTE thực hiện phần kết nối theo kiến trúc
+                đã được định nghĩa.
+            </p>
+
+
+            <h2>7. RTE và Client/Server</h2>
+
+            <p>
+                RTE cũng hỗ trợ giao tiếp theo mô hình
+                <strong>Client/Server</strong>.
+            </p>
+
+            <p>
+                Trong mô hình này, một SWC yêu cầu một operation và một SWC
+                khác cung cấp operation đó.
+            </p>
+
+            <pre><code>Client SWC
+     │
+     │ Request Operation
+     ▼
+    RTE
+     │
+     ▼
+Server SWC
+     │
+     │ Execute
+     ▼
+  Result
+     │
+     ▼
+    RTE
+     │
+     ▼
+Client SWC</code></pre>
+
+            <p>
+                Ví dụ, một SWC có thể yêu cầu một Service kiểm tra một điều kiện
+                hoặc thực hiện một chức năng.
+            </p>
+
+            <p>
+                Điểm quan trọng là Client không cần biết chi tiết bên trong
+                Server được triển khai như thế nào.
+            </p>
+
+
+            <h2>8. RTE và Runnable</h2>
+
+            <p>
+                RTE không chỉ liên quan đến việc trao đổi dữ liệu mà còn liên
+                quan đến cách các Runnable trong SWC được kích hoạt và tương tác
+                với môi trường.
+            </p>
+
+            <pre><code>Event
+  │
+  ▼
+RTE / Runtime mechanism
+  │
+  ▼
+Runnable
+  │
+  ▼
+Application Logic</code></pre>
+
+            <p>
+                Ví dụ một Runnable cần chạy định kỳ:
+            </p>
+
+            <pre><code>100 ms
+   │
+   ▼
+Runnable A
+   │
+   ▼
+Read Data
+   │
+   ▼
+Process
+   │
+   ▼
+Write Result
+   │
+   ▼
+Wait for next activation</code></pre>
+
+            <p>
+                Nhờ cơ chế Runtime của AUTOSAR, Application Software được tổ
+                chức thành những đơn vị thực thi rõ ràng thay vì tự xây dựng
+                toàn bộ cơ chế scheduling và giao tiếp.
+            </p>
+
+
+            <h2>9. RTE và Timing Event</h2>
+
+            <p>
+                Một Runnable có thể được kích hoạt theo chu kỳ.
+                Ví dụ một Runnable xử lý dữ liệu nhiệt độ có thể được yêu cầu
+                thực thi mỗi 100 ms.
+            </p>
+
+            <pre><code>Time
+ │
+ ├── 0 ms      → Runnable
+ │
+ ├── 100 ms    → Runnable
+ │
+ ├── 200 ms    → Runnable
+ │
+ ├── 300 ms    → Runnable
+ │
+ └── ...</code></pre>
+
+            <p>
+                Application developer quan tâm đến việc Runnable cần được
+                thực thi theo chu kỳ nào và xử lý dữ liệu gì.
+            </p>
+
+            <p>
+                Các cơ chế bên dưới của hệ thống chịu trách nhiệm đảm bảo việc
+                thực thi phù hợp với cấu hình và kiến trúc của ECU.
+            </p>
+
+
+            <h2>10. RTE và Data Received Event</h2>
+
+            <p>
+                Không phải mọi Runnable đều phải chạy theo chu kỳ.
+                Một Runnable có thể được kích hoạt khi dữ liệu mới xuất hiện.
+            </p>
+
+            <pre><code>New Data
+   │
+   ▼
+Input Port
+   │
+   ▼
+  RTE
+   │
+   │ Data Received Event
+   ▼
+Runnable
+   │
+   ▼
+Process Data</code></pre>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>CAN Data
+   │
+   ▼
+Communication Stack
+   │
+   ▼
+   RTE
+   │
+   ▼
+Data Received Event
+   │
+   ▼
+VehicleSpeed_Run()
+   │
+   ▼
+Application Logic</code></pre>
+
+            <p>
+                Như vậy, RTE tạo cầu nối giữa dữ liệu được cung cấp cho
+                Application và việc thực thi Runnable tương ứng.
+            </p>
+
+
+            <h2>11. RTE API ở mức khái niệm</h2>
+
+            <p>
+                Trong mã nguồn Application, việc giao tiếp với môi trường thường
+                được thực hiện thông qua các cơ chế truy cập do RTE cung cấp.
+            </p>
+
+            <p>
+                Ở mức khái niệm, có thể hình dung Application thực hiện:
+            </p>
+
+            <pre><code>Runnable
+   │
+   ├── Đọc dữ liệu từ môi trường
+   │
+   ├── Xử lý dữ liệu
+   │
+   └── Ghi kết quả ra môi trường
+          │
+          ▼
+         RTE</code></pre>
+
+            <p>
+                Tùy vào kiểu giao tiếp, RTE cung cấp các cơ chế phù hợp cho việc
+                đọc, ghi dữ liệu hoặc gọi operation.
+            </p>
+
+            <p>
+                Ở giai đoạn này, điều quan trọng cần nhớ là:
+                <strong>Application sử dụng giao diện do RTE cung cấp thay vì
+                trực tiếp truy cập các tầng bên dưới.</strong>
+            </p>
+
+            <div class="note">
+                <strong>Lưu ý:</strong>
+                Các API RTE cụ thể, cách đặt tên API, tham số, return value và
+                code được sinh tự động sẽ được tìm hiểu ở phần chuyên sâu hơn.
+                Trong bài này chỉ cần hiểu vai trò của chúng trong kiến trúc.
+            </div>
+
+
+            <h2>12. RTE và Basic Software</h2>
+
+            <p>
+                Một trong những vai trò quan trọng nhất của RTE là kết nối
+                Application Software với Basic Software.
+            </p>
+
+            <pre><code>Application SWC
+      │
+      ▼
+     RTE
+      │
+      ▼
+Service / BSW
+      │
+      ▼
+ECU Abstraction
+      │
+      ▼
+MCAL
+      │
+      ▼
+Hardware</code></pre>
+
+            <p>
+                Ví dụ, Application cần một dịch vụ nào đó của ECU.
+                Application không nhất thiết phải biết Service đó được thực hiện
+                bằng module BSW nào hoặc module đó cuối cùng truy cập hardware
+                ra sao.
+            </p>
+
+            <p>
+                RTE tạo ra lớp kết nối cần thiết giữa hai phía.
+            </p>
+
+
+            <h2>13. RTE và Service</h2>
+
+            <p>
+                Ngoài việc kết nối các SWC với nhau, Application Software còn có
+                thể sử dụng các chức năng được cung cấp bởi BSW Service.
+            </p>
+
+            <pre><code>Application SWC
+      │
+      │ Request service
+      ▼
+     RTE
+      │
+      ▼
+BSW Service
+      │
+      ▼
+Underlying BSW modules</code></pre>
+
+            <p>
+                Điều này giúp Application Software không phải tự triển khai
+                những chức năng hệ thống đã được AUTOSAR hoặc BSW cung cấp.
+            </p>
+
+            <p>
+                Có thể hiểu đơn giản:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Application:</strong> "Tôi cần chức năng này."
+                </li>
+
+                <li>
+                    <strong>RTE:</strong> "Tôi cung cấp đường kết nối."
+                </li>
+
+                <li>
+                    <strong>BSW Service:</strong> "Tôi thực hiện chức năng đó."
+                </li>
+            </ul>
+
+
+            <h2>14. RTE trong giao tiếp giữa các SWC cùng ECU</h2>
+
+            <p>
+                Một trường hợp đơn giản là hai SWC nằm trên cùng một ECU.
+            </p>
+
+            <pre><code>                    ECU
+ ┌─────────────────────────────────────┐
+ │                                     │
+ │   SWC A                 SWC B       │
+ │    │                      ▲         │
+ │    │ Output               │ Input   │
+ │    ▼                      │         │
+ │   ┌────────────────────────┐        │
+ │   │          RTE           │        │
+ │   └────────────────────────┘        │
+ │                                     │
+ └─────────────────────────────────────┘</code></pre>
+
+            <p>
+                RTE xử lý kết nối logic giữa hai SWC dựa trên các giao tiếp
+                được thiết kế.
+            </p>
+
+            <p>
+                Đây là một trong những trường hợp thể hiện rõ nhất vai trò
+                "middleware" của RTE.
+            </p>
+
+
+            <h2>15. RTE và giao tiếp giữa các ECU</h2>
+
+            <p>
+                Một điểm quan trọng là RTE không trực tiếp thay thế Communication
+                Stack.
+            </p>
+
+            <p>
+                Nếu dữ liệu cần đi từ một ECU sang ECU khác, luồng tổng quát
+                sẽ có nhiều tầng hơn:
+            </p>
+
+            <pre><code>ECU A
+
+Application SWC
+      │
+      ▼
+     RTE
+      │
+      ▼
+Communication Stack
+      │
+      ▼
+CAN / LIN / Ethernet
+      │
+      │ Network
+      ▼
+CAN / LIN / Ethernet
+      │
+      ▼
+Communication Stack
+      │
+      ▼
+     RTE
+      │
+      ▼
+Application SWC
+
+ECU B</code></pre>
+
+            <p>
+                RTE nằm ở phía Application của mỗi ECU, còn việc truyền dữ liệu
+                qua mạng được thực hiện bởi Communication Stack và phần cứng
+                truyền thông.
+            </p>
+
+            <p>
+                Vì vậy, cần phân biệt:
+            </p>
+
+            <ul>
+                <li><strong>RTE:</strong> kết nối Application với môi trường runtime.</li>
+                <li><strong>Communication Stack:</strong> xử lý việc truyền thông.</li>
+                <li><strong>MCAL/Driver:</strong> giao tiếp với phần cứng.</li>
+            </ul>
+
+
+            <h2>16. Ví dụ: CAN đến Application</h2>
+
+            <p>
+                Giả sử ECU nhận tốc độ xe thông qua CAN.
+            </p>
+
+            <pre><code>CAN Bus
+   │
+   ▼
+CAN Controller
+   │
+   ▼
+CAN Driver
+   │
+   ▼
+Communication Stack
+   │
+   ▼
+   RTE
+   │
+   ▼
+Vehicle Speed SWC
+   │
+   ▼
+Runnable
+   │
+   ▼
+Application Logic</code></pre>
+
+            <p>
+                Application SWC không cần trực tiếp đọc CAN Controller.
+                Nó chỉ cần nhận dữ liệu theo giao diện mà Application đã được
+                thiết kế.
+            </p>
+
+            <p>
+                Đây là một ví dụ điển hình cho việc RTE giúp tách Application
+                khỏi cơ chế truyền thông bên dưới.
+            </p>
+
+
+            <h2>17. Ví dụ: Application đến CAN</h2>
+
+            <p>
+                Luồng ngược lại cũng có thể xảy ra khi Application muốn gửi
+                một dữ liệu ra mạng.
+            </p>
+
+            <pre><code>Application SWC
+      │
+      ▼
+    Runnable
+      │
+      ▼
+     RTE
+      │
+      ▼
+Communication Stack
+      │
+      ▼
+CAN Driver
+      │
+      ▼
+CAN Controller
+      │
+      ▼
+CAN Bus</code></pre>
+
+            <p>
+                Application chỉ tập trung tạo ra dữ liệu hoặc trạng thái cần
+                gửi. Các tầng bên dưới đảm nhiệm việc biến yêu cầu đó thành
+                dữ liệu truyền thông thực tế.
+            </p>
+
+
+            <h2>18. RTE và tính độc lập của Application</h2>
+
+            <p>
+                Một trong những lợi ích lớn của RTE là hỗ trợ tính độc lập của
+                Application Software.
+            </p>
+
+            <p>
+                Ví dụ một Application SWC có thể sử dụng dữ liệu
+                <code>VehicleSpeed</code>.
+            </p>
+
+            <p>
+                Ở cấp Application, điều quan trọng là:
+            </p>
+
+            <pre><code>VehicleSpeed
+     │
+     ▼
+Application Logic</code></pre>
+
+            <p>
+                Application không nhất thiết phải quan tâm dữ liệu này đến từ:
+            </p>
+
+            <ul>
+                <li>CAN.</li>
+                <li>LIN.</li>
+                <li>Một SWC khác.</li>
+                <li>Một Service.</li>
+                <li>Một nguồn dữ liệu khác được hệ thống thiết kế.</li>
+            </ul>
+
+            <p>
+                Chính sự tách biệt này giúp kiến trúc AUTOSAR có khả năng
+                tái sử dụng Application Software tốt hơn.
+            </p>
+
+
+            <h2>19. RTE không hoàn toàn giống một Middleware thông thường</h2>
+
+            <p>
+                Có thể gọi RTE là một lớp trung gian hoặc middleware ở mức
+                khái niệm, nhưng cần hiểu rằng RTE trong AUTOSAR được tạo ra
+                dựa trên kiến trúc và cấu hình cụ thể của ECU.
+            </p>
+
+            <p>
+                Nó không phải một phần mềm middleware chung được viết hoàn toàn
+                độc lập rồi chạy giống nhau trên mọi ECU.
+            </p>
+
+            <pre><code>System Design
+      │
+      ▼
+SWC / Ports / Interfaces
+      │
+      ▼
+ECU Mapping
+      │
+      ▼
+RTE
+      │
+      ▼
+Generated / Configured Runtime Connections</code></pre>
+
+            <p>
+                Do đó, RTE của một ECU cụ thể phụ thuộc vào cách các SWC,
+                giao tiếp và các thành phần hệ thống được thiết kế và ánh xạ.
+            </p>
+
+
+            <h2>20. RTE và ECU Mapping</h2>
+
+            <p>
+                Trong hệ thống AUTOSAR, một Software Component ở mức thiết kế
+                chức năng có thể được ánh xạ vào một ECU cụ thể.
+            </p>
+
+            <pre><code>Software Architecture
+        │
+        ├── SWC A
+        ├── SWC B
+        └── SWC C
+                │
+                │ ECU Mapping
+                ▼
+              ECU 1
+                │
+                ▼
+               RTE</code></pre>
+
+            <p>
+                RTE của ECU sẽ cung cấp các kết nối cần thiết cho những SWC
+                được triển khai trên ECU đó.
+            </p>
+
+            <p>
+                Vì vậy, khi tìm hiểu RTE, cần phân biệt hai góc nhìn:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Thiết kế chức năng:</strong>
+                    SWC cần giao tiếp với ai và trao đổi gì.
+                </li>
+
+                <li>
+                    <strong>Triển khai ECU:</strong>
+                    các SWC đó được đặt ở ECU nào và kết nối thực tế ra sao.
+                </li>
+            </ul>
+
+
+            <h2>21. RTE và Virtual Functional Bus</h2>
+
+            <p>
+                Ở mức kiến trúc, VFB cung cấp mô hình giao tiếp trừu tượng
+                giữa các Software Component.
+            </p>
+
+            <pre><code>        SWC A                    SWC B
+          │                        │
+          │                        │
+          └──────── VFB ───────────┘
+                    │
+                    │
+              Logical connection</code></pre>
+
+            <p>
+                Khi triển khai trên một ECU cụ thể, RTE giúp hiện thực hóa
+                các kết nối cần thiết trong môi trường runtime của ECU.
+            </p>
+
+            <pre><code>Logical Design
+      │
+      ▼
+     VFB
+      │
+      ▼
+ ECU Deployment
+      │
+      ▼
+     RTE
+      │
+      ▼
+Actual Runtime Communication</code></pre>
+
+            <p>
+                Vì vậy có thể xem VFB và RTE là hai khái niệm có quan hệ rất
+                gần với nhau nhưng phục vụ các góc nhìn khác nhau.
+            </p>
+
+
+            <h2>22. Một ví dụ hoàn chỉnh về hoạt động của RTE</h2>
+
+            <p>
+                Xét chức năng: <strong>tự động bật đèn nội thất khi cửa mở</strong>.
+            </p>
+
+            <p>
+                Giả sử hệ thống có hai SWC:
+            </p>
+
+            <ul>
+                <li><strong>Door Status SWC</strong></li>
+                <li><strong>Interior Light SWC</strong></li>
+            </ul>
+
+            <p>
+                Door Status SWC cung cấp trạng thái cửa:
+            </p>
+
+            <pre><code>Door Status SWC
+       │
+       │ DoorOpen
+       ▼
+     RTE
+       │
+       ▼
+Interior Light SWC
+       │
+       ▼
+Runnable
+       │
+       ▼
+Check DoorOpen
+       │
+       ├── TRUE  → Light ON
+       │
+       └── FALSE → Light OFF</code></pre>
+
+            <p>
+                Nếu dữ liệu DoorOpen thay đổi, Runnable của Interior Light SWC
+                có thể được kích hoạt bởi cơ chế Event phù hợp.
+            </p>
+
+            <p>
+                Sau đó Runnable xử lý logic và tạo ra kết quả:
+            </p>
+
+            <pre><code>DoorOpen = TRUE
+       │
+       ▼
+InteriorLightControl_Run()
+       │
+       ▼
+LightCommand = ON
+       │
+       ▼
+RTE
+       │
+       ▼
+BSW / MCAL
+       │
+       ▼
+Interior Light Hardware</code></pre>
+
+            <p>
+                Đây là ví dụ thể hiện khá đầy đủ vai trò của RTE:
+            </p>
+
+            <ul>
+                <li>Nhận dữ liệu từ môi trường của SWC.</li>
+                <li>Cho phép Runnable xử lý dữ liệu.</li>
+                <li>Đưa kết quả của SWC ra môi trường.</li>
+                <li>Kết nối Application với các tầng bên dưới.</li>
+            </ul>
+
+
+            <h2>23. Khi debug một vấn đề liên quan đến RTE</h2>
+
+            <p>
+                Khi Application không nhận được dữ liệu hoặc không tạo được
+                output mong muốn, không nên chỉ kiểm tra code của Runnable.
+            </p>
+
+            <p>
+                Có thể phân tích theo chuỗi:
+            </p>
+
+            <pre><code>Input Source
+    │
+    ▼
+Interface / Port
+    │
+    ▼
+RTE
+    │
+    ▼
+Runnable
+    │
+    ▼
+Application Logic
+    │
+    ▼
+RTE
+    │
+    ▼
+Output / BSW
+    │
+    ▼
+Hardware / Network</code></pre>
+
+            <p>
+                Ví dụ nếu Runnable không nhận được dữ liệu, có thể đặt câu hỏi:
+            </p>
+
+            <ol>
+                <li>Dữ liệu nguồn có thực sự tồn tại không?</li>
+                <li>Port có được kết nối đúng không?</li>
+                <li>Interface có đúng không?</li>
+                <li>Runnable có được kích hoạt không?</li>
+                <li>Event có hoạt động đúng không?</li>
+                <li>RTE có cung cấp dữ liệu cho Runnable không?</li>
+                <li>Logic bên trong Runnable có đúng không?</li>
+            </ol>
+
+            <p>
+                Cách phân tích này giúp tránh việc ngay lập tức sửa code khi
+                nguyên nhân thực tế nằm ở cấu hình hoặc kết nối.
+            </p>
+
+
+            <h2>24. RTE trong quá trình phát triển AUTOSAR</h2>
+
+            <p>
+                Trong quy trình phát triển thực tế, RTE thường không được
+                lập trình thủ công toàn bộ.
+            </p>
+
+            <p>
+                Thay vào đó, các thông tin về SWC, Port, Interface, Runnable,
+                Event và kết nối được định nghĩa trong kiến trúc và cấu hình
+                AUTOSAR. Sau đó công cụ có thể sử dụng những thông tin đó để
+                tạo ra phần RTE cần thiết cho ECU.
+            </p>
+
+            <pre><code>SWC Design
+     │
+     ▼
+Ports / Interfaces
+     │
+     ▼
+Runnable / Events
+     │
+     ▼
+ECU Mapping
+     │
+     ▼
+RTE Configuration
+     │
+     ▼
+RTE Implementation
+     │
+     ▼
+Application Software</code></pre>
+
+            <p>
+                Đây là lý do tại sao khi làm việc với AUTOSAR, việc hiểu
+                architecture và configuration rất quan trọng.
+            </p>
+
+
+            <h2>25. Những câu hỏi quan trọng khi phân tích RTE</h2>
+
+            <p>
+                Khi gặp một thiết kế AUTOSAR, có thể sử dụng các câu hỏi sau
+                để kiểm tra xem mình đã hiểu RTE chưa:
+            </p>
+
+            <ul>
+                <li>RTE đang kết nối những thành phần nào?</li>
+                <li>SWC nào là nguồn dữ liệu?</li>
+                <li>SWC nào là nơi nhận dữ liệu?</li>
+                <li>Port nào được sử dụng?</li>
+                <li>Interface nào định nghĩa giao tiếp?</li>
+                <li>Runnable nào xử lý dữ liệu?</li>
+                <li>Runnable được kích hoạt bởi Event nào?</li>
+                <li>Dữ liệu đến từ SWC khác hay từ BSW?</li>
+                <li>Kết quả của Application đi đến đâu?</li>
+                <li>Nếu có CAN/LIN/Ethernet, Communication Stack nằm ở đâu?</li>
+            </ul>
+
+
+            <h2>26. Những điểm dễ nhầm lẫn</h2>
+
+            <h3>RTE không phải Application Software</h3>
+
+            <p>
+                Application Software chứa logic chức năng. RTE cung cấp cơ chế
+                kết nối và giao tiếp runtime.
+            </p>
+
+            <h3>RTE không phải Communication Stack</h3>
+
+            <p>
+                RTE có thể kết nối Application với Communication Stack, nhưng
+                việc xử lý giao tiếp mạng thuộc về các module Communication
+                Stack bên dưới.
+            </p>
+
+            <h3>RTE không phải Hardware Driver</h3>
+
+            <p>
+                RTE không trực tiếp điều khiển GPIO, CAN Controller hoặc các
+                peripheral. Những chức năng đó thuộc các tầng thấp hơn.
+            </p>
+
+            <h3>Runnable không phải SWC</h3>
+
+            <p>
+                SWC là đơn vị chức năng ở mức component, còn Runnable là đơn vị
+                thực thi bên trong SWC.
+            </p>
+
+            <h3>Port không phải Interface</h3>
+
+            <p>
+                Port là điểm giao tiếp của SWC, còn Interface mô tả nội dung
+                hoặc kiểu giao tiếp được sử dụng tại Port.
+            </p>
+
+
+            <h2>27. Sơ đồ tổng hợp</h2>
+
+            <pre><code>                 AUTOSAR Classic ECU
+
+┌──────────────────────────────────────────────────────┐
+│                Application Software                 │
+│                                                      │
+│   ┌────────────┐        ┌────────────┐              │
+│   │   SWC A    │        │   SWC B    │              │
+│   │            │        │            │              │
+│   │ Runnable   │        │ Runnable   │              │
+│   │ Port       │        │ Port       │              │
+│   └─────┬──────┘        └─────┬──────┘              │
+│         │                     │                     │
+└─────────┼─────────────────────┼─────────────────────┘
+          │                     │
+          └──────────┬──────────┘
+                     │
+                     ▼
+            ┌─────────────────┐
+            │       RTE       │
+            │                 │
+            │ SWC ↔ SWC       │
+            │ SWC ↔ BSW       │
+            │ Runtime         │
+            │ Communication   │
+            └────────┬────────┘
+                     │
+                     ▼
+            ┌─────────────────┐
+            │       BSW       │
+            │                 │
+            │ Services        │
+            │ Communication   │
+            │ ECU Abstraction │
+            │ MCAL            │
+            └────────┬────────┘
+                     │
+                     ▼
+                Hardware</code></pre>
+
+
+            <h2>28. Những khái niệm cần nhớ</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>RTE</td>
+                        <td>Lớp trung gian kết nối Application Software với môi trường runtime</td>
+                    </tr>
+
+                    <tr>
+                        <td>SWC</td>
+                        <td>Thành phần Application Software sử dụng RTE để giao tiếp</td>
+                    </tr>
+
+                    <tr>
+                        <td>Port</td>
+                        <td>Điểm giao tiếp của SWC</td>
+                    </tr>
+
+                    <tr>
+                        <td>Interface</td>
+                        <td>Định nghĩa nội dung và kiểu giao tiếp</td>
+                    </tr>
+
+                    <tr>
+                        <td>Runnable</td>
+                        <td>Đơn vị code được thực thi trong SWC</td>
+                    </tr>
+
+                    <tr>
+                        <td>Event</td>
+                        <td>Điều kiện kích hoạt Runnable</td>
+                    </tr>
+
+                    <tr>
+                        <td>Sender/Receiver</td>
+                        <td>Cơ chế trao đổi dữ liệu giữa các thành phần</td>
+                    </tr>
+
+                    <tr>
+                        <td>Client/Server</td>
+                        <td>Cơ chế yêu cầu và thực hiện operation</td>
+                    </tr>
+
+                    <tr>
+                        <td>VFB</td>
+                        <td>Mô hình giao tiếp chức năng ở mức trừu tượng</td>
+                    </tr>
+
+                    <tr>
+                        <td>RTE ↔ BSW</td>
+                        <td>Kết nối Application với các Service và chức năng BSW</td>
+                    </tr>
+
+                    <tr>
+                        <td>RTE ↔ Communication Stack</td>
+                        <td>Kết nối Application với chức năng truyền thông bên dưới</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <h2>29. Tóm tắt</h2>
+
+            <div class="note">
+                <strong>RTE (Runtime Environment)</strong> là lớp trung gian
+                quan trọng giữa Application Software và Basic Software trong
+                AUTOSAR Classic.
+                <br><br>
+
+                Application Software được tổ chức thành các
+                <strong>SWC</strong>. Các SWC giao tiếp thông qua
+                <strong>Port</strong> và <strong>Interface</strong>, còn các
+                <strong>Runnable</strong> thực hiện logic chức năng.
+                <br><br>
+
+                RTE cung cấp cơ chế để:
+                <br>
+                - SWC trao đổi dữ liệu với nhau.<br>
+                - SWC gọi operation của thành phần khác.<br>
+                - Runnable tương tác với dữ liệu và môi trường runtime.<br>
+                - Application sử dụng các Service của BSW.<br>
+                - Application giao tiếp với Communication Stack.
+                <br><br>
+
+                RTE không thay thế Application Software, Communication Stack
+                hay Hardware Driver. Nó đóng vai trò <strong>kết nối và
+                trừu tượng hóa môi trường runtime</strong> để Application
+                Software có thể tập trung vào logic chức năng.
+                <br><br>
+
+                Có thể ghi nhớ chuỗi chính:
+                <br><br>
+
+                <strong>
+                    SWC → Port / Interface → RTE → BSW / SWC khác
+                </strong>
+                <br><br>
+
+                Và với giao tiếp mạng:
+                <br><br>
+
+                <strong>
+                    Application → RTE → Communication Stack → Driver → Network
+                </strong>
+            </div>
+
+
+            <div class="pager">
+                <a href="lesson-13.html">← Bài trước</a>
+                <a href="lesson-15.html">Bài tiếp theo →</a>
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

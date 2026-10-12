@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 17: Chi tiết Memory Stack | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html" class="active" aria-current="page">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+            <a href="index.html">← Tất cả bài học AUTOSAR</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 17: Chi tiết Memory Stack</h1>
+
+            <p>
+                Trong một ECU automotive, phần mềm không chỉ cần xử lý dữ liệu
+                trong RAM mà còn phải lưu giữ những thông tin cần thiết qua
+                các lần reset hoặc tắt nguồn. Ví dụ như cấu hình, trạng thái,
+                dữ liệu học được hoặc thông tin cần được giữ lại sau khi ECU
+                khởi động lại.
+            </p>
+
+            <p>
+                Memory Stack trong AUTOSAR cung cấp kiến trúc phần mềm để
+                Application và các BSW module có thể truy cập bộ nhớ một cách
+                có tổ chức, đồng thời giảm sự phụ thuộc trực tiếp vào loại
+                memory và hardware cụ thể.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Bài này tập trung vào kiến trúc Memory Stack, sự khác nhau
+                giữa RAM và non-volatile memory, vai trò của NVRAM Manager,
+                Memory Abstraction và Memory Hardware Abstraction, cùng với
+                luồng đọc/ghi dữ liệu. Chưa đi sâu vào API cụ thể, cấu hình
+                module hoặc ARXML.
+            </div>
+
+            <h2>1. Memory Stack là gì?</h2>
+
+            <p>
+                Memory Stack là tập hợp các lớp và module phần mềm giúp hệ thống
+                AUTOSAR quản lý việc lưu trữ dữ liệu trong bộ nhớ.
+            </p>
+
+            <p>
+                Có thể hình dung đơn giản:
+            </p>
+
+            <pre><code>Application / BSW
+        |
+        v
+   Memory Services
+        |
+        v
+ Memory Abstraction
+        |
+        v
+   Memory Driver
+        |
+        v
+     Hardware
+</code></pre>
+
+            <p>
+                Mục tiêu quan trọng của kiến trúc này là Application không cần
+                trực tiếp biết chi tiết phần cứng memory đang được sử dụng.
+            </p>
+
+            <h2>2. Vì sao ECU cần Memory Stack?</h2>
+
+            <p>
+                ECU cần lưu trữ nhiều loại dữ liệu khác nhau.
+                Một số dữ liệu chỉ cần tồn tại trong thời gian ECU đang chạy,
+                trong khi một số dữ liệu phải tồn tại sau khi ECU mất nguồn.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Biến runtime.</li>
+                <li>Trạng thái hệ thống.</li>
+                <li>Cấu hình ECU.</li>
+                <li>Giá trị calibration.</li>
+                <li>Dữ liệu học được.</li>
+                <li>Thông tin diagnostic cần lưu lại.</li>
+                <li>Thông tin lỗi hoặc trạng thái hệ thống.</li>
+            </ul>
+
+            <p>
+                Nếu tất cả dữ liệu đều chỉ được lưu trong RAM,
+                dữ liệu sẽ mất khi ECU mất nguồn.
+            </p>
+
+            <pre><code>ECU đang chạy
+     |
+     v
+    RAM
+     |
+     X
+Power Off
+     |
+     v
+Dữ liệu runtime mất
+</code></pre>
+
+            <p>
+                Vì vậy hệ thống cần non-volatile memory để giữ lại
+                những dữ liệu cần thiết.
+            </p>
+
+            <h2>3. Volatile và Non-Volatile Memory</h2>
+
+            <p>
+                Đây là sự phân biệt cơ bản nhất khi học Memory Stack.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Loại</th>
+                        <th>Đặc điểm</th>
+                        <th>Dữ liệu sau Power Off</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Volatile Memory</td>
+                        <td>Cần nguồn để giữ dữ liệu</td>
+                        <td>Thông thường mất</td>
+                    </tr>
+                    <tr>
+                        <td>Non-Volatile Memory</td>
+                        <td>Có thể giữ dữ liệu không cần nguồn liên tục</td>
+                        <td>Được giữ lại</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                RAM thường được sử dụng cho dữ liệu runtime,
+                trong khi Flash hoặc EEPROM có thể được sử dụng cho
+                dữ liệu cần lưu trữ lâu dài.
+            </p>
+
+            <h2>4. RAM là gì?</h2>
+
+            <p>
+                RAM là bộ nhớ được sử dụng rất nhiều trong quá trình ECU
+                đang hoạt động.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>ECU Running
+
+Application
+    |
+    v
+Runtime Variable
+    |
+    v
+RAM
+</code></pre>
+
+            <p>
+                Các biến runtime, buffer và dữ liệu tạm thời thường được
+                đặt trong RAM.
+            </p>
+
+            <p>
+                Khi ECU bị mất nguồn, nội dung RAM thông thường không được
+                đảm bảo sẽ còn nguyên.
+            </p>
+
+            <h2>5. ROM và Flash</h2>
+
+            <p>
+                ROM là khái niệm dùng để chỉ bộ nhớ không mất dữ liệu khi
+                mất nguồn. Trong ECU hiện đại, Flash thường được sử dụng
+                rộng rãi để lưu chương trình và dữ liệu không mất nguồn.
+            </p>
+
+            <p>
+                Flash có thể được sử dụng cho:
+            </p>
+
+            <ul>
+                <li>Firmware.</li>
+                <li>Calibration data.</li>
+                <li>Cấu hình.</li>
+                <li>Dữ liệu persistent.</li>
+            </ul>
+
+            <p>
+                Tuy nhiên, cách sử dụng cụ thể phụ thuộc vào kiến trúc ECU
+                và loại memory hardware.
+            </p>
+
+            <h2>6. EEPROM</h2>
+
+            <p>
+                EEPROM cũng là một loại non-volatile memory.
+                Nó có thể được sử dụng để lưu dữ liệu cần giữ lại sau
+                khi ECU mất nguồn.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>ECU Configuration
+       |
+       v
+    EEPROM
+       |
+       | Power Off
+       v
+    Data remains
+</code></pre>
+
+            <p>
+                Trong các hệ thống khác nhau, EEPROM có thể tồn tại dưới
+                dạng memory riêng hoặc được mô phỏng bằng một vùng Flash.
+            </p>
+
+            <h2>7. NVRAM là gì?</h2>
+
+            <p>
+                NVRAM là khái niệm quan trọng trong AUTOSAR.
+                NVRAM có thể hiểu là vùng dữ liệu cần được duy trì
+                qua các lần reset hoặc mất nguồn.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>ECU chạy
+   |
+   v
+Persistent Data
+   |
+   v
+NVRAM
+   |
+   X
+Power Off
+   |
+   v
+ECU Restart
+   |
+   v
+Persistent Data được khôi phục
+</code></pre>
+
+            <p>
+                Trong AUTOSAR, việc quản lý dữ liệu non-volatile thường
+                được thực hiện thông qua các module thuộc NVRAM Manager
+                và các lớp Memory Abstraction phía dưới.
+            </p>
+
+            <h2>8. Memory Stack trong AUTOSAR</h2>
+
+            <p>
+                Một cách nhìn đơn giản về Memory Stack là:
+            </p>
+
+            <pre><code>+--------------------------------------+
+| Application / BSW                    |
++--------------------------------------+
+                    |
+                    v
++--------------------------------------+
+| NvM                                  |
+| NVRAM Manager                        |
++--------------------------------------+
+                    |
+                    v
++--------------------------------------+
+| MemIf                                |
+| Memory Abstraction Interface         |
++--------------------------------------+
+                    |
+                    v
++--------------------------------------+
+| Ea / Fee                             |
+| EEPROM Abstraction / Flash EEPROM    |
++--------------------------------------+
+                    |
+                    v
++--------------------------------------+
+| Eep / Fls                            |
+| EEPROM Driver / Flash Driver         |
++--------------------------------------+
+                    |
+                    v
++--------------------------------------+
+| Memory Hardware                      |
+| EEPROM / Flash                       |
++--------------------------------------+
+</code></pre>
+
+            <p>
+                Đây là mô hình quan trọng khi học AUTOSAR Classic Memory Stack.
+                Tên và sự xuất hiện của từng module có thể phụ thuộc vào
+                loại memory và kiến trúc ECU.
+            </p>
+
+            <h2>9. NVRAM Manager - NvM</h2>
+
+            <p>
+                NvM, hay NVRAM Manager, là một module quan trọng ở phía trên
+                của Memory Stack.
+            </p>
+
+            <p>
+                Nó cung cấp cơ chế quản lý các dữ liệu cần được lưu trữ
+                trong non-volatile memory.
+            </p>
+
+            <pre><code>Application / BSW
+        |
+        v
+       NvM
+        |
+        v
+     MemIf
+        |
+        v
+ Memory Driver
+        |
+        v
+     NVRAM
+</code></pre>
+
+            <p>
+                Application không nhất thiết phải trực tiếp điều khiển
+                Flash hoặc EEPROM.
+            </p>
+
+            <h2>10. NvM Block</h2>
+
+            <p>
+                Một khái niệm rất quan trọng là <strong>NvM Block</strong>.
+            </p>
+
+            <p>
+                Dữ liệu được quản lý bởi NvM thường được tổ chức thành
+                các block logic.
+            </p>
+
+            <pre><code>                NvM
+                 |
+       +---------+---------+
+       |         |         |
+       v         v         v
+    Block A   Block B   Block C
+
+    Config    Counter    Learned Data
+</code></pre>
+
+            <p>
+                Mỗi block có thể đại diện cho một nhóm dữ liệu cần được
+                quản lý và lưu trữ.
+            </p>
+
+            <h2>11. Vì sao cần NvM Block?</h2>
+
+            <p>
+                Nếu Application trực tiếp quản lý toàn bộ memory address,
+                phần mềm sẽ trở nên phụ thuộc mạnh vào Hardware.
+            </p>
+
+            <p>
+                Thay vào đó, Application có thể nghĩ theo logic:
+            </p>
+
+            <pre><code>"Tôi cần lưu dữ liệu cấu hình"
+              |
+              v
+          NvM Block
+              |
+              v
+       Memory Stack
+              |
+              v
+       Physical Memory
+</code></pre>
+
+            <p>
+                Điều này giúp tách dữ liệu logic khỏi địa chỉ vật lý
+                của memory.
+            </p>
+
+            <h2>12. RAM Block và ROM Block</h2>
+
+            <p>
+                Khi làm việc với NvM, có thể gặp khái niệm dữ liệu RAM,
+                ROM và NV liên quan đến một block.
+            </p>
+
+            <pre><code>             NvM Block
+                 |
+        +--------+--------+
+        |        |        |
+        v        v        v
+      RAM      ROM       NV
+    Runtime   Default   Persistent
+    copy      value     storage
+</code></pre>
+
+            <p>
+                Có thể hiểu đơn giản:
+            </p>
+
+            <ul>
+                <li><strong>RAM:</strong> bản dữ liệu đang được sử dụng trong runtime.</li>
+                <li><strong>ROM:</strong> giá trị mặc định hoặc giá trị khởi tạo.</li>
+                <li><strong>NV:</strong> dữ liệu được lưu trong non-volatile memory.</li>
+            </ul>
+
+            <h2>13. Luồng ghi dữ liệu vào NVRAM</h2>
+
+            <p>
+                Giả sử Application thay đổi một cấu hình:
+            </p>
+
+            <pre><code>New Configuration
+        |
+        v
+    Application
+        |
+        v
+       NvM
+        |
+        v
+      MemIf
+        |
+        v
+   Memory Abstraction
+        |
+        v
+     Driver
+        |
+        v
+   Flash / EEPROM
+</code></pre>
+
+            <p>
+                Dữ liệu cuối cùng được lưu vào non-volatile memory.
+            </p>
+
+            <h2>14. Luồng đọc dữ liệu từ NVRAM</h2>
+
+            <p>
+                Khi ECU khởi động lại, dữ liệu persistent có thể được
+                đọc từ memory.
+            </p>
+
+            <pre><code>Flash / EEPROM
+       |
+       v
+    Driver
+       |
+       v
+Memory Abstraction
+       |
+       v
+      MemIf
+       |
+       v
+      NvM
+       |
+       v
+Application / BSW
+</code></pre>
+
+            <p>
+                Application sau đó có thể sử dụng dữ liệu đã được khôi phục.
+            </p>
+
+            <h2>15. MemIf là gì?</h2>
+
+            <p>
+                MemIf là Memory Abstraction Interface.
+                Nó nằm giữa NvM và các lớp memory abstraction phía dưới.
+            </p>
+
+            <pre><code>        NvM
+         |
+         v
+       MemIf
+       /   \
+      v     v
+    Fee     Ea
+     |       |
+     v       v
+   Flash   EEPROM
+</code></pre>
+
+            <p>
+                MemIf giúp NvM không cần phụ thuộc trực tiếp vào một loại
+                memory abstraction cụ thể.
+            </p>
+
+            <h2>16. Fee là gì?</h2>
+
+            <p>
+                Fee là Flash EEPROM Emulation.
+                Nó cung cấp một abstraction để sử dụng Flash theo cách
+                phù hợp với mô hình EEPROM-like storage.
+            </p>
+
+            <p>
+                Có thể hình dung:
+            </p>
+
+            <pre><code>          NvM
+           |
+           v
+         MemIf
+           |
+           v
+          Fee
+           |
+           v
+      Flash Driver
+           |
+           v
+         Flash
+</code></pre>
+
+            <p>
+                Điều này đặc biệt hữu ích khi ECU không có EEPROM vật lý
+                nhưng cần cơ chế lưu dữ liệu non-volatile giống EEPROM.
+            </p>
+
+            <h2>17. Ea là gì?</h2>
+
+            <p>
+                Ea là EEPROM Abstraction.
+                Nó cung cấp lớp abstraction cho EEPROM phía dưới.
+            </p>
+
+            <pre><code>          NvM
+           |
+           v
+         MemIf
+           |
+           v
+           Ea
+           |
+           v
+     EEPROM Driver
+           |
+           v
+         EEPROM
+</code></pre>
+
+            <p>
+                Vì vậy, Fee và Ea đều có thể nằm bên dưới MemIf,
+                nhưng phục vụ các loại memory khác nhau.
+            </p>
+
+            <h2>18. Fee và Ea khác nhau</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Module</th>
+                        <th>Vai trò</th>
+                        <th>Memory phía dưới</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Fee</td>
+                        <td>EEPROM Emulation</td>
+                        <td>Flash</td>
+                    </tr>
+                    <tr>
+                        <td>Ea</td>
+                        <td>EEPROM Abstraction</td>
+                        <td>EEPROM</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Đây là một distinction quan trọng khi đọc Memory Stack
+                của một ECU.
+            </p>
+
+            <h2>19. Flash Driver và EEPROM Driver</h2>
+
+            <p>
+                Ở tầng thấp hơn nữa là các Driver tương ứng với memory hardware.
+            </p>
+
+            <pre><code>Fee
+ |
+ v
+Flash Driver
+ |
+ v
+Flash Hardware
+</code></pre>
+
+            <p>
+                hoặc:
+            </p>
+
+            <pre><code>Ea
+ |
+ v
+EEPROM Driver
+ |
+ v
+EEPROM Hardware
+</code></pre>
+
+            <p>
+                Driver chịu trách nhiệm giao tiếp với memory controller
+                hoặc hardware interface tương ứng.
+            </p>
+
+            <h2>20. Memory Stack hoàn chỉnh</h2>
+
+            <p>
+                Khi ghép các thành phần lại, ta có:
+            </p>
+
+            <pre><code>+--------------------------------------+
+| Application / BSW                    |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+| NvM                                  |
+| NVRAM Manager                        |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+| MemIf                                |
+| Memory Abstraction Interface         |
++------------------+-------------------+
+                   |
+             +-----+-----+
+             |           |
+             v           v
+           Fee           Ea
+             |           |
+             v           v
+          Fls Driver   Eep Driver
+             |           |
+             v           v
+           Flash      EEPROM
+</code></pre>
+
+            <p>
+                Đây là một trong những diagram quan trọng nhất của bài học.
+            </p>
+
+            <h2>21. Memory Stack và Hardware Abstraction</h2>
+
+            <p>
+                Tương tự Communication Stack, Memory Stack cũng áp dụng
+                nguyên tắc Hardware Abstraction.
+            </p>
+
+            <pre><code>Application
+     |
+     | Logical data
+     v
+NvM
+     |
+     v
+MemIf
+     |
+     v
+Fee / Ea
+     |
+     v
+Memory Driver
+     |
+     v
+Memory Hardware
+</code></pre>
+
+            <p>
+                Application tập trung vào dữ liệu cần lưu thay vì
+                địa chỉ vật lý của Flash hoặc EEPROM.
+            </p>
+
+            <h2>22. Memory Stack và tính độc lập Hardware</h2>
+
+            <p>
+                Giả sử một ECU sử dụng Flash:
+            </p>
+
+            <pre><code>Application
+     |
+     v
+NvM
+     |
+     v
+Fee
+     |
+     v
+Flash Driver
+     |
+     v
+Flash
+</code></pre>
+
+            <p>
+                Một ECU khác có thể sử dụng EEPROM:
+            </p>
+
+            <pre><code>Application
+     |
+     v
+NvM
+     |
+     v
+Ea
+     |
+     v
+EEPROM Driver
+     |
+     v
+EEPROM
+</code></pre>
+
+            <p>
+                Phía Application có thể giữ cách tiếp cận logic tương tự,
+                trong khi phần dưới thay đổi theo Hardware.
+            </p>
+
+            <h2>23. Memory Stack và Persistence</h2>
+
+            <p>
+                Persistence có nghĩa là dữ liệu tiếp tục tồn tại sau khi
+                ECU restart hoặc mất nguồn, tùy theo yêu cầu của hệ thống.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>Before Power Off:
+
+LearnedValue = 125
+        |
+        v
+       NvM
+        |
+        v
+     NVRAM
+
+
+Power Off
+    |
+    v
+ECU Restart
+    |
+    v
+Read NVRAM
+    |
+    v
+LearnedValue = 125
+</code></pre>
+
+            <p>
+                Đây là một use case quan trọng của Memory Stack trong automotive.
+            </p>
+
+            <h2>24. Runtime Data và Persistent Data</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Runtime Data</th>
+                        <th>Persistent Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Thường nằm trong RAM</td>
+                        <td>Được lưu trong non-volatile memory</td>
+                    </tr>
+                    <tr>
+                        <td>Phục vụ quá trình ECU đang chạy</td>
+                        <td>Cần tồn tại qua restart/power cycle</td>
+                    </tr>
+                    <tr>
+                        <td>Có thể mất khi power off</td>
+                        <td>Được thiết kế để giữ lại</td>
+                    </tr>
+                    <tr>
+                        <td>Ví dụ: temporary state</td>
+                        <td>Ví dụ: learned configuration</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>25. Khi nào không nên ghi Flash liên tục?</h2>
+
+            <p>
+                Non-volatile memory không phải là nơi nên ghi dữ liệu
+                liên tục cho mọi thay đổi nhỏ.
+            </p>
+
+            <p>
+                Ví dụ không hợp lý:
+            </p>
+
+            <pre><code>Sensor update: mỗi 10 ms
+        |
+        v
+Write Flash
+        |
+        v
+Write Flash
+        |
+        v
+Write Flash
+        |
+       ...
+</code></pre>
+
+            <p>
+                Việc ghi quá thường xuyên có thể gây vấn đề về hiệu năng
+                và endurance của memory.
+            </p>
+
+            <p>
+                Vì vậy kiến trúc thực tế cần cân nhắc:
+            </p>
+
+            <ul>
+                <li>Tần suất ghi.</li>
+                <li>Khi nào dữ liệu thực sự cần persistent.</li>
+                <li>Chiến lược lưu dữ liệu.</li>
+                <li>Endurance của memory.</li>
+                <li>Thời gian ghi.</li>
+            </ul>
+
+            <h2>26. Write Cycle</h2>
+
+            <p>
+                Non-volatile memory thường có giới hạn về số lần ghi/xóa.
+                Đây là một yếu tố quan trọng trong thiết kế automotive ECU.
+            </p>
+
+            <pre><code>Write
+  |
+  v
+Memory Cell
+  |
+  v
+Wear
+  |
+  v
+Many write cycles
+  |
+  v
+Limited endurance
+</code></pre>
+
+            <p>
+                Vì vậy Memory Stack không chỉ đơn giản là "ghi dữ liệu vào Flash".
+                Hệ thống phải quản lý cách dữ liệu được lưu trữ phù hợp.
+            </p>
+
+            <h2>27. Data Consistency</h2>
+
+            <p>
+                Một vấn đề khác là dữ liệu phải nhất quán.
+            </p>
+
+            <p>
+                Ví dụ ECU đang ghi cấu hình thì bị mất nguồn:
+            </p>
+
+            <pre><code>Application
+    |
+    v
+Write Configuration
+    |
+    v
+Memory Write
+    |
+    X
+Power Loss
+</code></pre>
+
+            <p>
+                Nếu không có cơ chế phù hợp, dữ liệu có thể bị hỏng hoặc
+                không còn ở trạng thái mong muốn.
+            </p>
+
+            <p>
+                Vì vậy thiết kế Memory Stack cần quan tâm đến các vấn đề như:
+            </p>
+
+            <ul>
+                <li>Data integrity.</li>
+                <li>Consistency.</li>
+                <li>Default value.</li>
+                <li>Recovery.</li>
+                <li>Invalid data detection.</li>
+            </ul>
+
+            <h2>28. Default Data</h2>
+
+            <p>
+                Hệ thống có thể cần một giá trị mặc định trong trường hợp
+                dữ liệu persistent không hợp lệ hoặc chưa từng được lưu.
+            </p>
+
+            <pre><code>Read NVRAM
+    |
+    +---- Valid
+    |      |
+    |      v
+    |   Use stored data
+    |
+    +---- Invalid
+           |
+           v
+      Use default data
+</code></pre>
+
+            <p>
+                Đây là một cơ chế rất quan trọng để hệ thống có thể
+                khởi động ở trạng thái xác định.
+            </p>
+
+            <h2>29. Startup và Memory Stack</h2>
+
+            <p>
+                Khi ECU startup, dữ liệu persistent có thể được khôi phục
+                từ NVRAM.
+            </p>
+
+            <pre><code>ECU Startup
+     |
+     v
+Initialize BSW
+     |
+     v
+Initialize Memory Stack
+     |
+     v
+Read Persistent Data
+     |
+     v
+Validate Data
+     |
+     v
+Load Application State
+     |
+     v
+Application Running
+</code></pre>
+
+            <p>
+                Vì vậy Memory Stack có liên hệ với ECU State Management
+                và quá trình startup của hệ thống.
+            </p>
+
+            <h2>30. Shutdown và Memory Stack</h2>
+
+            <p>
+                Khi ECU chuẩn bị shutdown, hệ thống có thể cần lưu những
+                dữ liệu quan trọng trước khi mất nguồn.
+            </p>
+
+            <pre><code>Application Running
+       |
+       v
+Shutdown Request
+       |
+       v
+Prepare Persistent Data
+       |
+       v
+Write NVRAM
+       |
+       v
+Shutdown
+       |
+       v
+Power Off
+</code></pre>
+
+            <p>
+                Đây là lý do Memory Stack không thể được xem độc lập hoàn toàn
+                với ECU Management.
+            </p>
+
+            <h2>31. Memory Stack và ECU State Management</h2>
+
+            <p>
+                Hai phần này có mối quan hệ trong các giai đoạn startup,
+                running và shutdown.
+            </p>
+
+            <pre><code>       ECU State Management
+              |
+      +-------+-------+
+      |       |       |
+      v       v       v
+   Startup  Running Shutdown
+      |               |
+      v               v
+ Read Memory       Save Memory
+</code></pre>
+
+            <p>
+                Memory Stack xử lý việc truy cập và lưu trữ dữ liệu,
+                còn ECU State Management điều phối trạng thái hoạt động
+                của ECU.
+            </p>
+
+            <h2>32. Memory Stack và Application</h2>
+
+            <p>
+                Application có thể có nhu cầu lưu dữ liệu persistent,
+                nhưng không nên phụ thuộc trực tiếp vào địa chỉ Flash.
+            </p>
+
+            <pre><code>Application
+     |
+     | "Save my configuration"
+     v
+Memory Service
+     |
+     v
+NvM
+     |
+     v
+Memory Stack
+     |
+     v
+Physical Memory
+</code></pre>
+
+            <p>
+                Điều này giữ cho Application ở mức abstraction cao hơn.
+            </p>
+
+            <h2>33. Ví dụ: Lưu cấu hình người dùng</h2>
+
+            <p>
+                Giả sử ECU có một cấu hình:
+            </p>
+
+            <pre><code>UserConfig:
+    Mode = 2
+    FeatureEnabled = TRUE
+</code></pre>
+
+            <p>
+                Khi người dùng thay đổi cấu hình:
+            </p>
+
+            <pre><code>User changes configuration
+          |
+          v
+Application
+          |
+          v
+NvM Block
+          |
+          v
+MemIf
+          |
+          v
+Fee
+          |
+          v
+Flash Driver
+          |
+          v
+Flash
+</code></pre>
+
+            <p>
+                Sau khi ECU mất nguồn và khởi động lại:
+            </p>
+
+            <pre><code>Flash
+  |
+  v
+Flash Driver
+  |
+  v
+Fee
+  |
+  v
+MemIf
+  |
+  v
+NvM
+  |
+  v
+Application
+  |
+  v
+UserConfig restored
+</code></pre>
+
+            <h2>34. Ví dụ: Lưu dữ liệu học được</h2>
+
+            <p>
+                Một ECU có thể có một giá trị được hệ thống học trong quá trình
+                hoạt động.
+            </p>
+
+            <pre><code>LearnedValue = 125
+            <p>
+                Nếu giá trị này cần được giữ lại sau khi ECU restart,
+                nó có thể được đưa vào một vùng persistent storage.
+            </p>
+
+            <pre><code>LearnedValue
+      |
+      v
+   NvM Block
+      |
+      v
+     NVRAM
+      |
+      X
+ Power Off
+      |
+      v
+ ECU Restart
+      |
+      v
+LearnedValue = 125
+</code></pre>
+
+            <h2>35. Memory Stack và Diagnostic Data</h2>
+
+            <p>
+                Diagnostic system cũng có thể cần lưu một số dữ liệu persistent,
+                chẳng hạn thông tin phục vụ theo dõi trạng thái hoặc lỗi.
+            </p>
+
+            <pre><code>Diagnostic Event
+       |
+       v
+Diagnostic / BSW
+       |
+       v
+Persistent Storage
+       |
+       v
+NvM
+       |
+       v
+NVRAM
+</code></pre>
+
+            <p>
+                Tuy nhiên, cách tổ chức cụ thể phụ thuộc vào Diagnostic architecture
+                của ECU.
+            </p>
+
+            <h2>36. Memory Stack và Error Handling</h2>
+
+            <p>
+                Một Memory operation có thể không thành công.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Memory hardware không phản hồi.</li>
+                <li>Write operation thất bại.</li>
+                <li>Dữ liệu không hợp lệ.</li>
+                <li>Power loss trong quá trình ghi.</li>
+                <li>Memory block bị lỗi.</li>
+            </ul>
+
+            <p>
+                Vì vậy Application không nên giả định rằng:
+            </p>
+
+            <pre><code>"Write requested" = "Data chắc chắn đã được lưu"
+</code></pre>
+
+            <p>
+                Hệ thống cần có cơ chế phản ánh trạng thái của Memory operation
+                để các thành phần phía trên có thể xử lý phù hợp.
+            </p>
+
+            <h2>37. Phân tích khi dữ liệu không được lưu</h2>
+
+            <p>
+                Giả sử Application yêu cầu lưu dữ liệu nhưng sau khi restart
+                dữ liệu bị mất.
+            </p>
+
+            <p>
+                Không nên ngay lập tức kết luận Flash bị hỏng.
+            </p>
+
+            <p>
+                Có thể phân tích:
+            </p>
+
+            <ol>
+                <li>Application có thực sự cập nhật dữ liệu cần lưu không?</li>
+                <li>NvM có nhận yêu cầu không?</li>
+                <li>Block có đúng không?</li>
+                <li>Memory operation có được thực hiện không?</li>
+                <li>MemIf có route đúng không?</li>
+                <li>Fee hoặc Ea có hoạt động không?</li>
+                <li>Driver có giao tiếp được với Hardware không?</li>
+                <li>Memory Hardware có ghi thành công không?</li>
+                <li>Dữ liệu có hợp lệ sau khi đọc lại không?</li>
+            </ol>
+
+            <h2>38. Debugging Memory Stack</h2>
+
+            <p>
+                Có thể debug theo chuỗi:
+            </p>
+
+            <pre><code>Application
+     |
+     | Data correct?
+     v
+NvM
+     |
+     | Request received?
+     v
+MemIf
+     |
+     | Correct route?
+     v
+Fee / Ea
+     |
+     | Operation executed?
+     v
+Memory Driver
+     |
+     | Hardware access?
+     v
+Flash / EEPROM
+</code></pre>
+
+            <p>
+                Sau đó kiểm tra lại chiều đọc:
+            </p>
+
+            <pre><code>Flash / EEPROM
+      |
+      v
+Driver
+      |
+      v
+Fee / Ea
+      |
+      v
+MemIf
+      |
+      v
+NvM
+      |
+      v
+Application
+</code></pre>
+
+            <h2>39. Ví dụ lỗi: đọc được default thay vì dữ liệu đã lưu</h2>
+
+            <p>
+                Giả sử Application mong đợi:
+            </p>
+
+            <pre><code>Mode = 2
+</code></pre>
+
+            <p>
+                nhưng sau restart lại nhận:
+            </p>
+
+            <pre><code>Mode = 0
+</code></pre>
+
+            <p>
+                Có thể có nhiều nguyên nhân:
+            </p>
+
+            <ul>
+                <li>Dữ liệu chưa từng được ghi.</li>
+                <li>Write operation thất bại.</li>
+                <li>Block không hợp lệ.</li>
+                <li>Dữ liệu bị phát hiện là invalid.</li>
+                <li>Hệ thống sử dụng default value.</li>
+                <li>Read operation thất bại.</li>
+            </ul>
+
+            <p>
+                Do đó cần kiểm tra từng lớp thay vì chỉ kiểm tra Application.
+            </p>
+
+            <h2>40. Memory Stack và Data Integrity</h2>
+
+            <p>
+                Trong automotive ECU, dữ liệu persistent không chỉ cần
+                được lưu mà còn cần đảm bảo tính toàn vẹn phù hợp với yêu cầu.
+            </p>
+
+            <p>
+                Có thể hình dung:
+            </p>
+
+            <pre><code>Stored Data
+     |
+     v
+Integrity Check
+     |
+ +---+---+
+ |       |
+ v       v
+Valid   Invalid
+ |       |
+ v       v
+Use     Recover /
+Data    Default
+</code></pre>
+
+            <p>
+                Các cơ chế cụ thể phụ thuộc vào thiết kế và yêu cầu của hệ thống.
+            </p>
+
+            <h2>41. Memory Stack và giới hạn bộ nhớ</h2>
+
+            <p>
+                Memory là tài nguyên hữu hạn.
+                Khi thiết kế ECU, cần cân nhắc:
+            </p>
+
+            <ul>
+                <li>Dung lượng RAM.</li>
+                <li>Dung lượng Flash.</li>
+                <li>Dung lượng EEPROM hoặc vùng emulated EEPROM.</li>
+                <li>Kích thước mỗi block.</li>
+                <li>Số lượng block.</li>
+                <li>Memory overhead.</li>
+            </ul>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>Flash Capacity
++--------------------------------+
+| Firmware                       |
+| Calibration                    |
+| Persistent Data                |
+| Reserved Area                  |
++--------------------------------+
+</code></pre>
+
+            <h2>42. RAM và Flash có vai trò khác nhau</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>RAM</th>
+                        <th>Flash / NVRAM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dữ liệu runtime</td>
+                        <td>Dữ liệu persistent</td>
+                    </tr>
+                    <tr>
+                        <td>Truy cập nhanh</td>
+                        <td>Ghi thường chậm hơn RAM</td>
+                    </tr>
+                    <tr>
+                        <td>Thông thường mất khi power off</td>
+                        <td>Giữ dữ liệu qua power cycle</td>
+                    </tr>
+                    <tr>
+                        <td>Phù hợp cho temporary state</td>
+                        <td>Phù hợp cho configuration / learned data</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>43. Memory Stack và Software Architecture</h2>
+
+            <p>
+                Memory Stack cũng thể hiện rõ nguyên tắc phân tách trách nhiệm
+                của AUTOSAR.
+            </p>
+
+            <pre><code>Application
+    |
+    | What data do I need to store?
+    v
+NvM
+    |
+    | How is the logical block managed?
+    v
+MemIf
+    |
+    | Where should the request go?
+    v
+Fee / Ea
+    |
+    | How is this memory type abstracted?
+    v
+Driver
+    |
+    | How do I access the hardware?
+    v
+Memory Hardware
+</code></pre>
+
+            <h2>44. Memory Stack khác Communication Stack như thế nào?</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Communication Stack</th>
+                        <th>Memory Stack</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Trao đổi dữ liệu</td>
+                        <td>Lưu trữ dữ liệu</td>
+                    </tr>
+                    <tr>
+                        <td>CAN / LIN / Ethernet</td>
+                        <td>RAM / Flash / EEPROM</td>
+                    </tr>
+                    <tr>
+                        <td>TX / RX</td>
+                        <td>Read / Write</td>
+                    </tr>
+                    <tr>
+                        <td>COM / PduR / Interface / Driver</td>
+                        <td>NvM / MemIf / Fee/Ea / Driver</td>
+                    </tr>
+                    <tr>
+                        <td>Network Hardware</td>
+                        <td>Memory Hardware</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>45. Một điểm cần phân biệt: Program Memory và Data Memory</h2>
+
+            <p>
+                Không phải mọi Flash đều được sử dụng giống nhau.
+            </p>
+
+            <pre><code>Memory
+ |
+ +---- Program / Code
+ |
+ +---- Calibration
+ |
+ +---- Persistent Data
+ |
+ +---- Configuration
+</code></pre>
+
+            <p>
+                Program memory chủ yếu chứa firmware/code,
+                trong khi persistent data có thể được quản lý bởi
+                Memory Stack tùy kiến trúc ECU.
+            </p>
+
+            <h2>46. Một luồng hoàn chỉnh từ Application đến Flash</h2>
+
+            <p>
+                Hãy tổng hợp toàn bộ kiến trúc bằng một ví dụ:
+                Application muốn lưu một cấu hình.
+            </p>
+
+            <pre><code>Application
+    |
+    | Configuration
+    v
+   NvM
+    |
+    | NvM Block
+    v
+  MemIf
+    |
+    v
+   Fee
+    |
+    v
+Flash Driver
+    |
+    v
+ Flash Hardware
+</code></pre>
+
+            <p>
+                Khi đọc lại:
+            </p>
+
+            <pre><code>Flash Hardware
+    |
+    v
+Flash Driver
+    |
+    v
+   Fee
+    |
+    v
+  MemIf
+    |
+    v
+   NvM
+    |
+    v
+Application
+</code></pre>
+
+            <p>
+                Đây là flow cốt lõi cần nắm trước khi học sâu hơn về từng
+                Memory module.
+            </p>
+
+            <h2>47. Checklist phân tích Memory Stack</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>Nội dung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Dữ liệu là runtime hay persistent?</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Dữ liệu được lưu trong RAM hay non-volatile memory?</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Dữ liệu thuộc NvM Block nào?</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>NvM có nhận yêu cầu không?</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>MemIf route request tới đâu?</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Sử dụng Fee hay Ea?</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Memory Driver nào được sử dụng?</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Hardware memory là gì?</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Write operation có thành công không?</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Read-back data có đúng và hợp lệ không?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>48. Các khái niệm cần nhớ</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RAM</td>
+                        <td>Bộ nhớ volatile dùng cho dữ liệu runtime</td>
+                    </tr>
+                    <tr>
+                        <td>Flash</td>
+                        <td>Non-volatile memory có thể lưu code và dữ liệu</td>
+                    </tr>
+                    <tr>
+                        <td>EEPROM</td>
+                        <td>Non-volatile memory cho dữ liệu persistent</td>
+                    </tr>
+                    <tr>
+                        <td>NVRAM</td>
+                        <td>Khái niệm vùng dữ liệu cần được giữ lại qua power cycle</td>
+                    </tr>
+                    <tr>
+                        <td>NvM</td>
+                        <td>Quản lý dữ liệu NVRAM ở mức logical</td>
+                    </tr>
+                    <tr>
+                        <td>NvM Block</td>
+                        <td>Đơn vị dữ liệu logic được NvM quản lý</td>
+                    </tr>
+                    <tr>
+                        <td>MemIf</td>
+                        <td>Interface abstraction giữa NvM và memory abstraction</td>
+                    </tr>
+                    <tr>
+                        <td>Fee</td>
+                        <td>Flash EEPROM Emulation</td>
+                    </tr>
+                    <tr>
+                        <td>Ea</td>
+                        <td>EEPROM Abstraction</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Driver</td>
+                        <td>Giao tiếp với memory hardware</td>
+                    </tr>
+                    <tr>
+                        <td>Persistence</td>
+                        <td>Khả năng giữ dữ liệu qua restart hoặc power cycle</td>
+                    </tr>
+                    <tr>
+                        <td>Data Integrity</td>
+                        <td>Đảm bảo dữ liệu được lưu và đọc ở trạng thái hợp lệ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>49. Tóm tắt</h2>
+
+            <div class="note">
+
+                <p>
+                    Memory Stack là phần kiến trúc AUTOSAR giúp quản lý việc
+                    lưu trữ dữ liệu từ Application/BSW xuống Memory Hardware.
+                    Nó đặc biệt quan trọng đối với các dữ liệu cần tồn tại
+                    qua reset hoặc power cycle.
+                </p>
+
+                <p>
+                    Luồng ghi dữ liệu cơ bản:
+                </p>
+
+                <pre><code>Application / BSW
+    -> NvM
+    -> MemIf
+    -> Fee / Ea
+    -> Memory Driver
+    -> Flash / EEPROM
+</code></pre>
+
+                <p>
+                    Luồng đọc dữ liệu:
+                </p>
+
+                <pre><code>Flash / EEPROM
+    -> Memory Driver
+    -> Fee / Ea
+    -> MemIf
+    -> NvM
+    -> Application / BSW
+</code></pre>
+
+                <p>
+                    Ba điểm quan trọng cần nhớ:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>NvM</strong> quản lý dữ liệu persistent ở mức logical
+                        thông qua các NvM Block.
+                    </li>
+                    <li>
+                        <strong>MemIf và Fee/Ea</strong> tạo abstraction giữa
+                        NVRAM management và loại memory cụ thể.
+                    </li>
+                    <li>
+                        <strong>Memory Driver</strong> nằm gần Hardware và chịu
+                        trách nhiệm giao tiếp với Flash hoặc EEPROM.
+                    </li>
+                </ul>
+
+                <p>
+                    Khi debug Memory Stack, hãy xác định dữ liệu thuộc loại nào,
+                    đi qua block nào, qua từng abstraction layer nào và cuối cùng
+                    có thực sự được ghi hoặc đọc đúng từ Memory Hardware hay không.
+                </p>
+
+            </div>
+
+            <div class="pager">
+                <a href="lesson-16.html">← Bài trước</a>
+                <a href="lesson-18.html">Bài tiếp theo →</a>
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

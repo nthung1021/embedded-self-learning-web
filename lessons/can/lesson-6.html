@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 6: Bus Arbitration | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html" class="active">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 6: Bus Arbitration</h1>
+
+                <p>
+                    Trong CAN, nhiều ECU có thể muốn truyền dữ liệu lên bus tại cùng một thời điểm.
+                    Vì CAN không sử dụng một node trung tâm để cấp quyền truyền,
+                    hệ thống cần một cơ chế xác định <strong>node nào được truyền trước</strong>.
+                </p>
+
+                <p>
+                    Cơ chế này được gọi là <strong>Bus Arbitration</strong>.
+                    CAN sử dụng phương pháp <strong>bitwise arbitration</strong>,
+                    trong đó các node cùng truyền Identifier và đồng thời giám sát trạng thái
+                    thực tế trên bus.
+                </p>
+
+                <div class="note">
+                    <strong>Ý tưởng cốt lõi:</strong>
+                    CAN cho phép nhiều node bắt đầu truyền cùng lúc mà không cần một node
+                    trung tâm điều phối. Node có message ưu tiên cao hơn sẽ tiếp tục truyền,
+                    trong khi các node thua arbitration sẽ tự động dừng truyền.
+                </div>
+
+                <h2>1. Tại sao CAN cần Arbitration?</h2>
+
+                <p>
+                    CAN là một mạng <strong>multi-master</strong>.
+                    Điều này có nghĩa là bất kỳ node nào cũng có thể bắt đầu truyền khi bus
+                    đang ở trạng thái cho phép.
+                </p>
+
+                <p>
+                    Ví dụ, tại cùng một thời điểm:
+                </p>
+
+                <ul>
+                    <li>ECU động cơ muốn gửi thông tin tốc độ động cơ.</li>
+                    <li>ECU phanh muốn gửi thông tin trạng thái phanh.</li>
+                    <li>ECU thân xe muốn gửi trạng thái công tắc.</li>
+                </ul>
+
+                <p>
+                    Nếu tất cả cùng truyền mà không có cơ chế phân xử,
+                    các tín hiệu có thể chồng lên nhau và dữ liệu sẽ bị phá hủy.
+                </p>
+
+                <p>
+                    CAN giải quyết vấn đề này bằng cách cho phép các node
+                    <strong>cùng bắt đầu truyền</strong> nhưng sẽ xác định node thắng
+                    trong quá trình truyền Identifier.
+                </p>
+
+                <h2>2. Hai trạng thái logic của CAN Bus</h2>
+
+                <p>
+                    Bus CAN có hai trạng thái logic cơ bản:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Trạng thái</th>
+                        <th>Logic</th>
+                        <th>Đặc điểm</th>
+                    </tr>
+                    <tr>
+                        <td>Dominant</td>
+                        <td><strong>0</strong></td>
+                        <td>Thắng khi đồng thời xuất hiện với recessive</td>
+                    </tr>
+                    <tr>
+                        <td>Recessive</td>
+                        <td><strong>1</strong></td>
+                        <td>Bị dominant ghi đè</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Có thể hình dung quy tắc kết hợp đơn giản như sau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Node A</th>
+                        <th>Node B</th>
+                        <th>Trạng thái bus</th>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td><strong>0</strong></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>0</td>
+                        <td><strong>0</strong></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Quy tắc quan trọng nhất trong arbitration:
+                    <strong>Dominant 0 thắng Recessive 1.</strong>
+                </div>
+
+                <h2>3. Bitwise Arbitration hoạt động như thế nào?</h2>
+
+                <p>
+                    Trong quá trình arbitration, mỗi node truyền từng bit của Identifier
+                    lên bus và đồng thời đọc lại giá trị thực tế trên bus.
+                </p>
+
+                <p>
+                    Nếu node truyền:
+                </p>
+
+                <pre><code>Recessive (1)</code></pre>
+
+                <p>
+                    nhưng đọc được:
+                </p>
+
+                <pre><code>Dominant (0)</code></pre>
+
+                <p>
+                    thì node đó biết rằng một node khác đang truyền một bit dominant.
+                    Nó đã <strong>thua arbitration</strong> và phải ngừng truyền.
+                </p>
+
+                <svg viewBox="0 0 760 220" role="img" aria-label="Sơ đồ bitwise arbitration giữa hai node CAN"
+                    style="width:100%;height:auto;max-width:760px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="20" y="30" width="180" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="200" y="30" width="180" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="380" y="30" width="180" height="45" fill="rgba(224,168,0,.25)" />
+                        <rect x="560" y="30" width="180" height="45" fill="rgba(224,168,0,.25)" />
+
+                        <rect x="20" y="95" width="180" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="200" y="95" width="180" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="380" y="95" width="180" height="45" fill="rgba(224,168,0,.25)" />
+                        <rect x="560" y="95" width="180" height="45" fill="rgba(224,168,0,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+
+                        <text x="110" y="58">Bit 1</text>
+                        <text x="290" y="58">Bit 2</text>
+                        <text x="470" y="58">Bit 3</text>
+                        <text x="650" y="58">Bit 4</text>
+
+                        <text x="110" y="123">0 / 0</text>
+                        <text x="290" y="123">0 / 1</text>
+                        <text x="470" y="123">0 / 0</text>
+                        <text x="650" y="123">...</text>
+
+                        <text x="380" y="175">Node gửi recessive nhưng đọc dominant → thua arbitration</text>
+                    </g>
+
+                    <text x="10" y="118" font-size="11" fill="currentColor" text-anchor="start">
+                        Bus:
+                    </text>
+
+                    <text x="380" y="205" font-size="11" fill="currentColor" text-anchor="middle">
+                        Node thắng tiếp tục truyền frame
+                    </text>
+                </svg>
+
+                <h2>4. Ví dụ đơn giản: Hai node cùng truyền</h2>
+
+                <p>
+                    Giả sử Node A và Node B cùng muốn truyền một Standard CAN frame.
+                    Hai node có Identifier:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Node</th>
+                        <th>CAN ID</th>
+                        <th>Binary</th>
+                    </tr>
+                    <tr>
+                        <td>Node A</td>
+                        <td><code>0x100</code></td>
+                        <td><code>001 0000 0000</code></td>
+                    </tr>
+                    <tr>
+                        <td>Node B</td>
+                        <td><code>0x200</code></td>
+                        <td><code>010 0000 0000</code></td>
+                    </tr>
+                </table>
+
+                <p>
+                    Hai node bắt đầu truyền Identifier từ bit có trọng số cao nhất.
+                </p>
+
+                <h3>Bit đầu tiên</h3>
+
+                <pre><code>Node A: 0
+Node B: 0
+Bus:    0</code></pre>
+
+                <p>
+                    Cả hai node đều truyền dominant nên không có node nào thua.
+                </p>
+
+                <h3>Bit thứ hai</h3>
+
+                <pre><code>Node A: 0
+Node B: 1
+Bus:    0</code></pre>
+
+                <p>
+                    Node B đã truyền recessive <code>1</code> nhưng đọc được dominant
+                    <code>0</code> trên bus.
+                </p>
+
+                <p>
+                    Vì vậy Node B biết rằng nó đã thua arbitration.
+                    Node B dừng truyền và chuyển sang chờ.
+                    Node A tiếp tục truyền frame.
+                </p>
+
+                <div class="note">
+                    Không có dữ liệu nào bị phá hủy trong quá trình này.
+                    Đây là đặc điểm quan trọng của cơ chế
+                    <strong>non-destructive arbitration</strong> của CAN.
+                </div>
+
+                <h2>5. Tại sao gọi là "Non-destructive Arbitration"?</h2>
+
+                <p>
+                    Trong một số cơ chế tranh quyền truyền khác, việc nhiều node cùng truyền
+                    có thể làm dữ liệu bị va chạm và phải truyền lại toàn bộ frame.
+                </p>
+
+                <p>
+                    CAN hoạt động khác:
+                </p>
+
+                <ul>
+                    <li>Các node có thể bắt đầu truyền cùng lúc.</li>
+                    <li>Arbitration xảy ra trong phần đầu của frame.</li>
+                    <li>Node thua dừng truyền ngay khi phát hiện mình thua.</li>
+                    <li>Node thắng tiếp tục truyền mà không cần truyền lại.</li>
+                </ul>
+
+                <p>
+                    Vì vậy arbitration trong CAN được gọi là
+                    <strong>non-destructive</strong>.
+                </p>
+
+                <h2>6. Mối quan hệ giữa CAN ID và Priority</h2>
+
+                <p>
+                    Arbitration khiến Identifier trở thành một phần quan trọng trong việc
+                    xác định priority của message.
+                </p>
+
+                <p>
+                    Trong cùng một dạng Identifier, message có ID số nhỏ hơn thường có
+                    priority cao hơn.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>CAN ID</th>
+                        <th>Priority tương đối</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td><code>0x050</code></td>
+                        <td>Rất cao</td>
+                        <td>Thông tin cần phản hồi nhanh</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x100</code></td>
+                        <td>Cao</td>
+                        <td>Engine information</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x300</code></td>
+                        <td>Trung bình</td>
+                        <td>Vehicle status</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x600</code></td>
+                        <td>Thấp hơn</td>
+                        <td>Thông tin ít gấp</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Đây là quan hệ priority trong arbitration, không phải quy tắc rằng
+                    mọi hệ thống CAN đều phải gán ý nghĩa cụ thể cho các khoảng ID này.
+                    Priority thực tế phụ thuộc vào thiết kế mạng và specification của dự án.
+                </div>
+
+                <h2>7. Arbitration và thời gian thực trong Automotive</h2>
+
+                <p>
+                    Trong hệ thống automotive, một số message có yêu cầu thời gian nghiêm ngặt.
+                    Ví dụ, các thông tin liên quan đến điều khiển hoặc trạng thái quan trọng
+                    có thể cần được truyền trước các message ít quan trọng hơn.
+                </p>
+
+                <p>
+                    Khi nhiều ECU cùng muốn truyền, message có priority cao hơn sẽ giành
+                    quyền truyền trước thông qua arbitration.
+                </p>
+
+                <p>
+                    Vì vậy, khi thiết kế CAN network cần xem xét:
+                </p>
+
+                <ul>
+                    <li>Tần suất truyền của message.</li>
+                    <li>Kích thước frame.</li>
+                    <li>Mức độ ưu tiên.</li>
+                    <li>Deadline hoặc yêu cầu latency.</li>
+                    <li>Khả năng một message ưu tiên thấp phải chờ quá lâu.</li>
+                </ul>
+
+                <h2>8. Arbitration không dựa trên Data</h2>
+
+                <p>
+                    Một điểm quan trọng cần nhớ là CAN không sử dụng phần Data để quyết định
+                    node nào thắng arbitration.
+                </p>
+
+                <p>
+                    Arbitration xảy ra ở phần đầu của frame, đặc biệt là trong quá trình
+                    truyền Identifier và các bit liên quan trước khi dữ liệu được truyền.
+                </p>
+
+                <div class="note">
+                    <strong>Nhớ:</strong>
+                    Nếu hai message có Data khác nhau nhưng Identifier khác nhau,
+                    priority được quyết định trước khi phần Data của message được truyền.
+                </div>
+
+                <h2>9. Điều gì xảy ra với node thua?</h2>
+
+                <p>
+                    Khi một node phát hiện mình thua arbitration, nó không coi đây là
+                    một lỗi truyền thông.
+                </p>
+
+                <p>
+                    Node thua sẽ:
+                </p>
+
+                <ol>
+                    <li>Dừng việc truyền frame hiện tại.</li>
+                    <li>Chờ bus trở lại trạng thái phù hợp.</li>
+                    <li>Thử truyền message của mình vào thời điểm thích hợp tiếp theo.</li>
+                </ol>
+
+                <p>
+                    Điều này khác với trường hợp một node phát hiện lỗi thực sự trong frame.
+                    <strong>Thua arbitration không đồng nghĩa với communication error.</strong>
+                </p>
+
+                <h2>10. Ví dụ với ba node</h2>
+
+                <p>
+                    Giả sử ba ECU cùng bắt đầu truyền:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Node</th>
+                        <th>ID</th>
+                        <th>Binary</th>
+                    </tr>
+                    <tr>
+                        <td>ECU A</td>
+                        <td><code>0x080</code></td>
+                        <td><code>000 1000 0000</code></td>
+                    </tr>
+                    <tr>
+                        <td>ECU B</td>
+                        <td><code>0x100</code></td>
+                        <td><code>001 0000 0000</code></td>
+                    </tr>
+                    <tr>
+                        <td>ECU C</td>
+                        <td><code>0x300</code></td>
+                        <td><code>011 0000 0000</code></td>
+                    </tr>
+                </table>
+
+                <p>
+                    Khi truyền từng bit từ trái sang phải, ECU có ID nhỏ nhất sẽ có lợi thế
+                    vì các bit dominant xuất hiện sớm hơn.
+                </p>
+
+                <pre><code>0x080
+   ↓
+có bit 0 ở vị trí ưu tiên cao
+
+0x100
+   ↓
+có bit 1 ở vị trí đó
+
+0x300
+   ↓
+cũng có bit 1 ở vị trí đó</code></pre>
+
+                <p>
+                    Tại vị trí khác biệt đầu tiên, ECU A truyền dominant trong khi ECU B
+                    và ECU C truyền recessive. ECU B và ECU C phát hiện mình thua và dừng lại.
+                </p>
+
+                <p>
+                    ECU A tiếp tục truyền frame mà không cần bắt đầu lại từ đầu.
+                </p>
+
+                <h2>11. Những điều cần chú ý khi phân bổ ID</h2>
+
+                <ul>
+                    <li>
+                        Không nên gán quá nhiều message với priority rất cao.
+                    </li>
+                    <li>
+                        Message có deadline nghiêm ngặt cần được xem xét priority phù hợp.
+                    </li>
+                    <li>
+                        Message priority thấp vẫn phải có cơ hội được truyền.
+                    </li>
+                    <li>
+                        Cần xem xét tổng bus load thay vì chỉ nhìn vào từng message riêng lẻ.
+                    </li>
+                    <li>
+                        Việc thay đổi CAN ID có thể làm thay đổi thứ tự arbitration của hệ thống.
+                    </li>
+                </ul>
+
+                <h2>12. Ví dụ minh họa trong phần mềm</h2>
+
+                <p>
+                    Trong phần mềm embedded, một message CAN thường được cấu hình với
+                    Identifier và các thông tin truyền khác.
+                </p>
+
+                <pre><code>can_message_t engine_msg = {
+    .id = 0x100,
+    .is_extended = 0,
+    .dlc = 4,
+    .data = {0x12, 0x34, 0x56, 0x78}
+};
+
+can_message_t diagnostic_msg = {
+    .id = 0x700,
+    .is_extended = 0,
+    .dlc = 2,
+    .data = {0x01, 0x02}
+};</code></pre>
+
+                <p>
+                    Nếu cả hai message cần được truyền cùng thời điểm,
+                    message có ID <code>0x100</code> sẽ có priority arbitration cao hơn
+                    message có ID <code>0x700</code>.
+                </p>
+
+                <div class="note">
+                    Trong driver CAN thực tế, việc xếp hàng và thời điểm retry sau khi thua
+                    arbitration thường được CAN controller hoặc CAN driver xử lý.
+                    Application software thường chỉ cần yêu cầu truyền message.
+                </div>
+
+                <h2>13. Arbitration trong CAN FD</h2>
+
+                <p>
+                    CAN FD vẫn giữ cơ chế arbitration cốt lõi của CAN.
+                    Arbitration được thực hiện ở <strong>nominal bit rate</strong>.
+                </p>
+
+                <p>
+                    Sau khi một node giành được quyền truyền, CAN FD có thể chuyển sang
+                    <strong>data bit rate</strong> cao hơn nếu frame sử dụng BRS.
+                </p>
+
+                <p>
+                    Điều này cho phép CAN FD vừa giữ được cơ chế arbitration của CAN,
+                    vừa tăng tốc độ truyền phần dữ liệu.
+                </p>
+
+                <div class="note">
+                    Đây là lý do Bài 4 và Bài 6 có liên hệ trực tiếp:
+                    <strong>CAN FD thay đổi tốc độ truyền dữ liệu nhưng không loại bỏ
+                        cơ chế arbitration của CAN.</strong>
+                </div>
+
+                <h2>14. Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>Bus Arbitration</strong> là cơ chế giúp nhiều CAN node
+                    cùng tranh quyền truyền mà không làm hỏng frame.
+                    <br><br>
+
+                    CAN sử dụng <strong>bitwise arbitration</strong>:
+                    mỗi node vừa truyền Identifier vừa đọc trạng thái thực tế trên bus.
+                    <br><br>
+
+                    <strong>Dominant 0 thắng Recessive 1.</strong>
+                    Nếu một node truyền <code>1</code> nhưng đọc được <code>0</code>,
+                    node đó biết rằng mình đã thua arbitration và dừng truyền.
+                    <br><br>
+
+                    Arbitration là <strong>non-destructive</strong>: node thắng tiếp tục
+                    truyền frame mà không cần truyền lại từ đầu.
+                    <br><br>
+
+                    Vì Identifier tham gia arbitration nên CAN ID cũng đóng vai trò
+                    quan trọng trong việc xác định <strong>message priority</strong>.
+                    Trong cùng dạng Identifier, ID số nhỏ hơn thường có priority cao hơn.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-5.html">← Bài trước</a>
+                    <a class="btn" href="lesson-7.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

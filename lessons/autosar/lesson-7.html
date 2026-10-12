@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 7: Tổng quan Hardware và Hardware Abstraction | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html" class="active" aria-current="page">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 7: Tổng quan Hardware và Hardware Abstraction</h1>
+
+                <p>
+                    Trong kiến trúc <strong>AUTOSAR Classic</strong>, phần mềm cuối cùng vẫn phải
+                    hoạt động trên một hệ thống phần cứng cụ thể. Vì vậy, bên cạnh các Software Layer,
+                    cần hiểu <strong>Hardware</strong> là gì và AUTOSAR sử dụng các lớp
+                    <strong>Hardware Abstraction</strong> như thế nào để giảm sự phụ thuộc
+                    trực tiếp của phần mềm vào phần cứng.
+                </p>
+
+                <p>
+                    Nếu Bài 6 tập trung vào <strong>Basic Software (BSW)</strong>, thì bài này
+                    tập trung vào phần nằm bên dưới BSW:
+                    <strong>Hardware và cách phần mềm tương tác với Hardware thông qua các lớp
+                    trừu tượng hóa.</strong>
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Bài này chỉ tập trung vào tổng quan về Hardware,
+                    Hardware Abstraction và mối quan hệ giữa Hardware với các Software Layer
+                    trong AUTOSAR. Các peripheral, driver, register, MCU cụ thể và cách cấu hình
+                    chi tiết sẽ được tìm hiểu trong các bài chuyên sâu sau.
+                </div>
+
+                <h2>1. Hardware trong một ECU là gì?</h2>
+
+                <p>
+                    <strong>Hardware</strong> là phần vật lý của ECU, bao gồm microcontroller,
+                    bộ nhớ, các peripheral, mạch điện và những thành phần phần cứng khác
+                    cần thiết để ECU thực hiện chức năng.
+                </p>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                    <strong>Software thực hiện chức năng, còn Hardware cung cấp nền tảng vật lý
+                    để Software có thể chạy và tương tác với thế giới bên ngoài.</strong>
+                </p>
+
+                <p>
+                    Một ECU automotive thông thường có thể bao gồm các thành phần như:
+                </p>
+
+                <ul>
+                    <li>Microcontroller (MCU).</li>
+                    <li>Flash và RAM.</li>
+                    <li>GPIO.</li>
+                    <li>Timer và các peripheral khác.</li>
+                    <li>Communication peripherals.</li>
+                    <li>Các mạch giao tiếp với sensor và actuator.</li>
+                    <li>Nguồn và các mạch điện hỗ trợ.</li>
+                </ul>
+
+                <h2>2. Hardware nằm ở đâu trong kiến trúc AUTOSAR?</h2>
+
+                <p>
+                    Hardware nằm ở lớp thấp nhất trong kiến trúc AUTOSAR Classic.
+                    Các Software Layer phía trên sử dụng những lớp BSW để giao tiếp
+                    với Hardware.
+                </p>
+
+                <svg viewBox="0 0 600 500" role="img"
+                    aria-label="Hardware và Hardware Abstraction trong kiến trúc AUTOSAR Classic"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+
+                        <rect x="20" y="20" width="560" height="70" rx="6"
+                            fill="rgba(20,80,107,.18)" />
+
+                        <rect x="20" y="100" width="560" height="65" rx="6"
+                            fill="rgba(224,168,0,.25)" />
+
+                        <rect x="20" y="175" width="560" height="190" rx="6"
+                            fill="rgba(46,139,87,.2)" />
+
+                        <rect x="20" y="375" width="560" height="105" rx="6"
+                            fill="rgba(128,128,128,.2)" />
+
+                    </g>
+
+                    <g font-size="14" fill="currentColor" text-anchor="middle">
+
+                        <text x="300" y="50" font-weight="bold">
+                            Application Software
+                        </text>
+
+                        <text x="300" y="76">
+                            Software Components
+                        </text>
+
+                        <text x="300" y="128" font-weight="bold">
+                            Runtime Environment (RTE)
+                        </text>
+
+                        <text x="300" y="150">
+                            Môi trường giao tiếp của Application
+                        </text>
+
+                        <text x="300" y="205" font-weight="bold">
+                            Basic Software
+                        </text>
+
+                        <text x="300" y="235">
+                            Services
+                        </text>
+
+                        <text x="300" y="265">
+                            ECU Abstraction
+                        </text>
+
+                        <text x="300" y="295">
+                            MCAL
+                        </text>
+
+                        <text x="300" y="330">
+                            Hardware Abstraction
+                        </text>
+
+                        <text x="300" y="405" font-weight="bold">
+                            Hardware
+                        </text>
+
+                        <text x="300" y="432">
+                            Microcontroller / Memory / Peripherals
+                        </text>
+
+                        <text x="300" y="459">
+                            Sensor / Actuator / Communication Hardware
+                        </text>
+
+                    </g>
+
+                </svg>
+
+                <p>
+                    Điểm quan trọng cần nhớ là Hardware không phải là một Software Layer.
+                    Nó là nền tảng vật lý mà các Software Layer bên trên cuối cùng phải
+                    tương tác với.
+                </p>
+
+                <h2>3. Tại sao Software cần Hardware Abstraction?</h2>
+
+                <p>
+                    Nếu Application Software truy cập trực tiếp vào Hardware, phần mềm sẽ
+                    phụ thuộc rất nhiều vào loại microcontroller và cách phần cứng được
+                    triển khai trên ECU.
+                </p>
+
+                <p>
+                    Ví dụ, cách điều khiển một GPIO có thể khác nhau giữa các
+                    microcontroller khác nhau. Nếu Application phải biết trực tiếp
+                    các chi tiết này, việc thay đổi Hardware có thể dẫn đến thay đổi
+                    rất nhiều phần code.
+                </p>
+
+                <pre><code>Không có Hardware Abstraction:
+
+Application
+     │
+     ├── Chi tiết MCU
+     ├── Register
+     ├── Peripheral
+     └── Hardware cụ thể
+             │
+             ↓
+          Hardware</code></pre>
+
+                <p>
+                    Đây là một sự phụ thuộc không mong muốn đối với Application Software.
+                </p>
+
+                <h2>4. Hardware Abstraction là gì?</h2>
+
+                <p>
+                    <strong>Hardware Abstraction</strong> là cách sử dụng một lớp giao tiếp
+                    trung gian để che giấu các chi tiết triển khai cụ thể của Hardware
+                    khỏi phần mềm ở phía trên.
+                </p>
+
+                <p>
+                    Thay vì để Application truy cập trực tiếp vào Hardware, các lớp phần mềm
+                    bên dưới cung cấp những giao diện phù hợp để sử dụng chức năng của Hardware.
+                </p>
+
+                <pre><code>Application Software
+        │
+        ↓
+   Abstraction Layer
+        │
+        ↓
+  Hardware-specific
+      Software
+        │
+        ↓
+     Hardware</code></pre>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                    <strong>Hardware Abstraction giúp phần mềm phía trên quan tâm nhiều hơn
+                    đến "muốn làm gì" thay vì phải biết toàn bộ "Hardware làm như thế nào".</strong>
+                </p>
+
+                <h2>5. Hardware Abstraction trong AUTOSAR</h2>
+
+                <p>
+                    AUTOSAR sử dụng nhiều lớp trong BSW để tạo ra sự trừu tượng hóa giữa
+                    Application Software và Hardware.
+                </p>
+
+                <p>
+                    Ở mức tổng quan, có thể hình dung:
+                </p>
+
+                <pre><code>Application Software
+        │
+        ↓
+       RTE
+        │
+        ↓
+       BSW
+        │
+        ├── Services
+        │
+        ├── ECU Abstraction
+        │
+        └── MCAL
+        │
+        ↓
+     Hardware</code></pre>
+
+                <p>
+                    Trong cấu trúc này, <strong>ECU Abstraction</strong> và
+                    <strong>MCAL</strong> là những thành phần quan trọng trong việc
+                    tạo lớp trừu tượng giữa phần mềm và Hardware.
+                </p>
+
+                <div class="note">
+                    Không nên hiểu Hardware Abstraction chỉ là một module duy nhất.
+                    Đây là một khái niệm tổng quát về việc che giấu các chi tiết Hardware
+                    thông qua các lớp phần mềm trung gian.
+                </div>
+
+                <h2>6. MCAL và Hardware Abstraction</h2>
+
+                <p>
+                    <strong>Microcontroller Abstraction Layer (MCAL)</strong> là một phần
+                    quan trọng của BSW và nằm rất gần microcontroller Hardware.
+                </p>
+
+                <p>
+                    MCAL cung cấp các driver để phần mềm phía trên có thể sử dụng
+                    những peripheral của microcontroller mà không cần trực tiếp xử lý
+                    toàn bộ chi tiết phần cứng.
+                </p>
+
+                <pre><code>Software phía trên
+        │
+        ↓
+       MCAL
+        │
+        ├── MCU
+        ├── GPIO
+        ├── Communication
+        ├── Memory
+        └── Timer
+        │
+        ↓
+  Microcontroller</code></pre>
+
+                <p>
+                    Vì vậy, MCAL có thể được xem là một trong những lớp quan trọng
+                    giúp tách phần mềm khỏi các chi tiết thấp của microcontroller.
+                </p>
+
+                <h2>7. ECU Abstraction và Hardware</h2>
+
+                <p>
+                    <strong>ECU Abstraction Layer</strong> nằm phía trên MCAL và cung cấp
+                    mức trừu tượng cao hơn đối với các thiết bị phần cứng của ECU.
+                </p>
+
+                <p>
+                    Điều này đặc biệt hữu ích khi một ECU có những thiết bị không hoàn toàn
+                    thuộc về một peripheral trực tiếp của microcontroller.
+                </p>
+
+                <pre><code>        Application
+             │
+             ↓
+            RTE
+             │
+             ↓
+      ECU Abstraction
+             │
+             ↓
+            MCAL
+             │
+             ↓
+        Microcontroller
+             │
+             ↓
+          Hardware</code></pre>
+
+                <p>
+                    Có thể hiểu đơn giản rằng MCAL gần với microcontroller hơn,
+                    trong khi ECU Abstraction cung cấp một cách tiếp cận trừu tượng hơn
+                    cho phần mềm phía trên.
+                </p>
+
+                <h2>8. Hardware Abstraction giúp giảm sự phụ thuộc</h2>
+
+                <p>
+                    Một trong những lợi ích quan trọng của Hardware Abstraction là
+                    giảm sự phụ thuộc trực tiếp của Application Software vào Hardware.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Truy cập trực tiếp Hardware</th>
+                        <th>Có Hardware Abstraction</th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Application phụ thuộc nhiều vào Hardware cụ thể.
+                        </td>
+                        <td>
+                            Application sử dụng các lớp giao tiếp trung gian.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Thay đổi MCU có thể ảnh hưởng nhiều đến Application.
+                        </td>
+                        <td>
+                            Chi tiết Hardware được tập trung ở các lớp thấp hơn.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Logic chức năng và Hardware dễ bị trộn lẫn.
+                        </td>
+                        <td>
+                            Logic chức năng được tách khỏi chi tiết Hardware.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Khó tái sử dụng phần mềm.
+                        </td>
+                        <td>
+                            Hỗ trợ khả năng tái sử dụng tốt hơn.
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>9. Ví dụ: Điều khiển một tín hiệu Hardware</h2>
+
+                <p>
+                    Giả sử Application Software cần điều khiển một tín hiệu đầu ra
+                    để bật một thiết bị.
+                </p>
+
+                <p>
+                    Nếu không có Hardware Abstraction, Application có thể phải biết
+                    nhiều chi tiết về register và peripheral của MCU.
+                </p>
+
+                <pre><code>Application
+     │
+     ↓
+  Register
+     │
+     ↓
+ Peripheral
+     │
+     ↓
+    Pin
+     │
+     ↓
+  Hardware</code></pre>
+
+                <p>
+                    Với kiến trúc có Hardware Abstraction, Application chỉ cần sử dụng
+                    chức năng được cung cấp thông qua các lớp phần mềm bên dưới.
+                </p>
+
+                <pre><code>Application
+     │
+     ↓
+      RTE
+     │
+     ↓
+     BSW
+     │
+     ↓
+   MCAL / ECU Abstraction
+     │
+     ↓
+  Microcontroller
+     │
+     ↓
+     Pin
+     │
+     ↓
+  Hardware</code></pre>
+
+                <p>
+                    Application không cần trực tiếp xử lý từng register của MCU.
+                    Các chi tiết thấp hơn được xử lý ở các lớp phù hợp trong BSW.
+                </p>
+
+                <h2>10. Hardware Abstraction và khả năng tái sử dụng</h2>
+
+                <p>
+                    Khi Application Software được tách khỏi Hardware cụ thể,
+                    cùng một logic chức năng có thể dễ dàng được tổ chức để sử dụng
+                    trên những nền tảng Hardware khác nhau hơn.
+                </p>
+
+                <pre><code>             Application Logic
+                    │
+                    ↓
+             Hardware Abstraction
+                /          \
+               /            \
+              ↓              ↓
+           MCU A            MCU B
+              │              │
+              ↓              ↓
+         Hardware A      Hardware B</code></pre>
+
+                <p>
+                    Điều này không có nghĩa là toàn bộ phần mềm có thể được chuyển
+                    sang một Hardware khác mà không cần thay đổi gì.
+                    Tuy nhiên, việc phân lớp giúp giới hạn những thay đổi liên quan
+                    đến Hardware ở các tầng thấp hơn.
+                </p>
+
+                <h2>11. Hardware Abstraction trong một ECU hoàn chỉnh</h2>
+
+                <p>
+                    Có thể hình dung mối quan hệ giữa Application, BSW và Hardware
+                    trong một ECU như sau:
+                </p>
+
+                <pre><code>+---------------------------------------+
+|        Application Software           |
+|                                       |
+|       Software Components             |
++-------------------+-------------------+
+                    │
+                    ↓
++---------------------------------------+
+|                 RTE                   |
++---------------------------------------+
+                    │
+                    ↓
++---------------------------------------+
+|          Basic Software               |
+|                                       |
+|  Services                            |
+|  ECU Abstraction                     |
+|  MCAL                                |
++---------------------------------------+
+                    │
+                    ↓
++---------------------------------------+
+|              Hardware                 |
+|                                       |
+|  Microcontroller                     |
+|  Memory                              |
+|  Peripherals                         |
+|  Communication Hardware              |
++---------------------------------------+</code></pre>
+
+                <p>
+                    Đây là cách nhìn tổng quan về mối quan hệ giữa các thành phần.
+                    Mỗi lớp có trách nhiệm riêng và giao tiếp với lớp bên dưới
+                    thông qua các giao diện phù hợp.
+                </p>
+
+                <h2>12. Hardware Abstraction và sự thay đổi Hardware</h2>
+
+                <p>
+                    Một trong những trường hợp dễ thấy nhất của Hardware Abstraction
+                    là khi nền tảng Hardware thay đổi.
+                </p>
+
+                <p>
+                    Ví dụ, một dự án có thể chuyển từ một microcontroller này sang
+                    một microcontroller khác. Khi đó, phần mềm ở các tầng thấp như
+                    MCAL có thể cần thay đổi để phù hợp với Hardware mới.
+                </p>
+
+                <pre><code>Trước khi thay đổi:
+
+Application
+     │
+     ↓
+ RTE / BSW
+     │
+     ↓
+   MCU A
+
+
+Sau khi thay đổi:
+
+Application
+     │
+     ↓
+ RTE / BSW
+     │
+     ↓
+   MCU B</code></pre>
+
+                <p>
+                    Mục tiêu của kiến trúc phân lớp là hạn chế ảnh hưởng của thay đổi
+                    Hardware lên phần mềm chức năng phía trên.
+                </p>
+
+                <div class="note">
+                    Đây là một trong những lý do quan trọng khiến Hardware Abstraction
+                    có giá trị trong các hệ thống embedded lớn: thay đổi phần cứng
+                    không nhất thiết phải kéo theo việc thay đổi toàn bộ Application Software.
+                </div>
+
+                <h2>13. Những khái niệm cần nhớ</h2>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa tổng quan</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware</strong></td>
+                        <td>
+                            Phần vật lý của ECU như MCU, Memory, Peripheral và các mạch phần cứng.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware Abstraction</strong></td>
+                        <td>
+                            Cách che giấu các chi tiết Hardware khỏi phần mềm phía trên
+                            thông qua các lớp trung gian.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>MCAL</strong></td>
+                        <td>
+                            Lớp BSW gần microcontroller, cung cấp driver cho các peripheral.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>ECU Abstraction</strong></td>
+                        <td>
+                            Cung cấp mức trừu tượng cao hơn đối với Hardware của ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware Independence</strong></td>
+                        <td>
+                            Giảm sự phụ thuộc của phần mềm phía trên vào Hardware cụ thể.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application ↔ Hardware</strong></td>
+                        <td>
+                            Application không nên trực tiếp phụ thuộc vào các chi tiết thấp
+                            của Hardware.
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>Hardware</strong> là nền tảng vật lý của ECU, bao gồm
+                    microcontroller, memory, peripheral và các thành phần phần cứng khác.
+                    Trong AUTOSAR Classic, <strong>Hardware Abstraction</strong> giúp
+                    tách Application Software khỏi những chi tiết triển khai cụ thể của
+                    Hardware. Các lớp như <strong>MCAL</strong> và
+                    <strong>ECU Abstraction</strong> đóng vai trò quan trọng trong việc
+                    tạo ra sự trừu tượng hóa này. Nhờ kiến trúc phân lớp, Application có
+                    thể tập trung vào logic chức năng, trong khi những thay đổi liên quan
+                    đến Hardware được giới hạn nhiều hơn ở các tầng thấp của hệ thống.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-6.html">← Bài trước</a>
+                    <a class="btn" href="lesson-8.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

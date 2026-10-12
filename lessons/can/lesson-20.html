@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 20: Sleep và Wake-up | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html" class="active">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 20: Sleep và Wake-up</h1>
+
+                <p>
+                    Trong hệ thống automotive, ECU không phải lúc nào cũng cần hoạt động ở trạng thái
+                    communication liên tục. Khi xe hoặc một chức năng không cần giao tiếp CAN,
+                    ECU có thể chuyển sang trạng thái <strong>Sleep</strong> để giảm mức tiêu thụ năng lượng.
+                    Khi có sự kiện phù hợp, ECU có thể được đánh thức và quay trở lại trạng thái hoạt động.
+                </p>
+
+                <p>
+                    Quá trình này được gọi là <strong>Sleep và Wake-up</strong>. Đây là một phần quan trọng
+                    của việc quản lý năng lượng và network communication trong hệ thống CAN.
+                </p>
+
+                <div class="note">
+                    <strong>Ý chính:</strong>
+                    Sleep là quá trình đưa CAN communication/controller vào trạng thái
+                    low-power hoặc không hoạt động bình thường; Wake-up là quá trình phát hiện
+                    một điều kiện đánh thức và đưa hệ thống trở lại trạng thái hoạt động.
+                </div>
+
+                <h2>1. Sleep là gì?</h2>
+
+                <p>
+                    Sleep là trạng thái trong đó CAN Controller hoặc các thành phần liên quan được
+                    đưa vào chế độ tiêu thụ năng lượng thấp theo thiết kế của hệ thống.
+                </p>
+
+                <p>
+                    Khi Sleep, ECU không hoạt động communication giống như trạng thái bình thường.
+                    Tuy nhiên, tùy kiến trúc phần cứng và hệ thống, một số mạch hoặc cơ chế wake-up
+                    vẫn có thể hoạt động để phát hiện sự kiện đánh thức.
+                </p>
+
+                <pre><code>Normal Communication
+        |
+        | No communication needed
+        v
+      Sleep
+        |
+        | Wake-up event
+        v
+Normal Communication</code></pre>
+
+                <h2>2. Tại sao ECU cần Sleep?</h2>
+
+                <p>
+                    Một trong những lý do chính là <strong>giảm power consumption</strong>.
+                    Trong automotive, có nhiều thời điểm xe không cần tất cả ECU hoạt động đầy đủ.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>Mục đích Sleep</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Xe đang tắt</td>
+                            <td>Giảm mức tiêu thụ năng lượng từ battery.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU không cần communication</td>
+                            <td>Tắt hoặc giảm hoạt động của communication resources.</td>
+                        </tr>
+                        <tr>
+                            <td>Network không hoạt động</td>
+                            <td>Đưa controller vào trạng thái low-power phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Standby</td>
+                            <td>Giữ hệ thống ở trạng thái chờ để có thể wake-up.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    Trong automotive, Sleep không chỉ là "tắt CAN". Mục tiêu là đưa hệ thống
+                    về trạng thái tiết kiệm năng lượng nhưng vẫn đáp ứng được yêu cầu
+                    wake-up của ECU.
+                </div>
+
+                <h2>3. Wake-up là gì?</h2>
+
+                <p>
+                    Wake-up là quá trình đưa ECU hoặc CAN communication từ trạng thái Sleep
+                    trở lại trạng thái có thể hoạt động.
+                </p>
+
+                <p>
+                    Một wake-up event có thể đến từ nhiều nguồn tùy architecture, ví dụ:
+                </p>
+
+                <ul>
+                    <li>Wake-up signal từ CAN network.</li>
+                    <li>CAN bus activity phù hợp với cơ chế wake-up của hardware.</li>
+                    <li>Wake-up source khác của ECU.</li>
+                    <li>External signal.</li>
+                    <li>Timer hoặc nguồn đánh thức được hệ thống cấu hình.</li>
+                </ul>
+
+                <p>
+                    Không phải mọi CAN Controller đều có cùng cơ chế wake-up. Phần hardware
+                    và transceiver đóng vai trò quan trọng trong việc phát hiện wake-up.
+                </p>
+
+                <h2>4. Sleep và Wake-up Flow</h2>
+
+                <svg viewBox="0 0 760 280" role="img" aria-label="CAN Sleep and Wake-up flow"
+                    style="width:100%;height:auto;max-width:760px">
+                    <defs>
+                        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L9,3 z" fill="currentColor"></path>
+                        </marker>
+                    </defs>
+
+                    <rect x="30" y="100" width="150" height="60" rx="8" stroke="currentColor" fill="none" />
+                    <text x="105" y="136" text-anchor="middle">Communication</text>
+
+                    <rect x="305" y="100" width="150" height="60" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="136" text-anchor="middle">SLEEP</text>
+
+                    <rect x="580" y="100" width="150" height="60" rx="8" stroke="currentColor" fill="none" />
+                    <text x="655" y="136" text-anchor="middle">WAKE-UP</text>
+
+                    <line x1="180" y1="130" x2="305" y2="130" stroke="currentColor" marker-end="url(#arrow)" />
+                    <text x="242" y="112" text-anchor="middle">Sleep request</text>
+
+                    <line x1="455" y1="130" x2="580" y2="130" stroke="currentColor" marker-end="url(#arrow)" />
+                    <text x="517" y="112" text-anchor="middle">Wake event</text>
+
+                    <path d="M655 100 C655 40, 105 40, 105 100" stroke="currentColor" fill="none"
+                        marker-end="url(#arrow)" />
+                    <text x="380" y="32" text-anchor="middle">Return to communication</text>
+                </svg>
+
+                <p>
+                    Sơ đồ trên mô tả lifecycle ở mức khái niệm. Trong AUTOSAR thực tế,
+                    việc quản lý network mode và power mode có thể liên quan đến nhiều module
+                    hơn CAN Driver.
+                </p>
+
+                <h2>5. Sleep không giống Stop</h2>
+
+                <p>
+                    Đây là điểm rất dễ nhầm với nội dung State Machine của bài trước.
+                    <strong>STOPPED</strong> và <strong>SLEEP</strong> không nên được xem là
+                    hoàn toàn giống nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STOPPED</th>
+                            <th>SLEEP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Controller không thực hiện communication bình thường.</td>
+                            <td>Controller/hệ thống được đưa vào trạng thái low-power hoặc sleep.</td>
+                        </tr>
+                        <tr>
+                            <td>Chủ yếu liên quan đến operational mode.</td>
+                            <td>Liên quan đến power/network management.</td>
+                        </tr>
+                        <tr>
+                            <td>Không nhất thiết mang ý nghĩa low-power.</td>
+                            <td>Mục tiêu chính thường là giảm power consumption.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Memory trick:</strong>
+                    STOPPED = "không communication bình thường".
+                    SLEEP = "đưa hệ thống vào trạng thái tiết kiệm năng lượng/chờ wake-up".
+                </div>
+
+                <h2>6. Sleep và CAN Controller</h2>
+
+                <p>
+                    CAN Controller có thể hỗ trợ các mode liên quan đến communication và low-power.
+                    Tuy nhiên, chi tiết về sleep mode, wake-up detection và register configuration
+                    phụ thuộc vào CAN Controller/MCU cụ thể.
+                </p>
+
+                <pre><code>CAN Driver
+     |
+     v
+CAN Controller
+     |
+     +--> Normal Operation
+     |
+     +--> Sleep / Low-power
+     |
+     +--> Wake-up Detection
+     |
+     v
+CAN Transceiver / Network</code></pre>
+
+                <p>
+                    Vì vậy khi làm việc với một MCU cụ thể, cần đọc datasheet/reference manual
+                    của CAN Controller và CAN Transceiver thay vì giả định mọi hardware hoạt động
+                    giống nhau.
+                </p>
+
+                <h2>7. Vai trò của CAN Transceiver</h2>
+
+                <p>
+                    CAN Transceiver nằm giữa CAN Controller và physical CAN Bus.
+                    Nó chuyển đổi tín hiệu logic của controller thành tín hiệu vật lý trên bus
+                    và ngược lại.
+                </p>
+
+                <pre><code>MCU
+ |
+ v
+CAN Controller
+ |
+ v
+CAN Transceiver
+ |
+ v
+CANH / CANL
+ |
+ v
+CAN Bus</code></pre>
+
+                <p>
+                    Đối với Sleep/Wake-up, transceiver rất quan trọng vì một số transceiver
+                    hỗ trợ cơ chế low-power và wake-up detection từ CAN network.
+                </p>
+
+                <div class="note">
+                    CAN Driver và CAN Transceiver Driver không phải là cùng một module.
+                    Trong AUTOSAR, CAN Transceiver có thể được quản lý bởi
+                    <strong>CanTrcv</strong>, trong khi CAN Controller được quản lý bởi
+                    <strong>Can</strong> driver.
+                </div>
+
+                <h2>8. CanTrcv và Sleep/Wake-up</h2>
+
+                <p>
+                    Trong kiến trúc AUTOSAR, <strong>CanTrcv</strong> là module liên quan đến
+                    CAN Transceiver. Nó có thể quản lý các mode của transceiver theo
+                    configuration của hệ thống.
+                </p>
+
+                <pre><code>CAN Driver
+    |
+    | Controller
+    v
+CAN Controller
+    |
+    |
+    +------------------+
+                       |
+CAN Transceiver Driver|
+    |                  |
+    v                  v
+CanTrcv          CAN Transceiver
+                       |
+                       v
+                    CAN Bus</code></pre>
+
+                <p>
+                    Do đó, khi debug Sleep/Wake-up, không nên chỉ kiểm tra CAN Driver.
+                    Cần xác định vấn đề nằm ở Controller, Transceiver, ECU power management
+                    hay network management.
+                </p>
+
+                <h2>9. Sleep Request</h2>
+
+                <p>
+                    Sleep thường không xảy ra một cách tùy ý từ CAN Driver.
+                    Một module quản lý hệ thống/network có thể quyết định rằng ECU không còn
+                    cần communication và yêu cầu chuyển sang trạng thái phù hợp.
+                </p>
+
+                <pre><code>Application / System
+        |
+        v
+Network / Power Management
+        |
+        | Sleep request
+        v
+CAN communication
+        |
+        v
+Controller / Transceiver
+        |
+        v
+Sleep</code></pre>
+
+                <p>
+                    Module cụ thể tạo request phụ thuộc vào architecture của ECU.
+                    Trong AUTOSAR, các module như EcuM, CanSM và CanTrcv có thể tham gia
+                    vào lifecycle/network management.
+                </p>
+
+                <h2>10. Wake-up Source</h2>
+
+                <p>
+                    Wake-up source là nguồn hoặc sự kiện có khả năng đánh thức ECU.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Wake-up source</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Network</td>
+                            <td>Hoạt động trên CAN Bus phù hợp với cơ chế wake-up.</td>
+                        </tr>
+                        <tr>
+                            <td>External input</td>
+                            <td>Tín hiệu từ một thiết bị hoặc ECU khác.</td>
+                        </tr>
+                        <tr>
+                            <td>Timer</td>
+                            <td>ECU được đánh thức theo thời gian định trước.</td>
+                        </tr>
+                        <tr>
+                            <td>Other ECU event</td>
+                            <td>Một sự kiện hệ thống yêu cầu ECU hoạt động trở lại.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Wake-up source thực tế phụ thuộc vào thiết kế ECU và phần cứng.
+                </p>
+
+                <h2>11. CAN Wake-up từ Bus</h2>
+
+                <p>
+                    Một trường hợp quan trọng là ECU đang ở trạng thái Sleep nhưng cần có khả năng
+                    phản ứng khi CAN network hoạt động trở lại.
+                </p>
+
+                <pre><code>ECU in Sleep
+      |
+      |
+      | CAN Bus activity
+      v
+CAN Transceiver / Wake-up Logic
+      |
+      v
+Wake-up Detection
+      |
+      v
+ECU Wake-up
+      |
+      v
+Restore CAN Communication</code></pre>
+
+                <p>
+                    Cơ chế chính xác phụ thuộc vào CAN Transceiver và MCU. Không nên hiểu rằng
+                    CAN Driver software luôn trực tiếp phát hiện mọi wake-up event từ physical bus.
+                </p>
+
+                <h2>12. Wake-up Detection và Wake-up Validation</h2>
+
+                <p>
+                    Có thể phân biệt hai khái niệm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Wake-up Detection</td>
+                            <td>Phần cứng/hệ thống phát hiện có sự kiện có khả năng đánh thức.</td>
+                        </tr>
+                        <tr>
+                            <td>Wake-up Validation</td>
+                            <td>Hệ thống xác định sự kiện đó có thực sự đáp ứng điều kiện wake-up hay không.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Việc validation có thể cần thiết để tránh một tín hiệu không mong muốn
+                    khiến ECU chuyển hoàn toàn sang trạng thái hoạt động.
+                </p>
+
+                <h2>13. Wake-up Flow</h2>
+
+                <pre><code>Wake-up Source
+      |
+      v
+Wake-up detected
+      |
+      v
+Wake-up validation / processing
+      |
+      v
+ECU / MCU becomes active
+      |
+      v
+Restore CAN Controller / Transceiver
+      |
+      v
+CAN communication available
+      |
+      v
+Normal operation</code></pre>
+
+                <p>
+                    Đây là flow tổng quát. Startup sequence thực tế phụ thuộc vào cách ECU
+                    được thiết kế và mức độ mà MCU thực sự được đưa vào low-power.
+                </p>
+
+                <h2>14. Wake-up không nhất thiết giống ECU Reset</h2>
+
+                <p>
+                    Wake-up và reset là hai khái niệm khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Wake-up</th>
+                            <th>Reset</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Đưa hệ thống từ trạng thái low-power/chờ sang hoạt động.</td>
+                            <td>Khởi động lại MCU theo cơ chế reset.</td>
+                        </tr>
+                        <tr>
+                            <td>Có thể giữ lại một số trạng thái tùy low-power mode.</td>
+                            <td>Software lifecycle thường bắt đầu lại từ reset/startup.</td>
+                        </tr>
+                        <tr>
+                            <td>Liên quan đến power/network management.</td>
+                            <td>Liên quan đến reset mechanism của MCU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    Một wake-up event có thể dẫn đến một startup sequence khác nhau tùy low-power
+                    mode. Vì vậy không nên mặc định rằng mọi wake-up đều tương đương với một
+                    cold boot.
+                </div>
+
+                <h2>15. Sleep và Network Management</h2>
+
+                <p>
+                    Trong một hệ thống automotive, việc một ECU đi Sleep thường không chỉ là
+                    quyết định riêng của CAN Driver. Network Management và các module liên quan
+                    có thể phối hợp để xác định khi nào network có thể chuyển sang trạng thái
+                    không hoạt động.
+                </p>
+
+                <pre><code>Application
+     |
+     v
+Network Management
+     |
+     v
+CanSM / CAN communication management
+     |
+     +----> CAN Controller
+     |
+     +----> CAN Transceiver
+     |
+     v
+Sleep / Wake-up</code></pre>
+
+                <p>
+                    Đây là mô hình khái niệm. Module và sequence chính xác phụ thuộc vào
+                    AUTOSAR configuration của project.
+                </p>
+
+                <h2>16. Vai trò của CanSM</h2>
+
+                <p>
+                    <strong>CanSM (CAN State Manager)</strong> quản lý trạng thái communication
+                    của CAN network ở tầng BSW và phối hợp với các module liên quan.
+                </p>
+
+                <p>
+                    CanSM không phải là CAN Driver. Có thể hình dung:
+                </p>
+
+                <pre><code>CanSM
+  |
+  | Network state management
+  v
+CanIf
+  |
+  v
+CAN Driver
+  |
+  v
+CAN Controller</code></pre>
+
+                <p>
+                    Trong các flow Sleep/Wake-up, CanSM có thể đóng vai trò trong việc quản lý
+                    network communication state, trong khi CAN Driver chịu trách nhiệm
+                    điều khiển phần controller theo API và configuration của nó.
+                </p>
+
+                <h2>17. EcuM và Wake-up</h2>
+
+                <p>
+                    <strong>EcuM (ECU State Manager)</strong> chịu trách nhiệm quản lý
+                    các trạng thái tổng thể của ECU.
+                </p>
+
+                <pre><code>Wake-up Event
+      |
+      v
+EcuM
+      |
+      v
+ECU State Transition
+      |
+      +--> Initialize / Resume required modules
+      |
+      v
+Communication available</code></pre>
+
+                <p>
+                    Vì vậy Wake-up có thể liên quan đến lifecycle của toàn ECU chứ không chỉ
+                    riêng CAN Controller.
+                </p>
+
+                <h2>18. Sleep và CAN Controller State</h2>
+
+                <p>
+                    Khi ECU muốn đi Sleep, controller thường cần được đưa về trạng thái
+                    phù hợp trước khi low-power được kích hoạt.
+                </p>
+
+                <pre><code>STARTED
+   |
+   | Stop communication
+   v
+STOPPED
+   |
+   | Prepare sleep
+   v
+SLEEP / Low-power</code></pre>
+
+                <p>
+                    Sau wake-up:
+                </p>
+
+                <pre><code>SLEEP / Low-power
+       |
+       | Wake-up
+       v
+Controller available
+       |
+       v
+STOPPED
+       |
+       | Start request
+       v
+STARTED</code></pre>
+
+                <div class="note">
+                    Các state trong sơ đồ là mô hình khái niệm. Sequence và tên state thực tế
+                    phải được kiểm tra theo AUTOSAR version, ECU architecture và CAN Controller.
+                </div>
+
+                <h2>19. Sleep và Transmission/Reception</h2>
+
+                <p>
+                    Sleep ảnh hưởng trực tiếp đến Tx/Rx. Khi communication đang ở trạng thái
+                    Sleep, ECU không thể được kỳ vọng hoạt động transmission/reception
+                    như trong trạng thái bình thường.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>State</th>
+                            <th>Transmission</th>
+                            <th>Reception</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>STARTED</td>
+                            <td>Có thể transmission.</td>
+                            <td>Có thể reception.</td>
+                        </tr>
+                        <tr>
+                            <td>STOPPED</td>
+                            <td>Không communication bình thường.</td>
+                            <td>Không xử lý Rx bình thường.</td>
+                        </tr>
+                        <tr>
+                            <td>SLEEP</td>
+                            <td>Không transmission bình thường.</td>
+                            <td>Chỉ wake-up mechanism phù hợp còn hoạt động.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>20. Sleep và Pending Transmission</h2>
+
+                <p>
+                    Trước khi đưa hệ thống vào Sleep, cần quan tâm đến các transmission đang
+                    chờ hoặc đang được xử lý.
+                </p>
+
+                <pre><code>Pending Tx?
+    |
+    +---- YES ----> Handle / complete / cancel according to system design
+    |
+    +---- NO -----> Continue sleep preparation
+                         |
+                         v
+                       Sleep</code></pre>
+
+                <p>
+                    Cách xử lý pending transmission phụ thuộc vào yêu cầu hệ thống.
+                    Không nên tự giả định rằng mọi pending message đều được giữ lại hoặc
+                    tự động gửi sau wake-up.
+                </p>
+
+                <h2>21. Wake-up và Reception</h2>
+
+                <p>
+                    Một trong những lý do quan trọng để ECU hỗ trợ CAN wake-up là ECU có thể
+                    được đánh thức khi network cần nó hoạt động.
+                </p>
+
+                <pre><code>Sleep
+  |
+  | CAN Wake-up Event
+  v
+Wake-up Detection
+  |
+  v
+ECU Active
+  |
+  v
+CAN Controller / Transceiver Ready
+  |
+  v
+Reception Available
+  |
+  v
+Normal CAN Communication</code></pre>
+
+                <p>
+                    Cần phân biệt wake-up detection với reception thông thường:
+                    một tín hiệu dùng để đánh thức ECU không nhất thiết đồng nghĩa với việc
+                    application đã nhận được một CAN PDU hoàn chỉnh.
+                </p>
+
+                <h2>22. Sleep/Wake-up và DET</h2>
+
+                <p>
+                    Trong development, các lỗi sử dụng API sai sequence hoặc sai state có thể
+                    được phát hiện thông qua cơ chế development error detection tùy implementation.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>Vấn đề có thể xảy ra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Gọi API sai state</td>
+                            <td>Driver/controller chưa ở state phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Wake-up sequence sai</td>
+                            <td>Module phía trên sử dụng CAN trước khi driver/controller ready.</td>
+                        </tr>
+                        <tr>
+                            <td>Sleep sequence sai</td>
+                            <td>Communication vẫn đang được yêu cầu nhưng controller đã sleep.</td>
+                        </tr>
+                        <tr>
+                            <td>Configuration sai</td>
+                            <td>Wake-up hoặc controller mode không hoạt động như mong đợi.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>23. Debug Sleep không hoạt động</h2>
+
+                <p>
+                    Nếu ECU không đi vào Sleep như mong muốn, có thể kiểm tra theo flow:
+                </p>
+
+                <pre><code>Sleep request generated?
+        |
+        v
+Network communication stopped?
+        |
+        v
+Controller moved to required state?
+        |
+        v
+Transceiver sleep mode requested?
+        |
+        v
+CAN Controller low-power configured?
+        |
+        v
+MCU / ECU power mode entered?
+        |
+        v
+Check actual power consumption</code></pre>
+
+                <p>
+                    Nếu ECU vẫn tiêu thụ năng lượng cao, cần xác định thành phần nào chưa
+                    chuyển sang low-power thay vì chỉ kiểm tra CAN Driver.
+                </p>
+
+                <h2>24. Debug Wake-up không hoạt động</h2>
+
+                <p>
+                    Nếu ECU không wake-up khi có CAN activity, có thể kiểm tra:
+                </p>
+
+                <pre><code>CAN Bus activity?
+        |
+        v
+Transceiver supports wake-up?
+        |
+        v
+Wake-up detection configured?
+        |
+        v
+Wake-up source enabled?
+        |
+        v
+MCU receives wake-up event?
+        |
+        v
+EcuM / system handles event?
+        |
+        v
+CAN communication restored?
+        |
+        v
+Controller STARTED / operational?</code></pre>
+
+                <div class="note">
+                    Đây là checklist tổng quát. Với lỗi wake-up thực tế, cần kiểm tra
+                    datasheet/reference manual của MCU và CAN transceiver để biết chính xác
+                    wake-up source, interrupt, register và pin nào liên quan.
+                </div>
+
+                <h2>25. Ví dụ: ECU đi Sleep</h2>
+
+                <p>
+                    Giả sử xe đã tắt và ECU không còn cần CAN communication.
+                </p>
+
+                <pre><code>Normal CAN Communication
+        |
+        v
+Network requests sleep
+        |
+        v
+Stop CAN communication
+        |
+        v
+Controller STOPPED
+        |
+        v
+Configure Transceiver Sleep
+        |
+        v
+ECU enters low-power
+        |
+        v
+SLEEP</code></pre>
+
+                <p>
+                    Mục tiêu cuối cùng là giảm power consumption nhưng vẫn duy trì
+                    khả năng wake-up cần thiết.
+                </p>
+
+                <h2>26. Ví dụ: ECU Wake-up bằng CAN</h2>
+
+                <pre><code>ECU in SLEEP
+      |
+      v
+CAN Bus activity
+      |
+      v
+CAN Transceiver detects wake-up condition
+      |
+      v
+Wake-up event
+      |
+      v
+ECU / MCU becomes active
+      |
+      v
+Restore required modules
+      |
+      v
+CAN Controller ready
+      |
+      v
+Controller STARTED
+      |
+      v
+CAN Communication</code></pre>
+
+                <p>
+                    Đây là flow khái niệm. Việc MCU wake-up trước hay sau một số bước
+                    của transceiver phụ thuộc vào phần cứng và thiết kế ECU.
+                </p>
+
+                <h2>27. Sleep/Wake-up và Init/DeInit</h2>
+
+                <p>
+                    Sleep/Wake-up không nên bị nhầm với Init/DeInit.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Init</td>
+                            <td>Khởi tạo lifecycle của CAN Driver.</td>
+                        </tr>
+                        <tr>
+                            <td>DeInit</td>
+                            <td>Kết thúc lifecycle của CAN Driver.</td>
+                        </tr>
+                        <tr>
+                            <td>Sleep</td>
+                            <td>Đưa communication/hệ thống vào trạng thái low-power/chờ.</td>
+                        </tr>
+                        <tr>
+                            <td>Wake-up</td>
+                            <td>Đánh thức hệ thống để quay lại hoạt động.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    Một ECU có thể đi Sleep và Wake-up nhiều lần trong lifecycle của mình.
+                    Init/DeInit lại mô tả lifecycle của driver và không nên được xem là
+                    đồng nghĩa với mỗi lần Sleep/Wake-up.
+                </div>
+
+                <h2>28. State Machine của Sleep/Wake-up</h2>
+
+                <svg viewBox="0 0 760 390" role="img" aria-label="Sleep and Wake-up State Machine"
+                    style="width:100%;height:auto;max-width:760px">
+                    <defs>
+                        <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L9,3 z" fill="currentColor"></path>
+                        </marker>
+                    </defs>
+
+                    <rect x="300" y="20" width="160" height="55" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="53" text-anchor="middle">STARTED</text>
+
+                    <rect x="300" y="120" width="160" height="55" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="153" text-anchor="middle">STOPPED</text>
+
+                    <rect x="300" y="220" width="160" height="55" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="253" text-anchor="middle">SLEEP</text>
+
+                    <rect x="300" y="320" width="160" height="55" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="353" text-anchor="middle">WAKE-UP</text>
+
+                    <line x1="380" y1="75" x2="380" y2="120" stroke="currentColor" marker-end="url(#arrow2)" />
+                    <text x="490" y="102">Stop request</text>
+
+                    <line x1="380" y1="175" x2="380" y2="220" stroke="currentColor" marker-end="url(#arrow2)" />
+                    <text x="500" y="202">Sleep request</text>
+
+                    <line x1="380" y1="275" x2="380" y2="320" stroke="currentColor" marker-end="url(#arrow2)" />
+                    <text x="505" y="302">Wake event</text>
+
+                    <path d="M300 347 C120 347, 120 48, 300 48" stroke="currentColor" fill="none"
+                        marker-end="url(#arrow2)" />
+                    <text x="95" y="195" text-anchor="middle" transform="rotate(-90 95 195)">Return to operation</text>
+                </svg>
+
+                <p>
+                    Sơ đồ này giúp kết nối kiến thức của bài 18 về State Machine với
+                    Sleep/Wake-up. Tuy nhiên, state thực tế và transition của project
+                    cần được xác định từ AUTOSAR configuration và hardware implementation.
+                </p>
+
+                <h2>29. Góc nhìn phỏng vấn</h2>
+
+                <div class="note">
+                    <strong>Câu hỏi:</strong> Why does an automotive ECU need CAN Sleep and Wake-up?
+                </div>
+
+                <p>
+                    Một câu trả lời phù hợp cho Fresher:
+                </p>
+
+                <blockquote>
+                    An automotive ECU may not need to communicate continuously, especially when
+                    the vehicle or a function is inactive. Sleep mode helps reduce power consumption,
+                    while Wake-up allows the ECU to become active again when a required event occurs,
+                    such as a CAN network wake-up or another configured wake-up source.
+                </blockquote>
+
+                <div class="note">
+                    <strong>Câu hỏi:</strong> What is the difference between Sleep and STOPPED?
+                </div>
+
+                <blockquote>
+                    STOPPED mainly means that the CAN Controller is not performing normal
+                    communication, while Sleep is related to putting the controller or system
+                    into a low-power or waiting state. Sleep is therefore more closely related
+                    to power and network management.
+                </blockquote>
+
+                <div class="note">
+                    <strong>Câu hỏi:</strong> How would you debug a CAN wake-up problem?
+                </div>
+
+                <pre><code>Check CAN Bus activity
+        ↓
+Check Transceiver wake-up support
+        ↓
+Check Wake-up configuration
+        ↓
+Check MCU wake-up source
+        ↓
+Check EcuM / system handling
+        ↓
+Check CAN Controller recovery
+        ↓
+Check Controller state
+        ↓
+Check CAN communication</code></pre>
+
+                <h2>30. Memory Map</h2>
+
+                <pre><code>SLEEP & WAKE-UP
+       |
+       +-- Sleep
+       |     |
+       |     +-- Stop communication
+       |     +-- Low-power
+       |     +-- Reduce power consumption
+       |
+       +-- Wake-up
+       |     |
+       |     +-- Wake-up source
+       |     +-- Detection
+       |     +-- Validation
+       |     +-- Restore communication
+       |
+       +-- Hardware
+       |     |
+       |     +-- CAN Controller
+       |     +-- CAN Transceiver
+       |
+       +-- AUTOSAR
+             |
+             +-- Can Driver
+             +-- CanTrcv
+             +-- CanSM
+             +-- EcuM</code></pre>
+
+                <h2>31. Tóm tắt</h2>
+
+                <p>
+                    Sleep và Wake-up là các cơ chế quan trọng trong automotive CAN để cân bằng
+                    giữa <strong>communication availability</strong> và
+                    <strong>power consumption</strong>.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Điều cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sleep</td>
+                            <td>Đưa communication/hệ thống vào trạng thái low-power hoặc chờ.</td>
+                        </tr>
+                        <tr>
+                            <td>Wake-up</td>
+                            <td>Đánh thức hệ thống khi có sự kiện phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Controller</td>
+                            <td>Xử lý CAN protocol và communication.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Transceiver</td>
+                            <td>Kết nối CAN Controller với physical CAN Bus và có thể hỗ trợ wake-up.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTrcv</td>
+                            <td>Quản lý CAN Transceiver theo architecture/configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>CanSM</td>
+                            <td>Quản lý trạng thái communication của CAN network.</td>
+                        </tr>
+                        <tr>
+                            <td>EcuM</td>
+                            <td>Quản lý lifecycle và trạng thái tổng thể của ECU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    Sleep/Wake-up không chỉ là chức năng của CAN Driver.
+                    Khi debug, hãy nhìn toàn bộ chain:
+                    <strong>CAN Driver → CAN Controller → CAN Transceiver → CAN Bus</strong>
+                    và các module quản lý như <strong>CanSM</strong> và <strong>EcuM</strong>.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-19.html">← Bài trước</a>
+                    <a class="btn" href="lesson-21.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

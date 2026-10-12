@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 10: CAN-Driver Scope | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Bit Stuffing</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html" class="active">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+                <h1>Bài 10: CAN-Driver Scope</h1>
+
+                <p>
+                    Ở Bài 8, chúng ta đã tìm hiểu <strong>CAN Driver (CanDrv)</strong> và các API cơ bản.
+                    Ở Bài 9, chúng ta đặt CAN Driver vào <strong>AUTOSAR CAN Communication Stack</strong>.
+                    Bước tiếp theo là xác định rõ <strong>scope</strong> của CAN Driver:
+                    CAN Driver thực sự chịu trách nhiệm những gì, không chịu trách nhiệm những gì,
+                    và ranh giới của nó với các module khác nằm ở đâu.
+                </p>
+
+                <div class="note">
+                    Có thể nhớ ngắn gọn:
+                    <strong>CAN Driver chịu trách nhiệm đưa CAN communication xuống mức CAN Controller hardware
+                        và đưa các sự kiện từ hardware trở lại CanIf.</strong>
+                    Nó không chịu trách nhiệm xử lý application signal, PDU routing hay diagnostic logic.
+                </div>
+
+                <h2>1. CAN Driver nằm ở ranh giới nào?</h2>
+
+                <p>
+                    CAN Driver thuộc <strong>Microcontroller Abstraction Layer (MCAL)</strong>.
+                    Vì vậy nó nằm rất gần phần cứng và cung cấp abstraction giữa các module phía trên
+                    với CAN Controller của microcontroller.
+                </p>
+
+                <svg viewBox="0 0 680 390" role="img"
+                    aria-label="Scope của AUTOSAR CAN Driver từ CanIf tới CAN Controller"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="120" y="15" width="440" height="48" fill="rgba(224,168,0,.25)" />
+                        <rect x="120" y="78" width="440" height="48" fill="rgba(46,139,87,.28)" />
+                        <rect x="120" y="141" width="440" height="48" fill="rgba(160,120,190,.25)" />
+                        <rect x="80" y="204" width="520" height="72" fill="rgba(70,130,180,.25)" />
+                        <rect x="120" y="291" width="440" height="48" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="340" y="44">Application / SWC</text>
+                        <text x="340" y="107">COM / PduR / CanTp</text>
+                        <text x="340" y="170">CanIf</text>
+                        <text x="340" y="232">CAN Driver Scope</text>
+                        <text x="340" y="255">Controller configuration / TX / RX / status</text>
+                        <text x="340" y="321">CAN Controller Hardware</text>
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="340" y="70">↓</text>
+                        <text x="340" y="133">↓</text>
+                        <text x="340" y="196">↓</text>
+                        <text x="340" y="284">↓</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Vì nằm giữa CanIf và CAN Controller, CAN Driver phải hiểu cả hai phía:
+                    nó phải cung cấp interface chuẩn hóa cho CanIf nhưng đồng thời phải biết
+                    cách điều khiển CAN peripheral cụ thể của MCU.
+                </p>
+
+                <h2>2. CAN Driver chịu trách nhiệm những gì?</h2>
+
+                <p>
+                    Có thể chia scope của CAN Driver thành các nhóm chức năng chính:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Nhóm</th>
+                        <th>CAN Driver chịu trách nhiệm</th>
+                    </tr>
+                    <tr>
+                        <td>Initialization</td>
+                        <td>Khởi tạo driver và CAN Controller theo configuration.</td>
+                    </tr>
+                    <tr>
+                        <td>Controller Mode</td>
+                        <td>Điều khiển trạng thái hoạt động của CAN Controller.</td>
+                    </tr>
+                    <tr>
+                        <td>Transmission</td>
+                        <td>Nhận yêu cầu truyền từ CanIf và đưa message tới hardware.</td>
+                    </tr>
+                    <tr>
+                        <td>Reception</td>
+                        <td>Đọc message từ CAN Controller và thông báo lên CanIf.</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware Object</td>
+                        <td>Quản lý HTH/HRH theo configuration của driver.</td>
+                    </tr>
+                    <tr>
+                        <td>Error / Status</td>
+                        <td>Phát hiện và thông báo các trạng thái CAN Controller được driver hỗ trợ.</td>
+                    </tr>
+                    <tr>
+                        <td>Bus-Off</td>
+                        <td>Phát hiện và thông báo bus-off theo cơ chế được cấu hình.</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Scope cụ thể phụ thuộc vào AUTOSAR specification, CAN Controller và implementation
+                    của vendor. Không nên giả định mọi CAN Driver đều hỗ trợ mọi tính năng CAN theo cùng
+                    một cách.
+                </div>
+
+                <h2>3. CAN Driver không chịu trách nhiệm những gì?</h2>
+
+                <p>
+                    Hiểu phần <strong>không thuộc scope</strong> cũng quan trọng như hiểu phần thuộc scope.
+                    Nếu không phân biệt được, khi debug rất dễ tìm sai module.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Chức năng</th>
+                        <th>Module phù hợp</th>
+                        <th>Không thuộc scope chính của CanDrv</th>
+                    </tr>
+                    <tr>
+                        <td>Signal packing/unpacking</td>
+                        <td>COM</td>
+                        <td>Không</td>
+                    </tr>
+                    <tr>
+                        <td>PDU routing</td>
+                        <td>PduR</td>
+                        <td>Không</td>
+                    </tr>
+                    <tr>
+                        <td>Transport protocol</td>
+                        <td>CanTp</td>
+                        <td>Không</td>
+                    </tr>
+                    <tr>
+                        <td>CAN interface abstraction</td>
+                        <td>CanIf</td>
+                        <td>Không</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Controller hardware access</td>
+                        <td>CanDrv</td>
+                        <td>Có</td>
+                    </tr>
+                    <tr>
+                        <td>CAN bit timing / controller configuration</td>
+                        <td>CanDrv + hardware configuration</td>
+                        <td>Có</td>
+                    </tr>
+                    <tr>
+                        <td>Application logic</td>
+                        <td>SWC / Application</td>
+                        <td>Không</td>
+                    </tr>
+                </table>
+
+                <h2>4. Scope của CAN Driver trên đường truyền TX</h2>
+
+                <p>
+                    Hãy xét trường hợp một module phía trên muốn truyền một CAN message.
+                    CanDrv không quyết định message đó có ý nghĩa gì đối với application.
+                    Nó nhận yêu cầu truyền đã được chuẩn hóa và thực hiện phần việc ở tầng hardware.
+                </p>
+
+                <svg viewBox="0 0 720 180" role="img" aria-label="Scope của CAN Driver trong transmission path"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="10" y="60" width="95" height="55" fill="rgba(224,168,0,.25)" />
+                        <rect x="135" y="60" width="95" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="260" y="60" width="110" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="400" y="42" width="155" height="91" fill="rgba(46,139,87,.28)" />
+                        <rect x="585" y="60" width="120" height="55" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="57" y="92">Application</text>
+                        <text x="182" y="92">COM</text>
+                        <text x="315" y="92">CanIf</text>
+                        <text x="477" y="80">CAN Driver</text>
+                        <text x="477" y="100">← Scope</text>
+                        <text x="645" y="92">CAN HW</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M105 87 L130 87" />
+                        <path d="M230 87 L255 87" />
+                        <path d="M370 87 L395 87" />
+                        <path d="M560 87 L580 87" />
+                    </g>
+
+                    <g font-size="10" fill="currentColor" text-anchor="middle">
+                        <text x="117" y="75">signal</text>
+                        <text x="242" y="75">PDU</text>
+                        <text x="382" y="75">request</text>
+                        <text x="570" y="75">HW access</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Trong transmission path, CanDrv chủ yếu quan tâm đến:
+                </p>
+
+                <ul>
+                    <li>Hardware Transmit Handle (HTH).</li>
+                    <li>CAN Identifier.</li>
+                    <li>Data length.</li>
+                    <li>Data buffer.</li>
+                    <li>CAN Controller transmit resources.</li>
+                    <li>Trạng thái của transmission.</li>
+                </ul>
+
+                <p>
+                    Một API quan trọng là:
+                </p>
+
+                <pre><code>Can_Write(
+    Can_HwHandleType Hth,
+    const Can_PduType* PduInfo
+);</code></pre>
+
+                <p>
+                    CanDrv sử dụng thông tin này để thực hiện yêu cầu transmission,
+                    nhưng không cần hiểu rằng dữ liệu bên trong payload là "VehicleSpeed",
+                    "EngineSpeed" hay "BrakeStatus".
+                </p>
+
+                <div class="note">
+                    Đây là một ranh giới rất quan trọng:
+                    <strong>COM hiểu ý nghĩa của signal; CanDrv chủ yếu xử lý dữ liệu ở mức CAN hardware.</strong>
+                </div>
+
+                <h2>5. Scope của CAN Driver trên đường nhận RX</h2>
+
+                <p>
+                    Ở chiều nhận, CAN Controller phát hiện frame trên bus.
+                    CAN Driver lấy thông tin từ hardware và chuyển notification lên CanIf.
+                </p>
+
+                <svg viewBox="0 0 720 180" role="img" aria-label="Scope của CAN Driver trong receive path"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="10" y="60" width="120" height="55" fill="rgba(190,120,80,.25)" />
+                        <rect x="165" y="42" width="155" height="91" fill="rgba(46,139,87,.28)" />
+                        <rect x="355" y="60" width="110" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="500" y="60" width="95" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="625" y="60" width="80" height="55" fill="rgba(224,168,0,.25)" />
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="70" y="92">CAN Bus</text>
+                        <text x="242" y="80">CAN Driver</text>
+                        <text x="242" y="100">← Scope</text>
+                        <text x="410" y="92">CanIf</text>
+                        <text x="547" y="92">PduR</text>
+                        <text x="665" y="92">COM</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M135 87 L160 87" />
+                        <path d="M325 87 L350 87" />
+                        <path d="M470 87 L495 87" />
+                        <path d="M600 87 L620 87" />
+                    </g>
+
+                    <g font-size="10" fill="currentColor" text-anchor="middle">
+                        <text x="147" y="75">frame</text>
+                        <text x="337" y="75">RxIndication</text>
+                        <text x="482" y="75">PDU</text>
+                        <text x="612" y="75">I-PDU</text>
+                    </g>
+                </svg>
+
+                <p>
+                    CAN Driver có thể phải xử lý receive event theo interrupt hoặc polling,
+                    tùy configuration. Sau khi nhận message từ hardware, driver cung cấp thông tin
+                    cần thiết cho CanIf.
+                </p>
+
+                <p>
+                    Điều quan trọng là CanDrv <strong>không unpack VehicleSpeed hay EngineSpeed</strong>.
+                    Việc phân tích payload thành signal thuộc các lớp phía trên, đặc biệt là COM.
+                </p>
+
+                <h2>6. CAN Driver và CAN Controller khác nhau thế nào?</h2>
+
+                <p>
+                    Đây là một điểm dễ nhầm khi mới học AUTOSAR.
+                    <strong>CAN Controller</strong> là phần cứng/peripheral của microcontroller,
+                    còn <strong>CAN Driver</strong> là software driver điều khiển peripheral đó.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>CAN Controller</th>
+                        <th>CAN Driver</th>
+                    </tr>
+                    <tr>
+                        <td>Phần cứng/peripheral</td>
+                        <td>Software trong MCAL</td>
+                    </tr>
+                    <tr>
+                        <td>Thực hiện chức năng CAN protocol ở hardware</td>
+                        <td>Điều khiển và truy cập controller</td>
+                    </tr>
+                    <tr>
+                        <td>Có TX/RX registers hoặc message resources</td>
+                        <td>Đọc/ghi và quản lý các resources đó</td>
+                    </tr>
+                    <tr>
+                        <td>Phát hiện các trạng thái CAN hardware</td>
+                        <td>Đọc trạng thái và thông báo lên layer phía trên</td>
+                    </tr>
+                    <tr>
+                        <td>Tham gia xử lý bit-level CAN</td>
+                        <td>Không tự triển khai toàn bộ CAN protocol bằng software</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Với một MCU hiện đại, CAN Controller thường đã thực hiện phần lớn CAN protocol ở hardware.
+                    CAN Driver không phải là một "CAN protocol implementation bằng C" chạy từng bit trên CPU.
+                    Nó là software layer điều khiển peripheral CAN.
+                </div>
+
+                <h2>7. CAN Driver và CAN Transceiver khác nhau thế nào?</h2>
+
+                <p>
+                    Một ECU CAN còn có <strong>CAN Transceiver</strong>, nhưng transceiver cũng không phải
+                    CAN Driver.
+                </p>
+
+                <svg viewBox="0 0 720 150" role="img"
+                    aria-label="Phân biệt CAN Driver, CAN Controller và CAN Transceiver"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="20" y="45" width="150" height="55" fill="rgba(46,139,87,.28)" />
+                        <rect x="205" y="45" width="150" height="55" fill="rgba(70,130,180,.25)" />
+                        <rect x="390" y="45" width="150" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="575" y="45" width="120" height="55" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="95" y="68">CAN Driver</text>
+                        <text x="95" y="87">Software</text>
+                        <text x="280" y="68">CAN Controller</text>
+                        <text x="280" y="87">MCU Peripheral</text>
+                        <text x="465" y="68">CAN Transceiver</text>
+                        <text x="465" y="87">Physical Layer</text>
+                        <text x="635" y="77">CAN Bus</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M175 72 L200 72" />
+                        <path d="M360 72 L385 72" />
+                        <path d="M545 72 L570 72" />
+                    </g>
+                </svg>
+
+                <table>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Vai trò</th>
+                    </tr>
+                    <tr>
+                        <td>CAN Driver</td>
+                        <td>Software điều khiển CAN Controller.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Controller</td>
+                        <td>Hardware peripheral xử lý CAN protocol.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Transceiver</td>
+                        <td>Chuyển đổi giữa logic CAN của controller và tín hiệu physical trên bus.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Bus</td>
+                        <td>Môi trường truyền vật lý giữa các ECU.</td>
+                    </tr>
+                </table>
+
+                <h2>8. CAN Driver có xử lý Arbitration không?</h2>
+
+                <p>
+                    Ở Bài 6, chúng ta đã học <strong>bus arbitration</strong>.
+                    Một câu hỏi thường gặp là: "CAN Driver có thực hiện arbitration bằng software không?"
+                </p>
+
+                <p>
+                    Câu trả lời là <strong>không theo nghĩa CAN Driver tự so sánh từng bit của các message
+                        bằng CPU</strong>. Arbitration là một phần của CAN protocol được CAN Controller
+                    và physical bus thực hiện ở mức hardware.
+                </p>
+
+                <p>
+                    CAN Driver cung cấp message/Identifier cho controller và xử lý các kết quả,
+                    còn controller thực hiện phần protocol cần thiết để truyền frame trên bus.
+                </p>
+
+                <div class="note">
+                    Vì vậy có thể nhớ:
+                    <strong>CanDrv điều khiển CAN Controller; CAN Controller thực hiện CAN protocol ở hardware.</strong>
+                </div>
+
+                <h2>9. CAN Driver có xử lý Bit Stuffing không?</h2>
+
+                <p>
+                    Tương tự arbitration, <strong>bit stuffing</strong> là một cơ chế của CAN protocol.
+                    CAN Controller chịu trách nhiệm thực hiện protocol ở mức bit.
+                </p>
+
+                <p>
+                    CAN Driver không cần tự tạo một chuỗi bit đã stuffing bằng software trước khi ghi
+                    message vào controller. Driver cung cấp dữ liệu và các thông tin cần thiết;
+                    controller thực hiện việc tạo frame theo CAN protocol.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Chức năng</th>
+                        <th>Thành phần chính</th>
+                    </tr>
+                    <tr>
+                        <td>Bit stuffing</td>
+                        <td>CAN Controller</td>
+                    </tr>
+                    <tr>
+                        <td>Arbitration</td>
+                        <td>CAN Controller + CAN bus</td>
+                    </tr>
+                    <tr>
+                        <td>CRC của CAN frame</td>
+                        <td>CAN Controller</td>
+                    </tr>
+                    <tr>
+                        <td>ACK mechanism</td>
+                        <td>CAN Controller + CAN bus</td>
+                    </tr>
+                    <tr>
+                        <td>Driver API / hardware access</td>
+                        <td>CAN Driver</td>
+                    </tr>
+                </table>
+
+                <h2>10. CAN Driver và Identifier</h2>
+
+                <p>
+                    Identifier xuất hiện trong CAN message, nhưng CAN Driver không quyết định ý nghĩa
+                    của Identifier đối với hệ thống.
+                </p>
+
+                <p>
+                    Driver cần xử lý Identifier theo configuration và interface được cung cấp,
+                    nhưng việc một Identifier có nghĩa là "Engine Speed", "Brake Status" hay
+                    "Diagnostic message" thuộc communication/network configuration phía trên.
+                </p>
+
+                <pre><code>CAN ID: 0x123
+
+CAN Driver nhìn:
+    → Identifier
+    → Data length
+    → Data buffer
+    → Hardware Object
+
+COM/Application nhìn:
+    → VehicleSpeed
+    → EngineSpeed
+    → BrakeStatus
+    → Signal value</code></pre>
+
+                <div class="note">
+                    Đây là một ví dụ điển hình về abstraction:
+                    <strong>CanDrv quan tâm message cần được truyền như thế nào;
+                        COM quan tâm dữ liệu trong message có ý nghĩa gì.</strong>
+                </div>
+
+                <h2>11. CAN Driver và Hardware Object</h2>
+
+                <p>
+                    Hardware Object là một phần quan trọng trong scope của CAN Driver.
+                    Tùy CAN Controller, implementation có thể có các mailbox, transmit buffer,
+                    receive buffer hoặc FIFO khác nhau. CAN Driver ánh xạ các tài nguyên hardware
+                    này với các Hardware Object trong configuration.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Object</th>
+                        <th>Vai trò</th>
+                    </tr>
+                    <tr>
+                        <td>HTH</td>
+                        <td>Đại diện cho transmit hardware object.</td>
+                    </tr>
+                    <tr>
+                        <td>HRH</td>
+                        <td>Đại diện cho receive hardware object.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>CanIf
+  |
+  |  Can_Write(HTH_0, PDU)
+  v
+CAN Driver
+  |
+  +-- HTH_0
+  |     |
+  |     +-- TX Mailbox 0
+  |
+  +-- HTH_1
+        |
+        +-- TX Mailbox 1</code></pre>
+
+                <p>
+                    Mapping thực tế phụ thuộc vào CAN Controller và configuration.
+                    Do đó khi debug transmission, cần kiểm tra cả <strong>HTH configuration</strong>
+                    chứ không chỉ kiểm tra CAN ID.
+                </p>
+
+                <h2>12. CAN Driver Configuration cũng thuộc scope</h2>
+
+                <p>
+                    CAN Driver không chỉ là một tập API runtime. Configuration là một phần rất quan trọng
+                    trong cách driver hoạt động.
+                </p>
+
+                <p>
+                    Các thông tin configuration thường liên quan đến:
+                </p>
+
+                <ul>
+                    <li>CAN Controller nào được sử dụng.</li>
+                    <li>Controller baud rate / bit timing.</li>
+                    <li>Hardware Objects.</li>
+                    <li>HTH và HRH.</li>
+                    <li>Receive filtering.</li>
+                    <li>Interrupt configuration.</li>
+                    <li>Polling configuration.</li>
+                    <li>CAN FD capability nếu được hỗ trợ.</li>
+                    <li>Notification/callback configuration.</li>
+                </ul>
+
+                <p>
+                    Configuration thường được tạo bằng AUTOSAR configuration tool và code/data cần thiết
+                    được generate cho project.
+                </p>
+
+                <div class="note">
+                    Vì configuration đóng vai trò lớn, một bug CAN không nhất thiết nằm trong source code
+                    của CanDrv. Một configuration sai cũng có thể khiến driver hoạt động không đúng mong đợi.
+                </div>
+
+                <h2>13. Runtime Scope của CAN Driver</h2>
+
+                <p>
+                    Để dễ hình dung, có thể chia CAN Driver thành hai nhóm công việc:
+                    <strong>initialization/configuration</strong> và <strong>runtime operation</strong>.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Giai đoạn</th>
+                        <th>Ví dụ công việc</th>
+                    </tr>
+                    <tr>
+                        <td>Initialization</td>
+                        <td>Load configuration, initialize controller, configure hardware resources.</td>
+                    </tr>
+                    <tr>
+                        <td>Start-up</td>
+                        <td>Đưa controller vào trạng thái phù hợp để communication.</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime TX</td>
+                        <td>Nhận transmission request và ghi message vào hardware resource.</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime RX</td>
+                        <td>Đọc received message và thông báo lên CanIf.</td>
+                    </tr>
+                    <tr>
+                        <td>Error handling</td>
+                        <td>Phát hiện/truyền notification về các trạng thái lỗi được driver quản lý.</td>
+                    </tr>
+                    <tr>
+                        <td>Shutdown</td>
+                        <td>Đưa controller về trạng thái phù hợp theo communication state.</td>
+                    </tr>
+                </table>
+
+                <h2>14. Ví dụ: lỗi nằm ở đâu?</h2>
+
+                <p>
+                    Giả sử requirement nói rằng:
+                    <strong>"ECU phải gửi CAN ID 0x200 mỗi 10 ms."</strong>
+                </p>
+
+                <p>
+                    Nếu message không xuất hiện trên CAN bus, không nên ngay lập tức kết luận
+                    "CAN Driver bị lỗi". Có rất nhiều layer có thể gây ra vấn đề.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Triệu chứng</th>
+                        <th>Khả năng cần kiểm tra</th>
+                    </tr>
+                    <tr>
+                        <td>SWC không cập nhật data</td>
+                        <td>Application / RTE</td>
+                    </tr>
+                    <tr>
+                        <td>COM không trigger transmission</td>
+                        <td>COM configuration / transmission mode</td>
+                    </tr>
+                    <tr>
+                        <td>PDU không được route</td>
+                        <td>PduR configuration</td>
+                    </tr>
+                    <tr>
+                        <td>PDU không tới CAN Driver</td>
+                        <td>CanIf / mapping / configuration</td>
+                    </tr>
+                    <tr>
+                        <td>Can_Write không chấp nhận request</td>
+                        <td>CanDrv / HTH / controller state</td>
+                    </tr>
+                    <tr>
+                        <td>Driver request đúng nhưng không có frame</td>
+                        <td>Controller / transceiver / physical bus</td>
+                    </tr>
+                    <tr>
+                        <td>Frame xuất hiện nhưng sai ID</td>
+                        <td>Configuration / CanIf / CAN setup</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Đây là tư duy debug rất quan trọng trong automotive:
+                    <strong>trace requirement → application → communication stack → driver → hardware → bus</strong>.
+                    Không nên chỉ nhìn một module và kết luận nguyên nhân.
+                </div>
+
+                <h2>15. CAN Driver Scope trong một câu hỏi phỏng vấn</h2>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is the scope of an AUTOSAR CAN Driver?"</strong>,
+                    bạn có thể tư duy theo ba phần:
+                </p>
+
+                <ol>
+                    <li><strong>Interface:</strong> cung cấp interface cho CanIf.</li>
+                    <li><strong>Hardware:</strong> điều khiển CAN Controller và Hardware Objects.</li>
+                    <li><strong>Events:</strong> xử lý transmission, reception và các controller status/error events.
+                    </li>
+                </ol>
+
+                <p>
+                    Và đồng thời phải biết giới hạn của nó:
+                    <strong>CanDrv không xử lý application signal, PDU routing hay transport protocol.</strong>
+                </p>
+
+                <pre><code>CAN Driver Scope
+
+        CanIf
+          │
+          │  TX request / RX notification
+          ▼
+   ┌─────────────────┐
+   │    CAN Driver   │
+   │                 │
+   │ Controller      │
+   │ Hardware Object │
+   │ TX / RX          │
+   │ Status / Error   │
+   └─────────────────┘
+          │
+          ▼
+    CAN Controller
+          │
+          ▼
+       CAN Bus</code></pre>
+
+                <h2>16. Scope Boundary Checklist</h2>
+
+                <p>
+                    Khi cần xác định một vấn đề có thuộc CAN Driver hay không, có thể dùng checklist sau:
+                </p>
+
+                <ul>
+                    <li>Vấn đề có liên quan trực tiếp đến CAN Controller không?</li>
+                    <li>Vấn đề có liên quan đến HTH hoặc HRH không?</li>
+                    <li>Vấn đề có xảy ra khi CanIf gọi CAN Driver API không?</li>
+                    <li>CAN Driver có nhận được transmission request không?</li>
+                    <li>CAN Controller có đang ở đúng mode không?</li>
+                    <li>CAN Driver có nhận được hardware event không?</li>
+                    <li>Vấn đề có phải signal packing/unpacking không? Nếu có, kiểm tra COM.</li>
+                    <li>Vấn đề có phải PDU routing không? Nếu có, kiểm tra PduR.</li>
+                    <li>Vấn đề có phải transport protocol không? Nếu có, kiểm tra CanTp.</li>
+                    <li>Vấn đề có phải physical layer không? Nếu có, kiểm tra transceiver, wiring và termination.</li>
+                </ul>
+
+                <h2>17. Tổng hợp ranh giới các layer</h2>
+
+                <table>
+                    <tr>
+                        <th>Layer / Component</th>
+                        <th>Câu hỏi chính mà nó giải quyết</th>
+                    </tr>
+                    <tr>
+                        <td>Application / SWC</td>
+                        <td>Dữ liệu có ý nghĩa gì đối với chức năng ECU?</td>
+                    </tr>
+                    <tr>
+                        <td>COM</td>
+                        <td>Signal được đóng gói và truyền như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>PduR</td>
+                        <td>PDU cần được route tới module nào?</td>
+                    </tr>
+                    <tr>
+                        <td>CanTp</td>
+                        <td>Dữ liệu lớn được truyền qua nhiều CAN frame như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>CanIf</td>
+                        <td>Làm thế nào để communication stack giao tiếp với CAN Driver một cách độc lập hardware?</td>
+                    </tr>
+                    <tr>
+                        <td>CanDrv</td>
+                        <td>Làm thế nào để điều khiển CAN Controller và xử lý TX/RX hardware event?</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Controller</td>
+                        <td>Làm thế nào để thực hiện CAN protocol ở hardware?</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Transceiver</td>
+                        <td>Làm thế nào để kết nối controller với physical CAN bus?</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>CAN-Driver Scope</strong> tập trung vào phần giao tiếp giữa AUTOSAR CanIf
+                    và CAN Controller. CAN Driver chịu trách nhiệm khởi tạo/configure controller,
+                    quản lý Hardware Object, thực hiện transmission/reception và thông báo các
+                    controller status hoặc error event lên layer phía trên.
+                    CAN Driver <strong>không</strong> xử lý application logic, signal packing/unpacking,
+                    PDU routing hay transport protocol. Những chức năng đó thuộc các module khác trong
+                    communication stack.
+                    Có thể nhớ toàn bộ ranh giới bằng chuỗi:
+                    <strong>Application → COM → PduR/CanTp → CanIf → CanDrv → CAN Controller → Transceiver → CAN
+                        Bus</strong>.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-9.html">← Bài trước</a>
+                    <a class="btn" href="lesson-11.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html" class="active" aria-current="page">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</h1>
+
+                <p>
+                    Trong các bài trước, chúng ta đã tìm hiểu từng thành phần chính của
+                    <strong>AUTOSAR Classic</strong> như Application Software, RTE, Basic Software
+                    và Hardware. Bài này sẽ kết nối những kiến thức đó lại để nhìn vào một vấn đề
+                    quan trọng:
+                    <strong>dữ liệu thực sự đi qua các tầng của AUTOSAR như thế nào?</strong>
+                </p>
+
+                <p>
+                    Thay vì tìm hiểu sâu từng module, bài này tập trung vào cách nhìn
+                    <strong>end-to-end</strong>: từ một tín hiệu hoặc dữ liệu ở bên ngoài ECU,
+                    đi qua Hardware và các Software Layer, đến Application Software và ngược lại.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Bài này chỉ tập trung vào luồng dữ liệu ở mức tổng quan.
+                    Các khái niệm chi tiết như Signal, I-PDU, PDU, COM, PduR, CanIf, CanDrv,
+                    RTE API, Port, Interface và cách cấu hình cụ thể sẽ được tìm hiểu
+                    trong các bài học chuyên sâu sau.
+                </div>
+
+                <h2>1. Luồng dữ liệu trong AUTOSAR là gì?</h2>
+
+                <p>
+                    <strong>Luồng dữ liệu</strong> mô tả cách thông tin được truyền từ một nguồn
+                    đến một nơi sử dụng thông qua các lớp phần mềm và phần cứng của hệ thống.
+                </p>
+
+                <p>
+                    Trong một ECU, dữ liệu có thể bắt đầu từ:
+                </p>
+
+                <ul>
+                    <li>Một sensor hoặc tín hiệu vật lý.</li>
+                    <li>Một ECU khác thông qua mạng truyền thông.</li>
+                    <li>Một peripheral hoặc input của microcontroller.</li>
+                    <li>Một Software Component khác.</li>
+                </ul>
+
+                <p>
+                    Dữ liệu sau đó có thể được xử lý bởi Application Software và cuối cùng
+                    tạo ra một output đến actuator, network hoặc một thành phần khác.
+                </p>
+
+                <h2>2. Nhìn toàn cảnh luồng dữ liệu</h2>
+
+                <p>
+                    Ở mức đơn giản nhất, có thể hình dung luồng dữ liệu xuyên suốt một ECU như sau:
+                </p>
+
+                <pre><code>Input / Network
+      │
+      ↓
+   Hardware
+      │
+      ↓
+     BSW
+      │
+      ↓
+     RTE
+      │
+      ↓
+Application Software
+      │
+      ↓
+     RTE
+      │
+      ↓
+     BSW
+      │
+      ↓
+   Hardware
+      │
+      ↓
+Output / Network</code></pre>
+
+                <p>
+                    Đây là cách nhìn tổng quan. Trong hệ thống thực tế, dữ liệu có thể đi qua
+                    nhiều module BSW khác nhau tùy theo loại dữ liệu và chức năng của ECU.
+                </p>
+
+                <h2>3. Luồng dữ liệu từ Hardware đến Application</h2>
+
+                <p>
+                    Một trường hợp phổ biến là ECU nhận dữ liệu từ bên ngoài và sử dụng dữ liệu
+                    đó để thực hiện một chức năng trong Application Software.
+                </p>
+
+                <p>
+                    Ví dụ, một sensor cung cấp thông tin cho ECU:
+                </p>
+
+                <pre><code>Sensor
+  │
+  ↓
+Hardware
+  │
+  ↓
+MCAL / BSW
+  │
+  ↓
+RTE
+  │
+  ↓
+Application SWC
+  │
+  ↓
+Xử lý dữ liệu</code></pre>
+
+                <p>
+                    Ở đây, Hardware nhận tín hiệu vật lý, các lớp BSW hỗ trợ việc đưa dữ liệu
+                    vào môi trường phần mềm, RTE cung cấp môi trường giao tiếp và
+                    Application Software xử lý dữ liệu theo logic chức năng.
+                </p>
+
+                <h2>4. Luồng dữ liệu từ Network đến Application</h2>
+
+                <p>
+                    Không phải tất cả dữ liệu đều bắt đầu từ sensor. Trong hệ thống automotive,
+                    ECU thường nhận dữ liệu từ các ECU khác thông qua mạng truyền thông.
+                </p>
+
+                <p>
+                    Ở mức tổng quan, luồng dữ liệu có thể được hình dung:
+                </p>
+
+                <pre><code>ECU khác
+   │
+   ↓
+Communication Hardware
+   │
+   ↓
+Communication BSW
+   │
+   ↓
+    RTE
+   │
+   ↓
+Application SWC</code></pre>
+
+                <p>
+                    Ví dụ, một ECU có thể nhận thông tin trạng thái cửa từ một ECU khác.
+                    Dữ liệu sau đó được đưa đến Application Software để thực hiện chức năng
+                    liên quan.
+                </p>
+
+                <div class="note">
+                    Trong các bài chuyên sâu về Communication Stack, chúng ta sẽ tìm hiểu
+                    chi tiết hơn dữ liệu đi qua những module nào. Ở đây chỉ cần nhớ rằng
+                    Communication BSW đóng vai trò quan trọng trong việc đưa dữ liệu mạng
+                    vào môi trường mà Application có thể sử dụng.
+                </div>
+
+                <h2>5. Luồng dữ liệu trong Application Software</h2>
+
+                <p>
+                    Sau khi dữ liệu đến Application Software, một hoặc nhiều
+                    <strong>Software Component (SWC)</strong> có thể xử lý dữ liệu.
+                </p>
+
+                <pre><code>Input Data
+    │
+    ↓
++-------------------+
+|       SWC A       |
+|   Input Handling  |
++---------+---------+
+          │
+          ↓
++-------------------+
+|       SWC B       |
+|  Function Logic   |
++---------+---------+
+          │
+          ↓
++-------------------+
+|       SWC C       |
+|   Output Control  |
++---------+---------+
+          │
+          ↓
+      Output Data</code></pre>
+
+                <p>
+                    Các SWC có thể đảm nhiệm những chức năng khác nhau và cần trao đổi dữ liệu
+                    với nhau. RTE cung cấp môi trường giao tiếp giữa các thành phần Application.
+                </p>
+
+                <h2>6. Vai trò của RTE trong luồng dữ liệu</h2>
+
+                <p>
+                    RTE nằm giữa Application Software và BSW, vì vậy nó là một thành phần
+                    quan trọng trong luồng dữ liệu của AUTOSAR Classic.
+                </p>
+
+                <pre><code>Application SWC A
+        │
+        ↓
+       RTE
+        │
+        ↓
+Application SWC B</code></pre>
+
+                <p>
+                    Trong trường hợp khác, Application Software có thể cần sử dụng dữ liệu
+                    hoặc dịch vụ từ hệ thống bên dưới:
+                </p>
+
+                <pre><code>Application SWC
+       │
+       ↓
+      RTE
+       │
+       ↓
+      BSW
+       │
+       ↓
+Hardware / Network</code></pre>
+
+                <p>
+                    Vì vậy, RTE có thể được xem là điểm giao tiếp quan trọng giữa
+                    Application Software với các thành phần khác trong hệ thống.
+                </p>
+
+                <h2>7. Luồng dữ liệu từ Application đến Hardware</h2>
+
+                <p>
+                    Luồng dữ liệu cũng có thể đi theo hướng ngược lại.
+                    Application Software có thể tạo ra một yêu cầu điều khiển
+                    một actuator hoặc một output của ECU.
+                </p>
+
+                <pre><code>Application SWC
+       │
+       ↓
+      RTE
+       │
+       ↓
+      BSW
+       │
+       ↓
+     MCAL
+       │
+       ↓
+   Hardware
+       │
+       ↓
+    Actuator</code></pre>
+
+                <p>
+                    Ví dụ, Application Software có thể quyết định bật đèn.
+                    Quyết định này được truyền xuống các lớp phần mềm bên dưới
+                    để cuối cùng tác động đến Hardware.
+                </p>
+
+                <h2>8. Luồng dữ liệu xuyên suốt một ECU</h2>
+
+                <p>
+                    Khi kết hợp các phần trên, ta có thể hình dung một luồng dữ liệu
+                    end-to-end đơn giản như sau:
+                </p>
+
+                <pre><code>                EXTERNAL WORLD
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+        Sensor                  Network
+          │                       │
+          └───────────┬───────────┘
+                      ↓
+                  Hardware
+                      │
+                      ↓
+                     BSW
+                      │
+                      ↓
+                     RTE
+                      │
+                      ↓
+             Application SWC
+                      │
+                      ↓
+                Function Logic
+                      │
+                      ↓
+                     RTE
+                      │
+                      ↓
+                     BSW
+                      │
+                      ↓
+                  Hardware
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+       Actuator                Network
+          │                       │
+          └───────────┬───────────┘
+                      ↓
+                EXTERNAL WORLD</code></pre>
+
+                <p>
+                    Sơ đồ này cho thấy dữ liệu có thể đi qua nhiều lớp khác nhau trước khi
+                    đến nơi sử dụng cuối cùng.
+                </p>
+
+                <h2>9. Ví dụ: Từ nút nhấn đến đèn</h2>
+
+                <p>
+                    Giả sử một ECU có nút nhấn dùng để điều khiển một đèn.
+                    Khi người dùng nhấn nút, ECU cần nhận biết trạng thái của nút
+                    và điều khiển đèn tương ứng.
+                </p>
+
+                <p>
+                    Ở mức tổng quan, luồng dữ liệu có thể là:
+                </p>
+
+                <pre><code>Button
+  │
+  ↓
+GPIO Hardware
+  │
+  ↓
+MCAL
+  │
+  ↓
+BSW
+  │
+  ↓
+RTE
+  │
+  ↓
+Button Control SWC
+  │
+  ↓
+Lighting Control SWC
+  │
+  ↓
+RTE
+  │
+  ↓
+BSW
+  │
+  ↓
+MCAL
+  │
+  ↓
+GPIO / Output Hardware
+  │
+  ↓
+Lamp</code></pre>
+
+                <p>
+                    Trong ví dụ này, Application Software không cần trực tiếp xử lý
+                    register của GPIO. Nó tập trung vào logic:
+                    <strong>nếu nút được nhấn thì thay đổi trạng thái đèn.</strong>
+                </p>
+
+                <h2>10. Ví dụ: Dữ liệu CAN đến Application</h2>
+
+                <p>
+                    Một trường hợp khác là ECU nhận dữ liệu từ mạng CAN.
+                    Ví dụ, một ECU khác gửi thông tin trạng thái cửa.
+                </p>
+
+                <p>
+                    Ở mức tổng quan:
+                </p>
+
+                <pre><code>ECU khác
+   │
+   ↓
+CAN Bus
+   │
+   ↓
+CAN Hardware
+   │
+   ↓
+CAN / Communication BSW
+   │
+   ↓
+RTE
+   │
+   ↓
+Door Status SWC
+   │
+   ↓
+Lighting Control SWC</code></pre>
+
+                <p>
+                    Application Software có thể sử dụng thông tin trạng thái cửa
+                    để thực hiện một chức năng khác, chẳng hạn quyết định trạng thái
+                    của hệ thống chiếu sáng.
+                </p>
+
+                <div class="note">
+                    Đây chỉ là sơ đồ khái niệm. Luồng CAN thực tế có nhiều lớp và module
+                    hơn. Các chi tiết này sẽ được tìm hiểu trong những bài học về
+                    CAN Communication Stack.
+                </div>
+
+                <h2>11. Ví dụ: Application gửi dữ liệu ra Network</h2>
+
+                <p>
+                    Dữ liệu cũng có thể đi từ Application Software ra mạng truyền thông.
+                </p>
+
+                <pre><code>Application SWC
+       │
+       ↓
+      RTE
+       │
+       ↓
+Communication BSW
+       │
+       ↓
+CAN / LIN / Ethernet
+       │
+       ↓
+Communication Hardware
+       │
+       ↓
+     Network
+       │
+       ↓
+    ECU khác</code></pre>
+
+                <p>
+                    Ví dụ, một SWC có thể tạo ra thông tin trạng thái hệ thống
+                    và thông tin này được gửi đến một ECU khác.
+                </p>
+
+                <h2>12. Luồng dữ liệu và các lớp AUTOSAR</h2>
+
+                <p>
+                    Có thể tóm tắt vai trò của từng lớp trong một luồng dữ liệu
+                    bằng bảng sau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Vai trò trong luồng dữ liệu</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware</strong></td>
+                        <td>
+                            Nhận hoặc tạo tín hiệu vật lý và cung cấp nền tảng phần cứng.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>MCAL</strong></td>
+                        <td>
+                            Cung cấp giao tiếp giữa phần mềm và các peripheral của microcontroller.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>BSW</strong></td>
+                        <td>
+                            Xử lý các chức năng nền tảng và các dịch vụ cần thiết cho hệ thống.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE</strong></td>
+                        <td>
+                            Cung cấp môi trường giao tiếp giữa Application và các thành phần khác.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application SWC</strong></td>
+                        <td>
+                            Xử lý dữ liệu và thực hiện logic chức năng.
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>13. Dữ liệu không chỉ đi theo một hướng</h2>
+
+                <p>
+                    Một điểm quan trọng cần nhớ là dữ liệu trong AUTOSAR không chỉ đi
+                    từ Hardware lên Application.
+                </p>
+
+                <p>
+                    Dữ liệu và yêu cầu có thể đi theo cả hai hướng:
+                </p>
+
+                <pre><code>          ↑ Input / Data
+          │
+          │
+Hardware ↔ BSW ↔ RTE ↔ Application
+          │
+          │
+          ↓ Output / Command</code></pre>
+
+                <p>
+                    Application có thể nhận dữ liệu từ Hardware hoặc Network,
+                    xử lý dữ liệu và tạo ra output quay trở lại Hardware hoặc gửi
+                    dữ liệu sang một ECU khác.
+                </p>
+
+                <h2>14. Luồng dữ liệu giữa nhiều ECU</h2>
+
+                <p>
+                    Khi mở rộng từ một ECU sang toàn bộ hệ thống, dữ liệu có thể
+                    đi qua nhiều ECU khác nhau.
+                </p>
+
+                <pre><code>+-------------+                         +-------------+
+|    ECU A    |                         |    ECU B    |
+|             |                         |             |
+| Application |                         | Application |
+|     ↓       |                         |      ↑      |
+|    RTE      |                         |     RTE     |
+|     ↓       |                         |      ↑      |
+|    BSW      |                         |     BSW      |
+|     ↓       |                         |      ↑      |
+|  Hardware   |                         |  Hardware   |
++------+------+                         +------+------+
+       │                                        │
+       └──────────── Communication ─────────────┘</code></pre>
+
+                <p>
+                    Ví dụ, ECU A có thể xử lý dữ liệu sensor và gửi kết quả qua mạng.
+                    ECU B nhận dữ liệu đó và sử dụng trong Application Software của mình.
+                </p>
+
+                <p>
+                    Vì vậy, khi nhìn ở cấp độ toàn hệ thống, luồng dữ liệu không chỉ
+                    nằm trong một ECU mà còn có thể đi giữa nhiều ECU thông qua
+                    các mạng truyền thông.
+                </p>
+
+                <h2>15. Luồng dữ liệu và sự phân lớp</h2>
+
+                <p>
+                    Việc chia hệ thống thành nhiều lớp giúp mỗi phần có trách nhiệm
+                    tương đối rõ ràng.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Lớp</th>
+                        <th>Tập trung vào</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application</strong></td>
+                        <td>
+                            Logic và chức năng của hệ thống.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE</strong></td>
+                        <td>
+                            Giao tiếp và kết nối của Application.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>BSW</strong></td>
+                        <td>
+                            Dịch vụ nền tảng, giao tiếp và xử lý phần cứng.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware Abstraction</strong></td>
+                        <td>
+                            Giảm sự phụ thuộc vào Hardware cụ thể.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware</strong></td>
+                        <td>
+                            Thực hiện các chức năng vật lý và giao tiếp bên ngoài.
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>16. Cách nhìn end-to-end</h2>
+
+                <p>
+                    Khi phân tích một chức năng AUTOSAR, thay vì chỉ nhìn vào một module,
+                    có thể đặt câu hỏi theo toàn bộ đường đi của dữ liệu:
+                </p>
+
+                <pre><code>1. Dữ liệu bắt đầu từ đâu?
+          ↓
+2. Hardware nào nhận dữ liệu?
+          ↓
+3. BSW nào xử lý dữ liệu?
+          ↓
+4. Dữ liệu đi qua RTE như thế nào?
+          ↓
+5. SWC nào sử dụng dữ liệu?
+          ↓
+6. Application xử lý gì?
+          ↓
+7. Output được tạo ra ở đâu?
+          ↓
+8. Output đi qua BSW / Hardware nào?
+          ↓
+9. Output đến đâu?</code></pre>
+
+                <p>
+                    Đây là cách nhìn rất hữu ích khi muốn hiểu một chức năng
+                    <strong>end-to-end</strong> trong hệ thống AUTOSAR.
+                </p>
+
+                <div class="note">
+                    Khi học các bài chuyên sâu sau này, chúng ta có thể quay lại
+                    luồng end-to-end này và lần lượt thay thế từng khối tổng quát
+                    bằng các module AUTOSAR cụ thể.
+                </div>
+
+                <h2>17. Những khái niệm cần nhớ</h2>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa tổng quan</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Data Flow</strong></td>
+                        <td>
+                            Đường đi của dữ liệu từ nguồn đến nơi sử dụng hoặc output.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>End-to-End</strong></td>
+                        <td>
+                            Nhìn toàn bộ luồng xử lý từ đầu vào đến đầu ra.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application SWC</strong></td>
+                        <td>
+                            Xử lý dữ liệu và thực hiện logic chức năng.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE</strong></td>
+                        <td>
+                            Môi trường giao tiếp giữa Application và các thành phần khác.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>BSW</strong></td>
+                        <td>
+                            Cung cấp các chức năng nền tảng và xử lý dữ liệu ở các tầng thấp.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware</strong></td>
+                        <td>
+                            Nguồn hoặc đích của dữ liệu vật lý và nền tảng thực thi của ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Communication</strong></td>
+                        <td>
+                            Cho phép dữ liệu được trao đổi giữa các ECU.
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>Luồng dữ liệu xuyên suốt AUTOSAR</strong> giúp kết nối các kiến thức
+                    về Application Software, RTE, Basic Software và Hardware thành một bức tranh
+                    hoàn chỉnh. Dữ liệu có thể bắt đầu từ <strong>Sensor, Hardware hoặc Network</strong>,
+                    đi qua các lớp <strong>BSW</strong> và <strong>RTE</strong> để đến
+                    <strong>Application Software</strong>. Sau khi được xử lý, dữ liệu hoặc
+                    command có thể đi theo chiều ngược lại qua RTE, BSW và Hardware để tạo
+                    output hoặc truyền sang ECU khác. Cách nhìn <strong>end-to-end</strong>
+                    giúp hiểu được vai trò của từng layer và cách các thành phần AUTOSAR
+                    phối hợp với nhau trong một chức năng hoàn chỉnh.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-7.html">← Bài trước</a>
+                    <a class="btn" href="lesson-9.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

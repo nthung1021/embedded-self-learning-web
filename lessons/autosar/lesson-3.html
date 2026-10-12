@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 3: Tổng quan các Software Layer chính | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>    
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html" class="active" aria-current="page">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 3: Tổng quan các Software Layer chính</h1>
+
+                <p>
+                    Trong kiến trúc <strong>AUTOSAR Classic</strong>, phần mềm của ECU được tổ chức thành
+                    nhiều lớp với trách nhiệm khác nhau. Việc phân chia này giúp tách phần mềm ứng dụng
+                    khỏi phần mềm nền tảng và phần cứng bên dưới.
+                </p>
+
+                <p>
+                    Ở bài này, chúng ta chỉ tập trung vào <strong>vai trò tổng quan của các Software Layer</strong>
+                    và mối quan hệ giữa chúng. Các thành phần bên trong từng layer sẽ được học chi tiết
+                    ở những bài sau.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Bài này chỉ nhằm xây dựng bức tranh tổng thể. Chưa cần ghi nhớ
+                    chi tiết từng module, API hay cơ chế giao tiếp bên trong các layer.
+                </div>
+
+                <h2>1. Các Software Layer chính</h2>
+
+                <p>
+                    Ở mức tổng quan, kiến trúc AUTOSAR Classic có thể được nhìn theo cấu trúc:
+                </p>
+
+                <svg viewBox="0 0 600 400" role="img"
+                    aria-label="Các Software Layer chính trong AUTOSAR Classic"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+
+                        <rect x="20" y="20" width="560" height="80" rx="6"
+                            fill="rgba(20,80,107,.18)" />
+
+                        <rect x="20" y="110" width="560" height="55" rx="6"
+                            fill="rgba(224,168,0,.25)" />
+
+                        <rect x="20" y="175" width="560" height="150" rx="6"
+                            fill="rgba(46,139,87,.2)" />
+
+                        <rect x="20" y="335" width="560" height="45" rx="6"
+                            fill="rgba(128,128,128,.2)" />
+
+                    </g>
+
+                    <g font-size="14" fill="currentColor" text-anchor="middle">
+
+                        <text x="300" y="45" font-weight="bold">
+                            Application Software
+                        </text>
+
+                        <text x="300" y="72">
+                            Các chức năng ứng dụng của ECU
+                        </text>
+
+                        <text x="300" y="142" font-weight="bold">
+                            RTE - Runtime Environment
+                        </text>
+
+                        <text x="300" y="205" font-weight="bold">
+                            Basic Software - BSW
+                        </text>
+
+                        <text x="120" y="245">
+                            Services
+                        </text>
+
+                        <text x="300" y="245">
+                            ECU Abstraction
+                        </text>
+
+                        <text x="465" y="245">
+                            MCAL
+                        </text>
+
+                        <text x="300" y="290">
+                            Các dịch vụ và phần mềm nền tảng
+                        </text>
+
+                        <text x="300" y="363" font-weight="bold">
+                            Microcontroller / Hardware
+                        </text>
+
+                    </g>
+
+                </svg>
+
+                <p>
+                    Có thể hiểu đơn giản rằng:
+                </p>
+
+                <ul>
+                    <li><strong>Application Software:</strong> thực hiện chức năng mà ECU cần cung cấp.</li>
+                    <li><strong>RTE:</strong> tạo môi trường trung gian giữa Application Software và phần mềm nền tảng.</li>
+                    <li><strong>Basic Software:</strong> cung cấp các dịch vụ nền tảng và khả năng truy cập phần cứng.</li>
+                    <li><strong>Hardware:</strong> là vi điều khiển và các phần cứng mà phần mềm điều khiển.</li>
+                </ul>
+
+                <h2>2. Application Software Layer</h2>
+
+                <p>
+                    <strong>Application Software Layer</strong> là nơi chứa logic thực hiện các chức năng
+                    của ECU.
+                </p>
+
+                <p>
+                    Ví dụ, tùy loại ECU, Application Software có thể thực hiện các chức năng như:
+                </p>
+
+                <ul>
+                    <li>Điều khiển cửa xe.</li>
+                    <li>Điều khiển đèn.</li>
+                    <li>Điều khiển cửa sổ.</li>
+                    <li>Giám sát trạng thái của hệ thống.</li>
+                    <li>Xử lý dữ liệu từ các cảm biến.</li>
+                </ul>
+
+                <p>
+                    Trong AUTOSAR, Application Software được tổ chức thành các
+                    <strong>Software Component (SWC)</strong>.
+                </p>
+
+                <div class="note">
+                    Chi tiết về SWC, Port, Interface, Runnable và Event sẽ được trình bày trong
+                    bài học riêng về <strong>Application Layer và SWC</strong>.
+                </div>
+
+                <h2>3. Runtime Environment - RTE</h2>
+
+                <p>
+                    <strong>RTE (Runtime Environment)</strong> nằm giữa Application Software và Basic Software.
+                    Nó cung cấp môi trường giao tiếp để các thành phần phần mềm có thể sử dụng
+                    các chức năng và dữ liệu mà chúng cần.
+                </p>
+
+                <p>
+                    Vì vậy, Application Software không cần phải trực tiếp quan tâm đến cách phần mềm
+                    nền tảng hoặc phần cứng bên dưới được triển khai.
+                </p>
+
+                <p>
+                    Có thể hình dung RTE giống như một <strong>lớp trung gian</strong> giúp kết nối
+                    Application Software với phần còn lại của hệ thống.
+                </p>
+
+                <div class="note">
+                    RTE là một khái niệm quan trọng của AUTOSAR Classic. Cơ chế hoạt động và
+                    Virtual Function Bus sẽ được học ở bài riêng sau.
+                </div>
+
+                <h2>4. Basic Software - BSW</h2>
+
+                <p>
+                    <strong>Basic Software (BSW)</strong> là phần mềm nền tảng của AUTOSAR.
+                    BSW cung cấp những chức năng chung mà Application Software cần sử dụng.
+                </p>
+
+                <p>
+                    Ở mức tổng quan, BSW bao gồm nhiều nhóm chức năng như:
+                </p>
+
+                <ul>
+                    <li>Quản lý hệ thống.</li>
+                    <li>Giao tiếp giữa ECU và các ECU khác.</li>
+                    <li>Quản lý bộ nhớ.</li>
+                    <li>Chẩn đoán.</li>
+                    <li>Quản lý vi điều khiển.</li>
+                    <li>Truy cập các thiết bị phần cứng.</li>
+                </ul>
+
+                <p>
+                    BSW có thể tiếp tục được chia thành các nhóm lớn như
+                    <strong>Services Layer</strong>, <strong>ECU Abstraction</strong>,
+                    <strong>MCAL</strong> và <strong>Complex Drivers</strong>.
+                </p>
+
+                <div class="note">
+                    Ở bài này chỉ cần hiểu BSW là <strong>phần mềm nền tảng</strong>.
+                    Các thành phần bên trong BSW sẽ được học ở các bài "Chi tiết..." tương ứng.
+                </div>
+
+                <h2>5. Microcontroller và Hardware</h2>
+
+                <p>
+                    Ở dưới cùng của kiến trúc là <strong>Microcontroller</strong> và các phần cứng
+                    liên quan của ECU.
+                </p>
+
+                <p>
+                    Microcontroller cung cấp các tài nguyên phần cứng để phần mềm có thể thực hiện
+                    công việc, chẳng hạn như:
+                </p>
+
+                <ul>
+                    <li>CPU.</li>
+                    <li>RAM và Flash.</li>
+                    <li>Timer.</li>
+                    <li>CAN Controller.</li>
+                    <li>ADC.</li>
+                    <li>GPIO.</li>
+                    <li>Các peripheral khác.</li>
+                </ul>
+
+                <p>
+                    AUTOSAR sử dụng các lớp phần mềm bên trên để hạn chế việc Application Software
+                    phải phụ thuộc trực tiếp vào những đặc điểm cụ thể của microcontroller.
+                </p>
+
+                <h2>6. Mối quan hệ giữa các Layer</h2>
+
+                <p>
+                    Có thể nhìn mối quan hệ giữa các tầng theo hướng từ trên xuống:
+                </p>
+
+                <pre><code>Application Software
+        ↓
+       RTE
+        ↓
+Basic Software (BSW)
+        ↓
+Microcontroller / Hardware</code></pre>
+
+                <p>
+                    Mỗi tầng có một trách nhiệm chính và cung cấp một mức trừu tượng khác nhau
+                    cho tầng phía trên.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Vai trò tổng quan</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application Software</strong></td>
+                        <td>Thực hiện chức năng của ECU.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE</strong></td>
+                        <td>Làm lớp trung gian kết nối Application Software với hệ thống bên dưới.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>BSW</strong></td>
+                        <td>Cung cấp các dịch vụ nền tảng và khả năng truy cập phần cứng.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware</strong></td>
+                        <td>Cung cấp tài nguyên vật lý để ECU thực hiện chức năng.</td>
+                    </tr>
+                </table>
+
+                <h2>7. Tại sao cần nhiều Layer?</h2>
+
+                <p>
+                    Việc chia phần mềm thành nhiều layer giúp mỗi phần tập trung vào một trách nhiệm
+                    nhất định thay vì để toàn bộ phần mềm phụ thuộc trực tiếp vào phần cứng.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Nếu không phân lớp</th>
+                        <th>Khi sử dụng kiến trúc phân lớp</th>
+                    </tr>
+
+                    <tr>
+                        <td>Application dễ phụ thuộc vào hardware.</td>
+                        <td>Application được tách khỏi hardware.</td>
+                    </tr>
+
+                    <tr>
+                        <td>Thay đổi hardware có thể ảnh hưởng nhiều code.</td>
+                        <td>Các lớp bên dưới có thể thay đổi mà application ít bị ảnh hưởng hơn.</td>
+                    </tr>
+
+                    <tr>
+                        <td>Khó phân chia trách nhiệm giữa các module.</td>
+                        <td>Mỗi layer có trách nhiệm rõ ràng hơn.</td>
+                    </tr>
+
+                    <tr>
+                        <td>Khó tái sử dụng phần mềm.</td>
+                        <td>Dễ hướng tới việc tái sử dụng các thành phần phần mềm.</td>
+                    </tr>
+                </table>
+
+                <h2>8. Ví dụ tổng quan: Điều khiển một chức năng của ECU</h2>
+
+                <p>
+                    Giả sử ECU cần thực hiện một chức năng điều khiển đèn. Ở mức tổng quan,
+                    luồng xử lý có thể được hình dung như sau:
+                </p>
+
+                <pre><code>Application Software
+        ↓
+       RTE
+        ↓
+       BSW
+        ↓
+      MCAL
+        ↓
+     Hardware
+        ↓
+       Đèn</code></pre>
+
+                <p>
+                    Application Software quyết định <strong>ECU cần làm gì</strong>.
+                    Các layer bên dưới đảm nhiệm phần <strong>hỗ trợ thực hiện chức năng đó</strong>
+                    và giao tiếp với phần cứng.
+                </p>
+
+                <div class="note">
+                    Đây chỉ là mô hình khái niệm. Các bước và module thực tế nằm giữa Application
+                    và Hardware sẽ được học trong những bài chuyên sâu sau.
+                </div>
+
+                <h2>9. Ví dụ tổng quan với CAN</h2>
+
+                <p>
+                    Với giao tiếp CAN, có thể hình dung đường đi của dữ liệu ở mức tổng quan:
+                </p>
+
+                <pre><code>Application Software
+        ↓
+       RTE
+        ↓
+   CAN Communication
+        ↓
+      CAN Driver
+        ↓
+   CAN Controller
+        ↓
+      CAN Bus</code></pre>
+
+                <p>
+                    Điều quan trọng ở bài này là nhận ra rằng <strong>CAN communication nằm trong
+                    phần mềm nền tảng của AUTOSAR</strong>, thay vì phải xử lý trực tiếp trong
+                    Application Software.
+                </p>
+
+                <p>
+                    Các module cụ thể của CAN Stack sẽ được học ở những bài chuyên biệt sau.
+                </p>
+
+                <h2>10. Các ý chính cần nhớ</h2>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Cần nhớ</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application Software</strong></td>
+                        <td>Chứa logic và chức năng của ECU.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE</strong></td>
+                        <td>Lớp trung gian giữa Application Software và BSW.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>BSW</strong></td>
+                        <td>Cung cấp các dịch vụ nền tảng cho ECU.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>MCAL</strong></td>
+                        <td>Là phần của BSW có vai trò trừu tượng hóa và truy cập các chức năng của microcontroller.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware</strong></td>
+                        <td>Cung cấp tài nguyên vật lý cho ECU.</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    Kiến trúc AUTOSAR Classic tổ chức phần mềm ECU thành các tầng chính:
+                    <strong>Application Software, RTE và Basic Software</strong>, bên dưới là
+                    <strong>Microcontroller/Hardware</strong>. Application tập trung vào chức năng
+                    của ECU, RTE đóng vai trò trung gian, BSW cung cấp các dịch vụ nền tảng,
+                    còn Hardware cung cấp tài nguyên vật lý. Việc phân lớp giúp giảm sự phụ thuộc
+                    giữa Application Software và phần cứng, đồng thời tạo ra kiến trúc dễ tổ chức
+                    và tái sử dụng hơn.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-2.html">← Bài trước</a>
+                    <a class="btn" href="lesson-4.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

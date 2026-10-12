@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 10: Tổng quan Service và ECU Management | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html" class="active" aria-current="page">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+            <a href="index.html">
+                ← Tất cả bài học AUTOSAR
+            </a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 10: Tổng quan Service và ECU Management</h1>
+
+            <p>
+                Trong các bài trước, chúng ta đã tìm hiểu tổng quan về
+                Application Software, RTE, Basic Software và Communication Stack.
+                Tuy nhiên, một ECU không chỉ cần xử lý chức năng ứng dụng và
+                truyền nhận dữ liệu.
+            </p>
+
+            <p>
+                ECU còn cần những dịch vụ chung để quản lý bộ nhớ, thời gian,
+                trạng thái hoạt động, lỗi và các chức năng hệ thống khác.
+                Đây là vai trò của nhóm <strong>Service</strong> trong AUTOSAR.
+            </p>
+
+            <p>
+                Bên cạnh đó, ECU cũng cần quản lý trạng thái hoạt động của chính
+                nó, chẳng hạn như khởi động, hoạt động bình thường và chuyển
+                sang trạng thái khác. Đây là phần
+                <strong>ECU Management</strong>.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Bài này chỉ giới thiệu vai trò tổng quan của Service và
+                ECU Management trong AUTOSAR Classic. Các module cụ thể,
+                configuration và API sẽ được tìm hiểu trong những bài chuyên
+                sâu hơn.
+            </div>
+
+
+            <h2>1. Service trong AUTOSAR là gì?</h2>
+
+            <p>
+                Trong AUTOSAR, Service là các chức năng phần mềm dùng chung
+                được cung cấp cho các thành phần khác trong ECU.
+            </p>
+
+            <p>
+                Thay vì mỗi Application Software Component phải tự xây dựng
+                những chức năng cơ bản như quản lý bộ nhớ, quản lý thời gian
+                hoặc xử lý trạng thái hệ thống, các chức năng này có thể được
+                cung cấp bởi Basic Software.
+            </p>
+
+            <p>
+                Có thể hình dung đơn giản:
+            </p>
+
+            <pre><code>+--------------------------------------+
+|       Application Software          |
+|              SWC                     |
++------------------+-------------------+
+                   |
+                   v
++--------------------------------------+
+|             RTE                      |
++------------------+-------------------+
+                   |
+                   v
++--------------------------------------+
+|          AUTOSAR Services            |
+|                                      |
+|  Memory | Time | Communication |     |
+|  OS     | ECU Management | ...       |
++------------------+-------------------+
+                   |
+                   v
++--------------------------------------+
+|       Hardware / MCAL / ECU Ab.      |
++--------------------------------------+</code></pre>
+
+
+            <h2>2. Tại sao cần Service?</h2>
+
+            <p>
+                Một ECU thường có nhiều software component cùng cần sử dụng
+                các chức năng cơ bản giống nhau.
+            </p>
+
+            <p>
+                Nếu mỗi component tự triển khai các chức năng này, phần mềm
+                sẽ dễ bị trùng lặp và khó quản lý.
+            </p>
+
+            <p>
+                Service giúp cung cấp những chức năng dùng chung theo một
+                kiến trúc thống nhất.
+            </p>
+
+            <ul>
+                <li>
+                    Giảm việc triển khai trùng lặp giữa các Application SWC.
+                </li>
+
+                <li>
+                    Cung cấp các chức năng chung cho toàn ECU.
+                </li>
+
+                <li>
+                    Tách Application khỏi các chi tiết phần cứng.
+                </li>
+
+                <li>
+                    Hỗ trợ quản lý trạng thái và hoạt động của ECU.
+                </li>
+
+                <li>
+                    Giúp kiến trúc phần mềm có tính module hóa cao hơn.
+                </li>
+            </ul>
+
+
+            <h2>3. Một số nhóm Service chính</h2>
+
+            <p>
+                Ở mức tổng quan, Service trong AUTOSAR có thể cung cấp nhiều
+                loại chức năng khác nhau.
+            </p>
+
+            <p>
+                Một số nhóm thường gặp gồm:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nhóm</th>
+                        <th>Vai trò tổng quan</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Operating System</td>
+                        <td>
+                            Quản lý task và việc thực thi các hoạt động
+                            phần mềm trong ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>ECU State Management</td>
+                        <td>
+                            Quản lý trạng thái hoạt động của ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Watchdog</td>
+                        <td>
+                            Hỗ trợ giám sát hoạt động của phần mềm và ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Memory Services</td>
+                        <td>
+                            Hỗ trợ các chức năng liên quan đến bộ nhớ.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Communication Services</td>
+                        <td>
+                            Cung cấp các dịch vụ hỗ trợ giao tiếp.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Diagnostic Services</td>
+                        <td>
+                            Hỗ trợ các chức năng chẩn đoán ECU.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Đây chỉ là cách phân loại ở mức khái niệm. Mỗi nhóm còn bao
+                gồm nhiều module khác nhau.
+            </p>
+
+
+            <h2>4. ECU Management là gì?</h2>
+
+            <p>
+                <strong>ECU Management</strong> có thể hiểu đơn giản là nhóm
+                chức năng chịu trách nhiệm quản lý trạng thái và hoạt động
+                của ECU.
+            </p>
+
+            <p>
+                Một ECU không phải lúc nào cũng ở cùng một trạng thái.
+                Trong quá trình hoạt động, ECU có thể trải qua nhiều giai đoạn:
+            </p>
+
+            <pre><code>        ECU OFF
+           |
+           v
+       ECU STARTUP
+           |
+           v
+      ECU INITIALIZE
+           |
+           v
+     ECU RUNNING
+           |
+           v
+     ECU SHUTDOWN
+           |
+           v
+        ECU OFF</code></pre>
+
+            <p>
+                Việc chuyển đổi giữa các trạng thái cần được quản lý để các
+                software component và hardware hoạt động đúng trình tự.
+            </p>
+
+
+            <h2>5. ECU Startup</h2>
+
+            <p>
+                Khi ECU được bật hoặc reset, hệ thống cần thực hiện một số
+                bước khởi tạo trước khi Application Software có thể hoạt động
+                bình thường.
+            </p>
+
+            <p>
+                Ở mức tổng quan, quá trình có thể hình dung:
+            </p>
+
+            <pre><code>ECU Power On / Reset
+          |
+          v
+  Hardware Initialization
+          |
+          v
+  Basic Software Startup
+          |
+          v
+  System Initialization
+          |
+          v
+ Application Startup
+          |
+          v
+    Normal Operation</code></pre>
+
+            <p>
+                Trong quá trình này, các thành phần của BSW được khởi tạo và
+                hệ thống chuẩn bị các dịch vụ cần thiết cho Application.
+            </p>
+
+
+            <h2>6. ECU Shutdown</h2>
+
+            <p>
+                Tương tự Startup, khi ECU cần tắt hoặc chuyển sang một trạng
+                thái khác, hệ thống cũng cần thực hiện quá trình shutdown
+                phù hợp.
+            </p>
+
+            <p>
+                Ví dụ đơn giản:
+            </p>
+
+            <pre><code>   Normal Operation
+          |
+          v
+   Shutdown Request
+          |
+          v
+ Stop / Prepare Software
+          |
+          v
+ Save Required Data
+          |
+          v
+ Disable / Stop Services
+          |
+          v
+       ECU OFF</code></pre>
+
+            <p>
+                Mục đích là đảm bảo ECU chuyển sang trạng thái mới một cách
+                có kiểm soát thay vì dừng hoạt động một cách bất ngờ.
+            </p>
+
+
+            <h2>7. ECU State Management</h2>
+
+            <p>
+                Một khái niệm quan trọng trong ECU Management là
+                <strong>quản lý trạng thái ECU</strong>.
+            </p>
+
+            <p>
+                ECU có thể có những trạng thái hoạt động khác nhau tùy theo
+                yêu cầu của hệ thống.
+            </p>
+
+            <pre><code>                 +-------------+
+                 | ECU Startup |
+                 +------+------+
+                        |
+                        v
+                 +-------------+
+                 |   RUNNING   |
+                 +------+------+
+                        |
+              +---------+---------+
+              |                   |
+              v                   v
+       +-------------+     +-------------+
+       |  Shutdown   |     |   Sleep     |
+       +------+------+     +------+------+
+              |                   |
+              +---------+---------+
+                        |
+                        v
+                   +---------+
+                   |   OFF   |
+                   +---------+</code></pre>
+
+            <p>
+                Việc quản lý trạng thái giúp các thành phần trong ECU biết
+                hệ thống đang ở trạng thái nào và cần thực hiện những hoạt
+                động phù hợp.
+            </p>
+
+
+            <h2>8. Operating System và ECU Management</h2>
+
+            <p>
+                ECU Management có liên hệ chặt chẽ với Operating System và
+                các thành phần BSW khác.
+            </p>
+
+            <p>
+                Operating System cung cấp môi trường để các task và hoạt động
+                phần mềm được thực thi.
+            </p>
+
+            <p>
+                ECU Management sử dụng các cơ chế của hệ thống để điều phối
+                quá trình khởi động, hoạt động và chuyển trạng thái của ECU.
+            </p>
+
+            <pre><code>+--------------------------------------+
+|         Application Software         |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+|                RTE                   |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+|          ECU Management              |
+|                                      |
+| Startup | Running | Shutdown         |
++------------------+-------------------+
+                   |
+                   v
++--------------------------------------+
+|        Operating System / BSW        |
++--------------------------------------+
+                   |
+                   v
++--------------------------------------+
+|              Hardware               |
++--------------------------------------+</code></pre>
+
+
+            <h2>9. Watchdog và giám sát ECU</h2>
+
+            <p>
+                Trong một ECU, việc đảm bảo phần mềm vẫn hoạt động đúng là
+                rất quan trọng.
+            </p>
+
+            <p>
+                <strong>Watchdog</strong> là một cơ chế được sử dụng để
+                giám sát hoạt động của hệ thống.
+            </p>
+
+            <p>
+                Có thể hiểu đơn giản:
+            </p>
+
+            <pre><code>Software hoạt động bình thường
+             |
+             v
+        "Tôi vẫn hoạt động"
+             |
+             v
+          Watchdog
+             |
+             v
+      Hệ thống tiếp tục chạy
+
+
+Nếu Software gặp vấn đề
+             |
+             v
+Không phản hồi đúng
+             |
+             v
+          Watchdog
+             |
+             v
+    Phát hiện bất thường
+             |
+             v
+      System Recovery</code></pre>
+
+            <p>
+                Watchdog là một phần của cơ chế giám sát ECU và có thể kết hợp
+                với các cơ chế an toàn khác.
+            </p>
+
+
+            <h2>10. Service và Application Software</h2>
+
+            <p>
+                Một điểm quan trọng cần nhớ là Application Software không
+                trực tiếp quản lý tất cả các chức năng hệ thống.
+            </p>
+
+            <p>
+                Thay vào đó, Application có thể sử dụng các service được
+                cung cấp bởi AUTOSAR.
+            </p>
+
+            <pre><code>+---------------------------+
+|     Application SWC       |
+|                           |
+|  Vehicle Function Logic   |
++-------------+-------------+
+              |
+              v
++---------------------------+
+|            RTE            |
++-------------+-------------+
+              |
+              v
++---------------------------+
+|     AUTOSAR Services      |
+|                           |
+| OS | ECU Mgmt | Memory    |
+| Watchdog | Communication  |
++---------------------------+</code></pre>
+
+            <p>
+                Điều này giúp Application tập trung vào chức năng của sản phẩm
+                thay vì phải tự xây dựng toàn bộ cơ chế quản lý ECU.
+            </p>
+
+
+            <h2>11. Ví dụ: ECU khởi động</h2>
+
+            <p>
+                Giả sử một Body ECU vừa được cấp nguồn.
+            </p>
+
+            <p>
+                Ở mức tổng quan, quá trình có thể diễn ra như sau:
+            </p>
+
+            <ol>
+                <li>
+                    ECU nhận nguồn và bắt đầu quá trình khởi động.
+                </li>
+
+                <li>
+                    Hardware và các thành phần BSW được khởi tạo.
+                </li>
+
+                <li>
+                    Operating System bắt đầu quản lý hoạt động của ECU.
+                </li>
+
+                <li>
+                    Các service cần thiết được chuẩn bị.
+                </li>
+
+                <li>
+                    Application Software được đưa vào trạng thái hoạt động.
+                </li>
+
+                <li>
+                    ECU chuyển sang trạng thái hoạt động bình thường.
+                </li>
+            </ol>
+
+            <p>
+                Sau khi hoàn tất quá trình này, các chức năng của Body ECU có
+                thể bắt đầu hoạt động.
+            </p>
+
+
+            <h2>12. Ví dụ: ECU chuyển sang Sleep</h2>
+
+            <p>
+                Khi xe không cần ECU hoạt động đầy đủ, ECU có thể được yêu cầu
+                chuyển sang trạng thái tiết kiệm năng lượng.
+            </p>
+
+            <pre><code>       RUNNING
+          |
+          v
+    Sleep Request
+          |
+          v
+ Prepare ECU
+          |
+          v
+ Stop unnecessary activities
+          |
+          v
+       SLEEP
+          |
+          |
+      Wake-up Event
+          |
+          v
+       STARTUP
+          |
+          v
+       RUNNING</code></pre>
+
+            <p>
+                Đây là ví dụ cho thấy ECU Management không chỉ liên quan đến
+                startup và shutdown mà còn liên quan đến việc quản lý các
+                trạng thái hoạt động khác của ECU.
+            </p>
+
+
+            <h2>13. Service và Hardware Abstraction</h2>
+
+            <p>
+                Service cũng góp phần giúp Application Software không phụ
+                thuộc trực tiếp vào phần cứng.
+            </p>
+
+            <pre><code>Application
+     |
+     v
+    RTE
+     |
+     v
+ AUTOSAR Services
+     |
+     v
+ BSW Abstraction
+     |
+     v
+   MCAL
+     |
+     v
+ Hardware</code></pre>
+
+            <p>
+                Ví dụ, Application không cần trực tiếp thao tác với thanh ghi
+                của một peripheral để thực hiện chức năng hệ thống.
+            </p>
+
+            <p>
+                Các tầng bên dưới đảm nhận những chi tiết liên quan đến
+                hardware, trong khi Application tập trung vào logic của
+                chức năng.
+            </p>
+
+
+            <h2>14. Service, Communication và Diagnostic</h2>
+
+            <p>
+                Service không hoạt động tách biệt với các phần khác của
+                AUTOSAR. Nó tương tác với nhiều nhóm chức năng trong ECU.
+            </p>
+
+            <pre><code>                    +----------------+
+                    |  Application   |
+                    +-------+--------+
+                            |
+                           RTE
+                            |
+        +-------------------+-------------------+
+        |                   |                   |
+        v                   v                   v
++---------------+   +---------------+   +---------------+
+| Communication |   | ECU Management|   |  Diagnostic   |
+|   Services    |   |   Services    |   |   Services    |
++---------------+   +---------------+   +---------------+
+        |                   |                   |
+        +-------------------+-------------------+
+                            |
+                            v
+                    Basic Software
+                            |
+                            v
+                        Hardware</code></pre>
+
+            <p>
+                Vì vậy, khi học AUTOSAR, nên nhìn Service như một nhóm chức
+                năng nền tảng hỗ trợ toàn bộ ECU thay vì chỉ xem nó như một
+                module riêng lẻ.
+            </p>
+
+
+            <h2>15. Service và ECU Management cần nhớ những gì?</h2>
+
+            <p>
+                Ở giai đoạn tổng quan, những điểm quan trọng nhất cần nhớ là:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Service</strong> cung cấp các chức năng dùng chung
+                    cho ECU.
+                </li>
+
+                <li>
+                    Service thuộc nhóm chức năng quan trọng của
+                    <strong>Basic Software</strong>.
+                </li>
+
+                <li>
+                    Application Software có thể sử dụng các service thông qua
+                    kiến trúc AUTOSAR thay vì tự triển khai tất cả chức năng
+                    hệ thống.
+                </li>
+
+                <li>
+                    <strong>ECU Management</strong> quản lý trạng thái và
+                    quá trình hoạt động của ECU.
+                </li>
+
+                <li>
+                    ECU có thể trải qua các giai đoạn như Startup, Running,
+                    Sleep và Shutdown.
+                </li>
+
+                <li>
+                    Operating System, Watchdog và các Service khác phối hợp
+                    để hỗ trợ ECU hoạt động ổn định.
+                </li>
+
+                <li>
+                    ECU Management giúp các thành phần trong ECU hoạt động
+                    đúng theo trạng thái hiện tại của hệ thống.
+                </li>
+            </ul>
+
+
+            <h2>16. Tóm tắt</h2>
+
+            <div class="note">
+
+                <p>
+                    <strong>Service</strong> là nhóm các chức năng dùng chung
+                    trong AUTOSAR, hỗ trợ Application và các thành phần khác
+                    của ECU.
+                </p>
+
+                <p>
+                    <strong>ECU Management</strong> tập trung vào việc quản lý
+                    trạng thái và vòng đời hoạt động của ECU, từ Startup,
+                    Running đến Sleep hoặc Shutdown.
+                </p>
+
+                <pre><code>+--------------------------------------+
+|       Application Software          |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+|                RTE                   |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+|          AUTOSAR Services            |
+|                                      |
+| OS | ECU Management | Watchdog       |
+| Memory | Communication | Diagnostic  |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+|       Hardware / BSW / MCAL         |
++--------------------------------------+</code></pre>
+
+                <p>
+                    Ý tưởng quan trọng nhất cần ghi nhớ:
+                    <strong>Application tập trung vào chức năng của ECU,
+                    còn Service và ECU Management cung cấp các cơ chế nền tảng
+                    giúp ECU hoạt động, được quản lý và chuyển đổi trạng thái
+                    một cách có tổ chức.</strong>
+                </p>
+
+            </div>
+
+
+            <div class="pager">
+
+                <a class="btn" href="lesson-9.html">
+                    ← Bài trước
+                </a>
+
+                <a class="btn" href="lesson-11.html">
+                    Bài tiếp theo →
+                </a>
+
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 25: OptoLyzer MOCCA FD | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html" class="active">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 25: OptoLyzer MOCCA FD</h1>
+
+                <div class="note">
+                    <strong>OptoLyzer MOCCA FD</strong> là một thiết bị giao tiếp và
+                    phân tích automotive bus được sử dụng trong quá trình phát triển,
+                    kiểm thử, mô phỏng và phân tích các hệ thống giao tiếp như
+                    CAN, CAN FD và LIN. Trong bài này, chúng ta tập trung vào cách
+                    sử dụng thiết bị như một công cụ hỗ trợ phát triển và debug CAN/CAN FD.
+                </div>
+
+                <h2>1. OptoLyzer MOCCA FD là gì?</h2>
+
+                <p>
+                    OptoLyzer MOCCA FD là một <strong>automotive bus interface</strong>.
+                    Nó được sử dụng để kết nối máy tính với các network bus trong
+                    quá trình phát triển ECU.
+                </p>
+
+                <p>
+                    Thay vì chỉ có ECU giao tiếp với nhau, chúng ta có thể đưa
+                    OptoLyzer MOCCA FD vào hệ thống để quan sát, tạo traffic,
+                    kiểm thử và phân tích communication.
+                </p>
+
+                <pre><code>                 Automotive CAN Bus
+                       │
+        ┌──────────────┼──────────────┐
+        │              │              │
+       ECU 1          ECU 2          ECU 3
+        │              │              │
+        └──────────────┼──────────────┘
+                       │
+                OptoLyzer MOCCA FD
+                       │
+                       ▼
+                       PC</code></pre>
+
+                <h2>2. Tại sao cần một Bus Interface?</h2>
+
+                <p>
+                    Khi phát triển ECU, chỉ nhìn vào source code thường không đủ
+                    để biết hệ thống CAN có thực sự hoạt động đúng hay không.
+                </p>
+
+                <p>
+                    Chúng ta cần quan sát communication thực tế trên bus:
+                </p>
+
+                <ul>
+                    <li>CAN ID nào đang được truyền?</li>
+                    <li>Data có đúng không?</li>
+                    <li>Message xuất hiện khi nào?</li>
+                    <li>Chu kỳ truyền có đúng không?</li>
+                    <li>ECU có phản hồi message hay không?</li>
+                    <li>CAN FD frame có được truyền đúng không?</li>
+                    <li>Có lỗi communication hay không?</li>
+                </ul>
+
+                <p>
+                    Bus interface như OptoLyzer MOCCA FD giúp kết nối thế giới
+                    phần mềm trên PC với automotive communication network.
+                </p>
+
+                <h2>3. MOCCA FD nằm ở đâu trong hệ thống?</h2>
+
+                <pre><code>PC
+ │
+ │ USB / Host connection
+ ▼
++-------------------------+
+| OptoLyzer MOCCA FD      |
+|                         |
+| CAN / CAN FD / LIN ...  |
++-------------------------+
+ │
+ │ Automotive Bus
+ ▼
++-------------------------+
+| ECU / ECU / ECU         |
++-------------------------+</code></pre>
+
+                <p>
+                    Có thể xem MOCCA FD như một cầu nối giữa:
+                    <strong>PC-based test environment</strong> và
+                    <strong>automotive network</strong>.
+                </p>
+
+                <h2>4. MOCCA FD có phải là ECU không?</h2>
+
+                <p>
+                    Không. MOCCA FD là một <strong>development/test interface</strong>,
+                    không phải ECU chức năng của xe.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>ECU</th>
+                        <th>MOCCA FD</th>
+                    </tr>
+                    <tr>
+                        <td>Chạy application/embedded software</td>
+                        <td>Hỗ trợ phát triển và kiểm thử</td>
+                    </tr>
+                    <tr>
+                        <td>Thực hiện chức năng của xe</td>
+                        <td>Quan sát và tạo communication</td>
+                    </tr>
+                    <tr>
+                        <td>Thường là target system</td>
+                        <td>Thường là development/test equipment</td>
+                    </tr>
+                    <tr>
+                        <td>Chạy trên MCU/SoC</td>
+                        <td>Kết nối PC với automotive bus</td>
+                    </tr>
+                </table>
+
+                <h2>5. MOCCA FD hỗ trợ những bus nào?</h2>
+
+                <p>
+                    Phiên bản OptoLyzer MOCCA FD được thiết kế cho nhiều automotive
+                    bus, trong đó đáng chú ý là:
+                </p>
+
+                <ul>
+                    <li>CAN FD</li>
+                    <li>CAN High-Speed</li>
+                    <li>LIN</li>
+                    <li>FlexRay</li>
+                </ul>
+
+                <p>
+                    Vì vậy, MOCCA FD không chỉ là một CAN analyzer đơn giản mà là
+                    một thiết bị giao tiếp đa bus phục vụ development và test.
+                </p>
+
+                <h2>6. CAN và CAN FD trên MOCCA FD</h2>
+
+                <p>
+                    Đối với CAN/CAN FD, MOCCA FD có thể được sử dụng để theo dõi
+                    communication trên bus và tạo các CAN/CAN FD message phục vụ
+                    kiểm thử.
+                </p>
+
+                <pre><code>Classic CAN:
+ID + Control + DLC + Data + CRC + ACK
+
+CAN FD:
+ID + Control + DLC + Data
+               │
+               └── Payload có thể lớn hơn Classic CAN</code></pre>
+
+                <p>
+                    Vì vậy thiết bị đặc biệt hữu ích khi phát triển ECU sử dụng
+                    CAN FD.
+                </p>
+
+                <h2>7. Các CAN FD Channel</h2>
+
+                <p>
+                    MOCCA FD cung cấp các interface CAN FD dành cho việc kết nối
+                    với CAN FD network.
+                </p>
+
+                <p>
+                    Theo cấu hình thiết bị, các channel CAN FD có thể được sử dụng
+                    độc lập để kết nối với các network hoặc test setup khác nhau.
+                </p>
+
+                <div class="note">
+                    Không nên nhầm số channel của một model MOCCA cụ thể với các
+                    phiên bản MOCCA khác. Khi làm việc thực tế, cần kiểm tra đúng
+                    model và hardware revision đang sử dụng.
+                </div>
+
+                <h2>8. MOCCA FD dùng để làm gì?</h2>
+
+                <p>
+                    Các use case chính có thể chia thành:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Use case</th>
+                        <th>Mục đích</th>
+                    </tr>
+                    <tr>
+                        <td>Monitoring</td>
+                        <td>Quan sát traffic trên bus</td>
+                    </tr>
+                    <tr>
+                        <td>Stimulation</td>
+                        <td>Tạo message để kích thích ECU</td>
+                    </tr>
+                    <tr>
+                        <td>Testing</td>
+                        <td>Kiểm tra behavior của ECU</td>
+                    </tr>
+                    <tr>
+                        <td>Analysis</td>
+                        <td>Phân tích communication</td>
+                    </tr>
+                    <tr>
+                        <td>Simulation</td>
+                        <td>Mô phỏng một node hoặc traffic</td>
+                    </tr>
+                </table>
+
+                <h2>9. Monitoring là gì?</h2>
+
+                <p>
+                    Monitoring nghĩa là quan sát những message đang xuất hiện
+                    trên CAN bus.
+                </p>
+
+                <pre><code>CAN Bus
+   │
+   ├── 0x100  11 22 33 44
+   ├── 0x120  00 01 02 03
+   ├── 0x100  12 22 33 44
+   └── 0x200  AA BB CC DD
+             │
+             ▼
+       MOCCA FD
+             │
+             ▼
+        PC Software
+             │
+             ▼
+        Trace / Analysis</code></pre>
+
+                <p>
+                    Đây là một trong những cách phổ biến nhất để debug communication
+                    của ECU.
+                </p>
+
+                <h2>10. Stimulation là gì?</h2>
+
+                <p>
+                    Stimulation nghĩa là gửi message từ test tool vào network để
+                    kích thích ECU phản ứng.
+                </p>
+
+                <pre><code>PC
+ │
+ ▼
+MOCCA FD
+ │
+ │ Send CAN frame
+ ▼
+CAN Bus
+ │
+ ▼
+ECU
+ │
+ ▼
+Software reacts</code></pre>
+
+                <p>
+                    Ví dụ, tester có thể gửi một message với ID và payload được
+                    xác định trước để kiểm tra ECU có xử lý đúng requirement hay không.
+                </p>
+
+                <h2>11. MOCCA FD trong ECU Testing</h2>
+
+                <p>
+                    Một test case đơn giản có thể có cấu trúc:
+                </p>
+
+                <pre><code>Precondition
+     ↓
+Send CAN message
+     ↓
+ECU processes message
+     ↓
+ECU sends response
+     ↓
+MOCCA FD captures response
+     ↓
+Compare with expected result</code></pre>
+
+                <p>
+                    Như vậy MOCCA FD có thể đóng vai trò vừa là stimulus generator
+                    vừa là measurement/monitoring interface.
+                </p>
+
+                <h2>12. Ví dụ Test CAN Message</h2>
+
+                <p>
+                    Giả sử requirement yêu cầu ECU phải bật một chức năng khi nhận
+                    message có ID <code>0x100</code>.
+                </p>
+
+                <pre><code>Test setup:
+
+MOCCA FD
+   │
+   │ ID = 0x100
+   │ DATA = 01 00 00 00
+   ▼
+CAN Bus
+   │
+   ▼
+ECU
+   │
+   ▼
+Expected behavior</code></pre>
+
+                <p>
+                    Tester có thể quan sát output hoặc response của ECU để xác định
+                    requirement có được đáp ứng hay không.
+                </p>
+
+                <h2>13. MOCCA FD và CAN Trace</h2>
+
+                <p>
+                    CAN trace là log các communication event xảy ra trên bus.
+                    Một trace thường chứa những thông tin như:
+                </p>
+
+                <ul>
+                    <li>Timestamp</li>
+                    <li>Channel</li>
+                    <li>CAN ID</li>
+                    <li>Frame type</li>
+                    <li>DLC</li>
+                    <li>Payload</li>
+                    <li>Direction hoặc thông tin trạng thái phù hợp</li>
+                </ul>
+
+                <pre><code>Time       Channel    ID       DLC      Data
+------------------------------------------------
+10.001 ms     CAN1     0x100      8      01 02 03 04 ...
+10.015 ms     CAN1     0x120      4      AA BB CC DD
+10.021 ms     CAN1     0x100      8      02 02 03 04 ...</code></pre>
+
+                <p>
+                    Trace là nguồn dữ liệu rất quan trọng khi debug CAN communication.
+                </p>
+
+                <h2>14. Timestamp có ý nghĩa gì?</h2>
+
+                <p>
+                    Timestamp cho biết thời điểm một communication event được
+                    ghi nhận.
+                </p>
+
+                <p>
+                    Nó giúp phân tích:
+                </p>
+
+                <ul>
+                    <li>Message period.</li>
+                    <li>Message delay.</li>
+                    <li>Response time.</li>
+                    <li>Sequence của các message.</li>
+                    <li>Timing giữa request và response.</li>
+                </ul>
+
+                <pre><code>Request
+   │
+   │ t1
+   ▼
+ECU processing
+   │
+   │ t2
+   ▼
+Response
+
+Response Time = t2 - t1</code></pre>
+
+                <h2>15. MOCCA FD và Baud-rate</h2>
+
+                <p>
+                    Để giao tiếp được với CAN bus, configuration của tool phải
+                    phù hợp với network.
+                </p>
+
+                <p>
+                    Đối với CAN FD, cần quan tâm đến các thông số của nominal phase
+                    và data phase.
+                </p>
+
+                <pre><code>CAN FD Bit Timing
+
+Nominal Bit Rate
+       │
+       ▼
+Arbitration Phase
+       │
+       ▼
+Data Bit Rate
+       │
+       ▼
+Data Phase</code></pre>
+
+                <p>
+                    Nếu configuration của tool không phù hợp với ECU/network,
+                    communication có thể không hoạt động hoặc xuất hiện error.
+                </p>
+
+                <h2>16. CAN FD Nominal Bit Rate và Data Bit Rate</h2>
+
+                <p>
+                    Một đặc điểm quan trọng của CAN FD là có thể sử dụng tốc độ
+                    khác nhau giữa arbitration phase và data phase.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Phase</th>
+                        <th>Vai trò</th>
+                    </tr>
+                    <tr>
+                        <td>Nominal / Arbitration</td>
+                        <td>Tham gia arbitration và các phần tương ứng của frame</td>
+                    </tr>
+                    <tr>
+                        <td>Data Phase</td>
+                        <td>Có thể sử dụng bit rate cao hơn để truyền payload</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Khi cấu hình MOCCA FD cho CAN FD, cần bảo đảm các thông số
+                    bit timing tương thích với network.
+                </p>
+
+                <h2>17. Termination và MOCCA FD</h2>
+
+                <p>
+                    CAN bus cần termination phù hợp ở hai đầu physical bus.
+                    Không nên mặc định rằng mọi test tool đều tự động cung cấp
+                    termination cho mọi trường hợp kết nối.
+                </p>
+
+                <pre><code>120 Ω                         120 Ω
+  │                              │
+  ▼                              ▼
+CAN_H ==============================
+CAN_L ==============================
+       │          │          │
+      ECU        ECU       MOCCA FD
+             CAN Network</code></pre>
+
+                <div class="note">
+                    Khi đưa MOCCA FD vào cuối bus, cần kiểm tra cấu hình termination
+                    của đúng model và setup. Nếu thiết bị đặt giữa hai đầu bus,
+                    không được vô tình tạo thêm termination.
+                </div>
+
+                <h2>18. MOCCA FD và Physical Layer</h2>
+
+                <p>
+                    Khi debug CAN, không nên chỉ quan sát software trace.
+                    Physical layer vẫn có thể là nguyên nhân của lỗi communication.
+                </p>
+
+                <p>Cần kiểm tra:</p>
+
+                <ul>
+                    <li>CAN_H.</li>
+                    <li>CAN_L.</li>
+                    <li>GND/reference.</li>
+                    <li>Termination.</li>
+                    <li>Cáp kết nối.</li>
+                    <li>Transceiver.</li>
+                    <li>Baud-rate.</li>
+                </ul>
+
+                <h2>19. MOCCA FD và CAN Analyzer</h2>
+
+                <p>
+                    Trong môi trường development, MOCCA FD có thể đóng vai trò
+                    tương tự một CAN/CAN FD analyzer nhưng với khả năng tích hợp
+                    nhiều bus và các chức năng test khác.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Chức năng</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Analyze</td>
+                        <td>Xem và phân tích traffic</td>
+                    </tr>
+                    <tr>
+                        <td>Transmit</td>
+                        <td>Gửi frame vào bus</td>
+                    </tr>
+                    <tr>
+                        <td>Filter</td>
+                        <td>Chỉ xem message cần quan tâm</td>
+                    </tr>
+                    <tr>
+                        <td>Trace</td>
+                        <td>Ghi lại communication</td>
+                    </tr>
+                    <tr>
+                        <td>Replay</td>
+                        <td>Phát lại traffic đã ghi trong môi trường hỗ trợ</td>
+                    </tr>
+                </table>
+
+                <h2>20. OptoLyzer Studio là gì?</h2>
+
+                <p>
+                    <strong>OptoLyzer Studio</strong> là phần mềm được sử dụng
+                    cùng với các thiết bị OptoLyzer để cấu hình, monitor và
+                    phân tích automotive network.
+                </p>
+
+                <pre><code>PC
+ │
+ ▼
+OptoLyzer Studio
+ │
+ │ USB / Device Interface
+ ▼
+OptoLyzer MOCCA FD
+ │
+ ▼
+CAN / CAN FD / LIN / ...
+ │
+ ▼
+ECUs</code></pre>
+
+                <p>
+                    Software layer trên PC giúp kỹ sư tương tác với hardware interface
+                    và quan sát network.
+                </p>
+
+                <h2>21. Trace View</h2>
+
+                <p>
+                    Một cách sử dụng điển hình là theo dõi message trong trace view.
+                </p>
+
+                <pre><code>┌────────────────────────────────────────────┐
+│ Trace                                      │
+├────────┬────────┬───────┬─────┬────────────┤
+│ Time   │Channel │ ID    │ DLC │ Data       │
+├────────┼────────┼───────┼─────┼────────────┤
+│ 1.001  │ CAN1   │ 100   │  8  │ 01 02 ... │
+│ 1.011  │ CAN1   │ 120   │  8  │ AA BB ... │
+│ 1.021  │ CAN1   │ 100   │  8  │ 02 02 ... │
+└────────┴────────┴───────┴─────┴────────────┘</code></pre>
+
+                <p>
+                    Đây là nơi kỹ sư có thể phát hiện message bị thiếu,
+                    sai ID, sai payload hoặc sai timing.
+                </p>
+
+                <h2>22. Filtering</h2>
+
+                <p>
+                    Khi network có hàng trăm hoặc hàng nghìn message,
+                    việc xem toàn bộ trace có thể rất khó.
+                </p>
+
+                <p>
+                    Filtering cho phép chỉ tập trung vào message cần debug.
+                </p>
+
+                <pre><code>CAN Traffic
+     │
+     ├── 0x100
+     ├── 0x101
+     ├── 0x200
+     ├── 0x300
+     ├── 0x100
+     └── 0x500
+          │
+          ▼
+      Filter: 0x100
+          │
+          ▼
+      Relevant Trace
+          │
+          ├── 0x100
+          └── 0x100</code></pre>
+
+                <h2>23. DBC và Signal</h2>
+
+                <p>
+                    Trong automotive development, message thường không chỉ được
+                    quan tâm dưới dạng raw bytes. Một CAN database như DBC có thể
+                    mô tả message, signal, scaling và các thông tin liên quan.
+                </p>
+
+                <pre><code>Raw CAN Frame
+     │
+     ▼
+ID = 0x100
+DATA = 20 03 00 00 ...
+     │
+     ▼
+DBC Definition
+     │
+     ├── VehicleSpeed
+     ├── EngineState
+     └── Temperature
+     │
+     ▼
+Human-readable Signal</code></pre>
+
+                <p>
+                    Việc sử dụng database giúp kỹ sư hiểu message ở mức signal
+                    thay vì phải tự giải mã từng byte.
+                </p>
+
+                <h2>24. MOCCA FD và K2L.Bus API</h2>
+
+                <p>
+                    Ngoài việc sử dụng phần mềm giao diện, MOCCA devices còn có thể
+                    được điều khiển thông qua API trong các môi trường phát triển
+                    phù hợp.
+                </p>
+
+                <p>
+                    Điều này hữu ích khi muốn xây dựng test automation thay vì
+                    thực hiện mọi thao tác thủ công.
+                </p>
+
+                <pre><code>Test Script
+     │
+     ▼
+K2L.Bus API
+     │
+     ▼
+MOCCA FD
+     │
+     ▼
+CAN Bus
+     │
+     ▼
+ECU
+     │
+     ▼
+Response
+     │
+     ▼
+Test Script evaluates result</code></pre>
+
+                <h2>25. Manual Test và Automated Test</h2>
+
+                <table>
+                    <tr>
+                        <th>Manual</th>
+                        <th>Automated</th>
+                    </tr>
+                    <tr>
+                        <td>Kỹ sư gửi message thủ công</td>
+                        <td>Script tự gửi message</td>
+                    </tr>
+                    <tr>
+                        <td>Quan sát trace bằng mắt</td>
+                        <td>Script tự kiểm tra kết quả</td>
+                    </tr>
+                    <tr>
+                        <td>Phù hợp debug nhanh</td>
+                        <td>Phù hợp regression test</td>
+                    </tr>
+                    <tr>
+                        <td>Dễ thực hiện test đơn giản</td>
+                        <td>Có thể lặp lại nhiều test case</td>
+                    </tr>
+                </table>
+
+                <h2>26. Ví dụ Test ECU với MOCCA FD</h2>
+
+                <p>
+                    Giả sử requirement:
+                    ECU nhận CAN message và phải gửi response trong một khoảng
+                    thời gian xác định.
+                </p>
+
+                <pre><code>Step 1:
+MOCCA FD gửi Request
+        │
+        ▼
+CAN ID = 0x100
+
+Step 2:
+ECU nhận Request
+        │
+        ▼
+Software xử lý
+
+Step 3:
+ECU gửi Response
+        │
+        ▼
+CAN ID = 0x200
+
+Step 4:
+MOCCA FD đo Timestamp
+
+Step 5:
+Compare:
+Response Time <= Requirement</code></pre>
+
+                <p>
+                    Đây là ví dụ điển hình cho việc kết hợp CAN protocol,
+                    ECU software và test tool.
+                </p>
+
+                <h2>27. Debug CAN Driver bằng MOCCA FD</h2>
+
+                <p>
+                    MOCCA FD đặc biệt hữu ích khi debug CAN Driver vì có thể
+                    giúp xác định vấn đề nằm ở phía ECU hay phía network.
+                </p>
+
+                <pre><code>Software Request
+       │
+       ▼
+Can_Write()
+       │
+       ▼
+CAN Controller
+       │
+       ▼
+CAN Bus
+       │
+       ▼
+MOCCA FD
+       │
+       ▼
+Frame visible?
+
+      YES ──► Driver/Controller likely transmitted
+       │
+      NO
+       │
+       ▼
+Check:
+- Controller state
+- HTH
+- Baud-rate
+- Interrupt
+- CAN Driver
+- Hardware</code></pre>
+
+                <h2>28. Debug Reception bằng MOCCA FD</h2>
+
+                <p>
+                    MOCCA FD cũng có thể được sử dụng để tạo incoming message
+                    nhằm kiểm tra reception path.
+                </p>
+
+                <pre><code>MOCCA FD
+   │
+   │ Send frame
+   ▼
+CAN Bus
+   │
+   ▼
+CAN Controller
+   │
+   ▼
+CAN Driver
+   │
+   ▼
+CanIf
+   │
+   ▼
+Upper Layer
+
+Check từng bước:
+Frame xuất hiện trên bus?
+        ↓
+Controller nhận?
+        ↓
+Driver notification?
+        ↓
+CanIf nhận?
+        ↓
+Upper layer nhận?</code></pre>
+
+                <h2>29. Debug CAN FD với MOCCA FD</h2>
+
+                <p>
+                    Khi debug CAN FD, cần đặc biệt chú ý đến việc hai bên phải
+                    có configuration tương thích.
+                </p>
+
+                <ul>
+                    <li>CAN FD enabled.</li>
+                    <li>Nominal bit rate.</li>
+                    <li>Data bit rate.</li>
+                    <li>Bit timing.</li>
+                    <li>Sample point.</li>
+                    <li>Frame format.</li>
+                    <li>Payload length.</li>
+                    <li>CAN FD controller/transceiver capability.</li>
+                </ul>
+
+                <pre><code>ECU CAN FD Configuration
+          │
+          │ must match
+          ▼
+MOCCA FD Configuration
+          │
+          ▼
+CAN FD Bus
+          │
+          ▼
+Valid communication</code></pre>
+
+                <h2>30. Debug khi MOCCA FD không thấy Message</h2>
+
+                <p>
+                    Nếu ECU được cho là đang transmit nhưng trace không thấy frame,
+                    có thể debug theo flow:
+                </p>
+
+                <pre><code>Application
+    ↓
+COM / Upper Layer
+    ↓
+CanIf
+    ↓
+Can Driver
+    ↓
+CAN Controller
+    ↓
+CAN Transceiver
+    ↓
+Physical Bus
+    ↓
+MOCCA FD
+    ↓
+Trace</code></pre>
+
+                <p>
+                    Không nên kết luận ngay rằng MOCCA FD bị lỗi.
+                    Trước tiên cần xác định frame có thực sự xuất hiện trên
+                    physical CAN bus hay không.
+                </p>
+
+                <h2>31. Debug khi MOCCA FD gửi nhưng ECU không nhận</h2>
+
+                <p>
+                    Trường hợp ngược lại:
+                </p>
+
+                <pre><code>MOCCA FD
+    │
+    ▼
+Physical Bus
+    │
+    ▼
+ECU Transceiver
+    │
+    ▼
+CAN Controller
+    │
+    ▼
+CAN Driver
+    │
+    ▼
+CanIf
+    │
+    ▼
+Upper Layer</code></pre>
+
+                <p>
+                    Có thể kiểm tra từng tầng để xác định message bị mất ở đâu.
+                </p>
+
+                <h2>32. MOCCA FD và CAN Error</h2>
+
+                <p>
+                    Khi CAN communication có vấn đề, trace và các thông tin
+                    diagnostic từ test setup có thể giúp khoanh vùng nguyên nhân.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Hiện tượng</th>
+                        <th>Khả năng cần kiểm tra</th>
+                    </tr>
+                    <tr>
+                        <td>Không thấy frame</td>
+                        <td>TX path, controller, wiring</td>
+                    </tr>
+                    <tr>
+                        <td>ACK Error</td>
+                        <td>Node nhận, baud-rate, physical bus</td>
+                    </tr>
+                    <tr>
+                        <td>CRC/Form/Bit Error</td>
+                        <td>Bit timing, signal quality, wiring</td>
+                    </tr>
+                    <tr>
+                        <td>CAN FD không hoạt động</td>
+                        <td>FD configuration, data bit rate</td>
+                    </tr>
+                    <tr>
+                        <td>Message sai period</td>
+                        <td>ECU timing/software</td>
+                    </tr>
+                </table>
+
+                <h2>33. MOCCA FD trong Development Lifecycle</h2>
+
+                <pre><code>Requirement
+    ↓
+Design
+    ↓
+Implementation
+    ↓
+ECU Development
+    ↓
++-----------------------+
+| OptoLyzer MOCCA FD    |
+|                       |
+| Monitor               |
+| Stimulate             |
+| Analyze               |
+| Verify                |
++-----------------------+
+    ↓
+Integration Test
+    ↓
+Validation
+    ↓
+Release</code></pre>
+
+                <p>
+                    Vì vậy test tool không chỉ được dùng ở cuối dự án.
+                    Nó có thể hỗ trợ nhiều giai đoạn từ development đến verification.
+                </p>
+
+                <h2>34. Ví dụ tổng hợp: ECU + MOCCA FD</h2>
+
+                <p>
+                    Giả sử có một ECU điều khiển chức năng trong xe.
+                    Tester muốn kiểm tra CAN communication của ECU.
+                </p>
+
+                <pre><code>                    PC
+                     │
+                     ▼
+             OptoLyzer Studio
+                     │
+                     ▼
+             OptoLyzer MOCCA FD
+                     │
+                     │ CAN FD
+                     ▼
+              +-------------+
+              | Automotive  |
+              | CAN Bus     |
+              +-------------+
+                 │       │
+                 ▼       ▼
+                ECU A   ECU B
+
+Test:
+1. MOCCA gửi request
+2. ECU A xử lý
+3. ECU A gửi response
+4. MOCCA capture response
+5. Check ID
+6. Check payload
+7. Check timing
+8. Pass / Fail</code></pre>
+
+                <h2>35. Những lỗi thường gặp khi sử dụng Bus Analyzer</h2>
+
+                <table>
+                    <tr>
+                        <th>Lỗi</th>
+                        <th>Nguyên nhân có thể</th>
+                    </tr>
+                    <tr>
+                        <td>Không có traffic</td>
+                        <td>Cáp, nguồn, controller hoặc configuration</td>
+                    </tr>
+                    <tr>
+                        <td>Frame bị lỗi</td>
+                        <td>Baud-rate/bit timing hoặc physical layer</td>
+                    </tr>
+                    <tr>
+                        <td>CAN FD không nhận</td>
+                        <td>FD/data-phase configuration không phù hợp</td>
+                    </tr>
+                    <tr>
+                        <td>Trace quá nhiều message</td>
+                        <td>Chưa sử dụng filter</td>
+                    </tr>
+                    <tr>
+                        <td>Không biết message có đúng không</td>
+                        <td>Chưa có DBC hoặc signal definition</td>
+                    </tr>
+                    <tr>
+                        <td>Test thủ công quá lâu</td>
+                        <td>Chưa sử dụng automation/API phù hợp</td>
+                    </tr>
+                </table>
+
+                <h2>36. Góc nhìn phỏng vấn</h2>
+
+                <p><strong>Q: OptoLyzer MOCCA FD là gì?</strong></p>
+
+                <p>
+                    Đây là một automotive bus interface dùng trong development,
+                    testing, simulation và analysis. Nó có thể được sử dụng để
+                    monitor và stimulate CAN/CAN FD network.
+                </p>
+
+                <p><strong>Q: Bạn dùng MOCCA FD để làm gì khi debug ECU?</strong></p>
+
+                <p>
+                    Tôi có thể dùng nó để quan sát CAN traffic, gửi test message,
+                    kiểm tra ID và payload, đo timing giữa các message và xác định
+                    xem frame có thực sự xuất hiện trên bus hay không.
+                </p>
+
+                <p><strong>Q: Nếu ECU gọi Can_Write nhưng MOCCA không thấy frame thì sao?</strong></p>
+
+                <p>
+                    Tôi sẽ kiểm tra từ software xuống hardware: CanIf, CAN Driver,
+                    controller state, HTH configuration, interrupt hoặc polling,
+                    CAN transceiver, physical connection và cuối cùng là configuration
+                    của MOCCA.
+                </p>
+
+                <p><strong>Q: MOCCA FD có phải là một ECU không?</strong></p>
+
+                <p>
+                    Không. Nó là một development/test interface dùng để kết nối
+                    PC với automotive bus và hỗ trợ monitoring, stimulation,
+                    analysis và verification.
+                </p>
+
+                <h2>37. Memory Map</h2>
+
+                <div class="note">
+                    <strong>OptoLyzer MOCCA FD = Automotive Bus Interface + Monitor + Stimulate + Analyze +
+                        Test</strong>
+                </div>
+
+                <pre><code>OptoLyzer MOCCA FD
+│
+├── Mục đích
+│   ├── Development
+│   ├── Testing
+│   ├── Simulation
+│   └── Analysis
+│
+├── Bus
+│   ├── CAN
+│   ├── CAN FD
+│   ├── LIN
+│   └── FlexRay
+│
+├── CAN/CAN FD
+│   ├── Monitor
+│   ├── Transmit
+│   ├── Trace
+│   ├── Filter
+│   └── Analyze
+│
+├── PC Software
+│   └── OptoLyzer Studio
+│
+├── Automation
+│   └── K2L.Bus API
+│
+└── ECU Debug
+    ├── Check Frame
+    ├── Check ID
+    ├── Check Payload
+    ├── Check Timing
+    ├── Check Bit Rate
+    └── Check Physical Layer</code></pre>
+
+                <h2>38.Tóm tắt</h2>
+
+                <p>
+                    OptoLyzer MOCCA FD là một công cụ quan trọng trong môi trường
+                    phát triển automotive network. Nó đóng vai trò là cầu nối giữa
+                    PC và các automotive bus, cho phép kỹ sư quan sát, tạo,
+                    ghi nhận và phân tích communication.
+                </p>
+
+                <p>
+                    Trong quá trình phát triển CAN/CAN FD ECU, một tool như MOCCA FD
+                    đặc biệt hữu ích để kiểm tra xem frame có thực sự xuất hiện
+                    trên bus hay không, payload có đúng không, message có đúng
+                    timing không và ECU có phản hồi đúng requirement không.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    Khi debug CAN, đừng chỉ nhìn vào code.
+                    Hãy kiểm tra cả <strong>ECU software → CAN Controller →
+                        Transceiver → Physical Bus → Bus Analyzer</strong>.
+                    MOCCA FD giúp bạn quan sát phần communication thực tế
+                    giữa các thành phần đó.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-24.html">← Bài trước</a>
+                    <a class="btn" href="lesson-26.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

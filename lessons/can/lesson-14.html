@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 14: CAN - MCU/PORT/INTC Modules | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html" class="active">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 14: CAN - MCU/PORT/INTC Modules</h1>
+
+                <p>
+                    Ở Bài 13, chúng ta đã tìm hiểu các module mà CAN Driver
+                    tương tác hoặc có liên quan trong AUTOSAR.
+                    Trong bài này, chúng ta đi sâu hơn vào ba thành phần
+                    rất quan trọng khi CAN Driver làm việc với hardware:
+                    <strong>MCU</strong>, <strong>PORT</strong> và
+                    <strong>INTC</strong>.
+                </p>
+
+                <p>
+                    Đây là ba khái niệm rất quan trọng đối với Embedded Engineer
+                    vì CAN Driver không thể hoạt động đúng nếu CAN Controller
+                    chưa có clock, chân CAN chưa được multiplex đúng hoặc
+                    interrupt của CAN Controller không được xử lý đúng.
+                </p>
+
+                <div class="note">
+                    <strong>Ý tưởng quan trọng:</strong>
+                    MCU, PORT và INTC không nên được hiểu đơn giản là
+                    "ba module mà CanDrv luôn gọi trực tiếp".
+                    Chúng chủ yếu nằm trong chuỗi khởi tạo và hardware integration:
+                    <strong>MCU cung cấp clock/system setup → PORT cấu hình chân →
+                        INTC/interrupt infrastructure chuyển interrupt tới ISR →
+                        CanDrv xử lý sự kiện CAN</strong>.
+                </div>
+
+                <h2>1. Ba module này giải quyết vấn đề gì?</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Vấn đề chính</th>
+                            <th>Ví dụ với CAN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>MCU</strong></td>
+                            <td>
+                                Clock, reset và một số cấu hình mức microcontroller
+                            </td>
+                            <td>
+                                Cấp clock cho CAN peripheral
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>PORT</strong></td>
+                            <td>
+                                Cấu hình các chân vật lý và pin multiplexing
+                            </td>
+                            <td>
+                                CAN_TX / CAN_RX được nối tới đúng peripheral function
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>INTC</strong></td>
+                            <td>
+                                Quản lý việc nhận và phân phối interrupt
+                            </td>
+                            <td>
+                                CAN Controller tạo interrupt và CPU nhận được ISR
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CanDrv</strong></td>
+                            <td>
+                                Điều khiển CAN Controller
+                            </td>
+                            <td>
+                                TX, RX, controller mode, bus-off, CAN interrupt handling
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể hình dung đơn giản:
+                </p>
+
+                <pre><code>MCU
+ │
+ ├── Clock / System setup
+ │
+ └──────────────┐
+                │
+PORT            │
+ │              │
+ ├── CAN_TX     │
+ └── CAN_RX     │
+                │
+                ▼
+        CAN Controller
+                │
+                │ Interrupt
+                ▼
+              INTC
+                │
+                ▼
+              ISR
+                │
+                ▼
+             CanDrv
+                │
+                ▼
+              CanIf</code></pre>
+
+                <h2>2. Tổng quan vị trí trong AUTOSAR MCAL</h2>
+
+                <p>
+                    CAN Driver thuộc nhóm Communication Drivers trong MCAL,
+                    trong khi MCU Driver và Port Driver là những driver
+                    gần microcontroller/hardware hơn.
+                </p>
+
+                <svg viewBox="0 0 900 520" role="img" aria-label="CAN Driver và MCU PORT INTC trong AUTOSAR"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="250" y="25" width="400" height="55" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="58" text-anchor="middle" font-size="19">
+                        Upper BSW / CanIf
+                    </text>
+
+                    <rect x="250" y="105" width="400" height="65" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="145" text-anchor="middle" font-size="21">
+                        CAN Driver
+                    </text>
+
+                    <rect x="70" y="230" width="220" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="180" y="272" text-anchor="middle" font-size="20">
+                        MCU Driver
+                    </text>
+
+                    <rect x="340" y="230" width="220" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="272" text-anchor="middle" font-size="20">
+                        CAN Controller
+                    </text>
+
+                    <rect x="610" y="230" width="220" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="720" y="272" text-anchor="middle" font-size="20">
+                        PORT Driver
+                    </text>
+
+                    <rect x="70" y="360" width="220" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="180" y="402" text-anchor="middle" font-size="20">
+                        Clock / Reset
+                    </text>
+
+                    <rect x="340" y="360" width="220" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="402" text-anchor="middle" font-size="20">
+                        INTC / ISR
+                    </text>
+
+                    <rect x="610" y="360" width="220" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="720" y="402" text-anchor="middle" font-size="20">
+                        CAN TX / RX Pins
+                    </text>
+
+                    <line x1="450" y1="80" x2="450" y2="105" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="300" y1="170" x2="200" y2="230" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="170" x2="450" y2="230" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="600" y1="170" x2="720" y2="230" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="180" y1="300" x2="180" y2="360" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="300" x2="450" y2="360" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="720" y1="300" x2="720" y2="360" stroke="currentColor" stroke-width="2" />
+
+                    <text x="105" y="475" font-size="16">
+                        Hardware/platform support
+                    </text>
+
+                </svg>
+
+                <p>
+                    Cần lưu ý rằng sơ đồ trên thể hiện <strong>mối quan hệ
+                        về hardware/platform</strong>, không có nghĩa rằng mọi
+                    mũi tên đều tương ứng với một API gọi trực tiếp giữa hai module.
+                </p>
+
+                <h2>3. MCU Module là gì?</h2>
+
+                <p>
+                    <strong>MCU Driver</strong> là driver cung cấp các chức năng
+                    liên quan tới microcontroller như clock initialization,
+                    clock configuration, một số system-level initialization
+                    và các chức năng phần cứng liên quan được AUTOSAR specification
+                    của MCU định nghĩa.
+                </p>
+
+                <p>
+                    Trong một ECU có CAN, điều quan trọng nhất đối với CAN
+                    là <strong>CAN peripheral phải được cấp clock đúng</strong>.
+                    Nếu clock của CAN Controller không hoạt động hoặc cấu hình sai,
+                    CAN Driver có thể đã được initialize nhưng controller vẫn
+                    không hoạt động như mong muốn.
+                </p>
+
+                <pre><code>MCU initialization
+       │
+       ├── Configure system clock
+       │
+       ├── Configure peripheral clock
+       │
+       └── CAN peripheral receives clock
+                    │
+                    ▼
+                 CanDrv
+                    │
+                    ▼
+             CAN Controller</code></pre>
+
+                <h2>4. CAN phụ thuộc MCU như thế nào?</h2>
+
+                <p>
+                    Để CAN Controller hoạt động, nhiều microcontroller yêu cầu
+                    một clock source hoặc peripheral clock được cấu hình trước.
+                    Vì vậy trong quá trình ECU startup, MCU configuration
+                    thường phải được thực hiện trước khi các peripheral driver
+                    sử dụng phần cứng đó.
+                </p>
+
+                <p>
+                    Có thể hình dung một chuỗi khởi tạo đơn giản:
+                </p>
+
+                <pre><code>Power-On / Reset
+      │
+      ▼
+MCU initialization
+      │
+      ├── System clock
+      ├── Peripheral clock
+      └── Basic MCU setup
+      │
+      ▼
+PORT initialization
+      │
+      └── CAN pin multiplexing
+      │
+      ▼
+CAN Driver initialization
+      │
+      ▼
+CAN Controller configuration
+      │
+      ▼
+CAN communication ready</code></pre>
+
+                <div class="note">
+                    <strong>Điểm phỏng vấn:</strong>
+                    Nếu interviewer hỏi "Tại sao CanDrv Init đúng nhưng CAN vẫn không chạy?",
+                    một câu trả lời tốt là: hãy kiểm tra trước <strong>clock configuration,
+                        pin configuration, controller configuration và interrupt configuration</strong>,
+                    thay vì chỉ kiểm tra code bên trong CanDrv.
+                </div>
+
+                <h2>5. MCU Clock ảnh hưởng CAN như thế nào?</h2>
+
+                <p>
+                    CAN communication phụ thuộc vào timing của CAN Controller.
+                    CAN Controller cần một clock phù hợp để tạo các timing parameter
+                    dùng trong việc phát và nhận bit trên CAN bus.
+                </p>
+
+                <svg viewBox="0 0 900 400" role="img" aria-label="Ảnh hưởng của MCU clock đến CAN timing"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="60" y="55" width="190" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="155" y="98" text-anchor="middle" font-size="20">
+                        MCU Clock
+                    </text>
+
+                    <rect x="355" y="55" width="190" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="98" text-anchor="middle" font-size="20">
+                        CAN Peripheral
+                    </text>
+
+                    <rect x="650" y="55" width="190" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="745" y="98" text-anchor="middle" font-size="20">
+                        CAN Timing
+                    </text>
+
+                    <line x1="250" y1="90" x2="355" y2="90" stroke="currentColor" stroke-width="2" />
+                    <polygon points="350,85 360,90 350,95" fill="currentColor" />
+
+                    <line x1="545" y1="90" x2="650" y2="90" stroke="currentColor" stroke-width="2" />
+                    <polygon points="645,85 655,90 645,95" fill="currentColor" />
+
+                    <rect x="230" y="220" width="440" height="80" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="255" text-anchor="middle" font-size="19">
+                        CAN Bit Timing / Baudrate Configuration
+                    </text>
+                    <text x="450" y="280" text-anchor="middle" font-size="15">
+                        Prescaler / Time Quanta / Sample Point...
+                    </text>
+
+                    <line x1="745" y1="125" x2="670" y2="220" stroke="currentColor" stroke-width="2" />
+                    <line x1="450" y1="125" x2="450" y2="220" stroke="currentColor" stroke-width="2" />
+
+                    <text x="310" y="350" font-size="16">
+                        Clock sai có thể dẫn tới CAN timing sai
+                    </text>
+
+                </svg>
+
+                <p>
+                    Ví dụ, nếu project yêu cầu một baudrate cụ thể nhưng
+                    clock source của CAN peripheral bị cấu hình khác với
+                    giá trị mà CAN configuration dự kiến, CAN Controller
+                    có thể tạo timing không đúng.
+                </p>
+
+                <h2>6. PORT Module là gì?</h2>
+
+                <p>
+                    <strong>PORT Driver</strong> quản lý việc cấu hình các
+                    microcontroller pins. Trong AUTOSAR, Port Driver có trách nhiệm
+                    cấu hình những thuộc tính của các pin theo configuration,
+                    bao gồm cả chức năng của pin và các thuộc tính điện phù hợp
+                    tùy hardware.
+                </p>
+
+                <p>
+                    Với CAN, hai tín hiệu quan trọng thường là:
+                </p>
+
+                <pre><code>CAN_TX
+   │
+   └── MCU pin configured as CAN transmit function
+
+CAN_RX
+   │
+   └── MCU pin configured as CAN receive function</code></pre>
+
+                <p>
+                    Tuy nhiên, trên một MCU hiện đại, CAN Controller thường có
+                    nhiều lựa chọn pin. Vì vậy cần cấu hình đúng
+                    <strong>pin multiplexing / alternate function</strong>.
+                </p>
+
+                <h2>7. Tại sao PORT quan trọng với CAN?</h2>
+
+                <p>
+                    Giả sử CAN Controller hoạt động hoàn toàn bình thường
+                    và CAN Driver không có lỗi. Nhưng CAN_TX vẫn được cấu hình
+                    thành GPIO thay vì CAN peripheral function.
+                    Khi đó frame có thể được "truyền" ở bên trong controller,
+                    nhưng tín hiệu không xuất hiện đúng trên chân vật lý.
+                </p>
+
+                <svg viewBox="0 0 900 430" role="img" aria-label="PORT và CAN pin multiplexing"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="60" y="75" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="150" y="118" text-anchor="middle" font-size="20">
+                        CanDrv
+                    </text>
+
+                    <rect x="360" y="75" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="118" text-anchor="middle" font-size="20">
+                        CAN Controller
+                    </text>
+
+                    <rect x="660" y="75" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="750" y="118" text-anchor="middle" font-size="20">
+                        PORT / MUX
+                    </text>
+
+                    <line x1="240" y1="110" x2="360" y2="110" stroke="currentColor" stroke-width="2" />
+                    <polygon points="355,105 365,110 355,115" fill="currentColor" />
+
+                    <line x1="540" y1="110" x2="660" y2="110" stroke="currentColor" stroke-width="2" />
+                    <polygon points="655,105 665,110 655,115" fill="currentColor" />
+
+                    <rect x="240" y="235" width="420" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="277" text-anchor="middle" font-size="20">
+                        MCU physical pin
+                    </text>
+
+                    <line x1="750" y1="145" x2="660" y2="235" stroke="currentColor" stroke-width="2" />
+
+                    <text x="90" y="370" font-size="17">
+                        Nếu MUX sai → CAN Controller có thể hoạt động
+                        nhưng tín hiệu không đi đúng tới chân CAN.
+                    </text>
+                </svg>
+
+                <div class="note">
+                    <strong>Tư duy debug:</strong>
+                    Nếu CAN Controller báo transmission thành công nhưng
+                    oscilloscope/logic analyzer không thấy tín hiệu đúng,
+                    hãy kiểm tra <strong>pin mux, port configuration,
+                        transceiver và physical connection</strong> thay vì chỉ
+                    debug Can_Write().
+                </div>
+
+                <h2>8. PORT Configuration cho CAN</h2>
+
+                <p>
+                    Tên configuration cụ thể sẽ phụ thuộc vào MCU và vendor,
+                    nhưng về mặt khái niệm CAN pin configuration thường bao gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Configuration</th>
+                            <th>Ý nghĩa</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pin Function</td>
+                            <td>Chọn peripheral function cho pin</td>
+                            <td>CAN_TX / CAN_RX</td>
+                        </tr>
+                        <tr>
+                            <td>Direction</td>
+                            <td>Xác định hướng hoạt động của pin</td>
+                            <td>TX output, RX input</td>
+                        </tr>
+                        <tr>
+                            <td>Pull configuration</td>
+                            <td>Cấu hình pull-up / pull-down nếu hardware hỗ trợ</td>
+                            <td>Phụ thuộc MCU/board design</td>
+                        </tr>
+                        <tr>
+                            <td>Pad / electrical configuration</td>
+                            <td>Các thuộc tính điện của pin</td>
+                            <td>Drive strength, slew rate...</td>
+                        </tr>
+                        <tr>
+                            <td>Pin mode</td>
+                            <td>Chọn alternate/peripheral mode</td>
+                            <td>CAN peripheral mode</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là một ví dụ conceptual:
+                </p>
+
+                <pre><code>Port_Init(...);
+
+CAN_TX_PIN
+    → Peripheral Mode
+    → CAN_TX Function
+    → Output
+
+CAN_RX_PIN
+    → Peripheral Mode
+    → CAN_RX Function
+    → Input</code></pre>
+
+                <p>
+                    Code configuration thực tế sẽ khác nhau giữa các MCU
+                    và vendor. Điều quan trọng đối với Embedded Engineer là
+                    hiểu <strong>tại sao</strong> các cấu hình đó cần thiết.
+                </p>
+
+                <h2>9. INTC là gì?</h2>
+
+                <p>
+                    <strong>INTC</strong> có thể được hiểu là
+                    <strong>Interrupt Controller / Interrupt Controller infrastructure</strong>.
+                    Đây là thành phần xử lý việc nhận, quản lý và phân phối
+                    các interrupt từ peripheral tới CPU.
+                </p>
+
+                <p>
+                    Không nên mặc định rằng mọi AUTOSAR MCU đều có một module
+                    chuẩn với tên chính xác là <strong>INTC</strong>.
+                    Tên gọi và kiến trúc interrupt controller phụ thuộc
+                    vào MCU, vendor và integration architecture.
+                </p>
+
+                <div class="note">
+                    <strong>Cách hiểu nên dùng:</strong>
+                    Trong bài học này, "INTC" được dùng như một tên khái niệm
+                    cho <strong>interrupt-controller layer</strong>,
+                    không phải khẳng định rằng mọi implementation AUTOSAR
+                    đều có một BSW module độc lập tên "INTC".
+                </div>
+
+                <h2>10. CAN Interrupt hoạt động như thế nào?</h2>
+
+                <p>
+                    CAN Controller có thể tạo interrupt khi xảy ra các sự kiện
+                    như transmission completed, receive event, error hoặc
+                    các trạng thái CAN khác, tùy hardware và configuration.
+                </p>
+
+                <p>
+                    Chuỗi xử lý khái niệm:
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      │ Interrupt request
+      ▼
+Interrupt Controller / INTC
+      │
+      │ route interrupt
+      ▼
+CPU / ISR
+      │
+      ▼
+CanDrv interrupt handler
+      │
+      ├── Process RX
+      ├── Process TX confirmation
+      ├── Process error
+      └── Process Bus-Off / status
+      │
+      ▼
+CanIf notification</code></pre>
+
+                <svg viewBox="0 0 900 420" role="img" aria-label="CAN interrupt flow"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="50" y="80" width="175" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="137" y="125" text-anchor="middle" font-size="19">
+                        CAN Controller
+                    </text>
+
+                    <rect x="280" y="80" width="175" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="367" y="125" text-anchor="middle" font-size="19">
+                        INTC
+                    </text>
+
+                    <rect x="510" y="80" width="145" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="582" y="125" text-anchor="middle" font-size="19">
+                        CPU / ISR
+                    </text>
+
+                    <rect x="710" y="80" width="145" height="75" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="782" y="125" text-anchor="middle" font-size="19">
+                        CanDrv
+                    </text>
+
+                    <line x1="225" y1="117" x2="280" y2="117" stroke="currentColor" stroke-width="2" />
+                    <polygon points="275,112 285,117 275,122" fill="currentColor" />
+
+                    <line x1="455" y1="117" x2="510" y2="117" stroke="currentColor" stroke-width="2" />
+                    <polygon points="505,112 515,117 505,122" fill="currentColor" />
+
+                    <line x1="655" y1="117" x2="710" y2="117" stroke="currentColor" stroke-width="2" />
+                    <polygon points="705,112 715,117 705,122" fill="currentColor" />
+
+                    <rect x="250" y="245" width="400" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="290" text-anchor="middle" font-size="19">
+                        CanIf Notification / Callback
+                    </text>
+
+                    <line x1="782" y1="155" x2="650" y2="245" stroke="currentColor" stroke-width="2" />
+                    <polygon points="654,237 645,249 660,247" fill="currentColor" />
+
+                    <text x="55" y="375" font-size="16">
+                        Interrupt có thể báo rằng có sự kiện cần CanDrv xử lý.
+                    </text>
+
+                </svg>
+
+                <h2>11. Interrupt và CanDrv có quan hệ như thế nào?</h2>
+
+                <p>
+                    AUTOSAR CAN Driver có các API và behavior liên quan đến
+                    controller interrupts. Điều đó cho phép driver
+                    enable/disable và xử lý interrupt state theo cấu hình
+                    và implementation.
+                </p>
+
+                <p>
+                    Một khái niệm thường gặp là:
+                </p>
+
+                <pre><code>Can_DisableControllerInterrupts(...)
+        │
+        ▼
+CAN Controller interrupts disabled
+        │
+        │ critical operation
+        ▼
+Can_EnableControllerInterrupts(...)
+        │
+        ▼
+CAN Controller interrupts restored</code></pre>
+
+                <p>
+                    Mục đích của cơ chế này là tránh một số trạng thái
+                    không nhất quán khi CanDrv đang thực hiện thao tác
+                    cần bảo vệ khỏi interrupt.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Việc enable/disable interrupt ở đây là behavior của
+                    CAN Driver đối với CAN Controller; nó không có nghĩa
+                    rằng CanDrv tự mình thay thế toàn bộ Interrupt Controller
+                    của MCU.
+                </div>
+
+                <h2>12. Interrupt Context và Main Function</h2>
+
+                <p>
+                    Một CAN implementation có thể sử dụng interrupt processing,
+                    polling hoặc kết hợp cả hai tùy configuration và hardware.
+                    Do đó cần phân biệt:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Processing</th>
+                            <th>Cách hoạt động</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Interrupt</td>
+                            <td>
+                                Hardware event tạo interrupt để driver xử lý
+                            </td>
+                            <td>
+                                RX/TX event
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Polling</td>
+                            <td>
+                                Driver được gọi định kỳ để kiểm tra trạng thái
+                            </td>
+                            <td>
+                                Can_MainFunction_Read()
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Hybrid</td>
+                            <td>
+                                Một số event dùng interrupt,
+                                một số event dùng polling
+                            </td>
+                            <td>
+                                Tùy configuration
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Với polling, interrupt controller không nhất thiết phải
+                    tham gia vào event đó. Với interrupt-driven processing,
+                    INTC/ISR path trở thành một phần quan trọng của hệ thống.
+                </p>
+
+                <h2>13. Startup Sequence: MCU → PORT → CAN</h2>
+
+                <p>
+                    Khi ECU khởi động, thứ tự thực tế phụ thuộc vào
+                    integration và configuration, nhưng về mặt tư duy
+                    có thể hình dung:
+                </p>
+
+                <pre><code>1. MCU / system initialization
+        │
+        ├── Clock
+        ├── Reset related setup
+        └── Peripheral availability
+        │
+        ▼
+2. PORT initialization
+        │
+        ├── CAN_TX
+        └── CAN_RX
+        │
+        ▼
+3. Interrupt infrastructure
+        │
+        └── CAN interrupt configuration
+        │
+        ▼
+4. CAN Driver initialization
+        │
+        └── CAN Controller configuration
+        │
+        ▼
+5. Controller START
+        │
+        ▼
+6. CAN communication</code></pre>
+
+                <p>
+                    Khi debug startup, nếu bỏ qua một bước ở đầu chuỗi,
+                    lỗi có thể xuất hiện ở bước cuối và khiến người phát triển
+                    tưởng rằng CanDrv là nguyên nhân.
+                </p>
+
+                <h2>14. Ví dụ: Clock CAN sai</h2>
+
+                <p>
+                    Giả sử project yêu cầu CAN communication với một
+                    baudrate cụ thể nhưng peripheral clock của CAN
+                    không đúng với giá trị mà configuration dự kiến.
+                </p>
+
+                <pre><code>Expected:
+MCU Clock
+   ↓
+CAN Peripheral Clock
+   ↓
+CAN Bit Timing
+   ↓
+Required CAN Baudrate
+
+Actual:
+Wrong MCU Clock
+   ↓
+Wrong CAN Peripheral Clock
+   ↓
+Wrong CAN Bit Timing
+   ↓
+CAN communication problem</code></pre>
+
+                <p>
+                    Khi gặp vấn đề như vậy, việc sửa trực tiếp
+                    <code>Can_Write()</code> thường không giải quyết được
+                    nguyên nhân gốc.
+                </p>
+
+                <h2>15. Ví dụ: PORT configuration sai</h2>
+
+                <p>
+                    Giả sử CAN Controller đã START và software báo
+                    transmission thành công, nhưng CAN bus không nhận được
+                    frame.
+                </p>
+
+                <pre><code>CanDrv
+   │
+   ▼
+CAN Controller
+   │
+   │ TX complete
+   ▼
+Software thinks: "Transmission OK"
+   │
+   ▼
+Physical pin
+   │
+   X
+   └── PIN MUX sai / pin function sai
+</code></pre>
+
+                <p>
+                    Trong trường hợp này, CAN Controller và CanDrv có thể
+                    vẫn hoạt động bình thường. Vấn đề nằm ở hardware
+                    configuration của pin.
+                </p>
+
+                <div class="note">
+                    <strong>Debug hint:</strong>
+                    Khi CAN software cho thấy TX đã hoàn thành nhưng
+                    trên bus không có waveform, hãy kiểm tra lần lượt:
+                    <strong>CAN Controller → PORT/MUX → CAN Transceiver →
+                        physical CANH/CANL</strong>.
+                </div>
+
+                <h2>16. Ví dụ: CAN RX Interrupt không hoạt động</h2>
+
+                <p>
+                    Một trường hợp khác là CAN bus có frame đến,
+                    nhưng application không nhận được.
+                </p>
+
+                <pre><code>CAN Bus
+   │
+   ▼
+CAN Controller
+   │
+   │ RX event
+   ▼
+Interrupt?
+   │
+   ├── NO → Check interrupt configuration / INTC / ISR
+   │
+   └── YES
+        │
+        ▼
+      CanDrv
+        │
+        ▼
+      CanIf
+        │
+        ▼
+   Upper layer</code></pre>
+
+                <p>
+                    Nếu CAN Controller thực sự nhận frame nhưng ISR không chạy,
+                    nên kiểm tra interrupt path trước khi sửa Receive logic
+                    trong application.
+                </p>
+
+                <h2>17. CAN Interrupt Debug Checklist</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kiểm tra</th>
+                            <th>Câu hỏi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Controller</td>
+                            <td>
+                                Controller có thực sự nhận/transmit event không?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CAN Interrupt Enable</td>
+                            <td>
+                                CAN event có được enable interrupt không?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>INTC</td>
+                            <td>
+                                Interrupt source có được route tới đúng CPU/ISR không?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISR</td>
+                            <td>
+                                ISR có được cài đặt và thực thi không?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CanDrv</td>
+                            <td>
+                                CAN driver có xử lý event đúng không?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CanIf</td>
+                            <td>
+                                Notification có được gọi lên đúng không?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Upper layer</td>
+                            <td>
+                                PduR/COM có nhận được notification/PDU không?
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>18. MCU, PORT, INTC không phải là trách nhiệm của CanDrv</h2>
+
+                <p>
+                    Đây là phần rất quan trọng để tránh hiểu sai boundary
+                    giữa các module.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Chức năng</th>
+                            <th>CanDrv chịu trách nhiệm?</th>
+                            <th>Thành phần liên quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Controller configuration</td>
+                            <td><strong>Có</strong></td>
+                            <td>CanDrv</td>
+                        </tr>
+                        <tr>
+                            <td>CAN TX/RX processing</td>
+                            <td><strong>Có</strong></td>
+                            <td>CanDrv</td>
+                        </tr>
+                        <tr>
+                            <td>System/peripheral clock setup</td>
+                            <td><strong>Không</strong></td>
+                            <td>MCU</td>
+                        </tr>
+                        <tr>
+                            <td>CAN pin multiplexing</td>
+                            <td><strong>Không</strong></td>
+                            <td>PORT</td>
+                        </tr>
+                        <tr>
+                            <td>Global interrupt routing</td>
+                            <td><strong>Không trực tiếp</strong></td>
+                            <td>INTC / MCU / OS integration</td>
+                        </tr>
+                        <tr>
+                            <td>CAN interrupt handling</td>
+                            <td><strong>Có</strong></td>
+                            <td>CanDrv</td>
+                        </tr>
+                        <tr>
+                            <td>Application signal processing</td>
+                            <td><strong>Không</strong></td>
+                            <td>COM / Application</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>19. Quan hệ giữa MCU, PORT, INTC và CanDrv</h2>
+
+                <svg viewBox="0 0 900 560" role="img" aria-label="Sơ đồ tổng hợp MCU PORT INTC và CAN Driver"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="325" y="25" width="250" height="65" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="65" text-anchor="middle" font-size="22">
+                        CanDrv
+                    </text>
+
+                    <rect x="70" y="150" width="200" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="170" y="192" text-anchor="middle" font-size="20">
+                        MCU Driver
+                    </text>
+
+                    <rect x="350" y="150" width="200" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="192" text-anchor="middle" font-size="20">
+                        CAN Controller
+                    </text>
+
+                    <rect x="630" y="150" width="200" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="730" y="192" text-anchor="middle" font-size="20">
+                        PORT Driver
+                    </text>
+
+                    <rect x="350" y="300" width="200" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="342" text-anchor="middle" font-size="20">
+                        INTC / ISR
+                    </text>
+
+                    <rect x="70" y="420" width="200" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="170" y="462" text-anchor="middle" font-size="20">
+                        Clock
+                    </text>
+
+                    <rect x="350" y="420" width="200" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="462" text-anchor="middle" font-size="20">
+                        CAN Interrupt
+                    </text>
+
+                    <rect x="630" y="420" width="200" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="730" y="462" text-anchor="middle" font-size="20">
+                        CAN TX / RX Pins
+                    </text>
+
+                    <line x1="365" y1="90" x2="230" y2="150" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="90" x2="450" y2="150" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="535" y1="90" x2="670" y2="150" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="220" x2="450" y2="300" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="170" y1="220" x2="170" y2="420" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="370" x2="450" y2="420" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="730" y1="220" x2="730" y2="420" stroke="currentColor" stroke-width="2" />
+
+                    <text x="275" y="125" font-size="15">
+                        platform dependency
+                    </text>
+
+                    <text x="560" y="125" font-size="15">
+                        pin configuration
+                    </text>
+
+                    <text x="505" y="280" font-size="15">
+                        interrupt path
+                    </text>
+
+                </svg>
+
+                <p>
+                    Có thể nhớ vai trò của từng thành phần bằng ba câu:
+                </p>
+
+                <pre><code>MCU   → "CAN Controller lấy clock ở đâu?"
+PORT  → "CAN signal đi ra/vào chân nào?"
+INTC  → "CAN interrupt đi đến CPU/ISR bằng đường nào?"
+CanDrv → "CAN Controller phải làm gì?"</code></pre>
+
+                <h2>20. Ví dụ Debug từ đầu đến cuối</h2>
+
+                <p>
+                    Giả sử một ECU không thể gửi CAN message.
+                    Thay vì ngay lập tức mở <code>Can_Write()</code>,
+                    hãy debug theo tầng.
+                </p>
+
+                <pre><code>Step 1:
+MCU Clock
+   │
+   └── CAN peripheral clock đúng?
+
+Step 2:
+PORT
+   │
+   ├── CAN_TX function đúng?
+   └── CAN_RX function đúng?
+
+Step 3:
+CanDrv
+   │
+   ├── Init thành công?
+   ├── Controller START?
+   └── Can_Write() trả E_OK?
+
+Step 4:
+INTC
+   │
+   └── Interrupt configuration đúng?
+
+Step 5:
+CAN Controller
+   │
+   └── TX request / status đúng?
+
+Step 6:
+CAN Transceiver
+   │
+   └── Normal mode?
+
+Step 7:
+Physical bus
+   │
+   └── CANH / CANL waveform đúng?
+
+Step 8:
+Other ECU
+   │
+   └── ACK / bus participation?</code></pre>
+
+                <div class="note">
+                    <strong>Điểm quan trọng:</strong>
+                    Embedded debugging hiệu quả thường bắt đầu từ
+                    <strong>hardware assumptions → low-level driver →
+                        communication stack → application</strong>.
+                    Không nên mặc định rằng mọi lỗi CAN đều là lỗi của CanDrv.
+                </div>
+
+                <h2>21. MCU / PORT / INTC trong một CAN Interview</h2>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What can cause a CAN driver to initialize successfully
+                        but CAN communication still does not work?"</strong>
+                </p>
+
+                <p>
+                    Một câu trả lời tốt có thể bao gồm:
+                </p>
+
+                <pre><code>"I would not check only the CAN driver.
+I would also check the MCU clock configuration,
+the CAN peripheral clock, the CAN pin multiplexing,
+the interrupt configuration, the CAN controller state,
+the transceiver mode, and finally the physical CAN bus."</code></pre>
+
+                <p>
+                    Đây là cách trả lời cho thấy bạn hiểu rằng CAN Driver
+                    nằm trong một hệ thống embedded hoàn chỉnh chứ không hoạt động
+                    độc lập.
+                </p>
+
+                <h2>22. Tóm tắt</h2>
+
+                <div class="note">
+                    <br><br>
+
+                    <strong>MCU Driver</strong> chịu trách nhiệm cho các chức năng
+                    ở mức microcontroller, trong đó clock của CAN peripheral
+                    là một yếu tố quan trọng đối với CAN communication.
+                    <br><br>
+
+                    <strong>PORT Driver</strong> cấu hình các chân vật lý của MCU.
+                    Với CAN, cần đảm bảo CAN_TX và CAN_RX được multiplex đúng
+                    sang CAN peripheral.
+                    <br><br>
+
+                    <strong>INTC / interrupt infrastructure</strong> xử lý
+                    đường đi của interrupt từ CAN Controller tới CPU/ISR.
+                    CAN Driver sau đó xử lý sự kiện CAN trong driver.
+                    <br><br>
+
+                    Một cách ghi nhớ rất đơn giản:
+                    <br><br>
+
+                    <strong>MCU → Clock</strong>
+                    <br>
+                    <strong>PORT → Pin</strong>
+                    <br>
+                    <strong>INTC → Interrupt</strong>
+                    <br>
+                    <strong>CanDrv → CAN Controller</strong>
+                    <br><br>
+
+                    Khi debug CAN, hãy kiểm tra theo chuỗi:
+                    <strong>Clock → Pin → Controller → Interrupt → CanDrv →
+                        CanIf → Upper Layer → Physical Bus</strong>.
+                    <br><br>
+
+                    Đặc biệt, không nên mặc định rằng MCU, PORT và INTC
+                    đều là các API dependency trực tiếp của CanDrv.
+                    Chúng có thể là những thành phần platform/hardware
+                    mà CanDrv phụ thuộc về mặt tích hợp và cấu hình.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-13.html">← Bài trước</a>
+                    <a class="btn" href="lesson-15.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

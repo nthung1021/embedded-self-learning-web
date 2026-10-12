@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 23: AUTOSAR Configuration và ARXML | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html" class="active" aria-current="page">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+
+            <a href="index.html">← Tất cả bài học AUTOSAR</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 23: AUTOSAR Configuration và ARXML</h1>
+
+            <p>
+                Trong các bài trước, chúng ta đã tìm hiểu kiến trúc AUTOSAR,
+                Software Component, RTE, BSW, MCAL, Interface và Dependency.
+                Tuy nhiên, kiến trúc đó không tự động trở thành một ECU có thể chạy được.
+            </p>
+
+            <p>
+                Các thành phần của AUTOSAR cần được <strong>mô tả, kết nối và cấu hình</strong>.
+                Đây là vai trò của <strong>AUTOSAR Configuration</strong>.
+                Một trong những định dạng quan trọng được sử dụng để trao đổi và lưu trữ
+                thông tin cấu hình là <strong>ARXML</strong>.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Bài này tập trung giải thích AUTOSAR Configuration và ARXML ở mức kiến trúc
+                và thực tế dự án: configuration dùng để làm gì, ARXML chứa loại thông tin nào,
+                quan hệ giữa ARXML và toolchain, cách configuration đi tới generated code,
+                cũng như cách đọc và debug configuration.
+                Chưa đi sâu vào toàn bộ schema AUTOSAR, từng XML tag hoặc cấu hình cụ thể
+                của một vendor tool.
+            </div>
+
+            <h2>1. AUTOSAR Configuration là gì?</h2>
+
+            <p>
+                AUTOSAR Configuration là quá trình xác định các thông tin cần thiết
+                để các thành phần trong hệ thống AUTOSAR biết chúng phải hoạt động
+                và kết nối với nhau như thế nào.
+            </p>
+
+            <p>
+                Có thể hiểu đơn giản:
+            </p>
+
+            <pre><code>Architecture
+    +
+Configuration
+    +
+Implementation
+    ↓
+ECU Software có thể chạy</code></pre>
+
+            <p>
+                Architecture trả lời câu hỏi <strong>"hệ thống được thiết kế như thế nào?"</strong>,
+                còn Configuration trả lời nhiều câu hỏi cụ thể hơn như
+                <strong>"component nào kết nối với component nào?"</strong>,
+                <strong>"driver nào được sử dụng?"</strong> và
+                <strong>"các thông số hoạt động là gì?"</strong>
+            </p>
+
+            <h2>2. Vì sao AUTOSAR cần Configuration?</h2>
+
+            <p>
+                Một ECU AUTOSAR có rất nhiều thành phần:
+            </p>
+
+            <ul>
+                <li>Software Components.</li>
+                <li>Interfaces.</li>
+                <li>RTE.</li>
+                <li>BSW Modules.</li>
+                <li>Communication Stack.</li>
+                <li>Memory Stack.</li>
+                <li>Diagnostic Stack.</li>
+                <li>MCAL Drivers.</li>
+                <li>Operating System.</li>
+                <li>Microcontroller và hardware.</li>
+            </ul>
+
+            <p>
+                Nếu mỗi thành phần tự quyết định cách kết nối với các thành phần khác,
+                hệ thống sẽ rất khó quản lý.
+            </p>
+
+            <p>
+                Configuration giúp biến kiến trúc tổng quát thành một cấu hình cụ thể
+                cho một ECU hoặc một project.
+            </p>
+
+            <h2>3. Configuration không phải là Source Code</h2>
+
+            <p>
+                Đây là một điểm quan trọng.
+                Configuration mô tả <strong>hệ thống phải được cấu hình như thế nào</strong>,
+                trong khi source code mô tả <strong>logic được thực hiện như thế nào</strong>.
+            </p>
+
+            <pre><code>Configuration
+      |
+      | defines
+      v
+System structure / parameters
+      |
+      | used by tools
+      v
+Generated Code / Runtime Configuration
+
+Source Code
+      |
+      | implements
+      v
+Application / Driver Logic</code></pre>
+
+            <p>
+                Hai phần này liên quan chặt chẽ nhưng không phải là một.
+            </p>
+
+            <h2>4. ARXML là gì?</h2>
+
+            <p>
+                <strong>ARXML</strong> là định dạng XML được sử dụng trong AUTOSAR
+                để mô tả và trao đổi các thông tin liên quan đến hệ thống AUTOSAR.
+            </p>
+
+            <p>
+                Có thể xem ARXML như một dạng
+                <strong>machine-readable description</strong> của hệ thống.
+            </p>
+
+            <pre><code>AUTOSAR Model / Configuration
+            |
+            v
+          ARXML
+            |
+            v
+       AUTOSAR Tools
+            |
+            v
+ Generated Configuration / Code</code></pre>
+
+            <h2>5. ARXML có phải là code không?</h2>
+
+            <p>
+                Không. ARXML là dữ liệu cấu hình và mô hình hóa,
+                không phải application source code.
+            </p>
+
+            <p>
+                Ví dụ một đoạn ARXML có thể mô tả một component,
+                interface hoặc một tham số cấu hình.
+                Tool sẽ đọc thông tin đó và sử dụng nó trong quá trình
+                configuration hoặc generation.
+            </p>
+
+            <pre><code>ARXML
+  ↓
+Tool đọc model
+  ↓
+Configuration
+  ↓
+Generated files
+  ↓
+Compiler
+  ↓
+ECU Software</code></pre>
+
+            <h2>6. XML là gì?</h2>
+
+            <p>
+                XML là một định dạng dữ liệu có cấu trúc,
+                trong đó thông tin được biểu diễn bằng các element và attribute.
+            </p>
+
+            <pre><code>&lt;Example&gt;
+    &lt;Name&gt;Temperature&lt;/Name&gt;
+    &lt;Value&gt;80&lt;/Value&gt;
+&lt;/Example&gt;</code></pre>
+
+            <p>
+                ARXML sử dụng XML làm nền tảng,
+                nhưng bổ sung cấu trúc và các quy tắc riêng của AUTOSAR.
+            </p>
+
+            <h2>7. ARXML chứa những gì?</h2>
+
+            <p>
+                ARXML có thể chứa rất nhiều loại thông tin tùy theo mục đích
+                và giai đoạn của project.
+            </p>
+
+            <ul>
+                <li>Software Components.</li>
+                <li>Ports.</li>
+                <li>Interfaces.</li>
+                <li>Data types.</li>
+                <li>System information.</li>
+                <li>ECU configuration.</li>
+                <li>Communication information.</li>
+                <li>BSW configuration.</li>
+                <li>Hardware-related configuration.</li>
+            </ul>
+
+            <p>
+                Vì vậy không nên nghĩ rằng
+                <strong>"một ARXML chỉ chứa một loại cấu hình"</strong>.
+            </p>
+
+            <h2>8. Một project có thể có nhiều ARXML</h2>
+
+            <p>
+                Trong project thực tế, rất hiếm khi chỉ có một file ARXML duy nhất.
+                Hệ thống có thể được chia thành nhiều file phục vụ các mục đích khác nhau.
+            </p>
+
+            <pre><code>Project
+ |
+ +-- Application SWC ARXML
+ |
+ +-- Interface ARXML
+ |
+ +-- System ARXML
+ |
+ +-- ECU Configuration ARXML
+ |
+ +-- BSW Configuration ARXML
+ |
+ +-- Communication ARXML
+ |
+ +-- Other configuration files</code></pre>
+
+            <p>
+                Các file này có thể được sử dụng bởi các tool khác nhau
+                trong các bước khác nhau của workflow.
+            </p>
+
+            <h2>9. ARXML và AUTOSAR Model</h2>
+
+            <p>
+                Một cách dễ hiểu là xem ARXML như một dạng biểu diễn của
+                AUTOSAR model.
+            </p>
+
+            <pre><code>Conceptual Model
+       |
+       v
+AUTOSAR Model
+       |
+       v
+ARXML Representation
+       |
+       v
+Toolchain</code></pre>
+
+            <p>
+                Người thiết kế có thể nhìn thấy model dưới dạng GUI,
+                trong khi tool lưu trữ hoặc trao đổi dữ liệu dưới dạng ARXML.
+            </p>
+
+            <h2>10. Configuration và Tool</h2>
+
+            <p>
+                Trong project AUTOSAR thực tế, developer thường không chỉnh sửa
+                tất cả configuration bằng tay.
+                Thay vào đó, tool được sử dụng để tạo, chỉnh sửa, kiểm tra
+                và generate configuration.
+            </p>
+
+            <pre><code>Developer
+    |
+    v
+AUTOSAR Configuration Tool
+    |
+    v
+Configuration Model
+    |
+    v
+ARXML / Generated Configuration
+    |
+    v
+Build</code></pre>
+
+            <p>
+                Vì vậy việc hiểu configuration không chỉ là biết XML syntax,
+                mà còn phải hiểu workflow của toolchain.
+            </p>
+
+            <h2>11. Configuration Workflow tổng quát</h2>
+
+            <pre><code>Requirement
+    ↓
+Architecture
+    ↓
+SWC / Interface Design
+    ↓
+System Configuration
+    ↓
+ECU Configuration
+    ↓
+BSW / MCAL Configuration
+    ↓
+Code Generation
+    ↓
+Build
+    ↓
+ECU Software</code></pre>
+
+            <p>
+                Mỗi project có thể có workflow và tool khác nhau,
+                nhưng tư duy tổng quát này rất hữu ích để hiểu vị trí
+                của configuration trong toàn bộ development process.
+            </p>
+
+            <h2>12. Application Configuration</h2>
+
+            <p>
+                Ở phía Application, configuration có thể liên quan đến
+                Software Components, ports, interfaces, runnable và các quan hệ
+                giữa các component.
+            </p>
+
+            <pre><code>Application Configuration
+
+SWC A
+ |
+ +-- Ports
+ +-- Interfaces
+ +-- Runnables
+ +-- Events
+ |
+SWC B
+ |
+ +-- Ports
+ +-- Interfaces
+ +-- Runnables</code></pre>
+
+            <h2>13. Interface Configuration</h2>
+
+            <p>
+                Interface cần được mô tả để các component có thể hiểu
+                dữ liệu hoặc operation mà chúng trao đổi.
+            </p>
+
+            <pre><code>Interface
+ |
+ +-- Data / Operation
+ |
+ +-- Data Type
+ |
+ +-- Semantics
+ |
+ +-- Communication relationship</code></pre>
+
+            <p>
+                Ví dụ một Temperature Interface có thể định nghĩa
+                dữ liệu nhiệt độ mà một SWC cung cấp cho SWC khác.
+            </p>
+
+            <h2>14. Port Configuration</h2>
+
+            <p>
+                Port xác định điểm kết nối của một SWC.
+                Configuration cần xác định port đó sử dụng interface nào
+                và nó thuộc loại cung cấp hay yêu cầu.
+            </p>
+
+            <pre><code>SWC
+ |
+ +-- Provided Port
+ |       |
+ |       +-- Interface
+ |
+ +-- Required Port
+         |
+         +-- Interface</code></pre>
+
+            <h2>15. RTE Configuration</h2>
+
+            <p>
+                RTE cần biết các SWC giao tiếp với nhau như thế nào
+                và các runnable được kích hoạt trong những điều kiện nào.
+            </p>
+
+            <pre><code>SWC
+ |
+ +-- Port
+ |
+ +-- Runnable
+ |
+ +-- Event
+ |
+ v
+RTE Configuration
+ |
+ v
+Generated RTE</code></pre>
+
+            <p>
+                Đây là lý do RTE không thể được tạo một cách độc lập
+                mà không biết architecture và configuration của Application.
+            </p>
+
+            <h2>16. BSW Configuration</h2>
+
+            <p>
+                BSW có rất nhiều module cần được cấu hình.
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Communication modules.</li>
+                <li>Memory modules.</li>
+                <li>Diagnostic modules.</li>
+                <li>ECU State Management.</li>
+                <li>Operating System.</li>
+                <li>Watchdog.</li>
+                <li>MCAL drivers.</li>
+            </ul>
+
+            <pre><code>BSW
+ |
+ +-- Communication
+ +-- Memory
+ +-- Diagnostics
+ +-- OS
+ +-- ECU Management
+ +-- MCAL
+ |
+ v
+Configuration</code></pre>
+
+            <h2>17. MCAL Configuration</h2>
+
+            <p>
+                MCAL cũng cần configuration để biết driver phải hoạt động
+                theo cách nào trên microcontroller cụ thể.
+            </p>
+
+            <p>
+                Ví dụ về mặt khái niệm:
+            </p>
+
+            <pre><code>MCAL Configuration
+
+GPIO
+ |
+ +-- Channel
+ +-- Direction
+ +-- Initial State
+
+ADC
+ |
+ +-- Channel
+ +-- Conversion setup
+
+CAN
+ |
+ +-- Controller
+ +-- Hardware configuration
+ +-- Communication settings</code></pre>
+
+            <p>
+                Chi tiết thực tế sẽ phụ thuộc vào MCU và MCAL vendor.
+            </p>
+
+            <h2>18. Configuration Parameter</h2>
+
+            <p>
+                Configuration parameter là một giá trị hoặc lựa chọn
+                dùng để xác định behavior của module.
+            </p>
+
+            <pre><code>Module
+ |
+ +-- Parameter A = ...
+ +-- Parameter B = ...
+ +-- Parameter C = ...
+ +-- Parameter D = ...</code></pre>
+
+            <p>
+                Không phải mọi parameter đều có ý nghĩa giống nhau.
+                Một số có thể liên quan đến timing,
+                một số liên quan đến communication,
+                một số liên quan đến hardware.
+            </p>
+
+            <h2>19. Configuration Class</h2>
+
+            <p>
+                Trong AUTOSAR, một số configuration có thể được phân loại
+                dựa trên thời điểm và cách chúng được xác định.
+            </p>
+
+            <p>
+                Ở mức khái niệm, cần phân biệt:
+            </p>
+
+            <ul>
+                <li>Cấu hình được xác định trước khi build.</li>
+                <li>Cấu hình được đưa vào generated code.</li>
+                <li>Cấu hình liên quan đến initialization/runtime.</li>
+            </ul>
+
+            <p>
+                Chi tiết từng configuration class có thể khác nhau tùy module,
+                vì vậy khi làm project thực tế cần xem specification của module đó.
+            </p>
+
+            <h2>20. Static Configuration</h2>
+
+            <p>
+                Một phần lớn configuration của ECU được xác định trước khi phần mềm
+                được build và flash vào ECU.
+            </p>
+
+            <pre><code>Configuration
+      ↓
+Generate
+      ↓
+Compile
+      ↓
+Flash
+      ↓
+ECU</code></pre>
+
+            <p>
+                Điều này phù hợp với đặc tính của embedded automotive software,
+                nơi nhiều behavior của hệ thống được xác định trước.
+            </p>
+
+            <h2>21. Configuration và Generated Code</h2>
+
+            <p>
+                Một trong những lý do quan trọng khiến configuration tồn tại
+                là để tool có thể generate một phần code cần thiết.
+            </p>
+
+            <pre><code>Configuration
+      ↓
+Generator
+      ↓
+Generated Source / Header
+      ↓
+Compiler
+      ↓
+Binary</code></pre>
+
+            <p>
+                Generated code có thể chứa các thông tin kết nối,
+                cấu hình module hoặc các phần infrastructure cần thiết.
+            </p>
+
+            <h2>22. Generated Code không nên sửa tùy tiện</h2>
+
+            <p>
+                Trong project AUTOSAR, một số file được generate tự động.
+                Nếu sửa trực tiếp generated code,
+                thay đổi có thể bị mất trong lần generate tiếp theo.
+            </p>
+
+            <pre><code>Configuration
+      ↓
+Generator
+      ↓
+Generated Code
+
+Nếu sửa trực tiếp:
+
+Generated Code
+      ↓
+Regenerate
+      ↓
+Thay đổi có thể bị ghi đè</code></pre>
+
+            <p>
+                Vì vậy nên sửa configuration hoặc source code đúng nơi
+                thay vì patch trực tiếp generated output nếu workflow của project
+                không cho phép.
+            </p>
+
+            <h2>23. ARXML trong Workflow</h2>
+
+            <p>
+                ARXML có thể xuất hiện ở nhiều giai đoạn của AUTOSAR development.
+            </p>
+
+            <pre><code>Design
+  ↓
+ARXML
+  ↓
+Exchange
+  ↓
+Configuration Tool
+  ↓
+Generate
+  ↓
+ECU Software</code></pre>
+
+            <p>
+                Một file ARXML có thể được tạo bởi một tool,
+                trao đổi sang tool khác và tiếp tục được sử dụng trong workflow.
+            </p>
+
+            <h2>24. ARXML giúp trao đổi giữa các Tool</h2>
+
+            <p>
+                Một lợi ích quan trọng của ARXML là hỗ trợ trao đổi
+                thông tin AUTOSAR giữa các công cụ và các bên tham gia project.
+            </p>
+
+            <pre><code>Tool A
+  |
+  | ARXML
+  v
+Tool B
+  |
+  | ARXML
+  v
+Tool C</code></pre>
+
+            <p>
+                Điều này đặc biệt hữu ích trong automotive,
+                nơi OEM, supplier và các nhóm development có thể sử dụng
+                những toolchain khác nhau.
+            </p>
+
+            <h2>25. ARXML không phải lúc nào cũng là file "configuration"</h2>
+
+            <p>
+                Đây là một điểm dễ gây nhầm lẫn.
+                ARXML là format dùng để biểu diễn thông tin AUTOSAR,
+                trong đó có nhiều loại thông tin khác nhau.
+            </p>
+
+            <p>
+                Vì vậy:
+            </p>
+
+            <pre><code>ARXML
+  ≠ chỉ có BSW Configuration
+
+ARXML có thể chứa:
+- SWC description
+- Interface description
+- System description
+- ECU configuration
+- Communication information
+- Các model/configuration khác</code></pre>
+
+            <h2>26. ARXML và ECU Extract</h2>
+
+            <p>
+                Trong các workflow AUTOSAR, thông tin hệ thống có thể được
+                phân chia hoặc trích xuất thành những phần phù hợp với từng ECU.
+            </p>
+
+            <pre><code>Complete Vehicle/System Description
+              |
+              v
+        ECU-specific information
+              |
+              v
+          ECU Project</code></pre>
+
+            <p>
+                Điều này giúp một ECU chỉ tập trung vào phần configuration
+                cần thiết cho nó.
+            </p>
+
+            <h2>27. System Description và ECU Configuration</h2>
+
+            <p>
+                Cần phân biệt thông tin ở cấp hệ thống với thông tin riêng của ECU.
+            </p>
+
+            <pre><code>System Level
+ |
+ +-- ECUs
+ +-- Networks
+ +-- Signals
+ +-- Communication
+ +-- System relationships
+
+ECU Level
+ |
+ +-- Local SWCs
+ +-- Local BSW configuration
+ +-- Local hardware
+ +-- ECU-specific settings</code></pre>
+
+            <p>
+                Đây là một distinction quan trọng khi đọc các file ARXML lớn.
+            </p>
+
+            <h2>28. ARXML và Communication</h2>
+
+            <p>
+                Trong hệ thống có CAN, LIN hoặc Ethernet,
+                configuration cần mô tả nhiều thông tin communication.
+            </p>
+
+            <pre><code>Network
+ |
+ +-- ECU
+ |
+ +-- Message / PDU
+ |
+ +-- Signal
+ |
+ +-- Communication relationship
+ |
+ +-- ECU mapping</code></pre>
+
+            <p>
+                Các thông tin này có thể được biểu diễn trong AUTOSAR model
+                và trao đổi bằng ARXML.
+            </p>
+
+            <h2>29. Ví dụ CAN Configuration</h2>
+
+            <p>
+                Giả sử ECU nhận VehicleSpeed từ CAN.
+            </p>
+
+            <pre><code>CAN Bus
+   |
+   v
+CAN Message
+   |
+   v
+PDU
+   |
+   v
+Signal: VehicleSpeed
+   |
+   v
+Communication Stack
+   |
+   v
+RTE
+   |
+   v
+Application SWC</code></pre>
+
+            <p>
+                Configuration phải xác định được những quan hệ cần thiết
+                để dữ liệu có thể đi qua chuỗi này.
+            </p>
+
+            <h2>30. Configuration không thay thế Application Logic</h2>
+
+            <p>
+                Configuration có thể xác định cách component được kết nối,
+                nhưng không thay thế logic nghiệp vụ của Application.
+            </p>
+
+            <pre><code>Configuration:
+"Temperature được kết nối vào Warning SWC"
+
+
+Application Logic:
+"Nếu Temperature > Threshold
+ → bật Warning"</code></pre>
+
+            <p>
+                Đây là hai trách nhiệm khác nhau.
+            </p>
+
+            <h2>31. Configuration và Runnable</h2>
+
+            <p>
+                Runnable là đơn vị thực thi logic của một SWC.
+                Configuration có thể xác định các event hoặc cơ chế
+                khiến runnable được kích hoạt.
+            </p>
+
+            <pre><code>Timing Event
+     |
+     v
+Runnable
+     |
+     v
+Application Logic</code></pre>
+
+            <p>
+                Vì vậy khi một runnable không chạy,
+                vấn đề có thể không nằm trong code của runnable
+                mà nằm ở configuration hoặc event mapping.
+            </p>
+
+            <h2>32. Ví dụ Runnable không chạy</h2>
+
+            <pre><code>Expected:
+
+Timing Event
+    ↓
+Runnable
+    ↓
+Read Input
+    ↓
+Calculate
+    ↓
+Write Output
+
+
+Actual:
+
+Timing Event
+    X
+    |
+    v
+Runnable không được kích hoạt</code></pre>
+
+            <p>
+                Khi debug, cần kiểm tra configuration của event,
+                task mapping và runtime environment,
+                không chỉ kiểm tra logic bên trong runnable.
+            </p>
+
+            <h2>33. Configuration và OS</h2>
+
+            <p>
+                AUTOSAR OS cũng cần được cấu hình.
+                Các task, event, alarm và resource liên quan đến execution
+                cần được xác định phù hợp với hệ thống.
+            </p>
+
+            <pre><code>Runnable
+   ↓
+RTE
+   ↓
+OS Task
+   ↓
+OS Scheduler
+   ↓
+CPU Execution</code></pre>
+
+            <p>
+                Vì vậy behavior của Application có thể phụ thuộc
+                vào cả Application configuration và OS configuration.
+            </p>
+
+            <h2>34. Configuration và Memory</h2>
+
+            <p>
+                Memory Stack cũng có nhiều thông tin cần cấu hình,
+                chẳng hạn cách các memory block hoặc service được tổ chức.
+            </p>
+
+            <pre><code>Application
+    ↓
+Memory Service
+    ↓
+Memory Abstraction
+    ↓
+MCAL / Flash Driver
+    ↓
+Memory Hardware</code></pre>
+
+            <p>
+                Nếu memory configuration không đúng,
+                chức năng đọc/ghi dữ liệu có thể không hoạt động dù application code đúng.
+            </p>
+
+            <h2>35. Configuration và Diagnostic</h2>
+
+            <p>
+                Diagnostic Stack cũng phụ thuộc mạnh vào configuration.
+                ECU cần biết những diagnostic event,
+                data hoặc service nào được hỗ trợ.
+            </p>
+
+            <pre><code>Diagnostic Configuration
+        |
+        +-- Event
+        +-- DTC relationship
+        +-- Diagnostic Data
+        +-- Service configuration
+        |
+        v
+Diagnostic Stack</code></pre>
+
+            <h2>36. Configuration và ECU State Management</h2>
+
+            <p>
+                ECU State Management cũng có các trạng thái và behavior
+                cần được cấu hình phù hợp với hệ thống.
+            </p>
+
+            <pre><code>Startup
+   ↓
+Run
+   ↓
+Sleep
+   ↓
+Wake-up
+   ↓
+Run</code></pre>
+
+            <p>
+                Nếu configuration không phù hợp,
+                ECU có thể không chuyển trạng thái như mong muốn.
+            </p>
+
+            <h2>37. Configuration và Watchdog</h2>
+
+            <p>
+                Watchdog là một ví dụ điển hình cho thấy configuration
+                có thể ảnh hưởng trực tiếp đến runtime behavior.
+            </p>
+
+            <pre><code>Application / OS
+      |
+      v
+Watchdog Service
+      |
+      v
+Watchdog Driver
+      |
+      v
+Hardware Watchdog</code></pre>
+
+            <p>
+                Nếu timing hoặc configuration của watchdog không phù hợp,
+                ECU có thể bị reset ngoài ý muốn.
+            </p>
+
+            <h2>38. Configuration Dependency</h2>
+
+            <p>
+                Các configuration không tồn tại độc lập.
+                Một cấu hình có thể phụ thuộc vào cấu hình của module khác.
+            </p>
+
+            <pre><code>Application Configuration
+          |
+          v
+RTE Configuration
+          |
+          v
+Communication / BSW Configuration
+          |
+          v
+MCAL Configuration
+          |
+          v
+Hardware Configuration</code></pre>
+
+            <p>
+                Vì vậy một thay đổi ở dưới có thể yêu cầu cập nhật
+                các phần configuration liên quan ở trên.
+            </p>
+
+            <h2>39. Configuration Consistency</h2>
+
+            <p>
+                Một hệ thống AUTOSAR cần configuration nhất quán.
+                Nếu một component yêu cầu interface nhưng không có provider phù hợp,
+                hệ thống sẽ có vấn đề.
+            </p>
+
+            <pre><code>Consumer
+   |
+   | Requires Interface A
+   v
+Interface A
+   X
+No valid Provider
+
+→ Configuration Error</code></pre>
+
+            <h2>40. Configuration Validation</h2>
+
+            <p>
+                Toolchain thường có các bước kiểm tra configuration
+                trước khi generate hoặc build.
+            </p>
+
+            <pre><code>Configuration
+      ↓
+Validation
+      |
+      +---- Error → Fix
+      |
+      +---- Valid
+              ↓
+           Generate</code></pre>
+
+            <p>
+                Validation giúp phát hiện lỗi càng sớm càng tốt,
+                trước khi chúng trở thành runtime problem.
+            </p>
+
+            <h2>41. Configuration Error và Runtime Error</h2>
+
+            <p>
+                Đây là hai loại lỗi cần phân biệt.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Loại lỗi</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Configuration Error</td>
+                        <td>Port không được map đúng</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration Error</td>
+                        <td>Module parameter không hợp lệ</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime Error</td>
+                        <td>Application xử lý dữ liệu sai</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime Error</td>
+                        <td>Communication timeout khi ECU đang chạy</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>42. Debug Configuration Error</h2>
+
+            <p>
+                Khi gặp lỗi configuration, có thể kiểm tra theo thứ tự:
+            </p>
+
+            <ol>
+                <li>Đọc error message của tool.</li>
+                <li>Xác định module liên quan.</li>
+                <li>Kiểm tra parameter.</li>
+                <li>Kiểm tra dependency.</li>
+                <li>Kiểm tra interface hoặc mapping.</li>
+                <li>Kiểm tra consistency với module liên quan.</li>
+                <li>Regenerate configuration.</li>
+                <li>Build lại.</li>
+            </ol>
+
+            <h2>43. Đọc ARXML có khó không?</h2>
+
+            <p>
+                ARXML thực tế có thể rất dài và khó đọc trực tiếp vì
+                cấu trúc của AUTOSAR khá lớn.
+            </p>
+
+            <p>
+                Tuy nhiên không cần đọc từ đầu đến cuối.
+                Cách hiệu quả hơn là xác định trước mình đang tìm thông tin gì.
+            </p>
+
+            <pre><code>Cần tìm:
+"Temperature Interface"
+
+        ↓
+
+Search trong ARXML
+        ↓
+
+Tìm element liên quan
+        ↓
+
+Trace references
+        ↓
+
+Provider / Consumer</code></pre>
+
+            <h2>44. Cách đọc một file ARXML</h2>
+
+            <ol>
+                <li>Xác định file thuộc loại model/configuration nào.</li>
+                <li>Tìm package hoặc element liên quan.</li>
+                <li>Tìm tên component hoặc interface.</li>
+                <li>Kiểm tra reference.</li>
+                <li>Trace sang object được reference.</li>
+                <li>Kiểm tra relationship với các thành phần khác.</li>
+            </ol>
+
+            <p>
+                Không nên cố hiểu toàn bộ file ngay từ lần đầu.
+            </p>
+
+            <h2>45. Package trong ARXML</h2>
+
+            <p>
+                Các object AUTOSAR thường được tổ chức theo package
+                để quản lý cấu trúc của model.
+            </p>
+
+            <pre><code>Package
+ |
+ +-- SWC
+ |
+ +-- Interface
+ |
+ +-- DataType
+ |
+ +-- System
+ |
+ +-- Configuration</code></pre>
+
+            <p>
+                Khi tìm một object trong ARXML,
+                package structure có thể giúp định vị nhanh hơn.
+            </p>
+
+            <h2>46. Reference trong ARXML</h2>
+
+            <p>
+                Một object có thể tham chiếu đến object khác.
+                Đây là lý do một phần ARXML thường không đủ để hiểu toàn bộ relationship.
+            </p>
+
+            <pre><code>Object A
+   |
+   | reference
+   v
+Object B
+   |
+   | reference
+   v
+Object C</code></pre>
+
+            <p>
+                Khi debug hoặc phân tích ARXML,
+                cần theo dõi các reference thay vì chỉ nhìn một element đơn lẻ.
+            </p>
+
+            <h2>47. Tên và Reference quan trọng hơn XML Syntax</h2>
+
+            <p>
+                Khi mới học ARXML, dễ bị tập trung vào dấu ngoặc XML
+                và các tag rất dài.
+                Nhưng điều quan trọng hơn là hiểu object nào đang được mô tả
+                và object đó liên kết với object nào.
+            </p>
+
+            <pre><code>Không nên chỉ hỏi:
+
+"Tag này nghĩa là gì?"
+
+
+Nên hỏi:
+
+"Object này là gì?"
+"Who uses it?"
+"Who provides it?"
+"Referenced object là gì?"</code></pre>
+
+            <h2>48. ARXML và Software Component</h2>
+
+            <p>
+                Một SWC được mô hình hóa trong AUTOSAR và thông tin của nó
+                có thể được biểu diễn trong ARXML.
+            </p>
+
+            <pre><code>SWC
+ |
+ +-- Name
+ +-- Ports
+ +-- Interfaces
+ +-- Runnables
+ +-- Events
+ +-- Other metadata
+</code></pre>
+
+            <p>
+                Đây là một trong những loại object thường gặp khi làm việc
+                với AUTOSAR application model.
+            </p>
+
+            <h2>49. ARXML và Data Type</h2>
+
+            <p>
+                Data type cũng là một phần quan trọng của model.
+                Component cần biết dữ liệu mà nó trao đổi có kiểu gì
+                và mang ý nghĩa gì.
+            </p>
+
+            <pre><code>Interface
+    |
+    v
+Data Element
+    |
+    v
+Data Type
+    |
+    v
+Application Data</code></pre>
+
+            <p>
+                Nếu data type giữa provider và consumer không phù hợp,
+                configuration hoặc integration có thể gặp vấn đề.
+            </p>
+
+            <h2>50. ARXML và Mapping</h2>
+
+            <p>
+                Trong hệ thống thực tế, nhiều loại mapping cần được xác định:
+            </p>
+
+            <pre><code>Application Data
+      ↓
+SWC Port
+      ↓
+RTE
+      ↓
+Communication / BSW
+      ↓
+PDU / Signal
+      ↓
+CAN / LIN / Ethernet
+      ↓
+Hardware</code></pre>
+
+            <p>
+                Configuration giúp tool biết các mapping này.
+            </p>
+
+            <h2>51. Configuration và ECU Variant</h2>
+
+            <p>
+                Một dòng ECU có thể có nhiều variant phần cứng hoặc tính năng.
+                Configuration có thể được sử dụng để tạo các variant khác nhau
+                từ một architecture chung.
+            </p>
+
+            <pre><code>Common Architecture
+       |
+       +---- Variant A
+       |
+       +---- Variant B
+       |
+       +---- Variant C</code></pre>
+
+            <p>
+                Điều này giúp giảm việc phải xây dựng hoàn toàn một software stack
+                riêng cho từng variant.
+            </p>
+
+            <h2>52. Configuration và Reusability</h2>
+
+            <p>
+                Nếu software architecture được thiết kế tốt,
+                một phần software có thể được reuse bằng cách thay đổi configuration
+                thay vì viết lại toàn bộ.
+            </p>
+
+            <pre><code>Reusable SWC
+     |
+     +---- Configuration A
+     |
+     +---- Configuration B
+     |
+     +---- Configuration C</code></pre>
+
+            <p>
+                Đây là một trong những lợi ích quan trọng của việc tách
+                configuration khỏi application logic.
+            </p>
+
+            <h2>53. Configuration và Portability</h2>
+
+            <p>
+                Khi chuyển sang hardware hoặc ECU khác,
+                một số configuration cần thay đổi trong khi Application logic
+                có thể được giữ lại.
+            </p>
+
+            <pre><code>Same Application
+      |
+      +---- ECU A Configuration
+      |
+      +---- ECU B Configuration
+      |
+      +---- ECU C Configuration</code></pre>
+
+            <p>
+                Mức độ portability thực tế phụ thuộc vào architecture,
+                vendor implementation và mức hardware dependency của project.
+            </p>
+
+            <h2>54. Configuration Management</h2>
+
+            <p>
+                Configuration là một phần của software project,
+                vì vậy cũng cần được quản lý bằng version control.
+            </p>
+
+            <pre><code>Git Repository
+ |
+ +-- Source Code
+ +-- ARXML
+ +-- Configuration
+ +-- Generated / Build Files
+ +-- Documentation</code></pre>
+
+            <p>
+                Cần tuân theo quy định của project về việc file nào được commit,
+                file nào được generate và file nào không nên chỉnh sửa thủ công.
+            </p>
+
+            <h2>55. Configuration Change Management</h2>
+
+            <p>
+                Một configuration change có thể ảnh hưởng đến nhiều phần của hệ thống.
+                Vì vậy cần xác định impact trước khi thay đổi.
+            </p>
+
+            <pre><code>Configuration Change
+        ↓
+Impact Analysis
+        ↓
+Affected Components
+        ↓
+Regenerate
+        ↓
+Build
+        ↓
+Test</code></pre>
+
+            <h2>56. Ví dụ thay đổi CAN Signal</h2>
+
+            <p>
+                Giả sử VehicleSpeed thay đổi từ một signal representation
+                sang representation khác.
+            </p>
+
+            <pre><code>CAN Signal Change
+       ↓
+Communication Configuration
+       ↓
+RTE / Mapping
+       ↓
+Application Interface
+       ↓
+Application
+       ↓
+Tests</code></pre>
+
+            <p>
+                Không nên chỉ sửa một nơi rồi giả định toàn bộ hệ thống vẫn đúng.
+            </p>
+
+            <h2>57. Generated Code và Source Code</h2>
+
+            <p>
+                Một project AUTOSAR thường có thể chứa cả:
+            </p>
+
+            <ul>
+                <li>Developer-written source code.</li>
+                <li>Generated source code.</li>
+                <li>Generated configuration.</li>
+                <li>ARXML/model files.</li>
+                <li>Vendor-specific files.</li>
+            </ul>
+
+            <p>
+                Khi debugging, cần biết file nào là source of truth.
+            </p>
+
+            <pre><code>Configuration / ARXML
+        |
+        v
+Generator
+        |
+        v
+Generated Code
+
+Source Code
+        |
+        v
+Application / Custom Logic</code></pre>
+
+            <h2>58. Source of Truth</h2>
+
+            <p>
+                Source of truth là nơi chứa thông tin mà project coi là
+                nguồn chính để tạo ra output.
+            </p>
+
+            <p>
+                Ví dụ nếu một giá trị được generate từ configuration,
+                không nên xem generated file là nơi duy nhất để chỉnh sửa giá trị đó.
+            </p>
+
+            <pre><code>Source of Truth
+       |
+       v
+Generator
+       |
+       v
+Generated Output</code></pre>
+
+            <h2>59. Debug Generated Code</h2>
+
+            <p>
+                Khi gặp vấn đề trong generated code,
+                không nên lập tức sửa generated file.
+                Trước tiên cần trace ngược:
+            </p>
+
+            <pre><code>Generated Code
+      ↑
+Generator
+      ↑
+Configuration
+      ↑
+ARXML / Model
+      ↑
+Architecture / Requirement</code></pre>
+
+            <p>
+                Cách này giúp tìm nguyên nhân thực sự thay vì chỉ sửa symptom.
+            </p>
+
+            <h2>60. Ví dụ Runnable Mapping Error</h2>
+
+            <p>
+                Giả sử runnable đã viết đúng nhưng không được gọi.
+            </p>
+
+            <pre><code>Runnable
+   ↑
+RTE
+   ↑
+Event Mapping
+   ↑
+Configuration
+   ↑
+ARXML / Model</code></pre>
+
+            <p>
+                Nếu event mapping sai,
+                sửa logic bên trong runnable sẽ không giải quyết được vấn đề.
+            </p>
+
+            <h2>61. Ví dụ CAN Configuration Error</h2>
+
+            <p>
+                Giả sử Application không nhận được CAN signal.
+                Có thể kiểm tra theo chuỗi:
+            </p>
+
+            <pre><code>CAN Frame
+   ↓
+CAN Driver
+   ↓
+CAN Stack
+   ↓
+PDU / Signal Mapping
+   ↓
+RTE
+   ↓
+Application</code></pre>
+
+            <p>
+                Nếu mapping trong configuration sai,
+                frame có thể xuất hiện trên bus nhưng Application vẫn không nhận được
+                giá trị mong muốn.
+            </p>
+
+            <h2>62. Ví dụ MCAL Configuration Error</h2>
+
+            <p>
+                Giả sử GPIO không hoạt động.
+                Có thể phân tích:
+            </p>
+
+            <pre><code>Application
+   ↓
+RTE
+   ↓
+I/O Abstraction
+   ↓
+MCAL
+   ↓
+Port Configuration
+   ↓
+DIO Configuration
+   ↓
+MCU Pin
+   ↓
+Hardware</code></pre>
+
+            <p>
+                Nếu pin direction hoặc initial configuration sai,
+                application code có thể hoàn toàn đúng nhưng output vẫn không hoạt động.
+            </p>
+
+            <h2>63. Configuration Validation trong Team</h2>
+
+            <p>
+                Configuration nên được review giống như source code.
+            </p>
+
+            <ul>
+                <li>Kiểm tra naming.</li>
+                <li>Kiểm tra consistency.</li>
+                <li>Kiểm tra dependency.</li>
+                <li>Kiểm tra mapping.</li>
+                <li>Kiểm tra parameter.</li>
+                <li>Kiểm tra generated output.</li>
+                <li>Kiểm tra regression.</li>
+            </ul>
+
+            <h2>64. Configuration và Review</h2>
+
+            <p>
+                Khi review một configuration,
+                có thể sử dụng các câu hỏi:
+            </p>
+
+            <ol>
+                <li>Configuration này phục vụ requirement nào?</li>
+                <li>Module nào sử dụng configuration?</li>
+                <li>Dependency với module khác là gì?</li>
+                <li>Interface có được map đúng không?</li>
+                <li>Parameter có hợp lệ không?</li>
+                <li>Generated code có phản ánh configuration không?</li>
+                <li>Có ảnh hưởng đến các ECU variant khác không?</li>
+            </ol>
+
+            <h2>65. Configuration và Build</h2>
+
+            <p>
+                Configuration thường nằm giữa architecture/model và build system.
+            </p>
+
+            <pre><code>Architecture
+      ↓
+Configuration
+      ↓
+Generate
+      ↓
+Source / Header
+      ↓
+Compile
+      ↓
+Link
+      ↓
+Executable</code></pre>
+
+            <p>
+                Vì vậy configuration error có thể ngăn build thành công
+                ngay cả khi source code không có syntax error.
+            </p>
+
+            <h2>66. Configuration và Runtime Behavior</h2>
+
+            <p>
+                Configuration không chỉ ảnh hưởng build.
+                Nó có thể ảnh hưởng trực tiếp đến behavior của ECU khi chạy.
+            </p>
+
+            <pre><code>Configuration
+      ↓
+Generated Code
+      ↓
+ECU Software
+      ↓
+Runtime Behavior</code></pre>
+
+            <p>
+                Ví dụ timing của runnable,
+                communication mapping hoặc watchdog configuration
+                đều có thể thay đổi runtime behavior.
+            </p>
+
+            <h2>67. Cách tư duy khi đọc ARXML</h2>
+
+            <p>
+                Khi bắt đầu với một ARXML lớn,
+                không nên cố đọc từng dòng.
+            </p>
+
+            <p>
+                Hãy bắt đầu từ câu hỏi cụ thể:
+            </p>
+
+            <pre><code>Tôi cần tìm gì?
+
+Ví dụ:
+- SWC nào?
+- Interface nào?
+- Port nào?
+- Signal nào?
+- ECU nào?
+- Mapping nào?
+- Parameter nào?
+- Reference nào?</code></pre>
+
+            <p>
+                Sau đó mới trace các reference liên quan.
+            </p>
+
+            <h2>68. Quy trình đọc ARXML thực tế</h2>
+
+            <ol>
+                <li>Xác định mục đích của file.</li>
+                <li>Tìm object cần quan tâm.</li>
+                <li>Xác định package chứa object.</li>
+                <li>Đọc các thuộc tính chính.</li>
+                <li>Kiểm tra reference.</li>
+                <li>Trace sang object được reference.</li>
+                <li>Xác định consumer/provider.</li>
+                <li>Đối chiếu với architecture diagram.</li>
+            </ol>
+
+            <h2>69. ARXML và Architecture Diagram</h2>
+
+            <p>
+                Architecture diagram và ARXML nên được xem là hai góc nhìn
+                của cùng một hệ thống.
+            </p>
+
+            <pre><code>Architecture Diagram
+        ↕
+AUTOSAR Model
+        ↕
+ARXML
+        ↕
+Configuration Tool
+        ↕
+Generated Software</code></pre>
+
+            <p>
+                Nếu diagram nói một điều nhưng configuration thể hiện điều khác,
+                cần kiểm tra consistency.
+            </p>
+
+            <h2>70. ARXML và Traceability</h2>
+
+            <p>
+                ARXML có thể giúp trace từ object này sang object khác,
+                nhưng không phải lúc nào cũng trực tiếp thể hiện requirement.
+            </p>
+
+            <pre><code>Requirement
+    ↓
+Architecture
+    ↓
+AUTOSAR Model
+    ↓
+ARXML
+    ↓
+Generated Configuration
+    ↓
+Software</code></pre>
+
+            <p>
+                Việc giữ traceability rõ ràng giúp phân tích impact và debugging dễ hơn.
+            </p>
+
+            <h2>71. Những nhầm lẫn thường gặp</h2>
+
+            <h3>ARXML = Source Code</h3>
+
+            <p>
+                Sai. ARXML là một định dạng mô tả/model/configuration.
+            </p>
+
+            <h3>ARXML = Chỉ Configuration</h3>
+
+            <p>
+                Không hoàn toàn đúng. ARXML có thể chứa nhiều loại thông tin AUTOSAR.
+            </p>
+
+            <h3>Configuration = Application Logic</h3>
+
+            <p>
+                Không. Configuration xác định structure, relationship và parameters;
+                application logic thực hiện behavior của chức năng.
+            </p>
+
+            <h3>Generated Code = Source of Truth</h3>
+
+            <p>
+                Không nhất thiết. Trong nhiều workflow,
+                configuration/model mới là nguồn tạo ra generated code.
+            </p>
+
+            <h3>Chỉ cần sửa Generated Code</h3>
+
+            <p>
+                Thường không nên. Cần tìm configuration hoặc source tương ứng
+                để thay đổi đúng nơi.
+            </p>
+
+            <h2>72. Checklist AUTOSAR Configuration</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>Câu hỏi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Purpose</td>
+                        <td>Configuration này phục vụ chức năng nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Module</td>
+                        <td>Module nào sử dụng?</td>
+                    </tr>
+                    <tr>
+                        <td>Parameter</td>
+                        <td>Các parameter có hợp lệ không?</td>
+                    </tr>
+                    <tr>
+                        <td>Interface</td>
+                        <td>Interface có được kết nối đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>Dependency</td>
+                        <td>Dependency đã được đáp ứng chưa?</td>
+                    </tr>
+                    <tr>
+                        <td>Mapping</td>
+                        <td>Mapping giữa các layer có đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>Consistency</td>
+                        <td>Các configuration liên quan có nhất quán không?</td>
+                    </tr>
+                    <tr>
+                        <td>Generation</td>
+                        <td>Generated output có đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime</td>
+                        <td>Configuration có ảnh hưởng behavior runtime không?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>73. Checklist đọc ARXML</h2>
+
+            <ol>
+                <li>Xác định file đang mô tả gì.</li>
+                <li>Tìm package liên quan.</li>
+                <li>Tìm object cần phân tích.</li>
+                <li>Đọc tên và thuộc tính chính.</li>
+                <li>Kiểm tra reference.</li>
+                <li>Trace sang object liên quan.</li>
+                <li>Xác định provider/consumer.</li>
+                <li>Đối chiếu với architecture.</li>
+                <li>Kiểm tra impact nếu object thay đổi.</li>
+            </ol>
+
+            <h2>74. Cách debug một vấn đề Configuration</h2>
+
+            <pre><code>Problem
+   ↓
+Xác định module
+   ↓
+Xác định configuration
+   ↓
+Kiểm tra parameter
+   ↓
+Kiểm tra dependency
+   ↓
+Kiểm tra mapping
+   ↓
+Kiểm tra ARXML / Model
+   ↓
+Regenerate
+   ↓
+Build
+   ↓
+Test</code></pre>
+
+            <p>
+                Quan trọng nhất là không sửa ngẫu nhiên generated code
+                khi chưa biết configuration nào tạo ra behavior đó.
+            </p>
+
+            <h2>75. Một ví dụ hoàn chỉnh</h2>
+
+            <p>
+                Xét chức năng cảnh báo nhiệt độ cao.
+                Sensor cung cấp Temperature,
+                Application quyết định Warning,
+                sau đó Lamp được bật.
+            </p>
+
+            <pre><code>Sensor
+  ↓
+MCAL / ECU Abstraction
+  ↓
+Temperature Provider
+  ↓
+Interface
+  ↓
+RTE
+  ↓
+Warning SWC
+  ↓
+Application Logic
+  ↓
+Output Interface
+  ↓
+RTE
+  ↓
+I/O Abstraction
+  ↓
+MCAL
+  ↓
+GPIO
+  ↓
+Lamp</code></pre>
+
+            <p>
+                Configuration phải mô tả hoặc hỗ trợ các quan hệ cần thiết:
+            </p>
+
+            <pre><code>Configuration
+ |
+ +-- Sensor-related configuration
+ |
+ +-- Temperature Interface
+ |
+ +-- SWC Ports
+ |
+ +-- RTE connection
+ |
+ +-- Runnable/Event
+ |
+ +-- Output mapping
+ |
+ +-- MCAL configuration</code></pre>
+
+            <p>
+                ARXML có thể được sử dụng để trao đổi hoặc lưu trữ
+                các thông tin model/configuration tương ứng.
+            </p>
+
+            <h2>76. Bức tranh tổng thể</h2>
+
+            <pre><code>                 AUTOSAR Development
+
+Requirement
+     ↓
+Architecture
+     ↓
+SWC / Interface Design
+     ↓
+AUTOSAR Model
+     ↓
+       ARXML
+     ↓
+Configuration Tools
+     ↓
+Validation
+     ↓
+Code Generation
+     ↓
+Generated RTE / BSW Configuration
+     ↓
+Build
+     ↓
+ECU Software
+     ↓
+Test
+     ↓
+ECU</code></pre>
+
+            <p>
+                Có thể xem configuration là cầu nối giữa
+                <strong>mô hình kiến trúc</strong> và
+                <strong>software có thể build/chạy trên ECU</strong>.
+            </p>
+
+            <h2>77. Các khái niệm cần nhớ</h2>
+
+            <ul>
+                <li><strong>AUTOSAR Configuration:</strong> xác định structure, relationship và parameter của hệ thống.</li>
+                <li><strong>ARXML:</strong> định dạng XML dùng để mô tả và trao đổi thông tin AUTOSAR.</li>
+                <li><strong>Model:</strong> biểu diễn các object và relationship của hệ thống.</li>
+                <li><strong>Configuration Tool:</strong> công cụ tạo, chỉnh sửa, kiểm tra hoặc generate configuration.</li>
+                <li><strong>Generated Code:</strong> code được tạo dựa trên model/configuration.</li>
+                <li><strong>Reference:</strong> liên kết một object với object khác.</li>
+                <li><strong>Mapping:</strong> xác định cách các thành phần/data được liên kết xuyên qua hệ thống.</li>
+                <li><strong>Validation:</strong> kiểm tra configuration có hợp lệ và nhất quán hay không.</li>
+                <li><strong>Source of Truth:</strong> nguồn chính dùng để tạo ra output configuration/generated code.</li>
+                <li><strong>Traceability:</strong> khả năng theo dõi thông tin từ requirement đến architecture, configuration và software.</li>
+            </ul>
+
+            <h2>78. Tóm tắt</h2>
+
+            <div class="note">
+                <strong>AUTOSAR Configuration</strong> là quá trình xác định cách các thành phần
+                trong ECU được tổ chức, kết nối và hoạt động.
+                <br><br>
+
+                <strong>ARXML</strong> là một định dạng dựa trên XML dùng để mô tả và trao đổi
+                thông tin AUTOSAR. ARXML có thể chứa thông tin về SWC, Interface, Data Type,
+                System, Communication và nhiều loại configuration khác.
+                <br><br>
+
+                Configuration có thể được đưa vào toolchain để validation,
+                generate RTE hoặc BSW configuration, sau đó build thành ECU software.
+                Vì vậy khi debug một vấn đề configuration,
+                không nên chỉ nhìn generated code mà cần trace ngược về
+                <strong>Configuration → ARXML/Model → Generator → Generated Code</strong>.
+                <br><br>
+
+                Khi học ARXML, không cần cố nhớ tất cả XML tag.
+                Quan trọng hơn là biết xác định:
+                <strong>Object → Reference → Relationship → Dependency → Generated Result</strong>.
+            </div>
+
+            <div class="pager">
+                <a href="lesson-22.html">← Bài trước</a>
+                <a href="lesson-24.html">Bài tiếp theo →</a>
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

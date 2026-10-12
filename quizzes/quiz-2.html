@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Kiểm tra 2: Ôn tập tổng hợp 25 bài học CAN | Tự học Embedded</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../index.html">Trang chủ</a>
+                <a href="../lessons/index.html">Bài học</a>
+                <a href="../quizzes/index.html" class="active" aria-current="page">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <h1>Kiểm tra 2: Ôn tập tổng hợp 25 bài học CAN</h1>
+        <p>50 câu trắc nghiệm mới, mỗi câu có đúng 1 đáp án. Chọn đáp án rồi bấm "Nộp bài" để xem điểm và giải thích.
+        </p>
+
+        <form id="quiz">
+            <!-- Các câu hỏi được sinh từ mảng Q ở script bên dưới -->
+            <button class="btn" type="submit">Nộp bài</button><span id="result" role="status"></span>
+        </form>
+
+        <p><a href="index.html">← Danh sách bài kiểm tra</a></p>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+    <script>
+        /* Mỗi phần tử: [số bài, câu hỏi, ĐÁP ÁN ĐÚNG, sai 1, sai 2, sai 3, giải thích]
+           Đáp án đúng luôn viết ở vị trí đầu; script tự xếp vào vị trí A/B/C/D khác nhau. */
+        var Q = [
+            [1, "Lý do chính khiến ô tô chuyển từ đi dây điểm-điểm sang bus CAN là gì?", "Giảm số dây, trọng lượng và chi phí mà vẫn chia sẻ được dữ liệu giữa nhiều ECU", "Để truyền dữ liệu ở tốc độ hàng Gbit/s", "Để mỗi ECU có một địa chỉ IP riêng", "Để ECU không cần dùng vi điều khiển", "Bus CAN chỉ cần 2 dây tín hiệu dùng chung cho nhiều node, nên nhẹ và rẻ hơn đi dây riêng cho từng cặp thiết bị."],
+            [1, "Mức logic 0 trên bus CAN được gọi là trạng thái nào?", "Dominant", "Recessive", "Idle", "Passive", "Logic 0 là dominant, logic 1 là recessive. Dominant luôn thắng recessive khi hai node gửi cùng lúc."],
+            [2, "Trên cổng OBD-II, tín hiệu CAN_H nối với chân số mấy?", "Chân 6", "Chân 4", "Chân 16", "Chân 2", "Chân 6 là CAN_H và chân 14 là CAN_L."],
+            [2, "CAN transceiver có nhiệm vụ chính nào?", "Chuyển mức logic TX/RX của controller thành tín hiệu vi sai trên bus và ngược lại", "Tạo frame và tính CRC", "Thực hiện arbitration giữa các node", "Lưu trữ cấu hình bit timing", "Frame, CRC và arbitration do CAN controller xử lý; transceiver chỉ lo phần tín hiệu điện trên bus."],
+            [2, "Đoạn dây rẽ (stub) từ bus vào node nên như thế nào ở tốc độ cao?", "Càng ngắn càng tốt", "Càng dài càng tốt để giảm nhiễu", "Dài bằng một nửa chiều dài bus", "Phải gắn thêm điện trở 120 Ω ở mỗi stub", "Stub dài gây phản xạ tín hiệu, làm méo dạng sóng ở tốc độ cao."],
+            [3, "Trường SOF của một frame có đặc điểm nào?", "1 bit dominant", "1 bit recessive", "7 bit recessive", "6 bit dominant", "SOF là 1 bit dominant, báo bắt đầu frame và giúp các node đồng bộ."],
+            [3, "Trường EOF của data frame gồm bao nhiêu bit và ở mức nào?", "7 bit recessive", "7 bit dominant", "3 bit recessive", "8 bit recessive", "EOF là 7 bit recessive; sau đó là 3 bit intermission."],
+            [3, "Overload frame được gửi trong trường hợp nào?", "Node nhận cần thêm thời gian xử lý trước khi nhận frame kế tiếp", "Node phát hiện lỗi CRC", "Node vừa thua arbitration", "Controller chuyển sang bus-off", "Overload frame dùng để trì hoãn frame kế tiếp, chỉ xuất hiện trong khoảng intermission."],
+            [4, "Bit FDF ở mức recessive cho biết điều gì?", "Đây là frame CAN FD", "Đây là remote frame", "Frame dùng Identifier 29 bit", "Node gửi đang ở trạng thái error passive", "FDF (FD Format) recessive nghĩa là frame theo định dạng CAN FD; dominant là Classic CAN."],
+            [4, "Bit ESI trong CAN FD phản ánh điều gì?", "Trạng thái lỗi (active hay passive) của node gửi", "Tốc độ của pha dữ liệu", "Độ dài của trường dữ liệu", "Loại Identifier đang dùng", "ESI (Error State Indicator) recessive nghĩa là node gửi đang ở error passive."],
+            [4, "Nominal bit rate trong CAN FD được dùng cho pha nào?", "Pha arbitration và các trường cuối frame", "Chỉ pha dữ liệu", "Chỉ trường CRC", "Chỉ khi bus đang idle", "Nominal bit rate dùng cho phần đầu (arbitration) và phần cuối (CRC delimiter, ACK, EOF); data bit rate chỉ dùng cho pha dữ liệu."],
+            [5, "Frame mở rộng có Identifier gồm Base ID 11 bit và phần mở rộng bao nhiêu bit?", "18 bit", "8 bit", "29 bit", "16 bit", "11 + 18 = 29 bit."],
+            [5, "Chuẩn J1939 trên xe tải dùng loại Identifier nào?", "29 bit (mở rộng)", "11 bit (tiêu chuẩn)", "16 bit", "32 bit", "J1939 dùng Identifier 29 bit, trong đó có chứa độ ưu tiên và PGN."],
+            [6, "Cơ chế truy cập bus của CAN thường được mô tả là gì?", "CSMA/CR: phân xử không phá hủy theo từng bit", "TDMA: chia khe thời gian cố định", "Token ring", "Polling từ một node master", "Node nào cũng nghe bus trước khi gửi, khi va chạm thì phân xử theo bit để frame ưu tiên cao đi tiếp mà không bị hỏng."],
+            [6, "Trong giai đoạn arbitration, node gửi bit recessive nhưng đọc lại thấy bus là dominant. Node đó làm gì?", "Hiểu mình đã thua arbitration và chuyển sang chế độ nhận", "Gửi error frame", "Gửi lại SOF ngay lập tức", "Tăng ngay bộ đếm TEC", "Đây là tình huống thua arbitration bình thường, không phải lỗi."],
+            [6, "Data frame và remote frame có cùng Identifier cùng tranh bus, frame nào thắng?", "Data frame", "Remote frame", "Hòa, cả hai gửi lại", "Tùy vào giá trị DLC", "Bit RTR của data frame là dominant còn remote frame là recessive, nên data frame thắng."],
+            [7, "Mục đích chính của bit stuffing là gì?", "Đảm bảo có đủ cạnh tín hiệu để các node đồng bộ lại", "Nén dữ liệu để frame ngắn hơn", "Mã hóa dữ liệu", "Tăng độ ưu tiên của frame", "Chuỗi bit giống nhau quá dài làm mất cạnh tín hiệu; bit chèn tạo thêm cạnh để bộ nhận đồng bộ lại."],
+            [7, "Chuỗi bit 0 0 0 0 0 1 sau khi áp dụng bit stuffing trở thành gì?", "0 0 0 0 0 [1] 1", "0 0 0 0 0 [0] 1", "0 0 0 0 [1] 0 1", "Không thay đổi", "Sau 5 bit 0 liên tiếp, bộ gửi chèn thêm một bit 1 (bit ngược mức)."],
+            [8, "Việc nào thuộc trách nhiệm trực tiếp của CAN Driver trong MCAL?", "Truy cập thanh ghi và hardware object của CAN controller", "Đóng gói signal thành I-PDU", "Chuyển mã chẩn đoán UDS", "Tạo và lưu mã lỗi DTC", "Can driver là lớp thấp nhất, làm việc trực tiếp với phần cứng CAN controller."],
+            [9, "Module Com trong CAN stack đảm nhiệm việc gì?", "Chuyển đổi giữa signal của ứng dụng và I-PDU", "Điều khiển CAN transceiver", "Khởi tạo clock cho vi điều khiển", "Lập lịch các task", "Com đóng gói signal thành I-PDU khi gửi và tách signal từ I-PDU khi nhận."],
+            [9, "CanSM (CAN State Manager) chịu trách nhiệm chính điều gì?", "Quản lý chế độ giao tiếp của mạng CAN, kể cả phục hồi bus-off", "Phân mảnh dữ liệu dài theo ISO 15765-2", "Ghi lỗi vào bộ nhớ", "Đóng gói signal thành PDU", "CanSM điều phối trạng thái giao tiếp của từng mạng CAN và xử lý bus-off."],
+            [10, "Module nào nằm ngay phía trên Can driver và che giấu sự khác biệt phần cứng cho các tầng trên?", "CanIf", "Mcu", "Port", "Det", "CanIf (CAN Interface) trừu tượng hóa nhiều CAN controller và transceiver."],
+            [10, "Can driver là thành phần phụ thuộc hay độc lập với vi điều khiển?", "Phụ thuộc vi điều khiển, vì nó thuộc MCAL", "Độc lập hoàn toàn", "Chỉ phụ thuộc vào ứng dụng", "Chỉ phụ thuộc vào hệ điều hành", "MCAL gồm các driver gắn chặt với phần cứng của MCU."],
+            [11, "Khác biệt giữa SRS và SWS trong AUTOSAR là gì?", "SRS nêu yêu cầu cần đạt, SWS đặc tả chi tiết API và hành vi phần mềm", "SRS là mã nguồn, SWS là tài liệu kiểm thử", "SRS dành cho phần cứng, SWS dành cho hệ điều hành", "Hai loại tài liệu hoàn toàn giống nhau", "SRS cho biết cần làm gì; SWS cho biết làm thế nào ở mức giao diện và hành vi."],
+            [12, "Can_Init nhận tham số nào?", "Con trỏ tới cấu trúc cấu hình Can_ConfigType", "ID của frame cần gửi", "Số hiệu controller và tốc độ baud", "Không nhận tham số nào", "Can_Init(const Can_ConfigType* Config) dùng cấu hình sinh từ công cụ cấu hình."],
+            [12, "Can_Write trả về E_OK có nghĩa là gì?", "Frame đã được chấp nhận và đưa vào hardware transmit object", "Frame đã được node khác nhận xong", "Controller đang ở trạng thái bus-off", "Tham số truyền vào bị sai", "E_OK chỉ xác nhận yêu cầu gửi được chấp nhận; việc gửi xong được báo sau bằng TxConfirmation."],
+            [13, "CanIf_TxConfirmation được Can driver gọi khi nào?", "Khi frame đã được truyền xong thành công", "Khi nhận được một frame mới", "Khi controller bị bus-off", "Khi controller chuyển sang sleep", "Đây là callback xác nhận gửi, được gọi sau khi frame lên bus thành công."],
+            [13, "CanIf điều khiển CAN transceiver thông qua module nào?", "CanTrcv", "Mcu", "Dem", "PduR", "Transceiver có driver riêng là CanTrcv; CanIf gọi nó để đổi chế độ."],
+            [14, "Module nào khởi tạo clock và PLL cấp cho CAN controller?", "Mcu", "Dem", "CanTp", "Com", "Mcu driver cấu hình clock, PLL và các thiết lập cấp vi điều khiển."],
+            [14, "Module nào cung cấp cơ chế cấu hình ngắt (vector, mức ưu tiên) cho ISR của CAN controller?", "Bộ điều khiển ngắt INTC cùng với OS", "PduR", "CanSM", "Dem", "INTC gán vector và mức ưu tiên cho ngắt của CAN controller; ISR do Can driver cung cấp."],
+            [15, "Can_MainFunction_BusOff dùng để làm gì?", "Kiểm tra định kỳ sự kiện bus-off khi cấu hình theo kiểu polling", "Gửi frame lên bus", "Đổi baud-rate", "Khởi tạo Can driver", "Ở chế độ polling, SchM gọi hàm này định kỳ để phát hiện bus-off."],
+            [15, "Sự kiện đánh thức từ CAN cuối cùng được báo cho module nào để quyết định khởi động lại ECU?", "EcuM", "Com", "PduR", "Port", "EcuM (ECU State Manager) quản lý quá trình ngủ, đánh thức và khởi động ECU."],
+            [16, "Tham số cấu hình nào bật hoặc tắt việc phát hiện lỗi phát triển của Can driver?", "CanDevErrorDetect", "CanTimeoutDuration", "CanIndex", "CanMainFunctionPeriod", "Khi CanDevErrorDetect bật, driver kiểm tra tham số và trạng thái, rồi báo lỗi lên Det."],
+            [16, "Lỗi CAN_E_UNINIT được báo khi nào?", "Khi gọi một API của Can driver trước khi Can_Init được gọi", "Khi controller bị bus-off", "Khi nhận frame bị lỗi CRC", "Khi baud-rate được cấu hình sai", "CAN_E_UNINIT là lỗi phát triển: dùng driver khi chưa khởi tạo."],
+            [16, "Det khác Dem ở điểm nào?", "Det báo lỗi phát triển khi lập trình; Dem lưu lỗi sản xuất phục vụ chẩn đoán", "Det lưu DTC; Dem báo lỗi tham số", "Cả hai hoàn toàn giống nhau", "Det dùng cho phần cứng; Dem dùng cho ứng dụng", "Det hỗ trợ giai đoạn phát triển, Dem ghi nhận sự cố khi xe vận hành để chẩn đoán."],
+            [17, "Thứ tự khởi tạo hợp lý trước khi dùng CAN là gì?", "Mcu_Init, Port_Init rồi Can_Init", "Can_Init rồi Mcu_Init", "Port_Init rồi Det_Init", "CanIf_Init rồi Mcu_Init", "Clock và chân phải sẵn sàng trước khi khởi tạo CAN controller."],
+            [18, "Transition nào đưa controller từ STARTED về STOPPED?", "CAN_T_STOP", "CAN_T_START", "CAN_T_SLEEP", "CAN_T_WAKEUP", "CAN_T_STOP dừng controller; CAN_T_START làm điều ngược lại."],
+            [18, "Controller đang ở STARTED có thể chuyển thẳng sang SLEEP không?", "Không, phải về STOPPED trước", "Có, bằng CAN_T_SLEEP", "Có, bằng Can_DeInit", "Chỉ có thể khi đang bus-off", "Máy trạng thái chỉ cho phép vào SLEEP từ STOPPED."],
+            [18, "CAN_T_WAKEUP chuyển controller từ trạng thái nào sang trạng thái nào?", "SLEEP sang STOPPED", "STOPPED sang STARTED", "STARTED sang SLEEP", "UNINIT sang STOPPED", "Sau khi thức dậy, controller về STOPPED rồi mới được START."],
+            [19, "Tham số swPduHandle trong Can_PduType được dùng để làm gì?", "Để tầng trên nhận ra PDU nào được xác nhận khi có TxConfirmation", "Chọn tốc độ gửi", "Đặt độ dài dữ liệu", "Chọn controller sẽ gửi", "swPduHandle được trả lại trong callback xác nhận để tầng trên biết PDU nào đã gửi xong."],
+            [19, "Khi truyền ở chế độ polling, hàm nào xử lý việc xác nhận gửi xong?", "Can_MainFunction_Write", "Can_MainFunction_Read", "Can_MainFunction_Wakeup", "Can_MainFunction_BusOff", "Write là main function của phần truyền; Read cho phần nhận."],
+            [20, "Controller phải ở trạng thái nào trước khi được đưa vào SLEEP?", "STOPPED", "STARTED", "UNINIT", "BUS-OFF", "Chỉ từ STOPPED mới dùng CAN_T_SLEEP để vào chế độ ngủ."],
+            [21, "Sample point trong bit timing là gì?", "Thời điểm trong một bit mà bộ nhận đọc giá trị của bit", "Thời điểm bắt đầu SOF", "Số bit trong một frame", "Mức điện áp ngưỡng dominant", "Điểm lấy mẫu thường nằm ở khoảng 75 – 87,5 % thời gian bit."],
+            [21, "Clock CAN 80 MHz, prescaler 10, mỗi bit gồm 16 time quanta thì baud-rate là bao nhiêu?", "500 kbit/s", "1 Mbit/s", "250 kbit/s", "800 kbit/s", "80 MHz chia 10 được 8 MHz; chia tiếp cho 16 time quanta mỗi bit được 500 kbit/s."],
+            [22, "Bit error được phát hiện khi nào?", "Khi node gửi một bit nhưng đọc lại giá trị khác (ngoài vùng arbitration và ACK slot)", "Khi CRC không khớp", "Khi có 6 bit liên tiếp cùng mức", "Khi một trường cố định có giá trị sai", "Node gửi luôn đọc lại bus để so sánh với bit đã gửi."],
+            [22, "Sau khi bus-off, node có thể tham gia lại bus khi nào theo cơ chế của chuẩn?", "Sau khi thấy 128 lần chuỗi 11 bit recessive liên tiếp", "Ngay lập tức", "Sau đúng 1 giây", "Ngay khi nhận một frame hợp lệ", "Đây là điều kiện phục hồi bus-off theo chuẩn; AUTOSAR còn cho phép CanSM chủ động điều khiển việc này."],
+            [23, "Mỗi sự kiện của CAN controller (Tx, Rx, bus-off, wake-up) có thể được cấu hình xử lý theo kiểu nào?", "Interrupt hoặc polling", "Chỉ interrupt", "Chỉ polling", "Chỉ do ứng dụng tự gọi", "Mỗi sự kiện chọn một trong hai kiểu, tùy yêu cầu tải CPU và độ trễ."],
+            [24, "Lợi ích chính của Pretended Networking là gì?", "Giảm tiêu thụ điện bằng cách chỉ thức dậy khi nhận đúng frame cần thiết", "Tăng tốc độ bus", "Tăng số byte dữ liệu mỗi frame", "Thay thế cơ chế arbitration", "ECU bỏ qua lưu lượng không liên quan nên ngủ được lâu hơn."],
+            [24, "Điều kiện khớp frame để đánh thức trong Pretended Networking thường dựa trên gì?", "ID (kèm mask), DLC và nội dung dữ liệu", "Chỉ màu của dây dẫn", "Chỉ baud-rate của bus", "Điện áp của CAN_H", "Có thể cấu hình để so khớp ID, độ dài và payload của frame."],
+            [25, "Trước khi ghi lưu lượng bằng công cụ như OptoLyzer MOCCA FD, cần cấu hình gì cho khớp với bus?", "Bit rate (kể cả data bit rate nếu là CAN FD)", "Địa chỉ IP của ECU", "Số node trên bus", "Mức điện áp chân OBD", "Sai bit rate sẽ làm công cụ liên tục báo lỗi hoặc không nhận được frame."]
+        ];
+
+        var f = document.getElementById('quiz'), btn = f.querySelector('button');
+        Q.forEach(function (d, i) {
+            var pos = (i * 7 + (i >> 2) + 1) % 4, o = d.slice(2, 6), c = o.shift();
+            o.splice(pos, 0, c);
+            var fs = document.createElement('fieldset');
+            fs.className = 'q';
+            fs.dataset.correct = 'abcd'[pos];
+            fs.dataset.explain = d[6];
+            var h = '<legend>Câu ' + (i + 1) + ' (Bài ' + d[0] + '): ' + d[1] + '</legend>';
+            o.forEach(function (t, k) {
+                h += '<label><input type="radio" name="q' + i + '" value="' + 'abcd'[k] + '"> ' + t + '</label>';
+            });
+            fs.innerHTML = h + '<p class="fb"></p>';
+            f.insertBefore(fs, btn);
+        });
+    </script>
+    <script src="../js/quiz.js"></script>
+
+</body>
+
+</html>

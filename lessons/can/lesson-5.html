@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 5: ID Tiêu chuẩn và ID mở rộng | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html" class="active">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 5: ID Tiêu chuẩn và ID mở rộng</h1>
+
+                <p>
+                    Trong CAN, mỗi message được nhận diện bằng một <strong>Identifier (ID)</strong>.
+                    ID không phải là địa chỉ của một node cụ thể mà chủ yếu xác định
+                    <strong>loại message và mức độ ưu tiên của message</strong>.
+                    CAN hỗ trợ hai dạng Identifier chính:
+                    <strong>Standard ID 11 bit</strong> và <strong>Extended ID 29 bit</strong>.
+                </p>
+
+                <p>
+                    Việc hiểu rõ hai loại ID này rất quan trọng vì Identifier không chỉ được sử dụng
+                    để lọc message mà còn trực tiếp tham gia vào cơ chế
+                    <strong>arbitration</strong> của CAN.
+                </p>
+
+                <h2>1. Identifier trong CAN là gì?</h2>
+
+                <p>
+                    Khi một node muốn truyền dữ liệu lên CAN bus, nó không gửi dữ liệu đến một
+                    node đích cụ thể như trong nhiều giao thức mạng khác. Thay vào đó,
+                    node gửi một message với một Identifier.
+                </p>
+
+                <p>
+                    Các node khác trên bus sẽ kiểm tra Identifier và quyết định xem message đó
+                    có cần được xử lý hay không.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm quan trọng:</strong>
+                    CAN sử dụng mô hình <strong>message-oriented</strong>.
+                    Vì vậy, ID thường mô tả nội dung hoặc ý nghĩa của message thay vì
+                    mô tả địa chỉ của thiết bị nhận.
+                </div>
+
+                <h2>2. Standard ID – Identifier 11 bit</h2>
+
+                <p>
+                    <strong>Standard Identifier</strong>, thường được gọi là
+                    <strong>Standard ID</strong> hoặc <strong>11-bit ID</strong>,
+                    sử dụng 11 bit để biểu diễn Identifier.
+                </p>
+
+                <p>
+                    Với 11 bit, số lượng giá trị ID có thể biểu diễn là:
+                </p>
+
+                <pre><code>2^11 = 2048 giá trị</code></pre>
+
+                <p>
+                    Do đó, Standard ID có phạm vi giá trị từ:
+                </p>
+
+                <pre><code>0x000 → 0x7FF</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>CAN ID</th>
+                        <th>Ví dụ ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td><code>0x100</code></td>
+                        <td>Engine status</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x200</code></td>
+                        <td>Vehicle speed</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x300</code></td>
+                        <td>Temperature information</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Các giá trị trên chỉ là ví dụ minh họa. Ý nghĩa thực tế của từng CAN ID
+                    phụ thuộc vào thiết kế của hệ thống hoặc specification của dự án.
+                </div>
+
+                <h2>3. Extended ID – Identifier 29 bit</h2>
+
+                <p>
+                    Khi hệ thống cần nhiều Identifier hơn Standard CAN có thể cung cấp,
+                    CAN hỗ trợ <strong>Extended Identifier</strong>, hay
+                    <strong>Extended ID</strong>.
+                </p>
+
+                <p>
+                    Extended ID sử dụng tổng cộng <strong>29 bit</strong> để biểu diễn Identifier.
+                    Vì vậy số lượng giá trị có thể biểu diễn là:
+                </p>
+
+                <pre><code>2^29 = 536,870,912 giá trị</code></pre>
+
+                <p>
+                    Phạm vi Identifier về mặt bit là:
+                </p>
+
+                <pre><code>0x00000000 → 0x1FFFFFFF</code></pre>
+
+                <p>
+                    Extended ID cho phép một hệ thống lớn sử dụng không gian Identifier rộng hơn,
+                    đặc biệt khi có nhiều loại message hoặc cần một cách tổ chức ID phức tạp hơn.
+                </p>
+
+                <h2>4. So sánh Standard ID và Extended ID</h2>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Standard ID</th>
+                        <th>Extended ID</th>
+                    </tr>
+                    <tr>
+                        <td>Độ dài Identifier</td>
+                        <td>11 bit</td>
+                        <td>29 bit</td>
+                    </tr>
+                    <tr>
+                        <td>Số giá trị ID</td>
+                        <td>2<sup>11</sup> = 2,048</td>
+                        <td>2<sup>29</sup> = 536,870,912</td>
+                    </tr>
+                    <tr>
+                        <td>Phạm vi ID</td>
+                        <td><code>0x000 – 0x7FF</code></td>
+                        <td><code>0x00000000 – 0x1FFFFFFF</code></td>
+                    </tr>
+                    <tr>
+                        <td>Kích thước ID trên bus</td>
+                        <td>Ngắn hơn</td>
+                        <td>Dài hơn</td>
+                    </tr>
+                    <tr>
+                        <td>Overhead</td>
+                        <td>Thấp hơn</td>
+                        <td>Cao hơn</td>
+                    </tr>
+                    <tr>
+                        <td>Không gian Identifier</td>
+                        <td>Nhỏ</td>
+                        <td>Rất lớn</td>
+                    </tr>
+                </table>
+
+                <h2>5. Identifier nằm ở đâu trong CAN Frame?</h2>
+
+                <p>
+                    Identifier nằm ở phần đầu của CAN frame và được truyền trước phần Data.
+                    Đây là lý do ID có thể tham gia vào quá trình arbitration trước khi
+                    node truyền toàn bộ dữ liệu.
+                </p>
+
+                <svg viewBox="0 0 760 150" role="img" aria-label="Vị trí Identifier trong Standard CAN frame"
+                    style="width:100%;height:auto;max-width:760px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="10" y="35" width="65" height="45" fill="rgba(224,168,0,.25)" />
+                        <rect x="75" y="35" width="150" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="225" y="35" width="75" height="45" fill="rgba(224,168,0,.25)" />
+                        <rect x="300" y="35" width="250" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="550" y="35" width="100" height="45" fill="rgba(224,168,0,.25)" />
+                        <rect x="650" y="35" width="100" height="45" fill="rgba(46,139,87,.28)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="42" y="62">SOF</text>
+                        <text x="150" y="55">Identifier</text>
+                        <text x="150" y="70">11 / 29 bit</text>
+                        <text x="262" y="62">Control</text>
+                        <text x="425" y="55">Data</text>
+                        <text x="425" y="70">0 – 8 byte</text>
+                        <text x="600" y="62">CRC</text>
+                        <text x="700" y="62">ACK / EOF</text>
+                    </g>
+
+                    <text x="150" y="110" font-size="11" fill="currentColor" text-anchor="middle">
+                        ← Identifier được dùng trong arbitration →
+                    </text>
+                </svg>
+
+                <div class="note">
+                    Standard ID và Extended ID có cấu trúc frame khác nhau ở phần Identifier
+                    và một số bit điều khiển liên quan. Tuy nhiên, cả hai đều sử dụng
+                    Identifier trong quá trình arbitration.
+                </div>
+
+                <h2>6. ID và cơ chế Arbitration</h2>
+
+                <p>
+                    Một trong những điểm quan trọng nhất của CAN là nhiều node có thể bắt đầu
+                    truyền cùng lúc. CAN cần một cơ chế để quyết định node nào được tiếp tục
+                    truyền mà không làm hỏng message.
+                </p>
+
+                <p>
+                    Cơ chế này gọi là <strong>bitwise arbitration</strong>.
+                    CAN sử dụng hai trạng thái:
+                </p>
+
+                <ul>
+                    <li><strong>Dominant bit</strong>: logic 0.</li>
+                    <li><strong>Recessive bit</strong>: logic 1.</li>
+                </ul>
+
+                <p>
+                    Khi hai node truyền cùng lúc, node nào phát recessive nhưng đọc được
+                    dominant trên bus sẽ nhận ra rằng nó đã thua arbitration và dừng truyền.
+                </p>
+
+                <h3>Ví dụ arbitration giữa hai Standard ID</h3>
+
+                <p>
+                    Giả sử hai node muốn truyền hai message:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Node</th>
+                        <th>CAN ID</th>
+                        <th>Binary</th>
+                    </tr>
+                    <tr>
+                        <td>Node A</td>
+                        <td><code>0x100</code></td>
+                        <td><code>001 0000 0000</code></td>
+                    </tr>
+                    <tr>
+                        <td>Node B</td>
+                        <td><code>0x200</code></td>
+                        <td><code>010 0000 0000</code></td>
+                    </tr>
+                </table>
+
+                <p>
+                    Các node bắt đầu truyền ID từ bit có trọng số cao nhất.
+                    Ở bit đầu tiên:
+                </p>
+
+                <pre><code>Node A: 0  → dominant
+Node B: 0  → dominant</code></pre>
+
+                <p>
+                    Hai node vẫn tiếp tục.
+                    Ở bit tiếp theo:
+                </p>
+
+                <pre><code>Node A: 0  → dominant
+Node B: 1  → recessive</code></pre>
+
+                <p>
+                    Bus sẽ giữ trạng thái dominant:
+                </p>
+
+                <pre><code>Bus = 0</code></pre>
+
+                <p>
+                    Node B đã gửi <code>1</code> nhưng đọc thấy <code>0</code>.
+                    Vì vậy Node B biết rằng nó đã thua arbitration và dừng truyền.
+                    Node A tiếp tục truyền frame của mình.
+                </p>
+
+                <div class="note">
+                    <strong>Quy tắc quan trọng:</strong>
+                    Trong CAN, ID có giá trị số nhỏ hơn thường có mức ưu tiên cao hơn,
+                    bởi vì các bit 0 ở vị trí cao hơn sẽ thắng các bit 1 tương ứng trong
+                    quá trình arbitration.
+                </div>
+
+                <h2>7. Vì sao ID nhỏ hơn có ưu tiên cao hơn?</h2>
+
+                <p>
+                    Điều này xuất phát trực tiếp từ đặc tính
+                    <strong>dominant = 0</strong> và <strong>recessive = 1</strong>.
+                </p>
+
+                <p>
+                    Có thể hình dung đơn giản như sau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Node A</th>
+                        <th>Node B</th>
+                        <th>Bus</th>
+                        <th>Kết quả</th>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>Tiếp tục</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>Node B thua</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>Node A thua</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>Tiếp tục</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Vì vậy, trong quá trình thiết kế hệ thống CAN,
+                    việc phân bổ ID không chỉ là đặt một con số bất kỳ.
+                    ID còn có thể được sử dụng để thể hiện <strong>mức độ ưu tiên truyền thông</strong>.
+                </p>
+
+                <h2>8. Standard ID và Extended ID trong Arbitration</h2>
+
+                <p>
+                    Standard ID và Extended ID đều có thể tham gia arbitration.
+                    Tuy nhiên, Extended Frame có thêm các bit liên quan đến việc phân biệt
+                    loại Identifier.
+                </p>
+
+                <p>
+                    Trong trường hợp các frame bắt đầu giống nhau, cấu trúc của CAN Frame
+                    sẽ quyết định cách arbitration tiếp tục diễn ra.
+                </p>
+
+                <div class="note">
+                    Khi phân tích arbitration trong một hệ thống thực tế, không nên chỉ nhìn
+                    vào giá trị ID dưới dạng số thập phân. Cần xem xét từng bit được truyền
+                    trên bus và thứ tự các trường của frame.
+                </div>
+
+                <h2>9. ID và Message Filtering</h2>
+
+                <p>
+                    Ngoài arbitration, Identifier còn được sử dụng để
+                    <strong>lọc message</strong> tại CAN controller.
+                </p>
+
+                <p>
+                    Một ECU có thể không cần xử lý tất cả message xuất hiện trên bus.
+                    CAN controller có thể được cấu hình để chỉ nhận những ID phù hợp
+                    với nhu cầu của ECU.
+                </p>
+
+                <p>
+                    Ví dụ, một ECU có thể quan tâm đến:
+                </p>
+
+                <pre><code>0x100  → Engine status
+0x200  → Vehicle speed
+0x300  → Temperature</code></pre>
+
+                <p>
+                    Các message có ID khác có thể được controller bỏ qua trước khi chuyển
+                    lên phần mềm ứng dụng.
+                </p>
+
+                <h3>Mask và Filter</h3>
+
+                <p>
+                    Nhiều CAN controller cung cấp cơ chế
+                    <strong>acceptance filter</strong> và <strong>mask</strong>.
+                    Chúng cho phép kiểm tra một hoặc nhiều bit của Identifier thay vì
+                    phải kiểm tra từng ID riêng biệt.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Filter</td>
+                        <td>Giá trị Identifier mà controller muốn nhận</td>
+                    </tr>
+                    <tr>
+                        <td>Mask</td>
+                        <td>Xác định những bit nào của Identifier cần được so sánh</td>
+                    </tr>
+                    <tr>
+                        <td>Acceptance</td>
+                        <td>Message được chấp nhận nếu thỏa điều kiện lọc</td>
+                    </tr>
+                </table>
+
+                <h2>10. Khi nào dùng Standard ID và Extended ID?</h2>
+
+                <table>
+                    <tr>
+                        <th>Tình huống</th>
+                        <th>Gợi ý</th>
+                    </tr>
+                    <tr>
+                        <td>Hệ thống nhỏ, số lượng message không nhiều</td>
+                        <td>Standard ID</td>
+                    </tr>
+                    <tr>
+                        <td>Cần giảm overhead của Identifier</td>
+                        <td>Standard ID</td>
+                    </tr>
+                    <tr>
+                        <td>Hệ thống có số lượng message lớn</td>
+                        <td>Extended ID</td>
+                    </tr>
+                    <tr>
+                        <td>Cần không gian Identifier lớn</td>
+                        <td>Extended ID</td>
+                    </tr>
+                    <tr>
+                        <td>Specification của dự án yêu cầu 29-bit ID</td>
+                        <td>Extended ID</td>
+                    </tr>
+                </table>
+
+                <h2>11. Một số lưu ý khi thiết kế CAN ID</h2>
+
+                <ul>
+                    <li>
+                        Không nên chọn ID hoàn toàn ngẫu nhiên nếu ID còn được sử dụng
+                        để phân cấp mức độ ưu tiên của message.
+                    </li>
+                    <li>
+                        Message có yêu cầu thời gian nghiêm ngặt thường cần được xem xét
+                        với mức ưu tiên phù hợp.
+                    </li>
+                    <li>
+                        Cần tránh thiết kế quá nhiều message có mức ưu tiên cao,
+                        vì chúng có thể làm các message ưu tiên thấp phải chờ lâu.
+                    </li>
+                    <li>
+                        Nên thống nhất quy tắc phân bổ ID giữa các ECU trong cùng một dự án.
+                    </li>
+                    <li>
+                        Phần mềm phải sử dụng đúng loại Identifier:
+                        <strong>Standard</strong> hoặc <strong>Extended</strong>.
+                    </li>
+                </ul>
+
+                <h2>12. Ví dụ cấu hình CAN ID trong C</h2>
+
+                <p>
+                    Ví dụ dưới đây minh họa cách một CAN message có thể được mô tả
+                    trong phần mềm. Cấu trúc thực tế phụ thuộc vào CAN driver hoặc MCU
+                    đang sử dụng.
+                </p>
+
+                <pre><code>typedef struct
+{
+    uint32_t id;
+    uint8_t  is_extended;
+    uint8_t  dlc;
+    uint8_t  data[8];
+} can_message_t;
+
+can_message_t msg = {
+    .id = 0x200,
+    .is_extended = 0,
+    .dlc = 2,
+    .data = {0x12, 0x34}
+};</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>id = 0x200</code>: Identifier của message.</li>
+                    <li><code>is_extended = 0</code>: sử dụng Standard ID.</li>
+                    <li><code>dlc = 2</code>: message chứa 2 byte dữ liệu.</li>
+                    <li><code>data</code>: nội dung dữ liệu được truyền.</li>
+                </ul>
+
+                <div class="note">
+                    Tên field và cách biểu diễn <code>is_extended</code> có thể khác nhau
+                    giữa các CAN driver. Khi làm việc với một MCU cụ thể, cần kiểm tra
+                    API và tài liệu của CAN controller đó.
+                </div>
+
+                <h2>13. Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>Standard ID</strong> sử dụng Identifier 11 bit, cung cấp
+                    2,048 giá trị và phù hợp với nhiều hệ thống CAN thông thường.
+                    <br><br>
+                    <strong>Extended ID</strong> sử dụng Identifier 29 bit, cung cấp
+                    không gian Identifier lớn hơn rất nhiều và phù hợp với những hệ thống
+                    cần nhiều ID hơn.
+                    <br><br>
+                    Identifier không chỉ dùng để nhận diện message mà còn đóng vai trò
+                    quan trọng trong <strong>arbitration</strong> và
+                    <strong>message filtering</strong>.
+                    Trong arbitration, bit <strong>dominant (0)</strong> thắng
+                    bit <strong>recessive (1)</strong>, vì vậy message có ID ưu tiên cao
+                    sẽ có cơ hội giành quyền truyền trước.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-4.html">← Bài trước</a>
+                    <a class="btn" href="lesson-6.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

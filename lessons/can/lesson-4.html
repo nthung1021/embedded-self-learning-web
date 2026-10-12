@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 4: CAN-FD và Classic CAN | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html" class="active">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+                <h1>Bài 4: CAN-FD và Classic CAN</h1>
+
+                <p>
+                    <strong>Classic CAN</strong> (CAN cổ điển, CAN 2.0A/B) đã phục vụ ô tô và công nghiệp từ thập niên
+                    1980.
+                    Khi lượng dữ liệu trên xe tăng nhanh (camera, radar, cập nhật phần mềm qua mạng, chẩn đoán),
+                    giới hạn 8 byte và 1 Mbit/s trở thành nút thắt. <strong>CAN FD</strong> (Flexible Data-rate)
+                    ra đời để giải quyết vấn đề này mà vẫn giữ cơ chế cốt lõi của CAN.
+                </p>
+
+                <h2>1. Classic CAN: nhắc lại giới hạn</h2>
+                <ul>
+                    <li><strong>Dữ liệu tối đa 8 byte</strong> mỗi frame.</li>
+                    <li><strong>Tốc độ tối đa 1 Mbit/s</strong>, và toàn bộ frame dùng cùng một tốc độ.</li>
+                    <li>Phần "phụ phí" (header, CRC, ACK, EOF) chiếm tỷ lệ lớn: khoảng 44 bit phụ phí cho tối đa 64 bit
+                        dữ liệu.</li>
+                    <li>Tốc độ bị giới hạn bởi cơ chế arbitration và ACK: mọi node phải thấy cùng một bit trong cùng một
+                        khoảng thời gian bit, nên không thể tăng tốc tùy ý.</li>
+                </ul>
+
+                <h2>2. Ý tưởng chính của CAN FD</h2>
+                <p>
+                    CAN FD được Bosch giới thiệu năm 2012 và được đưa vào chuẩn <code>ISO 11898-1:2015</code>.
+                    Hai cải tiến lớn:
+                </p>
+                <ul>
+                    <li><strong>Đổi tốc độ giữa frame:</strong> phần arbitration vẫn chạy tốc độ thấp (để mọi node đồng
+                        bộ), còn phần dữ liệu chuyển sang tốc độ cao hơn.</li>
+                    <li><strong>Tăng độ dài dữ liệu:</strong> từ 8 lên tối đa <strong>64 byte</strong>.</li>
+                </ul>
+                <svg viewBox="0 0 640 130" role="img"
+                    aria-label="Một frame CAN FD gồm pha arbitration tốc độ thấp, pha dữ liệu tốc độ cao, rồi quay lại tốc độ thấp"
+                    style="width:100%;height:auto;max-width:700px">
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="10" y="30" width="190" height="50" fill="rgba(224,168,0,.25)" />
+                        <rect x="200" y="30" width="230" height="50" fill="rgba(46,139,87,.28)" />
+                        <rect x="430" y="30" width="200" height="50" fill="rgba(224,168,0,.25)" />
+                    </g>
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="105" y="52">Pha arbitration</text><text x="105" y="68">tốc độ danh định</text>
+                        <text x="315" y="52">Pha dữ liệu</text><text x="315" y="68">tốc độ cao</text>
+                        <text x="530" y="52">Pha cuối</text><text x="530" y="68">tốc độ danh định</text>
+                        <text x="105" y="100">SOF, ID, FDF, BRS</text>
+                        <text x="315" y="100">ESI, DLC, Data, CRC</text>
+                        <text x="530" y="100">CRC delimiter, ACK, EOF</text>
+                    </g>
+                    <text x="200" y="22" font-size="11" fill="currentColor" text-anchor="middle">▼ chuyển tại bit
+                        BRS</text>
+                    <text x="430" y="22" font-size="11" fill="currentColor" text-anchor="middle">▼ quay lại sau
+                        CRC</text>
+                </svg>
+                <div class="note">
+                    Arbitration vẫn hoạt động y hệt Classic CAN, vì cơ chế "dominant thắng recessive" chỉ đúng khi
+                    mọi node nhìn thấy cùng một bit. Phần dữ liệu chỉ có <em>một</em> node phát nên có thể chạy nhanh
+                    hơn.
+                </div>
+
+                <h2>3. So sánh tổng quan</h2>
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Classic CAN</th>
+                        <th>CAN FD</th>
+                    </tr>
+                    <tr>
+                        <td>Chuẩn</td>
+                        <td>ISO 11898-1 (CAN 2.0A/B)</td>
+                        <td>ISO 11898-1:2015</td>
+                    </tr>
+                    <tr>
+                        <td>Dữ liệu tối đa</td>
+                        <td>8 byte</td>
+                        <td>64 byte</td>
+                    </tr>
+                    <tr>
+                        <td>Tốc độ pha arbitration</td>
+                        <td>Tối đa 1 Mbit/s</td>
+                        <td>Tối đa 1 Mbit/s</td>
+                    </tr>
+                    <tr>
+                        <td>Tốc độ pha dữ liệu</td>
+                        <td>Bằng pha arbitration</td>
+                        <td>Thường 2 – 5 Mbit/s (có thể tới 8 Mbit/s với transceiver đặc biệt)</td>
+                    </tr>
+                    <tr>
+                        <td>Identifier</td>
+                        <td>11 hoặc 29 bit</td>
+                        <td>11 hoặc 29 bit</td>
+                    </tr>
+                    <tr>
+                        <td>CRC</td>
+                        <td>15 bit</td>
+                        <td>17 bit (đến 16 byte) hoặc 21 bit (trên 16 byte)</td>
+                    </tr>
+                    <tr>
+                        <td>Remote frame</td>
+                        <td>Có</td>
+                        <td>Không</td>
+                    </tr>
+                    <tr>
+                        <td>Bit điều khiển thêm</td>
+                        <td>Không</td>
+                        <td>FDF, BRS, ESI</td>
+                    </tr>
+                    <tr>
+                        <td>Hiệu quả dữ liệu</td>
+                        <td>Thấp hơn</td>
+                        <td>Cao hơn nhờ ít phụ phí trên mỗi byte</td>
+                    </tr>
+                </table>
+
+                <h2>4. Khác biệt trong cấu trúc frame</h2>
+                <table>
+                    <tr>
+                        <th>Trường</th>
+                        <th>Classic CAN</th>
+                        <th>CAN FD</th>
+                    </tr>
+                    <tr>
+                        <td>Bit sau IDE</td>
+                        <td><code>r0</code> (dự trữ)</td>
+                        <td><code>FDF</code> (recessive = frame FD)</td>
+                    </tr>
+                    <tr>
+                        <td>Bit thay RTR</td>
+                        <td><code>RTR</code> (phân biệt data / remote)</td>
+                        <td><code>RRS</code> (luôn dominant, không còn remote frame)</td>
+                    </tr>
+                    <tr>
+                        <td>Bit đổi tốc độ</td>
+                        <td>Không có</td>
+                        <td><code>BRS</code> (recessive = chuyển sang tốc độ cao)</td>
+                    </tr>
+                    <tr>
+                        <td>Cờ trạng thái lỗi</td>
+                        <td>Không có</td>
+                        <td><code>ESI</code> (recessive = node gửi đang error passive)</td>
+                    </tr>
+                    <tr>
+                        <td>Bit stuffing trong CRC</td>
+                        <td>Có, theo quy tắc 5 bit</td>
+                        <td>Dùng <em>fixed stuff bit</em> trong CRC và thêm trường stuff count</td>
+                    </tr>
+                </table>
+
+                <h3>Bảng DLC của CAN FD</h3>
+                <p>Với 0 đến 8 byte, DLC giống Classic CAN. Từ 9 trở lên, mỗi giá trị DLC ứng với một độ dài cố định:
+                </p>
+                <table>
+                    <tr>
+                        <th>DLC</th>
+                        <th>0 – 8</th>
+                        <th>9</th>
+                        <th>10</th>
+                        <th>11</th>
+                        <th>12</th>
+                        <th>13</th>
+                        <th>14</th>
+                        <th>15</th>
+                    </tr>
+                    <tr>
+                        <td>Số byte</td>
+                        <td>0 – 8</td>
+                        <td>12</td>
+                        <td>16</td>
+                        <td>20</td>
+                        <td>24</td>
+                        <td>32</td>
+                        <td>48</td>
+                        <td>64</td>
+                    </tr>
+                </table>
+                <div class="note">
+                    Nếu cần gửi 30 byte, bạn phải dùng DLC = 13 (32 byte) và độn thêm 2 byte (padding). Trong Classic
+                    CAN,
+                    DLC từ 9 đến 15 đều chỉ 8 byte, còn ở CAN FD thì không.
+                </div>
+
+                <h2>5. Hai bit rate trong CAN FD</h2>
+                <p>
+                    CAN FD dùng hai bộ thông số định thời (bit timing) độc lập:
+                </p>
+                <ul>
+                    <li><strong>Nominal bit rate:</strong> dùng cho pha arbitration và các trường cuối frame. Thường là
+                        500 kbit/s.</li>
+                    <li><strong>Data bit rate:</strong> dùng cho pha dữ liệu khi BRS = recessive. Ví dụ 2 Mbit/s hoặc 5
+                        Mbit/s.</li>
+                </ul>
+                <p>
+                    Ở tốc độ cao, trễ của transceiver có thể làm điểm lấy mẫu bị lệch. CAN FD giải quyết bằng
+                    <strong>Transmitter Delay Compensation (TDC)</strong> với <em>secondary sample point (SSP)</em>:
+                    node gửi đo độ trễ vòng TX → bus → RX rồi dịch điểm lấy mẫu cho khớp.
+                </p>
+                <pre><code>// Ví dụ cấu hình minh họa (không gắn với MCU cụ thể)
+can_fd_config_t cfg = {
+    .nominal_bitrate = 500000,   // pha arbitration
+    .data_bitrate    = 2000000,  // pha dữ liệu
+    .brs_enabled     = 1,        // cho phép đổi tốc độ
+    .fd_enabled      = 1,        // cho phép frame FD
+    .tdc_enabled     = 1         // bù trễ transceiver
+};
+can_fd_init(CAN1, &amp;cfg);</code></pre>
+
+                <h2>6. So sánh thời gian truyền (ước lượng)</h2>
+                <p>Giả sử cần gửi <strong>64 byte</strong> dữ liệu, bỏ qua bit stuffing để tính cho đơn giản:</p>
+                <table>
+                    <tr>
+                        <th>Cách gửi</th>
+                        <th>Cấu hình</th>
+                        <th>Số bit xấp xỉ</th>
+                        <th>Thời gian xấp xỉ</th>
+                    </tr>
+                    <tr>
+                        <td>Classic CAN</td>
+                        <td>8 frame × 8 byte, 500 kbit/s</td>
+                        <td>8 × 111 = 888 bit</td>
+                        <td>khoảng 1,8 ms</td>
+                    </tr>
+                    <tr>
+                        <td>CAN FD</td>
+                        <td>1 frame 64 byte, 500 kbit/s + 2 Mbit/s</td>
+                        <td>khoảng 40 bit tốc độ thấp + 550 bit tốc độ cao</td>
+                        <td>khoảng 0,35 ms</td>
+                    </tr>
+                </table>
+                <p>
+                    Kết quả cho thấy CAN FD nhanh hơn nhiều lần ở cùng nominal bit rate. Số liệu thực tế còn phụ thuộc
+                    bit stuffing, độ dài ID và cấu hình định thời.
+                </p>
+
+                <h2>7. Khả năng tương thích</h2>
+                <ul>
+                    <li><strong>Node Classic không hiểu frame FD:</strong> khi thấy bit FDF, controller Classic coi đó
+                        là lỗi định dạng và gửi error frame, làm hỏng bus.</li>
+                    <li><strong>Node FD gửi và nhận được frame Classic:</strong> phần lớn controller FD vẫn hỗ trợ cả
+                        hai loại.</li>
+                    <li><strong>Không trộn Classic và FD trên cùng bus</strong> trừ khi các node Classic được thiết kế
+                        đặc biệt (ví dụ chế độ FD-tolerant hoặc partial networking có chỗ tắt/bỏ qua frame FD).</li>
+                    <li><strong>ISO CAN FD và non-ISO CAN FD:</strong> bản đầu của Bosch (non-ISO) khác bản ISO ở cách
+                        tính CRC và trường stuff count. Hai bản <em>không tương thích</em>, nên các thiết bị mới nên
+                        chọn bản ISO.</li>
+                </ul>
+                <div class="note">
+                    Khi nâng cấp xe hoặc hệ thống từ Classic lên FD, thường phải thay <strong>cả controller lẫn
+                        transceiver</strong>
+                    của các node trên cùng mạng. Transceiver FD cần chịu được tốc độ dữ liệu cao (loại ghi chú CAN FD
+                    hoặc có SIC).
+                </div>
+
+                <h2>8. Nên chọn loại nào?</h2>
+                <table>
+                    <tr>
+                        <th>Tình huống</th>
+                        <th>Gợi ý</th>
+                    </tr>
+                    <tr>
+                        <td>Bản tin ngắn, chu kỳ ổn định (tốc độ động cơ, trạng thái đèn)</td>
+                        <td>Classic CAN là đủ</td>
+                    </tr>
+                    <tr>
+                        <td>Hệ thống đã có sẵn nhiều node Classic</td>
+                        <td>Giữ Classic, tránh rủi ro tương thích</td>
+                    </tr>
+                    <tr>
+                        <td>Cần gửi nhiều dữ liệu hơn mỗi frame (tổng hợp cảm biến, thông tin ADAS)</td>
+                        <td>CAN FD</td>
+                    </tr>
+                    <tr>
+                        <td>Cập nhật firmware qua bus (flash ECU), chẩn đoán dữ liệu lớn</td>
+                        <td>CAN FD, tiết kiệm đáng kể thời gian</td>
+                    </tr>
+                    <tr>
+                        <td>Thiết kế mới, có thể chọn linh kiện hiện đại</td>
+                        <td>CAN FD (thường có sẵn trong các MCU ô tô mới)</td>
+                    </tr>
+                </table>
+
+                <h2>9. Phía sau CAN FD: CAN XL</h2>
+                <p>
+                    Để phục vụ nhu cầu cao hơn, tổ chức CAN in Automation (CiA) phát triển <strong>CAN XL</strong>:
+                    dữ liệu tối đa 2048 byte mỗi frame và tốc độ pha dữ liệu cao hơn nữa (hướng tới 10 Mbit/s hoặc hơn).
+                    CAN XL được thiết kế để chung bus với CAN FD trong một số cấu hình. Bài này chỉ giới thiệu để bạn
+                    biết hướng phát triển.
+                </p>
+
+                <h2>Tóm tắt</h2>
+                <div class="note">
+                    Classic CAN: tối đa 8 byte, 1 Mbit/s, một tốc độ cho cả frame. CAN FD: tối đa 64 byte, đổi sang tốc
+                    độ cao
+                    ở pha dữ liệu nhờ bit BRS, thêm FDF và ESI, CRC dài hơn, và không có remote frame.
+                    Arbitration vẫn giữ nguyên, nhưng không được trộn node Classic với frame FD trên cùng một bus.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-3.html">← Bài trước</a>
+                    <a class="btn" href="lesson-5.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

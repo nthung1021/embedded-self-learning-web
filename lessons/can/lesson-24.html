@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 24: Pretended Networking | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html" class="active">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 24: Pretended Networking</h1>
+
+                <div class="note">
+                    <strong>Pretended Networking (PN):</strong> là cơ chế cho phép một ECU
+                    đang ở trạng thái tiết kiệm năng lượng nhưng vẫn theo dõi một số hoạt động
+                    trên mạng CAN và chỉ đánh thức ECU khi một điều kiện đã được cấu hình xảy ra.
+                    Đây là một khái niệm quan trọng khi kết hợp CAN, CAN Transceiver và
+                    cơ chế Sleep/Wake-up trong hệ thống automotive.
+                </div>
+
+                <h2>1. Pretended Networking là gì?</h2>
+
+                <p>
+                    <strong>Pretended Networking</strong> có thể hiểu đơn giản là:
+                    ECU không cần hoạt động đầy đủ để theo dõi toàn bộ CAN bus.
+                    Thay vào đó, phần cứng liên quan đến CAN có thể tiếp tục giám sát
+                    một số message hoặc điều kiện đặc biệt trên bus.
+                </p>
+
+                <p>
+                    Khi điều kiện phù hợp xuất hiện, ECU có thể được đánh thức để chuyển
+                    sang trạng thái hoạt động bình thường.
+                </p>
+
+                <pre><code>ECU đang Sleep
+      │
+      │ CAN bus vẫn có traffic
+      ▼
++-------------------------+
+| Hardware monitoring     |
+| - CAN traffic           |
+| - Filter                |
+| - Wake-up condition     |
++-------------------------+
+      │
+      │ Match condition
+      ▼
+Wake-up ECU
+      │
+      ▼
+ECU hoạt động bình thường</code></pre>
+
+                <h2>2. Tại sao Automotive ECU cần Pretended Networking?</h2>
+
+                <p>
+                    Trong xe, có thể có rất nhiều ECU. Nếu tất cả ECU luôn hoạt động đầy đủ
+                    chỉ để theo dõi CAN bus thì mức tiêu thụ năng lượng sẽ tăng.
+                </p>
+
+                <p>
+                    Vì vậy, một ECU có thể chuyển sang trạng thái tiết kiệm năng lượng
+                    nhưng vẫn cần biết khi nào một message quan trọng xuất hiện.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Không có PN</th>
+                        <th>Có PN</th>
+                    </tr>
+                    <tr>
+                        <td>ECU phải hoạt động để kiểm tra CAN</td>
+                        <td>ECU có thể giảm hoạt động của phần mềm</td>
+                    </tr>
+                    <tr>
+                        <td>Tiêu thụ năng lượng cao hơn</td>
+                        <td>Có thể tiết kiệm năng lượng</td>
+                    </tr>
+                    <tr>
+                        <td>Khó duy trì trạng thái Sleep sâu</td>
+                        <td>Có thể giám sát điều kiện đánh thức</td>
+                    </tr>
+                </table>
+
+                <h2>3. Pretended Networking và Sleep</h2>
+
+                <p>
+                    PN thường được liên hệ với trạng thái Sleep hoặc Low-Power.
+                    Tuy nhiên, không nên hiểu rằng toàn bộ ECU bị tắt hoàn toàn.
+                </p>
+
+                <p>
+                    Một phần phần cứng hoặc logic cần thiết vẫn phải duy trì khả năng
+                    giám sát điều kiện trên CAN bus.
+                </p>
+
+                <pre><code>Normal Operation
+      │
+      ▼
+Prepare Sleep
+      │
+      ▼
+Low-Power / Sleep
+      │
+      │ Monitor selected CAN activity
+      │
+      ├── No match ───────► Continue low-power state
+      │
+      └── Match ──────────► Wake-up
+                                │
+                                ▼
+                         Normal Operation</code></pre>
+
+                <h2>4. "Pretended" có nghĩa là gì?</h2>
+
+                <p>
+                    Từ <strong>Pretended</strong> trong tên gọi nhấn mạnh rằng ECU
+                    không thực sự hoạt động đầy đủ như trong Normal Operation.
+                    Nó chỉ duy trì một khả năng giám sát giới hạn để phát hiện
+                    những điều kiện đã được định nghĩa.
+                </p>
+
+                <div class="note">
+                    <strong>Ý tưởng cần nhớ:</strong>
+                    ECU "giả định" rằng nó đang không hoạt động đầy đủ,
+                    nhưng một phần hardware vẫn đang theo dõi network để phát hiện
+                    điều kiện cần đánh thức.
+                </div>
+
+                <h2>5. PN khác với Wake-up thông thường như thế nào?</h2>
+
+                <p>
+                    Wake-up thông thường có thể chỉ cần phát hiện hoạt động trên bus.
+                    Pretended Networking có thể cung cấp điều kiện chọn lọc hơn,
+                    chẳng hạn chỉ đánh thức ECU khi một message phù hợp với cấu hình.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Wake-up thông thường</th>
+                        <th>Pretended Networking</th>
+                    </tr>
+                    <tr>
+                        <td>Quan tâm đến hoạt động đánh thức</td>
+                        <td>Quan tâm đến điều kiện/message cụ thể</td>
+                    </tr>
+                    <tr>
+                        <td>Có thể khá tổng quát</td>
+                        <td>Có thể lọc theo cấu hình</td>
+                    </tr>
+                    <tr>
+                        <td>Không nhất thiết cần xử lý message đầy đủ</td>
+                        <td>Hardware có thể kiểm tra điều kiện trước khi đánh thức</td>
+                    </tr>
+                </table>
+
+                <h2>6. PN và CAN Controller</h2>
+
+                <p>
+                    CAN Controller là một thành phần quan trọng vì nó có khả năng
+                    nhận biết các frame trên CAN bus.
+                </p>
+
+                <p>
+                    Trong một implementation hỗ trợ PN, controller hoặc phần cứng
+                    liên quan có thể thực hiện việc lọc/so khớp điều kiện trước khi
+                    tạo ra sự kiện wake-up.
+                </p>
+
+                <pre><code>CAN Bus
+   │
+   ▼
++------------------+
+| CAN Controller   |
+|                  |
+| Frame detection  |
+| Filter / Match   |
++------------------+
+   │
+   │ Match
+   ▼
+Wake-up Event
+   │
+   ▼
+ECU</code></pre>
+
+                <h2>7. PN và CAN Transceiver</h2>
+
+                <p>
+                    CAN Transceiver là cầu nối giữa CAN Controller và physical CAN bus.
+                    Trong hệ thống low-power, transceiver có thể có các chế độ
+                    liên quan đến Sleep, Standby hoặc khả năng phát hiện wake-up,
+                    tùy loại transceiver.
+                </p>
+
+                <p>
+                    Vì vậy, khi debug PN không hoạt động, không nên chỉ kiểm tra
+                    CAN Driver mà phải xem cả CAN Controller, CAN Transceiver,
+                    nguồn và cấu hình wake-up.
+                </p>
+
+                <h2>8. PN và CAN Transceiver Driver</h2>
+
+                <p>
+                    Trong AUTOSAR, CAN Transceiver thường được quản lý thông qua
+                    <strong>CanTrcv</strong>. Module này làm việc với transceiver
+                    phần cứng và các trạng thái liên quan đến network.
+                </p>
+
+                <pre><code>Application / BSW
+       │
+       ▼
+     CanSM
+       │
+       ▼
+    CanTrcv
+       │
+       ▼
+CAN Transceiver
+       │
+       ▼
+   Physical Bus</code></pre>
+
+                <p>
+                    Cần phân biệt rõ <strong>Can</strong> và <strong>CanTrcv</strong>:
+                    CAN Driver chủ yếu làm việc với CAN Controller, trong khi
+                    CanTrcv liên quan đến CAN Transceiver.
+                </p>
+
+                <h2>9. PN và CAN Driver</h2>
+
+                <p>
+                    CAN Driver không nhất thiết tự mình thực hiện toàn bộ cơ chế PN.
+                    Nó cung cấp khả năng giao tiếp với CAN Controller và hỗ trợ
+                    các event, notification hoặc trạng thái cần thiết cho hệ thống.
+                </p>
+
+                <p>
+                    Phần triển khai cụ thể của PN phụ thuộc vào MCU, CAN peripheral,
+                    transceiver và AUTOSAR configuration.
+                </p>
+
+                <div class="note">
+                    <strong>Quan trọng:</strong>
+                    Không nên hiểu PN là một API đơn giản của Can Driver.
+                    Đây là một cơ chế phối hợp giữa hardware và các software module
+                    liên quan đến CAN/network management.
+                </div>
+
+                <h2>10. PN và CAN-IF</h2>
+
+                <p>
+                    <strong>CanIf</strong> nằm phía trên CAN Driver và cung cấp
+                    abstraction giữa upper layer và CAN Driver.
+                </p>
+
+                <p>
+                    Trong hoạt động bình thường, CAN frame có thể đi theo hướng:
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      ▼
+   CAN Driver
+      │
+      ▼
+    CanIf
+      │
+      ▼
+PduR / CanTp / CanNm / COM
+      │
+      ▼
+Application</code></pre>
+
+                <p>
+                    Với PN, mục tiêu là tránh phải đánh thức toàn bộ software stack
+                    chỉ vì một frame CAN không liên quan.
+                </p>
+
+                <h2>11. PN và Network Management</h2>
+
+                <p>
+                    Trong automotive, Network Management giúp các ECU phối hợp
+                    trạng thái hoạt động của network.
+                </p>
+
+                <p>
+                    PN có thể liên quan đến việc ECU chỉ cần thức dậy khi network
+                    hoặc một điều kiện communication phù hợp với nhu cầu của ECU.
+                </p>
+
+                <p>
+                    Không nên đồng nhất PN với CAN Network Management. PN là một
+                    cơ chế low-power/selective wake-up, còn Network Management
+                    là một cơ chế quản lý trạng thái communication của network.
+                </p>
+
+                <h2>12. PN và CanSM</h2>
+
+                <p>
+                    <strong>CanSM</strong> quản lý trạng thái communication của
+                    CAN network và phối hợp với các module liên quan.
+                </p>
+
+                <p>
+                    Khi ECU chuyển giữa các trạng thái communication và low-power,
+                    CanSM có thể là một phần của flow tùy cấu hình hệ thống.
+                </p>
+
+                <pre><code>CanSM
+  │
+  ├── CAN Controller state
+  │
+  ├── CanTrcv state
+  │
+  └── Network communication state
+             │
+             ▼
+      Low-power / Wake-up</code></pre>
+
+                <h2>13. PN và EcuM</h2>
+
+                <p>
+                    <strong>EcuM</strong> chịu trách nhiệm quản lý lifecycle và
+                    các trạng thái năng lượng của ECU ở mức hệ thống.
+                </p>
+
+                <p>
+                    Khi ECU cần đi vào Sleep hoặc được đánh thức, EcuM có thể
+                    tham gia vào quá trình quản lý wake-up và power state.
+                </p>
+
+                <pre><code>CAN Bus activity
+       │
+       ▼
+PN / Wake-up detection
+       │
+       ▼
+Wake-up event
+       │
+       ▼
+    EcuM
+       │
+       ▼
+ECU startup / resume
+       │
+       ▼
+Communication available</code></pre>
+
+                <h2>14. PN và Interrupt</h2>
+
+                <p>
+                    Liên hệ với bài trước, PN có thể tạo ra một event cần được
+                    CPU xử lý khi điều kiện phù hợp được phát hiện.
+                </p>
+
+                <p>
+                    Tuy nhiên, phần phát hiện đầu tiên có thể xảy ra ở hardware.
+                    Không nên giả định rằng CPU phải xử lý từng CAN frame trong
+                    trạng thái low-power.
+                </p>
+
+                <pre><code>CAN Frame
+    │
+    ▼
+Hardware filter / PN logic
+    │
+    ├── No match ──► Ignore
+    │
+    └── Match
+          │
+          ▼
+      Wake-up event
+          │
+          ▼
+       Interrupt
+          │
+          ▼
+          CPU</code></pre>
+
+                <h2>15. PN và Hardware Filtering</h2>
+
+                <p>
+                    Hardware filtering giúp giảm lượng frame mà CPU phải xử lý.
+                    Trong PN, filtering đặc biệt hữu ích vì mục tiêu là giữ ECU
+                    ở trạng thái low-power càng lâu càng tốt.
+                </p>
+
+                <p>
+                    Thay vì:
+                </p>
+
+                <pre><code>Every CAN frame
+      ↓
+Wake CPU
+      ↓
+Software checks ID
+      ↓
+Most frames discarded</code></pre>
+
+                <p>
+                    hệ thống có thể hướng tới:
+                </p>
+
+                <pre><code>CAN frame
+      ↓
+Hardware filtering
+      ↓
+Match?
+  ├── No  → remain low-power
+  └── Yes → wake-up</code></pre>
+
+                <h2>16. Điều kiện Match</h2>
+
+                <p>
+                    Một điều kiện PN có thể được xây dựng từ những thông tin
+                    liên quan đến CAN frame, tùy khả năng phần cứng.
+                </p>
+
+                <p>Ví dụ về các thông tin có thể liên quan:</p>
+
+                <ul>
+                    <li>CAN identifier.</li>
+                    <li>Data pattern hoặc một phần payload.</li>
+                    <li>Mask/filter.</li>
+                    <li>Điều kiện network được cấu hình.</li>
+                </ul>
+
+                <div class="note">
+                    Các điều kiện cụ thể phụ thuộc vào CAN peripheral/transceiver
+                    và implementation. Không nên giả định mọi MCU đều hỗ trợ
+                    cùng một kiểu PN filtering.
+                </div>
+
+                <h2>17. PN Filter và Mask</h2>
+
+                <p>
+                    Một cách phổ biến để mô tả filtering là sử dụng ID và mask.
+                </p>
+
+                <pre><code>Received ID:  0x123
+Filter ID:    0x120
+Mask:         0x7F8
+
+Compare:
+(ID &amp; Mask) == (Filter &amp; Mask)
+
+Nếu đúng
+    → Match
+    → có thể tạo wake-up event</code></pre>
+
+                <p>
+                    Đây chỉ là mô hình minh họa cho ý tưởng filtering.
+                    Cách phần cứng thực hiện PN filter có thể khác nhau.
+                </p>
+
+                <h2>18. PN giúp tiết kiệm năng lượng như thế nào?</h2>
+
+                <p>
+                    Ý tưởng chính là giảm thời gian CPU và các phần mềm cấp cao
+                    phải hoạt động.
+                </p>
+
+                <pre><code>Không có selective monitoring:
+
+CAN Traffic
+    ↓
+CPU thức
+    ↓
+Software processing
+    ↓
+Discard irrelevant frame
+
+
+Có selective monitoring:
+
+CAN Traffic
+    ↓
+Hardware monitoring
+    ↓
+Relevant?
+ ┌──┴──┐
+No    Yes
+│      │
+Stay   Wake ECU
+low-   ↓
+power  Process
+       communication</code></pre>
+
+                <h2>19. PN và Battery Consumption</h2>
+
+                <p>
+                    Đối với ECU được cấp nguồn trong thời gian dài khi xe đang
+                    tắt hoặc ở trạng thái low-power, mức tiêu thụ năng lượng
+                    có ý nghĩa rất lớn.
+                </p>
+
+                <p>
+                    Nếu nhiều ECU liên tục thức chỉ để kiểm tra CAN traffic,
+                    dòng tiêu thụ tổng thể của xe có thể tăng.
+                </p>
+
+                <p>
+                    PN giúp giảm hoạt động không cần thiết bằng cách chỉ quan tâm
+                    đến những communication event có ý nghĩa.
+                </p>
+
+                <h2>20. PN không có nghĩa là ECU tắt hoàn toàn</h2>
+
+                <p>
+                    Đây là một điểm rất dễ nhầm.
+                </p>
+
+                <p>
+                    Nếu ECU bị mất hoàn toàn nguồn hoặc toàn bộ phần cứng cần thiết
+                    đã bị tắt, nó không thể tự mình phát hiện CAN message để đánh thức.
+                </p>
+
+                <p>
+                    Vì vậy, một hệ thống PN cần một phần hardware vẫn được cấp nguồn
+                    hoặc duy trì trạng thái cần thiết để monitoring.
+                </p>
+
+                <h2>21. PN và Wake-up Source</h2>
+
+                <p>
+                    Wake-up source là nguồn tạo ra yêu cầu đánh thức ECU.
+                    CAN bus chỉ là một trong những nguồn có thể tồn tại trong hệ thống.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Wake-up source</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td>CAN</td>
+                        <td>CAN activity hoặc PN condition</td>
+                    </tr>
+                    <tr>
+                        <td>LIN</td>
+                        <td>LIN bus activity</td>
+                    </tr>
+                    <tr>
+                        <td>GPIO</td>
+                        <td>External wake-up signal</td>
+                    </tr>
+                    <tr>
+                        <td>Timer</td>
+                        <td>Scheduled wake-up</td>
+                    </tr>
+                </table>
+
+                <h2>22. PN Wake-up Flow</h2>
+
+                <p>
+                    Một flow khái niệm có thể được mô tả như sau:
+                </p>
+
+                <pre><code>1. ECU hoạt động bình thường
+          ↓
+2. Communication không còn cần thiết
+          ↓
+3. ECU chuẩn bị Sleep
+          ↓
+4. CAN monitoring được cấu hình
+          ↓
+5. ECU vào low-power state
+          ↓
+6. CAN frame xuất hiện
+          ↓
+7. PN condition được kiểm tra
+          ↓
+8. Condition match
+          ↓
+9. Wake-up event
+          ↓
+10. ECU resume / startup
+          ↓
+11. Communication hoạt động</code></pre>
+
+                <h2>23. PN khi Message không Match</h2>
+
+                <p>
+                    Nếu một CAN frame không thỏa điều kiện PN, mục tiêu thông thường
+                    là không đánh thức toàn bộ ECU chỉ vì frame đó.
+                </p>
+
+                <pre><code>CAN Frame A
+     ↓
+PN Filter
+     ↓
+No Match
+     ↓
+No Wake-up
+     ↓
+Remain Low-Power</code></pre>
+
+                <p>
+                    Đây chính là điểm tạo ra giá trị của selective wake-up.
+                </p>
+
+                <h2>24. PN khi Message Match</h2>
+
+                <p>
+                    Khi frame thỏa điều kiện:
+                </p>
+
+                <pre><code>CAN Frame
+     ↓
+PN Filter
+     ↓
+MATCH
+     ↓
+Wake-up Event
+     ↓
+ECU Wake-up
+     ↓
+Normal Communication
+     ↓
+Upper Layer xử lý message</code></pre>
+
+                <p>
+                    Cần phân biệt <strong>phát hiện wake-up condition</strong>
+                    với <strong>xử lý CAN message đầy đủ</strong>.
+                    Hai quá trình này có thể xảy ra ở các giai đoạn khác nhau.
+                </p>
+
+                <h2>25. PN và Reception thông thường</h2>
+
+                <table>
+                    <tr>
+                        <th>Reception bình thường</th>
+                        <th>Pretended Networking</th>
+                    </tr>
+                    <tr>
+                        <td>ECU đang hoạt động</td>
+                        <td>ECU đang low-power</td>
+                    </tr>
+                    <tr>
+                        <td>Frame được nhận và xử lý</td>
+                        <td>Hardware giám sát điều kiện</td>
+                    </tr>
+                    <tr>
+                        <td>CPU có thể xử lý frame</td>
+                        <td>CPU có thể chưa thức</td>
+                    </tr>
+                    <tr>
+                        <td>Thông báo lên upper layer</td>
+                        <td>Wake-up có thể xảy ra trước</td>
+                    </tr>
+                </table>
+
+                <h2>26. PN và CAN-FD</h2>
+
+                <p>
+                    PN là một cơ chế liên quan đến network monitoring/low-power,
+                    không nên hiểu nó là một tính năng chỉ dành riêng cho Classic CAN.
+                </p>
+
+                <p>
+                    Tuy nhiên, khả năng hỗ trợ PN cụ thể với CAN-FD phụ thuộc vào
+                    CAN peripheral, transceiver và kiến trúc hardware.
+                </p>
+
+                <div class="note">
+                    Khi làm việc với một MCU cụ thể, luôn kiểm tra datasheet,
+                    reference manual và tài liệu của CAN transceiver để biết
+                    chính xác PN được hỗ trợ như thế nào.
+                </div>
+
+                <h2>27. PN trong AUTOSAR</h2>
+
+                <p>
+                    Trong AUTOSAR, PN không nên được xem là một module độc lập
+                    đơn giản nằm giữa Can Driver và CanIf.
+                </p>
+
+                <p>
+                    Nó có thể liên quan đến nhiều thành phần:
+                </p>
+
+                <pre><code>                 AUTOSAR BSW
+                     │
+        ┌────────────┼────────────┐
+        │            │            │
+      EcuM         CanSM        CanIf
+        │            │            │
+        │          CanTrcv       │
+        │            │            │
+        └────────────┼────────────┘
+                     │
+              CAN Controller /
+              CAN Transceiver
+                     │
+                     ▼
+                  CAN Bus</code></pre>
+
+                <p>
+                    Exact integration phụ thuộc AUTOSAR release, ECU architecture,
+                    MCU, transceiver và configuration.
+                </p>
+
+                <h2>28. PN và CanTrcv State</h2>
+
+                <p>
+                    CAN Transceiver có thể có các chế độ hoạt động khác nhau.
+                    Trong low-power, transceiver có thể chuyển sang trạng thái
+                    tiết kiệm năng lượng nhưng vẫn hỗ trợ khả năng wake-up cần thiết.
+                </p>
+
+                <pre><code>Normal
+   │
+   ▼
+Transceiver Active
+   │
+   ▼
+Prepare Low-Power
+   │
+   ▼
+Low-Power / Standby
+   │
+   │ Wake-up condition
+   ▼
+Wake-up
+   │
+   ▼
+Active</code></pre>
+
+                <p>
+                    Tên state và behavior cụ thể phụ thuộc vào transceiver và
+                    implementation.
+                </p>
+
+                <h2>29. PN và Debugging</h2>
+
+                <p>
+                    Khi PN không hoạt động, nên debug từ physical layer lên software
+                    thay vì chỉ nhìn vào application.
+                </p>
+
+                <pre><code>CAN Traffic
+    ↓
+Physical Bus
+    ↓
+Transceiver
+    ↓
+CAN Controller
+    ↓
+PN Filter / Condition
+    ↓
+Wake-up event
+    ↓
+Interrupt / wake-up mechanism
+    ↓
+EcuM / system handling
+    ↓
+CAN communication resume</code></pre>
+
+                <h2>30. Debug: ECU không Wake-up</h2>
+
+                <p>Kiểm tra lần lượt:</p>
+
+                <ol>
+                    <li>CAN bus có thực sự có traffic không?</li>
+                    <li>Baud-rate và bit timing có đúng không?</li>
+                    <li>CAN transceiver có được cấp nguồn không?</li>
+                    <li>Transceiver có đang ở chế độ phù hợp không?</li>
+                    <li>PN monitoring có được enable không?</li>
+                    <li>Filter/ID/mask có đúng không?</li>
+                    <li>Wake-up condition có thực sự match không?</li>
+                    <li>Wake-up event có được tạo không?</li>
+                    <li>Interrupt hoặc wake-up routing có hoạt động không?</li>
+                    <li>EcuM/low-power state có xử lý wake-up đúng không?</li>
+                </ol>
+
+                <h2>31. Debug: ECU Wake-up với mọi CAN Message</h2>
+
+                <p>
+                    Nếu ECU thức dậy với cả những message không liên quan,
+                    cần kiểm tra filtering và cấu hình PN.
+                </p>
+
+                <pre><code>Expected:
+
+Message A → No Match → No Wake-up
+Message B → No Match → No Wake-up
+Message C → Match    → Wake-up
+
+
+Observed:
+
+Message A → Wake-up
+Message B → Wake-up
+Message C → Wake-up
+
+Possible causes:
+- Filter quá rộng
+- Mask sai
+- PN configuration sai
+- Hardware limitation
+- Wake-up source khác đang kích hoạt ECU</code></pre>
+
+                <h2>32. Debug: PN Match nhưng Upper Layer không nhận Message</h2>
+
+                <p>
+                    Đây là một lỗi khác với việc PN không wake-up.
+                </p>
+
+                <p>
+                    Có thể ECU đã wake-up thành công nhưng communication stack
+                    chưa được khôi phục đầy đủ.
+                </p>
+
+                <pre><code>CAN Frame
+   ↓
+PN Match
+   ↓
+Wake-up SUCCESS
+   ↓
+ECU resumes
+   ↓
+CAN Controller / Driver not ready
+   ↓
+Message not delivered
+   ↓
+Upper layer does not receive PDU</code></pre>
+
+                <p>
+                    Do đó cần tách debug thành hai phần:
+                    <strong>Wake-up detection</strong> và
+                    <strong>Communication recovery</strong>.
+                </p>
+
+                <h2>33. Ví dụ thực tế</h2>
+
+                <p>
+                    Giả sử ECU cửa xe đang ở low-power state. ECU chỉ cần thức dậy
+                    khi nhận được một CAN message liên quan đến trạng thái khóa cửa.
+                </p>
+
+                <pre><code>Normal:
+ECU Door Controller
+        │
+        ▼
+   Communication
+        │
+        ▼
+      Sleep
+
+Sleep:
+CAN Bus
+  │
+  ├── Message 0x100 → No Match
+  │                    ↓
+  │                 Stay Sleep
+  │
+  └── Message 0x250 → Match
+                       ↓
+                    Wake-up
+                       ↓
+                 ECU Active
+                       ↓
+                 Process command</code></pre>
+
+                <p>
+                    Mục tiêu là tránh việc ECU phải hoạt động đầy đủ chỉ vì những
+                    message không liên quan xuất hiện trên bus.
+                </p>
+
+                <h2>34. Những lỗi thường gặp</h2>
+
+                <table>
+                    <tr>
+                        <th>Lỗi</th>
+                        <th>Vấn đề</th>
+                    </tr>
+                    <tr>
+                        <td>Nhầm PN với CAN Sleep</td>
+                        <td>PN là cơ chế monitoring/wake-up, không đơn giản chỉ là Sleep</td>
+                    </tr>
+                    <tr>
+                        <td>Nhầm PN với Network Management</td>
+                        <td>Hai cơ chế có mục đích khác nhau</td>
+                    </tr>
+                    <tr>
+                        <td>Chỉ kiểm tra CAN Driver</td>
+                        <td>Transceiver và power state cũng rất quan trọng</td>
+                    </tr>
+                    <tr>
+                        <td>Cho rằng CPU phải xử lý mọi frame</td>
+                        <td>PN hướng tới hardware-level selective monitoring</td>
+                    </tr>
+                    <tr>
+                        <td>Filter quá rộng</td>
+                        <td>ECU wake-up không cần thiết</td>
+                    </tr>
+                    <tr>
+                        <td>Filter quá hẹp</td>
+                        <td>ECU không wake-up khi cần</td>
+                    </tr>
+                </table>
+
+                <h2>35. Góc nhìn phỏng vấn</h2>
+
+                <p><strong>Q: Pretended Networking là gì?</strong></p>
+
+                <p>
+                    Pretended Networking là cơ chế cho phép ECU ở trạng thái
+                    low-power vẫn giám sát một số điều kiện trên network và chỉ
+                    wake-up khi điều kiện đã cấu hình được thỏa mãn.
+                </p>
+
+                <p><strong>Q: PN giúp ích gì?</strong></p>
+
+                <p>
+                    PN giúp giảm mức tiêu thụ năng lượng bằng cách tránh đánh thức
+                    CPU hoặc toàn bộ ECU cho những CAN message không liên quan.
+                </p>
+
+                <p><strong>Q: PN khác wake-up thông thường như thế nào?</strong></p>
+
+                <p>
+                    Wake-up thông thường có thể phản ứng với hoạt động trên bus,
+                    trong khi PN hướng tới việc lọc hoặc kiểm tra điều kiện cụ thể
+                    trước khi đánh thức ECU.
+                </p>
+
+                <p><strong>Q: Nếu PN không wake-up thì kiểm tra gì?</strong></p>
+
+                <p>
+                    Tôi sẽ kiểm tra CAN traffic, transceiver state, CAN controller,
+                    PN filter/configuration, wake-up condition, interrupt hoặc
+                    wake-up routing và cuối cùng là EcuM/power-state handling.
+                </p>
+
+                <h2>36. Memory Map</h2>
+
+                <div class="note">
+                    <strong>Pretended Networking = Low-power + Network Monitoring + Selective Wake-up</strong>
+                </div>
+
+                <pre><code>Pretended Networking
+│
+├── Mục tiêu
+│   └── Tiết kiệm năng lượng
+│
+├── Trạng thái
+│   └── ECU Low-Power / Sleep
+│
+├── Monitoring
+│   ├── CAN Traffic
+│   └── Filter / Match Condition
+│
+├── Khi không Match
+│   └── Continue Low-Power
+│
+├── Khi Match
+│   └── Wake-up
+│
+├── Hardware
+│   ├── CAN Controller
+│   └── CAN Transceiver
+│
+├── AUTOSAR liên quan
+│   ├── Can
+│   ├── CanTrcv
+│   ├── CanIf
+│   ├── CanSM
+│   └── EcuM
+│
+└── Debug
+    ├── CAN Bus
+    ├── Transceiver
+    ├── Filter
+    ├── Wake-up event
+    └── ECU resume</code></pre>
+
+                <h2>37. Tóm tắt</h2>
+
+                <p>
+                    Pretended Networking là một cơ chế quan trọng trong hệ thống
+                    automotive low-power. Thay vì để ECU hoạt động đầy đủ và xử lý
+                    toàn bộ CAN traffic trong thời gian chờ, một phần hardware có thể
+                    tiếp tục giám sát network và kiểm tra các điều kiện đã cấu hình.
+                </p>
+
+                <p>
+                    Nếu frame không phù hợp, ECU tiếp tục ở trạng thái low-power.
+                    Nếu frame hoặc điều kiện phù hợp, hệ thống tạo wake-up event
+                    để ECU trở lại trạng thái hoạt động và tiếp tục xử lý communication.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    PN không chỉ là "Sleep CAN". Hãy nhớ chuỗi:
+                    <strong>Low-Power → Monitor → Filter/Match → Wake-up → Resume Communication</strong>.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-23.html">← Bài trước</a>
+                    <a class="btn" href="lesson-25.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

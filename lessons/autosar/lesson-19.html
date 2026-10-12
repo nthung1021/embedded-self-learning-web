@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 19: Chi tiết Diagnostic Stack | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Tổng quan một ví dụ hoàn chỉnh</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html" class="active" aria-current="page">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 19: Chi tiết Diagnostic Stack</h1>
+
+            <p>
+                Diagnostic Stack là một phần quan trọng của AUTOSAR, chịu trách nhiệm
+                giúp ECU nhận yêu cầu chẩn đoán, xử lý yêu cầu đó, quản lý lỗi và cung cấp
+                thông tin chẩn đoán cho bên ngoài.
+            </p>
+
+            <p>
+                Trong các hệ thống automotive thực tế, Diagnostic Stack thường được sử dụng
+                khi tester hoặc thiết bị chẩn đoán muốn giao tiếp với ECU để đọc thông tin,
+                kiểm tra lỗi, đọc DTC, xóa lỗi hoặc thực hiện các dịch vụ chẩn đoán khác.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Bài này tập trung đi sâu vào kiến trúc và luồng hoạt động của Diagnostic Stack,
+                đặc biệt là DCM, DEM, PduR, CanTp và CAN communication path.
+                Các API cụ thể, cấu hình ARXML và cấu hình tool sẽ được để dành cho các bài
+                chuyên sâu hơn.
+            </div>
+
+            <h2>1. Diagnostic là gì?</h2>
+
+            <p>
+                Diagnostic trong automotive là quá trình phát hiện, lưu trữ, cung cấp và
+                phân tích thông tin liên quan đến trạng thái hoặc lỗi của ECU và hệ thống xe.
+            </p>
+
+            <p>
+                Diagnostic không chỉ đơn giản là "đọc lỗi". Nó bao gồm nhiều hoạt động như:
+            </p>
+
+            <ul>
+                <li>Kiểm tra trạng thái ECU.</li>
+                <li>Đọc thông tin nhận dạng ECU.</li>
+                <li>Đọc DTC.</li>
+                <li>Xóa DTC.</li>
+                <li>Đọc dữ liệu liên quan đến lỗi.</li>
+                <li>Thực hiện diagnostic routine.</li>
+                <li>Quản lý diagnostic session.</li>
+                <li>Nhận và phản hồi diagnostic request.</li>
+            </ul>
+
+            <p>
+                Trong AUTOSAR, các chức năng này được phân chia thành nhiều module thay vì
+                đặt toàn bộ trong Application Software.
+            </p>
+
+            <h2>2. Vì sao ECU cần Diagnostic Stack?</h2>
+
+            <p>
+                Một ECU có thể hoạt động bình thường trong điều kiện thông thường nhưng
+                khi xảy ra lỗi, kỹ thuật viên cần biết điều gì đã xảy ra.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Cảm biến nhiệt độ gửi giá trị bất thường.</li>
+                <li>Motor cửa sổ không phản hồi.</li>
+                <li>CAN communication bị mất.</li>
+                <li>Điện áp nguồn thấp.</li>
+                <li>Một actuator không hoạt động.</li>
+            </ul>
+
+            <p>
+                Nếu ECU chỉ phát hiện lỗi nhưng không có cơ chế Diagnostic, việc tìm nguyên
+                nhân sẽ khó khăn hơn rất nhiều.
+            </p>
+
+            <p>
+                Diagnostic Stack tạo ra một cơ chế chuẩn hóa để hệ thống bên ngoài có thể
+                yêu cầu ECU cung cấp thông tin chẩn đoán.
+            </p>
+
+            <h2>3. Diagnostic Stack nằm ở đâu?</h2>
+
+            <p>
+                Diagnostic Stack thuộc phạm vi Basic Software và liên kết với Communication
+                Stack để nhận và truyền diagnostic messages.
+            </p>
+
+<pre><code>Diagnostic Tester
+        |
+        | Diagnostic Request
+        v
++-------------------------+
+| Communication Stack     |
+|                         |
+| CAN Driver / CanIf      |
+| CanTp                   |
+| PduR                    |
++------------+------------+
+             |
+             v
++-------------------------+
+| Diagnostic Stack        |
+|                         |
+| DCM                     |
+| DEM                     |
++------------+------------+
+             |
+             v
++-------------------------+
+| Application / BSW       |
+|                         |
+| Diagnostic information  |
+| Error monitoring        |
++-------------------------+</code></pre>
+
+            <p>
+                Một điểm quan trọng là Diagnostic Stack không thay thế Communication Stack.
+                Communication Stack chịu trách nhiệm vận chuyển dữ liệu, trong khi Diagnostic
+                Stack hiểu ý nghĩa của diagnostic request.
+            </p>
+
+            <h2>4. Các thành phần chính</h2>
+
+            <p>
+                Một Diagnostic Stack trong AUTOSAR Classic thường liên quan đến các thành phần
+                chính:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Vai trò chính</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DCM</td>
+                        <td>Diagnostic Communication Manager, xử lý diagnostic request và response.</td>
+                    </tr>
+                    <tr>
+                        <td>DEM</td>
+                        <td>Diagnostic Event Manager, quản lý diagnostic event và DTC.</td>
+                    </tr>
+                    <tr>
+                        <td>PduR</td>
+                        <td>Định tuyến PDU giữa các communication module.</td>
+                    </tr>
+                    <tr>
+                        <td>CanTp</td>
+                        <td>Transport protocol cho diagnostic message khi dữ liệu cần truyền nhiều frame.</td>
+                    </tr>
+                    <tr>
+                        <td>CanIf</td>
+                        <td>Interface giữa communication stack và CAN Driver.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Driver</td>
+                        <td>Giao tiếp với CAN Controller.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>5. DCM là gì?</h2>
+
+            <p>
+                DCM là viết tắt của <strong>Diagnostic Communication Manager</strong>.
+                Đây là thành phần chịu trách nhiệm chính trong việc xử lý communication
+                giữa ECU và diagnostic tester.
+            </p>
+
+            <p>
+                Có thể xem DCM như "cổng giao tiếp diagnostic" của ECU.
+            </p>
+
+            <p>
+                DCM nhận diagnostic request, phân tích request, xác định dịch vụ tương ứng,
+                xử lý hoặc chuyển yêu cầu đến thành phần phù hợp và tạo diagnostic response.
+            </p>
+
+            <h2>6. DCM không trực tiếp quản lý mọi loại lỗi</h2>
+
+            <p>
+                Một nhầm lẫn phổ biến là cho rằng DCM chịu trách nhiệm quản lý toàn bộ lỗi
+                của ECU.
+            </p>
+
+            <p>
+                Thực tế, DCM chủ yếu chịu trách nhiệm về communication và diagnostic service.
+                Việc quản lý diagnostic event và DTC thuộc vai trò chính của DEM.
+            </p>
+
+<pre><code>Diagnostic Request
+       |
+       v
+      DCM
+       |
+       +---- Diagnostic Service
+       |
+       +---- DEM information
+       |
+       +---- Application / BSW data
+       |
+       v
+Diagnostic Response</code></pre>
+
+            <h2>7. DEM là gì?</h2>
+
+            <p>
+                DEM là viết tắt của <strong>Diagnostic Event Manager</strong>.
+                DEM chịu trách nhiệm quản lý các diagnostic event và thông tin lỗi liên quan.
+            </p>
+
+            <p>
+                Có thể hiểu đơn giản:
+            </p>
+
+<pre><code>Application / BSW
+       |
+       | Error Event
+       v
+      DEM
+       |
+       +---- Event Status
+       |
+       +---- DTC information
+       |
+       +---- Fault history
+       |
+       v
+Diagnostic information</code></pre>
+
+            <p>
+                DEM không phải là nơi phát hiện tất cả lỗi. Các module hoặc Application
+                thường phát hiện điều kiện lỗi và thông báo diagnostic event cho DEM.
+            </p>
+
+            <h2>8. Diagnostic Event là gì?</h2>
+
+            <p>
+                Diagnostic Event đại diện cho một điều kiện hoặc tình trạng mà hệ thống
+                cần theo dõi về mặt chẩn đoán.
+            </p>
+
+            <p>
+                Ví dụ một ECU điều khiển quạt có thể theo dõi:
+            </p>
+
+            <ul>
+                <li>Motor quạt không phản hồi.</li>
+                <li>Dòng điện của motor quá cao.</li>
+                <li>Cảm biến nhiệt độ không hợp lệ.</li>
+                <li>Communication với một ECU khác bị mất.</li>
+            </ul>
+
+            <p>
+                Khi điều kiện phù hợp xảy ra, Application hoặc BSW có thể báo diagnostic
+                event cho DEM.
+            </p>
+
+            <h2>9. Diagnostic Event và DTC</h2>
+
+            <p>
+                Diagnostic Event và DTC có liên quan nhưng không hoàn toàn giống nhau.
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Diagnostic Event:</strong>
+                    đại diện cho điều kiện lỗi mà hệ thống đang theo dõi.
+                </li>
+                <li>
+                    <strong>DTC:</strong>
+                    mã chẩn đoán được sử dụng để biểu diễn lỗi cho mục đích diagnostic.
+                </li>
+            </ul>
+
+            <p>
+                Một cách đơn giản để hình dung:
+            </p>
+
+<pre><code>Fault condition
+      |
+      v
+Diagnostic Event
+      |
+      v
+     DEM
+      |
+      v
+DTC information
+      |
+      v
+Diagnostic Tester</code></pre>
+
+            <h2>10. Event không đồng nghĩa với DTC</h2>
+
+            <p>
+                Đây là một điểm cần phân biệt khi học Diagnostic Stack.
+            </p>
+
+            <p>
+                Event là khái niệm nội bộ để theo dõi trạng thái lỗi. DTC là thông tin
+                chẩn đoán mà tester có thể sử dụng để xác định lỗi.
+            </p>
+
+            <p>
+                Vì vậy không nên hiểu đơn giản rằng:
+            </p>
+
+<pre><code>1 Event = 1 CAN Frame</code></pre>
+
+            <p>
+                hoặc:
+            </p>
+
+<pre><code>1 Event = 1 DTC message</code></pre>
+
+            <p>
+                Event và DTC thuộc những tầng khái niệm khác nhau trong hệ thống diagnostic.
+            </p>
+
+            <h2>11. DTC là gì?</h2>
+
+            <p>
+                DTC là viết tắt của <strong>Diagnostic Trouble Code</strong>.
+                Đây là mã dùng để biểu diễn một lỗi hoặc nhóm lỗi có ý nghĩa chẩn đoán.
+            </p>
+
+            <p>
+                Khi kỹ thuật viên sử dụng diagnostic tester và yêu cầu đọc lỗi, ECU có thể
+                cung cấp các DTC hiện đang được lưu hoặc đang có trạng thái phù hợp.
+            </p>
+
+            <p>
+                DTC thường được sử dụng để trả lời các câu hỏi như:
+            </p>
+
+            <ul>
+                <li>ECU đang có lỗi gì?</li>
+                <li>Lỗi có đang xảy ra không?</li>
+                <li>Lỗi có từng xảy ra trước đó không?</li>
+                <li>Lỗi có cần được kiểm tra thêm không?</li>
+            </ul>
+
+            <h2>12. DCM và DEM phối hợp như thế nào?</h2>
+
+            <p>
+                DCM và DEM có trách nhiệm khác nhau nhưng thường phối hợp rất chặt chẽ.
+            </p>
+
+<pre><code>Tester
+  |
+  | "Read Diagnostic Information"
+  v
+ DCM
+  |
+  | Request diagnostic data
+  v
+ DEM
+  |
+  | DTC / Event information
+  v
+ DCM
+  |
+  | Diagnostic Response
+  v
+Tester</code></pre>
+
+            <p>
+                DCM đóng vai trò giao tiếp với tester, trong khi DEM cung cấp thông tin
+                diagnostic event và DTC.
+            </p>
+
+            <h2>13. Diagnostic Request là gì?</h2>
+
+            <p>
+                Diagnostic Request là yêu cầu mà tester gửi đến ECU.
+            </p>
+
+            <p>
+                Một request có thể yêu cầu:
+            </p>
+
+            <ul>
+                <li>Đọc thông tin ECU.</li>
+                <li>Đọc DTC.</li>
+                <li>Xóa DTC.</li>
+                <li>Đọc dữ liệu diagnostic.</li>
+                <li>Thực hiện một diagnostic routine.</li>
+                <li>Thay đổi diagnostic session.</li>
+            </ul>
+
+            <p>
+                DCM là thành phần nhận và xử lý phần nội dung diagnostic của request.
+            </p>
+
+            <h2>14. Diagnostic Response là gì?</h2>
+
+            <p>
+                Sau khi xử lý request, ECU cần phản hồi cho tester.
+            </p>
+
+<pre><code>Tester
+   |
+   | Request
+   v
+ ECU
+   |
+   | Process
+   v
+ ECU
+   |
+   | Response
+   v
+Tester</code></pre>
+
+            <p>
+                Response có thể chứa dữ liệu được yêu cầu hoặc thông tin cho biết request
+                đã được xử lý như thế nào.
+            </p>
+
+            <h2>15. Diagnostic Session</h2>
+
+            <p>
+                ECU không phải lúc nào cũng hoạt động với cùng một tập diagnostic service.
+                Diagnostic Session cho phép ECU hoạt động trong những trạng thái diagnostic
+                khác nhau.
+            </p>
+
+            <p>
+                Có thể hình dung:
+            </p>
+
+<pre><code>ECU
+ |
+ +-- Normal / Default Session
+ |
+ +-- Extended Session
+ |
+ +-- Programming Session
+ |
+ +-- Other project-specific behavior</code></pre>
+
+            <p>
+                Mỗi session có thể cho phép hoặc hạn chế những dịch vụ diagnostic khác nhau.
+            </p>
+
+            <h2>16. Vì sao cần Diagnostic Session?</h2>
+
+            <p>
+                Nếu mọi diagnostic service đều được phép thực hiện ở mọi thời điểm,
+                hệ thống có thể gặp vấn đề về an toàn hoặc vận hành.
+            </p>
+
+            <p>
+                Ví dụ, một thao tác phục vụ programming hoặc configuration không nên
+                được thực hiện tùy ý khi xe đang ở trạng thái vận hành bình thường.
+            </p>
+
+            <p>
+                Session giúp ECU kiểm soát context mà diagnostic request đang được thực hiện.
+            </p>
+
+            <h2>17. DCM và Diagnostic Session</h2>
+
+            <p>
+                DCM theo dõi trạng thái diagnostic session và quyết định request hiện tại
+                có phù hợp với session hay không.
+            </p>
+
+<pre><code>Diagnostic Request
+        |
+        v
+      DCM
+        |
+        +---- Check Session
+        |
+        +---- Check Service
+        |
+        +---- Check Conditions
+        |
+        v
+     Process
+        |
+        v
+     Response</code></pre>
+
+            <h2>18. Diagnostic Security</h2>
+
+            <p>
+                Một số diagnostic service có thể cần cơ chế bảo vệ để tránh việc bất kỳ
+                tester nào cũng có thể thực hiện các thao tác nhạy cảm.
+            </p>
+
+            <p>
+                Vì vậy Diagnostic Stack có thể liên quan đến cơ chế security access hoặc
+                các điều kiện bảo vệ khác.
+            </p>
+
+            <p>
+                Ở mức kiến trúc, có thể hiểu:
+            </p>
+
+<pre><code>Request
+   |
+   v
+Session Check
+   |
+   v
+Security / Permission Check
+   |
+   v
+Service Processing</code></pre>
+
+            <h2>19. PduR trong Diagnostic Stack</h2>
+
+            <p>
+                PduR là thành phần trung gian định tuyến PDU giữa các module communication.
+                Trong diagnostic communication, PduR giúp kết nối các thành phần ở những
+                tầng khác nhau.
+            </p>
+
+<pre><code>CAN
+ |
+ v
+CanIf
+ |
+ v
+PduR
+ |
+ v
+DCM</code></pre>
+
+            <p>
+                Theo chiều ngược lại:
+            </p>
+
+<pre><code>DCM
+ |
+ v
+PduR
+ |
+ v
+CanIf
+ |
+ v
+CAN</code></pre>
+
+            <p>
+                PduR không phải là nơi hiểu ý nghĩa của diagnostic service.
+                Nó chủ yếu đảm nhiệm việc routing.
+            </p>
+
+            <h2>20. CanTp trong Diagnostic Communication</h2>
+
+            <p>
+                Diagnostic message có thể lớn hơn kích thước mà một CAN frame đơn lẻ
+                có thể chứa.
+            </p>
+
+            <p>
+                Khi đó cần một cơ chế transport để chia nhỏ dữ liệu thành nhiều frame
+                và ghép chúng lại ở phía nhận.
+            </p>
+
+<pre><code>Large Diagnostic Message
+          |
+          v
+       CanTp
+          |
+    +-----+-----+
+    |     |     |
+   CAN   CAN   CAN
+  Frame Frame Frame</code></pre>
+
+            <p>
+                Vì vậy CanTp đặc biệt quan trọng trong diagnostic communication trên CAN.
+            </p>
+
+            <h2>21. Diagnostic Message và CAN Frame</h2>
+
+            <p>
+                Cần phân biệt giữa diagnostic message và CAN frame.
+            </p>
+
+            <ul>
+                <li>Diagnostic message mang ý nghĩa ở tầng diagnostic.</li>
+                <li>CanTp có thể chia message thành nhiều phần.</li>
+                <li>CAN frame là đơn vị truyền dữ liệu trên CAN.</li>
+            </ul>
+
+<pre><code>Diagnostic Message
+        |
+        v
+      CanTp
+        |
+        v
+Multiple CAN Frames
+        |
+        v
+      CAN Bus</code></pre>
+
+            <p>
+                Vì vậy không nên đánh đồng một diagnostic request với một CAN frame.
+            </p>
+
+            <h2>22. Luồng Request từ Tester đến ECU</h2>
+
+            <p>
+                Một diagnostic request đi vào ECU qua communication path trước khi đến DCM.
+            </p>
+
+<pre><code>Diagnostic Tester
+       |
+       v
+    CAN Bus
+       |
+       v
+CAN Controller
+       |
+       v
+  CAN Driver
+       |
+       v
+    CanIf
+       |
+       v
+    CanTp
+       |
+       v
+    PduR
+       |
+       v
+     DCM</code></pre>
+
+            <p>
+                Đây là một luồng rất quan trọng cần nhớ khi phân tích Diagnostic Stack.
+            </p>
+
+            <h2>23. Luồng Response từ ECU đến Tester</h2>
+
+            <p>
+                Chiều response gần như ngược lại.
+            </p>
+
+<pre><code>DCM
+ |
+ v
+PduR
+ |
+ v
+CanTp
+ |
+ v
+CanIf
+ |
+ v
+CAN Driver
+ |
+ v
+CAN Controller
+ |
+ v
+CAN Bus
+ |
+ v
+Diagnostic Tester</code></pre>
+
+            <p>
+                Nếu tester không nhận được response, việc hiểu luồng này giúp khoanh vùng
+                vấn đề theo từng tầng.
+            </p>
+
+            <h2>24. DCM và Application Software</h2>
+
+            <p>
+                DCM không nhất thiết tự tạo ra toàn bộ dữ liệu diagnostic.
+                Một số dữ liệu có thể đến từ Application Software.
+            </p>
+
+<pre><code>Tester
+  |
+  v
+ DCM
+  |
+  | Request application data
+  v
+Application
+  |
+  | Data
+  v
+ DCM
+  |
+  v
+Tester</code></pre>
+
+            <p>
+                Ví dụ, tester có thể yêu cầu một giá trị trạng thái mà Application đang
+                quản lý.
+            </p>
+
+            <h2>25. DEM và Application Software</h2>
+
+            <p>
+                Application có thể phát hiện một điều kiện bất thường trong quá trình
+                thực hiện chức năng.
+            </p>
+
+<pre><code>Application
+     |
+     | Detect fault
+     v
+Diagnostic Event
+     |
+     v
+    DEM
+     |
+     v
+DTC / Diagnostic Status</code></pre>
+
+            <p>
+                Điều này tạo ra mối liên hệ giữa Application Software và Diagnostic Stack
+                nhưng vẫn giữ được separation of concerns.
+            </p>
+
+            <h2>26. Ví dụ: cảm biến nhiệt độ bị lỗi</h2>
+
+            <p>
+                Giả sử Application đọc cảm biến nhiệt độ và phát hiện giá trị không hợp lệ.
+            </p>
+
+            <ol>
+                <li>Application nhận dữ liệu cảm biến.</li>
+                <li>Application kiểm tra tính hợp lệ.</li>
+                <li>Phát hiện điều kiện lỗi.</li>
+                <li>Diagnostic event được báo cho DEM.</li>
+                <li>DEM cập nhật trạng thái event.</li>
+                <li>DTC information có thể được quản lý.</li>
+                <li>Tester gửi request đọc DTC.</li>
+                <li>DCM xử lý request.</li>
+                <li>DCM lấy diagnostic information từ DEM.</li>
+                <li>ECU gửi response cho tester.</li>
+            </ol>
+
+            <h2>27. Luồng hoàn chỉnh của ví dụ</h2>
+
+<pre><code>Temperature Sensor
+        |
+        v
+   Application
+        |
+        | Invalid value
+        v
+Diagnostic Event
+        |
+        v
+       DEM
+        |
+        | DTC information
+        v
+       DCM
+        ^
+        |
+Diagnostic Request
+        |
+        ^
+      Tester
+
+Response:
+DCM -> PduR -> CanTp -> CanIf -> CAN Driver
+    -> CAN Bus -> Tester</code></pre>
+
+            <h2>28. DTC Status</h2>
+
+            <p>
+                DTC không chỉ đơn giản có hai trạng thái "có lỗi" và "không lỗi".
+                Diagnostic system cần theo dõi trạng thái của event theo thời gian.
+            </p>
+
+            <p>
+                Ví dụ về các khái niệm thường gặp:
+            </p>
+
+            <ul>
+                <li>Lỗi hiện đang xảy ra.</li>
+                <li>Lỗi đã từng xảy ra.</li>
+                <li>Lỗi đã được xác nhận.</li>
+                <li>Lỗi đang được theo dõi.</li>
+            </ul>
+
+            <p>
+                Cách biểu diễn và chuyển đổi trạng thái phụ thuộc vào diagnostic design
+                và cấu hình của hệ thống.
+            </p>
+
+            <h2>29. Fault không nhất thiết xuất hiện ngay thành DTC</h2>
+
+            <p>
+                Một điều kiện bất thường nhất thời chưa chắc phải lập tức trở thành một
+                lỗi được xác nhận.
+            </p>
+
+            <p>
+                Hệ thống có thể cần theo dõi điều kiện trong một khoảng thời gian hoặc
+                qua nhiều chu kỳ trước khi xác định trạng thái diagnostic.
+            </p>
+
+<pre><code>Abnormal condition
+       |
+       v
+Monitor
+       |
+       v
+Event status evaluation
+       |
+       +---- Temporary
+       |
+       +---- Confirmed
+       |
+       v
+Diagnostic information</code></pre>
+
+            <h2>30. Diagnostic Event và debounce</h2>
+
+            <p>
+                Trong hệ thống thực tế, tín hiệu lỗi có thể dao động giữa bình thường
+                và bất thường.
+            </p>
+
+            <p>
+                Nếu mỗi lần dao động đều được xem là một lỗi mới, diagnostic information
+                sẽ không ổn định.
+            </p>
+
+            <p>
+                Vì vậy diagnostic event thường có cơ chế đánh giá hoặc debounce để xác định
+                liệu lỗi có thực sự xảy ra hay chỉ là một hiện tượng nhất thời.
+            </p>
+
+            <h2>31. Diagnostic và Memory</h2>
+
+            <p>
+                Một số thông tin diagnostic cần tồn tại sau khi ECU reset hoặc tắt nguồn.
+            </p>
+
+            <p>
+                Vì vậy Diagnostic Stack có thể liên quan đến Memory Stack để lưu trữ
+                diagnostic information cần thiết.
+            </p>
+
+<pre><code>Diagnostic Event
+       |
+       v
+      DEM
+       |
+       v
+Diagnostic Data
+       |
+       v
+Memory Services
+       |
+       v
+Non-Volatile Memory</code></pre>
+
+            <p>
+                Điều này cho phép ECU giữ lại thông tin lỗi cần thiết giữa các lần
+                khởi động.
+            </p>
+
+            <h2>32. Diagnostic và ECU Restart</h2>
+
+            <p>
+                Nếu ECU reset, thông tin diagnostic không nhất thiết biến mất hoàn toàn.
+                Những dữ liệu cần giữ lại có thể được lưu vào vùng nhớ không mất dữ liệu.
+            </p>
+
+<pre><code>ECU Running
+    |
+    | Fault
+    v
+DEM
+    |
+    v
+Persistent Diagnostic Data
+    |
+    v
+ECU Shutdown
+    |
+    v
+ECU Restart
+    |
+    v
+Diagnostic Data Restored / Available</code></pre>
+
+            <h2>33. Diagnostic và ECU State</h2>
+
+            <p>
+                Diagnostic hoạt động trong mối quan hệ chặt chẽ với ECU State Management.
+                Không phải mọi diagnostic service đều phù hợp với mọi trạng thái ECU.
+            </p>
+
+<pre><code>ECU State
+   |
+   +---- Startup
+   |
+   +---- Run
+   |
+   +---- Sleep
+   |
+   +---- Shutdown
+           |
+           v
+Diagnostic behavior
+may change according to state</code></pre>
+
+            <p>
+                Ví dụ, trong startup, ECU cần hoàn thành initialization trước khi cung cấp
+                đầy đủ diagnostic functionality.
+            </p>
+
+            <h2>34. Diagnostic và Communication State</h2>
+
+            <p>
+                Diagnostic communication cũng phụ thuộc vào trạng thái của communication
+                stack.
+            </p>
+
+            <p>
+                Nếu CAN Controller chưa được khởi tạo hoặc communication chưa được phép,
+                tester có thể không thể giao tiếp với DCM.
+            </p>
+
+<pre><code>ECU Startup
+    |
+    v
+Communication Init
+    |
+    v
+CAN Ready
+    |
+    v
+Diagnostic Communication Available
+    |
+    v
+DCM Processing</code></pre>
+
+            <h2>35. Diagnostic Request bị từ chối</h2>
+
+            <p>
+                Không phải request nào nhận được cũng được ECU chấp nhận.
+            </p>
+
+            <p>
+                DCM có thể kiểm tra nhiều điều kiện trước khi xử lý request.
+            </p>
+
+<pre><code>Request
+   |
+   v
+Session valid?
+   |
+   +-- No --> Reject
+   |
+   v
+Security valid?
+   |
+   +-- No --> Reject
+   |
+   v
+Conditions valid?
+   |
+   +-- No --> Reject
+   |
+   v
+Process Service</code></pre>
+
+            <h2>36. Diagnostic Communication và timeout</h2>
+
+            <p>
+                Diagnostic communication có các yêu cầu về timing. Tester gửi request và
+                kỳ vọng ECU phản hồi trong khoảng thời gian phù hợp.
+            </p>
+
+            <p>
+                Nếu ECU xử lý quá lâu hoặc communication path gặp vấn đề, tester có thể
+                báo timeout.
+            </p>
+
+<pre><code>Tester
+  |
+  | Request
+  v
+ ECU
+  |
+  | Processing
+  |
+  |------------------|
+  |                  |
+  v                  v
+Response          Timeout
+</code></pre>
+            <p>
+                Khi debug timeout, không nên chỉ kiểm tra DCM. Cần kiểm tra toàn bộ
+                communication path.
+            </p>
+
+            <h2>37. Diagnostic Stack và Transport Protocol</h2>
+
+            <p>
+                Khi diagnostic message nhỏ, communication có thể tương đối đơn giản.
+                Nhưng khi message lớn, transport protocol trở thành một phần quan trọng.
+            </p>
+            <pre><code>Small message:
+Diagnostic
+   |
+   v
+Single / limited CAN transfer
+
+Large message:
+Diagnostic
+   |
+   v
+CanTp
+   |
+   +---- Frame 1
+   +---- Frame 2
+   +---- Frame 3
+   +---- ...
+</code></pre>
+        <h2>38. Ví dụ đọc DTC</h2>
+
+        <p>
+            Hãy xét một tình huống tester muốn đọc các DTC hiện có của ECU.
+        </p>
+
+        <ol>
+            <li>Tester gửi diagnostic request.</li>
+            <li>CAN Controller nhận frame.</li>
+            <li>CAN Driver xử lý việc truyền/nhận ở mức driver.</li>
+            <li>CanIf chuyển tiếp communication.</li>
+            <li>CanTp xử lý transport nếu cần.</li>
+            <li>PduR route PDU đến DCM.</li>
+            <li>DCM xác định diagnostic service.</li>
+            <li>DCM yêu cầu thông tin từ DEM.</li>
+            <li>DEM cung cấp DTC information.</li>
+            <li>DCM tạo response.</li>
+            <li>Response đi ngược qua communication stack.</li>
+            <li>Tester nhận kết quả.</li>
+        </ol>
+
+        <h2>39. Sơ đồ đọc DTC hoàn chỉnh</h2>
+        <pre><code>                  ECU
+                   |
+Tester             |
+  |                |
+  | Request        |
+  +--------------->|
+                   v
+              CAN Controller
+                   |
+                   v
+              CAN Driver
+                   |
+                   v
+                 CanIf
+                   |
+                   v
+                 CanTp
+                   |
+                   v
+                  PduR
+                   |
+                   v
+                  DCM
+                   |
+                   v
+                  DEM
+                   |
+                   | DTC data
+                   v
+                  DCM
+                   |
+                   v
+                  PduR
+                   |
+                   v
+                 CanTp
+                   |
+                   v
+                 CanIf
+                   |
+                   v
+              CAN Driver
+                   |
+                   v
+              CAN Controller
+                   |
+                   v
+                 Tester</code></pre>
+        <h2>40. Ví dụ xóa DTC</h2>
+
+        <p>
+            Một diagnostic tester cũng có thể yêu cầu ECU xóa diagnostic information
+            theo điều kiện được cho phép.
+        </p>
+
+        <p>
+            Về mặt kiến trúc, luồng có thể được hiểu như sau:
+        </p>
+<pre><code>Tester
+  |
+  v
+DCM
+  |
+  | Check session / security / condition
+  v
+DEM
+  |
+  | Clear diagnostic information
+  v
+Diagnostic Memory / Status</code></pre>
+        <p>
+            Việc xóa DTC không nên được hiểu là "xóa mọi lỗi trong ECU".
+            Cơ chế cụ thể phụ thuộc vào diagnostic design và điều kiện của hệ thống.
+        </p>
+
+        <h2>41. Diagnostic Routine</h2>
+
+        <p>
+            Một số diagnostic service có thể yêu cầu ECU thực hiện một routine thay vì
+            chỉ trả về một giá trị đã có sẵn.
+        </p>
+
+        <p>
+            Ví dụ về mặt ý tưởng:
+        </p>
+<pre><code>Tester
+  |
+  | Start diagnostic routine
+  v
+ DCM
+  |
+  v
+Routine / Application / BSW
+  |
+  | Execute
+  v
+Result
+  |
+  v
+ DCM
+  |
+  v
+Tester</code></pre>
+        <p>
+            Đây là ví dụ cho thấy Diagnostic Stack có thể kích hoạt một chức năng
+            nằm bên ngoài chính DCM.
+        </p>
+
+        <h2>42. Diagnostic và Application Logic</h2>
+
+        <p>
+            Một nguyên tắc quan trọng là không nên đặt toàn bộ diagnostic logic vào
+            Application.
+        </p>
+
+        <p>
+            Application nên tập trung vào chức năng của ECU, trong khi DCM và DEM
+            đảm nhiệm các trách nhiệm diagnostic tương ứng.
+        </p>
+<pre><code>Application
+    |
+    | Functional Logic
+    v
+Vehicle Function
+
+Diagnostic Stack
+    |
+    +---- Diagnostic Communication
+    |
+    +---- Diagnostic Event
+    |
+    +---- DTC Management</code></pre>
+        <h2>43. Separation of Concerns trong Diagnostic</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Chức năng</th>
+                    <th>Thành phần chính</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Nhận diagnostic request</td>
+                    <td>DCM</td>
+                </tr>
+                <tr>
+                    <td>Xử lý diagnostic service</td>
+                    <td>DCM</td>
+                </tr>
+                <tr>
+                    <td>Quản lý diagnostic event</td>
+                    <td>DEM</td>
+                </tr>
+                <tr>
+                    <td>Quản lý DTC information</td>
+                    <td>DEM</td>
+                </tr>
+                <tr>
+                    <td>Routing PDU</td>
+                    <td>PduR</td>
+                </tr>
+                <tr>
+                    <td>Transport nhiều frame</td>
+                    <td>CanTp</td>
+                </tr>
+                <tr>
+                    <td>CAN interface</td>
+                    <td>CanIf</td>
+                </tr>
+                <tr>
+                    <td>Giao tiếp CAN Controller</td>
+                    <td>CAN Driver</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>44. Diagnostic Stack và Communication Stack</h2>
+
+        <p>
+            Hai stack này có quan hệ rất gần nhau nhưng không nên xem là một.
+        </p>
+<pre><code>Diagnostic Stack
+-------------------------
+DCM
+DEM
+-------------------------
+        |
+        v
+Communication Stack
+-------------------------
+PduR
+CanTp
+CanIf
+CAN Driver
+-------------------------
+        |
+        v
+CAN Hardware</code></pre>
+        <p>
+            Diagnostic Stack hiểu "nội dung diagnostic", còn Communication Stack
+            giúp đưa dữ liệu đó đến đúng nơi.
+        </p>
+
+        <h2>45. Diagnostic Stack và Memory Stack</h2>
+
+        <p>
+            Diagnostic Stack cũng có thể liên hệ với Memory Stack khi cần lưu trữ
+            diagnostic information lâu dài.
+        </p>
+<pre><code>DEM
+ |
+ | Diagnostic information
+ v
+Memory Services
+ |
+ v
+Non-Volatile Storage</code></pre>
+        <p>
+            Đây là một ví dụ khác cho thấy các BSW stack không hoạt động hoàn toàn
+            độc lập mà có thể phụ thuộc lẫn nhau.
+        </p>
+
+        <h2>46. Diagnostic Stack và System Services</h2>
+
+        <p>
+            Diagnostic cũng liên quan đến các System Services như OS, ECU State
+            Management, Watchdog và Memory Services.
+        </p>
+<pre><code>              Diagnostic
+                   |
+       +-----------+-----------+
+       |           |           |
+       v           v           v
+      OS      ECU State     Memory
+       |           |           |
+       +-----------+-----------+
+                   |
+                BSW System</code></pre>
+        <p>
+            Ví dụ, diagnostic processing có thể được thực hiện theo scheduling của OS,
+            chỉ hoạt động đầy đủ khi ECU ở trạng thái phù hợp và có thể cần memory
+            để lưu diagnostic data.
+        </p>
+
+        <h2>47. Debugging: Tester không nhận được response</h2>
+
+        <p>
+            Đây là một tình huống thực tế rất quan trọng.
+        </p>
+
+        <p>
+            Không nên ngay lập tức kết luận rằng DCM bị lỗi.
+        </p>
+
+        <p>
+            Có thể kiểm tra theo hướng từ ngoài vào trong:
+        </p>
+
+        <ol>
+            <li>Tester có thực sự gửi request không?</li>
+            <li>CAN Bus có hoạt động không?</li>
+            <li>CAN Controller có nhận frame không?</li>
+            <li>CAN Driver có hoạt động không?</li>
+            <li>CanIf có nhận dữ liệu không?</li>
+            <li>CanTp có xử lý đúng không?</li>
+            <li>PduR có route đúng không?</li>
+            <li>DCM có nhận request không?</li>
+            <li>DCM có reject request do session/security không?</li>
+            <li>DCM có tạo response không?</li>
+        </ol>
+
+        <h2>48. Debugging: DCM không nhận request</h2>
+
+        <p>
+            Nếu DCM không nhận request, cần đi ngược communication path.
+        </p>
+<pre><code>Tester
+  |
+  X  No request?
+  |
+CAN Bus
+  |
+  X
+CAN Controller
+  |
+  X
+CAN Driver
+  |
+  X
+CanIf
+  |
+  X
+CanTp
+  |
+  X
+PduR
+  |
+  X
+DCM</code></pre>
+        <p>
+            Mỗi dấu X đại diện cho một điểm có thể cần kiểm tra.
+        </p>
+
+        <h2>49. Debugging: DCM nhận request nhưng không response</h2>
+
+        <p>
+            Nếu request đã tới DCM, phạm vi tìm lỗi được thu hẹp đáng kể.
+        </p>
+
+        <p>
+            Có thể kiểm tra:
+        </p>
+
+        <ul>
+            <li>Diagnostic session.</li>
+            <li>Security condition.</li>
+            <li>Service support.</li>
+            <li>Input parameter.</li>
+            <li>Application data availability.</li>
+            <li>DEM response.</li>
+            <li>Internal diagnostic state.</li>
+            <li>Response timing.</li>
+        </ul>
+
+        <h2>50. Debugging: đọc DTC nhưng không thấy lỗi</h2>
+
+        <p>
+            Nếu tester đọc DTC nhưng không thấy lỗi mà kỹ sư mong đợi, có thể phân tích
+            theo chuỗi:
+        </p>
+<pre><code>Fault condition
+      |
+      v
+Was fault detected?
+      |
+      v
+Was Diagnostic Event reported?
+      |
+      v
+Did DEM update event status?
+      |
+      v
+Was DTC information stored?
+      |
+      v
+Does DCM request the correct information?
+      |
+      v
+Does tester interpret response correctly?</code></pre>
+        <p>
+            Cách phân tích này giúp tránh việc chỉ kiểm tra một module duy nhất.
+        </p>
+
+        <h2>51. Diagnostic và lỗi Communication</h2>
+
+        <p>
+            Một diagnostic event có thể chính là lỗi communication.
+        </p>
+
+        <p>
+            Ví dụ ECU A cần nhận dữ liệu từ ECU B nhưng trong một khoảng thời gian
+            không nhận được message.
+        </p>
+<pre><code>ECU B
+  |
+  | CAN Message
+  X
+  |
+ECU A
+  |
+  | Timeout detected
+  v
+Diagnostic Event
+  |
+  v
+DEM
+  |
+  v
+DTC information</code></pre>
+        <p>
+            Như vậy Communication Stack và Diagnostic Stack có thể liên kết rất chặt
+            trong việc phát hiện lỗi communication.
+        </p>
+
+        <h2>52. Diagnostic và Watchdog</h2>
+
+        <p>
+            Watchdog và Diagnostic có mục đích khác nhau.
+        </p>
+
+        <ul>
+            <li>
+                <strong>Watchdog:</strong>
+                giúp phát hiện ECU hoặc software không hoạt động đúng theo yêu cầu timing.
+            </li>
+            <li>
+                <strong>Diagnostic:</strong>
+                cung cấp cơ chế theo dõi và báo cáo các lỗi theo diagnostic model.
+            </li>
+        </ul>
+
+        <p>
+            Một watchdog reset có thể dẫn đến nhu cầu phân tích diagnostic information,
+            nhưng watchdog không phải là DCM.
+        </p>
+
+        <h2>53. Diagnostic và Safe State</h2>
+
+        <p>
+            Một số lỗi có thể ảnh hưởng trực tiếp đến chức năng của ECU.
+            Khi đó Application hoặc BSW có thể cần chuyển hệ thống sang trạng thái
+            an toàn.
+        </p>
+<pre><code>Fault
+  |
+  v
+Diagnostic Event
+  |
+  +----> DEM / DTC
+  |
+  +----> Functional reaction
+              |
+              v
+           Safe State</code></pre>
+        <p>
+            Diagnostic ghi nhận và cung cấp thông tin về lỗi, còn phản ứng chức năng
+            thuộc về thiết kế của hệ thống.
+        </p>
+
+        <h2>54. Diagnostic Stack không phải chỉ là DCM</h2>
+
+        <p>
+            Một lỗi phổ biến khi mới học AUTOSAR là coi Diagnostic Stack đồng nghĩa
+            với DCM.
+        </p>
+
+        <p>
+            Thực tế:
+        </p>
+<pre><code>Diagnostic System
+ |
+ +---- DCM
+ |
+ +---- DEM
+ |
+ +---- PduR
+ |
+ +---- CanTp
+ |
+ +---- CanIf
+ |
+ +---- CAN Driver
+ |
+ +---- Memory / System Services
+ |
+ +---- Application / BSW diagnostic sources</code></pre>
+        <p>
+            DCM là thành phần rất quan trọng nhưng chỉ là một phần của toàn bộ
+            diagnostic architecture.
+        </p>
+
+        <h2>55. Một ví dụ hoàn chỉnh: lỗi motor cửa sổ</h2>
+
+        <p>
+            Giả sử ECU điều khiển cửa sổ phát hiện motor không phản hồi.
+        </p>
+
+        <ol>
+            <li>Application gửi command cho motor.</li>
+            <li>Motor không tạo ra phản hồi như mong đợi.</li>
+            <li>Application phát hiện timeout hoặc trạng thái bất thường.</li>
+            <li>Application báo diagnostic event.</li>
+            <li>DEM cập nhật event status.</li>
+            <li>DTC information được quản lý.</li>
+            <li>Tester kết nối với ECU.</li>
+            <li>Tester gửi request đọc DTC.</li>
+            <li>Request đi qua CAN communication stack.</li>
+            <li>DCM nhận request.</li>
+            <li>DCM yêu cầu thông tin từ DEM.</li>
+            <li>DCM tạo response.</li>
+            <li>Response đi qua communication stack.</li>
+            <li>Tester nhận diagnostic information.</li>
+        </ol>
+
+        <h2>56. Sơ đồ ví dụ cửa sổ</h2>
+<pre><code>                Application
+                     |
+                     | Motor command
+                     v
+                  Window
+                   Motor
+                     |
+                     | No response
+                     v
+              Diagnostic Event
+                     |
+                     v
+                    DEM
+                     |
+                     v
+               DTC Information
+                     ^
+                     |
+                    DCM
+                     ^
+                     |
+                 Diagnostic
+                  Request
+                     ^
+                     |
+                   PduR
+                     ^
+                     |
+                  CanTp
+                     ^
+                     |
+                  CanIf
+                     ^
+                     |
+                CAN Driver
+                     ^
+                     |
+                 CAN Bus
+                     ^
+                     |
+                  Tester</code></pre>
+        <h2>57. Cách phân tích Diagnostic Stack từ requirement</h2>
+
+        <p>
+            Khi nhận một diagnostic requirement, không nên bắt đầu bằng cách tìm
+            module ngay lập tức.
+        </p>
+
+        <p>
+            Có thể phân tích theo thứ tự:
+        </p>
+
+        <ol>
+            <li>Requirement yêu cầu diagnostic function gì?</li>
+            <li>Ai gửi request?</li>
+            <li>ECU nhận request bằng communication nào?</li>
+            <li>Module nào xử lý diagnostic service?</li>
+            <li>Dữ liệu lấy từ đâu?</li>
+            <li>Có liên quan đến DEM không?</li>
+            <li>Có cần lưu dữ liệu vào memory không?</li>
+            <li>Response quay lại bằng path nào?</li>
+            <li>Có timing hoặc state condition nào không?</li>
+        </ol>
+
+        <h2>58. Cách phân tích Diagnostic Stack từ một lỗi</h2>
+
+        <p>
+            Khi gặp một diagnostic problem, có thể bắt đầu từ symptom và truy ngược.
+        </p>
+<pre><code>Symptom
+   |
+   v
+Tester response?
+   |
+   v
+DCM?
+   |
+   v
+PduR / CanTp?
+   |
+   v
+CanIf / CAN Driver?
+   |
+   v
+CAN Bus?
+   |
+   v
+Application / DEM?
+   |
+   v
+Root Cause</code></pre>
+        <p>
+            Đây là cách tiếp cận hữu ích khi debug hệ thống embedded thực tế.
+        </p>
+
+        <h2>59. Checklist phân tích Diagnostic Stack</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Check</th>
+                    <th>Nội dung</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Diagnostic Source</td>
+                    <td>Điều kiện lỗi được phát hiện ở đâu?</td>
+                </tr>
+                <tr>
+                    <td>Event</td>
+                    <td>Diagnostic Event có được báo đúng không?</td>
+                </tr>
+                <tr>
+                    <td>DEM</td>
+                    <td>DEM có quản lý event đúng không?</td>
+                </tr>
+                <tr>
+                    <td>DTC</td>
+                    <td>DTC information có phù hợp không?</td>
+                </tr>
+                <tr>
+                    <td>DCM</td>
+                    <td>DCM có nhận và xử lý request không?</td>
+                </tr>
+                <tr>
+                    <td>Session</td>
+                    <td>Diagnostic session có phù hợp không?</td>
+                </tr>
+                <tr>
+                    <td>Security</td>
+                    <td>Request có đáp ứng security condition không?</td>
+                </tr>
+                <tr>
+                    <td>PduR</td>
+                    <td>PDU có được routing đúng không?</td>
+                </tr>
+                <tr>
+                    <td>CanTp</td>
+                    <td>Transport có xử lý đúng không?</td>
+                </tr>
+                <tr>
+                    <td>CAN</td>
+                    <td>CAN communication có hoạt động không?</td>
+                </tr>
+                <tr>
+                    <td>Memory</td>
+                    <td>Diagnostic data cần persistent storage có được lưu đúng không?</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>60. Các nhầm lẫn thường gặp</h2>
+
+        <h3>Nhầm lẫn 1: DCM và DEM giống nhau</h3>
+
+        <p>
+            Không giống nhau. DCM tập trung vào diagnostic communication và service,
+            trong khi DEM tập trung vào diagnostic event và DTC management.
+        </p>
+
+        <h3>Nhầm lẫn 2: DTC chính là lỗi</h3>
+
+        <p>
+            DTC là representation của thông tin diagnostic. Điều kiện lỗi thực tế
+            được phát hiện bởi monitoring logic hoặc một module phù hợp.
+        </p>
+
+        <h3>Nhầm lẫn 3: Diagnostic request luôn chỉ có một CAN frame</h3>
+
+        <p>
+            Không đúng. Diagnostic message có thể cần nhiều CAN frame và khi đó
+            transport protocol đóng vai trò quan trọng.
+        </p>
+
+        <h3>Nhầm lẫn 4: PduR hiểu diagnostic service</h3>
+
+        <p>
+            Không. PduR chủ yếu chịu trách nhiệm routing PDU.
+        </p>
+
+        <h3>Nhầm lẫn 5: CanTp hiểu DTC</h3>
+
+        <p>
+            Không. CanTp xử lý transport của message, không xử lý ý nghĩa của DTC.
+        </p>
+
+        <h3>Nhầm lẫn 6: Diagnostic chỉ dùng khi ECU bị lỗi</h3>
+
+        <p>
+            Không. Diagnostic cũng được sử dụng để đọc thông tin, kiểm tra trạng thái,
+            thực hiện routine và hỗ trợ service/programming activities.
+        </p>
+
+        <h2>61. Bức tranh tổng thể Diagnostic Stack</h2>
+<pre><code>                         Diagnostic Tester
+                                |
+                                | Request / Response
+                                v
+========================= Communication =========================
+                                |
+                              CAN
+                                |
+                           CAN Driver
+                                |
+                              CanIf
+                                |
+                              CanTp
+                                |
+                               PduR
+                                |
+========================== Diagnostic ===========================
+                                |
+                               DCM
+                                |
+                   +------------+------------+
+                   |                         |
+                  DEM                 Application / BSW
+                   |                         |
+             DTC / Event              Diagnostic Data
+                   |
+                   v
+=========================== Memory ==============================
+                                |
+                         Persistent Data
+=================================================================</code></pre>
+        <h2>62. Cách nhớ Diagnostic Stack</h2>
+
+        <p>
+            Có thể nhớ Diagnostic Stack theo hai hướng chính.
+        </p>
+
+        <p>
+            <strong>Hướng communication:</strong>
+        </p>
+<pre><code>Tester
+ -> CAN
+ -> CAN Driver
+ -> CanIf
+ -> CanTp
+ -> PduR
+ -> DCM</code></pre>
+        <p>
+            <strong>Hướng diagnostic information:</strong>
+        </p>
+<pre><code>Application / BSW
+ -> Diagnostic Event
+ -> DEM
+ -> DTC Information
+ -> DCM
+ -> Tester</code></pre>
+        <p>
+            Khi kết hợp hai hướng này, có thể hình dung được phần lớn architecture
+            cơ bản của Diagnostic Stack.
+        </p>
+
+        <h2>63. Những khái niệm cần nhớ</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Khái niệm</th>
+                    <th>Ý nghĩa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Diagnostic</td>
+                    <td>Cơ chế chẩn đoán và cung cấp thông tin trạng thái/lỗi của ECU.</td>
+                </tr>
+                <tr>
+                    <td>DCM</td>
+                    <td>Quản lý diagnostic communication và diagnostic services.</td>
+                </tr>
+                <tr>
+                    <td>DEM</td>
+                    <td>Quản lý diagnostic events và DTC information.</td>
+                </tr>
+                <tr>
+                    <td>Diagnostic Event</td>
+                    <td>Điều kiện lỗi hoặc trạng thái cần được theo dõi về mặt diagnostic.</td>
+                </tr>
+                <tr>
+                    <td>DTC</td>
+                    <td>Mã/thông tin biểu diễn lỗi cho mục đích chẩn đoán.</td>
+                </tr>
+                <tr>
+                    <td>Diagnostic Session</td>
+                    <td>Context xác định các diagnostic operation được phép.</td>
+                </tr>
+                <tr>
+                    <td>PduR</td>
+                    <td>Định tuyến PDU.</td>
+                </tr>
+                <tr>
+                    <td>CanTp</td>
+                    <td>Transport dữ liệu diagnostic trên nhiều CAN frame.</td>
+                </tr>
+                <tr>
+                    <td>CanIf</td>
+                    <td>Interface giữa upper communication layer và CAN Driver.</td>
+                </tr>
+                <tr>
+                    <td>Memory</td>
+                    <td>Có thể lưu persistent diagnostic information.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>64. Tóm tắt</h2>
+
+        <div class="note">
+            Diagnostic Stack là hệ thống chịu trách nhiệm xử lý communication và
+            information liên quan đến chẩn đoán ECU. Trong đó, <strong>DCM</strong>
+            tập trung vào diagnostic communication và service, còn <strong>DEM</strong>
+            quản lý diagnostic event và DTC information.
+            <br><br>
+            Khi diagnostic request đi vào ECU qua CAN, dữ liệu có thể đi theo chuỗi
+            <strong>CAN Driver → CanIf → CanTp → PduR → DCM</strong>. Khi DCM cần
+            thông tin về lỗi, nó có thể phối hợp với DEM. Chiều response đi ngược lại
+            qua communication stack để trở về tester.
+            <br><br>
+            Diagnostic Stack cũng có quan hệ với Application Software, Memory Stack,
+            ECU State Management và các System Services. Vì vậy khi debug diagnostic
+            issue, cần nhìn toàn bộ luồng thay vì chỉ kiểm tra DCM.
+            <br><br>
+            Những điểm quan trọng nhất cần nhớ:
+            <br><br>
+            <strong>DCM = Diagnostic Communication</strong><br>
+            <strong>DEM = Diagnostic Event / DTC Management</strong><br>
+            <strong>PduR = PDU Routing</strong><br>
+            <strong>CanTp = Transport</strong><br>
+            <strong>CanIf = CAN Interface</strong><br>
+            <strong>Diagnostic Stack ≠ chỉ DCM</strong>
+        </div>
+
+        <div class="pager">
+            <a href="lesson-18.html">← Bài trước</a>
+            <a href="lesson-20.html">Bài tiếp theo →</a>
+        </div>
+
+    </article>
+
+</div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

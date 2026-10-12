@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 19: Transmission và Reception | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html" class="active">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 19: Transmission và Reception</h1>
+
+                <p>
+                    Trong CAN Bus, hai hoạt động cơ bản nhất của communication là
+                    <strong>Transmission (Tx)</strong> và <strong>Reception (Rx)</strong>.
+                    Transmission là quá trình một ECU gửi dữ liệu lên CAN Bus, còn Reception
+                    là quá trình một ECU nhận và xử lý dữ liệu từ CAN Bus.
+                </p>
+
+                <p>
+                    Trong AUTOSAR, CAN Driver nằm ở tầng thấp và chịu trách nhiệm giao tiếp
+                    trực tiếp với CAN Controller/Hardware. Các tầng phía trên như
+                    <strong>CanIf, PduR, COM</strong> và Application sử dụng các API và
+                    notification để thực hiện việc truyền nhận dữ liệu.
+                </p>
+
+                <div class="note">
+                    <strong>Ý chính:</strong>
+                    Transmission đi theo hướng
+                    <strong>Upper Layer → CAN Driver → CAN Controller → CAN Bus</strong>,
+                    trong khi Reception đi theo hướng
+                    <strong>CAN Bus → CAN Controller → CAN Driver → Upper Layer</strong>.
+                </div>
+
+                <h2>1. Transmission và Reception là gì?</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Transmission (Tx)</td>
+                            <td>Quá trình ECU gửi một CAN frame lên CAN Bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Reception (Rx)</td>
+                            <td>Quá trình ECU nhận một CAN frame từ CAN Bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Tx Request</td>
+                            <td>Yêu cầu gửi dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Rx Indication</td>
+                            <td>Thông báo cho upper layer rằng dữ liệu đã được nhận.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể nhớ đơn giản:
+                </p>
+
+                <pre><code>Transmission:
+Application → CAN Bus
+
+Reception:
+CAN Bus → Application</code></pre>
+
+                <h2>2. Kiến trúc Transmission</h2>
+
+                <p>
+                    Một transmission path điển hình trong AUTOSAR có thể được hình dung như sau:
+                </p>
+
+                <pre><code>Application
+     |
+     v
+COM
+     |
+     v
+PduR
+     |
+     v
+CanIf
+     |
+     v
+CAN Driver
+     |
+     v
+CAN Controller
+     |
+     v
+CAN Bus</code></pre>
+
+                <p>
+                    Không phải mọi project đều có đúng toàn bộ các module theo sơ đồ trên.
+                    Các module thực tế phụ thuộc vào architecture và configuration của ECU.
+                </p>
+
+                <h2>3. Transmission Flow tổng thể</h2>
+
+                <p>
+                    Khi một ECU cần gửi dữ liệu, quá trình có thể được hiểu theo các bước:
+                </p>
+
+                <pre><code>1. Application tạo / cập nhật dữ liệu
+             |
+             v
+2. COM tạo PDU
+             |
+             v
+3. PduR định tuyến PDU
+             |
+             v
+4. CanIf nhận yêu cầu transmission
+             |
+             v
+5. CanIf gọi CAN Driver
+             |
+             v
+6. CAN Driver ghi dữ liệu vào CAN Controller
+             |
+             v
+7. CAN Controller gửi CAN frame
+             |
+             v
+8. CAN Bus truyền frame
+             |
+             v
+9. Tx confirmation</code></pre>
+
+                <p>
+                    Đây là flow khái niệm. Trong implementation thực tế, một số bước có thể
+                    khác nhau tùy configuration.
+                </p>
+
+                <h2>4. Can_Write() là gì?</h2>
+
+                <p>
+                    <code>Can_Write()</code> là một API quan trọng của AUTOSAR CAN Driver
+                    được sử dụng để yêu cầu CAN Driver truyền một CAN L-PDU thông qua
+                    một Hardware Transmit Object.
+                </p>
+
+                <p>
+                    Ở mức khái niệm:
+                </p>
+
+                <pre><code>CanIf
+  |
+  | Can_Write(Hth, PduInfo)
+  v
+CAN Driver
+  |
+  v
+HTH / Tx Hardware Object
+  |
+  v
+CAN Controller
+  |
+  v
+CAN Bus</code></pre>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    <code>Can_Write()</code> tạo yêu cầu transmission cho CAN Driver.
+                    Nó không có nghĩa là CPU đã ngay lập tức truyền toàn bộ frame lên bus.
+                    Việc truyền thực tế được CAN Controller/Hardware thực hiện.
+                </div>
+
+                <h2>5. HTH là gì?</h2>
+
+                <p>
+                    <strong>HTH (Hardware Transmit Handle)</strong> là handle dùng để xác định
+                    Hardware Transmit Object mà CAN Driver sử dụng cho việc transmission.
+                </p>
+
+                <pre><code>Can_Write()
+     |
+     | HTH
+     v
++-----------------------+
+| Hardware Tx Object    |
+|                       |
+| CAN ID / configuration|
+| Tx buffer / mailbox   |
++-----------------------+
+     |
+     v
+CAN Controller</code></pre>
+
+                <p>
+                    HTH thường được configuration từ trước trong CAN Driver.
+                    Khi upper layer yêu cầu transmission, CAN Driver dựa vào HTH để xác định
+                    nơi xử lý yêu cầu.
+                </p>
+
+                <h2>6. PduInfo và dữ liệu Transmission</h2>
+
+                <p>
+                    Bên cạnh HTH, transmission còn cần thông tin về PDU.
+                    Về mặt khái niệm, PDU chứa các thông tin như CAN ID, data length và payload.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông tin</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN ID</td>
+                            <td>Identifier của CAN message.</td>
+                        </tr>
+                        <tr>
+                            <td>Length</td>
+                            <td>Số byte dữ liệu cần truyền.</td>
+                        </tr>
+                        <tr>
+                            <td>Payload</td>
+                            <td>Dữ liệu thực tế cần gửi.</td>
+                        </tr>
+                        <tr>
+                            <td>PDU information</td>
+                            <td>Thông tin dùng để mô tả transmission request.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>7. Transmission qua Hardware Buffer</h2>
+
+                <p>
+                    CAN Controller thường có các vùng lưu trữ hoặc mailbox phục vụ transmission.
+                    CAN Driver sử dụng Hardware Transmit Object để tương tác với các tài nguyên này.
+                </p>
+
+                <pre><code>Application Data
+       |
+       v
+CanIf
+       |
+       v
+Can_Write()
+       |
+       v
++-------------------+
+| Tx Hardware Object|
++-------------------+
+       |
+       v
+CAN Controller
+       |
+       v
+CAN Bus</code></pre>
+
+                <p>
+                    Tùy MCU/CAN Controller, số lượng và cơ chế của mailbox/buffer có thể khác nhau.
+                    Vì vậy không nên giả định mọi CAN Controller đều có cùng cấu trúc hardware.
+                </p>
+
+                <h2>8. Transmission và Bus Arbitration</h2>
+
+                <p>
+                    Khi nhiều ECU cùng muốn transmission, CAN Bus sử dụng cơ chế
+                    <strong>arbitration</strong> để xác định message nào được truyền trước.
+                </p>
+
+                <pre><code>ECU A ----\
+           \
+ECU B -------> CAN Bus Arbitration ---> Message with higher priority
+           /
+ECU C ----/</code></pre>
+
+                <p>
+                    Trong CAN, identifier có mức ưu tiên cao hơn khi giá trị identifier
+                    thấp hơn trong quá trình arbitration.
+                </p>
+
+                <p>
+                    CAN Driver chịu trách nhiệm đưa transmission request đến CAN Controller,
+                    còn cơ chế arbitration được thực hiện bởi CAN protocol/controller hardware.
+                </p>
+
+                <h2>9. Transmission Confirmation</h2>
+
+                <p>
+                    Sau khi CAN Controller xử lý transmission thành công, CAN Driver có thể
+                    thông báo kết quả lên tầng phía trên thông qua cơ chế notification/Tx confirmation
+                    theo architecture của AUTOSAR.
+                </p>
+
+                <pre><code>Can_Write()
+     |
+     v
+Tx Request
+     |
+     v
+CAN Controller
+     |
+     v
+CAN Bus
+     |
+     v
+Transmission completed
+     |
+     v
+CAN Driver
+     |
+     v
+Tx Confirmation
+     |
+     v
+CanIf / Upper Layer</code></pre>
+
+                <div class="note">
+                    <strong>Phân biệt:</strong>
+                    <code>Can_Write()</code> là yêu cầu transmission,
+                    còn <strong>Tx Confirmation</strong> là thông báo rằng transmission
+                    đã được controller/hardware xử lý theo cơ chế của hệ thống.
+                </div>
+
+                <h2>10. Reception Flow tổng thể</h2>
+
+                <p>
+                    Reception có hướng ngược lại với transmission:
+                </p>
+
+                <pre><code>CAN Bus
+   |
+   v
+CAN Controller
+   |
+   v
+Rx Hardware Object
+   |
+   v
+CAN Driver
+   |
+   v
+CanIf
+   |
+   v
+PduR / COM
+   |
+   v
+Application</code></pre>
+
+                <p>
+                    Khi một CAN frame xuất hiện trên bus và phù hợp với filter/configuration,
+                    CAN Controller có thể nhận frame và lưu dữ liệu vào Rx hardware resource.
+                </p>
+
+                <h2>11. HRH là gì?</h2>
+
+                <p>
+                    <strong>HRH (Hardware Receive Handle)</strong> là handle đại diện cho
+                    Hardware Receive Object mà CAN Driver sử dụng để xử lý dữ liệu nhận được.
+                </p>
+
+                <pre><code>CAN Bus
+   |
+   v
+CAN Controller
+   |
+   v
++-----------------------+
+| Hardware Rx Object    |
+|                       |
+| Filter / CAN ID       |
+| Receive configuration |
++-----------------------+
+   |
+   | HRH
+   v
+CAN Driver
+   |
+   v
+CanIf</code></pre>
+
+                <p>
+                    HRH giúp CAN Driver xác định nguồn hoặc cấu hình Hardware Receive Object
+                    liên quan đến dữ liệu nhận được.
+                </p>
+
+                <h2>12. Reception và CAN ID Filtering</h2>
+
+                <p>
+                    CAN Controller có thể sử dụng hardware filtering để xác định frame nào
+                    phù hợp với cấu hình reception.
+                </p>
+
+                <pre><code>CAN Frame
+    |
+    v
+CAN Controller
+    |
+    | Check Filter
+    |
+    +---- Not Match ----> Ignore / not delivered
+    |
+    +---- Match --------> Rx Hardware Object
+                              |
+                              v
+                          CAN Driver
+                              |
+                              v
+                            CanIf</code></pre>
+
+                <p>
+                    Cơ chế filter cụ thể phụ thuộc vào CAN Controller và configuration.
+                    Không nên giả định toàn bộ filtering đều được thực hiện hoàn toàn trong
+                    CAN Driver.
+                </p>
+
+                <h2>13. Reception Notification</h2>
+
+                <p>
+                    Sau khi CAN Controller nhận được frame, CAN Driver cần đưa thông tin
+                    reception lên tầng trên.
+                </p>
+
+                <pre><code>CAN Controller
+       |
+       | Rx event
+       v
+CAN Driver
+       |
+       | Rx indication / notification
+       v
+CanIf
+       |
+       v
+Upper Layer</code></pre>
+
+                <p>
+                    Reception có thể được xử lý theo cơ chế interrupt hoặc polling tùy
+                    configuration của CAN Driver.
+                </p>
+
+                <h2>14. Interrupt-based Reception</h2>
+
+                <p>
+                    Với interrupt-based reception, CAN Controller tạo interrupt khi có
+                    một sự kiện reception phù hợp.
+                </p>
+
+                <pre><code>CAN Frame arrives
+       |
+       v
+CAN Controller
+       |
+       | Rx Interrupt
+       v
+Interrupt Handler
+       |
+       v
+CAN Driver
+       |
+       v
+CanIf / Upper Layer</code></pre>
+
+                <p>
+                    Ưu điểm của cách này là CPU có thể phản ứng nhanh với sự kiện mà không cần
+                    liên tục kiểm tra hardware.
+                </p>
+
+                <h2>15. Polling-based Reception</h2>
+
+                <p>
+                    Trong polling, phần mềm định kỳ kiểm tra trạng thái của CAN Controller
+                    để xác định có dữ liệu hoặc event mới hay không.
+                </p>
+
+                <pre><code>Periodic Function
+       |
+       v
+Check CAN Controller
+       |
+       +---- No Rx Event ----> Return
+       |
+       +---- Rx Event -------> Read Data
+                                  |
+                                  v
+                               CanIf</code></pre>
+
+                <p>
+                    Việc sử dụng interrupt hay polling phụ thuộc vào configuration và
+                    yêu cầu của project.
+                </p>
+
+                <h2>16. Transmission và Reception trong CAN Driver</h2>
+
+                <p>
+                    Có thể đặt Tx và Rx cạnh nhau để dễ so sánh:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Transmission</th>
+                            <th>Reception</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Upper Layer → Driver</td>
+                            <td>CAN Bus → Driver</td>
+                        </tr>
+                        <tr>
+                            <td>Sử dụng HTH</td>
+                            <td>Sử dụng HRH</td>
+                        </tr>
+                        <tr>
+                            <td>API quan trọng: Can_Write()</td>
+                            <td>Rx processing / notification</td>
+                        </tr>
+                        <tr>
+                            <td>Gửi frame lên bus</td>
+                            <td>Nhận frame từ bus</td>
+                        </tr>
+                        <tr>
+                            <td>Có Tx Confirmation</td>
+                            <td>Có Rx Indication</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>17. Tx và Rx Architecture</h2>
+
+                <svg viewBox="0 0 760 390" role="img" aria-label="CAN Transmission and Reception Architecture"
+                    style="width:100%;height:auto;max-width:760px">
+                    <defs>
+                        <marker id="arrow3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L9,3 z" fill="currentColor"></path>
+                        </marker>
+                    </defs>
+
+                    <rect x="300" y="20" width="160" height="50" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="50" text-anchor="middle">Application</text>
+
+                    <rect x="300" y="100" width="160" height="50" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="130" text-anchor="middle">CanIf / Upper Layer</text>
+
+                    <rect x="300" y="180" width="160" height="50" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="210" text-anchor="middle">CAN Driver</text>
+
+                    <rect x="300" y="260" width="160" height="50" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="290" text-anchor="middle">CAN Controller</text>
+
+                    <rect x="300" y="340" width="160" height="35" rx="8" stroke="currentColor" fill="none" />
+                    <text x="380" y="363" text-anchor="middle">CAN Bus</text>
+
+                    <line x1="380" y1="70" x2="380" y2="100" stroke="currentColor" marker-end="url(#arrow3)" />
+                    <line x1="380" y1="150" x2="380" y2="180" stroke="currentColor" marker-end="url(#arrow3)" />
+                    <line x1="380" y1="230" x2="380" y2="260" stroke="currentColor" marker-end="url(#arrow3)" />
+                    <line x1="380" y1="310" x2="380" y2="340" stroke="currentColor" marker-end="url(#arrow3)" />
+
+                    <text x="475" y="88">TX ↓</text>
+                    <text x="250" y="328">RX ↑</text>
+                </svg>
+
+                <p>
+                    Transmission đi từ trên xuống dưới, còn Reception đi từ dưới lên trên.
+                    Đây là cách trực quan nhất để nhớ hướng của hai luồng dữ liệu.
+                </p>
+
+                <h2>18. Tx và Rx cùng tồn tại</h2>
+
+                <p>
+                    Một ECU không chỉ truyền hoặc chỉ nhận. Trong hệ thống automotive,
+                    một ECU thường vừa gửi các message của mình vừa nhận các message từ ECU khác.
+                </p>
+
+                <pre><code>                 CAN Bus
+              ↙          ↘
+             ↙            ↘
+        Reception       Transmission
+            ↓                ↑
+       CAN Driver       CAN Driver
+            ↓                ↑
+          ECU              ECU</code></pre>
+
+                <p>
+                    Ví dụ một ECU có thể truyền tốc độ xe lên bus và đồng thời nhận
+                    thông tin nhiệt độ từ một ECU khác.
+                </p>
+
+                <h2>19. Tx Buffer và Rx Buffer</h2>
+
+                <p>
+                    Hardware CAN Controller thường có tài nguyên lưu trữ dành cho Tx và Rx.
+                    Cách tổ chức cụ thể phụ thuộc vào MCU.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resource</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tx Mailbox / Buffer</td>
+                            <td>Lưu transmission request trước khi controller gửi.</td>
+                        </tr>
+                        <tr>
+                            <td>Rx Mailbox / Buffer</td>
+                            <td>Lưu frame nhận được trước khi software xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>HTH</td>
+                            <td>Đại diện cho Hardware Transmit Object.</td>
+                        </tr>
+                        <tr>
+                            <td>HRH</td>
+                            <td>Đại diện cho Hardware Receive Object.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>20. Tx Queue và Rx Queue</h2>
+
+                <p>
+                    Ở một số implementation, software hoặc hardware có thể có cơ chế
+                    queue/buffer để quản lý nhiều message.
+                </p>
+
+                <pre><code>Tx Requests
+     |
+     v
++-------------+
+| Tx Queue    |
++-------------+
+     |
+     v
+CAN Controller
+     |
+     v
+CAN Bus</code></pre>
+
+                <p>
+                    Đối với reception:
+                </p>
+
+                <pre><code>CAN Bus
+   |
+   v
+CAN Controller
+   |
+   v
++-------------+
+| Rx Buffer   |
++-------------+
+   |
+   v
+CAN Driver
+   |
+   v
+Upper Layer</code></pre>
+
+                <p>
+                    Không nên mặc định rằng mọi CAN Driver đều triển khai queue software theo
+                    cùng một cách. Đây là chi tiết phụ thuộc implementation.
+                </p>
+
+                <h2>21. Transmission Error</h2>
+
+                <p>
+                    Transmission có thể không hoàn thành như mong đợi do nhiều nguyên nhân:
+                </p>
+
+                <ul>
+                    <li>CAN Controller chưa ở trạng thái phù hợp.</li>
+                    <li>Configuration của HTH không đúng.</li>
+                    <li>CAN Bus có lỗi.</li>
+                    <li>Arbitration bị mất và phải chờ transmission lại.</li>
+                    <li>CAN Controller phát hiện protocol error.</li>
+                    <li>Controller đi vào trạng thái error handling.</li>
+                    <li>Configuration timing/bitrate không phù hợp.</li>
+                </ul>
+
+                <p>
+                    Khi debug, cần phân biệt giữa việc <strong>Can_Write() chấp nhận request</strong>
+                    và việc <strong>CAN frame thực sự được truyền thành công trên bus</strong>.
+                </p>
+
+                <h2>22. Reception Error</h2>
+
+                <p>
+                    Reception cũng có thể gặp vấn đề:
+                </p>
+
+                <ul>
+                    <li>CAN Controller không nhận được frame.</li>
+                    <li>Filter không match CAN ID.</li>
+                    <li>HRH configuration sai.</li>
+                    <li>Interrupt không được cấu hình đúng.</li>
+                    <li>Polling function không được gọi đúng chu kỳ.</li>
+                    <li>CAN Driver không xử lý Rx event đúng.</li>
+                    <li>CanIf hoặc upper layer không nhận được indication.</li>
+                </ul>
+
+                <h2>23. Debug Transmission</h2>
+
+                <p>
+                    Khi một message không được truyền, có thể kiểm tra theo flow:
+                </p>
+
+                <pre><code>Application generated data?
+        |
+        v
+PDU created correctly?
+        |
+        v
+CanIf received Tx request?
+        |
+        v
+Can_Write() called?
+        |
+        v
+HTH correct?
+        |
+        v
+Controller STARTED?
+        |
+        v
+Tx mailbox/buffer available?
+        |
+        v
+CAN Controller transmitted?
+        |
+        v
+CAN Bus contains frame?
+        |
+        v
+Tx Confirmation?</code></pre>
+
+                <div class="note">
+                    Đây là một checklist debug rất hữu ích khi làm automotive embedded,
+                    vì nó giúp chia nhỏ vấn đề từ Application xuống Hardware.
+                </div>
+
+                <h2>24. Debug Reception</h2>
+
+                <p>
+                    Với reception, có thể kiểm tra theo hướng ngược lại:
+                </p>
+
+                <pre><code>CAN Bus contains frame?
+        |
+        v
+Controller received frame?
+        |
+        v
+Filter matched?
+        |
+        v
+HRH correct?
+        |
+        v
+Rx Interrupt / Polling working?
+        |
+        v
+CAN Driver processed Rx?
+        |
+        v
+CanIf received Rx indication?
+        |
+        v
+Upper Layer received PDU?
+        |
+        v
+Application received data?</code></pre>
+
+                <h2>25. Ví dụ Transmission</h2>
+
+                <p>
+                    Giả sử ECU cần gửi tốc độ xe với CAN ID <code>0x100</code>.
+                </p>
+
+                <pre><code>Vehicle Speed = 60 km/h
+
+Application
+    |
+    | Data = 60
+    v
+COM / PDU
+    |
+    | CAN ID = 0x100
+    v
+CanIf
+    |
+    v
+Can_Write()
+    |
+    | HTH + PDU
+    v
+CAN Driver
+    |
+    v
+CAN Controller
+    |
+    v
+CAN Bus
+
+CAN Frame:
+ID      = 0x100
+Payload = Vehicle Speed</code></pre>
+
+                <p>
+                    Sau khi transmission được xử lý thành công, Tx confirmation có thể được
+                    đưa ngược lên tầng phía trên theo configuration.
+                </p>
+
+                <h2>26. Ví dụ Reception</h2>
+
+                <p>
+                    Giả sử ECU nhận nhiệt độ từ một ECU khác với CAN ID <code>0x200</code>.
+                </p>
+
+                <pre><code>CAN Bus
+   |
+   | CAN ID = 0x200
+   | Payload = Temperature
+   v
+CAN Controller
+   |
+   | Filter Match
+   v
+Rx Hardware Object
+   |
+   | HRH
+   v
+CAN Driver
+   |
+   v
+CanIf
+   |
+   v
+COM / Application
+   |
+   v
+Temperature Data</code></pre>
+
+                <h2>27. Transmission vs Reception</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Transmission</th>
+                            <th>Reception</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hướng</td>
+                            <td>ECU → Bus</td>
+                            <td>Bus → ECU</td>
+                        </tr>
+                        <tr>
+                            <td>Hardware Object</td>
+                            <td>HTH</td>
+                            <td>HRH</td>
+                        </tr>
+                        <tr>
+                            <td>API/Mechanism</td>
+                            <td><code>Can_Write()</code></td>
+                            <td>Rx processing / notification</td>
+                        </tr>
+                        <tr>
+                            <td>Kết quả</td>
+                            <td>Tx Confirmation</td>
+                            <td>Rx Indication</td>
+                        </tr>
+                        <tr>
+                            <td>Điểm cần debug</td>
+                            <td>HTH, controller, buffer, bus</td>
+                            <td>Filter, HRH, interrupt/polling, upper layer</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>28. Góc nhìn phỏng vấn</h2>
+
+                <div class="note">
+                    <strong>Câu hỏi:</strong> Can you explain the CAN transmission flow in AUTOSAR?
+                </div>
+
+                <p>
+                    Một câu trả lời phù hợp cho Fresher:
+                </p>
+
+                <blockquote>
+                    The transmission starts from the upper layer, where the application data is
+                    prepared and routed through the communication stack. CanIf then requests the
+                    CAN Driver to transmit the PDU, typically using Can_Write() with a configured
+                    HTH. The CAN Driver passes the request to the CAN Controller, which transmits
+                    the CAN frame onto the bus. After the transmission is handled successfully,
+                    a Tx confirmation can be provided to the upper layer.
+                </blockquote>
+
+                <div class="note">
+                    <strong>Câu hỏi:</strong> What is the difference between HTH and HRH?
+                </div>
+
+                <blockquote>
+                    HTH stands for Hardware Transmit Handle and is used for transmission,
+                    while HRH stands for Hardware Receive Handle and is used for reception.
+                    They identify the configured hardware objects used by the CAN Driver
+                    to handle transmit and receive operations.
+                </blockquote>
+
+                <div class="note">
+                    <strong>Câu hỏi:</strong> How would you debug a CAN message that is not received?
+                </div>
+
+                <pre><code>Check CAN Bus
+      ↓
+Check CAN Controller Rx
+      ↓
+Check CAN ID / Filter
+      ↓
+Check HRH
+      ↓
+Check Interrupt / Polling
+      ↓
+Check CAN Driver
+      ↓
+Check CanIf Rx Indication
+      ↓
+Check Upper Layer / Application</code></pre>
+
+                <h2>29. Memory Map</h2>
+
+                <pre><code>TRANSMISSION
+    |
+    +-- Application
+    |
+    +-- COM / PduR
+    |
+    +-- CanIf
+    |
+    +-- Can_Write()
+    |
+    +-- HTH
+    |
+    +-- CAN Controller
+    |
+    +-- CAN Bus
+    |
+    +-- Tx Confirmation
+
+
+RECEPTION
+    |
+    +-- CAN Bus
+    |
+    +-- CAN Controller
+    |
+    +-- Filter
+    |
+    +-- HRH
+    |
+    +-- CAN Driver
+    |
+    +-- CanIf
+    |
+    +-- Upper Layer
+    |
+    +-- Rx Indication</code></pre>
+
+                <h2>30. Tóm tắt</h2>
+
+                <p>
+                    Transmission và Reception là hai luồng communication cốt lõi của CAN.
+                    Trong AUTOSAR, CAN Driver nằm giữa CAN Controller và các tầng communication
+                    phía trên, cung cấp cơ chế để gửi và nhận CAN frame.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Điều cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Transmission</td>
+                            <td>Gửi CAN frame từ ECU lên CAN Bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Reception</td>
+                            <td>Nhận CAN frame từ CAN Bus vào ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Can_Write()</td>
+                            <td>Yêu cầu CAN Driver thực hiện transmission.</td>
+                        </tr>
+                        <tr>
+                            <td>HTH</td>
+                            <td>Handle của Hardware Transmit Object.</td>
+                        </tr>
+                        <tr>
+                            <td>HRH</td>
+                            <td>Handle của Hardware Receive Object.</td>
+                        </tr>
+                        <tr>
+                            <td>Tx Confirmation</td>
+                            <td>Thông báo kết quả xử lý transmission lên tầng trên.</td>
+                        </tr>
+                        <tr>
+                            <td>Rx Indication</td>
+                            <td>Thông báo dữ liệu đã được nhận lên tầng trên.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    Khi debug CAN communication, hãy đi theo đúng hướng của data flow.
+                    Với Tx, đi từ <strong>Application → Driver → Controller → Bus</strong>.
+                    Với Rx, đi từ <strong>Bus → Controller → Driver → Application</strong>.
+                    Sau đó kiểm tra HTH/HRH, filter, interrupt/polling và confirmation/indication.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-18.html">← Bài trước</a>
+                    <a class="btn" href="lesson-20.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

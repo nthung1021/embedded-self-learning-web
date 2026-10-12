@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 11: Tổng quan về quan hệ giữa các tầng | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html" class="active" aria-current="page">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+            <a href="index.html">
+                ← Tất cả bài học AUTOSAR
+            </a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 11: Tổng quan về quan hệ giữa các tầng</h1>
+
+            <p>
+                Trong các bài trước, chúng ta đã tìm hiểu từng thành phần
+                chính của kiến trúc AUTOSAR Classic như Application Software,
+                RTE, Basic Software, Hardware, Communication Stack và
+                Service.
+            </p>
+
+            <p>
+                Tuy nhiên, để thực sự hiểu kiến trúc AUTOSAR, không chỉ cần
+                biết từng tầng làm gì mà còn phải hiểu
+                <strong>các tầng liên hệ và phối hợp với nhau như thế nào</strong>.
+            </p>
+
+            <p>
+                Bài này sẽ kết nối những kiến thức đã học thành một bức tranh
+                tổng thể về cách một ECU AUTOSAR hoạt động.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Nội dung chỉ tập trung vào mối quan hệ giữa các tầng và trách
+                nhiệm tổng quan của từng tầng. Các API, configuration,
+                ARXML và cách triển khai chi tiết sẽ được tìm hiểu ở các bài
+                chuyên sâu sau.
+            </div>
+
+
+            <h2>1. Nhìn lại kiến trúc AUTOSAR</h2>
+
+            <p>
+                Ở mức tổng quan, kiến trúc AUTOSAR Classic có thể được nhìn
+                từ trên xuống dưới như sau:
+            </p>
+
+            <pre><code>+--------------------------------------+
+|       Application Software          |
+|              SWC                     |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+|                RTE                   |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+|          Basic Software              |
+|                                      |
+|  Services / Communication /          |
+|  ECU Abstraction / MCAL / ...        |
++--------------------------------------+
+                  |
+                  v
++--------------------------------------+
+|              Hardware                |
++--------------------------------------+</code></pre>
+
+            <p>
+                Mỗi tầng có trách nhiệm riêng nhưng không hoạt động độc lập.
+                Chúng phối hợp với nhau để tạo thành một ECU hoàn chỉnh.
+            </p>
+
+
+            <h2>2. Quan hệ giữa Application và RTE</h2>
+
+            <p>
+                <strong>Application Software</strong> tập trung vào logic
+                chức năng của ECU.
+            </p>
+
+            <p>
+                <strong>RTE</strong> đóng vai trò môi trường giao tiếp giữa
+                Application Software và các thành phần khác của AUTOSAR.
+            </p>
+
+            <pre><code>+---------------------------+
+|    Application SWC        |
+|                           |
+|  Function Logic           |
++-------------+-------------+
+              |
+              | Communication
+              v
++---------------------------+
+|            RTE            |
++---------------------------+
+              |
+              v
+       Other SWC / BSW</code></pre>
+
+            <p>
+                Nhờ RTE, Application Software không cần trực tiếp biết toàn
+                bộ cách các thành phần bên dưới được triển khai.
+            </p>
+
+            <p>
+                Ví dụ, một SWC có thể cần dữ liệu từ một SWC khác. RTE cung
+                cấp cơ chế để hai thành phần giao tiếp với nhau theo kiến
+                trúc AUTOSAR.
+            </p>
+
+
+            <h2>3. Quan hệ giữa RTE và Basic Software</h2>
+
+            <p>
+                RTE nằm giữa Application Software và Basic Software.
+            </p>
+
+            <pre><code>Application SWC
+       |
+       v
+      RTE
+       |
+       v
+Basic Software
+       |
+       v
+   Hardware</code></pre>
+
+            <p>
+                Application sử dụng các cơ chế do RTE cung cấp, trong khi RTE
+                liên kết Application với các dịch vụ hoặc chức năng bên dưới.
+            </p>
+
+            <p>
+                Vì vậy, RTE có thể được xem là một lớp trung gian rất quan
+                trọng trong kiến trúc AUTOSAR Classic.
+            </p>
+
+
+            <h2>4. Quan hệ giữa các thành phần trong BSW</h2>
+
+            <p>
+                Basic Software không phải là một module duy nhất mà bao gồm
+                nhiều nhóm chức năng khác nhau.
+            </p>
+
+            <pre><code>                  Basic Software
+                         |
+       +-----------------+-----------------+
+       |                 |                 |
+       v                 v                 v
+   Services       ECU Abstraction       MCAL
+       |                 |                 |
+       |                 |                 v
+       |                 |             Hardware
+       |                 |
+       +--------+--------+
+                |
+                v
+       Communication / Other
+        BSW functionality</code></pre>
+
+            <p>
+                Các nhóm này có quan hệ với nhau để cung cấp một môi trường
+                phần mềm hoàn chỉnh cho ECU.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Services</strong> cung cấp các chức năng dùng chung.
+                </li>
+
+                <li>
+                    <strong>ECU Abstraction</strong> che giấu thêm các chi tiết
+                    liên quan đến phần cứng ECU.
+                </li>
+
+                <li>
+                    <strong>MCAL</strong> cung cấp lớp truy cập gần với
+                    microcontroller.
+                </li>
+            </ul>
+
+
+            <h2>5. Quan hệ giữa MCAL và Hardware</h2>
+
+            <p>
+                MCAL nằm gần Hardware nhất trong kiến trúc AUTOSAR Classic.
+            </p>
+
+            <pre><code>+---------------------------+
+|     Higher BSW Layers     |
++-------------+-------------+
+              |
+              v
++---------------------------+
+|           MCAL            |
++-------------+-------------+
+              |
+              v
++---------------------------+
+|       Microcontroller     |
+|          Hardware         |
++---------------------------+</code></pre>
+
+            <p>
+                MCAL cung cấp cách thức để phần mềm phía trên tương tác với
+                các peripheral của microcontroller mà không cần trực tiếp
+                xử lý toàn bộ chi tiết phần cứng.
+            </p>
+
+            <p>
+                Đây là một trong những điểm quan trọng của Hardware
+                Abstraction trong AUTOSAR.
+            </p>
+
+
+            <h2>6. Quan hệ giữa ECU Abstraction và MCAL</h2>
+
+            <p>
+                ECU Abstraction nằm phía trên MCAL và giúp cung cấp một mức
+                trừu tượng cao hơn đối với phần cứng ECU.
+            </p>
+
+            <pre><code>Application
+     |
+    RTE
+     |
+     v
+ECU Abstraction
+     |
+     v
+   MCAL
+     |
+     v
+Hardware</code></pre>
+
+            <p>
+                Có thể hiểu đơn giản:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>MCAL:</strong>
+                    làm việc gần với microcontroller.
+                </li>
+
+                <li>
+                    <strong>ECU Abstraction:</strong>
+                    cung cấp cách truy cập phần cứng ở mức trừu tượng cao hơn.
+                </li>
+
+                <li>
+                    <strong>Application:</strong>
+                    không cần trực tiếp biết các chi tiết này.
+                </li>
+            </ul>
+
+
+            <h2>7. Quan hệ giữa Application và Hardware</h2>
+
+            <p>
+                Một trong những mục tiêu quan trọng của kiến trúc AUTOSAR là
+                Application Software không phải phụ thuộc trực tiếp vào
+                Hardware.
+            </p>
+
+            <pre><code>Application
+     |
+     v
+    RTE
+     |
+     v
+    BSW
+     |
+     +---- Services
+     |
+     +---- ECU Abstraction
+     |
+     +---- MCAL
+     |
+     v
+Hardware</code></pre>
+
+            <p>
+                Nhờ các lớp trung gian, cùng một chức năng Application có thể
+                được triển khai trên những ECU hoặc hardware platform khác
+                nhau với mức độ thay đổi phù hợp.
+            </p>
+
+            <p>
+                Đây chính là một trong những lợi ích lớn của việc phân tầng.
+            </p>
+
+
+            <h2>8. Quan hệ trong Communication Stack</h2>
+
+            <p>
+                Communication Stack là một ví dụ cụ thể cho mối quan hệ giữa
+                các tầng trong AUTOSAR.
+            </p>
+
+            <pre><code>Application
+     |
+     v
+    RTE
+     |
+     v
+    COM
+     |
+     v
+   PduR
+     |
+     v
+Communication Interface
+     |
+     v
+Communication Driver
+     |
+     v
+Communication Hardware
+     |
+     v
+Network</code></pre>
+
+            <p>
+                Khi ECU truyền dữ liệu, dữ liệu đi từ tầng cao xuống các tầng
+                thấp hơn.
+            </p>
+
+            <p>
+                Khi ECU nhận dữ liệu, dữ liệu đi theo chiều ngược lại.
+            </p>
+
+            <pre><code>TX:
+
+Application
+     ↓
+    RTE
+     ↓
+Communication Stack
+     ↓
+Hardware
+     ↓
+Network
+
+
+RX:
+
+Network
+     ↓
+Hardware
+     ↓
+Communication Stack
+     ↓
+    RTE
+     ↓
+Application</code></pre>
+
+            <p>
+                Đây là ví dụ rõ ràng về việc nhiều tầng phối hợp để hoàn thành
+                một chức năng duy nhất.
+            </p>
+
+
+            <h2>9. Quan hệ giữa Service và các tầng khác</h2>
+
+            <p>
+                Service cung cấp nhiều chức năng dùng chung cho hệ thống và
+                có thể hỗ trợ cả Application lẫn các thành phần BSW khác.
+            </p>
+
+            <pre><code>                Application
+                     |
+                     v
+                    RTE
+                     |
+          +----------+----------+
+          |                     |
+          v                     v
+   Application Services      BSW
+                                |
+                    +-----------+-----------+
+                    |           |           |
+                    v           v           v
+                 Service   Communication  ECU Mgmt
+                    |
+                    v
+              Lower BSW / HW</code></pre>
+
+            <p>
+                Vì vậy, Service không chỉ phục vụ một chức năng duy nhất mà
+                đóng vai trò hỗ trợ chung cho ECU.
+            </p>
+
+
+            <h2>10. Quan hệ theo hướng từ trên xuống</h2>
+
+            <p>
+                Một cách đơn giản để hiểu AUTOSAR là xem mỗi tầng có trách
+                nhiệm khác nhau khi đi từ trên xuống dưới.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tầng</th>
+                        <th>Vai trò tổng quan</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Application Software</td>
+                        <td>
+                            Thực hiện logic và chức năng của ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>RTE</td>
+                        <td>
+                            Kết nối Application với các thành phần khác.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Services</td>
+                        <td>
+                            Cung cấp các chức năng hệ thống dùng chung.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Communication Stack</td>
+                        <td>
+                            Hỗ trợ trao đổi dữ liệu qua network.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>ECU Abstraction</td>
+                        <td>
+                            Che giấu thêm các chi tiết phần cứng ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>MCAL</td>
+                        <td>
+                            Cung cấp lớp truy cập gần với microcontroller.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Hardware</td>
+                        <td>
+                            Cung cấp tài nguyên và thực hiện chức năng vật lý.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <h2>11. Quan hệ theo luồng dữ liệu</h2>
+
+            <p>
+                Ngoài việc nhìn theo tầng, chúng ta cũng có thể nhìn AUTOSAR
+                thông qua luồng dữ liệu.
+            </p>
+
+            <p>
+                Ví dụ một cảm biến gửi dữ liệu vào ECU:
+            </p>
+
+            <pre><code>Sensor
+   |
+   v
+Hardware
+   |
+   v
+MCAL / ECU Abstraction
+   |
+   v
+BSW
+   |
+   v
+RTE
+   |
+   v
+Application SWC
+   |
+   v
+Process Data
+   |
+   v
+RTE
+   |
+   v
+Communication Stack
+   |
+   v
+CAN / Ethernet
+   |
+   v
+Other ECU</code></pre>
+
+            <p>
+                Một chức năng thực tế có thể sử dụng rất nhiều tầng khác nhau
+                trong quá trình xử lý một dữ liệu.
+            </p>
+
+
+            <h2>12. Ví dụ: nút bấm điều khiển đèn</h2>
+
+            <p>
+                Hãy xét một ví dụ đơn giản: người dùng nhấn một nút và ECU
+                bật đèn.
+            </p>
+
+            <pre><code>Button
+  |
+  v
+Hardware
+  |
+  v
+MCAL / ECU Abstraction
+  |
+  v
+RTE
+  |
+  v
+Application SWC
+  |
+  |  Button = Pressed
+  v
+Application Logic
+  |
+  |  Turn ON
+  v
+RTE
+  |
+  v
+BSW / Hardware Abstraction
+  |
+  v
+Hardware
+  |
+  v
+Lamp ON</code></pre>
+
+            <p>
+                Application thực hiện quyết định:
+                <strong>"Nếu nút được nhấn thì bật đèn."</strong>
+            </p>
+
+            <p>
+                Các tầng bên dưới đảm nhận việc đưa quyết định đó đến phần
+                cứng.
+            </p>
+
+
+            <h2>13. Ví dụ: dữ liệu CAN đến Application</h2>
+
+            <p>
+                Một ví dụ khác là ECU nhận dữ liệu từ CAN Bus.
+            </p>
+
+            <pre><code>Other ECU
+    |
+    v
+CAN Bus
+    |
+    v
+CAN Hardware
+    |
+    v
+CAN Driver
+    |
+    v
+Communication Stack
+    |
+    v
+   RTE
+    |
+    v
+Application SWC
+    |
+    v
+Vehicle Function</code></pre>
+
+            <p>
+                Trong trường hợp này, Application không cần trực tiếp xử lý
+                CAN Controller.
+            </p>
+
+            <p>
+                Communication Stack đảm nhận phần communication, còn RTE
+                cung cấp môi trường để dữ liệu được đưa đến Application.
+            </p>
+
+
+            <h2>14. Các tầng phụ thuộc lẫn nhau như thế nào?</h2>
+
+            <p>
+                Khi nói về kiến trúc phân tầng, không có nghĩa là mỗi tầng
+                hoàn toàn độc lập.
+            </p>
+
+            <p>
+                Các tầng vẫn có quan hệ với nhau, nhưng mỗi tầng nên tập trung
+                vào trách nhiệm của mình.
+            </p>
+
+            <pre><code>+----------------------+
+|   Application        |
+|   "Làm gì?"          |
++----------+-----------+
+           |
+           v
++----------------------+
+|   RTE                |
+|   "Kết nối thế nào?" |
++----------+-----------+
+           |
+           v
++----------------------+
+|   BSW                |
+|   "Cung cấp dịch vụ  |
+|    và xử lý hệ thống"|
++----------+-----------+
+           |
+           v
++----------------------+
+|   Hardware           |
+|   "Thực hiện vật lý" |
++----------------------+</code></pre>
+
+            <p>
+                Cách phân chia này giúp giảm sự phụ thuộc trực tiếp giữa
+                Application và Hardware.
+            </p>
+
+
+            <h2>15. Tại sao cần hiểu quan hệ giữa các tầng?</h2>
+
+            <p>
+                Khi làm việc với AUTOSAR, một lỗi hoặc một yêu cầu có thể
+                liên quan đến nhiều tầng khác nhau.
+            </p>
+
+            <p>
+                Ví dụ nếu Application không nhận được dữ liệu CAN, không nên
+                chỉ kiểm tra Application.
+            </p>
+
+            <p>
+                Có thể cần xem xét theo chuỗi:
+            </p>
+
+            <pre><code>Application
+     ↓
+    RTE
+     ↓
+Communication Stack
+     ↓
+Communication Driver
+     ↓
+CAN Controller
+     ↓
+CAN Bus
+     ↓
+Other ECU</code></pre>
+
+            <p>
+                Vì vậy, hiểu quan hệ giữa các tầng giúp kỹ sư có thể xác định
+                phạm vi vấn đề và tìm nguyên nhân hiệu quả hơn.
+            </p>
+
+
+            <h2>16. Cách tư duy khi phân tích một vấn đề AUTOSAR</h2>
+
+            <p>
+                Khi gặp một vấn đề, có thể bắt đầu bằng những câu hỏi đơn giản:
+            </p>
+
+            <ul>
+                <li>
+                    Vấn đề xảy ra ở Application hay bên dưới?
+                </li>
+
+                <li>
+                    RTE có liên quan đến việc giao tiếp này không?
+                </li>
+
+                <li>
+                    Dữ liệu có đi qua Communication Stack không?
+                </li>
+
+                <li>
+                    Service nào đang cung cấp chức năng cần thiết?
+                </li>
+
+                <li>
+                    Vấn đề có liên quan đến ECU Abstraction hoặc MCAL không?
+                </li>
+
+                <li>
+                    Hardware có hoạt động đúng không?
+                </li>
+            </ul>
+
+            <p>
+                Đây là cách tiếp cận từ trên xuống hoặc từ dưới lên để khoanh
+                vùng lỗi thay vì kiểm tra ngẫu nhiên.
+            </p>
+
+
+            <h2>17. Bức tranh tổng thể</h2>
+
+            <p>
+                Sau khi hoàn thành các bài từ 1 đến 11, có thể hình dung
+                AUTOSAR Classic ở mức tổng quan như sau:
+            </p>
+
+            <pre><code>                 AUTOSAR CLASSIC ECU
+
++------------------------------------------------+
+|              Application Software              |
+|                                                |
+|              Software Components              |
++-------------------------+----------------------+
+                          |
+                          v
++------------------------------------------------+
+|                     RTE                        |
+|                                                |
+|      Communication between SW Components       |
+|            and BSW / Services                  |
++-------------------------+----------------------+
+                          |
+                          v
++------------------------------------------------+
+|                 Basic Software                 |
+|                                                |
+| +-------------+  +-------------+  +----------+ |
+| |  Services   |  | Communication|  |   ECU   | |
+| |             |  |    Stack     |  |Abstrac. | |
+| +-------------+  +-------------+  +----------+ |
+|                                                |
+|                    +-----------+               |
+|                    |   MCAL    |               |
+|                    +-----+-----+               |
++--------------------------|---------------------+
+                           |
+                           v
++------------------------------------------------+
+|                    Hardware                    |
+|                                                |
+| MCU | CAN | LIN | Ethernet | Sensors | Actuator|
++------------------------------------------------+</code></pre>
+
+            <p>
+                Đây là mô hình tư duy quan trọng để tiếp tục học các phần
+                AUTOSAR chuyên sâu hơn.
+            </p>
+
+
+            <h2>18. Những điểm cần nhớ</h2>
+
+            <ul>
+                <li>
+                    Mỗi tầng AUTOSAR có một trách nhiệm chính riêng.
+                </li>
+
+                <li>
+                    Các tầng không hoạt động độc lập mà phối hợp với nhau.
+                </li>
+
+                <li>
+                    Application tập trung vào chức năng của ECU.
+                </li>
+
+                <li>
+                    RTE tạo môi trường giao tiếp giữa Application và các
+                    thành phần bên dưới.
+                </li>
+
+                <li>
+                    BSW cung cấp các dịch vụ và chức năng nền tảng cho ECU.
+                </li>
+
+                <li>
+                    Communication Stack hỗ trợ trao đổi dữ liệu với các ECU
+                    khác.
+                </li>
+
+                <li>
+                    ECU Abstraction và MCAL giúp tách phần mềm khỏi các chi
+                    tiết của Hardware.
+                </li>
+
+                <li>
+                    Hardware là nơi thực hiện các chức năng vật lý của ECU.
+                </li>
+
+                <li>
+                    Một chức năng thực tế thường đi qua nhiều tầng khác nhau.
+                </li>
+
+                <li>
+                    Khi debug, cần nhìn toàn bộ luồng thay vì chỉ kiểm tra
+                    một tầng.
+                </li>
+            </ul>
+
+
+            <h2>19. Tóm tắt</h2>
+
+            <div class="note">
+
+                <p>
+                    Kiến trúc AUTOSAR được chia thành nhiều tầng để mỗi tầng
+                    đảm nhận một nhóm trách nhiệm riêng.
+                </p>
+
+                <p>
+                    Tuy nhiên, giá trị của kiến trúc không chỉ nằm ở việc
+                    chia tầng mà còn nằm ở <strong>cách các tầng phối hợp với
+                    nhau</strong>.
+                </p>
+
+                <pre><code>Application
+     ↕
+    RTE
+     ↕
+    BSW
+     ↕
+Hardware</code></pre>
+
+                <p>
+                    Trong BSW lại có nhiều nhóm chức năng như Services,
+                    Communication Stack, ECU Abstraction và MCAL.
+                </p>
+
+                <p>
+                    Vì vậy, khi phân tích một chức năng hoặc một vấn đề trong
+                    AUTOSAR, hãy luôn đặt câu hỏi:
+                    <strong>chức năng này bắt đầu ở đâu, đi qua những tầng nào,
+                    và mỗi tầng chịu trách nhiệm phần nào?</strong>
+                </p>
+
+                <p>
+                    Đây là nền tảng quan trọng trước khi chuyển sang các bài
+                    học chi tiết về từng module và luồng xử lý cụ thể.
+                </p>
+
+            </div>
+
+
+            <div class="pager">
+
+                <a class="btn" href="lesson-10.html">
+                    ← Bài trước
+                </a>
+
+                <a class="btn" href="lesson-12.html">
+                    Bài tiếp theo →
+                </a>
+
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

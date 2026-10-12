@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 3: Các loại CAN Frame | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html" class="active">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+                <h1>Bài 3: Các loại CAN Frame</h1>
+
+                <p>
+                    Mọi thông tin trên bus CAN đều được gửi đi trong các <strong>frame</strong> (khung bản tin).
+                    Chuẩn <code>ISO 11898-1</code> định nghĩa bốn loại frame, mỗi loại có một nhiệm vụ riêng.
+                </p>
+
+                <h2>1. Bốn loại frame</h2>
+                <table>
+                    <tr>
+                        <th>Frame</th>
+                        <th>Ai gửi</th>
+                        <th>Mục đích</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Data frame</strong></td>
+                        <td>Node gửi dữ liệu</td>
+                        <td>Mang dữ liệu từ 0 đến 8 byte lên bus</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Remote frame</strong></td>
+                        <td>Node cần dữ liệu</td>
+                        <td>Yêu cầu node khác gửi data frame có cùng Identifier</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Error frame</strong></td>
+                        <td>Bất kỳ node nào phát hiện lỗi</td>
+                        <td>Báo lỗi cho toàn bộ bus</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Overload frame</strong></td>
+                        <td>Node nhận chưa sẵn sàng</td>
+                        <td>Xin thêm thời gian giữa hai frame</td>
+                    </tr>
+                </table>
+                <div class="note">
+                    Trong thực tế, <strong>data frame</strong> chiếm gần như toàn bộ lưu lượng. Remote frame ít được
+                    dùng
+                    và không còn trong CAN FD. Error frame và overload frame do phần cứng CAN controller tự tạo ra.
+                </div>
+
+                <h2>2. Data frame (chuẩn 11 bit)</h2>
+                <p>Một data frame gồm các trường (field) được truyền theo thứ tự từ trái sang phải:</p>
+                <svg viewBox="0 0 640 110" role="img" aria-label="Các trường của data frame CAN chuẩn"
+                    style="width:100%;height:auto;max-width:700px">
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="10" y="20" width="40" height="60" fill="rgba(224,168,0,.25)" />
+                        <rect x="50" y="20" width="110" height="60" fill="rgba(20,80,107,.18)" />
+                        <rect x="160" y="20" width="90" height="60" fill="rgba(224,168,0,.25)" />
+                        <rect x="250" y="20" width="130" height="60" fill="rgba(20,80,107,.18)" />
+                        <rect x="380" y="20" width="100" height="60" fill="rgba(224,168,0,.25)" />
+                        <rect x="480" y="20" width="60" height="60" fill="rgba(20,80,107,.18)" />
+                        <rect x="540" y="20" width="90" height="60" fill="rgba(224,168,0,.25)" />
+                    </g>
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="30" y="48">SOF</text><text x="30" y="64">1 bit</text>
+                        <text x="105" y="48">Arbitration</text><text x="105" y="64">11 bit ID + RTR</text>
+                        <text x="205" y="48">Control</text><text x="205" y="64">IDE, r0, DLC</text>
+                        <text x="315" y="48">Data</text><text x="315" y="64">0 – 8 byte</text>
+                        <text x="430" y="48">CRC</text><text x="430" y="64">15 bit + delim</text>
+                        <text x="510" y="48">ACK</text><text x="510" y="64">slot + delim</text>
+                        <text x="585" y="48">EOF</text><text x="585" y="64">7 bit</text>
+                    </g>
+                    <text x="320" y="102" font-size="11" fill="currentColor" text-anchor="middle">Sau EOF là 3 bit
+                        Intermission (khoảng nghỉ giữa các frame)</text>
+                </svg>
+
+                <table>
+                    <tr>
+                        <th>Trường</th>
+                        <th>Kích thước</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td><strong>SOF</strong> (Start of Frame)</td>
+                        <td>1 bit dominant</td>
+                        <td>Báo bắt đầu frame, giúp các node đồng bộ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Identifier</strong></td>
+                        <td>11 bit</td>
+                        <td>Nhận diện bản tin và quyết định độ ưu tiên (số nhỏ = ưu tiên cao)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RTR</strong> (Remote Transmission Request)</td>
+                        <td>1 bit</td>
+                        <td>Dominant = data frame, recessive = remote frame</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IDE</strong> (Identifier Extension)</td>
+                        <td>1 bit</td>
+                        <td>Dominant = frame chuẩn 11 bit, recessive = frame mở rộng 29 bit</td>
+                    </tr>
+                    <tr>
+                        <td><strong>r0</strong></td>
+                        <td>1 bit</td>
+                        <td>Bit dự trữ, được gửi là dominant</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DLC</strong> (Data Length Code)</td>
+                        <td>4 bit</td>
+                        <td>Số byte dữ liệu (0 đến 8)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data</strong></td>
+                        <td>0 – 64 bit</td>
+                        <td>Dữ liệu, gửi từng byte, bit cao trước</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CRC</strong></td>
+                        <td>15 bit + 1 bit delimiter</td>
+                        <td>Mã kiểm tra lỗi; delimiter luôn là recessive</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ACK</strong></td>
+                        <td>ACK slot + ACK delimiter (2 bit)</td>
+                        <td>Node phát gửi recessive ở ACK slot; node nhận đúng frame sẽ kéo bus xuống dominant để xác
+                            nhận</td>
+                    </tr>
+                    <tr>
+                        <td><strong>EOF</strong> (End of Frame)</td>
+                        <td>7 bit recessive</td>
+                        <td>Kết thúc frame</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IFS</strong> (Interframe Space)</td>
+                        <td>3 bit recessive</td>
+                        <td>Khoảng nghỉ trước khi frame tiếp theo có thể bắt đầu</td>
+                    </tr>
+                </table>
+                <p>
+                    Giá trị DLC từ 9 đến 15 trong CAN cổ điển đều được hiểu là 8 byte dữ liệu.
+                    Một data frame chuẩn dài nhất (8 byte) có <strong>108 bit</strong> khi chưa tính bit stuffing và
+                    IFS.
+                </p>
+
+                <h3>Bit stuffing</h3>
+                <p>
+                    Để các node không bị mất đồng bộ khi bus giữ cùng một mức quá lâu, bộ gửi tự chèn một bit
+                    ngược mức sau mỗi <strong>5 bit liên tiếp giống nhau</strong>. Bộ nhận sẽ tự loại bit này ra.
+                    Quy tắc áp dụng từ SOF đến hết CRC sequence, không áp dụng cho CRC delimiter, ACK và EOF.
+                </p>
+                <pre><code>Dữ liệu gốc  : 1 1 1 1 1 0 0 0 0 0 1
+Sau stuffing : 1 1 1 1 1 [0] 0 0 0 0 0 [1] 1</code></pre>
+
+                <h3>Ví dụ: frame ID 0x123, gửi 2 byte 0xAB 0xCD</h3>
+                <ul>
+                    <li>Identifier <code>0x123</code> viết thành 11 bit: <code>001 0010 0011</code></li>
+                    <li>RTR = 0 (data frame), IDE = 0 (chuẩn), r0 = 0</li>
+                    <li>DLC = <code>0010</code> (2 byte)</li>
+                    <li>Data = <code>0xAB</code>, <code>0xCD</code></li>
+                </ul>
+
+                <h2>3. Data frame mở rộng (29 bit)</h2>
+                <p>
+                    CAN 2.0B cho phép Identifier dài 29 bit để có nhiều bản tin hơn (chuẩn J1939 dùng dạng này).
+                    Frame mở rộng chia Identifier làm hai phần:
+                </p>
+                <table>
+                    <tr>
+                        <th>Trường</th>
+                        <th>Kích thước</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                    <tr>
+                        <td>Base ID</td>
+                        <td>11 bit</td>
+                        <td>Giống Identifier của frame chuẩn</td>
+                    </tr>
+                    <tr>
+                        <td>SRR (Substitute Remote Request)</td>
+                        <td>1 bit recessive</td>
+                        <td>Thay vị trí của RTR trong frame chuẩn</td>
+                    </tr>
+                    <tr>
+                        <td>IDE</td>
+                        <td>1 bit recessive</td>
+                        <td>Báo đây là frame mở rộng</td>
+                    </tr>
+                    <tr>
+                        <td>Extended ID</td>
+                        <td>18 bit</td>
+                        <td>Phần mở rộng của Identifier</td>
+                    </tr>
+                    <tr>
+                        <td>RTR</td>
+                        <td>1 bit</td>
+                        <td>Giống frame chuẩn</td>
+                    </tr>
+                    <tr>
+                        <td>r1, r0</td>
+                        <td>2 bit</td>
+                        <td>Bit dự trữ</td>
+                    </tr>
+                </table>
+                <div class="note">
+                    Khi một frame chuẩn và một frame mở rộng có cùng 11 bit đầu, bit IDE sẽ quyết định:
+                    <strong>frame chuẩn (IDE = dominant) thắng</strong> và được ưu tiên hơn.
+                    Hai loại frame này có thể cùng tồn tại trên một bus.
+                </div>
+
+                <h2>4. Remote frame</h2>
+                <p>
+                    Remote frame có cấu trúc giống data frame, khác ở hai điểm: bit <strong>RTR là recessive</strong>
+                    và <strong>không có trường Data</strong>. Trường DLC ghi độ dài dữ liệu mà node yêu cầu muốn nhận.
+                </p>
+                <ul>
+                    <li>Node A gửi remote frame với Identifier <code>0x200</code>.</li>
+                    <li>Node B là nơi đăng ký phát bản tin <code>0x200</code>, sẽ trả lời bằng data frame cùng
+                        Identifier.</li>
+                    <li>Nếu remote frame và data frame cùng Identifier tranh bus cùng lúc, <strong>data frame
+                            thắng</strong> vì RTR dominant.</li>
+                </ul>
+                <p>
+                    Cơ chế này ít được dùng vì nhiều thiết kế chỉ cho các node tự gửi bản tin theo chu kỳ hoặc khi có sự
+                    kiện.
+                </p>
+
+                <h2>5. Error frame</h2>
+                <p>
+                    Khi một node phát hiện lỗi (bit error, stuff error, CRC error, form error, ACK error), nó
+                    lập tức gửi error frame để hủy frame đang truyền. Mọi node khác thấy lỗi và cũng bỏ frame đó,
+                    sau đó bộ gửi sẽ tự động gửi lại.
+                </p>
+                <table>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Kích thước</th>
+                        <th>Mô tả</th>
+                    </tr>
+                    <tr>
+                        <td>Error flag (active)</td>
+                        <td>6 bit dominant</td>
+                        <td>Cố tình vi phạm quy tắc bit stuffing để mọi node nhận ra lỗi</td>
+                    </tr>
+                    <tr>
+                        <td>Error flag (passive)</td>
+                        <td>6 bit recessive</td>
+                        <td>Dùng bởi node ở trạng thái error passive</td>
+                    </tr>
+                    <tr>
+                        <td>Superposition</td>
+                        <td>0 – 6 bit</td>
+                        <td>Các error flag của những node khác chồng lên nhau</td>
+                    </tr>
+                    <tr>
+                        <td>Error delimiter</td>
+                        <td>8 bit recessive</td>
+                        <td>Kết thúc error frame</td>
+                    </tr>
+                </table>
+                <p>Chi tiết về các loại lỗi và bộ đếm lỗi sẽ được học ở bài sau.</p>
+
+                <h2>6. Overload frame</h2>
+                <p>
+                    Overload frame cho phép một node nhận <strong>trì hoãn</strong> frame kế tiếp khi nó cần thêm thời
+                    gian xử lý.
+                    Frame này chỉ được gửi trong khoảng intermission, không bao giờ xuất hiện giữa lúc truyền dữ liệu.
+                </p>
+                <table>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Kích thước</th>
+                    </tr>
+                    <tr>
+                        <td>Overload flag</td>
+                        <td>6 bit dominant</td>
+                    </tr>
+                    <tr>
+                        <td>Overload delimiter</td>
+                        <td>8 bit recessive</td>
+                    </tr>
+                </table>
+                <p>
+                    Các controller hiện đại hầu như không còn phát overload frame, nhưng bạn vẫn cần biết khái niệm này
+                    vì nó là một phần của chuẩn.
+                </p>
+
+                <h2>7. Interframe space</h2>
+                <p>Khoảng cách giữa hai frame liên tiếp gồm:</p>
+                <ul>
+                    <li><strong>Intermission:</strong> 3 bit recessive. Sau đó node nào có dữ liệu mới được bắt đầu SOF.
+                    </li>
+                    <li><strong>Suspend transmission:</strong> thêm 8 bit recessive, chỉ áp dụng cho node đang ở trạng
+                        thái error passive vừa gửi frame.</li>
+                    <li><strong>Bus idle:</strong> bus ở recessive cho đến khi có node gửi SOF.</li>
+                </ul>
+
+                <h2>8. CAN FD frame (giới thiệu)</h2>
+                <p>
+                    CAN FD (Flexible Data-rate) giữ cấu trúc gần giống data frame cổ điển, bổ sung vài bit điều khiển:
+                </p>
+                <table>
+                    <tr>
+                        <th>Bit / trường</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>FDF</td>
+                        <td>Recessive nghĩa là đây là frame CAN FD</td>
+                    </tr>
+                    <tr>
+                        <td>BRS (Bit Rate Switch)</td>
+                        <td>Recessive nghĩa là pha dữ liệu chạy ở tốc độ cao hơn pha arbitration</td>
+                    </tr>
+                    <tr>
+                        <td>ESI (Error State Indicator)</td>
+                        <td>Cho biết node gửi đang ở trạng thái error passive hay không</td>
+                    </tr>
+                    <tr>
+                        <td>Data</td>
+                        <td>Tối đa 64 byte (8, 12, 16, 20, 24, 32, 48, 64 khi vượt quá 8 byte)</td>
+                    </tr>
+                    <tr>
+                        <td>CRC</td>
+                        <td>17 bit hoặc 21 bit tùy độ dài dữ liệu</td>
+                    </tr>
+                </table>
+                <p>CAN FD không có remote frame.</p>
+
+                <h2>9. Biểu diễn frame trong code</h2>
+                <p>
+                    Khi lập trình, bạn thường làm việc với frame ở mức cấu trúc dữ liệu thay vì từng bit.
+                    Dưới đây là một cấu trúc minh họa (không gắn với thư viện cụ thể):
+                </p>
+                <pre><code>typedef struct {
+    uint32_t id;        // 11 bit hoặc 29 bit
+    uint8_t  is_ext;    // 0: chuẩn, 1: mở rộng (IDE)
+    uint8_t  is_remote; // 0: data frame, 1: remote frame (RTR)
+    uint8_t  dlc;       // 0..8
+    uint8_t  data[8];
+} can_frame_t;
+
+can_frame_t tx = {
+    .id = 0x123, .is_ext = 0, .is_remote = 0, .dlc = 2,
+    .data = {0xAB, 0xCD}
+};
+can_send(&amp;tx);   // hàm gửi giả định</code></pre>
+                <div class="note">
+                    Bạn không cần tự tạo SOF, CRC, ACK hay EOF. CAN controller thực hiện toàn bộ phần này bằng phần
+                    cứng.
+                    Phần mềm chỉ cung cấp Identifier, DLC và dữ liệu.
+                </div>
+
+                <h2>Tóm tắt</h2>
+                <div class="note">
+                    CAN có bốn loại frame: <strong>data</strong> (mang dữ liệu), <strong>remote</strong> (yêu cầu dữ
+                    liệu),
+                    <strong>error</strong> (báo lỗi) và <strong>overload</strong> (xin thêm thời gian).
+                    Data frame gồm SOF, Arbitration, Control, Data, CRC, ACK và EOF; có hai dạng
+                    là chuẩn (11 bit) và mở rộng (29 bit). CAN FD mở rộng thêm tốc độ và độ dài dữ liệu tới 64 byte.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-2.html">← Bài trước</a>
+                    <a class="btn" href="lesson-4.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

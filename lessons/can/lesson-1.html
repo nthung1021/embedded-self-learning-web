@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 1: Định nghĩa CAN | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html" class="active">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+                <h1>Bài 1: Định nghĩa CAN</h1>
+
+                <p>
+                    <strong>CAN (Controller Area Network)</strong> là một giao thức truyền thông nối tiếp,
+                    cho phép nhiều thiết bị điện tử (gọi là <em>node</em> hoặc <em>ECU</em>) trao đổi dữ liệu
+                    với nhau trên cùng một đường truyền gồm hai dây, mà không cần máy tính trung tâm điều phối.
+                </p>
+                <p>
+                    CAN được thiết kế cho môi trường nhiều nhiễu và yêu cầu độ tin cậy cao, như bên trong ô tô,
+                    máy công nghiệp và thiết bị y tế.
+                </p>
+
+                <h2>1. Vì sao cần CAN?</h2>
+                <p>
+                    Trước khi có CAN, mỗi chức năng trên xe thường được nối với nhau bằng dây riêng
+                    (kiểu điểm-điểm). Khi số lượng cảm biến và bộ điều khiển tăng lên, bó dây trở nên nặng,
+                    đắt và khó bảo trì.
+                </p>
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Đi dây điểm-điểm</th>
+                        <th>Dùng bus CAN</th>
+                    </tr>
+                    <tr>
+                        <td>Số lượng dây</td>
+                        <td>Rất nhiều</td>
+                        <td>Chỉ 2 dây tín hiệu</td>
+                    </tr>
+                    <tr>
+                        <td>Thêm thiết bị mới</td>
+                        <td>Phải kéo thêm dây</td>
+                        <td>Gắn thêm vào bus</td>
+                    </tr>
+                    <tr>
+                        <td>Chia sẻ dữ liệu</td>
+                        <td>Phức tạp</td>
+                        <td>Mọi node cùng nhận được</td>
+                    </tr>
+                    <tr>
+                        <td>Khối lượng và chi phí</td>
+                        <td>Cao</td>
+                        <td>Thấp hơn</td>
+                    </tr>
+                </table>
+
+                <h2>2. Lịch sử ngắn gọn</h2>
+                <ul>
+                    <li><strong>1986:</strong> Hãng Bosch (Đức) giới thiệu CAN.</li>
+                    <li><strong>1991:</strong> Dòng xe Mercedes-Benz S-Class (W140) là xe sản xuất hàng loạt đầu tiên
+                        dùng CAN.</li>
+                    <li><strong>1993:</strong> CAN được chuẩn hóa thành <code>ISO 11898</code>.</li>
+                    <li><strong>2012–2015:</strong> Xuất hiện <strong>CAN FD</strong> (Flexible Data-rate), tăng tốc độ
+                        và kích thước dữ liệu.</li>
+                </ul>
+
+                <h2>3. Đặc điểm chính của CAN</h2>
+                <ul>
+                    <li><strong>Đa chủ (multi-master):</strong> node nào cũng có thể bắt đầu truyền khi bus rảnh.</li>
+                    <li><strong>Truyền quảng bá (broadcast):</strong> một bản tin được gửi lên bus, mọi node đều nhận
+                        được và tự quyết định có xử lý hay không.</li>
+                    <li><strong>Hướng bản tin (message-oriented):</strong> bản tin được nhận diện bằng
+                        <em>Identifier</em>, không phải bằng địa chỉ của node.
+                    </li>
+                    <li><strong>Có ưu tiên:</strong> Identifier nhỏ thì độ ưu tiên cao hơn (sẽ học ở Bài 3).</li>
+                    <li><strong>Phát hiện lỗi mạnh:</strong> có CRC, kiểm tra bit, bit stuffing và cơ chế tự ngắt node
+                        lỗi.</li>
+                    <li><strong>Tín hiệu vi sai:</strong> hai dây CAN_H và CAN_L giúp chống nhiễu tốt.</li>
+                </ul>
+
+                <h2>4. Tầng vật lý cơ bản</h2>
+                <p>
+                    CAN dùng cặp dây xoắn, tín hiệu là hiệu điện thế giữa <code>CAN_H</code> và <code>CAN_L</code>.
+                    Bus có hai trạng thái logic:
+                </p>
+                <table>
+                    <tr>
+                        <th>Trạng thái</th>
+                        <th>Mức logic</th>
+                        <th>CAN_H</th>
+                        <th>CAN_L</th>
+                    </tr>
+                    <tr>
+                        <td>Dominant</td>
+                        <td>0</td>
+                        <td>khoảng 3,5 V</td>
+                        <td>khoảng 1,5 V</td>
+                    </tr>
+                    <tr>
+                        <td>Recessive</td>
+                        <td>1</td>
+                        <td>khoảng 2,5 V</td>
+                        <td>khoảng 2,5 V</td>
+                    </tr>
+                </table>
+                <div class="note">
+                    Khi một node gửi dominant và một node khác gửi recessive cùng lúc, bus sẽ ở trạng thái
+                    <strong>dominant</strong>. Đây là nền tảng của cơ chế arbitration.
+                </div>
+
+                <h2>5. Cấu trúc mạng (topology)</h2>
+                <p>
+                    Mạng CAN có dạng bus tuyến tính: các node nối song song vào hai dây,
+                    và hai đầu bus phải có điện trở kết cuối <strong>120 Ω</strong> để tránh phản xạ tín hiệu.
+                </p>
+                <svg viewBox="0 0 600 150" role="img" aria-label="Sơ đồ bus CAN với ba node và hai điện trở kết cuối"
+                    style="width:100%;height:auto;max-width:640px">
+                    <line x1="40" y1="50" x2="560" y2="50" stroke="#e0a800" stroke-width="3" />
+                    <line x1="40" y1="70" x2="560" y2="70" stroke="#2e8b57" stroke-width="3" />
+                    <text x="565" y="54" font-size="12" fill="#e0a800">CAN_H</text>
+                    <text x="565" y="74" font-size="12" fill="#2e8b57">CAN_L</text>
+                    <rect x="20" y="50" width="12" height="20" fill="none" stroke="currentColor" />
+                    <text x="8" y="90" font-size="11" fill="currentColor">120 Ω</text>
+                    <rect x="528" y="50" width="12" height="20" fill="none" stroke="currentColor" />
+                    <text x="516" y="90" font-size="11" fill="currentColor">120 Ω</text>
+                    <g fill="none" stroke="currentColor">
+                        <rect x="110" y="105" width="80" height="34" rx="4" />
+                        <rect x="260" y="105" width="80" height="34" rx="4" />
+                        <rect x="410" y="105" width="80" height="34" rx="4" />
+                        <line x1="150" y1="70" x2="150" y2="105" />
+                        <line x1="300" y1="70" x2="300" y2="105" />
+                        <line x1="450" y1="70" x2="450" y2="105" />
+                    </g>
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="150" y="127">ECU 1</text>
+                        <text x="300" y="127">ECU 2</text>
+                        <text x="450" y="127">ECU 3</text>
+                    </g>
+                </svg>
+
+                <h2>6. Tốc độ và chiều dài bus</h2>
+                <p>Tốc độ càng cao thì chiều dài bus tối đa càng ngắn. Các giá trị dưới đây mang tính tham khảo:</p>
+                <table>
+                    <tr>
+                        <th>Tốc độ</th>
+                        <th>Chiều dài bus tối đa (xấp xỉ)</th>
+                    </tr>
+                    <tr>
+                        <td>1 Mbit/s</td>
+                        <td>40 m</td>
+                    </tr>
+                    <tr>
+                        <td>500 kbit/s</td>
+                        <td>100 m</td>
+                    </tr>
+                    <tr>
+                        <td>250 kbit/s</td>
+                        <td>250 m</td>
+                    </tr>
+                    <tr>
+                        <td>125 kbit/s</td>
+                        <td>500 m</td>
+                    </tr>
+                </table>
+
+                <h2>7. Các phiên bản CAN</h2>
+                <table>
+                    <tr>
+                        <th>Phiên bản</th>
+                        <th>Identifier</th>
+                        <th>Dữ liệu tối đa</th>
+                        <th>Tốc độ tối đa</th>
+                    </tr>
+                    <tr>
+                        <td>CAN 2.0A (standard)</td>
+                        <td>11 bit</td>
+                        <td>8 byte</td>
+                        <td>1 Mbit/s</td>
+                    </tr>
+                    <tr>
+                        <td>CAN 2.0B (extended)</td>
+                        <td>29 bit</td>
+                        <td>8 byte</td>
+                        <td>1 Mbit/s</td>
+                    </tr>
+                    <tr>
+                        <td>CAN FD</td>
+                        <td>11 hoặc 29 bit</td>
+                        <td>64 byte</td>
+                        <td>khoảng 8 Mbit/s (pha dữ liệu)</td>
+                    </tr>
+                </table>
+
+                <h2>8. CAN được dùng ở đâu?</h2>
+                <ul>
+                    <li><strong>Ô tô:</strong> động cơ, hộp số, phanh ABS, túi khí, bảng đồng hồ, điều hòa.</li>
+                    <li><strong>Công nghiệp:</strong> máy CNC, robot, băng chuyền (CANopen, DeviceNet).</li>
+                    <li><strong>Xe tải, máy nông nghiệp:</strong> chuẩn J1939.</li>
+                    <li><strong>Thiết bị y tế, tàu thủy, thang máy.</strong></li>
+                </ul>
+
+                <h2>9. So sánh nhanh với các giao thức khác</h2>
+                <table>
+                    <tr>
+                        <th>Giao thức</th>
+                        <th>Số dây</th>
+                        <th>Nhiều master</th>
+                        <th>Khoảng cách</th>
+                        <th>Dùng phổ biến</th>
+                    </tr>
+                    <tr>
+                        <td>UART</td>
+                        <td>2 (TX, RX)</td>
+                        <td>Không</td>
+                        <td>Ngắn</td>
+                        <td>Debug, giao tiếp điểm-điểm</td>
+                    </tr>
+                    <tr>
+                        <td>SPI</td>
+                        <td>4 trở lên</td>
+                        <td>Không</td>
+                        <td>Rất ngắn</td>
+                        <td>Cảm biến, bộ nhớ</td>
+                    </tr>
+                    <tr>
+                        <td>I2C</td>
+                        <td>2</td>
+                        <td>Có</td>
+                        <td>Rất ngắn</td>
+                        <td>Cảm biến trên cùng board</td>
+                    </tr>
+                    <tr>
+                        <td>CAN</td>
+                        <td>2</td>
+                        <td>Có</td>
+                        <td>Đến hàng trăm mét</td>
+                        <td>Ô tô, công nghiệp</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+                <div class="note">
+                    CAN là bus nối tiếp đa chủ, truyền quảng bá, dùng hai dây vi sai, có khả năng phát hiện lỗi
+                    và phân xử ưu tiên rất tốt. Nhờ đó nó trở thành chuẩn giao tiếp chính giữa các ECU trên ô tô.
+                </div>
+
+                <div class="pager">
+                    <span></span>
+                    <a class="btn" href="lesson-2.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

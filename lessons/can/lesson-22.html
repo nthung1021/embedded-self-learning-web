@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 22: Theo dõi Bus-Error | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html" class="active">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 22: Theo dõi Bus-Error</h1>
+
+                <p>
+                    CAN được thiết kế với cơ chế phát hiện và xử lý lỗi rất mạnh. Khi một node phát hiện
+                    lỗi trong quá trình truyền hoặc nhận frame, CAN Controller có thể tạo
+                    <strong>Error Frame</strong>, cập nhật các bộ đếm lỗi và thay đổi trạng thái
+                    Error State của controller.
+                </p>
+
+                <div class="note">
+                    <strong>Ý chính:</strong> Theo dõi Bus-Error không chỉ là kiểm tra xem có lỗi hay không.
+                    Kỹ sư cần biết <strong>loại lỗi</strong>, <strong>lỗi xảy ra ở đâu</strong>,
+                    <strong>error counter đang thay đổi thế nào</strong> và
+                    <strong>CAN Controller đang ở trạng thái nào</strong>.
+                </div>
+
+                <h2>1. Bus-Error là gì?</h2>
+
+                <p>
+                    Bus-Error là lỗi xảy ra trong quá trình CAN Controller giao tiếp trên CAN bus.
+                    Lỗi có thể xuất phát từ:
+                </p>
+
+                <ul>
+                    <li>Bit timing không phù hợp.</li>
+                    <li>Baud-rate không tương thích.</li>
+                    <li>Physical layer có vấn đề.</li>
+                    <li>CAN Transceiver lỗi.</li>
+                    <li>Wiring hoặc termination không đúng.</li>
+                    <li>Frame bị vi phạm quy tắc CAN.</li>
+                    <li>CAN Controller phát hiện trạng thái bus không như mong đợi.</li>
+                </ul>
+
+                <p>
+                    CAN Controller có cơ chế tự phát hiện nhiều loại lỗi ngay trong quá trình truyền
+                    và nhận frame.
+                </p>
+
+                <h2>2. Tại sao cần theo dõi Bus-Error?</h2>
+
+                <p>
+                    Nếu chỉ quan sát việc "có nhận được message hay không", kỹ sư có thể bỏ sót nguyên
+                    nhân thực sự của communication failure.
+                </p>
+
+                <pre><code>CAN Communication
+       │
+       ▼
+   Có lỗi?
+       │
+   ┌───┴───┐
+   │       │
+  No      Yes
+   │       │
+   ▼       ▼
+Normal   Analyze
+         Error Type
+             │
+             ▼
+       Error Counter
+             │
+             ▼
+       Controller State
+             │
+             ▼
+          Root Cause</code></pre>
+
+                <div class="note">
+                    Theo dõi Bus-Error đặc biệt quan trọng trong giai đoạn integration test,
+                    system test và debugging trên ECU thực tế.
+                </div>
+
+                <h2>3. Các loại CAN Error chính</h2>
+
+                <p>
+                    CAN định nghĩa các nhóm lỗi chính:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại lỗi</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bit Error</td>
+                            <td>Giá trị bit được quan sát trên bus không phù hợp với bit mà node đang truyền, trong
+                                trường hợp áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Stuff Error</td>
+                            <td>Vi phạm quy tắc bit stuffing.</td>
+                        </tr>
+                        <tr>
+                            <td>CRC Error</td>
+                            <td>CRC kiểm tra frame không phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Form Error</td>
+                            <td>Một field cố định của frame có giá trị không đúng quy định.</td>
+                        </tr>
+                        <tr>
+                            <td>ACK Error</td>
+                            <td>Node truyền không nhận được dominant ACK như mong đợi.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>4. Bit Error</h2>
+
+                <p>
+                    Bit Error xảy ra khi node đang truyền một giá trị bit nhưng phát hiện trạng thái
+                    trên bus không phù hợp với giá trị mà nó đang truyền, trong các phần của frame
+                    mà cơ chế bit monitoring được áp dụng.
+                </p>
+
+                <pre><code>Node đang truyền:
+
+TX Bit
+  │
+  ▼
+  1
+  │
+  │ Bit Monitoring
+  ▼
+CAN Bus
+  │
+  ▼
+  0
+
+Expected ≠ Observed
+        ↓
+    Bit Error</code></pre>
+
+                <div class="note">
+                    Có các trường hợp đặc biệt trong CAN, chẳng hạn quá trình arbitration,
+                    khiến việc quan sát dominant/recessive không được xử lý giống một Bit Error
+                    thông thường. Không nên hiểu đơn giản rằng mọi trường hợp TX khác RX đều là lỗi.
+                </div>
+
+                <h2>5. Stuff Error</h2>
+
+                <p>
+                    CAN sử dụng <strong>bit stuffing</strong> để hỗ trợ synchronization.
+                    Sau một số lượng bit liên tiếp cùng giá trị theo quy tắc CAN, transmitter chèn
+                    một bit ngược lại.
+                </p>
+
+                <pre><code>Data sequence:
+
+11111
+     ↓
+Bit stuffing
+     ↓
+111110</code></pre>
+
+                <p>
+                    Nếu receiver phát hiện quy tắc stuffing bị vi phạm, controller có thể xác định
+                    đây là <strong>Stuff Error</strong>.
+                </p>
+
+                <h2>6. CRC Error</h2>
+
+                <p>
+                    CAN frame có trường CRC để giúp receiver kiểm tra tính toàn vẹn của dữ liệu
+                    frame.
+                </p>
+
+                <pre><code>Transmitter
+    │
+    │ Calculate CRC
+    ▼
+┌───────────────────────┐
+│ CAN Frame + CRC       │
+└───────────────────────┘
+    │
+    ▼
+   Bus
+    │
+    ▼
+Receiver
+    │
+    │ Calculate / Check CRC
+    ▼
+CRC Match?
+   │
+ ┌─┴─┐
+Yes  No
+ │    │
+ ▼    ▼
+ OK  CRC Error</code></pre>
+
+                <h2>7. Form Error</h2>
+
+                <p>
+                    Một số field trong CAN frame phải có giá trị cố định theo format của frame.
+                    Nếu receiver phát hiện một field như vậy có trạng thái không hợp lệ,
+                    có thể xảy ra <strong>Form Error</strong>.
+                </p>
+
+                <p>
+                    Ví dụ, các delimiter và một số trường điều khiển frame có quy tắc cố định.
+                    Nếu quy tắc đó bị vi phạm, CAN Controller có thể phát hiện lỗi.
+                </p>
+
+                <h2>8. ACK Error</h2>
+
+                <p>
+                    Trong quá trình truyền frame, transmitter mong đợi ít nhất một receiver hợp lệ
+                    xác nhận bằng ACK.
+                </p>
+
+                <pre><code>Transmitter
+     │
+     │ Send Frame
+     ▼
+════════════════ CAN BUS ════════════════
+     │
+     │            ACK
+     ▼             ▼
+ Receiver A    Receiver B
+     │
+     └──────── ACK = Dominant
+
+Nếu không có ACK phù hợp
+            ↓
+        ACK Error</code></pre>
+
+                <p>
+                    ACK Error không nhất thiết có nghĩa là "receiver bị hỏng". Nó có thể xảy ra khi
+                    không có node nào nhận frame hợp lệ, ví dụ do cấu hình baud-rate hoặc network
+                    không phù hợp.
+                </p>
+
+                <h2>9. Error Frame</h2>
+
+                <p>
+                    Khi một node phát hiện lỗi, CAN có cơ chế thông báo lỗi trên bus bằng
+                    <strong>Error Frame</strong>.
+                </p>
+
+                <pre><code>Normal Frame
+───────────────────────────────────►
+
+             Node phát hiện lỗi
+                     │
+                     ▼
+               Error Frame
+                     │
+                     ▼
+════════════════ CAN BUS ════════════════
+                     │
+                     ▼
+          Các node nhận biết lỗi</code></pre>
+
+                <p>
+                    Error Frame giúp các node khác biết rằng frame hiện tại đã không được truyền
+                    hoặc nhận đúng theo quy tắc CAN.
+                </p>
+
+                <h2>10. Error Active và Error Passive</h2>
+
+                <p>
+                    CAN Controller theo dõi mức độ lỗi thông qua các error counter. Từ đó controller
+                    có thể ở các trạng thái error khác nhau.
+                </p>
+
+                <pre><code>        Error Active
+             │
+             │ Error tăng
+             ▼
+       Error Passive
+             │
+             │ Error tiếp tục nghiêm trọng
+             ▼
+        Bus-Off</code></pre>
+
+                <p>
+                    Đây là mô hình khái niệm. Chuyển trạng thái thực tế được quyết định bởi các
+                    quy tắc của CAN và giá trị của các error counters.
+                </p>
+
+                <h2>11. Error Counter</h2>
+
+                <p>
+                    CAN Controller thường có hai bộ đếm quan trọng:
+                </p>
+
+                <ul>
+                    <li><strong>TEC</strong> — Transmit Error Counter.</li>
+                    <li><strong>REC</strong> — Receive Error Counter.</li>
+                </ul>
+
+                <pre><code>CAN Controller
+      │
+      ├───────────────┐
+      │               │
+      ▼               ▼
+    TEC             REC
+Transmit Error   Receive Error
+   Counter          Counter</code></pre>
+
+                <p>
+                    Hai counter này giúp controller đánh giá mức độ lỗi liên quan đến transmission
+                    và reception.
+                </p>
+
+                <h2>12. TEC - Transmit Error Counter</h2>
+
+                <p>
+                    TEC liên quan đến các lỗi mà CAN Controller gặp trong quá trình truyền.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Transmission
+     │
+     ▼
+Error detected
+     │
+     ▼
+Transmit Error Counter
+     │
+     ▼
+Controller evaluates
+Error State</code></pre>
+
+                <p>
+                    TEC không đơn giản chỉ tăng một đơn vị cho mọi loại lỗi. Quy tắc cập nhật
+                    counter phụ thuộc vào loại lỗi và hoàn cảnh xảy ra lỗi theo CAN specification.
+                </p>
+
+                <h2>13. REC - Receive Error Counter</h2>
+
+                <p>
+                    REC liên quan đến các lỗi được phát hiện trong quá trình nhận.
+                </p>
+
+                <pre><code>CAN Bus
+   │
+   ▼
+Receive Frame
+   │
+   ▼
+Error detected
+   │
+   ▼
+Receive Error Counter
+   │
+   ▼
+Error State evaluation</code></pre>
+
+                <div class="note">
+                    Khi debug thực tế, không nên chỉ nhìn một counter riêng lẻ. Hãy xem cả TEC,
+                    REC, loại error và controller state.
+                </div>
+
+                <h2>14. Error State</h2>
+
+                <p>
+                    Ba trạng thái quan trọng cần nhớ là:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>State</th>
+                            <th>Ý nghĩa khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Error Active</td>
+                            <td>Controller đang hoạt động trong trạng thái lỗi bình thường.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Passive</td>
+                            <td>Error counter đã đạt mức khiến controller bị hạn chế hơn trong việc báo lỗi.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus-Off</td>
+                            <td>Controller bị tách khỏi CAN bus để ngăn một node lỗi tiếp tục ảnh hưởng bus.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>15. Error Active</h2>
+
+                <p>
+                    Khi controller ở Error Active, nó vẫn có thể giao tiếp bình thường và có thể
+                    sử dụng <strong>Active Error Flag</strong> khi cần báo lỗi.
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      ▼
+ Error Active
+      │
+      ├── Transmit
+      ├── Receive
+      └── Active Error Flag</code></pre>
+
+                <h2>16. Error Passive</h2>
+
+                <p>
+                    Khi mức độ lỗi tăng cao, controller có thể chuyển sang Error Passive.
+                    Khi đó hành vi báo lỗi của node bị hạn chế so với Error Active.
+                </p>
+
+                <pre><code>Error Active
+     │
+     │ Error counters increase
+     ▼
+Error Passive
+     │
+     │ Continue severe errors
+     ▼
+  Bus-Off</code></pre>
+
+                <h2>17. Bus-Off</h2>
+
+                <p>
+                    <strong>Bus-Off</strong> là trạng thái quan trọng trong CAN error handling.
+                    Khi controller chuyển sang Bus-Off, nó ngừng tham gia truyền thông trên bus
+                    theo cơ chế của CAN để tránh một node liên tục gây lỗi ảnh hưởng toàn mạng.
+                </p>
+
+                <pre><code>          CAN Bus
+             │
+             ▼
+       CAN Controller
+             │
+        Too many TX errors
+             │
+             ▼
+          BUS-OFF
+             │
+             X
+       Không tiếp tục
+       giao tiếp bình thường</code></pre>
+
+                <div class="note">
+                    Bus-Off không nên được hiểu đơn giản là "CAN Driver bị crash". Đây là một
+                    trạng thái error handling được định nghĩa trong CAN protocol.
+                </div>
+
+                <h2>18. Vì sao Bus-Off quan trọng?</h2>
+
+                <p>
+                    CAN là một mạng multi-node. Nếu một node bị lỗi nghiêm trọng và liên tục tạo
+                    error, node đó có thể gây ảnh hưởng tới các node khác.
+                </p>
+
+                <pre><code>             CAN BUS
+─────────────────────────────────────
+       │          │           │
+       ▼          ▼           ▼
+     ECU A      ECU B       ECU C
+                  │
+                  │ repeated errors
+                  ▼
+               BUS-OFF
+
+ECU B được tách khỏi communication
+để hạn chế ảnh hưởng tới network.</code></pre>
+
+                <h2>19. Bus-Off Recovery</h2>
+
+                <p>
+                    Sau khi Bus-Off, controller không đơn giản tự động quay lại giao tiếp trong
+                    mọi implementation/configuration.
+                </p>
+
+                <p>
+                    Hệ thống cần có cơ chế recovery phù hợp. Recovery có thể liên quan đến:
+                </p>
+
+                <ul>
+                    <li>CAN Controller.</li>
+                    <li>CAN Driver.</li>
+                    <li>CanIf.</li>
+                    <li>CanSM.</li>
+                    <li>EcuM hoặc các module quản lý ECU.</li>
+                    <li>Cấu hình recovery của project.</li>
+                </ul>
+
+                <pre><code>Normal
+  │
+  ▼
+Bus-Off
+  │
+  ▼
+Detection
+  │
+  ▼
+Recovery Procedure
+  │
+  ▼
+Controller Restart / Re-enable
+  │
+  ▼
+Normal Communication</code></pre>
+
+                <div class="note">
+                    Cách recovery cụ thể phụ thuộc AUTOSAR configuration, CAN controller và yêu cầu
+                    của project. Không nên giả định một chuỗi API recovery duy nhất cho mọi hệ thống.
+                </div>
+
+                <h2>20. Theo dõi Error bằng CAN Driver</h2>
+
+                <p>
+                    CAN Driver có vai trò giao tiếp với CAN Controller và xử lý các trạng thái,
+                    interrupt hoặc polling liên quan đến lỗi theo cấu hình.
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      │ Error Event
+      ▼
+CAN Driver
+      │
+      ├── Error information
+      ├── Controller state
+      └── Notification / callback
+             │
+             ▼
+           CanIf
+             │
+             ▼
+           CanSM
+             │
+             ▼
+       Upper software</code></pre>
+
+                <p>
+                    Tên API và callback cụ thể có thể khác tùy AUTOSAR release và vendor implementation.
+                </p>
+
+                <h2>21. Controller Error Notification</h2>
+
+                <p>
+                    CAN Driver có thể thông báo cho tầng trên khi controller gặp một số trạng thái
+                    hoặc lỗi nhất định.
+                </p>
+
+                <p>
+                    Một cách nhìn khái niệm:
+                </p>
+
+                <pre><code>Hardware Error
+      │
+      ▼
+CAN Controller
+      │
+      ▼
+CAN Driver
+      │
+      ▼
+Error Notification
+      │
+      ▼
+CanIf / CanSM
+      │
+      ▼
+Network Management / Diagnostic handling</code></pre>
+
+                <div class="note">
+                    Không nên tự suy ra rằng mọi CAN hardware error đều được truyền nguyên trạng lên
+                    application. AUTOSAR stack thường abstraction và xử lý lỗi ở nhiều tầng.
+                </div>
+
+                <h2>22. DET và Bus-Error</h2>
+
+                <p>
+                    Cần phân biệt <strong>Bus-Error</strong> với <strong>Development Error</strong>.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bus-Error</th>
+                            <th>DET Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lỗi xảy ra trong CAN communication.</td>
+                            <td>Lỗi do software gọi API/configuration không hợp lệ theo development checks.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ: CRC Error, ACK Error, Bit Error.</td>
+                            <td>Ví dụ: API được gọi với parameter không hợp lệ.</td>
+                        </tr>
+                        <tr>
+                            <td>Được phát hiện bởi CAN protocol/controller.</td>
+                            <td>Được phát hiện bởi software development error checks.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>23. DEM và Bus-Error</h2>
+
+                <p>
+                    Trong một hệ thống AUTOSAR, các lỗi communication có thể được xử lý hoặc
+                    chuyển thành diagnostic event tùy configuration.
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      ▼
+Communication Error
+      │
+      ▼
+CAN Driver / CanIf / CanSM
+      │
+      ▼
+Error Handling
+      │
+      ▼
+Diagnostic Event
+      │
+      ▼
+DEM
+      │
+      ▼
+Diagnostic Information</code></pre>
+
+                <div class="note">
+                    Không phải mọi Bus-Error đều mặc định trở thành một DEM event. Việc mapping
+                    error → diagnostic event phụ thuộc architecture và configuration của project.
+                </div>
+
+                <h2>24. Theo dõi Bus-Error bằng Interrupt</h2>
+
+                <p>
+                    Một số CAN Controller hỗ trợ interrupt khi xảy ra error hoặc thay đổi trạng thái.
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      │ Error Interrupt
+      ▼
+Interrupt Controller
+      │
+      ▼
+ISR
+      │
+      ▼
+CAN Driver
+      │
+      ▼
+Error Handling</code></pre>
+
+                <p>
+                    Đây là cách phổ biến để software phản ứng nhanh với các event từ CAN hardware.
+                </p>
+
+                <h2>25. Theo dõi Bus-Error bằng Polling</h2>
+
+                <p>
+                    Tùy configuration, một số thông tin có thể được xử lý theo cơ chế polling hoặc
+                    periodic main function.
+                </p>
+
+                <pre><code>Periodic Task
+      │
+      ▼
+Can_MainFunction_*
+      │
+      ▼
+Check CAN Controller
+      │
+      ▼
+Error / Status
+      │
+      ▼
+Process Notification</code></pre>
+
+                <p>
+                    Interrupt và polling là hai cơ chế xử lý khác nhau. Việc sử dụng cơ chế nào phụ
+                    thuộc cấu hình driver và phần cứng.
+                </p>
+
+                <h2>26. Debug khi TEC tăng liên tục</h2>
+
+                <p>
+                    Nếu TEC liên tục tăng, cần xem xét các nguyên nhân liên quan đến transmission.
+                </p>
+
+                <pre><code>TEC tăng
+  │
+  ├── Baud-rate?
+  │
+  ├── Bit timing?
+  │
+  ├── CAN clock?
+  │
+  ├── Transceiver?
+  │
+  ├── CAN wiring?
+  │
+  ├── Termination?
+  │
+  ├── Bus traffic?
+  │
+  └── Controller configuration?</code></pre>
+
+                <p>
+                    Đặc biệt, nếu transmitter không nhận được ACK hợp lệ, ACK Error có thể khiến
+                    transmission tiếp tục thất bại và ảnh hưởng đến error counter.
+                </p>
+
+                <h2>27. Debug khi REC tăng</h2>
+
+                <p>
+                    Nếu REC tăng, cần tập trung vào các vấn đề liên quan đến reception.
+                </p>
+
+                <ul>
+                    <li>Kiểm tra baud-rate.</li>
+                    <li>Kiểm tra bit timing.</li>
+                    <li>Kiểm tra physical bus.</li>
+                    <li>Kiểm tra CAN transceiver.</li>
+                    <li>Kiểm tra chất lượng tín hiệu.</li>
+                    <li>Kiểm tra các node khác trên bus.</li>
+                    <li>Kiểm tra CAN controller configuration.</li>
+                </ul>
+
+                <h2>28. Debug Bus-Off</h2>
+
+                <p>
+                    Khi ECU bị Bus-Off, không nên chỉ reset ECU ngay lập tức mà cần tìm nguyên nhân
+                    gây ra lỗi.
+                </p>
+
+                <pre><code>Bus-Off detected
+       │
+       ▼
+Record diagnostic information
+       │
+       ├── TEC / REC
+       ├── Error status
+       ├── Controller state
+       ├── CAN traffic
+       └── Timestamp
+       │
+       ▼
+Check physical layer
+       │
+       ▼
+Check timing / configuration
+       │
+       ▼
+Check software
+       │
+       ▼
+Recovery</code></pre>
+
+                <div class="note">
+                    Khi debug, việc lưu lại thông tin trước recovery rất hữu ích. Nếu reset ngay,
+                    một phần evidence về nguyên nhân có thể bị mất.
+                </div>
+
+                <h2>29. Ví dụ: Baud-rate sai gây Error</h2>
+
+                <p>
+                    Giả sử network yêu cầu:
+                </p>
+
+                <pre><code>CAN Network = 500 kbit/s
+
+ECU A = 500 kbit/s
+ECU B = 500 kbit/s
+ECU C = 250 kbit/s</code></pre>
+
+                <p>
+                    ECU C có thể không decode đúng frame từ bus. Tùy hoàn cảnh, các node có thể
+                    phát hiện lỗi và tạo Error Frame.
+                </p>
+
+                <pre><code>ECU A ──500k──┐
+              │
+ECU B ──500k──┼──── CAN BUS
+              │
+ECU C ──250k──┘
+                 │
+                 ▼
+           Communication Error</code></pre>
+
+                <h2>30. Ví dụ: Termination có vấn đề</h2>
+
+                <p>
+                    Một CAN bus thông thường cần termination phù hợp ở hai đầu bus.
+                    Nếu termination không đúng, signal integrity có thể bị ảnh hưởng.
+                </p>
+
+                <pre><code>120Ω                           120Ω
+  │                               │
+  ▼                               ▼
+┌─────┐=========================┌─────┐
+│ ECU │        CAN BUS           │ ECU │
+└─────┘=========================└─────┘
+   ▲                               ▲
+Termination                    Termination</code></pre>
+
+                <p>
+                    Nếu termination, wiring hoặc topology không đúng, CAN communication có thể xuất
+                    hiện error dù software configuration nhìn có vẻ chính xác.
+                </p>
+
+                <h2>31. Quy trình Debug Bus-Error</h2>
+
+                <pre><code>Bus-Error
+    │
+    ▼
+1. Identify Error Type
+    │
+    ▼
+2. Check TEC / REC
+    │
+    ▼
+3. Check Controller State
+    │
+    ▼
+4. Check Baud-rate / Bit Timing
+    │
+    ▼
+5. Check CAN Clock
+    │
+    ▼
+6. Check Transceiver
+    │
+    ▼
+7. Check Wiring / Termination
+    │
+    ▼
+8. Check CAN Traffic
+    │
+    ▼
+9. Check CAN Driver
+    │
+    ▼
+10. Check Upper-layer Configuration
+    │
+    ▼
+Root Cause + Recovery</code></pre>
+
+                <h2>32. Góc nhìn phỏng vấn</h2>
+
+                <p>
+                    Với vị trí Junior Automotive Embedded Software Engineer, một số câu hỏi có thể
+                    được sử dụng để kiểm tra khả năng debug CAN:
+                </p>
+
+                <ul>
+                    <li>What are the main CAN error types?</li>
+                    <li>What is an Error Frame?</li>
+                    <li>What are TEC and REC?</li>
+                    <li>What is Error Active?</li>
+                    <li>What is Error Passive?</li>
+                    <li>What is Bus-Off?</li>
+                    <li>Why does a CAN node enter Bus-Off?</li>
+                    <li>How would you debug a CAN Bus-Off issue?</li>
+                    <li>What can cause ACK Error?</li>
+                    <li>What is the difference between a CAN Bus-Error and a DET error?</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Câu trả lời ngắn nên nhớ:</strong>
+                    CAN monitors communication errors using mechanisms such as error detection,
+                    error counters and controller error states. When debugging a Bus-Error,
+                    I would first identify the error type and controller state, then check
+                    baud-rate, bit timing, CAN clock, transceiver, wiring, termination and
+                    software configuration.
+                </div>
+
+                <h2>33. Memory Map</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bit Error</td>
+                            <td>Bit được quan sát không phù hợp với bit đang truyền trong trường hợp áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Stuff Error</td>
+                            <td>Vi phạm quy tắc bit stuffing.</td>
+                        </tr>
+                        <tr>
+                            <td>CRC Error</td>
+                            <td>CRC của frame không hợp lệ.</td>
+                        </tr>
+                        <tr>
+                            <td>Form Error</td>
+                            <td>Vi phạm format của frame.</td>
+                        </tr>
+                        <tr>
+                            <td>ACK Error</td>
+                            <td>Không nhận được ACK phù hợp từ receiver.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Frame</td>
+                            <td>Frame dùng để báo lỗi trên CAN bus.</td>
+                        </tr>
+                        <tr>
+                            <td>TEC</td>
+                            <td>Transmit Error Counter.</td>
+                        </tr>
+                        <tr>
+                            <td>REC</td>
+                            <td>Receive Error Counter.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Active</td>
+                            <td>Trạng thái lỗi hoạt động bình thường.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Passive</td>
+                            <td>Trạng thái khi mức lỗi đã tăng cao.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus-Off</td>
+                            <td>Controller bị tách khỏi hoạt động giao tiếp bình thường trên bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Recovery</td>
+                            <td>Quy trình đưa controller trở lại hoạt động sau Bus-Off.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>34. Tóm tắt</h2>
+
+                <p>
+                    Theo dõi Bus-Error là một phần quan trọng trong CAN communication và
+                    automotive embedded debugging. CAN Controller có khả năng phát hiện nhiều loại
+                    lỗi và sử dụng error counters để theo dõi mức độ lỗi.
+                </p>
+
+                <pre><code>CAN Communication
+       │
+       ▼
+  Error Detection
+       │
+       ├── Bit Error
+       ├── Stuff Error
+       ├── CRC Error
+       ├── Form Error
+       └── ACK Error
+       │
+       ▼
+   Error Counter
+       │
+       ├── TEC
+       └── REC
+       │
+       ▼
+    Error State
+       │
+       ├── Error Active
+       ├── Error Passive
+       └── Bus-Off
+       │
+       ▼
+   Error Handling
+       │
+       ▼
+    Recovery</code></pre>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong> Khi gặp CAN Bus-Error, đừng chỉ nhìn vào
+                    một error code. Hãy xác định <strong>error type → TEC/REC → controller state
+                        → timing → physical layer → CAN Driver/stack</strong>. Đây là cách tiếp cận
+                    có hệ thống để tìm root cause thay vì chỉ reset ECU và thử lại.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-21.html">← Bài trước</a>
+                    <a class="btn" href="lesson-23.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

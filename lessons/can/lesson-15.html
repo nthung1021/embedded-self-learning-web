@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 15: CAN-IF, EcuM, OS, SchM | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html" class="active">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 15: CAN-IF, EcuM, OS, SchM</h1>
+
+                <p>
+                    Ở các bài trước, chúng ta đã tìm hiểu CAN Driver và các module
+                    liên quan như MCU, PORT, INTC, CanTrcv, DET và CanSM.
+                    Trong bài này, chúng ta tập trung vào bốn thành phần rất quan trọng
+                    trong quá trình tích hợp CAN Driver vào một ECU AUTOSAR:
+                    <strong>CanIf, EcuM, OS và SchM</strong>.
+                </p>
+
+                <p>
+                    Bốn thành phần này nằm ở những tầng khác nhau và có responsibility
+                    khác nhau. Việc hiểu đúng ranh giới giữa chúng rất quan trọng,
+                    đặc biệt khi đọc AUTOSAR architecture hoặc debug một CAN stack.
+                </p>
+
+                <div class="note">
+                    <strong>Ý tưởng chính:</strong>
+                    <br><br>
+                    <strong>CanIf</strong> là abstraction/interface giữa CAN Driver
+                    và các module communication phía trên.
+                    <br>
+                    <strong>EcuM</strong> quản lý trạng thái tổng thể của ECU,
+                    đặc biệt startup, shutdown, sleep và wakeup.
+                    <br>
+                    <strong>OS</strong> cung cấp execution environment như Task,
+                    ISR và scheduling.
+                    <br>
+                    <strong>SchM</strong> hỗ trợ việc điều phối các MainFunction
+                    và các cơ chế bảo vệ/synchronization của BSW.
+                </div>
+
+                <h2>1. Nhìn tổng thể bốn thành phần</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Vai trò chính</th>
+                            <th>Liên quan tới CAN như thế nào?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>CanIf</strong></td>
+                            <td>CAN Interface</td>
+                            <td>
+                                Giao tiếp giữa upper CAN modules và CanDrv
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>EcuM</strong></td>
+                            <td>ECU State Manager</td>
+                            <td>
+                                Startup, shutdown, sleep, wakeup
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>OS</strong></td>
+                            <td>Operating System</td>
+                            <td>
+                                Task, ISR, scheduling và execution context
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>SchM</strong></td>
+                            <td>BSW Scheduler / synchronization support</td>
+                            <td>
+                                Hỗ trợ scheduling MainFunction và
+                                critical-section/synchronization mechanisms
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>2. Vị trí của các thành phần trong ECU</h2>
+
+                <svg viewBox="0 0 900 650" role="img" aria-label="Vị trí CanIf EcuM OS SchM trong AUTOSAR"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="270" y="25" width="360" height="55" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="59" text-anchor="middle" font-size="19">
+                        Application / SWC
+                    </text>
+
+                    <rect x="270" y="105" width="360" height="65" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="145" text-anchor="middle" font-size="20">
+                        COM / PduR / CanSM / CanTp
+                    </text>
+
+                    <rect x="270" y="195" width="360" height="65" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="235" text-anchor="middle" font-size="22">
+                        CanIf
+                    </text>
+
+                    <rect x="270" y="285" width="360" height="65" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="325" text-anchor="middle" font-size="21">
+                        CanDrv
+                    </text>
+
+                    <rect x="270" y="375" width="360" height="65" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="415" text-anchor="middle" font-size="20">
+                        CAN Controller
+                    </text>
+
+                    <rect x="60" y="285" width="150" height="65" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="135" y="325" text-anchor="middle" font-size="19">
+                        EcuM
+                    </text>
+
+                    <rect x="690" y="285" width="150" height="65" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="765" y="325" text-anchor="middle" font-size="19">
+                        OS
+                    </text>
+
+                    <rect x="60" y="465" width="150" height="65" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="135" y="505" text-anchor="middle" font-size="19">
+                        SchM
+                    </text>
+
+                    <rect x="690" y="465" width="150" height="65" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="765" y="505" text-anchor="middle" font-size="19">
+                        ISR / Task
+                    </text>
+
+                    <line x1="450" y1="80" x2="450" y2="105" stroke="currentColor" stroke-width="2" />
+                    <line x1="450" y1="170" x2="450" y2="195" stroke="currentColor" stroke-width="2" />
+                    <line x1="450" y1="260" x2="450" y2="285" stroke="currentColor" stroke-width="2" />
+                    <line x1="450" y1="350" x2="450" y2="375" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="210" y1="317" x2="270" y2="317" stroke="currentColor" stroke-width="2" />
+                    <line x1="630" y1="317" x2="690" y2="317" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="135" y1="350" x2="135" y2="465" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="765" y1="350" x2="765" y2="465" stroke="currentColor" stroke-width="2" />
+
+                </svg>
+
+                <p>
+                    Lưu ý rằng OS và SchM không phải là các tầng xử lý CAN message.
+                    Chúng cung cấp môi trường để các BSW module như CanDrv thực thi
+                    công việc của mình.
+                </p>
+
+                <h2>3. CanIf là gì?</h2>
+
+                <p>
+                    <strong>CanIf (CAN Interface)</strong> là module nằm giữa
+                    các upper-layer communication modules và CAN Driver.
+                    Nó cung cấp một abstraction layer để upper layers không phải
+                    phụ thuộc trực tiếp vào CAN Controller hoặc implementation
+                    cụ thể của CAN Driver.
+                </p>
+
+                <pre><code>Upper CAN Modules
+        │
+        ▼
+      CanIf
+        │
+        ▼
+      CanDrv
+        │
+        ▼
+CAN Controller</code></pre>
+
+                <p>
+                    Ví dụ, upper layer có thể yêu cầu truyền một CAN PDU.
+                    CanIf chịu trách nhiệm mapping thông tin PDU đó tới
+                    các thông tin mà CanDrv cần để thực hiện transmission.
+                </p>
+
+                <h2>4. CanIf và CanDrv: Transmission</h2>
+
+                <p>
+                    Một luồng truyền CAN message có thể được hình dung như sau:
+                </p>
+
+                <pre><code>Application
+    │
+    ▼
+   COM
+    │
+    ▼
+   PduR
+    │
+    ▼
+  CanIf
+    │
+    │ Can_Write(...)
+    ▼
+  CanDrv
+    │
+    ▼
+CAN Controller
+    │
+    ▼
+ CAN Bus</code></pre>
+
+                <p>
+                    CanIf giúp upper layer không cần biết trực tiếp:
+                </p>
+
+                <ul>
+                    <li>CAN Controller register nằm ở đâu.</li>
+                    <li>Hardware Object cụ thể được map như thế nào.</li>
+                    <li>CAN Driver của vendor được implement ra sao.</li>
+                    <li>Cách CAN Controller thực hiện transmission ở mức hardware.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Boundary cần nhớ:</strong>
+                    CanIf xử lý abstraction và mapping ở communication interface;
+                    CanDrv xử lý CAN Controller ở mức driver.
+                </div>
+
+                <h2>5. CanIf và CanDrv: Reception</h2>
+
+                <p>
+                    Ở chiều nhận, flow được đảo ngược:
+                </p>
+
+                <pre><code>CAN Bus
+    │
+    ▼
+CAN Controller
+    │
+    ▼
+  CanDrv
+    │
+    │ Rx Indication
+    ▼
+  CanIf
+    │
+    ▼
+ PduR / CanTp / COM
+    │
+    ▼
+Application</code></pre>
+
+                <p>
+                    CanDrv xử lý event từ CAN Controller rồi thông báo lên CanIf.
+                    CanIf tiếp tục xác định PDU cần được chuyển tới module nào.
+                </p>
+
+                <h2>6. EcuM là gì?</h2>
+
+                <p>
+                    <strong>EcuM (ECU State Manager)</strong> chịu trách nhiệm
+                    quản lý các trạng thái lớn của ECU trong vòng đời hoạt động,
+                    bao gồm các quá trình như startup, shutdown, sleep và wakeup.
+                </p>
+
+                <p>
+                    Vì CAN Driver là một BSW module trong ECU, nó phải được
+                    initialize ở thời điểm phù hợp trong quá trình ECU startup.
+                </p>
+
+                <pre><code>ECU Reset
+   │
+   ▼
+EcuM Startup
+   │
+   ├── Initialize system
+   ├── Initialize BSW modules
+   ├── Initialize communication stack
+   │
+   ▼
+CanIf / CanDrv ready
+   │
+   ▼
+CAN communication available</code></pre>
+
+                <p>
+                    EcuM không phải là module xử lý CAN frame.
+                    Nó quản lý trạng thái của ECU và điều phối quá trình
+                    startup/shutdown để các BSW module có thể hoạt động
+                    trong đúng lifecycle.
+                </p>
+
+                <h2>7. EcuM và CAN Startup</h2>
+
+                <p>
+                    Có thể hình dung một ECU startup đơn giản như sau:
+                </p>
+
+                <pre><code>Power On
+   │
+   ▼
+Reset
+   │
+   ▼
+EcuM / Startup
+   │
+   ├── MCU initialization
+   ├── PORT initialization
+   ├── OS initialization
+   ├── BSW initialization
+   │
+   ▼
+CanDrv initialization
+   │
+   ▼
+CanIf initialization
+   │
+   ▼
+Communication stack ready
+   │
+   ▼
+ECU RUNNING</code></pre>
+
+                <p>
+                    Thứ tự chi tiết và cách gọi từng module phụ thuộc
+                    vào ECU integration và AUTOSAR configuration.
+                    Vì vậy không nên coi sơ đồ trên là một danh sách API
+                    cố định cho mọi project.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm quan trọng:</strong>
+                    EcuM quản lý lifecycle của ECU; nó không thay thế
+                    CanIf hoặc CanDrv và cũng không trực tiếp xử lý
+                    CAN transmit/receive.
+                </div>
+
+                <h2>8. EcuM và CAN Wakeup</h2>
+
+                <p>
+                    Một trong những điểm CAN liên quan rõ nhất tới EcuM
+                    là <strong>wakeup</strong>.
+                </p>
+
+                <p>
+                    Khi ECU đang ở một trạng thái low-power hoặc sleep,
+                    một sự kiện CAN có thể là nguồn wakeup tùy thiết kế hệ thống.
+                    Khi đó CAN hardware, transceiver và wakeup infrastructure
+                    phải phối hợp để ECU quay trở lại trạng thái hoạt động.
+                </p>
+
+                <svg viewBox="0 0 900 430" role="img" aria-label="CAN wakeup và EcuM"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="50" y="70" width="170" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="135" y="113" text-anchor="middle" font-size="19">
+                        CAN Bus
+                    </text>
+
+                    <rect x="285" y="70" width="190" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="380" y="113" text-anchor="middle" font-size="19">
+                        CAN Controller
+                    </text>
+
+                    <rect x="540" y="70" width="150" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="615" y="113" text-anchor="middle" font-size="19">
+                        CanDrv
+                    </text>
+
+                    <rect x="740" y="70" width="110" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="795" y="113" text-anchor="middle" font-size="18">
+                        CanIf
+                    </text>
+
+                    <rect x="285" y="255" width="190" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="380" y="298" text-anchor="middle" font-size="20">
+                        EcuM
+                    </text>
+
+                    <line x1="220" y1="105" x2="285" y2="105" stroke="currentColor" stroke-width="2" />
+                    <line x1="475" y1="105" x2="540" y2="105" stroke="currentColor" stroke-width="2" />
+                    <line x1="690" y1="105" x2="740" y2="105" stroke="currentColor" stroke-width="2" />
+
+                    <path d="M795 140 C795 220, 520 235, 475 270" fill="none" stroke="currentColor" stroke-width="2" />
+
+                    <text x="530" y="215" font-size="16">
+                        Wakeup information / handling
+                    </text>
+
+                    <text x="50" y="390" font-size="16">
+                        EcuM quản lý ECU lifecycle, không trực tiếp xử lý CAN frame.
+                    </text>
+
+                </svg>
+
+                <h2>9. OS là gì?</h2>
+
+                <p>
+                    <strong>OS (Operating System)</strong> trong AUTOSAR Classic
+                    cung cấp cơ chế thực thi cho application và BSW.
+                    Một số khái niệm quan trọng gồm:
+                </p>
+
+                <ul>
+                    <li>Task</li>
+                    <li>ISR (Interrupt Service Routine)</li>
+                    <li>Scheduling</li>
+                    <li>Event</li>
+                    <li>Counter / Alarm</li>
+                    <li>Resource và synchronization</li>
+                </ul>
+
+                <p>
+                    Đối với CAN, OS đặc biệt quan trọng vì CAN Driver có thể
+                    được thực thi trong nhiều execution context khác nhau,
+                    chẳng hạn ISR hoặc task/main function.
+                </p>
+
+                <h2>10. CAN Driver và ISR</h2>
+
+                <p>
+                    Nếu CAN Controller sử dụng interrupt-driven processing,
+                    một sự kiện từ CAN Controller có thể kích hoạt ISR.
+                </p>
+
+                <pre><code>CAN Controller
+       │
+       │ Interrupt
+       ▼
+      INTC
+       │
+       ▼
+      ISR
+       │
+       ▼
+    CanDrv
+       │
+       ▼
+    CanIf
+       │
+       ▼
+ Upper modules</code></pre>
+
+                <p>
+                    ISR phải được cấu hình và tích hợp đúng với OS/MCU.
+                    CanDrv chịu trách nhiệm xử lý phần CAN event của mình,
+                    nhưng không có nghĩa rằng CanDrv tự quản lý toàn bộ
+                    interrupt infrastructure của ECU.
+                </p>
+
+                <h2>11. CAN Driver và Task</h2>
+
+                <p>
+                    Không phải tất cả CAN processing đều nhất thiết xảy ra
+                    trong ISR. Với polling configuration, một MainFunction
+                    của CAN Driver có thể được gọi định kỳ từ một task
+                    hoặc scheduling mechanism.
+                </p>
+
+                <pre><code>OS Task
+   │
+   │ periodic execution
+   ▼
+Can_MainFunction_Read()
+   │
+   ▼
+CanDrv
+   │
+   ▼
+Check CAN Controller
+   │
+   ├── RX event
+   ├── TX event
+   └── Error / status
+   │
+   ▼
+CanIf</code></pre>
+
+                <p>
+                    Vì vậy, khi debug một CAN reception problem,
+                    cần biết project đang sử dụng interrupt processing
+                    hay polling processing.
+                </p>
+
+                <h2>12. OS Scheduling ảnh hưởng CAN như thế nào?</h2>
+
+                <p>
+                    Với polling-based processing, thời gian mà CAN MainFunction
+                    được gọi sẽ ảnh hưởng tới thời điểm driver phát hiện
+                    và xử lý event.
+                </p>
+
+                <svg viewBox="0 0 900 430" role="img" aria-label="OS scheduling và CAN polling"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <line x1="80" y1="220" x2="830" y2="220" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="150" y1="195" x2="150" y2="245" stroke="currentColor" stroke-width="2" />
+                    <line x1="350" y1="195" x2="350" y2="245" stroke="currentColor" stroke-width="2" />
+                    <line x1="550" y1="195" x2="550" y2="245" stroke="currentColor" stroke-width="2" />
+                    <line x1="750" y1="195" x2="750" y2="245" stroke="currentColor" stroke-width="2" />
+
+                    <text x="125" y="175" font-size="17">
+                        T0
+                    </text>
+                    <text x="325" y="175" font-size="17">
+                        T1
+                    </text>
+                    <text x="525" y="175" font-size="17">
+                        T2
+                    </text>
+                    <text x="725" y="175" font-size="17">
+                        T3
+                    </text>
+
+                    <rect x="115" y="90" width="70" height="45" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="150" y="118" text-anchor="middle" font-size="14">
+                        Read
+                    </text>
+
+                    <rect x="315" y="90" width="70" height="45" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="350" y="118" text-anchor="middle" font-size="14">
+                        Read
+                    </text>
+
+                    <rect x="515" y="90" width="70" height="45" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="550" y="118" text-anchor="middle" font-size="14">
+                        Read
+                    </text>
+
+                    <rect x="715" y="90" width="70" height="45" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="750" y="118" text-anchor="middle" font-size="14">
+                        Read
+                    </text>
+
+                    <circle cx="300" cy="220" r="7" fill="currentColor" />
+                    <text x="260" y="285" font-size="15">
+                        CAN RX event
+                    </text>
+
+                    <line x1="300" y1="220" x2="315" y2="220" stroke="currentColor" stroke-width="2"
+                        stroke-dasharray="5,5" />
+
+                    <text x="85" y="350" font-size="16">
+                        Với polling, event có thể phải chờ tới lần MainFunction tiếp theo.
+                    </text>
+
+                </svg>
+
+                <p>
+                    Ví dụ, nếu CAN frame đến ngay sau khi
+                    <code>Can_MainFunction_Read()</code> vừa chạy,
+                    driver có thể phải chờ tới lần polling tiếp theo
+                    mới xử lý event.
+                </p>
+
+                <div class="note">
+                    <strong>Debug hint:</strong>
+                    Nếu reception có độ trễ bất thường trong polling mode,
+                    hãy kiểm tra period của MainFunction và scheduling của OS.
+                </div>
+
+                <h2>13. SchM là gì?</h2>
+
+                <p>
+                    <strong>SchM (BSW Scheduler)</strong> là một phần của
+                    AUTOSAR BSW infrastructure, cung cấp các cơ chế hỗ trợ
+                    scheduling và synchronization cho BSW modules.
+                </p>
+
+                <p>
+                    SchM không phải là một CAN-specific scheduler.
+                    Nó được sử dụng bởi nhiều BSW modules và giúp module
+                    thực hiện các thao tác cần được bảo vệ hoặc được điều phối
+                    trong execution environment phù hợp.
+                </p>
+
+                <pre><code>BSW Module
+    │
+    ├── MainFunction
+    │
+    ├── Critical Section
+    │
+    └── Synchronization
+             │
+             ▼
+            SchM
+             │
+             ▼
+        OS / Scheduler</code></pre>
+
+                <h2>14. SchM và CAN MainFunction</h2>
+
+                <p>
+                    Trong CAN Driver, các MainFunction có thể được cấu hình
+                    để thực hiện các processing định kỳ.
+                </p>
+
+                <pre><code>OS / Scheduling
+       │
+       ▼
+      SchM
+       │
+       ▼
+Can_MainFunction_Read()
+Can_MainFunction_Write()
+Can_MainFunction_BusOff()
+Can_MainFunction_Wakeup()
+       │
+       ▼
+     CanDrv</code></pre>
+
+                <p>
+                    Tên và việc sử dụng từng MainFunction phụ thuộc vào
+                    CAN Driver specification và configuration của project.
+                    Không phải tất cả MainFunction đều luôn được sử dụng.
+                </p>
+
+                <h2>15. SchM và Critical Section</h2>
+
+                <p>
+                    Một driver có thể cần bảo vệ một đoạn code khi dữ liệu
+                    hoặc trạng thái nội bộ không được phép bị thay đổi
+                    đồng thời bởi một execution context khác.
+                </p>
+
+                <p>
+                    Có thể hình dung:
+                </p>
+
+                <pre><code>Normal execution
+       │
+       ▼
+SchM_Enter_...
+       │
+       ▼
+Critical Section
+       │
+       ├── Access shared driver data
+       ├── Update driver state
+       └── Hardware-related operation
+       │
+       ▼
+SchM_Exit_...
+       │
+       ▼
+Normal execution</code></pre>
+
+                <div class="note">
+                    <strong>Không nên hiểu SchM là "nơi chứa toàn bộ CAN scheduling".</strong>
+                    SchM cung cấp các service/infrastructure để BSW module
+                    sử dụng; OS vẫn là thành phần chịu trách nhiệm về
+                    execution scheduling ở cấp hệ thống.
+                </div>
+
+                <h2>16. OS và SchM khác nhau như thế nào?</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>OS</th>
+                            <th>SchM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Scope</strong></td>
+                            <td>Toàn ECU / execution environment</td>
+                            <td>BSW module support</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Task</strong></td>
+                            <td>Có</td>
+                            <td>Không phải responsibility chính</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ISR</strong></td>
+                            <td>Có</td>
+                            <td>Không trực tiếp quản lý ISR</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scheduling</strong></td>
+                            <td>System-level scheduling</td>
+                            <td>Hỗ trợ scheduling interface cho BSW</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Critical section</strong></td>
+                            <td>Cung cấp OS mechanisms</td>
+                            <td>Cung cấp BSW-specific abstraction/macros</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CAN-specific?</strong></td>
+                            <td>Không</td>
+                            <td>Không</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>17. OS và SchM trong một CAN polling system</h2>
+
+                <svg viewBox="0 0 900 450" role="img" aria-label="OS SchM và CAN polling"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="50" y="55" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="140" y="98" text-anchor="middle" font-size="20">
+                        OS
+                    </text>
+
+                    <rect x="360" y="55" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="98" text-anchor="middle" font-size="20">
+                        SchM
+                    </text>
+
+                    <rect x="670" y="55" width="180" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="760" y="98" text-anchor="middle" font-size="20">
+                        CanDrv
+                    </text>
+
+                    <rect x="360" y="220" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="263" text-anchor="middle" font-size="19">
+                        MainFunction
+                    </text>
+
+                    <rect x="670" y="220" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="760" y="263" text-anchor="middle" font-size="19">
+                        CAN Controller
+                    </text>
+
+                    <line x1="230" y1="90" x2="360" y2="90" stroke="currentColor" stroke-width="2" />
+                    <polygon points="355,85 365,90 355,95" fill="currentColor" />
+
+                    <line x1="540" y1="90" x2="670" y2="90" stroke="currentColor" stroke-width="2" />
+                    <polygon points="665,85 675,90 665,95" fill="currentColor" />
+
+                    <line x1="450" y1="125" x2="450" y2="220" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="540" y1="255" x2="670" y2="255" stroke="currentColor" stroke-width="2" />
+                    <polygon points="665,250 675,255 665,260" fill="currentColor" />
+
+                    <text x="65" y="360" font-size="16">
+                        OS quyết định execution context/schedule.
+                    </text>
+
+                    <text x="65" y="390" font-size="16">
+                        SchM cung cấp BSW scheduling/synchronization support.
+                    </text>
+
+                    <text x="65" y="420" font-size="16">
+                        CanDrv thực hiện CAN-specific processing.
+                    </text>
+
+                </svg>
+
+                <h2>18. Interrupt mode vs Polling mode</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Interrupt-driven</th>
+                            <th>Polling-driven</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Event trigger</strong></td>
+                            <td>Hardware interrupt</td>
+                            <td>Periodic MainFunction</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OS involvement</strong></td>
+                            <td>ISR / interrupt context</td>
+                            <td>Task / scheduled context</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SchM</strong></td>
+                            <td>
+                                Có thể liên quan tới synchronization/critical section
+                            </td>
+                            <td>
+                                Có thể liên quan tới MainFunction scheduling support
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Response time</strong></td>
+                            <td>
+                                Thường nhanh hơn nếu cấu hình đúng
+                            </td>
+                            <td>
+                                Phụ thuộc polling period
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Debug focus</strong></td>
+                            <td>
+                                INTC → ISR → CanDrv
+                            </td>
+                            <td>
+                                OS → scheduling → MainFunction → CanDrv
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>19. Một CAN TX flow hoàn chỉnh</h2>
+
+                <p>
+                    Bây giờ chúng ta có thể ghép các bài trước thành
+                    một flow hoàn chỉnh.
+                </p>
+
+                <pre><code>Application
+     │
+     ▼
+    COM
+     │
+     ▼
+    PduR
+     │
+     ▼
+   CanIf
+     │
+     │ Can_Write()
+     ▼
+   CanDrv
+     │
+     ▼
+CAN Controller
+     │
+     ▼
+ CAN Transmit
+     │
+     ▼
+CAN Controller Event
+     │
+     ▼
+Interrupt / Polling
+     │
+     ▼
+OS / ISR or MainFunction
+     │
+     ▼
+   CanDrv
+     │
+     ▼
+   CanIf
+     │
+     ▼
+Tx Confirmation</code></pre>
+
+                <p>
+                    Flow này cho thấy CAN communication không chỉ là
+                    "gọi Can_Write rồi xong". Việc xử lý event sau đó
+                    còn phụ thuộc vào execution mechanism của ECU.
+                </p>
+
+                <h2>20. Một CAN RX flow hoàn chỉnh</h2>
+
+                <pre><code>CAN Bus
+    │
+    ▼
+CAN Controller
+    │
+    ├───────────────┐
+    │               │
+    ▼               ▼
+ Interrupt       Polling
+    │               │
+    ▼               ▼
+   ISR         MainFunction
+    │               │
+    └───────┬───────┘
+            ▼
+          CanDrv
+            │
+            ▼
+          CanIf
+            │
+            ▼
+       PduR / COM
+            │
+            ▼
+       Application</code></pre>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Interrupt và polling là hai cách khác nhau để đưa
+                    CAN event vào execution flow của CanDrv.
+                    Không nên nhầm "CanDrv xử lý interrupt" với
+                    "CanDrv là Interrupt Controller".
+                </div>
+
+                <h2>21. EcuM, OS và SchM có cùng responsibility không?</h2>
+
+                <p>
+                    Không. Đây là một trong những phần dễ nhầm nhất.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Câu hỏi mà nó giải quyết</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>EcuM</strong></td>
+                            <td>
+                                ECU đang ở lifecycle/state nào?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>OS</strong></td>
+                            <td>
+                                Code nào được thực thi, khi nào và trong context nào?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>SchM</strong></td>
+                            <td>
+                                BSW module sử dụng scheduling/synchronization
+                                abstraction như thế nào?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CanIf</strong></td>
+                            <td>
+                                CAN communication interface giữa upper layer và CanDrv là gì?
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>22. CAN Initialization nhìn từ bốn module</h2>
+
+                <svg viewBox="0 0 900 560" role="img" aria-label="CAN initialization với CanIf EcuM OS và SchM"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="340" y="25" width="220" height="65" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="65" text-anchor="middle" font-size="21">
+                        ECU Startup
+                    </text>
+
+                    <rect x="80" y="145" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="170" y="187" text-anchor="middle" font-size="20">
+                        EcuM
+                    </text>
+
+                    <rect x="360" y="145" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="187" text-anchor="middle" font-size="20">
+                        OS
+                    </text>
+
+                    <rect x="640" y="145" width="180" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="730" y="187" text-anchor="middle" font-size="20">
+                        SchM
+                    </text>
+
+                    <rect x="220" y="300" width="200" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="320" y="342" text-anchor="middle" font-size="20">
+                        CanDrv
+                    </text>
+
+                    <rect x="500" y="300" width="200" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="600" y="342" text-anchor="middle" font-size="20">
+                        CanIf
+                    </text>
+
+                    <rect x="360" y="445" width="180" height="65" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="485" text-anchor="middle" font-size="19">
+                        CAN Ready
+                    </text>
+
+                    <line x1="450" y1="90" x2="170" y2="145" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="90" x2="450" y2="145" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="90" x2="730" y2="145" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="170" y1="215" x2="270" y2="300" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="215" x2="350" y2="300" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="730" y1="215" x2="650" y2="300" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="420" y1="335" x2="500" y2="335" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="370" x2="450" y2="445" stroke="currentColor" stroke-width="2" />
+
+                </svg>
+
+                <p>
+                    Sơ đồ trên chỉ mô tả relationship ở mức conceptual.
+                    Startup sequence thực tế của một ECU sẽ phụ thuộc vào
+                    ECU configuration, OS configuration và vendor integration.
+                </p>
+
+                <h2>23. Debug CAN theo CanIf → EcuM → OS → SchM</h2>
+
+                <p>
+                    Khi CAN communication không hoạt động, có thể chia việc debug
+                    thành bốn nhóm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm</th>
+                            <th>Câu hỏi debug</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>CanIf</strong></td>
+                            <td>
+                                PDU có được mapping đúng?
+                                Tx/Rx notification có được gọi?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>EcuM</strong></td>
+                            <td>
+                                ECU đã ở trạng thái cho phép communication chưa?
+                                Startup/wakeup có hoàn tất không?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>OS</strong></td>
+                            <td>
+                                Task/ISR có được execute không?
+                                Priority và scheduling có đúng không?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>SchM</strong></td>
+                            <td>
+                                MainFunction có được schedule?
+                                Critical section/synchronization có vấn đề không?
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>24. Ví dụ Debug: CAN RX không tới Application</h2>
+
+                <p>
+                    Giả sử bạn dùng CAN analyzer và thấy ECU thực sự nhận được
+                    CAN frame nhưng Application không nhận được signal.
+                </p>
+
+                <pre><code>CAN frame exists
+       │
+       ▼
+CAN Controller
+       │
+       ▼
+CanDrv
+       │
+       ├── Is RX processing executed?
+       │
+       ├── Interrupt or polling?
+       │
+       └── Is MainFunction scheduled?
+       │
+       ▼
+CanIf
+       │
+       ├── Correct HRH / PDU mapping?
+       │
+       └── Rx indication?
+       │
+       ▼
+PduR / COM
+       │
+       ▼
+Application</code></pre>
+
+                <p>
+                    Nếu polling mode được sử dụng nhưng MainFunction không bao giờ
+                    được execute, CanDrv có thể hoàn toàn không có cơ hội xử lý
+                    RX event.
+                </p>
+
+                <h2>25. Ví dụ Debug: CAN Bus-off</h2>
+
+                <p>
+                    Một ví dụ khác là CAN Controller chuyển sang trạng thái
+                    <strong>Bus-Off</strong>.
+                </p>
+
+                <pre><code>CAN Controller
+       │
+       │ Bus-Off
+       ▼
+    CanDrv
+       │
+       ├── Interrupt / Polling processing
+       │
+       ▼
+    CanIf
+       │
+       ▼
+    CanSM
+       │
+       ▼
+Communication state handling</code></pre>
+
+                <p>
+                    Trong trường hợp này, CanDrv xử lý phần controller-level
+                    event, CanIf chuyển notification lên tầng thích hợp,
+                    còn CanSM chịu trách nhiệm CAN network state management.
+                </p>
+
+                <h2>26. Những điều không nên nhầm lẫn</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dễ nhầm</th>
+                            <th>Cách hiểu đúng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CanIf = CanDrv</td>
+                            <td>
+                                Không. CanIf là interface/abstraction,
+                                CanDrv điều khiển CAN Controller.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>EcuM = CAN Manager</td>
+                            <td>
+                                Không. EcuM quản lý ECU lifecycle.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>OS = SchM</td>
+                            <td>
+                                Không. OS quản lý execution environment;
+                                SchM hỗ trợ BSW scheduling/synchronization.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SchM trực tiếp schedule CPU</td>
+                            <td>
+                                Không nên hiểu như vậy. System scheduling
+                                thuộc OS; SchM cung cấp abstraction cho BSW.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>EcuM xử lý CAN frame</td>
+                            <td>
+                                Không. CAN frame processing thuộc CAN stack.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CanIf là OS task</td>
+                            <td>
+                                Không. CanIf là BSW communication module.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>27. Interview Perspective</h2>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is the relationship between CanIf, CanDrv,
+                        OS and SchM?"</strong>
+                </p>
+
+                <p>
+                    Có thể trả lời theo logic:
+                </p>
+
+                <pre><code>CanIf:
+Provides the CAN abstraction/interface
+between upper communication layers and CanDrv.
+
+CanDrv:
+Controls the CAN controller and handles
+CAN-specific hardware events.
+
+OS:
+Provides the execution context such as
+tasks, ISRs and scheduling.
+
+SchM:
+Provides BSW scheduling/synchronization
+support used by BSW modules.</code></pre>
+
+                <p>
+                    Nếu interviewer hỏi thêm về EcuM:
+                </p>
+
+                <pre><code>EcuM:
+Manages the ECU lifecycle, including
+startup, shutdown, sleep and wakeup.
+It does not process CAN frames directly.</code></pre>
+
+                <h2>28. Memory Map</h2>
+
+                <svg viewBox="0 0 900 500" role="img" aria-label="Memory map của CanIf EcuM OS SchM"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="320" y="30" width="260" height="75" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="76" text-anchor="middle" font-size="23">
+                        CAN Communication
+                    </text>
+
+                    <rect x="60" y="170" width="180" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="150" y="216" text-anchor="middle" font-size="21">
+                        CanIf
+                    </text>
+
+                    <rect x="270" y="170" width="180" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="360" y="216" text-anchor="middle" font-size="21">
+                        EcuM
+                    </text>
+
+                    <rect x="480" y="170" width="180" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="570" y="216" text-anchor="middle" font-size="21">
+                        OS
+                    </text>
+
+                    <rect x="690" y="170" width="180" height="75" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="780" y="216" text-anchor="middle" font-size="21">
+                        SchM
+                    </text>
+
+                    <rect x="210" y="340" width="480" height="80" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="375" text-anchor="middle" font-size="21">
+                        CanDrv / CAN Controller
+                    </text>
+                    <text x="450" y="402" text-anchor="middle" font-size="16">
+                        Hardware-specific CAN processing
+                    </text>
+
+                    <line x1="150" y1="245" x2="300" y2="340" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="360" y1="245" x2="360" y2="340" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="570" y1="245" x2="520" y2="340" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="780" y1="245" x2="600" y2="340" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="105" x2="450" y2="170" stroke="currentColor" stroke-width="2" />
+
+                </svg>
+
+                <div class="note">
+                    <strong>Memory trick:</strong>
+                    <br><br>
+                    <strong>CanIf → Interface</strong>
+                    <br>
+                    <strong>EcuM → ECU State</strong>
+                    <br>
+                    <strong>OS → Execution</strong>
+                    <br>
+                    <strong>SchM → BSW Scheduling / Synchronization</strong>
+                    <br>
+                    <strong>CanDrv → CAN Controller</strong>
+                </div>
+
+                <h2>29. Tóm tắt</h2>
+
+                <div class="note">
+                    <br><br>
+
+                    <strong>CanIf</strong> là abstraction layer giữa
+                    upper communication modules và CAN Driver.
+                    Nó giúp upper layers không cần biết implementation
+                    cụ thể của CAN Controller/CanDrv.
+                    <br><br>
+
+                    <strong>EcuM</strong> quản lý lifecycle của ECU,
+                    bao gồm startup, shutdown, sleep và wakeup.
+                    Nó không trực tiếp xử lý CAN frame.
+                    <br><br>
+
+                    <strong>OS</strong> cung cấp execution environment:
+                    Task, ISR, scheduling và synchronization mechanisms.
+                    CAN Driver có thể được thực thi trong ISR hoặc
+                    task/main-function context tùy configuration.
+                    <br><br>
+
+                    <strong>SchM</strong> cung cấp BSW scheduling và
+                    synchronization abstraction. Nó không thay thế OS.
+                    <br><br>
+
+                    Có thể ghi nhớ toàn bộ bài bằng:
+                    <br><br>
+
+                    <strong>CanIf → Interface</strong>
+                    <br>
+                    <strong>EcuM → ECU Lifecycle</strong>
+                    <br>
+                    <strong>OS → Execution</strong>
+                    <br>
+                    <strong>SchM → BSW Scheduling / Synchronization</strong>
+                    <br>
+                    <strong>CanDrv → CAN Controller</strong>
+                    <br><br>
+
+                    Khi debug CAN, hãy xác định trước ECU đang sử dụng
+                    <strong>interrupt hay polling</strong>, sau đó kiểm tra
+                    execution path tương ứng:
+                    <strong>ISR → CanDrv → CanIf</strong> hoặc
+                    <strong>OS scheduling → MainFunction → CanDrv → CanIf</strong>.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-14.html">← Bài trước</a>
+                    <a class="btn" href="lesson-16.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

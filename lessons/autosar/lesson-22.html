@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 22: AUTOSAR Interfaces và Dependencies | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html" class="active" aria-current="page">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+            <a href="index.html">← Tất cả bài học AUTOSAR</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 22: AUTOSAR Interfaces và Dependencies</h1>
+
+            <p>
+                Trong các bài trước, chúng ta đã tìm hiểu Application Software, RTE, BSW,
+                ECU Abstraction và MCAL. Tuy nhiên, để các thành phần này thực sự làm việc
+                với nhau, chúng cần một cơ chế xác định rõ <strong>giao tiếp</strong> và
+                <strong>phụ thuộc</strong>.
+            </p>
+
+            <p>
+                Hai khái niệm quan trọng giúp hiểu vấn đề này là
+                <strong>Interface</strong> và <strong>Dependency</strong>.
+                Interface mô tả cách một thành phần giao tiếp với thành phần khác,
+                trong khi dependency thể hiện thành phần đó đang phụ thuộc vào điều gì.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Bài này đi sâu vào cách hiểu Interface và Dependency trong kiến trúc AUTOSAR,
+                đặc biệt là quan hệ giữa Application Software, RTE, BSW và Hardware.
+                Chúng ta tập trung vào kiến trúc, luồng giao tiếp, dependency và cách phân tích,
+                chưa đi sâu vào ARXML hay cấu hình công cụ cụ thể.
+            </div>
+
+            <h2>1. Interface là gì?</h2>
+
+            <p>
+                Interface có thể hiểu đơn giản là một
+                <strong>điểm giao tiếp được định nghĩa giữa hai thành phần</strong>.
+                Nó quy định một thành phần có thể cung cấp hoặc sử dụng những dữ liệu,
+                dịch vụ hay chức năng nào.
+            </p>
+
+            <p>
+                Interface giúp các thành phần không cần biết toàn bộ cách triển khai
+                bên trong của nhau.
+            </p>
+
+            <pre><code>Component A
+     |
+     |  Interface
+     v
+Component B
+
+A chỉ cần biết:
+- Có thể giao tiếp với B
+- Dữ liệu/chức năng nào được cung cấp
+- Cách sử dụng interface
+
+A không nhất thiết phải biết:
+- B được implement bên trong như thế nào
+- B sử dụng phần cứng nào</code></pre>
+
+            <h2>2. Vì sao AUTOSAR cần Interface?</h2>
+
+            <p>
+                Một trong những mục tiêu quan trọng của AUTOSAR là
+                <strong>separation of concerns</strong> và khả năng tái sử dụng.
+                Nếu Application phải truy cập trực tiếp vào từng driver hoặc hardware,
+                phần mềm sẽ phụ thuộc rất mạnh vào ECU cụ thể.
+            </p>
+
+            <p>
+                Interface tạo ra một ranh giới rõ ràng giữa các thành phần.
+                Nhờ đó, một component có thể thay đổi implementation phía dưới
+                mà component phía trên ít bị ảnh hưởng hơn.
+            </p>
+
+            <pre><code>Application
+     |
+     | Interface
+     v
+    RTE
+     |
+     | Interface
+     v
+   BSW
+     |
+     | Interface
+     v
+   MCAL
+     |
+     v
+ Hardware</code></pre>
+
+            <h2>3. Interface không phải là Implementation</h2>
+
+            <p>
+                Đây là một điểm rất quan trọng.
+                Interface mô tả <strong>cách giao tiếp</strong>,
+                còn implementation mô tả <strong>cách chức năng được thực hiện</strong>.
+            </p>
+
+            <p>
+                Ví dụ, Application có thể yêu cầu trạng thái của một công tắc.
+                Interface có thể cung cấp dữ liệu Boolean như ON/OFF.
+                Application không cần biết dữ liệu đó được lấy từ GPIO,
+                CAN hay một nguồn khác.
+            </p>
+
+            <pre><code>Interface:
+    SwitchState = TRUE / FALSE
+
+Implementation có thể là:
+
+GPIO
+  ↓
+MCAL
+  ↓
+ECU Abstraction
+  ↓
+RTE
+  ↓
+SwitchState
+
+hoặc:
+
+CAN Frame
+  ↓
+Communication Stack
+  ↓
+RTE
+  ↓
+SwitchState</code></pre>
+
+            <h2>4. Sender-Receiver Interface</h2>
+
+            <p>
+                Một loại giao tiếp quan trọng trong AUTOSAR là
+                <strong>Sender-Receiver</strong>.
+                Mô hình này tập trung vào việc trao đổi dữ liệu giữa các software component.
+            </p>
+
+            <pre><code>Sender SWC
+    |
+    |  Data
+    v
+Interface
+    |
+    v
+Receiver SWC</code></pre>
+
+            <p>
+                Ví dụ một SWC đo nhiệt độ có thể gửi giá trị nhiệt độ,
+                trong khi một SWC khác sử dụng giá trị đó để quyết định
+                có bật cảnh báo hay không.
+            </p>
+
+            <pre><code>Temperature SWC
+       |
+       | Temperature = 85°C
+       v
+  Sender-Receiver
+       |
+       v
+Warning SWC
+       |
+       | Temperature > Threshold
+       v
+Warning = ON</code></pre>
+
+            <h2>5. Client-Server Interface</h2>
+
+            <p>
+                Một kiểu giao tiếp khác là <strong>Client-Server</strong>.
+                Trong mô hình này, một component yêu cầu thực hiện một operation
+                từ component khác.
+            </p>
+
+            <pre><code>Client
+  |
+  | Request operation
+  v
+Server
+  |
+  | Execute operation
+  v
+Result</code></pre>
+
+            <p>
+                Ví dụ, một Application SWC có thể yêu cầu một service thực hiện
+                một chức năng mà service đó cung cấp.
+            </p>
+
+            <p>
+                Điểm khác biệt quan trọng là Sender-Receiver chủ yếu tập trung vào
+                <strong>trao đổi dữ liệu</strong>, còn Client-Server tập trung vào
+                <strong>gọi một operation/service</strong>.
+            </p>
+
+            <h2>6. Sender-Receiver và Client-Server khác nhau thế nào?</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Đặc điểm</th>
+                        <th>Sender-Receiver</th>
+                        <th>Client-Server</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mục đích</td>
+                        <td>Trao đổi dữ liệu</td>
+                        <td>Yêu cầu operation/service</td>
+                    </tr>
+                    <tr>
+                        <td>Trọng tâm</td>
+                        <td>Data</td>
+                        <td>Operation</td>
+                    </tr>
+                    <tr>
+                        <td>Ví dụ</td>
+                        <td>Temperature = 80°C</td>
+                        <td>Request diagnostic service</td>
+                    </tr>
+                    <tr>
+                        <td>Quan hệ</td>
+                        <td>Sender → Receiver</td>
+                        <td>Client → Server</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>7. Port và Interface</h2>
+
+            <p>
+                Trong AUTOSAR, interface thường được kết nối với
+                <strong>Port</strong> của Software Component.
+            </p>
+
+            <p>
+                Có thể hình dung Port là điểm kết nối,
+                còn Interface định nghĩa nội dung hoặc cách giao tiếp tại điểm đó.
+            </p>
+
+            <pre><code>SWC A                         SWC B
+
+[ Port ] ------------------- [ Port ]
+     \                         /
+      \---- Interface --------/</code></pre>
+
+            <p>
+                Vì vậy khi phân tích một SWC, không nên chỉ nhìn vào code.
+                Cần xem component có những port nào và mỗi port sử dụng interface nào.
+            </p>
+
+            <h2>8. Required Port và Provided Port</h2>
+
+            <p>
+                Một component có thể <strong>cung cấp</strong> một chức năng
+                hoặc <strong>yêu cầu</strong> một chức năng.
+            </p>
+
+            <ul>
+                <li><strong>Provided:</strong> component cung cấp dữ liệu hoặc service.</li>
+                <li><strong>Required:</strong> component cần dữ liệu hoặc service từ nơi khác.</li>
+            </ul>
+
+            <pre><code>Sensor SWC
+
+[Provided]
+Temperature
+     |
+     v
+  Other SWC
+
+
+Warning SWC
+
+[Required]
+Temperature
+     ^
+     |
+  Sensor SWC</code></pre>
+
+            <h2>9. Dependency là gì?</h2>
+
+            <p>
+                Dependency là mối quan hệ trong đó một thành phần cần một thành phần khác
+                để thực hiện chức năng của mình.
+            </p>
+
+            <pre><code>Component A
+     |
+     | depends on
+     v
+Component B</code></pre>
+
+            <p>
+                Ví dụ, Application Software có thể phụ thuộc vào một service do BSW cung cấp.
+                Nếu service đó không hoạt động, chức năng Application tương ứng cũng có thể bị ảnh hưởng.
+            </p>
+
+            <h2>10. Dependency không có nghĩa là gọi trực tiếp</h2>
+
+            <p>
+                Trong AUTOSAR, một dependency không nhất thiết có nghĩa là
+                component phía trên gọi trực tiếp code của component phía dưới.
+            </p>
+
+            <p>
+                Dependency thường được thể hiện thông qua interface và các abstraction layer.
+            </p>
+
+            <pre><code>Application
+    |
+    | depends on
+    v
+Interface
+    |
+    v
+RTE
+    |
+    v
+BSW Service</code></pre>
+
+            <p>
+                Application phụ thuộc vào khả năng mà service cung cấp,
+                thay vì phải phụ thuộc trực tiếp vào implementation cụ thể bên dưới.
+            </p>
+
+            <h2>11. Compile-time và Runtime Dependency</h2>
+
+            <p>
+                Dependency có thể xuất hiện ở nhiều mức độ khác nhau.
+                Một cách phân tích hữu ích là phân biệt dependency liên quan đến
+                build/compile với dependency xảy ra trong quá trình chạy.
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Compile-time dependency:</strong>
+                    thành phần cần một definition hoặc generated interface để build.
+                </li>
+                <li>
+                    <strong>Runtime dependency:</strong>
+                    chức năng chỉ hoạt động đúng khi service hoặc component liên quan
+                    hoạt động trong runtime.
+                </li>
+            </ul>
+
+            <h2>12. Application Software phụ thuộc vào ai?</h2>
+
+            <p>
+                Application Software thường không nên phụ thuộc trực tiếp vào hardware.
+                Thay vào đó, nó sử dụng các interface được cung cấp qua RTE.
+            </p>
+
+            <pre><code>Application SWC
+       |
+       | Required Interface
+       v
+      RTE
+       |
+       v
+BSW / Other SWC / Services</code></pre>
+
+            <p>
+                Đây là một trong những điểm thể hiện rõ tư tưởng abstraction của AUTOSAR.
+            </p>
+
+            <h2>13. RTE có vai trò gì đối với Interface?</h2>
+
+            <p>
+                RTE đóng vai trò trung gian kết nối các Software Component
+                với nhau và kết nối Application Software với các service phù hợp.
+            </p>
+
+            <pre><code>SWC A
+  |
+  | Interface
+  v
+ RTE
+  |
+  | Interface
+  v
+SWC B</code></pre>
+
+            <p>
+                Hoặc:
+            </p>
+
+            <pre><code>Application SWC
+       |
+       v
+      RTE
+       |
+       v
+BSW Service
+       |
+       v
+Hardware</code></pre>
+
+            <p>
+                Vì vậy RTE giúp Application tránh phải biết chi tiết
+                về cách dữ liệu đi xuyên qua các layer phía dưới.
+            </p>
+
+            <h2>14. Interface giữa Application và RTE</h2>
+
+            <p>
+                Từ góc nhìn Application, RTE cung cấp môi trường giao tiếp
+                đã được định nghĩa cho SWC.
+            </p>
+
+            <p>
+                Application có thể yêu cầu dữ liệu hoặc service mà nó cần
+                thông qua các port/interface của mình.
+            </p>
+
+            <pre><code>Application SWC
+       |
+       | Required Port
+       v
+      RTE
+       |
+       | tìm provider phù hợp
+       v
+Provider SWC / BSW Service</code></pre>
+
+            <h2>15. Interface giữa các Software Component</h2>
+
+            <p>
+                Hai SWC có thể giao tiếp với nhau mà không cần biết implementation
+                nội bộ của nhau.
+            </p>
+
+            <pre><code>+----------------+        +----------------+
+| Temperature SWC|        | Warning SWC    |
+|                |        |                |
+| Provide Temp   |------->| Require Temp   |
++----------------+        +----------------+
+
+             Interface
+             Temperature</code></pre>
+
+            <p>
+                Điều này giúp từng SWC có thể được phát triển và kiểm thử
+                tương đối độc lập.
+            </p>
+
+            <h2>16. Interface giữa Application và BSW</h2>
+
+            <p>
+                Application cũng có thể sử dụng các functionality do BSW cung cấp.
+                Tuy nhiên, Application không nên bỏ qua abstraction để truy cập trực tiếp
+                vào các driver thấp hơn.
+            </p>
+
+            <pre><code>Application
+     |
+     v
+    RTE
+     |
+     v
+BSW Service
+     |
+     v
+ECU Abstraction
+     |
+     v
+MCAL
+     |
+     v
+Hardware</code></pre>
+
+            <h2>17. MCAL có Interface không?</h2>
+
+            <p>
+                Có. MCAL cũng cung cấp các interface để layer phía trên sử dụng
+                chức năng của driver.
+            </p>
+
+            <p>
+                Ví dụ về mặt khái niệm:
+            </p>
+
+            <pre><code>Upper Layer
+     |
+     | Driver Interface
+     v
+MCAL Driver
+     |
+     v
+Microcontroller Register
+     |
+     v
+Hardware</code></pre>
+
+            <p>
+                Điều quan trọng là Application không nên nhảy trực tiếp xuống
+                MCAL chỉ vì MCAL có interface.
+            </p>
+
+            <h2>18. Interface và Abstraction Layer</h2>
+
+            <p>
+                Interface và abstraction có quan hệ rất chặt chẽ.
+                Abstraction giúp che giấu implementation,
+                còn interface định nghĩa cách truy cập phần functionality được cung cấp.
+            </p>
+
+            <pre><code>Implementation
+      |
+      | hidden by
+      v
+Abstraction
+      |
+      | exposed through
+      v
+Interface
+      |
+      v
+Consumer</code></pre>
+
+            <h2>19. Ví dụ: đọc nút nhấn</h2>
+
+            <p>
+                Xét một chức năng đơn giản: Application cần biết nút nhấn
+                đang được nhấn hay không.
+            </p>
+
+            <pre><code>Physical Button
+       |
+       v
+ GPIO Hardware
+       |
+       v
+    MCAL
+       |
+       v
+ECU Abstraction
+       |
+       v
+      RTE
+       |
+       v
+Application SWC</code></pre>
+
+            <p>
+                Application quan tâm đến trạng thái logic của button,
+                không cần biết MCU register nào đang được sử dụng.
+            </p>
+
+            <h2>20. Dependency trong ví dụ nút nhấn</h2>
+
+            <p>
+                Application có dependency về mặt chức năng đối với nguồn cung cấp
+                trạng thái button.
+            </p>
+
+            <pre><code>Application SWC
+       |
+       | requires
+       v
+Button State Interface
+       |
+       v
+Provider
+       |
+       v
+GPIO / MCAL / Hardware</code></pre>
+
+            <p>
+                Nếu GPIO bị cấu hình sai, dependency chain bị gián đoạn
+                và Application có thể nhận dữ liệu sai.
+            </p>
+
+            <h2>21. Ví dụ: điều khiển đèn</h2>
+
+            <p>
+                Application có thể quyết định bật đèn dựa trên một điều kiện.
+            </p>
+
+            <pre><code>Application
+    |
+    | LampCommand = ON
+    v
+   RTE
+    |
+    v
+BSW / ECU Abstraction
+    |
+    v
+MCAL
+    |
+    v
+GPIO
+    |
+    v
+Lamp</code></pre>
+
+            <p>
+                Application không cần biết chính xác GPIO nào điều khiển lamp.
+                Thông tin phần cứng được giữ ở các layer phù hợp.
+            </p>
+
+            <h2>22. Interface không chỉ dành cho Data</h2>
+
+            <p>
+                Interface có thể đại diện cho nhiều loại giao tiếp,
+                không chỉ đơn thuần là một giá trị dữ liệu.
+            </p>
+
+            <ul>
+                <li>Data exchange</li>
+                <li>Operations</li>
+                <li>Services</li>
+                <li>Communication giữa SWC</li>
+                <li>Communication với BSW services</li>
+            </ul>
+
+            <h2>23. Interface và Communication</h2>
+
+            <p>
+                Cần phân biệt interface logic với communication mechanism.
+            </p>
+
+            <p>
+                Interface có thể nói rằng:
+                <strong>"Temperature được cung cấp cho component này"</strong>.
+                Nhưng interface không nhất thiết nói rằng dữ liệu vật lý
+                được truyền bằng CAN, LIN hay một mechanism cụ thể nào.
+            </p>
+
+            <pre><code>Logical Interface
+       |
+       v
+Temperature
+       |
+       +---- CAN
+       |
+       +---- LIN
+       |
+       +---- Internal SWC communication</code></pre>
+
+            <h2>24. Interface và CAN</h2>
+
+            <p>
+                Trong một ECU, Application có thể sử dụng một dữ liệu logic như
+                VehicleSpeed.
+                Dữ liệu này có thể bắt nguồn từ CAN communication.
+            </p>
+
+            <pre><code>CAN Bus
+   |
+   v
+CAN Driver
+   |
+   v
+Communication Stack
+   |
+   v
+RTE
+   |
+   v
+Application
+   |
+   v
+VehicleSpeed</code></pre>
+
+            <p>
+                Application chủ yếu quan tâm đến VehicleSpeed,
+                thay vì trực tiếp xử lý từng bit của CAN frame.
+            </p>
+
+            <h2>25. Interface và Hardware Dependency</h2>
+
+            <p>
+                Một mục tiêu quan trọng của interface là giảm
+                <strong>hardware dependency</strong> ở tầng phía trên.
+            </p>
+
+            <pre><code>Không tốt:
+
+Application
+    |
+    v
+MCU Register
+    |
+    v
+Hardware
+
+
+Tốt hơn:
+
+Application
+    |
+    v
+Interface
+    |
+    v
+Abstraction
+    |
+    v
+MCAL
+    |
+    v
+Hardware</code></pre>
+
+            <h2>26. Interface Dependency và Hardware Dependency</h2>
+
+            <p>
+                Hai khái niệm này không hoàn toàn giống nhau.
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Interface dependency:</strong>
+                    component cần một interface hoặc service để hoạt động.
+                </li>
+                <li>
+                    <strong>Hardware dependency:</strong>
+                    implementation phụ thuộc vào một phần cứng cụ thể.
+                </li>
+            </ul>
+
+            <p>
+                AUTOSAR cố gắng đẩy hardware dependency xuống các layer thấp hơn
+                và giữ Application ở mức abstraction cao hơn.
+            </p>
+
+            <h2>27. Dependency Chain</h2>
+
+            <p>
+                Khi phân tích một chức năng AUTOSAR, có thể vẽ dependency chain
+                để biết chức năng phụ thuộc vào những thành phần nào.
+            </p>
+
+            <pre><code>Application
+    ↓
+RTE
+    ↓
+BSW Service
+    ↓
+ECU Abstraction
+    ↓
+MCAL
+    ↓
+Microcontroller
+    ↓
+Hardware</code></pre>
+
+            <p>
+                Đây là một công cụ tư duy rất hữu ích khi debugging.
+            </p>
+
+            <h2>28. Dependency ngược chiều có vấn đề gì?</h2>
+
+            <p>
+                Trong một kiến trúc phân tầng rõ ràng,
+                layer phía trên thường sử dụng abstraction hoặc service
+                của layer phía dưới.
+            </p>
+
+            <p>
+                Nếu một layer thấp bắt đầu phụ thuộc trực tiếp vào logic
+                của Application, kiến trúc sẽ trở nên khó quản lý.
+            </p>
+
+            <pre><code>Application
+     ↓
+RTE
+     ↓
+BSW
+     ↓
+MCAL
+
+Mong muốn:
+
+Higher Layer
+     ↓
+Lower Layer
+
+
+Cần tránh dependency ngược:
+
+Lower Layer
+     ↑
+Application-specific logic</code></pre>
+
+            <h2>29. Dependency và Separation of Concerns</h2>
+
+            <p>
+                Separation of Concerns có nghĩa là mỗi thành phần nên tập trung
+                vào trách nhiệm phù hợp với nó.
+            </p>
+
+            <pre><code>Application
+→ Business / Functional Logic
+
+RTE
+→ Communication between SWCs / Application and Services
+
+BSW
+→ System Services / Communication / Memory / Diagnostics
+
+MCAL
+→ Microcontroller Access
+
+Hardware
+→ Physical execution</code></pre>
+
+            <p>
+                Interface giúp giữ các ranh giới này rõ ràng.
+            </p>
+
+            <h2>30. Dependency và Reusability</h2>
+
+            <p>
+                Một component có dependency quá cụ thể vào hardware hoặc implementation
+                sẽ khó tái sử dụng.
+            </p>
+
+            <pre><code>Component A
+   |
+   +---- depends on MCU-X
+   +---- depends on GPIO-5
+   +---- depends on Register-Y
+
+→ Khó reuse
+
+
+Component B
+   |
+   +---- depends on standard interface
+
+→ Dễ reuse hơn</code></pre>
+
+            <h2>31. Dependency và Portability</h2>
+
+            <p>
+                Portability là khả năng chuyển phần mềm sang môi trường khác
+                với mức thay đổi hợp lý.
+            </p>
+
+            <p>
+                Nếu Application phụ thuộc trực tiếp vào hardware,
+                việc chuyển sang MCU khác có thể yêu cầu sửa rất nhiều code.
+            </p>
+
+            <p>
+                Nếu dependency được giới hạn thông qua abstraction và interface,
+                phần thay đổi có thể được tập trung ở các layer thấp hơn.
+            </p>
+
+            <h2>32. Ví dụ thay đổi MCU</h2>
+
+            <p>
+                Giả sử cùng một Application được chạy trên hai MCU khác nhau.
+            </p>
+
+            <pre><code>MCU A                         MCU B
+
+Application                  Application
+     |                            |
+    RTE                          RTE
+     |                            |
+   BSW                          BSW
+     |                            |
+  MCAL-A                       MCAL-B
+     |                            |
+  MCU-A                         MCU-B</code></pre>
+
+            <p>
+                Application có thể giữ nguyên hoặc thay đổi rất ít,
+                trong khi phần hardware-specific được thay đổi ở các layer thấp hơn.
+            </p>
+
+            <h2>33. Interface giúp kiểm thử như thế nào?</h2>
+
+            <p>
+                Interface rõ ràng giúp một component có thể được kiểm thử
+                mà không nhất thiết phải luôn có toàn bộ hệ thống thật.
+            </p>
+
+            <p>
+                Ví dụ, khi kiểm thử Warning SWC,
+                có thể cung cấp các giá trị Temperature giả lập qua interface.
+            </p>
+
+            <pre><code>Test Environment
+       |
+       | Temperature = 20°C
+       v
+Warning SWC
+
+Test:
+Temperature = 20°C → Warning OFF
+
+Temperature = 90°C → Warning ON</code></pre>
+
+            <p>
+                Đây là một trong những lợi ích lớn của việc tách interface
+                khỏi implementation.
+            </p>
+
+            <h2>34. Interface và Unit Testing</h2>
+
+            <p>
+                Unit test thường tập trung vào một component hoặc một đơn vị chức năng.
+                Interface xác định dữ liệu hoặc service mà unit đó cần.
+            </p>
+
+            <pre><code>Input Interface
+       |
+       v
++----------------+
+|   Unit / SWC   |
++----------------+
+       |
+       v
+Output Interface</code></pre>
+
+            <p>
+                Test có thể kiểm soát input thông qua interface
+                và kiểm tra output được tạo ra.
+            </p>
+
+            <h2>35. Interface và Integration Testing</h2>
+
+            <p>
+                Integration test quan tâm nhiều hơn đến việc các component
+                có giao tiếp đúng với nhau hay không.
+            </p>
+
+            <pre><code>SWC A
+  |
+  | Interface
+  v
+SWC B
+  |
+  | Interface
+  v
+SWC C</code></pre>
+
+            <p>
+                Các vấn đề thường gặp có thể nằm ở:
+            </p>
+
+            <ul>
+                <li>Dữ liệu không được truyền.</li>
+                <li>Dữ liệu sai kiểu hoặc sai ý nghĩa.</li>
+                <li>Timing không phù hợp.</li>
+                <li>Provider không hoạt động.</li>
+                <li>Interface giữa các component không khớp.</li>
+            </ul>
+
+            <h2>36. Debugging theo Interface</h2>
+
+            <p>
+                Khi một chức năng không hoạt động,
+                không nên chỉ kiểm tra code của Application.
+                Có thể kiểm tra từng interface trong dependency chain.
+            </p>
+
+            <pre><code>Application
+    |
+    | Check data
+    v
+Interface
+    |
+    | Check RTE communication
+    v
+RTE
+    |
+    | Check service
+    v
+BSW
+    |
+    | Check driver
+    v
+MCAL
+    |
+    | Check hardware
+    v
+Hardware</code></pre>
+
+            <h2>37. Ví dụ debugging CAN Receive</h2>
+
+            <p>
+                Giả sử Application không nhận được VehicleSpeed.
+                Có thể phân tích theo chuỗi dependency.
+            </p>
+
+            <ol>
+                <li>CAN bus có frame không?</li>
+                <li>CAN Controller có nhận frame không?</li>
+                <li>CAN Driver có nhận được frame không?</li>
+                <li>Communication Stack có xử lý đúng không?</li>
+                <li>RTE có cung cấp dữ liệu cho SWC không?</li>
+                <li>Application có đọc đúng interface không?</li>
+            </ol>
+
+            <pre><code>CAN Bus
+  ↓
+CAN Controller
+  ↓
+CAN Driver
+  ↓
+Communication Stack
+  ↓
+RTE
+  ↓
+Application</code></pre>
+
+            <p>
+                Đây là cách dùng dependency chain để thu hẹp phạm vi lỗi.
+            </p>
+
+            <h2>38. Ví dụ debugging Sensor</h2>
+
+            <p>
+                Nếu Application đọc nhiệt độ sai, có thể kiểm tra:
+            </p>
+
+            <pre><code>Sensor
+  ↓
+Hardware Communication
+  ↓
+MCAL
+  ↓
+ECU Abstraction
+  ↓
+RTE
+  ↓
+Application Interface
+  ↓
+Application Logic</code></pre>
+
+            <p>
+                Nếu dữ liệu sai ngay từ hardware layer,
+                không nên vội sửa Application logic.
+            </p>
+
+            <h2>39. Interface Contract</h2>
+
+            <p>
+                Có thể xem interface như một dạng
+                <strong>contract</strong> giữa các component.
+            </p>
+
+            <p>
+                Contract cần làm rõ những thông tin quan trọng như:
+            </p>
+
+            <ul>
+                <li>Dữ liệu hoặc operation nào được cung cấp.</li>
+                <li>Ai cung cấp.</li>
+                <li>Ai sử dụng.</li>
+                <li>Kiểu dữ liệu.</li>
+                <li>Ý nghĩa của dữ liệu.</li>
+                <li>Timing hoặc tần suất nếu có.</li>
+                <li>Điều kiện hợp lệ.</li>
+                <li>Trạng thái lỗi hoặc giá trị mặc định.</li>
+            </ul>
+
+            <h2>40. Vì sao Data Type chưa đủ?</h2>
+
+            <p>
+                Hai component có thể cùng sử dụng kiểu dữ liệu Integer,
+                nhưng vẫn hiểu dữ liệu theo hai cách khác nhau.
+            </p>
+
+            <pre><code>Component A:
+Speed = 100
+
+Component B:
+100 = ?</code></pre>
+
+            <p>
+                Vì vậy interface cần có semantic rõ ràng.
+                Ví dụ 100 có thể là 100 km/h, 100 m/s hoặc một raw value.
+            </p>
+
+            <h2>41. Interface và Timing</h2>
+
+            <p>
+                Interface trong hệ thống real-time không chỉ liên quan đến nội dung dữ liệu.
+                Timing cũng có thể ảnh hưởng đến cách component sử dụng dữ liệu.
+            </p>
+
+            <pre><code>Sensor SWC
+    |
+    | Temperature every 100 ms
+    v
+Warning SWC</code></pre>
+
+            <p>
+                Nếu Warning SWC mong đợi dữ liệu mỗi 100 ms nhưng dữ liệu
+                chỉ cập nhật mỗi 1 giây, chức năng có thể không đáp ứng yêu cầu.
+            </p>
+
+            <h2>42. Interface và Error Handling</h2>
+
+            <p>
+                Khi interface không cung cấp dữ liệu hợp lệ,
+                consumer cần biết cách xử lý.
+            </p>
+
+            <pre><code>Interface
+    |
+    +---- Valid Data
+    |
+    +---- Invalid Data
+    |
+    +---- Timeout
+    |
+    +---- Communication Error
+             |
+             v
+       Safe Handling</code></pre>
+
+            <p>
+                Điều này đặc biệt quan trọng trong hệ thống automotive,
+                nơi mất dữ liệu hoặc dữ liệu không hợp lệ có thể ảnh hưởng
+                đến hành vi của ECU.
+            </p>
+
+            <h2>43. Interface và Default/Safe Value</h2>
+
+            <p>
+                Một số chức năng cần xác định giá trị mặc định hoặc trạng thái an toàn
+                khi dữ liệu không còn hợp lệ.
+            </p>
+
+            <pre><code>Normal:
+Temperature = 80°C
+
+Communication lost
+        ↓
+Invalid Data
+        ↓
+Default / Safe Handling
+        ↓
+Application Decision</code></pre>
+
+            <p>
+                Đây là một phần quan trọng khi phân tích interface trong hệ thống thực tế.
+            </p>
+
+            <h2>44. Interface Dependency giữa các ECU</h2>
+
+            <p>
+                Dependency không chỉ tồn tại bên trong một ECU.
+                Các ECU khác nhau cũng có thể phụ thuộc vào dữ liệu
+                được trao đổi qua communication network.
+            </p>
+
+            <pre><code>ECU A
+  |
+  | CAN / LIN / Ethernet
+  v
+ECU B
+  |
+  v
+Application</code></pre>
+
+            <p>
+                ECU B có thể phụ thuộc vào dữ liệu được ECU A cung cấp.
+            </p>
+
+            <h2>45. Logical Dependency và Physical Dependency</h2>
+
+            <p>
+                Khi phân tích hệ thống, nên phân biệt:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Logical dependency:</strong>
+                    chức năng này cần dữ liệu hoặc service từ chức năng khác.
+                </li>
+                <li>
+                    <strong>Physical dependency:</strong>
+                    implementation phụ thuộc vào hardware hoặc communication channel cụ thể.
+                </li>
+            </ul>
+
+            <pre><code>Logical:
+
+Warning SWC
+    ↓
+Temperature
+
+
+Physical:
+
+Temperature
+    ↓
+CAN Bus
+    ↓
+ECU B
+    ↓
+CAN Controller</code></pre>
+
+            <h2>46. Dependency giữa các Software Layer</h2>
+
+            <p>
+                Một cách nhìn tổng quát:
+            </p>
+
+            <pre><code>Application
+     |
+     | depends on
+     v
+RTE
+     |
+     | depends on
+     v
+BSW Services / Abstraction
+     |
+     | depends on
+     v
+MCAL
+     |
+     | depends on
+     v
+Microcontroller
+     |
+     v
+Hardware</code></pre>
+
+            <p>
+                Mỗi layer nên có boundary tương đối rõ ràng.
+            </p>
+
+            <h2>47. Không phải dependency nào cũng xấu</h2>
+
+            <p>
+                Dependency là điều bình thường trong phần mềm.
+                Vấn đề không phải là loại bỏ mọi dependency,
+                mà là <strong>quản lý dependency đúng cách</strong>.
+            </p>
+
+            <p>
+                Dependency tốt thường:
+            </p>
+
+            <ul>
+                <li>Có mục đích rõ ràng.</li>
+                <li>Đi qua abstraction phù hợp.</li>
+                <li>Không tạo coupling không cần thiết.</li>
+                <li>Dễ kiểm thử.</li>
+                <li>Dễ thay đổi implementation phía dưới.</li>
+            </ul>
+
+            <h2>48. Coupling và Dependency</h2>
+
+            <p>
+                Nếu hai component phụ thuộc quá chặt vào implementation của nhau,
+                chúng có <strong>high coupling</strong>.
+            </p>
+
+            <pre><code>High Coupling:
+
+A <=================> B
+  phụ thuộc implementation
+
+
+Low Coupling:
+
+A ---> Interface <--- B
+       abstraction</code></pre>
+
+            <p>
+                AUTOSAR hướng đến việc giảm coupling không cần thiết
+                thông qua component model và abstraction layers.
+            </p>
+
+            <h2>49. Interface giúp giảm Coupling</h2>
+
+            <p>
+                Giả sử Component A cần dữ liệu từ Component B.
+            </p>
+
+            <p>
+                Nếu A biết toàn bộ implementation của B,
+                việc thay đổi B sẽ ảnh hưởng đến A.
+            </p>
+
+            <p>
+                Nếu A chỉ phụ thuộc vào interface,
+                B có thể thay đổi implementation mà A ít bị ảnh hưởng hơn.
+            </p>
+
+            <pre><code>Before:
+
+A ---> B implementation
+
+
+After:
+
+A ---> Interface <--- B implementation</code></pre>
+
+            <h2>50. Interface và Reuse Component</h2>
+
+            <p>
+                Một SWC được thiết kế với interface rõ ràng
+                có thể dễ dàng được đưa vào ECU hoặc project khác
+                nếu các dependency cần thiết vẫn được đáp ứng.
+            </p>
+
+            <pre><code>SWC
+ |
+ +---- Required Interface A
+ +---- Required Interface B
+ +---- Provided Interface C
+
+Nếu environment mới cung cấp
+A và B phù hợp
+
+→ SWC có khả năng được reuse</code></pre>
+
+            <h2>51. Phân tích một SWC bằng Interface</h2>
+
+            <p>
+                Khi nhận một SWC chưa quen thuộc,
+                có thể bắt đầu bằng việc xem interface thay vì đọc toàn bộ code.
+            </p>
+
+            <ol>
+                <li>Xác định Provided Ports.</li>
+                <li>Xác định Required Ports.</li>
+                <li>Xác định Interface tương ứng.</li>
+                <li>Xác định dữ liệu hoặc operation.</li>
+                <li>Xác định provider và consumer.</li>
+                <li>Xác định dependency phía dưới.</li>
+            </ol>
+
+            <h2>52. Phân tích Dependency của một chức năng</h2>
+
+            <p>
+                Ví dụ chức năng "Automatic Door Lock".
+            </p>
+
+            <pre><code>Door Lock SWC
+      |
+      +---- Vehicle Speed
+      |
+      +---- Door Status
+      |
+      +---- Lock Command
+      |
+      +---- System State
+      |
+      v
+   RTE / Services
+      |
+      v
+Communication / I/O / ECU Services</code></pre>
+
+            <p>
+                Nhìn vào dependency này có thể biết chức năng không hoạt động
+                thì nên kiểm tra những nguồn dữ liệu nào trước.
+            </p>
+
+            <h2>53. Dependency Matrix</h2>
+
+            <p>
+                Với hệ thống lớn, dependency có thể được biểu diễn bằng một bảng.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Consumer</th>
+                        <th>Dependency</th>
+                        <th>Provider</th>
+                        <th>Interface</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Warning SWC</td>
+                        <td>Temperature</td>
+                        <td>Sensor SWC</td>
+                        <td>Temperature Interface</td>
+                    </tr>
+                    <tr>
+                        <td>Door Lock SWC</td>
+                        <td>Vehicle Speed</td>
+                        <td>Communication Stack</td>
+                        <td>Speed Interface</td>
+                    </tr>
+                    <tr>
+                        <td>Application SWC</td>
+                        <td>System State</td>
+                        <td>ECU State Management</td>
+                        <td>System Service</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>54. Interface và Traceability</h2>
+
+            <p>
+                Interface cũng giúp trace một requirement xuyên qua kiến trúc.
+            </p>
+
+            <pre><code>Requirement
+    ↓
+Application Function
+    ↓
+SWC Interface
+    ↓
+RTE
+    ↓
+BSW / Communication
+    ↓
+MCAL
+    ↓
+Hardware</code></pre>
+
+            <p>
+                Nếu có lỗi hoặc thay đổi requirement,
+                dependency chain giúp xác định những thành phần có khả năng bị ảnh hưởng.
+            </p>
+
+            <h2>55. Impact Analysis</h2>
+
+            <p>
+                Giả sử interface Temperature thay đổi từ Celsius sang một representation khác.
+                Những component sử dụng interface này có thể bị ảnh hưởng.
+            </p>
+
+            <pre><code>Temperature Interface
+        |
+        +---- Warning SWC
+        |
+        +---- Display SWC
+        |
+        +---- Logging SWC
+        |
+        +---- Diagnostic SWC</code></pre>
+
+            <p>
+                Vì vậy trước khi thay đổi interface,
+                cần xác định tất cả consumer liên quan.
+            </p>
+
+            <h2>56. Interface Change và Dependency</h2>
+
+            <p>
+                Một thay đổi nhỏ ở interface có thể tạo ra nhiều thay đổi
+                ở các component phụ thuộc.
+            </p>
+
+            <pre><code>Interface Change
+       |
+       v
+Provider
+       |
+       +---- Consumer A
+       +---- Consumer B
+       +---- Consumer C
+       +---- Test
+       +---- Integration
+       +---- Documentation</code></pre>
+
+            <p>
+                Đây là lý do interface cần được thiết kế và quản lý cẩn thận.
+            </p>
+
+            <h2>57. Dependency và Architecture Review</h2>
+
+            <p>
+                Khi review kiến trúc AUTOSAR, có thể đặt các câu hỏi:
+            </p>
+
+            <ul>
+                <li>Component này cần dữ liệu gì?</li>
+                <li>Dữ liệu đến từ đâu?</li>
+                <li>Interface nào được sử dụng?</li>
+                <li>Provider là ai?</li>
+                <li>Dependency có đi qua layer phù hợp không?</li>
+                <li>Có dependency trực tiếp vào hardware không?</li>
+                <li>Dependency có tạo coupling quá cao không?</li>
+                <li>Nếu interface thay đổi, component nào bị ảnh hưởng?</li>
+            </ul>
+
+            <h2>58. Ví dụ Architecture Review</h2>
+
+            <p>
+                Giả sử reviewer phát hiện Application code truy cập trực tiếp
+                vào một MCU register.
+            </p>
+
+            <pre><code>Application
+     |
+     v
+MCU Register
+     |
+     v
+Hardware</code></pre>
+
+            <p>
+                Đây là dấu hiệu cho thấy abstraction boundary có thể đang bị phá vỡ.
+            </p>
+
+            <p>
+                Kiến trúc mong muốn nên hướng tới:
+            </p>
+
+            <pre><code>Application
+     |
+     v
+RTE / Interface
+     |
+     v
+BSW / Abstraction
+     |
+     v
+MCAL
+     |
+     v
+Hardware</code></pre>
+
+            <h2>59. Interface Dependency trong Debugging</h2>
+
+            <p>
+                Một cách thực tế để debug là hỏi:
+                <strong>"Component này đang phụ thuộc vào interface nào?"</strong>
+            </p>
+
+            <p>
+                Sau đó kiểm tra từng dependency từ trên xuống dưới.
+            </p>
+
+            <pre><code>Problem:
+Lamp không bật
+
+Check:
+
+Application decision
+        ↓
+Lamp Command Interface
+        ↓
+RTE
+        ↓
+I/O abstraction
+        ↓
+MCAL
+        ↓
+GPIO
+        ↓
+Hardware</code></pre>
+
+            <h2>60. Interface Dependency và Testability</h2>
+
+            <p>
+                Dependency rõ ràng giúp xác định test boundary.
+            </p>
+
+            <pre><code>+-----------------------+
+|       SWC Under Test  |
+|                       |
+|   Application Logic   |
++-----------------------+
+       ↑           ↓
+       |           |
+    Input       Output
+   Interface   Interface</code></pre>
+
+            <p>
+                Tester có thể tập trung kiểm tra behavior của SWC
+                thay vì phải kiểm tra toàn bộ hardware ngay từ đầu.
+            </p>
+
+            <h2>61. Interface và HIL/SIL</h2>
+
+            <p>
+                Khi hệ thống được kiểm thử trong môi trường mô phỏng,
+                interface giúp phân tách phần software cần kiểm tra
+                khỏi phần hardware thật.
+            </p>
+
+            <pre><code>Simulation
+    |
+    | simulated input
+    v
+Interface
+    |
+    v
+SWC
+    |
+    | output
+    v
+Simulation / Test Environment</code></pre>
+
+            <p>
+                Đây là một trong những lý do interface rõ ràng rất quan trọng
+                đối với các phương pháp kiểm thử hiện đại.
+            </p>
+
+            <h2>62. Interface và Configuration</h2>
+
+            <p>
+                Trong AUTOSAR thực tế, interface không chỉ tồn tại dưới dạng
+                ý tưởng kiến trúc. Nó còn được mô hình hóa và cấu hình trong hệ thống.
+            </p>
+
+            <p>
+                Công cụ AUTOSAR sẽ sử dụng các thông tin này để tạo ra
+                nhiều phần cấu hình hoặc mã cần thiết cho hệ thống.
+            </p>
+
+            <p>
+                Tuy nhiên, ở mức học kiến trúc, điều quan trọng nhất vẫn là hiểu:
+            </p>
+
+            <pre><code>Who provides?
+Who requires?
+What is exchanged?
+How is it connected?
+What does it depend on?</code></pre>
+
+            <h2>63. Interface và Generated Code</h2>
+
+            <p>
+                Khi AUTOSAR configuration được xử lý bởi toolchain,
+                một phần code liên quan đến giao tiếp có thể được generate.
+            </p>
+
+            <p>
+                Developer vì vậy cần hiểu model/interface trước khi đọc generated code.
+                Nếu chỉ nhìn vào generated code mà không hiểu architecture,
+                rất khó xác định tại sao dependency tồn tại.
+            </p>
+
+            <h2>64. Interface không phải API theo nghĩa thông thường</h2>
+
+            <p>
+                Interface trong AUTOSAR rộng hơn việc chỉ định nghĩa một tập function.
+                Nó có thể mô tả data, operation, port và mối quan hệ giữa các component.
+            </p>
+
+            <p>
+                Vì vậy không nên đồng nhất hoàn toàn:
+            </p>
+
+            <pre><code>AUTOSAR Interface
+        ≠
+Một vài C function đơn giản</code></pre>
+
+            <h2>65. API và Interface khác nhau thế nào?</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Interface</td>
+                        <td>Định nghĩa cách các thành phần giao tiếp</td>
+                    </tr>
+                    <tr>
+                        <td>API</td>
+                        <td>Cách phần mềm truy cập một functionality trong implementation cụ thể</td>
+                    </tr>
+                    <tr>
+                        <td>Dependency</td>
+                        <td>Điều mà một thành phần cần để hoạt động</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>66. Một Dependency Chain hoàn chỉnh</h2>
+
+            <p>
+                Xét chức năng cảnh báo nhiệt độ cao.
+            </p>
+
+            <pre><code>Temperature Sensor
+        ↓
+MCAL / Hardware Access
+        ↓
+ECU Abstraction
+        ↓
+Temperature Provider
+        ↓
+RTE
+        ↓
+Warning SWC
+        ↓
+Warning Decision
+        ↓
+Output Interface
+        ↓
+Lamp SWC
+        ↓
+I/O Abstraction
+        ↓
+MCAL
+        ↓
+GPIO
+        ↓
+Lamp</code></pre>
+
+            <p>
+                Có thể thấy một chức năng đơn giản vẫn có thể đi qua
+                nhiều interface và dependency khác nhau.
+            </p>
+
+            <h2>67. Cách phân tích Interface của một chức năng</h2>
+
+            <ol>
+                <li>Xác định chức năng cần thực hiện.</li>
+                <li>Xác định SWC chịu trách nhiệm.</li>
+                <li>Xác định input interface.</li>
+                <li>Xác định output interface.</li>
+                <li>Xác định provider của từng input.</li>
+                <li>Xác định consumer của từng output.</li>
+                <li>Trace dependency xuống các layer phía dưới.</li>
+                <li>Xác định hardware dependency nếu có.</li>
+                <li>Kiểm tra timing và error handling.</li>
+                <li>Xác định phạm vi ảnh hưởng nếu interface thay đổi.</li>
+            </ol>
+
+            <h2>68. Checklist phân tích Interface</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>Câu hỏi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Provider</td>
+                        <td>Ai cung cấp dữ liệu/service?</td>
+                    </tr>
+                    <tr>
+                        <td>Consumer</td>
+                        <td>Ai sử dụng?</td>
+                    </tr>
+                    <tr>
+                        <td>Data</td>
+                        <td>Dữ liệu nào được trao đổi?</td>
+                    </tr>
+                    <tr>
+                        <td>Direction</td>
+                        <td>Dữ liệu đi theo hướng nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Timing</td>
+                        <td>Dữ liệu được cập nhật khi nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Error</td>
+                        <td>Xử lý dữ liệu invalid hoặc timeout thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Dependency</td>
+                        <td>Interface phụ thuộc vào những thành phần nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware</td>
+                        <td>Có dependency trực tiếp vào hardware không?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>69. Checklist phân tích Dependency</h2>
+
+            <ul>
+                <li>Dependency có cần thiết không?</li>
+                <li>Dependency có đi qua abstraction phù hợp không?</li>
+                <li>Component có phụ thuộc trực tiếp vào hardware không?</li>
+                <li>Provider có được xác định rõ không?</li>
+                <li>Consumer có được xác định rõ không?</li>
+                <li>Dependency có tạo coupling cao không?</li>
+                <li>Dependency có ảnh hưởng đến khả năng reuse không?</li>
+                <li>Dependency có ảnh hưởng đến portability không?</li>
+                <li>Dependency có được test không?</li>
+            </ul>
+
+            <h2>70. Những nhầm lẫn thường gặp</h2>
+
+            <h3>Interface = Function</h3>
+
+            <p>
+                Không hoàn toàn đúng. Function có thể là một phần implementation
+                hoặc API, trong khi AUTOSAR interface mô tả contract giao tiếp ở mức kiến trúc.
+            </p>
+
+            <h3>Dependency = Direct Function Call</h3>
+
+            <p>
+                Không nhất thiết. Một component có thể phụ thuộc vào service hoặc interface
+                mà không trực tiếp gọi implementation của provider.
+            </p>
+
+            <h3>RTE = Interface</h3>
+
+            <p>
+                Không. RTE là runtime infrastructure thực hiện kết nối/giao tiếp,
+                còn interface định nghĩa giao tiếp đó.
+            </p>
+
+            <h3>MCAL = Hardware</h3>
+
+            <p>
+                Không. MCAL là software layer cung cấp abstraction/access
+                đối với microcontroller.
+            </p>
+
+            <h3>Dependency luôn xấu</h3>
+
+            <p>
+                Không. Dependency là bình thường.
+                Vấn đề là dependency có được kiểm soát và đặt đúng architectural boundary hay không.
+            </p>
+
+            <h2>71. Bức tranh tổng thể</h2>
+
+            <pre><code>                  AUTOSAR
+
+        +-----------------------+
+        |   Application SWC     |
+        +-----------------------+
+             |           ^
+             | Interface |
+             v           |
+        +-----------------------+
+        |          RTE          |
+        +-----------------------+
+             |
+             v
+        +-----------------------+
+        |          BSW          |
+        | Services / Abstraction|
+        +-----------------------+
+             |
+             v
+        +-----------------------+
+        |         MCAL          |
+        +-----------------------+
+             |
+             v
+        +-----------------------+
+        |     Microcontroller   |
+        +-----------------------+
+             |
+             v
+        +-----------------------+
+        |       Hardware        |
+        +-----------------------+</code></pre>
+
+            <p>
+                Interface giúp xác định các điểm giao tiếp,
+                còn dependency giúp chúng ta hiểu component nào cần component nào
+                để chức năng có thể hoạt động.
+            </p>
+
+            <h2>72. Cách tư duy khi gặp một Interface</h2>
+
+            <p>
+                Khi nhìn thấy một interface trong project AUTOSAR,
+                hãy đặt năm câu hỏi:
+            </p>
+
+            <ol>
+                <li>Interface này dùng để làm gì?</li>
+                <li>Ai cung cấp?</li>
+                <li>Ai sử dụng?</li>
+                <li>Dữ liệu hoặc operation nào được trao đổi?</li>
+                <li>Nó phụ thuộc vào thành phần nào bên dưới?</li>
+            </ol>
+
+            <p>
+                Nếu trả lời được năm câu hỏi này,
+                bạn đã có thể hiểu phần lớn vai trò của interface
+                mà chưa cần đọc toàn bộ implementation.
+            </p>
+
+            <h2>73. Các khái niệm cần nhớ</h2>
+
+            <ul>
+                <li><strong>Interface:</strong> định nghĩa cách các thành phần giao tiếp.</li>
+                <li><strong>Sender-Receiver:</strong> giao tiếp tập trung vào trao đổi dữ liệu.</li>
+                <li><strong>Client-Server:</strong> giao tiếp tập trung vào operation/service.</li>
+                <li><strong>Port:</strong> điểm kết nối của Software Component.</li>
+                <li><strong>Provided:</strong> chức năng/dữ liệu được component cung cấp.</li>
+                <li><strong>Required:</strong> chức năng/dữ liệu mà component cần.</li>
+                <li><strong>Dependency:</strong> điều mà một component cần để hoạt động.</li>
+                <li><strong>Abstraction:</strong> che giấu implementation phía dưới.</li>
+                <li><strong>Coupling:</strong> mức độ phụ thuộc giữa các component.</li>
+                <li><strong>Traceability:</strong> khả năng theo dõi dependency xuyên qua kiến trúc.</li>
+            </ul>
+
+            <h2>74. Tóm tắt</h2>
+
+            <div class="note">
+                <strong>Interface</strong> là contract xác định cách các thành phần trong AUTOSAR
+                giao tiếp với nhau. Interface có thể dùng để trao đổi dữ liệu hoặc yêu cầu
+                operation/service.
+                <br><br>
+
+                <strong>Dependency</strong> thể hiện một component cần dữ liệu, service,
+                interface hoặc thành phần khác để thực hiện chức năng.
+                <br><br>
+
+                Trong kiến trúc AUTOSAR, interface và abstraction giúp giảm coupling,
+                hạn chế hardware dependency, tăng khả năng reuse và hỗ trợ testing.
+                Khi debugging, có thể trace dependency từ Application → RTE → BSW →
+                MCAL → Hardware để xác định vị trí lỗi.
+                <br><br>
+
+                Khi phân tích một interface, hãy luôn xác định:
+                <strong>Provider → Interface → Consumer → Dependency → Hardware</strong>.
+            </div>
+
+            <div class="pager">
+                <a href="lesson-21.html">← Bài trước</a>
+                <a href="lesson-23.html">Bài tiếp theo →</a>
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

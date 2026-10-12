@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html" class="active" aria-current="page">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+            <a href="index.html">
+                ← Tất cả bài học AUTOSAR
+            </a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</h1>
+
+            <p>
+                Trong các bài trước, chúng ta đã tìm hiểu từng tầng chính của
+                kiến trúc AUTOSAR Classic và mối quan hệ giữa chúng.
+            </p>
+
+            <p>
+                Tuy nhiên, khi học kiến trúc phân tầng, việc nhìn từng tầng
+                riêng lẻ đôi khi khiến chúng ta khó hình dung một chức năng
+                thực tế sẽ đi qua toàn bộ hệ thống như thế nào.
+            </p>
+
+            <p>
+                Bài này sẽ sử dụng một ví dụ đơn giản:
+                <strong>một nút bấm điều khiển một đèn</strong>.
+                Qua ví dụ này, chúng ta sẽ theo dõi dữ liệu từ
+                <strong>Application Software xuống Hardware</strong>.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Mục tiêu của bài là kết nối các kiến thức về kiến trúc AUTOSAR
+                thành một luồng hoàn chỉnh. Các API, configuration, ARXML và
+                chi tiết implementation của từng module chưa được đề cập.
+            </div>
+
+
+            <h2>1. Bài toán cần thực hiện</h2>
+
+            <p>
+                Giả sử chúng ta có một ECU điều khiển một chiếc đèn.
+            </p>
+
+            <p>
+                Yêu cầu chức năng rất đơn giản:
+            </p>
+
+            <ul>
+                <li>
+                    Khi người dùng nhấn nút, đèn được bật.
+                </li>
+
+                <li>
+                    Khi người dùng nhả nút, đèn được tắt.
+                </li>
+            </ul>
+
+            <p>
+                Về mặt chức năng, chúng ta có thể mô tả:
+            </p>
+
+            <pre><code>       Button
+          |
+          v
+   Application Logic
+          |
+          v
+        Lamp</code></pre>
+
+            <p>
+                Nhưng trong AUTOSAR, Application không trực tiếp điều khiển
+                chân GPIO của microcontroller.
+            </p>
+
+            <p>
+                Vì vậy, cần nhiều tầng phần mềm ở giữa.
+            </p>
+
+
+            <h2>2. Toàn bộ kiến trúc của ví dụ</h2>
+
+            <p>
+                Luồng tổng quan của ví dụ có thể được hình dung như sau:
+            </p>
+
+            <pre><code>+--------------------------------------+
+|        Application Software          |
+|                                      |
+|       Button & Lamp Logic            |
++------------------+-------------------+
+                   |
+                   v
++--------------------------------------+
+|                 RTE                  |
++------------------+-------------------+
+                   |
+                   v
++--------------------------------------+
+|          Basic Software              |
+|                                      |
+| Services / ECU Abstraction / MCAL    |
++------------------+-------------------+
+                   |
+                   v
++--------------------------------------+
+|              Hardware               |
+|                                      |
+| GPIO / Microcontroller / Lamp        |
++--------------------------------------+</code></pre>
+
+            <p>
+                Để hiểu rõ hơn, chúng ta sẽ chia quá trình thành hai chiều:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Input:</strong>
+                    Button → Application.
+                </li>
+
+                <li>
+                    <strong>Output:</strong>
+                    Application → Lamp.
+                </li>
+            </ul>
+
+
+            <h2>3. Bước 1: Hardware nhận tín hiệu từ Button</h2>
+
+            <p>
+                Đầu tiên, người dùng nhấn một nút vật lý.
+            </p>
+
+            <p>
+                Nút này được kết nối với một chân input của microcontroller.
+            </p>
+
+            <pre><code>   Physical Button
+          |
+          | Electrical Signal
+          v
++----------------------+
+| Microcontroller GPIO |
+|        Input         |
++----------------------+</code></pre>
+
+            <p>
+                Ở đây, Hardware chịu trách nhiệm nhận tín hiệu vật lý từ nút.
+            </p>
+
+            <p>
+                Application Software không cần biết tín hiệu điện được tạo ra
+                như thế nào. Nó chỉ cần nhận được thông tin ở mức phù hợp để
+                thực hiện logic của mình.
+            </p>
+
+
+            <h2>4. Bước 2: MCAL xử lý phần cứng</h2>
+
+            <p>
+                Để phần mềm có thể làm việc với GPIO của microcontroller,
+                AUTOSAR sử dụng các module thuộc <strong>MCAL</strong>.
+            </p>
+
+            <pre><code>Button
+  |
+  v
+GPIO Hardware
+  |
+  v
+MCAL
+  |
+  v
+Higher BSW
+  |
+  v
+Application</code></pre>
+
+            <p>
+                MCAL nằm gần microcontroller và cung cấp lớp truy cập đến các
+                peripheral của phần cứng.
+            </p>
+
+            <p>
+                Application không cần trực tiếp thao tác với các thanh ghi
+                GPIO của microcontroller.
+            </p>
+
+
+            <h2>5. Bước 3: Hardware Abstraction</h2>
+
+            <p>
+                Phía trên MCAL có thể có các lớp abstraction khác giúp phần
+                mềm phía trên không phải phụ thuộc trực tiếp vào chi tiết
+                của microcontroller.
+            </p>
+
+            <pre><code>Application
+     |
+    RTE
+     |
+     v
+ECU Abstraction
+     |
+     v
+   MCAL
+     |
+     v
+GPIO Hardware</code></pre>
+
+            <p>
+                Ý tưởng chính là:
+                <strong>càng lên tầng cao, phần mềm càng ít phải quan tâm đến
+                chi tiết phần cứng.</strong>
+            </p>
+
+
+            <h2>6. Bước 4: Dữ liệu đến Application</h2>
+
+            <p>
+                Sau khi thông tin về trạng thái Button được xử lý ở các tầng
+                bên dưới, dữ liệu có thể được đưa đến Application Software
+                thông qua kiến trúc AUTOSAR.
+            </p>
+
+            <pre><code>Button
+  |
+  v
+Hardware
+  |
+  v
+MCAL
+  |
+  v
+BSW / Abstraction
+  |
+  v
+RTE
+  |
+  v
+Application SWC</code></pre>
+
+            <p>
+                Application lúc này có thể nhận được thông tin đơn giản như:
+            </p>
+
+            <pre><code>ButtonState = PRESSED</code></pre>
+
+            <p>
+                Application không cần biết dữ liệu đã đi qua những thanh ghi
+                hay peripheral cụ thể nào của microcontroller.
+            </p>
+
+
+            <h2>7. Bước 5: Application xử lý logic</h2>
+
+            <p>
+                Đây là nơi Application Software thực hiện chức năng chính của
+                bài toán.
+            </p>
+
+            <p>
+                Logic rất đơn giản:
+            </p>
+
+            <pre><code>if ButtonState == PRESSED
+    LampState = ON
+else
+    LampState = OFF</code></pre>
+
+            <p>
+                Có thể xem đây là phần quan trọng nhất đối với
+                <strong>chức năng nghiệp vụ</strong> của ECU.
+            </p>
+
+            <p>
+                Application không cần quan tâm:
+            </p>
+
+            <ul>
+                <li>GPIO nằm ở peripheral nào.</li>
+                <li>Microcontroller sử dụng thanh ghi nào.</li>
+                <li>Chân vật lý nào được sử dụng.</li>
+                <li>Cách ghi dữ liệu trực tiếp xuống hardware.</li>
+            </ul>
+
+            <p>
+                Application chỉ tập trung vào logic:
+                <strong>Button được nhấn thì Lamp phải bật.</strong>
+            </p>
+
+
+            <h2>8. Bước 6: Application gửi yêu cầu điều khiển Lamp</h2>
+
+            <p>
+                Sau khi Application xác định rằng đèn cần được bật, thông tin
+                sẽ được đưa xuống các tầng bên dưới.
+            </p>
+
+            <pre><code>Application SWC
+       |
+       | LampState = ON
+       v
+      RTE
+       |
+       v
+      BSW
+       |
+       v
+Hardware Abstraction
+       |
+       v
+      MCAL
+       |
+       v
+GPIO Hardware</code></pre>
+
+            <p>
+                RTE đóng vai trò kết nối giữa Application và phần mềm bên dưới.
+            </p>
+
+
+            <h2>9. Bước 7: MCAL điều khiển Hardware</h2>
+
+            <p>
+                Khi yêu cầu điều khiển đèn đến phần dưới của hệ thống, MCAL
+                cung cấp cách để phần mềm tương tác với GPIO của
+                microcontroller.
+            </p>
+
+            <pre><code>Application
+     |
+     v
+    RTE
+     |
+     v
+BSW / Abstraction
+     |
+     v
+   MCAL
+     |
+     v
+GPIO Output
+     |
+     v
+    Lamp</code></pre>
+
+            <p>
+                Hardware cuối cùng thực hiện hành động vật lý:
+                <strong>đèn được bật.</strong>
+            </p>
+
+
+            <h2>10. Ghép toàn bộ luồng lại</h2>
+
+            <p>
+                Bây giờ chúng ta có thể ghép cả quá trình từ Button đến Lamp.
+            </p>
+
+            <pre><code>                    INPUT
+                      |
+                      v
+               +-------------+
+               |   Button    |
+               +------+------+
+                      |
+                      v
+               +-------------+
+               |  Hardware   |
+               |    GPIO     |
+               +------+------+
+                      |
+                      v
+               +-------------+
+               |    MCAL     |
+               +------+------+
+                      |
+                      v
+               +-------------+
+               |     BSW     |
+               | Abstraction |
+               +------+------+
+                      |
+                      v
+               +-------------+
+               |     RTE     |
+               +------+------+
+                      |
+                      v
+               +-------------+
+               | Application |
+               |     SWC     |
+               +------+------+
+                      |
+                      | Button = Pressed
+                      | -> Lamp = ON
+                      v
+               +-------------+
+               |     RTE     |
+               +------+------+
+                      |
+                      v
+               +-------------+
+               |     BSW     |
+               +------+------+
+                      |
+                      v
+               +-------------+
+               |    MCAL     |
+               +------+------+
+                      |
+                      v
+               +-------------+
+               |  GPIO Output|
+               +------+------+
+                      |
+                      v
+               +-------------+
+               |    Lamp     |
+               +-------------+
+                      |
+                      v
+                    OUTPUT</code></pre>
+
+
+            <h2>11. Vai trò của từng tầng trong ví dụ</h2>
+
+            <p>
+                Từ ví dụ trên, chúng ta có thể tóm tắt trách nhiệm của từng
+                tầng như sau:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Vai trò trong ví dụ</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Button Hardware</td>
+                        <td>
+                            Tạo tín hiệu input vật lý.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>MCAL</td>
+                        <td>
+                            Cung cấp lớp truy cập đến GPIO của
+                            microcontroller.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>BSW / Abstraction</td>
+                        <td>
+                            Cung cấp các chức năng phần mềm nền tảng và
+                            abstraction phù hợp.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>RTE</td>
+                        <td>
+                            Kết nối Application với các thành phần bên dưới.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Application SWC</td>
+                        <td>
+                            Xử lý logic Button → Lamp.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>MCAL Output</td>
+                        <td>
+                            Đưa yêu cầu điều khiển đến GPIO Hardware.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Lamp Hardware</td>
+                        <td>
+                            Thực hiện hành động vật lý.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <h2>12. Application không trực tiếp điều khiển Hardware</h2>
+
+            <p>
+                Đây là một trong những điểm quan trọng nhất cần rút ra từ ví dụ.
+            </p>
+
+            <p>
+                Nếu sử dụng kiến trúc phần mềm đơn giản không phân tầng,
+                chúng ta có thể tưởng tượng:
+            </p>
+
+            <pre><code>Application
+     |
+     | Direct GPIO Access
+     v
+Hardware</code></pre>
+
+            <p>
+                Nhưng trong AUTOSAR, kiến trúc được phân chia thành nhiều
+                tầng:
+            </p>
+
+            <pre><code>Application
+     |
+     v
+    RTE
+     |
+     v
+    BSW
+     |
+     v
+   MCAL
+     |
+     v
+Hardware</code></pre>
+
+            <p>
+                Nhờ đó, Application tập trung vào chức năng thay vì phụ thuộc
+                trực tiếp vào phần cứng.
+            </p>
+
+
+            <h2>13. Nếu thay đổi Microcontroller thì sao?</h2>
+
+            <p>
+                Giả sử ECU được chuyển từ một microcontroller sang một
+                microcontroller khác.
+            </p>
+
+            <p>
+                Nếu Application trực tiếp điều khiển GPIO, việc thay đổi
+                hardware có thể khiến Application phải thay đổi rất nhiều.
+            </p>
+
+            <pre><code>Application
+     |
+     | Direct Hardware Dependency
+     v
+Microcontroller A</code></pre>
+
+            <p>
+                Trong kiến trúc AUTOSAR:
+            </p>
+
+            <pre><code>Application
+     |
+    RTE
+     |
+    BSW
+     |
+   MCAL
+     |
+     +------ Microcontroller A
+     |
+     +------ Microcontroller B</code></pre>
+
+            <p>
+                Phần Application có thể được giữ ổn định hơn, trong khi các
+                phần liên quan đến hardware có thể được thay đổi phù hợp.
+            </p>
+
+            <p>
+                Đây là một trong những lợi ích của Hardware Abstraction.
+            </p>
+
+
+            <h2>14. Một ví dụ có Communication</h2>
+
+            <p>
+                Bây giờ mở rộng bài toán một chút.
+            </p>
+
+            <p>
+                Thay vì Button nằm trực tiếp trên ECU, giả sử trạng thái
+                Button được gửi từ một ECU khác thông qua CAN.
+            </p>
+
+            <pre><code>Other ECU
+    |
+    v
+ CAN Bus
+    |
+    v
+CAN Hardware
+    |
+    v
+CAN Driver
+    |
+    v
+Communication Stack
+    |
+    v
+   RTE
+    |
+    v
+Application SWC
+    |
+    | Button = Pressed
+    v
+   RTE
+    |
+    v
+BSW / MCAL
+    |
+    v
+Lamp Hardware</code></pre>
+
+            <p>
+                Như vậy, chỉ một chức năng đơn giản cũng có thể sử dụng nhiều
+                nhóm thành phần khác nhau của AUTOSAR.
+            </p>
+
+
+            <h2>15. Ví dụ hoàn chỉnh: CAN điều khiển Lamp</h2>
+
+            <p>
+                Hãy xem toàn bộ luồng trong một ví dụ hoàn chỉnh hơn:
+            </p>
+
+            <p>
+                <strong>ECU A</strong> gửi trạng thái Button qua CAN.
+                <strong>ECU B</strong> nhận dữ liệu và điều khiển Lamp.
+            </p>
+
+            <pre><code>                         ECU A
+                  +----------------+
+                  | Application    |
+                  +-------+--------+
+                          |
+                         RTE
+                          |
+                          v
+                  Communication Stack
+                          |
+                          v
+                       CAN HW
+                          |
+                          |
+                       CAN Bus
+                          |
+                          |
+                          v
+                         ECU B
+                  +-------+--------+
+                  |    CAN HW     |
+                  +-------+--------+
+                          |
+                          v
+                  Communication Stack
+                          |
+                          v
+                         RTE
+                          |
+                          v
+                  +----------------+
+                  | Application    |
+                  | Button -> Lamp |
+                  +-------+--------+
+                          |
+                          v
+                         RTE
+                          |
+                          v
+                         MCAL
+                          |
+                          v
+                     Lamp GPIO
+                          |
+                          v
+                        Lamp</code></pre>
+
+            <p>
+                Đây là ví dụ cho thấy kiến trúc AUTOSAR không chỉ dùng để
+                xử lý một peripheral mà còn có thể kết hợp
+                <strong>Application, RTE, Communication Stack, MCAL và
+                Hardware</strong> trong cùng một chức năng.
+            </p>
+
+
+            <h2>16. Nếu có Service và ECU Management</h2>
+
+            <p>
+                Trong thực tế, ECU còn có những chức năng nền tảng khác như
+                quản lý trạng thái, watchdog, memory, communication và
+                diagnostic.
+            </p>
+
+            <p>
+                Vì vậy, mô hình thực tế có thể được hình dung rộng hơn:
+            </p>
+
+            <pre><code>+------------------------------------------------+
+|              Application Software              |
+|                                                |
+|          Button / Lamp Function                |
++-------------------------+----------------------+
+                          |
+                          v
++------------------------------------------------+
+|                     RTE                        |
++-------------------------+----------------------+
+                          |
+                          v
++------------------------------------------------+
+|                 Basic Software                 |
+|                                                |
+| +-----------+ +-------------+ +--------------+ |
+| | Services  | |Communication| | ECU Management| |
+| +-----------+ +-------------+ +--------------+ |
+|                                                |
+| +-------------------+     +------------------+ |
+| | ECU Abstraction   |     |      MCAL        | |
+| +-------------------+     +------------------+ |
++-------------------------------+----------------+
+                                |
+                                v
++------------------------------------------------+
+|                   Hardware                     |
+|                                                |
+| MCU | GPIO | CAN | Sensors | Actuators        |
++------------------------------------------------+</code></pre>
+
+            <p>
+                Application nằm ở phía trên và sử dụng các dịch vụ của hệ
+                thống, trong khi các tầng bên dưới đảm nhận việc kết nối với
+                phần cứng và môi trường bên ngoài.
+            </p>
+
+
+            <h2>17. Một chức năng đi qua nhiều tầng</h2>
+
+            <p>
+                Qua ví dụ này, có thể thấy một yêu cầu rất đơn giản như:
+            </p>
+
+            <pre><code>"Nhấn Button thì bật Lamp"</code></pre>
+
+            <p>
+                thực tế có thể liên quan đến nhiều tầng:
+            </p>
+
+            <pre><code>Button
+  ↓
+Hardware
+  ↓
+MCAL
+  ↓
+BSW / Abstraction
+  ↓
+RTE
+  ↓
+Application
+  ↓
+RTE
+  ↓
+BSW / Abstraction
+  ↓
+MCAL
+  ↓
+Hardware
+  ↓
+Lamp</code></pre>
+
+            <p>
+                Mỗi tầng không thực hiện toàn bộ chức năng. Mỗi tầng chỉ đảm
+                nhận một phần trách nhiệm trong toàn bộ luồng.
+            </p>
+
+
+            <h2>18. Cách phân tích một chức năng thực tế</h2>
+
+            <p>
+                Khi gặp một yêu cầu chức năng trong dự án AUTOSAR, có thể
+                phân tích theo các câu hỏi:
+            </p>
+
+            <ol>
+                <li>
+                    Chức năng được thực hiện bởi Application SWC nào?
+                </li>
+
+                <li>
+                    Application cần dữ liệu input từ đâu?
+                </li>
+
+                <li>
+                    RTE tham gia vào việc kết nối như thế nào?
+                </li>
+
+                <li>
+                    BSW nào cung cấp chức năng cần thiết?
+                </li>
+
+                <li>
+                    Nếu có communication, dữ liệu đi qua stack nào?
+                </li>
+
+                <li>
+                    Hardware nào thực hiện input hoặc output?
+                </li>
+
+                <li>
+                    MCAL hoặc Hardware Abstraction đóng vai trò gì?
+                </li>
+            </ol>
+
+            <p>
+                Đây là cách tư duy rất hữu ích khi đọc architecture diagram,
+                software requirement hoặc phân tích một issue trong ECU.
+            </p>
+
+
+            <h2>19. Góc nhìn Debug</h2>
+
+            <p>
+                Ví dụ giả sử người dùng nhấn Button nhưng Lamp không sáng.
+            </p>
+
+            <p>
+                Không nên chỉ kiểm tra Application.
+                Có thể phân tích theo từng tầng:
+            </p>
+
+            <pre><code>Button
+  |
+  v
+Hardware Input ?
+  |
+  v
+MCAL ?
+  |
+  v
+BSW / Abstraction ?
+  |
+  v
+RTE ?
+  |
+  v
+Application Logic ?
+  |
+  v
+RTE ?
+  |
+  v
+BSW / MCAL ?
+  |
+  v
+Hardware Output ?
+  |
+  v
+Lamp</code></pre>
+
+            <p>
+                Cách tiếp cận này giúp chia một vấn đề lớn thành nhiều phạm
+                vi nhỏ hơn.
+            </p>
+
+            <p>
+                Đây cũng là một trong những lợi ích quan trọng của kiến trúc
+                phân tầng: <strong>dễ xác định trách nhiệm của từng thành
+                phần khi phân tích lỗi.</strong>
+            </p>
+
+
+            <h2>20. Những điểm cần nhớ</h2>
+
+            <ul>
+                <li>
+                    Một chức năng AUTOSAR có thể đi qua nhiều tầng khác nhau.
+                </li>
+
+                <li>
+                    Application tập trung vào logic chức năng.
+                </li>
+
+                <li>
+                    RTE đóng vai trò kết nối Application với các thành phần
+                    khác.
+                </li>
+
+                <li>
+                    BSW cung cấp các dịch vụ và chức năng nền tảng.
+                </li>
+
+                <li>
+                    ECU Abstraction và MCAL giúp kết nối phần mềm với
+                    Hardware.
+                </li>
+
+                <li>
+                    Hardware thực hiện phần xử lý vật lý cuối cùng.
+                </li>
+
+                <li>
+                    Communication Stack có thể xuất hiện khi dữ liệu được
+                    trao đổi giữa các ECU.
+                </li>
+
+                <li>
+                    Một chức năng đơn giản ở Application có thể cần sự phối
+                    hợp của rất nhiều thành phần bên dưới.
+                </li>
+
+                <li>
+                    Khi debug, nên đi theo toàn bộ luồng từ Input đến
+                    Application rồi đến Output.
+                </li>
+            </ul>
+
+
+            <h2>21. Tóm tắt</h2>
+
+            <div class="note">
+
+                <p>
+                    Ví dụ <strong>Button → Lamp</strong> giúp chúng ta nhìn
+                    thấy rõ mối quan hệ giữa các tầng trong AUTOSAR.
+                </p>
+
+                <pre><code>Input
+  ↓
+Hardware
+  ↓
+MCAL
+  ↓
+BSW / Abstraction
+  ↓
+RTE
+  ↓
+Application
+  ↓
+RTE
+  ↓
+BSW / Abstraction
+  ↓
+MCAL
+  ↓
+Hardware
+  ↓
+Output</code></pre>
+
+                <p>
+                    Nếu có communication giữa các ECU, Communication Stack
+                    sẽ tham gia vào luồng:
+                </p>
+
+                <pre><code>ECU A
+  ↓
+Communication Stack
+  ↓
+Network
+  ↓
+Communication Stack
+  ↓
+ECU B
+  ↓
+Application
+  ↓
+Hardware</code></pre>
+
+                <p>
+                    Điều quan trọng nhất cần nhớ là:
+                    <strong>Application quyết định chức năng cần thực hiện,
+                    RTE kết nối các thành phần, BSW cung cấp các chức năng nền
+                    tảng, MCAL hỗ trợ truy cập microcontroller và Hardware
+                    thực hiện hành động vật lý.</strong>
+                </p>
+
+                <p>
+                    Khi đã hiểu được một luồng hoàn chỉnh từ Application đến
+                    Hardware, chúng ta có nền tảng để bắt đầu đi sâu vào từng
+                    module AUTOSAR cụ thể.
+                </p>
+
+            </div>
+
+
+            <div class="pager">
+
+                <a class="btn" href="lesson-11.html">
+                    ← Bài trước
+                </a>
+
+                <a class="btn" href="lesson-13.html">
+                    Bài tiếp theo →
+                </a>
+
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

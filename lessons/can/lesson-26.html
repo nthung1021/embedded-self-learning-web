@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 26: CANNM, CANTP và CANTRCV | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html" class="active">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 26: CANNM, CANTP và CANTRCV</h1>
+
+                <div class="note">
+                    <strong>CanNm, CanTp và CanTrcv</strong> là ba thành phần có
+                    vai trò rất khác nhau trong hệ thống AUTOSAR CAN.
+                    CanNm quản lý Network Management, CanTp vận chuyển dữ liệu
+                    lớn hơn giới hạn của một CAN frame và CanTrcv điều khiển
+                    CAN Transceiver. Hiểu rõ ba module này giúp tránh nhầm lẫn
+                    giữa communication management, transport protocol và
+                    physical interface.
+                </div>
+
+                <h2>1. Ba module này nằm ở đâu?</h2>
+
+                <p>
+                    Trong một AUTOSAR CAN stack, ba module nằm ở những tầng khác nhau
+                    và giải quyết ba vấn đề khác nhau.
+                </p>
+
+                <pre><code>Application
+     │
+     ▼
+    COM
+     │
+     ├──────────────────────┐
+     │                      │
+     ▼                      ▼
+   CanNm                   CanTp
+     │                      │
+     │                      ▼
+     │                    PduR
+     │                      │
+     └──────────┬───────────┘
+                ▼
+              CanIf
+                │
+        ┌───────┴────────┐
+        ▼                ▼
+      CanDrv           CanTrcv
+        │                │
+        ▼                ▼
+CAN Controller     CAN Transceiver
+        │                │
+        └───────┬────────┘
+                ▼
+              CAN Bus</code></pre>
+
+                <p>
+                    Sơ đồ trên là mô hình khái niệm. Cách kết nối chính xác giữa
+                    các module có thể thay đổi tùy AUTOSAR release và configuration.
+                </p>
+
+                <h2>2. CanNm là gì?</h2>
+
+                <p>
+                    <strong>CanNm</strong> là module CAN Network Management trong
+                    AUTOSAR. Nó hỗ trợ quản lý trạng thái hoạt động của network
+                    thông qua các Network Management messages.
+                </p>
+
+                <p>
+                    Mục tiêu chính của Network Management là giúp các ECU trong
+                    cùng network phối hợp việc communication activity và chuyển
+                    giữa các trạng thái network phù hợp.
+                </p>
+
+                <pre><code>ECU A ──┐
+        │
+ECU B ──┼── CAN Network
+        │
+ECU C ──┘
+   │
+   ▼
+CanNm
+   │
+   ▼
+Network Management</code></pre>
+
+                <h2>3. Tại sao cần CanNm?</h2>
+
+                <p>
+                    Một chiếc xe có thể có rất nhiều ECU. Không phải lúc nào tất cả
+                    ECU cũng cần communication liên tục.
+                </p>
+
+                <p>
+                    Nếu mọi ECU luôn hoạt động, hệ thống sẽ tiêu thụ nhiều năng lượng.
+                    Network Management giúp các ECU phối hợp khi network cần hoạt động
+                    và khi có thể chuyển sang trạng thái tiết kiệm năng lượng.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Không có Network Management</th>
+                        <th>Có CanNm</th>
+                    </tr>
+                    <tr>
+                        <td>ECU hoạt động độc lập</td>
+                        <td>ECU phối hợp trạng thái network</td>
+                    </tr>
+                    <tr>
+                        <td>Khó quản lý network state</td>
+                        <td>Có cơ chế communication coordination</td>
+                    </tr>
+                    <tr>
+                        <td>Có thể giữ network active không cần thiết</td>
+                        <td>Hỗ trợ chuyển sang trạng thái phù hợp</td>
+                    </tr>
+                </table>
+
+                <h2>4. Network Management Message</h2>
+
+                <p>
+                    CanNm sử dụng các Network Management PDU/message để trao đổi
+                    thông tin cần thiết giữa các node tham gia network management.
+                </p>
+
+                <pre><code>ECU A                         ECU B
+ │                              │
+ │──── NM Message ─────────────►│
+ │                              │
+ │◄──── NM Message ─────────────│
+ │                              │
+ ▼                              ▼
+Network Management state coordination</code></pre>
+
+                <p>
+                    NM message không nên bị nhầm với application message.
+                    Nó phục vụ mục đích quản lý network.
+                </p>
+
+                <h2>5. CanNm và trạng thái Network</h2>
+
+                <p>
+                    CanNm quản lý một state machine liên quan đến hoạt động
+                    Network Management.
+                </p>
+
+                <p>
+                    Các trạng thái cụ thể phụ thuộc specification/version và
+                    configuration, nhưng về mặt khái niệm có thể hình dung:
+                </p>
+
+                <pre><code>Network không hoạt động
+        │
+        ▼
+Prepare / Network requested
+        │
+        ▼
+Network active
+        │
+        ▼
+Network release
+        │
+        ▼
+Prepare Sleep
+        │
+        ▼
+Bus Sleep</code></pre>
+
+                <div class="note">
+                    Không nên học thuộc sơ đồ trên như danh sách API hoặc enum
+                    cố định. Đây là state flow khái niệm để hiểu vai trò của CanNm.
+                </div>
+
+                <h2>6. CanNm và Sleep</h2>
+
+                <p>
+                    Một trong những mục tiêu quan trọng của Network Management là
+                    hỗ trợ các ECU xác định khi nào communication không còn cần thiết.
+                </p>
+
+                <pre><code>Communication required
+        │
+        ▼
+Network Active
+        │
+        │ No more communication request
+        ▼
+Prepare Sleep
+        │
+        ▼
+Bus Sleep
+        │
+        │ New network request
+        ▼
+Network Active</code></pre>
+
+                <p>
+                    Flow thực tế còn liên quan đến CanSM, EcuM, CanTrcv và
+                    các module khác.
+                </p>
+
+                <h2>7. CanNm và CanSM</h2>
+
+                <p>
+                    <strong>CanNm</strong> và <strong>CanSM</strong> rất dễ bị nhầm.
+                    Hai module đều liên quan đến communication state nhưng không
+                    có cùng trách nhiệm.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Module</th>
+                        <th>Vai trò chính</th>
+                    </tr>
+                    <tr>
+                        <td>CanNm</td>
+                        <td>Network Management trên CAN</td>
+                    </tr>
+                    <tr>
+                        <td>CanSM</td>
+                        <td>Quản lý communication mode của CAN network</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Có thể hiểu đơn giản: CanNm hoạt động ở góc nhìn Network
+                    Management protocol, còn CanSM đóng vai trò quản lý state
+                    của CAN communication trong BSW.
+                </p>
+
+                <h2>8. CanNm và CanIf</h2>
+
+                <p>
+                    CanNm không trực tiếp điều khiển CAN Controller.
+                    Communication của CanNm đi qua các lớp phía dưới theo
+                    architecture AUTOSAR.
+                </p>
+
+                <pre><code>CanNm
+  │
+  ▼
+PduR / routing layer
+  │
+  ▼
+CanIf
+  │
+  ▼
+CanDrv
+  │
+  ▼
+CAN Controller
+  │
+  ▼
+CAN Bus</code></pre>
+
+                <p>
+                    Đây là lý do khi debug NM message không xuất hiện trên bus,
+                    cần kiểm tra nhiều tầng thay vì chỉ kiểm tra CanNm.
+                </p>
+
+                <h2>9. CanTp là gì?</h2>
+
+                <p>
+                    <strong>CanTp</strong> là CAN Transport Protocol.
+                    Nó cho phép truyền một PDU có kích thước lớn hơn payload
+                    mà một CAN frame có thể mang trong một lần truyền.
+                </p>
+
+                <p>
+                    Với Classic CAN, một CAN Data Frame có tối đa 8 byte data.
+                    Vì vậy nếu cần truyền một message lớn hơn 8 byte, cần cơ chế
+                    phân đoạn và ghép lại.
+                </p>
+
+                <pre><code>Large Data
+   │
+   ▼
++-----------------------+
+|       CanTp           |
+| Segmentation          |
+| Flow Control          |
+| Reassembly            |
++-----------------------+
+   │
+   ▼
+Multiple CAN Frames
+   │
+   ├── Frame 1
+   ├── Frame 2
+   ├── Frame 3
+   └── ...
+   │
+   ▼
+Receiver reassembles
+   │
+   ▼
+Original Data</code></pre>
+
+                <h2>10. Tại sao cần CanTp?</h2>
+
+                <p>
+                    CAN frame có giới hạn payload. Nhưng các ứng dụng automotive
+                    thường cần truyền dữ liệu lớn hơn giới hạn này.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <ul>
+                    <li>Diagnostic request/response.</li>
+                    <li>ECU identification data.</li>
+                    <li>Diagnostic data records.</li>
+                    <li>Firmware-related data trong các quy trình phù hợp.</li>
+                    <li>Các PDU có kích thước lớn.</li>
+                </ul>
+
+                <p>
+                    CanTp chia dữ liệu lớn thành nhiều frame nhỏ và phía nhận
+                    ghép chúng lại thành dữ liệu ban đầu.
+                </p>
+
+                <h2>11. CanTp và Single Frame</h2>
+
+                <p>
+                    Nếu dữ liệu đủ nhỏ, không nhất thiết phải sử dụng nhiều frame.
+                    CanTp có thể truyền bằng <strong>Single Frame (SF)</strong>.
+                </p>
+
+                <pre><code>Application Data
+      │
+      ▼
+Size fits in one CAN frame?
+      │
+      ├── YES
+      │    │
+      │    ▼
+      │  Single Frame
+      │
+      └── NO
+           │
+           ▼
+      Multi-frame transfer</code></pre>
+
+                <p>
+                    Với Single Frame, toàn bộ payload của transport message
+                    có thể được truyền trong một CAN frame theo format của CanTp.
+                </p>
+
+                <h2>12. CanTp và First Frame</h2>
+
+                <p>
+                    Nếu dữ liệu lớn hơn khả năng của một frame, CanTp có thể bắt đầu
+                    bằng <strong>First Frame (FF)</strong>.
+                </p>
+
+                <pre><code>Large PDU
+   │
+   ▼
+First Frame
+   │
+   │ Contains information about transfer
+   ▼
+Receiver prepares
+   │
+   ▼
+Flow Control
+   │
+   ▼
+Consecutive Frames</code></pre>
+
+                <p>
+                    First Frame cho receiver biết rằng đây là một segmented transfer
+                    và cung cấp thông tin cần thiết để tiếp tục quá trình.
+                </p>
+
+                <h2>13. CanTp và Consecutive Frame</h2>
+
+                <p>
+                    Sau First Frame và Flow Control, sender tiếp tục truyền dữ liệu
+                    bằng các <strong>Consecutive Frame (CF)</strong>.
+                </p>
+
+                <pre><code>Original Data:
+
+[AAAAAAAA][BBBBBBBB][CCCCCCCC][DDDDDDDD]...
+
+        ↓ CanTp segmentation
+
+FF
+ │
+ ▼
+FC
+ │
+ ▼
+CF #1
+ │
+ ▼
+CF #2
+ │
+ ▼
+CF #3
+ │
+ ▼
+...</code></pre>
+
+                <p>
+                    Receiver sử dụng các frame này để tái tạo lại PDU ban đầu.
+                </p>
+
+                <h2>14. Flow Control Frame</h2>
+
+                <p>
+                    <strong>Flow Control (FC)</strong> cho phép receiver điều khiển
+                    cách sender tiếp tục truyền dữ liệu.
+                </p>
+
+                <pre><code>Sender                         Receiver
+  │                               │
+  │──── First Frame ─────────────►│
+  │                               │
+  │◄──── Flow Control ────────────│
+  │                               │
+  │──── Consecutive Frame ───────►│
+  │──── Consecutive Frame ───────►│
+  │──── ... ─────────────────────►│</code></pre>
+
+                <p>
+                    Điều này giúp receiver kiểm soát tốc độ và lượng dữ liệu
+                    được truyền trong từng giai đoạn.
+                </p>
+
+                <h2>15. Block Size và STmin</h2>
+
+                <p>
+                    Flow Control có thể chứa các thông tin điều khiển như
+                    <strong>Block Size (BS)</strong> và
+                    <strong>Separation Time Minimum (STmin)</strong>.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Block Size</td>
+                        <td>Số Consecutive Frames có thể gửi trước khi cần Flow Control tiếp theo</td>
+                    </tr>
+                    <tr>
+                        <td>STmin</td>
+                        <td>Khoảng thời gian tối thiểu giữa các Consecutive Frames theo transport protocol</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Các giá trị thực tế phụ thuộc vào Flow Control và configuration
+                    của transport layer.
+                </p>
+
+                <h2>16. CanTp Receiver Flow</h2>
+
+                <pre><code>Receive First Frame
+        │
+        ▼
+Check total length
+        │
+        ▼
+Allocate / prepare buffer
+        │
+        ▼
+Send Flow Control
+        │
+        ▼
+Receive Consecutive Frames
+        │
+        ▼
+Check sequence
+        │
+        ▼
+Reassemble
+        │
+        ▼
+Complete PDU
+        │
+        ▼
+Deliver to upper layer</code></pre>
+
+                <p>
+                    Đây là flow khái niệm giúp hiểu quá trình reassembly.
+                </p>
+
+                <h2>17. CanTp Sender Flow</h2>
+
+                <pre><code>Upper Layer sends large PDU
+        │
+        ▼
+CanTp
+        │
+        ▼
+Single Frame?
+   ┌────┴────┐
+  YES        NO
+   │          │
+   ▼          ▼
+Send SF     Send FF
+              │
+              ▼
+       Wait Flow Control
+              │
+              ▼
+       Send Consecutive Frames
+              │
+              ▼
+         Transfer complete</code></pre>
+
+                <h2>18. CanTp và PduR</h2>
+
+                <p>
+                    <strong>PduR</strong> đóng vai trò routing PDU giữa các module
+                    communication trong AUTOSAR.
+                </p>
+
+                <pre><code>Application / DCM
+       │
+       ▼
+      PduR
+       │
+       ▼
+     CanTp
+       │
+       ▼
+     CanIf
+       │
+       ▼
+    CanDrv
+       │
+       ▼
+CAN Controller
+       │
+       ▼
+CAN Bus</code></pre>
+
+                <p>
+                    Với diagnostic communication, DCM thường là một upper layer
+                    quan trọng sử dụng transport mechanism để truyền dữ liệu lớn.
+                </p>
+
+                <h2>19. CanTp và DCM</h2>
+
+                <p>
+                    Trong UDS diagnostic, request hoặc response có thể lớn hơn
+                    một CAN frame.
+                </p>
+
+                <p>
+                    Khi đó CanTp thực hiện việc segmentation và reassembly giữa
+                    diagnostic layer và CAN network.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       │
+       ▼
+     UDS
+       │
+       ▼
+     CanTp
+       │
+       ▼
+CAN Frames
+       │
+       ▼
+     CanTp
+       │
+       ▼
+     DCM
+       │
+       ▼
+ECU Diagnostic Service</code></pre>
+
+                <h2>20. CanTp không phải CAN Driver</h2>
+
+                <div class="note">
+                    <strong>Đây là điểm rất quan trọng:</strong>
+                    CanTp không điều khiển CAN Controller.
+                    Nó xử lý transport-level segmentation/reassembly.
+                    CanDrv mới là module giao tiếp trực tiếp với CAN Controller.
+                </div>
+
+                <table>
+                    <tr>
+                        <th>CanTp</th>
+                        <th>CanDrv</th>
+                    </tr>
+                    <tr>
+                        <td>Transport protocol</td>
+                        <td>CAN hardware driver</td>
+                    </tr>
+                    <tr>
+                        <td>Segmentation/reassembly</td>
+                        <td>Transmit/receive CAN frame</td>
+                    </tr>
+                    <tr>
+                        <td>Flow Control</td>
+                        <td>Controller configuration</td>
+                    </tr>
+                    <tr>
+                        <td>Không trực tiếp điều khiển CAN peripheral</td>
+                        <td>Trực tiếp giao tiếp CAN Controller</td>
+                    </tr>
+                </table>
+
+                <h2>21. CanTrcv là gì?</h2>
+
+                <p>
+                    <strong>CanTrcv</strong> là CAN Transceiver Driver.
+                    Nó cung cấp abstraction để phần mềm điều khiển CAN Transceiver
+                    bên ngoài hoặc tích hợp trên hệ thống phần cứng.
+                </p>
+
+                <p>
+                    CAN Transceiver nằm giữa CAN Controller và physical CAN bus.
+                </p>
+
+                <pre><code>Software
+   │
+   ▼
+CanTrcv
+   │
+   ▼
+CAN Transceiver
+   │
+   ├── TXD
+   └── RXD
+       │
+       ▼
+   CAN_H / CAN_L
+       │
+       ▼
+    CAN Bus</code></pre>
+
+                <h2>22. CAN Controller và CAN Transceiver khác nhau</h2>
+
+                <p>
+                    Đây là một trong những kiến thức cơ bản nhưng rất quan trọng
+                    khi debug CAN.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>CAN Controller</th>
+                        <th>CAN Transceiver</th>
+                    </tr>
+                    <tr>
+                        <td>Xử lý CAN protocol</td>
+                        <td>Giao tiếp electrical với CAN bus</td>
+                    </tr>
+                    <tr>
+                        <td>Thường nằm trong MCU</td>
+                        <td>Thường là external IC hoặc peripheral riêng</td>
+                    </tr>
+                    <tr>
+                        <td>Frame, arbitration, error handling</td>
+                        <td>Chuyển đổi logic signal ↔ bus signal</td>
+                    </tr>
+                    <tr>
+                        <td>Được điều khiển bởi CanDrv</td>
+                        <td>Được điều khiển qua CanTrcv</td>
+                    </tr>
+                </table>
+
+                <h2>23. Các trạng thái của CAN Transceiver</h2>
+
+                <p>
+                    Tùy transceiver và AUTOSAR implementation, transceiver có thể
+                    hỗ trợ các mode như Normal, Standby hoặc Sleep.
+                </p>
+
+                <pre><code>              Normal
+                │
+        ┌───────┴───────┐
+        │               │
+        ▼               ▼
+     Standby          Sleep
+        │               │
+        └───────┬───────┘
+                ▼
+              Wake-up
+                │
+                ▼
+              Normal</code></pre>
+
+                <p>
+                    Tên gọi và khả năng cụ thể phụ thuộc hardware.
+                </p>
+
+                <h2>24. CanTrcv và Sleep/Wake-up</h2>
+
+                <p>
+                    CanTrcv đặc biệt quan trọng trong các hệ thống cần low-power.
+                    Transceiver có thể chuyển sang một chế độ giảm năng lượng
+                    nhưng vẫn duy trì khả năng wake-up phù hợp với hardware.
+                </p>
+
+                <pre><code>Normal Operation
+       │
+       ▼
+CanTrcv Normal
+       │
+       ▼
+Prepare Sleep
+       │
+       ▼
+Low-Power Mode
+       │
+       │ CAN Wake-up
+       ▼
+Wake-up Detection
+       │
+       ▼
+CanTrcv Normal
+       │
+       ▼
+Communication Resume</code></pre>
+
+                <h2>25. CanTrcv và Pretended Networking</h2>
+
+                <p>
+                    Liên hệ với Bài 24, Pretended Networking và selective wake-up
+                    có thể liên quan đến khả năng của CAN transceiver và CAN
+                    controller trong việc phát hiện communication cần thiết
+                    trong trạng thái low-power.
+                </p>
+
+                <p>
+                    Vì vậy khi debug PN hoặc wake-up, cần xem cả:
+                </p>
+
+                <ul>
+                    <li>CAN Controller.</li>
+                    <li>CAN Transceiver.</li>
+                    <li>CanTrcv configuration.</li>
+                    <li>CanSM.</li>
+                    <li>EcuM.</li>
+                    <li>Wake-up configuration.</li>
+                </ul>
+
+                <h2>26. CanTrcv và CanSM</h2>
+
+                <p>
+                    CanSM có thể điều phối trạng thái communication của CAN network
+                    và phối hợp với CanTrcv khi cần thay đổi trạng thái transceiver.
+                </p>
+
+                <pre><code>          CanSM
+            │
+     ┌──────┴──────┐
+     │             │
+     ▼             ▼
+  CanDrv        CanTrcv
+     │             │
+     ▼             ▼
+Controller     Transceiver
+     │             │
+     └──────┬──────┘
+            ▼
+          CAN Bus</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái niệm. API và sequence chính xác phụ thuộc
+                    AUTOSAR version và implementation.
+                </p>
+
+                <h2>27. So sánh CanNm, CanTp và CanTrcv</h2>
+
+                <table>
+                    <tr>
+                        <th>Module</th>
+                        <th>Giải quyết vấn đề</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td>CanNm</td>
+                        <td>Network Management</td>
+                        <td>Network state coordination</td>
+                    </tr>
+                    <tr>
+                        <td>CanTp</td>
+                        <td>Transport Protocol</td>
+                        <td>Truyền PDU lớn qua nhiều CAN frame</td>
+                    </tr>
+                    <tr>
+                        <td>CanTrcv</td>
+                        <td>Transceiver control</td>
+                        <td>Normal / Standby / Sleep</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    <strong>Mẹo nhớ:</strong>
+                    <br>
+                    <strong>CanNm = Network</strong>
+                    <br>
+                    <strong>CanTp = Transport</strong>
+                    <br>
+                    <strong>CanTrcv = Transceiver</strong>
+                </div>
+
+                <h2>28. Ba module này có thay thế cho nhau không?</h2>
+
+                <p>
+                    Không. Chúng nằm ở các abstraction level khác nhau.
+                </p>
+
+                <pre><code>Network Management
+       │
+      CanNm
+       │
+       ▼
+
+Transport
+       │
+      CanTp
+       │
+       ▼
+
+CAN Interface / Driver
+       │
+       ▼
+
+Physical Transceiver
+       │
+     CanTrcv</code></pre>
+
+                <p>
+                    Một ECU có thể sử dụng cả ba module cùng lúc vì mỗi module
+                    giải quyết một vấn đề khác nhau.
+                </p>
+
+                <h2>29. Ví dụ tổng hợp: Diagnostic Communication</h2>
+
+                <p>
+                    Giả sử tester gửi một diagnostic request lớn đến ECU.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       │
+       ▼
+MOCCA FD / CAN Tester
+       │
+       ▼
+CAN Bus
+       │
+       ▼
+ECU
+       │
+       ▼
+CanTp
+       │
+       ▼
+PduR / DCM
+       │
+       ▼
+Diagnostic Service
+
+CanTp:
+- Nhận các frame
+- Kiểm tra sequence
+- Reassemble
+- Deliver complete PDU</code></pre>
+
+                <p>
+                    Trong khi đó, CanNm có thể quản lý network communication state
+                    và CanTrcv chịu trách nhiệm abstraction của transceiver.
+                </p>
+
+                <h2>30. Ví dụ tổng hợp: ECU Sleep</h2>
+
+                <pre><code>ECU hoạt động
+      │
+      ▼
+CanNm network activity
+      │
+      ▼
+Network no longer required
+      │
+      ▼
+CanSM requests communication state change
+      │
+      ▼
+CanTrcv changes mode
+      │
+      ▼
+CAN low-power / Sleep
+      │
+      ▼
+Wake-up event
+      │
+      ▼
+CanTrcv / CanSM / EcuM handling
+      │
+      ▼
+Communication resumes</code></pre>
+
+                <p>
+                    Sequence thực tế có thể khác tùy architecture và configuration,
+                    nhưng sơ đồ giúp phân biệt vai trò của từng module.
+                </p>
+
+                <h2>31. Debug CanNm</h2>
+
+                <p>
+                    Nếu Network Management không hoạt động đúng, có thể kiểm tra:
+                </p>
+
+                <ol>
+                    <li>CanNm configuration.</li>
+                    <li>NM message ID và PDU configuration.</li>
+                    <li>CanNm state.</li>
+                    <li>PduR routing.</li>
+                    <li>CanIf.</li>
+                    <li>CAN Driver.</li>
+                    <li>CAN Controller state.</li>
+                    <li>Physical CAN bus.</li>
+                </ol>
+
+                <pre><code>CanNm
+  ↓
+PduR
+  ↓
+CanIf
+  ↓
+CanDrv
+  ↓
+Controller
+  ↓
+Bus
+
+Không thấy NM frame?
+→ Debug từ trên xuống hoặc từ bus lên.</code></pre>
+
+                <h2>32. Debug CanTp</h2>
+
+                <p>
+                    Nếu một diagnostic message lớn không được truyền đúng,
+                    cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>Single Frame hay multi-frame.</li>
+                    <li>First Frame.</li>
+                    <li>Flow Control.</li>
+                    <li>Block Size.</li>
+                    <li>STmin.</li>
+                    <li>Consecutive Frame sequence.</li>
+                    <li>Timeout.</li>
+                    <li>PduR routing.</li>
+                    <li>CanIf và CAN Driver.</li>
+                </ul>
+
+                <pre><code>Expected:
+
+FF → FC → CF1 → CF2 → CF3 → ...
+
+Observed:
+
+FF → FC → CF1 → [missing] → timeout
+
+Possible causes:
+- FC problem
+- Timeout
+- Wrong routing
+- Sequence problem
+- CAN bus error</code></pre>
+
+                <h2>33. Debug CanTrcv</h2>
+
+                <p>
+                    Nếu ECU không thể giao tiếp sau khi chuyển từ Sleep sang Active,
+                    cần kiểm tra transceiver.
+                </p>
+
+                <pre><code>ECU Wake-up
+    ↓
+CanTrcv state
+    ↓
+Transceiver physical state
+    ↓
+CAN Controller state
+    ↓
+CAN Bus
+    ↓
+Communication</code></pre>
+
+                <p>
+                    Một transceiver đang ở sai mode có thể khiến CAN Controller
+                    hoạt động nhưng không thể giao tiếp đúng với physical bus.
+                </p>
+
+                <h2>34. Common Mistakes</h2>
+
+                <table>
+                    <tr>
+                        <th>Nhầm lẫn</th>
+                        <th>Cách hiểu đúng</th>
+                    </tr>
+                    <tr>
+                        <td>CanNm truyền application data</td>
+                        <td>CanNm quản lý Network Management</td>
+                    </tr>
+                    <tr>
+                        <td>CanTp là CAN Driver</td>
+                        <td>CanTp là Transport Protocol</td>
+                    </tr>
+                    <tr>
+                        <td>CanTrcv xử lý CAN frame protocol</td>
+                        <td>CanTrcv điều khiển CAN Transceiver</td>
+                    </tr>
+                    <tr>
+                        <td>CanTp chỉ dành cho mọi CAN frame</td>
+                        <td>CanTp đặc biệt cần cho transport message/segmentation</td>
+                    </tr>
+                    <tr>
+                        <td>CanNm = CanSM</td>
+                        <td>Hai module có trách nhiệm khác nhau</td>
+                    </tr>
+                    <tr>
+                        <td>CanTrcv = CAN Controller</td>
+                        <td>Controller và Transceiver là hai thành phần khác nhau</td>
+                    </tr>
+                </table>
+
+                <h2>35. Góc nhìn phỏng vấn</h2>
+
+                <p><strong>Q: CanNm là gì?</strong></p>
+
+                <p>
+                    CanNm là CAN Network Management module trong AUTOSAR.
+                    Nó hỗ trợ quản lý và phối hợp trạng thái network communication
+                    giữa các ECU thông qua Network Management communication.
+                </p>
+
+                <p><strong>Q: CanTp dùng để làm gì?</strong></p>
+
+                <p>
+                    CanTp dùng để truyền các PDU có kích thước lớn hơn khả năng
+                    truyền của một CAN frame bằng cách segmentation ở phía gửi
+                    và reassembly ở phía nhận, đồng thời sử dụng Flow Control
+                    trong multi-frame transfer.
+                </p>
+
+                <p><strong>Q: CanTrcv là gì?</strong></p>
+
+                <p>
+                    CanTrcv là CAN Transceiver Driver, cung cấp abstraction để
+                    điều khiển CAN Transceiver và các trạng thái liên quan như
+                    Normal hoặc low-power tùy hardware.
+                </p>
+
+                <p><strong>Q: CanTp khác CanDrv như thế nào?</strong></p>
+
+                <p>
+                    CanTp xử lý transport-level segmentation và reassembly,
+                    còn CanDrv giao tiếp trực tiếp với CAN Controller để truyền
+                    và nhận CAN frame.
+                </p>
+
+                <p><strong>Q: Nếu diagnostic message lớn không đến được ECU thì debug thế nào?</strong></p>
+
+                <p>
+                    Tôi sẽ kiểm tra CanTp flow trước, đặc biệt First Frame,
+                    Flow Control, Consecutive Frames, sequence, timeout và sau đó
+                    kiểm tra PduR, CanIf, CAN Driver, controller và physical bus.
+                </p>
+
+                <h2>36. Memory Map</h2>
+
+                <div class="note">
+                    <strong>CanNm = Network Management | CanTp = Transport | CanTrcv = Transceiver</strong>
+                </div>
+
+                <pre><code>AUTOSAR CAN
+│
+├── CanNm
+│   ├── Network Management
+│   ├── NM Messages
+│   ├── Network State
+│   └── Sleep Coordination
+│
+├── CanTp
+│   ├── Transport Protocol
+│   ├── Single Frame
+│   ├── First Frame
+│   ├── Flow Control
+│   ├── Consecutive Frame
+│   └── Reassembly
+│
+└── CanTrcv
+    ├── CAN Transceiver Driver
+    ├── Normal Mode
+    ├── Standby / Low-Power
+    ├── Sleep / Wake-up
+    └── Physical CAN Interface
+
+        ↓
+
+CanNm → "Network"
+CanTp → "Transport"
+CanTrcv → "Transceiver"</code></pre>
+
+                <h2>37.Tóm tắt</h2>
+
+                <p>
+                    CanNm, CanTp và CanTrcv là ba thành phần quan trọng trong
+                    AUTOSAR CAN nhưng giải quyết ba bài toán hoàn toàn khác nhau.
+                </p>
+
+                <p>
+                    <strong>CanNm</strong> tập trung vào Network Management và
+                    phối hợp trạng thái của network. <strong>CanTp</strong> xử lý
+                    việc vận chuyển các PDU lớn bằng cách segmentation, Flow Control
+                    và reassembly. <strong>CanTrcv</strong> cung cấp abstraction
+                    để điều khiển CAN Transceiver và các trạng thái liên quan đến
+                    physical CAN interface.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    Khi nhìn vào một AUTOSAR CAN stack, hãy nhớ:
+                    <strong>CanNm quản lý Network → CanTp vận chuyển dữ liệu →
+                        CanTrcv điều khiển Transceiver</strong>.
+                    Ba module này không thay thế nhau và có thể cùng xuất hiện
+                    trong một ECU.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-25.html">← Bài trước</a>
+                    <a class="btn" href="lesson-27.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

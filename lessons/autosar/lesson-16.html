@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 16: Chi tiết Communication Stack | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html" class="active" aria-current="page">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+            <a href="index.html">← Tất cả bài học AUTOSAR</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 16: Chi tiết Communication Stack</h1>
+
+            <p>
+                Communication Stack là tập hợp các module trong AUTOSAR Basic Software
+                chịu trách nhiệm xử lý việc trao đổi dữ liệu giữa ECU với các ECU khác
+                thông qua các mạng truyền thông như CAN, LIN, FlexRay hoặc Ethernet.
+            </p>
+
+            <p>
+                Trong Bài 9, chúng ta đã nhìn Communication Stack ở mức tổng quan.
+                Trong bài này, chúng ta sẽ đi sâu hơn vào cách dữ liệu đi qua các lớp,
+                vai trò của từng thành phần và cách phân tích một đường truyền
+                Communication từ Application xuống Network và ngược lại.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Bài này tập trung vào kiến trúc và luồng xử lý của Communication Stack.
+                Chưa đi sâu vào API cụ thể, cấu hình ARXML hoặc cấu hình chi tiết của
+                từng module. Các nội dung đó có thể được tách thành những bài chuyên sâu
+                riêng cho CAN, COM, PduR, CanIf, CanDrv, Ethernet...
+            </div>
+
+            <h2>1. Communication Stack là gì?</h2>
+
+            <p>
+                Communication Stack là phần mềm trung gian giúp Application Software
+                trao đổi dữ liệu với bên ngoài thông qua một Communication Bus.
+            </p>
+
+            <p>
+                Application thường không cần biết trực tiếp CAN Controller, thanh ghi
+                phần cứng hay cách một frame được truyền trên bus. Thay vào đó,
+                Application giao tiếp thông qua các interface được AUTOSAR cung cấp.
+            </p>
+
+            <p>
+                Có thể hình dung:
+            </p>
+
+            <pre><code>Application
+     |
+     v
+    RTE
+     |
+     v
+Communication Stack
+     |
+     v
+Communication Driver
+     |
+     v
+Communication Controller
+     |
+     v
+Communication Bus
+</code></pre>
+
+            <p>
+                Nhờ cách phân lớp này, Application có thể tập trung vào chức năng
+                của hệ thống thay vì xử lý trực tiếp phần cứng truyền thông.
+            </p>
+
+            <h2>2. Vì sao cần Communication Stack?</h2>
+
+            <p>
+                Nếu Application phải trực tiếp điều khiển Communication Controller,
+                phần mềm sẽ nhanh chóng trở nên phụ thuộc vào phần cứng và giao thức.
+            </p>
+
+            <p>
+                Ví dụ, nếu một Application muốn gửi nhiệt độ:
+            </p>
+
+            <pre><code>Application
+    |
+    | Temperature = 35°C
+    v
+??? trực tiếp điều khiển CAN Controller
+    |
+    v
+CAN Bus
+</code></pre>
+
+            <p>
+                Application lúc này phải quan tâm đến nhiều vấn đề như:
+            </p>
+
+            <ul>
+                <li>CAN Controller.</li>
+                <li>CAN frame.</li>
+                <li>CAN ID.</li>
+                <li>Hardware buffer.</li>
+                <li>Transmission status.</li>
+                <li>Reception buffer.</li>
+                <li>Hardware-specific behavior.</li>
+            </ul>
+
+            <p>
+                Communication Stack giải quyết vấn đề này bằng cách chia trách nhiệm
+                thành nhiều lớp.
+            </p>
+
+            <pre><code>Application
+    |
+    | Logical data
+    v
+RTE
+    |
+    | Communication abstraction
+    v
+COM
+    |
+    | PDU
+    v
+PduR
+    |
+    | Routing
+    v
+CanIf / LinIf / EthIf / ...
+    |
+    v
+Driver
+    |
+    v
+Hardware
+</code></pre>
+
+            <h2>3. Vị trí của Communication Stack trong AUTOSAR</h2>
+
+            <p>
+                Communication Stack chủ yếu nằm trong Basic Software.
+                Nó kết nối Application Software và RTE với Communication Hardware.
+            </p>
+
+            <pre><code>+--------------------------------------------------+
+|                 Application                      |
+|                                                  |
+|       SWC A        SWC B        SWC C            |
++-------------------------+------------------------+
+                          |
+                          v
++--------------------------------------------------+
+|                     RTE                          |
++-------------------------+------------------------+
+                          |
+                          v
++--------------------------------------------------+
+|              Communication Services              |
+|                                                  |
+|                     COM                          |
+|                     PduR                         |
++-------------------------+------------------------+
+                          |
+                          v
++--------------------------------------------------+
+|          Communication Hardware Abstraction     |
+|                                                  |
+|              CanIf / LinIf / EthIf              |
++-------------------------+------------------------+
+                          |
+                          v
++--------------------------------------------------+
+|              Communication Drivers               |
+|                                                  |
+|              Can / Lin / Ethernet                |
++-------------------------+------------------------+
+                          |
+                          v
++--------------------------------------------------+
+|                  Hardware                       |
+|                                                  |
+|          CAN Controller / Ethernet MAC           |
++--------------------------------------------------+
+</code></pre>
+
+            <p>
+                Tùy loại Communication Bus và kiến trúc ECU, các module cụ thể
+                có thể khác nhau. Tuy nhiên, nguyên tắc phân lớp vẫn là:
+                Application không nên phụ thuộc trực tiếp vào Communication Hardware.
+            </p>
+
+            <h2>4. Hai hướng xử lý chính: TX và RX</h2>
+
+            <p>
+                Communication Stack có thể được hiểu dễ nhất bằng cách chia thành
+                hai hướng chính:
+            </p>
+
+            <ul>
+                <li><strong>TX (Transmit):</strong> ECU gửi dữ liệu ra mạng.</li>
+                <li><strong>RX (Receive):</strong> ECU nhận dữ liệu từ mạng.</li>
+            </ul>
+
+            <pre><code>TX:
+
+Application
+    |
+    v
+RTE
+    |
+    v
+Communication Stack
+    |
+    v
+Driver
+    |
+    v
+Bus
+
+
+RX:
+
+Bus
+    |
+    v
+Driver
+    |
+    v
+Communication Stack
+    |
+    v
+RTE
+    |
+    v
+Application
+</code></pre>
+
+            <p>
+                Hai hướng này có cùng các lớp nhưng chiều xử lý ngược nhau.
+                Đây là một trong những cách quan trọng nhất để phân tích Communication Stack.
+            </p>
+
+            <h2>5. Dữ liệu trong Communication Stack</h2>
+
+            <p>
+                Một điểm quan trọng là dữ liệu không giữ nguyên một hình thức
+                khi đi xuyên qua toàn bộ Stack.
+            </p>
+
+            <p>
+                Ở Application, chúng ta có thể nghĩ về dữ liệu dưới dạng một
+                giá trị có ý nghĩa:
+            </p>
+
+            <pre><code>VehicleSpeed = 60 km/h
+</code></pre>
+
+            <p>
+                Khi đi xuống Communication Stack, dữ liệu được tổ chức thành
+                các đơn vị truyền thông phù hợp với từng lớp.
+            </p>
+
+            <pre><code>Application Data
+       |
+       v
+Signal
+       |
+       v
+PDU
+       |
+       v
+Frame
+       |
+       v
+Physical Bus
+</code></pre>
+
+            <p>
+                Không nên đồng nhất Signal, PDU và Frame.
+                Chúng có liên quan nhưng đại diện cho các khái niệm khác nhau.
+            </p>
+
+            <h2>6. Signal là gì?</h2>
+
+            <p>
+                Signal thường đại diện cho một giá trị dữ liệu có ý nghĩa đối với
+                Application.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>VehicleSpeed = 60 km/h
+EngineTemperature = 90 °C
+DoorStatus = OPEN
+IgnitionStatus = ON
+</code></pre>
+
+            <p>
+                Application thường quan tâm đến ý nghĩa của những giá trị này
+                hơn là vị trí bit cụ thể trong CAN frame.
+            </p>
+
+            <h2>7. PDU là gì?</h2>
+
+            <p>
+                PDU, hay Protocol Data Unit, là đơn vị dữ liệu được sử dụng
+                giữa các lớp giao tiếp.
+            </p>
+
+            <p>
+                Có thể hình dung đơn giản:
+            </p>
+
+            <pre><code>Signal
+   |
+   | packing
+   v
++---------------------------+
+|           PDU             |
+| Signal A | Signal B | ... |
++---------------------------+
+</code></pre>
+
+            <p>
+                Một PDU có thể chứa một hoặc nhiều Signal tùy theo cách thiết kế
+                Communication.
+            </p>
+
+            <p>
+                Đây là lý do Application không nhất thiết phải biết rằng
+                một Signal đang nằm ở bit nào trong một frame.
+            </p>
+
+            <h2>8. Frame là gì?</h2>
+
+            <p>
+                Frame là đơn vị truyền dữ liệu theo một Communication Protocol
+                cụ thể trên Bus.
+            </p>
+
+            <p>
+                Ví dụ với CAN:
+            </p>
+
+            <pre><code>CAN Frame
++------+----------+---------+
+| ID   | Data     | Control |
++------+----------+---------+
+</code></pre>
+
+            <p>
+                Trong một hệ thống thực tế, nhiều thông tin ở Application có thể
+                được đóng gói vào PDU rồi truyền dưới dạng CAN frame.
+            </p>
+
+            <h2>9. COM nằm ở đâu?</h2>
+
+            <p>
+                COM là một Communication Service trong AUTOSAR.
+                Nó nằm ở phía trên PduR và có nhiệm vụ xử lý việc truyền nhận
+                các Communication Signal và PDU ở mức trừu tượng.
+            </p>
+
+            <pre><code>Application
+      |
+      v
+     RTE
+      |
+      v
+     COM
+      |
+      v
+     PduR
+</code></pre>
+
+            <p>
+                Một cách đơn giản, COM giúp chuyển đổi giữa cách Application
+                nhìn dữ liệu và cách Communication Stack xử lý dữ liệu.
+            </p>
+
+            <h2>10. Vai trò của COM</h2>
+
+            <p>
+                COM có thể thực hiện các chức năng liên quan đến Signal như:
+            </p>
+
+            <ul>
+                <li>Đóng gói Signal vào PDU khi truyền.</li>
+                <li>Tách Signal ra khỏi PDU khi nhận.</li>
+                <li>Xử lý các thuộc tính của Signal.</li>
+                <li>Quản lý trạng thái của dữ liệu truyền nhận.</li>
+            </ul>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>Application:
+    VehicleSpeed = 60
+
+        |
+        v
+
+       COM
+
+        |
+        v
+
+PDU chứa dữ liệu VehicleSpeed
+
+        |
+        v
+
+      PduR
+</code></pre>
+
+            <h2>11. PduR là gì?</h2>
+
+            <p>
+                PduR là viết tắt của PDU Router.
+                Nhiệm vụ chính của PduR là định tuyến PDU giữa các module
+                Communication khác nhau.
+            </p>
+
+            <pre><code>             +------+
+             | COM   |
+             +---+---+
+                 |
+                 v
+             +---+---+
+             | PduR  |
+             +---+---+
+              /     \
+             v       v
+         CanIf     LinIf
+</code></pre>
+
+            <p>
+                PduR không tập trung vào ý nghĩa của Signal.
+                Nó chủ yếu quan tâm đến việc PDU cần được chuyển tới đâu.
+            </p>
+
+            <h2>12. COM và PduR khác nhau như thế nào?</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Quan tâm chính</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>COM</td>
+                        <td>Signal và PDU</td>
+                        <td>Đóng gói VehicleSpeed vào PDU</td>
+                    </tr>
+                    <tr>
+                        <td>PduR</td>
+                        <td>Routing PDU</td>
+                        <td>Chuyển PDU tới CanIf</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Có thể nhớ đơn giản:
+            </p>
+
+            <pre><code>COM  = "Dữ liệu được đóng gói như thế nào?"
+PduR = "PDU này cần đi đâu?"
+</code></pre>
+
+            <h2>13. Communication Interface</h2>
+
+            <p>
+                Sau PduR, PDU thường đi tới một Communication Interface
+                tương ứng với loại mạng.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li><strong>CanIf:</strong> giao tiếp với CAN Driver.</li>
+                <li><strong>LinIf:</strong> giao tiếp với LIN Driver.</li>
+                <li><strong>EthIf:</strong> giao tiếp với Ethernet-related modules.</li>
+            </ul>
+
+            <pre><code>                    PduR
+                     |
+          +----------+----------+
+          |          |          |
+          v          v          v
+        CanIf      LinIf      EthIf
+          |          |          |
+          v          v          v
+       CAN Drv    LIN Drv    Eth Stack/Driver
+</code></pre>
+
+            <h2>14. Vì sao cần Communication Interface?</h2>
+
+            <p>
+                Communication Interface giúp tách các module phía trên khỏi
+                chi tiết của Communication Driver phía dưới.
+            </p>
+
+            <p>
+                Ví dụ, phía trên có thể chỉ cần yêu cầu:
+            </p>
+
+            <pre><code>Send PDU
+</code></pre>
+
+            <p>
+                thay vì phải biết:
+            </p>
+
+            <pre><code>CAN Controller nào?
+Hardware buffer nào?
+Register nào?
+Controller configuration nào?
+</code></pre>
+
+            <p>
+                Đây chính là nguyên tắc Hardware Abstraction được áp dụng
+                cho Communication.
+            </p>
+
+            <h2>15. Communication Driver</h2>
+
+            <p>
+                Communication Driver nằm gần Hardware hơn.
+                Driver chịu trách nhiệm giao tiếp với Communication Controller
+                của phần cứng.
+            </p>
+
+            <p>
+                Với CAN, ta có thể hình dung:
+            </p>
+
+            <pre><code>CanIf
+  |
+  v
+CAN Driver
+  |
+  v
+CAN Controller
+</code></pre>
+
+            <p>
+                Driver xử lý các thao tác ở mức thấp hơn,
+                trong khi CanIf cung cấp abstraction cho các module phía trên.
+            </p>
+
+            <h2>16. CanIf và CAN Driver</h2>
+
+            <p>
+                Đây là một cặp module rất quan trọng khi học AUTOSAR CAN.
+            </p>
+
+            <pre><code>Upper Layer
+    |
+    v
+  CanIf
+    |
+    v
+ CAN Driver
+    |
+    v
+CAN Controller
+</code></pre>
+
+            <p>
+                CanIf không trực tiếp điều khiển thanh ghi CAN Controller.
+                Nó sử dụng interface của CAN Driver để yêu cầu truyền hoặc
+                xử lý dữ liệu nhận.
+            </p>
+
+            <p>
+                Điều này tạo ra sự phân tách:
+            </p>
+
+            <ul>
+                <li>CanIf: abstraction và interface.</li>
+                <li>CAN Driver: giao tiếp với CAN Controller.</li>
+                <li>CAN Controller: phần cứng thực hiện truyền nhận CAN.</li>
+            </ul>
+
+            <h2>17. Luồng TX chi tiết</h2>
+
+            <p>
+                Hãy xét một ví dụ Application muốn gửi tốc độ xe.
+            </p>
+
+            <pre><code>Application
+    |
+    | VehicleSpeed = 60
+    v
+RTE
+    |
+    v
+COM
+    |
+    | Signal -> PDU
+    v
+PduR
+    |
+    | Route PDU
+    v
+CanIf
+    |
+    | Request transmission
+    v
+CAN Driver
+    |
+    v
+CAN Controller
+    |
+    v
+CAN Bus
+</code></pre>
+
+            <p>
+                Điều quan trọng là mỗi lớp chỉ chịu trách nhiệm cho một phần
+                của quá trình.
+            </p>
+
+            <h2>18. TX: Application đến COM</h2>
+
+            <p>
+                Application tạo hoặc cập nhật dữ liệu logic.
+            </p>
+
+            <pre><code>VehicleSpeed = 60 km/h
+</code></pre>
+
+            <p>
+                Application không cần tự tạo CAN frame.
+                RTE cung cấp cơ chế giao tiếp để dữ liệu được đưa tới
+                Communication Stack.
+            </p>
+
+            <h2>19. TX: COM đến PduR</h2>
+
+            <p>
+                COM xử lý Signal và đóng gói chúng vào PDU theo cấu hình
+                Communication.
+            </p>
+
+            <pre><code>Signal:
+    VehicleSpeed = 60
+
+        |
+        v
+
+PDU:
++----------------------+
+| VehicleSpeed = 60    |
++----------------------+
+</code></pre>
+
+            <p>
+                PDU sau đó được đưa xuống PduR.
+            </p>
+
+            <h2>20. TX: PduR đến CanIf</h2>
+
+            <p>
+                PduR xác định PDU cần được chuyển tới Communication Interface
+                nào.
+            </p>
+
+            <pre><code>             PduR
+               |
+               | PDU
+               v
+             CanIf
+</code></pre>
+
+            <p>
+                Nếu PDU thuộc đường truyền CAN, nó sẽ được chuyển về phía
+                CAN communication path.
+            </p>
+
+            <h2>21. TX: CanIf đến CAN Driver</h2>
+
+            <p>
+                CanIf đóng vai trò trung gian giữa các module phía trên và
+                CAN Driver.
+            </p>
+
+            <pre><code>CanIf
+  |
+  | Transmission request
+  v
+CAN Driver
+</code></pre>
+
+            <p>
+                CAN Driver sau đó làm việc với CAN Controller để thực hiện
+                việc truyền.
+            </p>
+
+            <h2>22. TX: CAN Controller đến CAN Bus</h2>
+
+            <p>
+                CAN Controller là thành phần trực tiếp xử lý việc truyền
+                CAN frame lên bus.
+            </p>
+
+            <pre><code>CAN Driver
+     |
+     v
+CAN Controller
+     |
+     v
+CAN Bus
+</code></pre>
+
+            <p>
+                Các cơ chế như arbitration và bit stuffing thuộc về hoạt động
+                của CAN Controller và CAN protocol, không phải trách nhiệm
+                của Application.
+            </p>
+
+            <h2>23. Luồng RX chi tiết</h2>
+
+            <p>
+                Chiều nhận dữ liệu hoạt động theo hướng ngược lại.
+            </p>
+
+            <pre><code>CAN Bus
+    |
+    v
+CAN Controller
+    |
+    v
+CAN Driver
+    |
+    v
+CanIf
+    |
+    v
+PduR
+    |
+    v
+COM
+    |
+    v
+RTE
+    |
+    v
+Application
+</code></pre>
+
+            <p>
+                Đây là flow cần nhớ khi debug một dữ liệu CAN không tới được
+                Application.
+            </p>
+
+            <h2>24. RX: CAN Bus đến CAN Driver</h2>
+
+            <p>
+                Khi một CAN frame xuất hiện trên bus và phù hợp với cấu hình
+                nhận của ECU, CAN Controller xử lý frame.
+            </p>
+
+            <pre><code>CAN Bus
+    |
+    v
+CAN Controller
+    |
+    v
+CAN Driver
+</code></pre>
+
+            <p>
+                CAN Driver lấy thông tin từ Controller và đưa nó lên lớp phía trên.
+            </p>
+
+            <h2>25. RX: CAN Driver đến CanIf</h2>
+
+            <p>
+                CAN Driver thông báo dữ liệu nhận được cho CanIf.
+            </p>
+
+            <pre><code>CAN Driver
+    |
+    | Received CAN data
+    v
+CanIf
+</code></pre>
+
+            <p>
+                CanIf tiếp tục chuyển dữ liệu tới các module phía trên theo
+                Communication configuration.
+            </p>
+
+            <h2>26. RX: CanIf đến PduR</h2>
+
+            <p>
+                PduR tiếp nhận PDU và định tuyến nó tới đích tương ứng.
+            </p>
+
+            <pre><code>CanIf
+   |
+   v
+ PduR
+   |
+   | Route PDU
+   v
+ COM
+</code></pre>
+
+            <p>
+                PduR ở đây không cần hiểu VehicleSpeed có ý nghĩa gì.
+                Nó chủ yếu xử lý việc định tuyến PDU.
+            </p>
+
+            <h2>27. RX: COM đến Application</h2>
+
+            <p>
+                COM xử lý PDU nhận được và cung cấp các Signal tương ứng
+                cho phía Application thông qua RTE.
+            </p>
+
+            <pre><code>PDU
+ |
+ v
+COM
+ |
+ | Extract Signal
+ v
+VehicleSpeed = 60
+ |
+ v
+RTE
+ |
+ v
+Application
+</code></pre>
+
+            <p>
+                Application cuối cùng nhận được thông tin có ý nghĩa thay vì
+                phải xử lý trực tiếp CAN frame.
+            </p>
+
+            <h2>28. So sánh toàn bộ TX và RX</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>TX</th>
+                        <th>RX</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Application tạo dữ liệu</td>
+                        <td>Application nhận dữ liệu</td>
+                    </tr>
+                    <tr>
+                        <td>RTE đưa dữ liệu xuống</td>
+                        <td>RTE đưa dữ liệu lên</td>
+                    </tr>
+                    <tr>
+                        <td>COM đóng gói Signal</td>
+                        <td>COM tách Signal</td>
+                    </tr>
+                    <tr>
+                        <td>PduR route PDU xuống</td>
+                        <td>PduR route PDU lên</td>
+                    </tr>
+                    <tr>
+                        <td>CanIf yêu cầu truyền</td>
+                        <td>CanIf xử lý dữ liệu nhận</td>
+                    </tr>
+                    <tr>
+                        <td>Driver → Controller</td>
+                        <td>Controller → Driver</td>
+                    </tr>
+                    <tr>
+                        <td>ECU → Bus</td>
+                        <td>Bus → ECU</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>29. Communication Stack và Hardware Abstraction</h2>
+
+            <p>
+                Communication Stack là một ví dụ rất rõ về nguyên tắc
+                Hardware Abstraction trong AUTOSAR.
+            </p>
+
+            <pre><code>Application
+     |
+     | Không cần biết Hardware cụ thể
+     v
+RTE / Communication Stack
+     |
+     | Abstraction
+     v
+Communication Driver
+     |
+     v
+Hardware
+</code></pre>
+
+            <p>
+                Nếu thay đổi một phần Hardware bên dưới, các lớp phía trên
+                có thể được giữ ổn định hơn thay vì phải thay đổi toàn bộ
+                Application.
+            </p>
+
+            <h2>30. Communication Stack và khả năng tái sử dụng</h2>
+
+            <p>
+                Một trong những mục tiêu quan trọng của AUTOSAR là giảm sự phụ thuộc
+                giữa Application và Hardware.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>Application
+     |
+     v
+RTE
+     |
+     v
+Communication abstraction
+     |
+     +------ CAN
+     |
+     +------ LIN
+     |
+     +------ Ethernet
+</code></pre>
+
+            <p>
+                Application có thể tập trung vào chức năng thay vì phải viết
+                lại toàn bộ Communication logic cho từng loại Controller.
+            </p>
+
+            <h2>31. Một ECU có thể sử dụng nhiều Communication Bus</h2>
+
+            <p>
+                Một ECU không nhất thiết chỉ sử dụng một loại Communication Bus.
+            </p>
+
+            <pre><code>                    Application
+                         |
+                         v
+                        RTE
+                         |
+                         v
+                       PduR
+                    /    |    \
+                   /     |     \
+                  v      v      v
+               CanIf   LinIf   EthIf
+                  |      |       |
+                  v      v       v
+                CAN    LIN   Ethernet
+</code></pre>
+
+            <p>
+                PduR có thể đóng vai trò quan trọng trong việc định tuyến
+                các PDU giữa các communication paths khác nhau.
+            </p>
+
+            <h2>32. Communication Stack không chỉ dành cho CAN</h2>
+
+            <p>
+                Mặc dù CAN rất phổ biến trong automotive, kiến trúc
+                Communication Stack không chỉ dành cho CAN.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bus</th>
+                        <th>Ví dụ thành phần</th>
+                        <th>Mục đích</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CAN</td>
+                        <td>CanIf, CAN Driver</td>
+                        <td>Trao đổi dữ liệu CAN</td>
+                    </tr>
+                    <tr>
+                        <td>LIN</td>
+                        <td>LinIf, LIN Driver</td>
+                        <td>Trao đổi dữ liệu LIN</td>
+                    </tr>
+                    <tr>
+                        <td>Ethernet</td>
+                        <td>EthIf và các Ethernet modules</td>
+                        <td>Trao đổi dữ liệu Ethernet</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>33. Communication Stack và Transport Protocol</h2>
+
+            <p>
+                Không phải mọi dữ liệu đều có thể truyền trong một lần truyền
+                đơn giản của Network Protocol.
+            </p>
+
+            <p>
+                Đối với dữ liệu lớn, có thể cần Transport Protocol để chia nhỏ
+                và ghép lại dữ liệu.
+            </p>
+
+            <pre><code>Large Data
+    |
+    v
+Transport Protocol
+    |
+    +---- Segment 1
+    +---- Segment 2
+    +---- Segment 3
+    +---- ...
+    |
+    v
+Network
+</code></pre>
+
+            <p>
+                Đây là lý do Communication Stack trong hệ thống automotive
+                có thể chứa thêm các thành phần phục vụ Transport Protocol
+                và Diagnostic Communication.
+            </p>
+
+            <h2>34. Communication Stack và Diagnostic Communication</h2>
+
+            <p>
+                Communication phục vụ không chỉ Application Data mà còn có thể
+                phục vụ Diagnostic.
+            </p>
+
+            <pre><code>Diagnostic Tester
+       |
+       v
+Communication Bus
+       |
+       v
+ECU
+       |
+       v
+Diagnostic Stack
+       |
+       v
+Application / BSW
+</code></pre>
+
+            <p>
+                Tuy nhiên, Diagnostic Communication có các yêu cầu và module
+                riêng. Vì vậy không nên đồng nhất Communication Stack cho
+                Application Signal với toàn bộ Diagnostic Stack.
+            </p>
+
+            <h2>35. Ví dụ hoàn chỉnh: ECU A gửi tốc độ xe cho ECU B</h2>
+
+            <p>
+                Giả sử ECU A đo được tốc độ xe:
+            </p>
+
+            <pre><code>VehicleSpeed = 60 km/h
+</code></pre>
+
+            <p>
+                ECU A gửi dữ liệu này tới ECU B thông qua CAN.
+            </p>
+
+            <h3>ECU A - TX</h3>
+
+            <pre><code>Application
+    |
+    | VehicleSpeed = 60
+    v
+RTE
+    |
+    v
+COM
+    |
+    | Signal -> PDU
+    v
+PduR
+    |
+    v
+CanIf
+    |
+    v
+CAN Driver
+    |
+    v
+CAN Controller
+    |
+    v
+CAN Bus
+</code></pre>
+
+            <h3>ECU B - RX</h3>
+
+            <pre><code>CAN Bus
+    |
+    v
+CAN Controller
+    |
+    v
+CAN Driver
+    |
+    v
+CanIf
+    |
+    v
+PduR
+    |
+    v
+COM
+    |
+    v
+RTE
+    |
+    v
+Application
+    |
+    v
+VehicleSpeed = 60
+</code></pre>
+
+            <p>
+                Đây là ví dụ rất quan trọng vì nó cho thấy Communication Stack
+                không chỉ hoạt động trong một ECU mà tạo thành một chuỗi
+                xuyên qua nhiều ECU.
+            </p>
+
+            <h2>36. Phân tích khi CAN TX không hoạt động</h2>
+
+            <p>
+                Giả sử Application đã có dữ liệu nhưng ECU không gửi được CAN frame.
+                Không nên ngay lập tức kết luận rằng CAN Driver bị lỗi.
+            </p>
+
+            <p>
+                Có thể kiểm tra từ trên xuống:
+            </p>
+
+            <ol>
+                <li>Application có tạo đúng dữ liệu không?</li>
+                <li>RTE có thực hiện đường truyền đúng không?</li>
+                <li>COM có xử lý Signal/PDU đúng không?</li>
+                <li>PduR có route PDU đúng không?</li>
+                <li>CanIf có nhận transmission request không?</li>
+                <li>CAN Driver có xử lý request không?</li>
+                <li>CAN Controller có đang hoạt động không?</li>
+                <li>Hardware và CAN Bus có đúng không?</li>
+            </ol>
+
+            <pre><code>Application
+    |
+    | OK?
+    v
+RTE
+    |
+    | OK?
+    v
+COM
+    |
+    | OK?
+    v
+PduR
+    |
+    | OK?
+    v
+CanIf
+    |
+    | OK?
+    v
+CAN Driver
+    |
+    | OK?
+    v
+CAN Controller
+    |
+    | OK?
+    v
+CAN Bus
+</code></pre>
+
+            <h2>37. Phân tích khi CAN RX không tới Application</h2>
+
+            <p>
+                Với RX, có thể kiểm tra theo chiều ngược lại.
+            </p>
+
+            <ol>
+                <li>CAN frame có thực sự xuất hiện trên Bus không?</li>
+                <li>CAN Controller có nhận frame không?</li>
+                <li>CAN Driver có nhận dữ liệu không?</li>
+                <li>CanIf có nhận đúng dữ liệu không?</li>
+                <li>PduR có route đúng PDU không?</li>
+                <li>COM có xử lý PDU không?</li>
+                <li>RTE có đưa dữ liệu tới SWC không?</li>
+                <li>Application có đọc và xử lý dữ liệu không?</li>
+            </ol>
+
+            <p>
+                Cách suy nghĩ này giúp giới hạn phạm vi tìm lỗi thay vì kiểm tra
+                toàn bộ hệ thống một cách ngẫu nhiên.
+            </p>
+
+            <h2>38. Ví dụ: CAN frame có trên Bus nhưng Application không nhận</h2>
+
+            <p>
+                Giả sử CAN analyzer cho thấy frame đã xuất hiện:
+            </p>
+
+            <pre><code>CAN Bus:
+
+ID = 0x123
+Data = ...
+Frame appears correctly
+</code></pre>
+
+            <p>
+                Nhưng Application không nhận được VehicleSpeed.
+            </p>
+
+            <p>
+                Khi đó có thể suy luận:
+            </p>
+
+            <pre><code>CAN Bus
+   |
+   | Frame exists
+   v
+CAN Controller       ? 
+   |
+CAN Driver           ?
+   |
+CanIf                 ?
+   |
+PduR                  ?
+   |
+COM                   ?
+   |
+RTE                   ?
+   |
+Application           ?
+</code></pre>
+
+            <p>
+                Việc frame tồn tại trên Bus giúp loại bỏ một số nguyên nhân
+                ở phía TX của ECU gửi, nhưng chưa chứng minh rằng toàn bộ
+                RX path của ECU nhận hoạt động đúng.
+            </p>
+
+            <h2>39. Ví dụ: Application có dữ liệu nhưng Bus không có frame</h2>
+
+            <p>
+                Trường hợp ngược lại:
+            </p>
+
+            <pre><code>Application:
+    VehicleSpeed = 60
+          |
+          v
+        RTE
+          |
+          v
+        COM
+          |
+          v
+        PduR
+          |
+          v
+       CanIf
+          |
+          v
+     CAN Driver
+          |
+          v
+     CAN Controller
+          |
+          X
+       CAN Bus
+</code></pre>
+
+            <p>
+                Lúc này cần xác định frame biến mất ở lớp nào.
+                Đây là cách tiếp cận theo từng boundary của Stack.
+            </p>
+
+            <h2>40. Các boundary quan trọng khi debug</h2>
+
+            <p>
+                Thay vì xem Communication Stack như một khối duy nhất,
+                hãy chia nó thành các boundary:
+            </p>
+
+            <pre><code>Application
+     |
+     | Application / RTE boundary
+     v
+RTE
+     |
+     | RTE / Communication boundary
+     v
+COM
+     |
+     | PDU routing boundary
+     v
+PduR
+     |
+     | Communication abstraction boundary
+     v
+CanIf
+     |
+     | Driver boundary
+     v
+CAN Driver
+     |
+     | Hardware boundary
+     v
+CAN Controller
+     |
+     v
+CAN Bus
+</code></pre>
+
+            <p>
+                Khi một dữ liệu bị mất, mục tiêu của debugging là xác định
+                boundary đầu tiên mà dữ liệu không còn đúng.
+            </p>
+
+            <h2>41. Communication Stack và Separation of Concerns</h2>
+
+            <p>
+                Mỗi lớp có một trách nhiệm tương đối rõ ràng.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Layer / Module</th>
+                        <th>Câu hỏi chính</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Application</td>
+                        <td>Dữ liệu có ý nghĩa gì?</td>
+                    </tr>
+                    <tr>
+                        <td>RTE</td>
+                        <td>Dữ liệu được kết nối giữa các SWC như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>COM</td>
+                        <td>Signal được xử lý và đóng gói như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>PduR</td>
+                        <td>PDU cần được route tới đâu?</td>
+                    </tr>
+                    <tr>
+                        <td>CanIf</td>
+                        <td>Communication abstraction được cung cấp như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Driver</td>
+                        <td>Giao tiếp với CAN Controller như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Controller</td>
+                        <td>Thực hiện CAN communication ở Hardware như thế nào?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>42. Những điều Application không nên làm</h2>
+
+            <p>
+                Trong kiến trúc AUTOSAR, Application không nên trực tiếp:
+            </p>
+
+            <ul>
+                <li>Truy cập thanh ghi CAN Controller.</li>
+                <li>Tự quản lý Hardware buffer.</li>
+                <li>Tự triển khai toàn bộ CAN Driver.</li>
+                <li>Phụ thuộc trực tiếp vào một CAN Controller cụ thể.</li>
+                <li>Tự xử lý mọi chi tiết của Communication Protocol.</li>
+            </ul>
+
+            <p>
+                Thay vào đó, Application nên làm việc với abstraction được cung cấp
+                bởi RTE và các tầng phía dưới.
+            </p>
+
+            <h2>43. Những điều Communication Stack không nên làm</h2>
+
+            <p>
+                Ngược lại, Communication Stack cũng không nên chứa toàn bộ
+                business logic của Application.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>Không nên:
+
+COM:
+    if VehicleSpeed > 120
+        TurnOnWarningLamp();
+</code></pre>
+
+            <p>
+                Logic như trên thuộc về Application hoặc một chức năng phù hợp
+                của hệ thống, không phải nhiệm vụ chính của COM.
+            </p>
+
+            <p>
+                Communication Stack chủ yếu đảm bảo dữ liệu được truyền nhận
+                đúng theo Communication architecture.
+            </p>
+
+            <h2>44. Những nhầm lẫn thường gặp</h2>
+
+            <h3>44.1. COM chính là CAN Driver</h3>
+
+            <p>
+                Sai. COM xử lý Communication Signal/PDU ở mức cao hơn,
+                trong khi CAN Driver giao tiếp với CAN Controller.
+            </p>
+
+            <h3>44.2. PduR xử lý CAN frame</h3>
+
+            <p>
+                Không nên hiểu như vậy. PduR chủ yếu định tuyến PDU giữa các module.
+            </p>
+
+            <h3>44.3. CanIf là CAN Controller</h3>
+
+            <p>
+                Không. CanIf là Software Interface/abstraction,
+                còn CAN Controller là phần cứng.
+            </p>
+
+            <h3>44.4. Application phải biết CAN ID</h3>
+
+            <p>
+                Không nhất thiết. Trong kiến trúc AUTOSAR, Application chủ yếu
+                làm việc với dữ liệu logic thông qua RTE.
+            </p>
+
+            <h3>44.5. CAN Driver xử lý toàn bộ Communication Stack</h3>
+
+            <p>
+                Không. CAN Driver chỉ là một phần ở phía dưới Communication Stack.
+            </p>
+
+            <h2>45. Cách đọc một Communication Architecture</h2>
+
+            <p>
+                Khi gặp một architecture diagram, có thể phân tích theo thứ tự:
+            </p>
+
+            <ol>
+                <li>Xác định Application SWC nào gửi hoặc nhận dữ liệu.</li>
+                <li>Xác định RTE interface.</li>
+                <li>Xác định Signal/PDU.</li>
+                <li>Xác định COM.</li>
+                <li>Xác định PduR.</li>
+                <li>Xác định Communication Interface.</li>
+                <li>Xác định Driver.</li>
+                <li>Xác định Hardware Controller.</li>
+                <li>Xác định Network/Bus.</li>
+            </ol>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>SWC
+ |
+ v
+RTE
+ |
+ v
+COM
+ |
+ v
+PduR
+ |
+ v
+CanIf
+ |
+ v
+CanDrv
+ |
+ v
+CAN Controller
+ |
+ v
+CAN Bus
+</code></pre>
+
+            <p>
+                Chỉ cần xác định được chuỗi này, chúng ta đã có thể hiểu được
+                phần lớn đường đi của một CAN communication trong kiến trúc AUTOSAR.
+            </p>
+
+            <h2>46. Checklist phân tích Communication Stack</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>Nội dung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Xác định nguồn và đích của dữ liệu</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Xác định TX hay RX</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Xác định Signal</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Xác định PDU</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Xác định PduR routing</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Xác định Communication Interface</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Xác định Communication Driver</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Xác định Hardware Controller</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Xác định Bus</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Xác định điểm cần kiểm tra khi debugging</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>47. Các khái niệm cần nhớ</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Signal</td>
+                        <td>Dữ liệu có ý nghĩa đối với Application</td>
+                    </tr>
+                    <tr>
+                        <td>PDU</td>
+                        <td>Đơn vị dữ liệu được trao đổi giữa các lớp</td>
+                    </tr>
+                    <tr>
+                        <td>Frame</td>
+                        <td>Đơn vị truyền của Communication Protocol</td>
+                    </tr>
+                    <tr>
+                        <td>COM</td>
+                        <td>Xử lý Signal/PDU</td>
+                    </tr>
+                    <tr>
+                        <td>PduR</td>
+                        <td>Định tuyến PDU</td>
+                    </tr>
+                    <tr>
+                        <td>CanIf</td>
+                        <td>CAN Communication abstraction</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Driver</td>
+                        <td>Giao tiếp với CAN Controller</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Controller</td>
+                        <td>Hardware thực hiện CAN communication</td>
+                    </tr>
+                    <tr>
+                        <td>TX</td>
+                        <td>Truyền dữ liệu</td>
+                    </tr>
+                    <tr>
+                        <td>RX</td>
+                        <td>Nhận dữ liệu</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>48. Tóm tắt</h2>
+
+            <div class="note">
+                <p>
+                    Communication Stack là phần quan trọng trong AUTOSAR BSW,
+                    giúp Application trao đổi dữ liệu với các ECU khác thông qua
+                    Communication Network mà không cần phụ thuộc trực tiếp vào Hardware.
+                </p>
+
+                <p>
+                    Luồng TX cơ bản:
+                </p>
+
+                <pre><code>Application
+    -> RTE
+    -> COM
+    -> PduR
+    -> CanIf / LinIf / EthIf
+    -> Driver
+    -> Controller
+    -> Bus
+</code></pre>
+
+                <p>
+                    Luồng RX cơ bản:
+                </p>
+
+                <pre><code>Bus
+    -> Controller
+    -> Driver
+    -> CanIf / LinIf / EthIf
+    -> PduR
+    -> COM
+    -> RTE
+    -> Application
+</code></pre>
+
+                <p>
+                    Ba điểm đặc biệt quan trọng cần nhớ là:
+                </p>
+
+                <ul>
+                    <li><strong>COM</strong> tập trung vào Signal/PDU.</li>
+                    <li><strong>PduR</strong> tập trung vào việc routing PDU.</li>
+                    <li><strong>Communication Interface + Driver</strong> tạo abstraction giữa các lớp phía trên và Hardware.</li>
+                </ul>
+
+                <p>
+                    Khi debugging Communication, hãy đi theo từng boundary và
+                    xác định điểm đầu tiên mà dữ liệu không còn đúng thay vì
+                    mặc định lỗi nằm ở CAN Driver hoặc Hardware.
+                </p>
+            </div>
+
+            <div class="pager">
+                <a href="lesson-15.html">← Bài trước</a>
+                <a href="lesson-17.html">Bài tiếp theo →</a>
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

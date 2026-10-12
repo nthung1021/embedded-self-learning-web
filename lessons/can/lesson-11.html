@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 11: AUTOSAR_SRS_CAN | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Bit Stuffing</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html" class="active">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 11: AUTOSAR_SRS_CAN</h1>
+
+                <p>
+                    Ở Bài 10, chúng ta đã xác định <strong>scope của CAN Driver</strong>:
+                    CAN Driver nằm giữa <strong>CanIf</strong> và <strong>CAN Controller</strong>,
+                    chịu trách nhiệm điều khiển controller, Hardware Object, transmission,
+                    reception và các controller status/error event.
+                </p>
+
+                <p>
+                    Nhưng một câu hỏi quan trọng hơn là:
+                    <strong>AUTOSAR yêu cầu CAN Driver và các thành phần CAN phải hoạt động như thế nào?</strong>
+                </p>
+
+                <p>
+                    Đây chính là nơi <strong>AUTOSAR_SRS_CAN</strong> trở nên quan trọng.
+                    SRS CAN không phải là một file source code và cũng không phải là implementation
+                    của CAN Driver. Nó là tài liệu mô tả các <strong>software requirements</strong>
+                    mà các thành phần CAN trong AUTOSAR cần đáp ứng.
+                </p>
+
+                <div class="note">
+                    Có thể nhớ ngắn gọn:
+                    <strong>SRS CAN nói "CAN software phải đáp ứng những yêu cầu gì",
+                        còn SWS sẽ đi sâu hơn vào "module thực hiện các yêu cầu đó bằng interface/API như thế
+                        nào".</strong>
+                </div>
+
+                <h2>1. AUTOSAR_SRS_CAN là gì?</h2>
+
+                <p>
+                    <strong>SRS</strong> là viết tắt của
+                    <strong>Software Requirements Specification</strong>.
+                    Vì vậy, AUTOSAR_SRS_CAN có thể hiểu là tài liệu tập hợp các
+                    <strong>requirements liên quan đến CAN</strong> trong AUTOSAR.
+                </p>
+
+                <p>
+                    Mục đích của SRS là xác định rõ hành vi và capability mà phần mềm CAN
+                    cần cung cấp, trước khi đi vào thiết kế và implementation cụ thể.
+                </p>
+
+                <svg viewBox="0 0 700 360" role="img" aria-label="Vị trí của AUTOSAR SRS CAN trong quá trình phát triển"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="130" y="20" width="440" height="52" fill="rgba(224,168,0,.25)" />
+                        <rect x="130" y="92" width="440" height="52" fill="rgba(46,139,87,.28)" />
+                        <rect x="130" y="164" width="440" height="52" fill="rgba(160,120,190,.25)" />
+                        <rect x="130" y="236" width="440" height="52" fill="rgba(70,130,180,.25)" />
+                        <rect x="130" y="308" width="440" height="35" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="350" y="51">System / ECU Requirements</text>
+                        <text x="350" y="123">AUTOSAR SRS CAN</text>
+                        <text x="350" y="195">Software Design / SWS</text>
+                        <text x="350" y="267">CAN Driver Implementation</text>
+                        <text x="350" y="330">CAN Controller Hardware</text>
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="350" y="82">↓</text>
+                        <text x="350" y="154">↓</text>
+                        <text x="350" y="226">↓</text>
+                        <text x="350" y="298">↓</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Điều quan trọng là SRS nằm ở mức <strong>requirement</strong>.
+                    Nó không bắt implementation phải sử dụng một loại MCU, compiler hay
+                    một cấu trúc source code cụ thể nếu requirement không yêu cầu điều đó.
+                </p>
+
+                <h2>2. SRS CAN khác SWS CAN như thế nào?</h2>
+
+                <p>
+                    Đây là điểm rất dễ nhầm khi bắt đầu đọc AUTOSAR specification.
+                    Hai loại tài liệu có vai trò khác nhau.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>SRS</th>
+                        <th>SWS</th>
+                    </tr>
+                    <tr>
+                        <td>Software Requirements Specification</td>
+                        <td>Software Specification</td>
+                    </tr>
+                    <tr>
+                        <td>Trả lời: phần mềm cần đáp ứng điều gì?</td>
+                        <td>Trả lời: module được đặc tả và cung cấp interface như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Tập trung vào requirements</td>
+                        <td>Chi tiết hơn về module, API, behavior và interface</td>
+                    </tr>
+                    <tr>
+                        <td>Có thể dùng làm cơ sở để xác định requirement cần verify</td>
+                        <td>Dùng gần hơn với design và implementation</td>
+                    </tr>
+                    <tr>
+                        <td>Không phải source code</td>
+                        <td>Cũng không phải source code implementation</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Một cách nhớ đơn giản:
+                    <strong>SRS = What?</strong>
+                    <br>
+                    <strong>SWS = How is the software interface/behavior specified?</strong>
+                    <br>
+                    <strong>Implementation = How is it actually coded for the target?</strong>
+                </div>
+
+                <h2>3. AUTOSAR_SRS_CAN bao phủ những gì?</h2>
+
+                <p>
+                    SRS CAN không chỉ nói về một API của CAN Driver.
+                    Phạm vi của tài liệu rộng hơn và liên quan tới nhiều thành phần trong
+                    CAN communication architecture.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Nhóm</th>
+                        <th>Ví dụ nội dung</th>
+                    </tr>
+                    <tr>
+                        <td>CAN Driver</td>
+                        <td>Controller, transmission, reception, interrupt, status và error handling.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Interface</td>
+                        <td>Abstraction giữa communication stack và CAN Driver.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Transport Layer</td>
+                        <td>Các yêu cầu liên quan đến truyền dữ liệu vượt quá một CAN frame.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Transceiver Driver</td>
+                        <td>Điều khiển và quản lý CAN transceiver.</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration</td>
+                        <td>Các yêu cầu về khả năng cấu hình của CAN software.</td>
+                    </tr>
+                    <tr>
+                        <td>Non-functional requirements</td>
+                        <td>Data consistency, interrupt handling và các yêu cầu chung của BSW.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Vì vậy, khi đọc tài liệu có tên <strong>AUTOSAR_SRS_CAN</strong>,
+                    không nên hiểu nó đơn giản là "requirements cho CanDrv".
+                    Nó mô tả requirements cho nhiều thành phần liên quan đến CAN.
+                </p>
+
+                <h2>4. Requirement ID trong SRS CAN</h2>
+
+                <p>
+                    Một đặc điểm quan trọng của AUTOSAR specification là các requirement thường
+                    có một identifier riêng.
+                    Trong SRS CAN, các requirement có dạng như:
+                </p>
+
+                <pre><code>SRS_Can_01043
+SRS_Can_01045
+SRS_Can_01059
+...</code></pre>
+
+                <p>
+                    Identifier này rất hữu ích khi làm việc với requirement engineering,
+                    implementation và testing.
+                </p>
+
+                <svg viewBox="0 0 700 180" role="img" aria-label="Cấu trúc requirement ID trong AUTOSAR SRS CAN"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="100" y="55" width="500" height="70" fill="rgba(46,139,87,.28)" />
+                    </g>
+
+                    <g font-size="22" fill="currentColor" text-anchor="middle">
+                        <text x="350" y="98">SRS_Can_01043</text>
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="170" y="45">Document / Requirement family</text>
+                        <text x="350" y="150">CAN requirement identifier</text>
+                        <text x="510" y="45">Unique number</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.2">
+                        <path d="M170 50 L170 55" />
+                        <path d="M350 130 L350 125" />
+                        <path d="M510 50 L510 55" />
+                    </g>
+                </svg>
+
+                <p>
+                    Khi đọc requirement, không nên chỉ đọc phần mô tả.
+                    Hãy ghi nhớ cả <strong>requirement ID</strong>, vì ID này có thể được dùng
+                    để trace từ requirement sang design, implementation và test.
+                </p>
+
+                <h2>5. Một requirement AUTOSAR thường được đọc như thế nào?</h2>
+
+                <p>
+                    Requirement trong AUTOSAR thường đi kèm nhiều thông tin,
+                    không chỉ một câu mô tả chức năng.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thông tin</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>ID</td>
+                        <td>Identifier duy nhất của requirement.</td>
+                    </tr>
+                    <tr>
+                        <td>Type</td>
+                        <td>Loại requirement hoặc trạng thái theo specification.</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>Nội dung yêu cầu phần mềm cần đáp ứng.</td>
+                    </tr>
+                    <tr>
+                        <td>Rationale</td>
+                        <td>Lý do requirement tồn tại.</td>
+                    </tr>
+                    <tr>
+                        <td>Use Case</td>
+                        <td>Tình huống sử dụng hoặc ví dụ áp dụng.</td>
+                    </tr>
+                    <tr>
+                        <td>Dependencies</td>
+                        <td>Requirement hoặc chức năng liên quan.</td>
+                    </tr>
+                    <tr>
+                        <td>Supporting Material</td>
+                        <td>Tài liệu hoặc requirement khác hỗ trợ cho requirement.</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Khi học SRS, đừng chỉ học thuộc câu requirement.
+                    Hãy hiểu:
+                    <strong>requirement yêu cầu gì → tại sao cần → khi nào xảy ra → test như thế nào.</strong>
+                </div>
+
+                <h2>6. CAN Driver Initialization</h2>
+
+                <p>
+                    Một nhóm requirement quan trọng liên quan đến CAN Driver là
+                    <strong>initialization</strong>.
+                </p>
+
+                <p>
+                    Trước khi CAN Controller có thể thực hiện communication bình thường,
+                    driver phải đưa hardware vào trạng thái phù hợp dựa trên configuration.
+                </p>
+
+                <pre><code>CAN Driver Initialization
+
+        Configuration
+             |
+             v
+      Can_Init(...)
+             |
+             v
+    Configure Controller
+             |
+             v
+    Configure HW Objects
+             |
+             v
+      Controller ready
+             |
+             v
+       Runtime operation</code></pre>
+
+                <p>
+                    Configuration có thể chứa những thông tin như controller,
+                    bit timing, hardware objects, filtering và các notification liên quan.
+                </p>
+
+                <p>
+                    Vì vậy, khi debug một CAN system không hoạt động ngay từ đầu,
+                    cần kiểm tra cả <strong>configuration + initialization + controller state</strong>,
+                    chứ không chỉ kiểm tra runtime transmit code.
+                </p>
+
+                <h2>7. CAN Driver phải quản lý Controller như thế nào?</h2>
+
+                <p>
+                    CAN Driver không chỉ ghi data vào CAN Controller.
+                    Nó còn phải cung cấp cơ chế quản lý trạng thái của controller.
+                </p>
+
+                <svg viewBox="0 0 700 260" role="img" aria-label="CAN Controller state flow"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="70" y="90" width="140" height="55" fill="rgba(224,168,0,.25)" />
+                        <rect x="280" y="90" width="140" height="55" fill="rgba(46,139,87,.28)" />
+                        <rect x="490" y="90" width="140" height="55" fill="rgba(70,130,180,.25)" />
+                    </g>
+
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="140" y="123">STOPPED</text>
+                        <text x="350" y="123">STARTED</text>
+                        <text x="560" y="123">BUS-OFF / ERROR</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M210 117 L275 117" />
+                        <path d="M420 117 L485 117" />
+                        <path d="M490 145 C430 200 350 205 280 145" />
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="245" y="105">SetControllerMode</text>
+                        <text x="455" y="105">status / error</text>
+                        <text x="385" y="205">recovery / state transition</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Tên state và chi tiết state machine phụ thuộc specification/module version,
+                    nhưng về mặt tư duy cần nhớ rằng CAN Driver phải biết controller đang ở trạng thái
+                    nào trước khi thực hiện một operation.
+                </p>
+
+                <div class="note">
+                    Ví dụ:
+                    <strong>một transmission request hợp lệ về mặt dữ liệu vẫn có thể không thực hiện được
+                        nếu CAN Controller đang ở state không cho phép transmission.</strong>
+                </div>
+
+                <h2>8. Transmission requirement</h2>
+
+                <p>
+                    Một phần quan trọng của CAN Driver là hỗ trợ transmission.
+                    Khi layer phía trên yêu cầu gửi một PDU, CAN Driver phải chuyển request đó
+                    xuống hardware resource phù hợp.
+                </p>
+
+                <svg viewBox="0 0 720 190" role="img" aria-label="CAN transmission requirement flow"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="10" y="65" width="110" height="55" fill="rgba(224,168,0,.25)" />
+                        <rect x="150" y="65" width="110" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="290" y="45" width="140" height="95" fill="rgba(46,139,87,.28)" />
+                        <rect x="460" y="65" width="110" height="55" fill="rgba(70,130,180,.25)" />
+                        <rect x="600" y="65" width="110" height="55" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="65" y="97">CanIf</text>
+                        <text x="205" y="97">TX Request</text>
+                        <text x="360" y="82">CAN Driver</text>
+                        <text x="360" y="103">HTH / TX Resource</text>
+                        <text x="515" y="97">CAN Controller</text>
+                        <text x="655" y="97">CAN Bus</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M120 92 L145 92" />
+                        <path d="M260 92 L285 92" />
+                        <path d="M435 92 L455 92" />
+                        <path d="M575 92 L595 92" />
+                    </g>
+                </svg>
+
+                <p>
+                    Ở đây requirement không chỉ là "driver gửi message".
+                    Cần quan tâm đến các vấn đề như:
+                </p>
+
+                <ul>
+                    <li>Request có được tiếp nhận hay không.</li>
+                    <li>Hardware Object nào được sử dụng.</li>
+                    <li>Controller có đang ở state phù hợp hay không.</li>
+                    <li>Transmission resource có sẵn hay không.</li>
+                    <li>Notification hoặc status được xử lý như thế nào.</li>
+                    <li>Dữ liệu có được truyền nhất quán xuống hardware hay không.</li>
+                </ul>
+
+                <h2>9. Reception và Data Consistency</h2>
+
+                <p>
+                    Reception cũng là một phần quan trọng của CAN Driver.
+                    Tuy nhiên, một vấn đề đặc biệt quan trọng trong embedded system là
+                    <strong>data consistency</strong>.
+                </p>
+
+                <p>
+                    Hãy tưởng tượng CAN Controller đang giữ một received message trong hardware buffer.
+                    Trong lúc CPU đang đọc message, một message mới có thể đến và ảnh hưởng tới
+                    resource đó.
+                </p>
+
+                <pre><code>CAN Hardware Buffer
+
+        Message A
+            |
+            | CPU starts copying
+            v
+      +-------------+
+      |   RX Buffer |
+      +-------------+
+            ^
+            |
+        Message B arrives
+        at an unsafe time
+
+Potential problem:
+    Data copied to software
+    may become inconsistent.</code></pre>
+
+                <p>
+                    Vì vậy SRS CAN có requirement liên quan đến việc CAN Driver phải bảo đảm
+                    dữ liệu nhận được không bị trở nên inconsistent trong quá trình copy từ
+                    Hardware Object.
+                </p>
+
+                <div class="note">
+                    Đây là một ví dụ rất tốt để hiểu rằng requirement của embedded software
+                    không chỉ nói về <strong>functionality</strong>.
+                    Nó còn phải quan tâm đến <strong>timing, concurrency và data consistency</strong>.
+                </div>
+
+                <h2>10. Interrupt trong CAN Driver</h2>
+
+                <p>
+                    CAN Controller có thể tạo interrupt khi xảy ra các event như transmission,
+                    reception hoặc các trạng thái liên quan.
+                </p>
+
+                <p>
+                    Vì interrupt là asynchronous event, CAN Driver cần có cơ chế phù hợp để
+                    enable hoặc disable các interrupt của controller.
+                </p>
+
+                <svg viewBox="0 0 700 220" role="img" aria-label="CAN interrupt handling flow"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="50" y="70" width="150" height="60" fill="rgba(70,130,180,.25)" />
+                        <rect x="275" y="70" width="150" height="60" fill="rgba(46,139,87,.28)" />
+                        <rect x="500" y="70" width="150" height="60" fill="rgba(160,120,190,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="125" y="95">CAN Controller</text>
+                        <text x="125" y="115">Hardware Event</text>
+
+                        <text x="350" y="95">CAN Driver ISR</text>
+                        <text x="350" y="115">Handle Event</text>
+
+                        <text x="575" y="95">CanIf / Upper Layer</text>
+                        <text x="575" y="115">Notification</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M205 100 L270 100" />
+                        <path d="M430 100 L495 100" />
+                    </g>
+                </svg>
+
+                <p>
+                    Trong một số implementation, event có thể được xử lý bằng interrupt,
+                    polling hoặc kết hợp tùy configuration và architecture.
+                </p>
+
+                <p>
+                    Khi debug một CAN RX/TX event không xảy ra, cần xác định:
+                </p>
+
+                <ol>
+                    <li>Hardware event có thực sự xảy ra không?</li>
+                    <li>Interrupt có được enable không?</li>
+                    <li>ISR có được gọi không?</li>
+                    <li>Driver có xử lý đúng event không?</li>
+                    <li>Notification có được truyền lên CanIf không?</li>
+                </ol>
+
+                <h2>11. Error và Bus-Off</h2>
+
+                <p>
+                    CAN Controller có thể gặp các trạng thái lỗi liên quan đến CAN communication.
+                    Một trong những trạng thái quan trọng nhất là <strong>Bus-Off</strong>.
+                </p>
+
+                <p>
+                    CAN Driver cần cung cấp cơ chế để phát hiện và thông báo những trạng thái
+                    mà controller/driver được yêu cầu quản lý.
+                </p>
+
+                <pre><code>CAN Controller
+      |
+      | error event
+      v
+CAN Driver
+      |
+      | controller status
+      | / error notification
+      v
+  CanIf / Upper Layer
+      |
+      v
+Communication Management
+or Diagnostic / Recovery Logic</code></pre>
+
+                <p>
+                    Điều quan trọng cần phân biệt:
+                    CAN Driver không nhất thiết quyết định toàn bộ system recovery strategy.
+                    Driver cung cấp thông tin và thực hiện phần behavior thuộc scope của nó;
+                    các layer phía trên có thể sử dụng thông tin đó để thực hiện logic hệ thống.
+                </p>
+
+                <div class="note">
+                    Khi debug Bus-Off, đừng chỉ hỏi
+                    <strong>"CAN Driver có lỗi không?"</strong>.
+                    Hãy trace:
+                    <strong>CAN Controller → Driver → CanIf → Communication Management → Recovery behavior</strong>.
+                </div>
+
+                <h2>12. Configuration là một phần quan trọng của SRS</h2>
+
+                <p>
+                    CAN software trong AUTOSAR có tính <strong>configurable</strong>.
+                    Vì vậy requirements không chỉ mô tả runtime API mà còn liên quan tới
+                    khả năng cấu hình của driver.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Configuration</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td>Controller</td>
+                        <td>CAN Controller được sử dụng.</td>
+                    </tr>
+                    <tr>
+                        <td>Bit Timing</td>
+                        <td>Baud rate và các thông số timing.</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware Object</td>
+                        <td>HTH / HRH và resource mapping.</td>
+                    </tr>
+                    <tr>
+                        <td>Receive Filter</td>
+                        <td>Message nào được nhận bởi Hardware Object.</td>
+                    </tr>
+                    <tr>
+                        <td>Interrupt</td>
+                        <td>Interrupt configuration.</td>
+                    </tr>
+                    <tr>
+                        <td>Notification</td>
+                        <td>Các callback/event notification cần thiết.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN FD</td>
+                        <td>Khả năng và configuration liên quan nếu controller hỗ trợ.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Đây là lý do trong AUTOSAR project, configuration tool và generated configuration
+                    có vai trò rất lớn.
+                </p>
+
+                <div class="note">
+                    Một requirement có thể hoàn toàn đúng trong source code,
+                    nhưng system vẫn không hoạt động nếu configuration được generate sai.
+                    Vì vậy debugging AUTOSAR CAN phải xem xét cả
+                    <strong>source code + generated configuration + hardware configuration</strong>.
+                </div>
+
+                <h2>13. CAN Interface và CAN Driver trong SRS CAN</h2>
+
+                <p>
+                    Một mục tiêu quan trọng của AUTOSAR là tách phần communication logic phía trên
+                    khỏi hardware-specific CAN Driver.
+                </p>
+
+                <svg viewBox="0 0 700 280" role="img" aria-label="CAN Interface abstraction"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="100" y="20" width="500" height="48" fill="rgba(224,168,0,.25)" />
+                        <rect x="100" y="92" width="500" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="100" y="171" width="500" height="55" fill="rgba(46,139,87,.28)" />
+                        <rect x="100" y="250" width="500" height="25" fill="rgba(70,130,180,.25)" />
+                    </g>
+
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="350" y="50">Communication Stack</text>
+                        <text x="350" y="116">CanIf</text>
+                        <text x="350" y="195">CAN Driver</text>
+                        <text x="350" y="267">CAN Controller</text>
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="350" y="82">↓ standardized interface</text>
+                        <text x="350" y="161">↓ hardware abstraction boundary</text>
+                        <text x="350" y="240">↓ hardware-specific access</text>
+                    </g>
+                </svg>
+
+                <p>
+                    CanIf giúp communication stack không cần phụ thuộc trực tiếp vào
+                    implementation cụ thể của CAN Controller.
+                </p>
+
+                <p>
+                    Ví dụ một project có thể thay đổi MCU hoặc CAN peripheral.
+                    Phần CAN Driver có thể thay đổi theo hardware, trong khi các layer phía trên
+                    vẫn có thể giữ architecture interface tương đối ổn định.
+                </p>
+
+                <div class="note">
+                    Đây chính là một trong những mục tiêu quan trọng của AUTOSAR:
+                    <strong>tách software khỏi hardware-specific implementation thông qua
+                        abstraction và standardized interfaces.</strong>
+                </div>
+
+                <h2>14. CAN Transport Layer trong SRS CAN</h2>
+
+                <p>
+                    SRS CAN không chỉ tập trung vào CAN Driver.
+                    CAN Transport Layer cũng là một phần của CAN requirements.
+                </p>
+
+                <p>
+                    Một CAN frame có giới hạn kích thước payload.
+                    Khi dữ liệu cần truyền lớn hơn khả năng của một frame,
+                    cần có transport mechanism để chia dữ liệu thành nhiều frame
+                    và ghép chúng lại ở phía nhận.
+                </p>
+
+                <svg viewBox="0 0 720 220" role="img" aria-label="CAN Transport Layer segmentation"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="20" y="70" width="150" height="60" fill="rgba(224,168,0,.25)" />
+                        <rect x="230" y="70" width="130" height="60" fill="rgba(160,120,190,.25)" />
+                        <rect x="420" y="45" width="130" height="110" fill="rgba(46,139,87,.28)" />
+                        <rect x="610" y="70" width="90" height="60" fill="rgba(70,130,180,.25)" />
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="95" y="103">Large Data</text>
+                        <text x="295" y="103">CanTp</text>
+                        <text x="485" y="85">Multiple</text>
+                        <text x="485" y="103">CAN Frames</text>
+                        <text x="485" y="121">SF / FF / CF...</text>
+                        <text x="655" y="103">CAN Bus</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M175 100 L225 100" />
+                        <path d="M365 100 L415 100" />
+                        <path d="M555 100 L605 100" />
+                    </g>
+                </svg>
+
+                <p>
+                    Đây là một ví dụ quan trọng để phân biệt scope:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Chức năng</th>
+                        <th>Layer phù hợp</th>
+                    </tr>
+                    <tr>
+                        <td>Điều khiển CAN Controller</td>
+                        <td>CAN Driver</td>
+                    </tr>
+                    <tr>
+                        <td>CAN hardware TX/RX</td>
+                        <td>CAN Driver</td>
+                    </tr>
+                    <tr>
+                        <td>Chia dữ liệu lớn thành nhiều CAN frame</td>
+                        <td>CanTp</td>
+                    </tr>
+                    <tr>
+                        <td>Ghép nhiều frame thành dữ liệu lớn</td>
+                        <td>CanTp</td>
+                    </tr>
+                    <tr>
+                        <td>Signal packing</td>
+                        <td>COM</td>
+                    </tr>
+                </table>
+
+                <h2>15. CAN Transceiver Driver</h2>
+
+                <p>
+                    Một phần khác của SRS CAN liên quan đến
+                    <strong>CAN Bus Transceiver Driver</strong>.
+                </p>
+
+                <p>
+                    Cần phân biệt ba thành phần:
+                </p>
+
+                <svg viewBox="0 0 720 180" role="img" aria-label="CAN Driver, CAN Controller và CAN Transceiver"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="20" y="55" width="150" height="60" fill="rgba(46,139,87,.28)" />
+                        <rect x="205" y="55" width="150" height="60" fill="rgba(70,130,180,.25)" />
+                        <rect x="390" y="55" width="150" height="60" fill="rgba(160,120,190,.25)" />
+                        <rect x="575" y="55" width="120" height="60" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="95" y="78">CAN Driver</text>
+                        <text x="95" y="98">Software</text>
+
+                        <text x="280" y="78">CAN Controller</text>
+                        <text x="280" y="98">MCU Peripheral</text>
+
+                        <text x="465" y="78">Transceiver</text>
+                        <text x="465" y="98">Physical Interface</text>
+
+                        <text x="635" y="88">CAN Bus</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M175 85 L200 85" />
+                        <path d="M360 85 L385 85" />
+                        <path d="M545 85 L570 85" />
+                    </g>
+                </svg>
+
+                <p>
+                    Transceiver driver có những requirements riêng vì transceiver là thiết bị
+                    khác với CAN Controller.
+                    Ví dụ, configuration có thể liên quan đến loại transceiver,
+                    bus wake-up hoặc cách điều khiển transceiver tùy hardware.
+                </p>
+
+                <p>
+                    Vì vậy:
+                </p>
+
+                <pre><code>CAN Driver
+    ↓
+CAN Controller
+    ↓
+CAN Transceiver Driver / Transceiver
+    ↓
+Physical CAN Bus</code></pre>
+
+                <div class="note">
+                    Không nên gộp tất cả thành "CAN Driver".
+                    Trong AUTOSAR architecture, mỗi abstraction boundary có responsibility riêng.
+                </div>
+
+                <h2>16. SRS CAN và Data Consistency</h2>
+
+                <p>
+                    Embedded software phải xử lý những vấn đề mà application software thông thường
+                    có thể ít gặp hơn, đặc biệt là concurrency giữa CPU và hardware.
+                </p>
+
+                <p>
+                    Ví dụ một RX Hardware Object đang được driver đọc trong khi hardware tiếp tục
+                    nhận message mới.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Nguy cơ</th>
+                        <th>Hậu quả</th>
+                        <th>Cần quan tâm</th>
+                    </tr>
+                    <tr>
+                        <td>Hardware ghi đè buffer trong lúc CPU copy</td>
+                        <td>Data inconsistent</td>
+                        <td>Data consistency mechanism</td>
+                    </tr>
+                    <tr>
+                        <td>Interrupt xảy ra giữa critical operation</td>
+                        <td>Race / unexpected state</td>
+                        <td>Interrupt handling</td>
+                    </tr>
+                    <tr>
+                        <td>TX resource đang được sử dụng</td>
+                        <td>Transmission không thực hiện được</td>
+                        <td>Resource management</td>
+                    </tr>
+                    <tr>
+                        <td>Controller thay đổi state</td>
+                        <td>Operation không còn hợp lệ</td>
+                        <td>Controller state handling</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Đây là lý do khi đọc SRS CAN, bạn sẽ thấy các requirement không chỉ mô tả
+                    "CAN phải gửi và nhận được message", mà còn mô tả behavior cần thiết
+                    để phần mềm hoạt động an toàn và nhất quán.
+                </p>
+
+                <h2>17. Từ SRS Requirement đến Test Case</h2>
+
+                <p>
+                    Một kỹ năng rất quan trọng đối với Embedded Software Engineer là chuyển
+                    requirement thành test case.
+                </p>
+
+                <p>
+                    Ví dụ một requirement nói rằng CAN Driver phải cung cấp
+                    <strong>reception indication</strong>.
+                </p>
+
+                <p>
+                    Không nên chỉ viết test:
+                    <strong>"Call receive function and check result."</strong>
+                </p>
+
+                <p>
+                    Thay vào đó cần suy nghĩ theo requirement:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Phần</th>
+                        <th>Câu hỏi</th>
+                    </tr>
+                    <tr>
+                        <td>Precondition</td>
+                        <td>Controller và driver đang ở state nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Input</td>
+                        <td>CAN frame nào được đưa vào hardware?</td>
+                    </tr>
+                    <tr>
+                        <td>Trigger</td>
+                        <td>Interrupt hay polling?</td>
+                    </tr>
+                    <tr>
+                        <td>Expected behavior</td>
+                        <td>Driver có nhận biết message không?</td>
+                    </tr>
+                    <tr>
+                        <td>Notification</td>
+                        <td>CanIf có nhận được indication không?</td>
+                    </tr>
+                    <tr>
+                        <td>Data</td>
+                        <td>ID, DLC và payload có đúng không?</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Tư duy này rất gần với công việc thực tế của embedded engineer:
+                    <strong>Requirement → Test Condition → Input → Expected Result → Verification</strong>.
+                </p>
+
+                <h2>18. Ví dụ Requirement → Implementation → Test</h2>
+
+                <p>
+                    Hãy xét một ví dụ đơn giản liên quan đến reception.
+                </p>
+
+                <pre><code>Requirement
+    |
+    |  CAN Driver shall provide RX indication
+    v
+Design
+    |
+    |  ISR / polling detects received message
+    v
+Implementation
+    |
+    |  Read Hardware Object
+    |  Check data consistency
+    |  Notify CanIf
+    v
+Test
+    |
+    |  Inject CAN frame
+    |  Verify RX event
+    |  Verify ID / DLC / data
+    |  Verify notification
+    v
+Result
+    |
+    +-- PASS
+    +-- FAIL → Debug driver / configuration / hardware</code></pre>
+
+                <div class="note">
+                    Đây là cách nên tư duy khi làm việc với AUTOSAR:
+                    <strong>đừng bắt đầu từ code rồi mới nghĩ requirement là gì.
+                        Hãy bắt đầu từ requirement và trace xuống implementation và test.</strong>
+                </div>
+
+                <h2>19. Traceability trong Automotive Software</h2>
+
+                <p>
+                    Requirement ID rất hữu ích cho <strong>traceability</strong>.
+                    Một requirement có thể được trace qua nhiều artifact.
+                </p>
+
+                <svg viewBox="0 0 720 230" role="img" aria-label="Requirement traceability flow"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="20" y="75" width="120" height="60" fill="rgba(224,168,0,.25)" />
+                        <rect x="180" y="75" width="120" height="60" fill="rgba(160,120,190,.25)" />
+                        <rect x="340" y="75" width="120" height="60" fill="rgba(46,139,87,.28)" />
+                        <rect x="500" y="75" width="120" height="60" fill="rgba(70,130,180,.25)" />
+                        <rect x="660" y="75" width="45" height="60" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="80" y="98">SRS</text>
+                        <text x="80" y="118">Requirement</text>
+
+                        <text x="240" y="98">Design</text>
+                        <text x="240" y="118">Specification</text>
+
+                        <text x="400" y="98">Code</text>
+                        <text x="400" y="118">Implementation</text>
+
+                        <text x="560" y="98">Test Case</text>
+                        <text x="560" y="118">Verification</text>
+
+                        <text x="682" y="108">Result</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M145 105 L175 105" />
+                        <path d="M305 105 L335 105" />
+                        <path d="M465 105 L495 105" />
+                        <path d="M625 105 L655 105" />
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="360" y="180">Requirement ID được trace xuyên suốt quá trình phát triển</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>SRS_Can_xxxxx
+      |
+      +-- Design item
+      |
+      +-- Source code
+      |
+      +-- Unit Test
+      |
+      +-- Integration Test
+      |
+      +-- Test Result</code></pre>
+
+                <p>
+                    Nếu một test fail, engineer có thể trace ngược về requirement để xác định
+                    expected behavior ban đầu là gì.
+                </p>
+
+                <h2>20. Ví dụ Debug dựa trên SRS CAN</h2>
+
+                <p>
+                    Giả sử requirement của hệ thống yêu cầu một CAN message phải được nhận.
+                    Nhưng application không nhận được message.
+                </p>
+
+                <p>
+                    Không nên ngay lập tức sửa code application.
+                    Hãy trace từ dưới lên:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Step</th>
+                        <th>Kiểm tra</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>CAN frame có thực sự xuất hiện trên bus không?</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>CAN Controller có nhận frame không?</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Hardware Object / filter có đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>CAN Driver có xử lý RX event không?</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>CanIf có nhận được indication không?</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>PDU có được route đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>COM có unpack signal đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Application có nhận được signal không?</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Tư duy debug:
+                    <strong>Bus → Controller → CanDrv → CanIf → PduR/COM → Application</strong>.
+                    SRS giúp xác định expected behavior ở từng phần thay vì debug dựa trên phỏng đoán.
+                </div>
+
+                <h2>21. SRS CAN và vai trò của Embedded Engineer</h2>
+
+                <p>
+                    Đối với một fresher hoặc junior embedded engineer, bạn không nhất thiết phải
+                    thuộc toàn bộ AUTOSAR_SRS_CAN.
+                    Điều quan trọng hơn là biết cách <strong>đọc và sử dụng requirement</strong>.
+                </p>
+
+                <p>
+                    Khi nhận một requirement CAN, bạn nên có khả năng:
+                </p>
+
+                <ol>
+                    <li>Xác định requirement ID.</li>
+                    <li>Hiểu chính xác requirement yêu cầu gì.</li>
+                    <li>Xác định module chịu trách nhiệm.</li>
+                    <li>Xác định precondition và trigger.</li>
+                    <li>Xác định expected behavior.</li>
+                    <li>Chuyển requirement thành test condition.</li>
+                    <li>Trace requirement tới implementation.</li>
+                    <li>Trace requirement tới test result.</li>
+                </ol>
+
+                <p>
+                    Đây là kỹ năng có giá trị cao trong automotive software vì công việc
+                    không chỉ là viết C/C++, mà còn là làm việc với requirements,
+                    specifications, testing và traceability.
+                </p>
+
+                <h2>22. Những điều không nên hiểu sai về SRS CAN</h2>
+
+                <table>
+                    <tr>
+                        <th>Hiểu sai</th>
+                        <th>Cách hiểu đúng</th>
+                    </tr>
+                    <tr>
+                        <td>SRS CAN là source code của CAN Driver</td>
+                        <td>SRS CAN là tài liệu requirements.</td>
+                    </tr>
+                    <tr>
+                        <td>SRS CAN chỉ dành cho CanDrv</td>
+                        <td>Nó bao phủ nhiều CAN-related components.</td>
+                    </tr>
+                    <tr>
+                        <td>Mỗi requirement là một API</td>
+                        <td>Requirement mô tả behavior/capability cần đáp ứng.</td>
+                    </tr>
+                    <tr>
+                        <td>Đọc SRS là đủ để viết implementation</td>
+                        <td>Cần thêm module/software specification và hardware information.</td>
+                    </tr>
+                    <tr>
+                        <td>Test chỉ cần kiểm tra code chạy</td>
+                        <td>Test phải verify behavior được requirement yêu cầu.</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration không quan trọng</td>
+                        <td>Configuration có thể quyết định behavior thực tế của CAN stack.</td>
+                    </tr>
+                </table>
+
+                <h2>23. SRS CAN trong toàn bộ CAN Software Stack</h2>
+
+                <p>
+                    Sau khi học Bài 8, 9, 10 và 11, chúng ta có thể nối các kiến thức lại:
+                </p>
+
+                <pre><code>Application / SWC
+        |
+        v
+      COM
+        |
+        v
+      PduR
+        |
+        +---------> CanTp
+        |
+        v
+      CanIf
+        |
+        v
+   CAN Driver
+        |
+        v
+ CAN Controller
+        |
+        v
+ CAN Transceiver
+        |
+        v
+     CAN Bus
+
+
+AUTOSAR_SRS_CAN
+        |
+        +-- Requirements
+        |
+        +-- CAN Driver
+        |
+        +-- CAN Interface
+        |
+        +-- CAN Transport Layer
+        |
+        +-- CAN Transceiver Driver
+        |
+        +-- Configuration / non-functional requirements</code></pre>
+
+                <p>
+                    Như vậy, SRS CAN không phải là một layer runtime nằm giữa các module.
+                    Nó là <strong>tài liệu requirements</strong> mô tả những gì các CAN-related
+                    software components cần đáp ứng.
+                </p>
+
+                <h2>24. Cách học AUTOSAR_SRS_CAN hiệu quả</h2>
+
+                <p>
+                    Không nên cố học thuộc hàng trăm requirement.
+                    Thay vào đó, hãy chia requirement thành các nhóm.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Nhóm cần nhớ</th>
+                        <th>Câu hỏi cần trả lời</th>
+                    </tr>
+                    <tr>
+                        <td>Architecture</td>
+                        <td>Requirement thuộc module nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Initialization</td>
+                        <td>Driver phải chuẩn bị hardware như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>TX</td>
+                        <td>Transmission request được xử lý như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>RX</td>
+                        <td>Received message được xử lý như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Interrupt</td>
+                        <td>Asynchronous hardware event được xử lý ra sao?</td>
+                    </tr>
+                    <tr>
+                        <td>Consistency</td>
+                        <td>Làm sao tránh dữ liệu không nhất quán?</td>
+                    </tr>
+                    <tr>
+                        <td>Error</td>
+                        <td>Controller/error state được xử lý thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration</td>
+                        <td>Những behavior nào phụ thuộc configuration?</td>
+                    </tr>
+                    <tr>
+                        <td>Testing</td>
+                        <td>Requirement được verify bằng test nào?</td>
+                    </tr>
+                </table>
+
+                <h2>25. SRS CAN trong một câu hỏi phỏng vấn</h2>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is AUTOSAR_SRS_CAN?"</strong>,
+                    bạn có thể tư duy theo ba ý chính:
+                </p>
+
+                <ol>
+                    <li><strong>Purpose:</strong> xác định requirements cho CAN-related software.</li>
+                    <li><strong>Scope:</strong> bao gồm các thành phần như CAN Driver, CAN Interface, CAN Transport
+                        Layer và CAN Transceiver Driver.</li>
+                    <li><strong>Usage:</strong> làm cơ sở cho specification, implementation, testing và traceability.
+                    </li>
+                </ol>
+
+                <p>
+                    Một câu trả lời ngắn có thể là:
+                </p>
+
+                <div class="note">
+                    <strong>
+                        "AUTOSAR_SRS_CAN is the requirements specification for CAN-related
+                        software in AUTOSAR. It defines the required behavior and capabilities
+                        of components such as the CAN Driver, CAN Interface, CAN Transport Layer
+                        and CAN Transceiver Driver. These requirements can then be traced to
+                        software design, implementation and verification."
+                    </strong>
+                </div>
+
+                <h2>26. Requirement → Code → Test Checklist</h2>
+
+                <p>
+                    Khi làm một task CAN trong project, có thể sử dụng checklist sau:
+                </p>
+
+                <ul>
+                    <li>Xác định requirement ID.</li>
+                    <li>Đọc Description và hiểu expected behavior.</li>
+                    <li>Đọc Rationale để hiểu tại sao requirement tồn tại.</li>
+                    <li>Xác định module chịu trách nhiệm.</li>
+                    <li>Xác định configuration liên quan.</li>
+                    <li>Xác định runtime trigger.</li>
+                    <li>Xác định input và output.</li>
+                    <li>Xác định error condition.</li>
+                    <li>Thiết kế implementation phù hợp.</li>
+                    <li>Viết unit/integration test.</li>
+                    <li>Kiểm tra expected result.</li>
+                    <li>Trace test result về requirement ID.</li>
+                </ul>
+
+                <h2>27. Tổng hợp các khái niệm quan trọng</h2>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>SRS</td>
+                        <td>Software Requirements Specification.</td>
+                    </tr>
+                    <tr>
+                        <td>SRS CAN</td>
+                        <td>Requirements specification liên quan đến CAN trong AUTOSAR.</td>
+                    </tr>
+                    <tr>
+                        <td>Requirement ID</td>
+                        <td>Identifier để trace một requirement cụ thể.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Driver</td>
+                        <td>Software điều khiển CAN Controller và xử lý TX/RX hardware interaction.</td>
+                    </tr>
+                    <tr>
+                        <td>CanIf</td>
+                        <td>CAN abstraction layer giữa communication stack và CAN Driver.</td>
+                    </tr>
+                    <tr>
+                        <td>CanTp</td>
+                        <td>Transport layer cho việc truyền dữ liệu vượt giới hạn một CAN frame.</td>
+                    </tr>
+                    <tr>
+                        <td>Transceiver Driver</td>
+                        <td>Software liên quan đến việc điều khiển CAN transceiver.</td>
+                    </tr>
+                    <tr>
+                        <td>Traceability</td>
+                        <td>Liên kết requirement với design, code và test.</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>AUTOSAR_SRS_CAN</strong> là tài liệu requirements mô tả những gì
+                    các CAN-related software components trong AUTOSAR cần đáp ứng.
+                    Nó không phải source code và cũng không phải implementation cụ thể của
+                    CAN Driver.
+                    <br><br>
+                    Khi học SRS CAN, cần đặc biệt hiểu:
+                    <strong>requirement ID, CAN Driver requirements, TX/RX behavior,
+                        controller state, interrupt handling, data consistency, error handling,
+                        configuration và traceability.</strong>
+                    <br><br>
+                    Có thể nhớ toàn bộ bài bằng chuỗi:
+                    <strong>
+                        Requirement → Design → Implementation → Test → Verification
+                    </strong>.
+                    <br><br>
+                    Và đối với CAN architecture:
+                    <strong>
+                        SRS CAN → CanIf / CanDrv / CanTp / Transceiver
+                        → CAN Controller → CAN Bus
+                    </strong>.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-10.html">← Bài trước</a>
+                    <a class="btn" href="lesson-12.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

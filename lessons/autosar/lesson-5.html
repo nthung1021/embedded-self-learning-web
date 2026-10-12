@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 5: Tổng quan tầng Runtime Environment | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html" class="active" aria-current="page">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 5: Tổng quan tầng Runtime Environment</h1>
+
+                <p>
+                    <strong>Runtime Environment (RTE)</strong> là tầng trung gian trong kiến trúc
+                    AUTOSAR Classic, nằm giữa <strong>Application Software</strong> và
+                    <strong>Basic Software (BSW)</strong>.
+                </p>
+
+                <p>
+                    Nếu Bài 4 tập trung vào Application Software và Software Component, thì bài này
+                    tập trung vào câu hỏi:
+                    <strong>Application Software giao tiếp với các thành phần khác thông qua đâu?</strong>
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Bài này chỉ tập trung vào tổng quan về RTE.
+                    Các khái niệm chi tiết như Port, Interface, Runnable, Event, RTE API,
+                    Sender-Receiver và Client-Server sẽ được tìm hiểu ở các bài chuyên sâu sau.
+                </div>
+
+                <h2>1. Runtime Environment là gì?</h2>
+
+                <p>
+                    RTE là một lớp phần mềm nằm giữa <strong>Application Software</strong> và
+                    <strong>Basic Software</strong>.
+                </p>
+
+                <p>
+                    Vai trò tổng quan của RTE là cung cấp môi trường để các Software Component
+                    trong Application Software có thể giao tiếp với nhau và sử dụng các dịch vụ
+                    cần thiết từ hệ thống bên dưới.
+                </p>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                    <strong>RTE giúp Application Software giao tiếp với phần còn lại của hệ thống
+                    mà không cần trực tiếp xử lý các chi tiết bên dưới.</strong>
+                </p>
+
+                <h2>2. RTE nằm ở đâu trong kiến trúc AUTOSAR?</h2>
+
+                <p>
+                    Vị trí của RTE trong kiến trúc AUTOSAR Classic có thể hình dung như sau:
+                </p>
+
+                <svg viewBox="0 0 600 390" role="img"
+                    aria-label="Vị trí của Runtime Environment trong AUTOSAR Classic"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+
+                        <rect x="20" y="20" width="560" height="90" rx="6"
+                            fill="rgba(20,80,107,.18)" />
+
+                        <rect x="20" y="120" width="560" height="70" rx="6"
+                            fill="rgba(224,168,0,.25)" />
+
+                        <rect x="20" y="200" width="560" height="135" rx="6"
+                            fill="rgba(46,139,87,.2)" />
+
+                        <rect x="20" y="345" width="560" height="25" rx="6"
+                            fill="rgba(128,128,128,.2)" />
+
+                    </g>
+
+                    <g font-size="14" fill="currentColor" text-anchor="middle">
+
+                        <text x="300" y="50" font-weight="bold">
+                            Application Software
+                        </text>
+
+                        <text x="300" y="80">
+                            Software Components
+                        </text>
+
+                        <text x="300" y="155" font-weight="bold">
+                            Runtime Environment (RTE)
+                        </text>
+
+                        <text x="300" y="178">
+                            Môi trường giao tiếp của Application
+                        </text>
+
+                        <text x="300" y="230" font-weight="bold">
+                            Basic Software
+                        </text>
+
+                        <text x="300" y="260">
+                            Services / ECU Abstraction / MCAL
+                        </text>
+
+                        <text x="300" y="290">
+                            Phần mềm nền tảng
+                        </text>
+
+                        <text x="300" y="320">
+                            Cung cấp dịch vụ và truy cập Hardware
+                        </text>
+
+                        <text x="300" y="363" font-weight="bold">
+                            Hardware
+                        </text>
+
+                    </g>
+
+                </svg>
+
+                <p>
+                    Vì nằm giữa Application Software và BSW, RTE đóng vai trò như một
+                    <strong>cầu nối</strong> giữa phần mềm ứng dụng và môi trường AUTOSAR bên dưới.
+                </p>
+
+                <h2>3. Tại sao cần RTE?</h2>
+
+                <p>
+                    Nếu Application Software phải trực tiếp giao tiếp với từng module bên dưới,
+                    phần mềm ứng dụng sẽ dễ trở nên phụ thuộc vào cách hệ thống được triển khai.
+                </p>
+
+                <p>
+                    RTE giúp tạo ra một ranh giới rõ ràng:
+                </p>
+
+                <pre><code>Application Software
+        │
+        │  Giao tiếp thông qua RTE
+        ↓
+       RTE
+        │
+        │  Kết nối với hệ thống bên dưới
+        ↓
+       BSW
+        │
+        ↓
+    Hardware</code></pre>
+
+                <p>
+                    Nhờ đó, Application Software có thể tập trung vào
+                    <strong>logic chức năng</strong> thay vì phải xử lý toàn bộ các chi tiết
+                    liên quan đến nền tảng phần mềm và phần cứng.
+                </p>
+
+                <h2>4. RTE kết nối các Software Component</h2>
+
+                <p>
+                    Application Software trong AUTOSAR được chia thành nhiều
+                    <strong>Software Component (SWC)</strong>.
+                </p>
+
+                <p>
+                    Các SWC có thể cần trao đổi dữ liệu hoặc yêu cầu chức năng từ những
+                    thành phần khác. Ở mức tổng quan, RTE cung cấp môi trường để những
+                    giao tiếp này được thực hiện.
+                </p>
+
+                <pre><code>+-------------------+       +-------------------+
+|     SWC A         |       |      SWC B        |
+|                   |       |                   |
+|  Function A       |       |  Function B       |
++---------+---------+       +---------+---------+
+          \                         /
+           \                       /
+            +-------- RTE --------+
+                     │
+                     ↓
+               Basic Software</code></pre>
+
+                <p>
+                    Ví dụ, một Software Component xử lý trạng thái cửa có thể cung cấp
+                    thông tin cho một Software Component khác đang xử lý đèn hoặc khóa cửa.
+                </p>
+
+                <div class="note">
+                    Cách dữ liệu được trao đổi giữa các SWC và các loại Interface được sử dụng
+                    sẽ được trình bày chi tiết trong các bài học sau.
+                </div>
+
+                <h2>5. RTE kết nối Application với BSW</h2>
+
+                <p>
+                    Không chỉ kết nối các Software Component, RTE còn giúp Application Software
+                    sử dụng những dịch vụ được cung cấp bởi Basic Software.
+                </p>
+
+                <p>
+                    Ví dụ ở mức tổng quan, Application Software có thể cần:
+                </p>
+
+                <ul>
+                    <li>Thông tin về trạng thái hệ thống.</li>
+                    <li>Dữ liệu nhận từ mạng truyền thông.</li>
+                    <li>Dịch vụ liên quan đến thời gian.</li>
+                    <li>Các dịch vụ nền tảng khác do BSW cung cấp.</li>
+                </ul>
+
+                <p>
+                    Application không cần trực tiếp đi xuống từng module BSW để xử lý những
+                    chức năng này. RTE đóng vai trò trung gian trong kiến trúc.
+                </p>
+
+                <pre><code>Application SWC
+       │
+       ↓
+      RTE
+       │
+       ↓
+   BSW Services
+       │
+       ↓
+ Hardware / Communication / System</code></pre>
+
+                <h2>6. RTE và Virtual Function Bus</h2>
+
+                <p>
+                    Trong AUTOSAR, khái niệm <strong>Virtual Function Bus (VFB)</strong> được
+                    sử dụng để mô tả môi trường giao tiếp giữa các Software Component ở mức
+                    kiến trúc.
+                </p>
+
+                <p>
+                    Có thể hình dung VFB như một môi trường giao tiếp logic:
+                </p>
+
+                <pre><code>        Software Component A
+                  │
+                  ↓
+        +-------------------+
+        |   Virtual Function|
+        |       Bus (VFB)   |
+        +-------------------+
+                  │
+                  ↓
+        Software Component B</code></pre>
+
+                <p>
+                    Ở mức thiết kế hệ thống, VFB giúp mô tả cách các chức năng phần mềm
+                    giao tiếp với nhau mà không cần tập trung ngay vào cách chúng được
+                    triển khai trên một ECU cụ thể.
+                </p>
+
+                <p>
+                    Khi hệ thống được triển khai trên ECU, RTE là thành phần quan trọng
+                    giúp hiện thực môi trường giao tiếp này trong AUTOSAR Classic.
+                </p>
+
+                <div class="note">
+                    <strong>VFB và RTE</strong> có liên quan chặt chẽ nhưng không nên xem
+                    chúng là cùng một khái niệm. VFB là cách nhìn ở mức kiến trúc về môi trường
+                    giao tiếp, còn RTE là phần được triển khai trong ECU để hỗ trợ việc giao tiếp
+                    và thực thi của Application Software.
+                </div>
+
+                <h2>7. Ví dụ tổng quan về luồng dữ liệu</h2>
+
+                <p>
+                    Giả sử một ECU nhận thông tin trạng thái cửa và cần sử dụng thông tin đó
+                    để quyết định trạng thái đèn.
+                </p>
+
+                <p>
+                    Ở mức tổng quan, luồng xử lý có thể hình dung:
+                </p>
+
+                <pre><code>Thông tin trạng thái cửa
+          ↓
+     Software Component
+       Door Status
+          ↓
+         RTE
+          ↓
+     Lighting Control
+          ↓
+     Software Component
+          ↓
+         RTE
+          ↓
+     Hệ thống bên dưới
+          ↓
+         Đèn</code></pre>
+
+                <p>
+                    Điểm cần nhớ là Application Software tập trung vào logic chức năng,
+                    trong khi RTE cung cấp môi trường giao tiếp giữa các thành phần.
+                </p>
+
+                <h2>8. RTE giúp giảm sự phụ thuộc của Application</h2>
+
+                <p>
+                    Một mục tiêu quan trọng của kiến trúc AUTOSAR là giảm sự phụ thuộc trực tiếp
+                    giữa Application Software và các chi tiết triển khai bên dưới.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Không có lớp trung gian</th>
+                        <th>Có RTE</th>
+                    </tr>
+
+                    <tr>
+                        <td>Application dễ phụ thuộc vào các thành phần bên dưới.</td>
+                        <td>Application giao tiếp thông qua một lớp trung gian.</td>
+                    </tr>
+
+                    <tr>
+                        <td>Khó tách biệt logic chức năng và nền tảng.</td>
+                        <td>Logic Application được tách khỏi phần mềm nền tảng rõ hơn.</td>
+                    </tr>
+
+                    <tr>
+                        <td>Việc tái sử dụng có thể khó hơn.</td>
+                        <td>Hỗ trợ tổ chức Application thành các Software Component.</td>
+                    </tr>
+                </table>
+
+                <h2>9. RTE trong một ví dụ ECU đơn giản</h2>
+
+                <p>
+                    Giả sử một ECU có hai chức năng:
+                    <strong>Door Status</strong> và <strong>Lighting Control</strong>.
+                </p>
+
+                <pre><code>+---------------------------------------+
+|        Application Software           |
+|                                       |
+|  +---------------+  +---------------+ |
+|  | Door Status   |  | Lighting      | |
+|  | SWC           |  | Control SWC   | |
+|  +-------+-------+  +-------+-------+ |
+|          \                  /          |
++-----------\----------------/-----------+
+             \              /
+              +---- RTE ----+
+                     │
+                     ↓
+             +---------------+
+             |      BSW      |
+             +---------------+
+                     │
+                     ↓
+                 Hardware</code></pre>
+
+                <p>
+                    Khi trạng thái cửa thay đổi, thông tin có thể được sử dụng bởi
+                    Lighting Control SWC thông qua môi trường giao tiếp do AUTOSAR cung cấp.
+                </p>
+
+                <p>
+                    Như vậy, RTE giúp các Software Component được tổ chức độc lập hơn
+                    và hỗ trợ việc kết nối chúng thành một hệ thống hoàn chỉnh.
+                </p>
+
+                <h2>10. Những khái niệm cần nhớ</h2>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa tổng quan</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE</strong></td>
+                        <td>
+                            Lớp trung gian giữa Application Software và Basic Software.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Software Component</strong></td>
+                        <td>
+                            Thành phần phần mềm thực hiện một chức năng hoặc một phần chức năng.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>VFB</strong></td>
+                        <td>
+                            Môi trường giao tiếp logic giữa các chức năng Software Component
+                            ở mức kiến trúc.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application ↔ RTE</strong></td>
+                        <td>
+                            Application sử dụng RTE để giao tiếp với các thành phần khác.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE ↔ BSW</strong></td>
+                        <td>
+                            RTE hỗ trợ Application sử dụng môi trường và dịch vụ của hệ thống bên dưới.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware Independence</strong></td>
+                        <td>
+                            RTE góp phần tách Application khỏi các chi tiết triển khai phần cứng.
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>Runtime Environment (RTE)</strong> là tầng trung gian quan trọng
+                    trong AUTOSAR Classic, nằm giữa <strong>Application Software</strong> và
+                    <strong>Basic Software</strong>. RTE cung cấp môi trường để các
+                    <strong>Software Component</strong> giao tiếp với nhau và sử dụng các
+                    dịch vụ của hệ thống bên dưới. Ở mức kiến trúc, khái niệm
+                    <strong>Virtual Function Bus (VFB)</strong> giúp mô tả môi trường giao tiếp
+                    giữa các chức năng phần mềm. Nhờ RTE, Application Software được tách khỏi
+                    nhiều chi tiết của nền tảng và Hardware.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-4.html">← Bài trước</a>
+                    <a class="btn" href="lesson-6.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html> 

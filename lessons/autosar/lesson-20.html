@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 20: ECU Abstraction và I/O | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Tổng quan một ví dụ hoàn chỉnh</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html" class="active" aria-current="page">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+        </aside>
+
+        <article>
+
+            <h1>Bài 20: ECU Abstraction và I/O</h1>
+
+            <p>
+                Trong AUTOSAR Classic, Application Software không nên phụ thuộc trực tiếp
+                vào cách một chân GPIO, ADC, PWM hoặc một thiết bị phần cứng cụ thể được
+                triển khai bên trong microcontroller.
+            </p>
+
+            <p>
+                <strong>ECU Abstraction</strong> đóng vai trò tạo ra một lớp trung gian
+                giữa các chức năng phần mềm phía trên và phần cứng ECU phía dưới. Nhờ đó,
+                Application có thể làm việc với các chức năng I/O theo cách trừu tượng hơn
+                thay vì phải biết chi tiết thanh ghi hoặc peripheral của MCU.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Bài này đi sâu vào ECU Abstraction, quan hệ giữa ECU Abstraction và MCAL,
+                cách xử lý Input/Output, các loại I/O phổ biến và luồng dữ liệu từ Hardware
+                lên Application hoặc từ Application xuống Hardware. Bài chưa đi sâu vào
+                API cụ thể, cấu hình tool hoặc ARXML.
+            </div>
+
+            <h2>1. ECU Abstraction là gì?</h2>
+
+            <p>
+                ECU Abstraction là một phần của Basic Software, nằm phía trên MCAL và
+                cung cấp một cách truy cập phần cứng có tính trừu tượng hơn cho các tầng
+                phía trên.
+            </p>
+
+<pre><code>Application Software
+        |
+        v
+       RTE
+        |
+        v
+       BSW
+        |
+        v
+ECU Abstraction
+        |
+        v
+      MCAL
+        |
+        v
+    Microcontroller
+        |
+        v
+      Hardware</code></pre>
+
+            <p>
+                Mục tiêu quan trọng của ECU Abstraction là giảm sự phụ thuộc của phần mềm
+                phía trên vào cách phần cứng cụ thể được kết nối và triển khai.
+            </p>
+
+            <h2>2. Vì sao cần ECU Abstraction?</h2>
+
+            <p>
+                Nếu Application truy cập trực tiếp vào phần cứng, code sẽ phụ thuộc rất
+                nhiều vào MCU, peripheral và cách thiết kế ECU.
+            </p>
+
+<pre><code>Application
+     |
+     | Direct Hardware Access
+     v
+MCU Register / Peripheral
+     |
+     v
+Hardware</code></pre>
+
+            <p>
+                Cách tiếp cận này khiến việc thay đổi hardware trở nên khó khăn.
+            </p>
+
+            <p>
+                Với ECU Abstraction:
+            </p>
+
+<pre><code>Application
+     |
+     v
+RTE
+     |
+     v
+ECU Abstraction
+     |
+     v
+MCAL
+     |
+     v
+Hardware</code></pre>
+
+            <p>
+                Application tập trung vào chức năng thay vì phải biết chi tiết phần cứng.
+            </p>
+
+            <h2>3. ECU Abstraction nằm ở đâu trong BSW?</h2>
+
+            <p>
+                ECU Abstraction nằm giữa Services hoặc các BSW module phía trên và MCAL
+                phía dưới.
+            </p>
+
+<pre><code>+--------------------------------+
+| Application Software           |
++--------------------------------+
+| RTE                            |
++--------------------------------+
+| BSW Services                   |
++--------------------------------+
+| ECU Abstraction                |
++--------------------------------+
+| MCAL                           |
++--------------------------------+
+| Microcontroller                |
++--------------------------------+
+| ECU Hardware                   |
++--------------------------------+</code></pre>
+
+            <p>
+                Vị trí này rất quan trọng vì ECU Abstraction giúp che giấu một phần
+                khác biệt của ECU hardware khỏi phần mềm phía trên.
+            </p>
+
+            <h2>4. ECU Abstraction và MCAL có giống nhau không?</h2>
+
+            <p>
+                Không. Hai tầng này có mối quan hệ rất gần nhưng mục đích khác nhau.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Đặc điểm</th>
+                        <th>ECU Abstraction</th>
+                        <th>MCAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Vị trí</td>
+                        <td>Phía trên MCAL</td>
+                        <td>Phía dưới ECU Abstraction</td>
+                    </tr>
+                    <tr>
+                        <td>Mục tiêu</td>
+                        <td>Trừu tượng hóa thiết bị/peripheral ở mức ECU</td>
+                        <td>Truy cập và điều khiển MCU</td>
+                    </tr>
+                    <tr>
+                        <td>Phụ thuộc MCU</td>
+                        <td>Ít hơn</td>
+                        <td>Cao</td>
+                    </tr>
+                    <tr>
+                        <td>Ví dụ</td>
+                        <td>ECU I/O abstraction</td>
+                        <td>GPIO, ADC, PWM, CAN driver</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>5. MCAL nhìn phần cứng như thế nào?</h2>
+
+            <p>
+                MCAL nằm gần microcontroller nên phải hiểu các peripheral cụ thể của MCU.
+            </p>
+
+            <p>
+                Ví dụ một MCU có:
+            </p>
+
+            <ul>
+                <li>GPIO Port A.</li>
+                <li>ADC Channel 3.</li>
+                <li>PWM Channel 1.</li>
+                <li>CAN Controller 0.</li>
+            </ul>
+
+            <p>
+                MCAL phải cung cấp driver phù hợp để điều khiển các peripheral đó.
+            </p>
+
+            <h2>6. ECU Abstraction nhìn phần cứng như thế nào?</h2>
+
+            <p>
+                ECU Abstraction không nhất thiết muốn Application biết rằng một tín hiệu
+                đang nằm ở GPIO Port A hay ADC Channel 3.
+            </p>
+
+            <p>
+                Thay vào đó, phần mềm phía trên có thể quan tâm đến ý nghĩa của tín hiệu:
+            </p>
+
+<pre><code>Physical Hardware
+      |
+      v
+ADC Channel 3
+      |
+      v
+ECU Abstraction
+      |
+      v
+CabinTemperature
+      |
+      v
+Application</code></pre>
+
+            <p>
+                Application quan tâm đến <strong>CabinTemperature</strong> hơn là việc
+                tín hiệu đó đến từ ADC channel nào.
+            </p>
+
+            <h2>7. ECU Abstraction không tạo ra hardware mới</h2>
+
+            <p>
+                ECU Abstraction chỉ tạo ra một cách truy cập trừu tượng hơn.
+                Nó không biến một digital input thành analog input hoặc thay đổi bản chất
+                của hardware.
+            </p>
+
+            <p>
+                Có thể hiểu:
+            </p>
+
+<pre><code>Hardware capability
+        |
+        v
+MCAL
+        |
+        v
+ECU Abstraction
+        |
+        v
+Software representation</code></pre>
+
+            <h2>8. I/O là gì?</h2>
+
+            <p>
+                I/O là viết tắt của <strong>Input/Output</strong>.
+                Trong ECU, I/O là cầu nối giữa phần mềm và các tín hiệu hoặc thiết bị
+                bên ngoài.
+            </p>
+
+            <p>
+                Có thể chia đơn giản thành:
+            </p>
+
+            <ul>
+                <li>Digital Input.</li>
+                <li>Digital Output.</li>
+                <li>Analog Input.</li>
+                <li>PWM Output.</li>
+                <li>Communication I/O.</li>
+            </ul>
+
+            <h2>9. Digital Input</h2>
+
+            <p>
+                Digital Input thường biểu diễn một tín hiệu có một trong các trạng thái
+                logic như ON/OFF hoặc 0/1.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Nút nhấn.</li>
+                <li>Công tắc cửa.</li>
+                <li>Ignition signal.</li>
+                <li>Brake switch.</li>
+                <li>Door status.</li>
+            </ul>
+
+<pre><code>Physical Switch
+      |
+      v
+GPIO Input
+      |
+      v
+MCAL
+      |
+      v
+ECU Abstraction
+      |
+      v
+RTE
+      |
+      v
+Application</code></pre>
+
+            <h2>10. Digital Output</h2>
+
+            <p>
+                Digital Output cho phép phần mềm điều khiển một tín hiệu hoặc thiết bị
+                theo trạng thái logic.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Bật/tắt relay.</li>
+                <li>Bật/tắt indicator.</li>
+                <li>Điều khiển một digital actuator.</li>
+                <li>Điều khiển trạng thái của một GPIO.</li>
+            </ul>
+
+<pre><code>Application
+     |
+     v
+RTE
+     |
+     v
+ECU Abstraction
+     |
+     v
+MCAL
+     |
+     v
+GPIO
+     |
+     v
+Actuator</code></pre>
+
+            <h2>11. Analog Input</h2>
+
+            <p>
+                Analog Input biểu diễn tín hiệu có giá trị liên tục trong một khoảng.
+                MCU thường sử dụng ADC để chuyển tín hiệu analog thành giá trị số.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Nhiệt độ.</li>
+                <li>Điện áp battery.</li>
+                <li>Áp suất.</li>
+                <li>Vị trí của một sensor.</li>
+            </ul>
+
+<pre><code>Analog Sensor
+      |
+      v
+ADC
+      |
+      v
+MCAL
+      |
+      v
+ECU Abstraction
+      |
+      v
+RTE
+      |
+      v
+Application</code></pre>
+
+            <h2>12. Từ ADC value đến physical value</h2>
+
+            <p>
+                Giá trị ADC mà MCU đọc được chưa nhất thiết là giá trị vật lý mà
+                Application cần.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+<pre><code>ADC raw value
+      |
+      v
+Conversion / Scaling
+      |
+      v
+Voltage
+      |
+      v
+Temperature
+      |
+      v
+Application</code></pre>
+
+            <p>
+                Việc chuyển đổi từ raw value thành physical value có thể được thực hiện
+                ở những tầng khác nhau tùy theo thiết kế hệ thống.
+            </p>
+
+            <h2>13. PWM Output</h2>
+
+            <p>
+                PWM là một cơ chế phổ biến để điều khiển actuator hoặc tạo tín hiệu có
+                duty cycle thay đổi.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Điều khiển độ sáng.</li>
+                <li>Điều khiển tốc độ motor.</li>
+                <li>Điều khiển actuator.</li>
+            </ul>
+
+<pre><code>Application
+      |
+      | Desired output
+      v
+ECU Abstraction / BSW
+      |
+      v
+MCAL PWM
+      |
+      v
+PWM Peripheral
+      |
+      v
+Hardware</code></pre>
+
+            <h2>14. I/O không chỉ là GPIO</h2>
+
+            <p>
+                Khi nói đến ECU I/O, không nên chỉ nghĩ đến GPIO.
+            </p>
+
+            <p>
+                Một ECU có thể có nhiều dạng giao tiếp với thế giới bên ngoài:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Loại</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Digital Input</td>
+                        <td>Switch, sensor trạng thái</td>
+                    </tr>
+                    <tr>
+                        <td>Digital Output</td>
+                        <td>Relay, indicator</td>
+                    </tr>
+                    <tr>
+                        <td>Analog Input</td>
+                        <td>Temperature, voltage</td>
+                    </tr>
+                    <tr>
+                        <td>PWM</td>
+                        <td>Motor, lighting</td>
+                    </tr>
+                    <tr>
+                        <td>CAN</td>
+                        <td>ECU-to-ECU communication</td>
+                    </tr>
+                    <tr>
+                        <td>LIN</td>
+                        <td>Sensor/actuator communication</td>
+                    </tr>
+                    <tr>
+                        <td>Ethernet</td>
+                        <td>High-speed communication</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Tuy nhiên, communication interface như CAN hoặc LIN có architecture
+                riêng và đã được trình bày trong Communication Stack. Trong bài này,
+                trọng tâm là I/O theo nghĩa interface giữa ECU software và hardware.
+            </p>
+
+            <h2>15. Physical Signal và Software Signal</h2>
+
+            <p>
+                Một tín hiệu vật lý và tín hiệu mà Application nhìn thấy không nhất thiết
+                giống nhau.
+            </p>
+
+<pre><code>Physical Signal
+      |
+      v
+Electrical Representation
+      |
+      v
+MCAL
+      |
+      v
+ECU Abstraction
+      |
+      v
+Software Signal
+      |
+      v
+Application</code></pre>
+
+            <p>
+                Đây chính là một trong những giá trị quan trọng của abstraction.
+            </p>
+
+            <h2>16. Ví dụ: Door Switch</h2>
+
+            <p>
+                Giả sử một ECU cần biết cửa xe đang mở hay đóng.
+            </p>
+
+<pre><code>Door Switch
+    |
+    | Electrical signal
+    v
+GPIO
+    |
+    v
+MCAL
+    |
+    v
+ECU Abstraction
+    |
+    v
+DoorOpen
+    |
+    v
+RTE
+    |
+    v
+Application</code></pre>
+
+            <p>
+                Application không cần trực tiếp biết door switch được kết nối vào
+                GPIO pin nào.
+            </p>
+
+            <h2>17. Input path</h2>
+
+            <p>
+                Với một input, dữ liệu thường di chuyển từ hardware lên software.
+            </p>
+
+<pre><code>Hardware
+   |
+   v
+Physical Input
+   |
+   v
+MCAL
+   |
+   v
+ECU Abstraction
+   |
+   v
+RTE
+   |
+   v
+Application</code></pre>
+
+            <p>
+                Mỗi tầng có một trách nhiệm khác nhau trong việc đưa dữ liệu lên tầng trên.
+            </p>
+
+            <h2>18. Output path</h2>
+
+            <p>
+                Với output, hướng dữ liệu ngược lại.
+            </p>
+
+<pre><code>Application
+   |
+   v
+RTE
+   |
+   v
+ECU Abstraction
+   |
+   v
+MCAL
+   |
+   v
+Hardware
+   |
+   v
+Actuator</code></pre>
+
+            <p>
+                Đây là mô hình rất quan trọng khi phân tích một chức năng I/O.
+            </p>
+
+            <h2>19. Input và Output không phải lúc nào cũng trực tiếp</h2>
+
+            <p>
+                Trong hệ thống thực tế, giữa các tầng có thể có thêm các bước xử lý:
+            </p>
+
+            <ul>
+                <li>Filtering.</li>
+                <li>Debouncing.</li>
+                <li>Scaling.</li>
+                <li>Validation.</li>
+                <li>Range checking.</li>
+                <li>Signal conversion.</li>
+            </ul>
+
+            <p>
+                Vì vậy luồng thực tế có thể phức tạp hơn sơ đồ đơn giản.
+            </p>
+
+            <h2>20. Debouncing cho Digital Input</h2>
+
+            <p>
+                Một switch vật lý có thể tạo ra nhiều dao động tín hiệu khi chuyển trạng thái.
+                Nếu Application đọc trực tiếp, nó có thể thấy nhiều lần chuyển đổi ON/OFF.
+            </p>
+
+<pre><code>Physical switch:
+
+ON
+ |¯|_|¯|¯|_|¯|¯¯¯
+        |
+        v
+   Debounce / Filter
+        |
+        v
+Stable ON
+</code></pre>
+
+            <p>
+                Debouncing có thể được thực hiện ở hardware hoặc software tùy thiết kế.
+            </p>
+
+            <h2>21. Filtering cho Analog Input</h2>
+
+            <p>
+                Analog sensor có thể chứa nhiễu. Nếu đưa trực tiếp giá trị raw vào
+                application, kết quả có thể dao động.
+            </p>
+
+<pre><code>Raw Sensor Data
+      |
+      v
+    Filter
+      |
+      v
+Stable / Valid Data
+      |
+      v
+Application</code></pre>
+
+            <p>
+                Filtering giúp application sử dụng dữ liệu ổn định hơn.
+            </p>
+
+            <h2>22. Range Checking</h2>
+
+            <p>
+                Application hoặc một tầng phù hợp có thể kiểm tra xem giá trị nhận được
+                có nằm trong phạm vi hợp lệ hay không.
+            </p>
+
+<pre><code>Input
+  |
+  v
+Range Check
+  |
+  +---- Valid ------> Application
+  |
+  +---- Invalid ----> Error Handling
+</code></pre>
+
+            <p>
+                Ví dụ một sensor nhiệt độ có range thiết kế nhất định. Nếu giá trị nằm
+                ngoài range hợp lý, hệ thống có thể coi đó là lỗi hoặc dữ liệu không hợp lệ.
+            </p>
+
+            <h2>23. ECU Abstraction và Sensor</h2>
+
+            <p>
+                ECU Abstraction giúp tách Application khỏi chi tiết kết nối sensor.
+            </p>
+
+<pre><code>Temperature Sensor
+       |
+       v
+ADC Channel
+       |
+       v
+MCAL
+       |
+       v
+ECU Abstraction
+       |
+       v
+Temperature Signal
+       |
+       v
+Application</code></pre>
+
+            <p>
+                Application tập trung vào việc sử dụng temperature signal thay vì xử lý
+                trực tiếp ADC register.
+            </p>
+
+            <h2>24. ECU Abstraction và Actuator</h2>
+
+            <p>
+                Tương tự với output, Application chỉ cần yêu cầu một hành động ở mức
+                chức năng phù hợp.
+            </p>
+
+<pre><code>Application
+     |
+     | Set actuator command
+     v
+ECU Abstraction
+     |
+     v
+MCAL
+     |
+     v
+PWM / GPIO / Driver
+     |
+     v
+Actuator</code></pre>
+
+            <h2>25. ECU Abstraction và Hardware Independence</h2>
+
+            <p>
+                Một trong những mục tiêu quan trọng của abstraction là tăng khả năng
+                tái sử dụng phần mềm.
+            </p>
+
+            <p>
+                Ví dụ cùng một chức năng:
+            </p>
+
+<pre><code>Application
+     |
+     v
+"Read Vehicle Speed"
+     |
+     +--------------------+
+     |                    |
+     v                    v
+Hardware A            Hardware B
+ADC Channel 1         ADC Channel 5
+     |                    |
+     +--------+-----------+
+              |
+              v
+        Same Application Concept</code></pre>
+
+            <p>
+                Chi tiết mapping hardware có thể thay đổi mà không nhất thiết phải thay
+                đổi toàn bộ functional logic phía trên.
+            </p>
+
+            <h2>26. ECU Abstraction không loại bỏ hoàn toàn hardware dependency</h2>
+
+            <p>
+                Cần hiểu đúng rằng abstraction không có nghĩa là hệ thống hoàn toàn
+                độc lập với hardware.
+            </p>
+
+            <p>
+                Cuối cùng, mỗi tín hiệu vẫn phải được mapping tới một hardware resource
+                cụ thể.
+            </p>
+
+<pre><code>Software Signal
+      |
+      v
+ECU Mapping
+      |
+      v
+Hardware Resource
+      |
+      v
+MCU Peripheral
+      |
+      v
+Physical Pin</code></pre>
+
+            <p>
+                ECU Abstraction giúp che giấu dependency khỏi các tầng không cần biết
+                chi tiết đó, chứ không xóa dependency.
+            </p>
+
+            <h2>27. ECU Abstraction và RTE</h2>
+
+            <p>
+                RTE tạo communication mechanism giữa Application Software và phần còn lại
+                của AUTOSAR system.
+            </p>
+
+            <p>
+                Vì vậy Application thường không trực tiếp gọi ECU Abstraction.
+            </p>
+
+<pre><code>Application
+      |
+      v
+     RTE
+      |
+      v
+BSW / ECU Abstraction
+      |
+      v
+     MCAL
+      |
+      v
+Hardware</code></pre>
+
+            <p>
+                Đây là điểm quan trọng để phân biệt kiến trúc AUTOSAR với một embedded
+                application đơn giản.
+            </p>
+
+            <h2>28. Application không nên biết GPIO pin</h2>
+
+            <p>
+                Ví dụ Application cần bật đèn.
+            </p>
+
+            <p>
+                Một thiết kế tốt không nên có logic kiểu:
+            </p>
+
+<pre><code>if (lamp_request)
+{
+    GPIO_PIN_12 = 1;
+}</code></pre>
+
+            <p>
+                Application nên làm việc ở mức abstraction phù hợp với chức năng.
+            </p>
+
+<pre><code>Application
+     |
+     | Lamp Request
+     v
+     RTE
+     |
+     v
+BSW / I/O abstraction
+     |
+     v
+MCAL
+     |
+     v
+GPIO / PWM
+     |
+     v
+Lamp</code></pre>
+
+            <h2>29. ECU Abstraction và I/O Mapping</h2>
+
+            <p>
+                I/O Mapping là quá trình liên kết giữa software signal và hardware
+                resource tương ứng.
+            </p>
+
+<pre><code>Software Signal
+      |
+      | Mapping
+      v
+ECU I/O
+      |
+      v
+MCAL Channel
+      |
+      v
+MCU Peripheral
+      |
+      v
+Physical Pin</code></pre>
+
+            <p>
+                Khi phân tích một ECU architecture, mapping này rất quan trọng vì nó
+                cho biết một signal cuối cùng đi đến đâu.
+            </p>
+
+            <h2>30. Một ví dụ về I/O Mapping</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Software Signal</th>
+                        <th>Hardware Type</th>
+                        <th>MCU Resource</th>
+                        <th>Chức năng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DoorOpen</td>
+                        <td>Digital Input</td>
+                        <td>GPIO</td>
+                        <td>Đọc trạng thái cửa</td>
+                    </tr>
+                    <tr>
+                        <td>BatteryVoltage</td>
+                        <td>Analog Input</td>
+                        <td>ADC</td>
+                        <td>Đọc điện áp</td>
+                    </tr>
+                    <tr>
+                        <td>LampCommand</td>
+                        <td>Digital/PWM Output</td>
+                        <td>GPIO/PWM</td>
+                        <td>Điều khiển đèn</td>
+                    </tr>
+                    <tr>
+                        <td>MotorSpeedCommand</td>
+                        <td>PWM Output</td>
+                        <td>PWM</td>
+                        <td>Điều khiển motor</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>31. ECU Abstraction và ECU-specific hardware</h2>
+
+            <p>
+                ECU Abstraction đặc biệt hữu ích khi ECU có các thiết bị không hoàn toàn
+                thuộc peripheral chuẩn của MCU.
+            </p>
+
+            <p>
+                Ví dụ ECU có external device:
+            </p>
+
+<pre><code>Application
+     |
+     v
+ECU Abstraction
+     |
+     v
+External Device
+     |
+     v
+SPI / I2C / Other Interface
+     |
+     v
+MCAL
+     |
+     v
+MCU</code></pre>
+
+            <p>
+                Trong trường hợp này, ECU Abstraction có thể giúp che giấu chi tiết
+                của external device khỏi tầng phía trên.
+            </p>
+
+            <h2>32. ECU Abstraction và External Device</h2>
+
+            <p>
+                Không phải mọi thiết bị của ECU đều nằm trực tiếp bên trong MCU.
+            </p>
+
+            <p>
+                Một ECU có thể sử dụng:
+            </p>
+
+            <ul>
+                <li>External sensor.</li>
+                <li>External actuator driver.</li>
+                <li>External ADC.</li>
+                <li>External communication device.</li>
+                <li>Power management device.</li>
+            </ul>
+
+            <p>
+                Đây là một trong những lý do ECU Abstraction tồn tại ở mức ECU thay vì
+                chỉ có MCU abstraction.
+            </p>
+
+            <h2>33. ECU Abstraction và MCAL: một ví dụ</h2>
+
+            <p>
+                Giả sử ECU sử dụng một external sensor kết nối qua SPI.
+            </p>
+
+<pre><code>Temperature Sensor
+       |
+       | SPI
+       v
+MCU SPI Peripheral
+       |
+       v
+MCAL SPI Driver
+       |
+       v
+ECU Abstraction
+       |
+       v
+Temperature Data
+       |
+       v
+Application</code></pre>
+
+            <p>
+                MCAL biết cách giao tiếp với SPI peripheral của MCU.
+                ECU Abstraction có thể cung cấp representation phù hợp hơn cho thiết bị
+                hoặc dữ liệu mà Application sử dụng.
+            </p>
+
+            <h2>34. ECU Abstraction và Complex Device Driver</h2>
+
+            <p>
+                Trong một số trường hợp, chức năng hardware đặc biệt không phù hợp với
+                driver abstraction thông thường.
+            </p>
+
+            <p>
+                Khi đó hệ thống có thể sử dụng Complex Device Driver hoặc cơ chế phù hợp
+                khác.
+            </p>
+
+            <p>
+                Điều quan trọng ở đây là:
+            </p>
+
+<pre><code>Normal hardware access
+       |
+       v
+MCAL / ECU Abstraction
+
+Special / complex hardware behavior
+       |
+       v
+Complex Driver
+</code></pre>
+
+            <p>
+                Không nên cố gắng đưa mọi hardware behavior vào cùng một abstraction
+                đơn giản.
+            </p>
+
+            <h2>35. Input Processing Pipeline</h2>
+
+            <p>
+                Một input trong ECU thực tế có thể trải qua nhiều bước trước khi tới
+                Application.
+            </p>
+
+<pre><code>Physical Input
+      |
+      v
+Electrical Signal
+      |
+      v
+MCU Peripheral
+      |
+      v
+MCAL
+      |
+      v
+ECU Abstraction
+      |
+      v
+Filtering / Validation
+      |
+      v
+Software Signal
+      |
+      v
+RTE
+      |
+      v
+Application</code></pre>
+
+            <p>
+                Khi debug input, cần xác định dữ liệu sai xuất hiện ở tầng nào trong
+                pipeline này.
+            </p>
+
+            <h2>36. Output Processing Pipeline</h2>
+
+            <p>
+                Output cũng có thể có nhiều bước xử lý.
+            </p>
+
+<pre><code>Application
+      |
+      v
+RTE
+      |
+      v
+Software Command
+      |
+      v
+ECU Abstraction
+      |
+      v
+MCAL
+      |
+      v
+MCU Peripheral
+      |
+      v
+Electrical Output
+      |
+      v
+Actuator</code></pre>
+
+            <p>
+                Nếu Application tạo command đúng nhưng actuator không hoạt động,
+                cần kiểm tra từng tầng trong pipeline.
+            </p>
+
+            <h2>37. Ví dụ hoàn chỉnh: Door Open Input</h2>
+
+            <p>
+                Giả sử door switch tạo tín hiệu digital khi cửa mở.
+            </p>
+
+<pre><code>Door Switch
+    |
+    v
+GPIO
+    |
+    v
+MCAL
+    |
+    v
+ECU Abstraction
+    |
+    | DoorOpen = TRUE
+    v
+RTE
+    |
+    v
+Application
+    |
+    | Turn on interior lamp
+    v
+RTE
+    |
+    v
+Output Abstraction
+    |
+    v
+MCAL GPIO
+    |
+    v
+Interior Lamp</code></pre>
+
+            <p>
+                Đây là một ví dụ thể hiện cả input path và output path trong cùng một
+                functional flow.
+            </p>
+
+            <h2>38. Ví dụ hoàn chỉnh: Temperature Sensor</h2>
+
+            <p>
+                Giả sử ECU đọc nhiệt độ từ một analog sensor.
+            </p>
+
+<pre><code>Temperature Sensor
+       |
+       v
+      ADC
+       |
+       v
+     MCAL
+       |
+       v
+ECU Abstraction
+       |
+       v
+Raw / Converted Value
+       |
+       v
+      RTE
+       |
+       v
+Application
+       |
+       +---- Normal
+       |
+       +---- Warning
+       |
+       +---- Fault</code></pre>
+
+            <p>
+                Application không cần xử lý ADC register trực tiếp.
+            </p>
+
+            <h2>39. Ví dụ hoàn chỉnh: PWM Lamp</h2>
+
+            <p>
+                Một ECU có thể sử dụng PWM để điều khiển độ sáng của đèn.
+            </p>
+
+<pre><code>Application
+    |
+    | Brightness = 60%
+    v
+RTE
+    |
+    v
+ECU Abstraction
+    |
+    v
+PWM MCAL
+    |
+    v
+PWM Peripheral
+    |
+    v
+Lamp Driver
+    |
+    v
+Lamp</code></pre>
+
+            <p>
+                Application quan tâm đến yêu cầu độ sáng, trong khi MCAL chịu trách nhiệm
+                tương tác với PWM peripheral.
+            </p>
+
+            <h2>40. ECU Abstraction và Signal Semantics</h2>
+
+            <p>
+                Một software signal có thể mang ý nghĩa cao hơn raw hardware value.
+            </p>
+
+<pre><code>Raw ADC = 512
+     |
+     v
+Converted Voltage
+     |
+     v
+Temperature = 25°C
+     |
+     v
+CabinTemperature</code></pre>
+
+            <p>
+                Khi thiết kế architecture, cần xác định rõ tầng nào chịu trách nhiệm
+                chuyển đổi và tầng nào chịu trách nhiệm sử dụng semantic của signal.
+            </p>
+
+            <h2>41. ECU Abstraction không nên chứa toàn bộ Application Logic</h2>
+
+            <p>
+                ECU Abstraction không nên trở thành nơi chứa tất cả logic của Application.
+            </p>
+
+            <p>
+                Ví dụ logic:
+            </p>
+
+<pre><code>if (temperature > threshold)
+{
+    turn_on_warning();
+}</code></pre>
+
+            <p>
+                thường thuộc functional logic của Application hoặc một software component
+                phù hợp, không phải bản thân hardware abstraction.
+            </p>
+
+            <p>
+                ECU Abstraction nên tập trung vào việc cung cấp interface phù hợp với
+                hardware/device.
+            </p>
+
+            <h2>42. Separation of Concerns</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tầng</th>
+                        <th>Trách nhiệm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Application</td>
+                        <td>Vehicle/functional logic</td>
+                    </tr>
+                    <tr>
+                        <td>RTE</td>
+                        <td>Communication giữa Application và AUTOSAR environment</td>
+                    </tr>
+                    <tr>
+                        <td>ECU Abstraction</td>
+                        <td>Abstraction của ECU hardware/device</td>
+                    </tr>
+                    <tr>
+                        <td>MCAL</td>
+                        <td>Truy cập MCU peripheral</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware</td>
+                        <td>Thực hiện electrical/physical operation</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>43. Debugging: Input luôn bằng 0</h2>
+
+            <p>
+                Giả sử Application luôn đọc Digital Input bằng 0 mặc dù switch đã bật.
+            </p>
+
+            <p>
+                Có thể debug theo chuỗi:
+            </p>
+
+<pre><code>Switch
+  |
+  v
+Physical Signal?
+  |
+  v
+GPIO?
+  |
+  v
+MCAL?
+  |
+  v
+ECU Abstraction?
+  |
+  v
+RTE?
+  |
+  v
+Application?</code></pre>
+
+            <p>
+                Mục tiêu là tìm tầng đầu tiên mà giá trị bắt đầu sai.
+            </p>
+
+            <h2>44. Debugging: ADC value sai</h2>
+
+            <p>
+                Nếu Application nhận nhiệt độ sai, không nên chỉ kiểm tra Application.
+            </p>
+
+            <p>
+                Có thể kiểm tra:
+            </p>
+
+            <ol>
+                <li>Sensor có tạo tín hiệu đúng không?</li>
+                <li>Electrical signal có đúng không?</li>
+                <li>ADC có đọc đúng raw value không?</li>
+                <li>MCAL có trả dữ liệu đúng không?</li>
+                <li>ECU Abstraction có mapping đúng không?</li>
+                <li>Scaling có đúng không?</li>
+                <li>RTE có truyền đúng không?</li>
+                <li>Application có xử lý đúng không?</li>
+            </ol>
+
+            <h2>45. Debugging: Output không hoạt động</h2>
+
+            <p>
+                Nếu Application yêu cầu bật actuator nhưng actuator không hoạt động:
+            </p>
+
+<pre><code>Application Command
+       |
+       v
+RTE
+       |
+       v
+ECU Abstraction
+       |
+       v
+MCAL
+       |
+       v
+MCU Peripheral
+       |
+       v
+Electrical Output
+       |
+       v
+Actuator</code></pre>
+
+            <p>
+                Có thể đo hoặc quan sát signal tại từng điểm để tìm vị trí mà output
+                không còn đúng.
+            </p>
+
+            <h2>46. Hardware Debug và Software Debug</h2>
+
+            <p>
+                I/O debugging thường cần kết hợp cả hardware và software.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Loại kiểm tra</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Hardware</td>
+                        <td>Voltage, wiring, sensor, actuator</td>
+                    </tr>
+                    <tr>
+                        <td>MCU</td>
+                        <td>GPIO, ADC, PWM peripheral</td>
+                    </tr>
+                    <tr>
+                        <td>MCAL</td>
+                        <td>Driver behavior</td>
+                    </tr>
+                    <tr>
+                        <td>BSW</td>
+                        <td>ECU abstraction / signal handling</td>
+                    </tr>
+                    <tr>
+                        <td>RTE</td>
+                        <td>Signal communication</td>
+                    </tr>
+                    <tr>
+                        <td>Application</td>
+                        <td>Functional logic</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>47. ECU Abstraction và Portability</h2>
+
+            <p>
+                Portability là một trong những lợi ích lớn của abstraction.
+            </p>
+
+            <p>
+                Nếu hardware được thay đổi nhưng software interface phía trên vẫn được
+                giữ ổn định, phần Application có thể cần ít thay đổi hơn.
+            </p>
+
+<pre><code>              Application
+                   |
+             Stable Interface
+                   |
+          +--------+--------+
+          |                 |
+          v                 v
+       ECU A             ECU B
+     Hardware           Hardware
+        mapping           mapping</code></pre>
+
+            <h2>48. ECU Abstraction và Reusability</h2>
+
+            <p>
+                Reusability cũng liên quan chặt chẽ với portability.
+            </p>
+
+            <p>
+                Một functional software component có thể được tái sử dụng trên nhiều
+                ECU nếu interface và behavior phù hợp, trong khi hardware mapping
+                được thay đổi bên dưới.
+            </p>
+
+            <h2>49. Khi nào abstraction trở nên quan trọng?</h2>
+
+            <p>
+                ECU Abstraction đặc biệt quan trọng khi:
+            </p>
+
+            <ul>
+                <li>ECU có nhiều loại hardware.</li>
+                <li>Platform có nhiều biến thể.</li>
+                <li>Hardware có thể thay đổi.</li>
+                <li>Software cần được reuse.</li>
+                <li>Nhiều developer cùng làm việc trên các tầng khác nhau.</li>
+                <li>Architecture cần separation of concerns rõ ràng.</li>
+            </ul>
+
+            <h2>50. ECU Abstraction và Hardware Variant</h2>
+
+            <p>
+                Trong một dòng sản phẩm, cùng một chức năng có thể được triển khai trên
+                nhiều hardware variant.
+            </p>
+
+<pre><code>Same Function
+     |
+     +------------------+
+     |                  |
+     v                  v
+Variant A            Variant B
+GPIO A               GPIO B
+ADC A                ADC B
+PWM A                PWM B
+     |                  |
+     +---------+--------+
+               |
+               v
+        Same functional concept</code></pre>
+
+            <p>
+                Abstraction giúp architecture quản lý sự khác biệt này tốt hơn.
+            </p>
+
+            <h2>51. ECU Abstraction và Testing</h2>
+
+            <p>
+                Abstraction cũng hỗ trợ việc kiểm thử vì functional logic có thể được
+                tách khỏi hardware-specific implementation.
+            </p>
+
+            <p>
+                Ví dụ Application cần kiểm tra:
+            </p>
+
+<pre><code>DoorOpen = TRUE
+       |
+       v
+LampCommand = ON</code></pre>
+
+            <p>
+                Test có thể tập trung vào functional behavior mà không nhất thiết phải
+                phụ thuộc hoàn toàn vào physical switch hoặc lamp thật trong mọi trường hợp.
+            </p>
+
+            <h2>52. Bench Test và ECU Abstraction</h2>
+
+            <p>
+                Trong bench testing, engineer có thể kiểm tra cả software signal và
+                physical signal.
+            </p>
+
+<pre><code>Test Input
+    |
+    v
+ECU I/O
+    |
+    v
+Application
+    |
+    v
+Output
+    |
+    v
+Measurement</code></pre>
+
+            <p>
+                Điều này giúp xác định vấn đề nằm ở functional logic hay hardware interface.
+            </p>
+
+            <h2>53. ECU Abstraction và Simulation</h2>
+
+            <p>
+                Khi hệ thống được mô phỏng, abstraction giúp giảm sự phụ thuộc trực tiếp
+                vào physical hardware.
+            </p>
+
+            <p>
+                Có thể thay input thật bằng simulated input:
+            </p>
+
+<pre><code>Real Sensor       Simulated Sensor
+     |                   |
+     +---------+---------+
+               |
+               v
+        Software Interface
+               |
+               v
+          Application</code></pre>
+
+            <p>
+                Đây là một trong những lý do abstraction hữu ích cho việc testing và
+                validation.
+            </p>
+
+            <h2>54. ECU Abstraction và Integration</h2>
+
+            <p>
+                Khi tích hợp một ECU, cần kiểm tra cả mapping giữa software và hardware.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+<pre><code>Requirement
+    |
+    v
+Software Signal
+    |
+    v
+ECU Mapping
+    |
+    v
+MCAL Channel
+    |
+    v
+Physical Pin
+    |
+    v
+Hardware Device</code></pre>
+
+            <p>
+                Nếu một mapping sai, Application có thể hoàn toàn đúng nhưng hệ thống
+                vật lý vẫn không hoạt động.
+            </p>
+
+            <h2>55. Một ví dụ tổng hợp: Exterior Lighting</h2>
+
+            <p>
+                Giả sử ECU điều khiển đèn ngoài dựa trên switch và một yêu cầu độ sáng.
+            </p>
+
+<pre><code>Light Switch
+     |
+     v
+Digital Input
+     |
+     v
+MCAL
+     |
+     v
+ECU Abstraction
+     |
+     v
+RTE
+     |
+     v
+Lighting Application
+     |
+     | Brightness command
+     v
+RTE
+     |
+     v
+ECU Abstraction
+     |
+     v
+PWM MCAL
+     |
+     v
+PWM Peripheral
+     |
+     v
+Lamp Driver
+     |
+     v
+Exterior Lamp</code></pre>
+
+            <p>
+                Đây là một ví dụ điển hình về việc ECU Abstraction kết nối Application
+                với hardware mà không để Application phụ thuộc trực tiếp vào peripheral.
+            </p>
+
+            <h2>56. Phân biệt ba khái niệm quan trọng</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Câu hỏi cần đặt ra</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MCAL</td>
+                        <td>Làm thế nào để truy cập MCU peripheral?</td>
+                    </tr>
+                    <tr>
+                        <td>ECU Abstraction</td>
+                        <td>Làm thế nào để biểu diễn/truy cập thiết bị hoặc I/O ở mức ECU?</td>
+                    </tr>
+                    <tr>
+                        <td>Application</td>
+                        <td>ECU cần thực hiện chức năng gì?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>57. Một cách nhớ đơn giản</h2>
+
+<pre><code>Application
+"WHAT should the ECU do?"
+          |
+          v
+ECU Abstraction
+"HOW is the ECU hardware represented?"
+          |
+          v
+MCAL
+"HOW do I access the MCU?"
+          |
+          v
+Hardware
+"Physical operation"</code></pre>
+
+            <p>
+                Đây là cách tư duy rất hữu ích khi phân tích AUTOSAR architecture.
+            </p>
+
+            <h2>58. Checklist phân tích ECU I/O</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>Nội dung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Signal</td>
+                        <td>Tín hiệu I/O là gì?</td>
+                    </tr>
+                    <tr>
+                        <td>Direction</td>
+                        <td>Input hay Output?</td>
+                    </tr>
+                    <tr>
+                        <td>Type</td>
+                        <td>Digital, Analog, PWM hay loại khác?</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware</td>
+                        <td>Tín hiệu kết nối với thiết bị nào?</td>
+                    </tr>
+                    <tr>
+                        <td>MCU Resource</td>
+                        <td>GPIO, ADC, PWM hoặc peripheral nào?</td>
+                    </tr>
+                    <tr>
+                        <td>MCAL</td>
+                        <td>Driver nào truy cập hardware?</td>
+                    </tr>
+                    <tr>
+                        <td>ECU Abstraction</td>
+                        <td>Abstraction nào đại diện cho hardware?</td>
+                    </tr>
+                    <tr>
+                        <td>RTE</td>
+                        <td>Signal đi tới Application như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Conversion</td>
+                        <td>Có scaling/filtering/debounce không?</td>
+                    </tr>
+                    <tr>
+                        <td>Validation</td>
+                        <td>Giá trị invalid được xử lý thế nào?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>59. Checklist debugging I/O</h2>
+
+            <ol>
+                <li>Kiểm tra physical signal.</li>
+                <li>Kiểm tra hardware connection.</li>
+                <li>Kiểm tra MCU peripheral.</li>
+                <li>Kiểm tra MCAL.</li>
+                <li>Kiểm tra ECU Abstraction.</li>
+                <li>Kiểm tra signal conversion/filtering.</li>
+                <li>Kiểm tra RTE communication.</li>
+                <li>Kiểm tra Application logic.</li>
+            </ol>
+
+            <p>
+                Nguyên tắc quan trọng là tìm <strong>điểm đầu tiên mà dữ liệu trở nên sai</strong>.
+                Đây thường là cách nhanh hơn so với việc kiểm tra toàn bộ code một cách
+                không có cấu trúc.
+            </p>
+
+            <h2>60. Các khái niệm cần nhớ</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ECU Abstraction</td>
+                        <td>Lớp abstraction phần cứng ở mức ECU.</td>
+                    </tr>
+                    <tr>
+                        <td>MCAL</td>
+                        <td>Driver truy cập MCU peripheral.</td>
+                    </tr>
+                    <tr>
+                        <td>I/O</td>
+                        <td>Interface giữa software và physical world.</td>
+                    </tr>
+                    <tr>
+                        <td>Digital Input</td>
+                        <td>Input dạng trạng thái logic.</td>
+                    </tr>
+                    <tr>
+                        <td>Digital Output</td>
+                        <td>Output dạng trạng thái logic.</td>
+                    </tr>
+                    <tr>
+                        <td>Analog Input</td>
+                        <td>Input có giá trị liên tục được số hóa.</td>
+                    </tr>
+                    <tr>
+                        <td>PWM</td>
+                        <td>Cơ chế tạo output điều chế theo duty cycle.</td>
+                    </tr>
+                    <tr>
+                        <td>I/O Mapping</td>
+                        <td>Liên kết software signal với hardware resource.</td>
+                    </tr>
+                    <tr>
+                        <td>Input Path</td>
+                        <td>Hardware → MCAL → ECU Abstraction → RTE → Application.</td>
+                    </tr>
+                    <tr>
+                        <td>Output Path</td>
+                        <td>Application → RTE → ECU Abstraction → MCAL → Hardware.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>61. Tóm tắt</h2>
+
+            <div class="note">
+                <strong>ECU Abstraction</strong> là lớp quan trọng trong Basic Software,
+                nằm phía trên MCAL và giúp các tầng phía trên làm việc với ECU hardware
+                theo cách trừu tượng hơn.
+                <br><br>
+                Cần phân biệt rõ:
+                <strong>MCAL</strong> tập trung vào việc truy cập MCU peripheral,
+                trong khi <strong>ECU Abstraction</strong> giúp biểu diễn và truy cập
+                hardware/device ở mức ECU.
+                <br><br>
+                Với I/O, có thể nhớ hai luồng cơ bản:
+                <br><br>
+                <strong>Input:</strong>
+                Hardware → MCAL → ECU Abstraction → RTE → Application
+                <br><br>
+                <strong>Output:</strong>
+                Application → RTE → ECU Abstraction → MCAL → Hardware
+                <br><br>
+                Trong hệ thống thực tế, luồng này có thể có thêm filtering, debouncing,
+                scaling, validation và các bước xử lý khác.
+                <br><br>
+                Giá trị lớn nhất của ECU Abstraction là giúp giảm hardware dependency,
+                tăng khả năng reuse, portability và separation of concerns. Khi debug
+                một vấn đề I/O, cần kiểm tra từ physical signal qua MCU, MCAL, ECU
+                Abstraction, RTE cho đến Application để xác định chính xác tầng gây lỗi.
+            </div>
+
+            <div class="pager">
+                <a href="lesson-19.html">← Bài trước</a>
+                <a href="lesson-21.html">Bài tiếp theo →</a>
+            </div>
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

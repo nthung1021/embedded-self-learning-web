@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 1: AUTOSAR | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html" class="active" aria-current="page">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+            </aside>
+
+            <article>
+                <h1>Bài 1: AUTOSAR</h1>
+
+                <p>
+                    <strong>AUTOSAR (AUTomotive Open System ARchitecture)</strong> là một chuẩn kiến trúc phần mềm
+                    mở cho ECU ô tô, do một liên minh các hãng xe, nhà cung cấp và công ty công cụ cùng xây dựng.
+                    Chuẩn này quy định cách tổ chức phần mềm thành các lớp, cách các thành phần giao tiếp với nhau
+                    và cách mô tả, cấu hình hệ thống, để phần mềm không bị gắn chặt với một loại phần cứng cụ thể.
+                </p>
+                <p>
+                    Nói ngắn gọn, AUTOSAR cho phép các nhà sản xuất khác nhau viết phần mềm theo cùng một "ngôn ngữ chung",
+                    rồi ghép lại với nhau trong cùng một chiếc xe.
+                </p>
+
+                <h2>1. Vì sao cần AUTOSAR?</h2>
+                <p>
+                    Một chiếc xe hiện đại có từ hàng chục đến hơn một trăm ECU, mỗi ECU chạy hàng triệu dòng code.
+                    Trước khi có AUTOSAR, mỗi hãng xe và mỗi nhà cung cấp thường tự viết phần mềm riêng cho từng loại
+                    vi điều khiển. Phần mềm khó tái sử dụng, khó tích hợp và chi phí phát triển tăng nhanh.
+                </p>
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Phần mềm ECU truyền thống</th>
+                        <th>Phần mềm theo AUTOSAR</th>
+                    </tr>
+                    <tr>
+                        <td>Phụ thuộc phần cứng</td>
+                        <td>Code gắn chặt với vi điều khiển</td>
+                        <td>Tách khỏi phần cứng nhờ các lớp trừu tượng</td>
+                    </tr>
+                    <tr>
+                        <td>Tái sử dụng</td>
+                        <td>Thấp, thường phải viết lại</td>
+                        <td>Cao, chuyển phần mềm giữa các ECU</td>
+                    </tr>
+                    <tr>
+                        <td>Giao diện giữa các module</td>
+                        <td>Mỗi hãng tự định nghĩa</td>
+                        <td>Chuẩn hóa chung</td>
+                    </tr>
+                    <tr>
+                        <td>Tích hợp từ nhiều nhà cung cấp</td>
+                        <td>Phức tạp, dễ xung đột</td>
+                        <td>Dễ hơn vì cùng chuẩn</td>
+                    </tr>
+                    <tr>
+                        <td>Cấu hình</td>
+                        <td>Chủ yếu viết tay</td>
+                        <td>Dùng công cụ, sinh code tự động</td>
+                    </tr>
+                </table>
+
+                <h2>2. Lịch sử ngắn gọn</h2>
+                <ul>
+                    <li><strong>Đầu những năm 2000 (khoảng 2003):</strong> các hãng xe lớn và nhà cung cấp cấp 1 của châu Âu
+                        cùng thành lập liên minh AUTOSAR.</li>
+                    <li><strong>Giai đoạn đầu:</strong> xây dựng các phiên bản đầu của Classic Platform, định nghĩa kiến trúc
+                        phân lớp và các module phần mềm cơ bản.</li>
+                    <li><strong>Những năm 2010:</strong> Classic Platform trưởng thành và được dùng rộng rãi trên xe sản xuất hàng loạt.</li>
+                    <li><strong>Khoảng 2017:</strong> ra mắt <strong>Adaptive Platform</strong> cho các ECU hiệu năng cao
+                        (lái tự động, kết nối, cập nhật qua mạng).</li>
+                    <li><strong>Từ 2019:</strong> các nền tảng được phát hành đồng bộ, đặt tên theo năm và tháng
+                        (ví dụ <code>R22-11</code>).</li>
+                </ul>
+                <div class="note">
+                    Số hiệu phiên bản chính xác và danh sách thành viên thay đổi theo thời gian.
+                    Khi làm dự án thật, bạn nên đối chiếu với trang chính thức của AUTOSAR.
+                </div>
+
+                <h2>3. Ba thành phần của chuẩn AUTOSAR</h2>
+                <table>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Mô tả ngắn</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Classic Platform (CP)</strong></td>
+                        <td>Dành cho ECU nhúng truyền thống, yêu cầu thời gian thực chặt, cấu hình tĩnh</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Adaptive Platform (AP)</strong></td>
+                        <td>Dành cho ECU hiệu năng cao, hệ điều hành kiểu POSIX, ứng dụng C++ và giao tiếp hướng dịch vụ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Foundation</strong></td>
+                        <td>Các đặc tả dùng chung cho cả hai nền tảng để chúng tương thích với nhau</td>
+                    </tr>
+                </table>
+                <p>Hai bài tiếp theo sẽ so sánh chi tiết hơn Classic Platform và Adaptive Platform.</p>
+
+                <h2>4. Ý tưởng cốt lõi: kiến trúc phân lớp</h2>
+                <p>
+                    AUTOSAR Classic chia phần mềm ECU thành các lớp. Ứng dụng nằm trên cùng, phần cứng nằm dưới cùng,
+                    và ở giữa là các lớp che giấu sự khác biệt của phần cứng.
+                </p>
+                <svg viewBox="0 0 600 340" role="img" aria-label="Kiến trúc phân lớp AUTOSAR Classic: Application Layer, RTE, Basic Software và Microcontroller"
+                    style="width:100%;height:auto;max-width:640px">
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="20" y="10" width="560" height="80" rx="6" fill="rgba(20,80,107,.18)" />
+                        <rect x="20" y="100" width="560" height="36" rx="6" fill="rgba(224,168,0,.25)" />
+                        <rect x="20" y="146" width="560" height="140" rx="6" fill="rgba(46,139,87,.2)" />
+                        <rect x="20" y="296" width="560" height="36" rx="6" fill="rgba(128,128,128,.2)" />
+                    </g>
+                    <g fill="none" stroke="currentColor">
+                        <rect x="50" y="42" width="140" height="38" rx="4" />
+                        <rect x="230" y="42" width="140" height="38" rx="4" />
+                        <rect x="410" y="42" width="140" height="38" rx="4" />
+                        <rect x="40" y="180" width="130" height="90" rx="4" />
+                        <rect x="185" y="180" width="130" height="90" rx="4" />
+                        <rect x="330" y="180" width="130" height="90" rx="4" />
+                        <rect x="475" y="180" width="95" height="90" rx="4" />
+                    </g>
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="300" y="30" font-weight="bold">Application Layer</text>
+                        <text x="120" y="66">SWC A</text>
+                        <text x="300" y="66">SWC B</text>
+                        <text x="480" y="66">SWC C</text>
+                        <text x="300" y="123" font-weight="bold">RTE (Runtime Environment)</text>
+                        <text x="300" y="166" font-weight="bold">Basic Software (BSW)</text>
+                        <text x="105" y="222">Services</text><text x="105" y="240">Layer</text>
+                        <text x="250" y="222">ECU</text><text x="250" y="240">Abstraction</text>
+                        <text x="395" y="222">MCAL</text>
+                        <text x="522" y="222">Complex</text><text x="522" y="240">Drivers</text>
+                        <text x="300" y="319" font-weight="bold">Microcontroller (phần cứng)</text>
+                    </g>
+                </svg>
+                <ul>
+                    <li><strong>Application Layer:</strong> chứa các Software Component (SWC) thực hiện chức năng của xe,
+                        ví dụ điều khiển cửa sổ, tính vận tốc.</li>
+                    <li><strong>RTE:</strong> lớp trung gian kết nối các SWC với nhau và với Basic Software.</li>
+                    <li><strong>Basic Software (BSW):</strong> gồm hệ điều hành, các stack giao tiếp (CAN, LIN, Ethernet),
+                        quản lý bộ nhớ, chẩn đoán và các driver phần cứng.</li>
+                    <li><strong>Microcontroller:</strong> phần cứng thực tế mà BSW điều khiển.</li>
+                </ul>
+
+                <h2>5. Các khái niệm cơ bản cần nhớ</h2>
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>ECU</td>
+                        <td>Bộ điều khiển điện tử, gồm vi điều khiển và phần mềm</td>
+                    </tr>
+                    <tr>
+                        <td>SWC (Software Component)</td>
+                        <td>Đơn vị phần mềm ứng dụng, đóng gói một chức năng</td>
+                    </tr>
+                    <tr>
+                        <td>Runnable</td>
+                        <td>Hàm C bên trong SWC, được hệ điều hành lập lịch để chạy</td>
+                    </tr>
+                    <tr>
+                        <td>RTE</td>
+                        <td>Lớp được sinh tự động, đưa dữ liệu qua lại giữa các SWC và BSW</td>
+                    </tr>
+                    <tr>
+                        <td>BSW</td>
+                        <td>Phần mềm nền tảng, cung cấp dịch vụ cho ứng dụng</td>
+                    </tr>
+                    <tr>
+                        <td>MCAL</td>
+                        <td>Lớp driver thấp nhất, truy cập trực tiếp phần cứng vi điều khiển</td>
+                    </tr>
+                    <tr>
+                        <td>ARXML</td>
+                        <td>Định dạng file XML mô tả hệ thống và cấu hình AUTOSAR</td>
+                    </tr>
+                </table>
+
+                <h2>6. AUTOSAR giúp gì cho lập trình viên?</h2>
+                <p>
+                    Ứng dụng không gọi thẳng vào phần cứng mà làm việc qua RTE. Ví dụ dưới đây là một runnable minh họa
+                    (tên port và dữ liệu mang tính giả định):
+                </p>
+<pre><code>void Swc_SpeedDisplay_Run(void)
+{
+    uint16 speed;
+
+    /* Đọc tốc độ xe qua RTE, không quan tâm dữ liệu đến từ CAN hay cảm biến */
+    if (Rte_Read_SpeedIn_VehicleSpeed(&amp;speed) == RTE_E_OK)
+    {
+        Rte_Write_DisplayOut_Speed(speed);
+    }
+}</code></pre>
+                <div class="note">
+                    Nếu một ngày tín hiệu tốc độ được chuyển từ CAN sang Ethernet, đoạn code trên có thể giữ nguyên.
+                    Chỉ phần cấu hình và Basic Software bên dưới thay đổi.
+                </div>
+
+                <h2>7. Luồng làm việc ở mức tổng quan</h2>
+                <ol>
+                    <li><strong>Thiết kế:</strong> mô tả các SWC, port và giao diện giữa chúng.</li>
+                    <li><strong>Cấu hình hệ thống:</strong> gán SWC vào ECU, định nghĩa tín hiệu, bản tin CAN, task, ngắt.</li>
+                    <li><strong>Cấu hình BSW:</strong> thiết lập từng module bằng công cụ cấu hình.</li>
+                    <li><strong>Sinh code:</strong> công cụ tạo ra RTE và các file cấu hình dưới dạng code C.</li>
+                    <li><strong>Viết logic và build:</strong> viết phần thân runnable, biên dịch, nạp vào ECU.</li>
+                </ol>
+                <p>Quy trình này (methodology) cùng định dạng ARXML sẽ được học chi tiết ở Bài 8.</p>
+
+                <h2>8. AUTOSAR liên quan gì đến CAN?</h2>
+                <p>
+                    Giao tiếp CAN trong AUTOSAR được thực hiện bởi một chuỗi module trong Basic Software:
+                    <code>Com</code>, <code>PduR</code>, <code>CanIf</code> và <code>Can</code> driver.
+                    Nếu bạn đã học môn CAN, đây chính là phần "CAN Stack" nằm trong lớp BSW của kiến trúc ở mục 4.
+                </p>
+
+                <h2>9. Lợi ích và thách thức</h2>
+                <table>
+                    <tr>
+                        <th>Lợi ích</th>
+                        <th>Thách thức</th>
+                    </tr>
+                    <tr>
+                        <td>Tái sử dụng phần mềm giữa các dự án và ECU</td>
+                        <td>Đường học dốc, nhiều khái niệm và tài liệu</td>
+                    </tr>
+                    <tr>
+                        <td>Giao diện chuẩn, dễ tích hợp nhiều nhà cung cấp</td>
+                        <td>Phụ thuộc nhiều vào công cụ cấu hình</td>
+                    </tr>
+                    <tr>
+                        <td>Dễ mở rộng và bảo trì</td>
+                        <td>Có thêm chi phí về bộ nhớ và thời gian CPU</td>
+                    </tr>
+                    <tr>
+                        <td>Hỗ trợ an toàn chức năng và chẩn đoán theo chuẩn</td>
+                        <td>Cấu hình sai khó phát hiện nếu không hiểu kiến trúc</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+                <div class="note">
+                    AUTOSAR là chuẩn kiến trúc phần mềm mở cho ECU ô tô, giúp tách ứng dụng khỏi phần cứng bằng
+                    các lớp Application, RTE, Basic Software và MCAL. Chuẩn gồm Classic Platform, Adaptive Platform
+                    và Foundation. Mục tiêu chính là tái sử dụng, chuẩn hóa giao diện và dễ tích hợp giữa nhiều nhà
+                    cung cấp trong cùng một chiếc xe.
+                </div>
+
+                <div class="pager">
+                    <span></span>
+                    <a class="btn" href="lesson-2.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

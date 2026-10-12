@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 23: Bật và Tắt Interrupts | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html" class="active">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 23: Bật và Tắt Interrupts</h1>
+
+                <p>
+                    Trong một CAN Controller, nhiều sự kiện có thể xảy ra bất đồng bộ với luồng
+                    thực thi chính của CPU, chẳng hạn như <strong>CAN frame đã được nhận</strong>,
+                    <strong>transmission hoàn tất</strong> hoặc <strong>CAN error xảy ra</strong>.
+                    Interrupt cho phép CAN hardware thông báo cho CPU khi những sự kiện này xảy ra.
+                </p>
+
+                <div class="note">
+                    <strong>Enable and Disable Interrupts</strong> là việc kiểm soát xem một nguồn
+                    interrupt có được phép gửi yêu cầu đến CPU hay không. Trong AUTOSAR CAN Driver,
+                    interrupt configuration cần phối hợp với CAN Controller, Interrupt Controller,
+                    OS và cơ chế xử lý của driver.
+                </div>
+
+                <h2>1. Interrupt là gì?</h2>
+
+                <p>
+                    Interrupt là cơ chế cho phép hardware hoặc một peripheral thông báo cho CPU rằng
+                    một sự kiện cần được xử lý.
+                </p>
+
+                <pre><code>CPU đang thực hiện task
+        │
+        │
+        ▼
+   CAN Controller
+        │
+        │ Event xảy ra
+        ▼
+     Interrupt
+        │
+        ▼
+       CPU
+        │
+        ▼
+ Interrupt Service Routine
+        │
+        ▼
+   Xử lý CAN Event</code></pre>
+
+                <p>
+                    Thay vì CPU phải liên tục kiểm tra CAN Controller, hardware có thể tạo interrupt
+                    khi một sự kiện cụ thể xảy ra.
+                </p>
+
+                <h2>2. Tại sao CAN cần Interrupt?</h2>
+
+                <p>
+                    CAN communication diễn ra độc lập với thời điểm CPU đang thực hiện application
+                    hoặc một task khác.
+                </p>
+
+                <p>
+                    Ví dụ, CPU đang xử lý một task:
+                </p>
+
+                <pre><code>CPU
+ │
+ ├── Task A
+ │
+ ├── Task B
+ │
+ └── Task C
+
+Trong lúc đó:
+
+CAN Controller
+      │
+      ▼
+Receive CAN Frame
+      │
+      ▼
+CAN Interrupt
+      │
+      ▼
+CPU xử lý CAN event</code></pre>
+
+                <p>
+                    Interrupt giúp hệ thống phản ứng với CAN event mà không cần CPU liên tục polling
+                    trạng thái hardware.
+                </p>
+
+                <h2>3. Interrupt và Polling</h2>
+
+                <p>
+                    Hai cách phổ biến để software phát hiện event từ CAN Controller là
+                    <strong>interrupt</strong> và <strong>polling</strong>.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Interrupt</th>
+                            <th>Polling</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hardware chủ động thông báo CPU.</td>
+                            <td>Software chủ động kiểm tra hardware.</td>
+                        </tr>
+                        <tr>
+                            <td>Phản ứng nhanh với event.</td>
+                            <td>Có thể phụ thuộc chu kỳ polling.</td>
+                        </tr>
+                        <tr>
+                            <td>Giảm việc CPU phải kiểm tra liên tục.</td>
+                            <td>Có thể đơn giản hơn trong một số thiết kế.</td>
+                        </tr>
+                        <tr>
+                            <td>Cần cấu hình interrupt.</td>
+                            <td>Cần periodic task/main function.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>4. CAN Interrupt Sources</h2>
+
+                <p>
+                    CAN Controller có thể cung cấp nhiều nguồn interrupt khác nhau tùy hardware.
+                    Các nhóm thường gặp gồm:
+                </p>
+
+                <ul>
+                    <li>Receive interrupt.</li>
+                    <li>Transmit interrupt.</li>
+                    <li>Error interrupt.</li>
+                    <li>Bus status/state change interrupt.</li>
+                    <li>Wake-up interrupt.</li>
+                    <li>FIFO hoặc message buffer related interrupt.</li>
+                </ul>
+
+                <pre><code>                 CAN Controller
+                       │
+       ┌───────────────┼───────────────┐
+       │               │               │
+       ▼               ▼               ▼
+   Receive          Transmit          Error
+  Interrupt        Interrupt        Interrupt
+       │               │               │
+       └───────────────┼───────────────┘
+                       ▼
+              Interrupt Controller
+                       │
+                       ▼
+                       CPU</code></pre>
+
+                <div class="note">
+                    Tên interrupt và cách phân chia interrupt source phụ thuộc CAN IP của MCU.
+                    Không nên giả định mọi MCU có cùng các interrupt flag hoặc cùng cấu trúc vector.
+                </div>
+
+                <h2>5. Enable Interrupt là gì?</h2>
+
+                <p>
+                    <strong>Enable Interrupt</strong> nghĩa là cho phép một nguồn interrupt được
+                    truyền từ peripheral đến CPU hoặc đến tầng interrupt controller theo kiến trúc
+                    của MCU.
+                </p>
+
+                <pre><code>CAN Event
+   │
+   ▼
+Interrupt Flag
+   │
+   ▼
+Interrupt Enable = 1
+   │
+   ▼
+Interrupt Controller
+   │
+   ▼
+CPU
+   │
+   ▼
+ISR</code></pre>
+
+                <p>
+                    Khi interrupt source được enable và event tương ứng xảy ra, CPU có thể nhận
+                    interrupt request.
+                </p>
+
+                <h2>6. Disable Interrupt là gì?</h2>
+
+                <p>
+                    <strong>Disable Interrupt</strong> nghĩa là tạm thời hoặc có chủ đích ngăn một
+                    nguồn interrupt tạo yêu cầu xử lý tới CPU.
+                </p>
+
+                <pre><code>CAN Event
+   │
+   ▼
+Interrupt Flag
+   │
+   ▼
+Interrupt Enable = 0
+   │
+   X
+   │
+   ▼
+CPU không nhận interrupt từ source này</code></pre>
+
+                <div class="note">
+                    Disable một interrupt source không nhất thiết có nghĩa là event hardware không
+                    xảy ra. Event/flag có thể vẫn được hardware ghi nhận tùy thiết kế peripheral.
+                    Cách flag được giữ, clear hoặc xử lý phụ thuộc CAN Controller.
+                </div>
+
+                <h2>7. Interrupt Enable và Interrupt Flag khác nhau</h2>
+
+                <p>
+                    Đây là điểm rất quan trọng khi làm việc với peripheral registers.
+                    <strong>Enable bit</strong> và <strong>status/flag bit</strong> không phải cùng một thứ.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Interrupt Flag</td>
+                            <td>Cho biết một event đã xảy ra hoặc đang pending theo thiết kế hardware.</td>
+                        </tr>
+                        <tr>
+                            <td>Interrupt Enable</td>
+                            <td>Cho phép source đó tạo interrupt request.</td>
+                        </tr>
+                        <tr>
+                            <td>Interrupt Priority</td>
+                            <td>Quyết định mức ưu tiên xử lý khi MCU có nhiều interrupt.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>8. Ví dụ về Enable và Flag</h2>
+
+                <pre><code>Receive Event xảy ra
+        │
+        ▼
+RX Flag = 1
+        │
+        ├───────────────┐
+        │               │
+RX Interrupt       RX Interrupt
+Enabled = 1        Enabled = 0
+        │               │
+        ▼               ▼
+Interrupt         Không tạo
+Request           Interrupt Request</code></pre>
+
+                <p>
+                    Vì vậy, việc không nhận được interrupt không nhất thiết có nghĩa là CAN hardware
+                    không nhận được frame.
+                </p>
+
+                <h2>9. CAN Receive Interrupt</h2>
+
+                <p>
+                    Khi CAN Controller nhận được một frame phù hợp với cấu hình receive object,
+                    hardware có thể tạo receive interrupt.
+                </p>
+
+                <pre><code>CAN Bus
+   │
+   ▼
+CAN Controller
+   │
+   ▼
+Receive Message
+   │
+   ▼
+RX Buffer / FIFO
+   │
+   ▼
+RX Interrupt
+   │
+   ▼
+ISR
+   │
+   ▼
+CAN Driver
+   │
+   ▼
+CanIf / Upper Layer</code></pre>
+
+                <p>
+                    Cách xử lý cụ thể phụ thuộc controller sử dụng message buffer, FIFO, hardware
+                    receive object và interrupt/polling configuration như thế nào.
+                </p>
+
+                <h2>10. CAN Transmit Interrupt</h2>
+
+                <p>
+                    Khi một transmission hoàn tất hoặc một transmit event phù hợp xảy ra,
+                    CAN Controller có thể tạo interrupt.
+                </p>
+
+                <pre><code>Can_Write()
+    │
+    ▼
+CAN Controller
+    │
+    ▼
+Transmit Message
+    │
+    ▼
+Transmission Complete
+    │
+    ▼
+TX Interrupt
+    │
+    ▼
+ISR
+    │
+    ▼
+CAN Driver
+    │
+    ▼
+Upper Layer Notification</code></pre>
+
+                <p>
+                    TX interrupt giúp software biết rằng hardware đã xử lý transmission event.
+                </p>
+
+                <h2>11. CAN Error Interrupt</h2>
+
+                <p>
+                    CAN Controller cũng có thể tạo interrupt khi phát hiện một số loại error hoặc
+                    thay đổi error state.
+                </p>
+
+                <pre><code>CAN Communication
+       │
+       ▼
+Error detected
+       │
+       ▼
+CAN Error Status
+       │
+       ▼
+Error Interrupt
+       │
+       ▼
+ISR
+       │
+       ▼
+CAN Driver
+       │
+       ▼
+Error Handling</code></pre>
+
+                <p>
+                    Điều này liên quan trực tiếp đến nội dung bài trước về theo dõi Bus-Error.
+                </p>
+
+                <h2>12. Wake-up Interrupt</h2>
+
+                <p>
+                    Trong một số hệ thống, CAN Controller hoặc CAN Transceiver có thể cung cấp
+                    cơ chế thông báo wake-up.
+                </p>
+
+                <pre><code>ECU Sleep
+    │
+    ▼
+CAN Bus Activity
+    │
+    ▼
+Wake-up Detection
+    │
+    ▼
+Wake-up Event / Interrupt
+    │
+    ▼
+ECU Wake-up Handling</code></pre>
+
+                <p>
+                    Cơ chế chính xác phụ thuộc phần cứng, transceiver và architecture của ECU.
+                </p>
+
+                <h2>13. Interrupt Controller</h2>
+
+                <p>
+                    CAN Controller thường không trực tiếp thực hiện toàn bộ việc quản lý interrupt
+                    của CPU. MCU có một <strong>Interrupt Controller</strong> làm trung gian.
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      │ Interrupt Request
+      ▼
+┌─────────────────────┐
+│ Interrupt Controller│
+└─────────────────────┘
+      │
+      ├── Priority
+      ├── Enable
+      └── Routing
+      │
+      ▼
+     CPU
+      │
+      ▼
+     ISR</code></pre>
+
+                <p>
+                    Đây là lý do Bài 14 về MCU/PORT/INTC có liên quan trực tiếp đến nội dung
+                    Enable and Disable Interrupts.
+                </p>
+
+                <h2>14. Interrupt Vector</h2>
+
+                <p>
+                    Khi CPU nhận một interrupt, MCU cần xác định routine nào sẽ xử lý interrupt đó.
+                    Thông tin này thường được liên kết với <strong>interrupt vector</strong>.
+                </p>
+
+                <pre><code>Interrupt Request
+       │
+       ▼
+Interrupt Vector
+       │
+       ▼
+ISR Address
+       │
+       ▼
+Interrupt Service Routine</code></pre>
+
+                <p>
+                    ISR là routine được thực thi để xử lý interrupt event.
+                </p>
+
+                <h2>15. ISR là gì?</h2>
+
+                <p>
+                    <strong>ISR - Interrupt Service Routine</strong> là hàm hoặc routine được thực
+                    thi khi một interrupt được CPU chấp nhận.
+                </p>
+
+                <pre><code>Normal execution
+      │
+      ▼
+      CPU
+      │
+      │ Interrupt
+      ▼
+     ISR
+      │
+      ▼
+Clear / Handle Event
+      │
+      ▼
+Return from ISR
+      │
+      ▼
+Normal execution</code></pre>
+
+                <div class="note">
+                    ISR thường cần được thiết kế ngắn gọn và hiệu quả. Công việc xử lý dài hoặc
+                    phức tạp thường được chuyển sang task hoặc main function tùy architecture.
+                </div>
+
+                <h2>16. ISR không nên làm quá nhiều việc</h2>
+
+                <p>
+                    Nếu ISR thực hiện quá nhiều công việc, CPU có thể dành quá nhiều thời gian cho
+                    interrupt handling.
+                </p>
+
+                <pre><code>CAN Interrupt
+      │
+      ▼
+     ISR
+      │
+      ├── Read hardware status
+      ├── Capture necessary data
+      ├── Clear / acknowledge event
+      └── Notify software
+             │
+             ▼
+          Return
+             │
+             ▼
+      Deferred processing</code></pre>
+
+                <p>
+                    Thiết kế cụ thể phụ thuộc driver architecture và timing requirements của project.
+                </p>
+
+                <h2>17. Critical Section</h2>
+
+                <p>
+                    Một số đoạn code cần được bảo vệ để tránh bị interrupt làm gián đoạn giữa chừng.
+                    Đoạn code như vậy thường được gọi là <strong>critical section</strong>.
+                </p>
+
+                <pre><code>Normal Code
+     │
+     ▼
+Enter Critical Section
+     │
+     ├── Interrupts restricted
+     │
+     ├── Shared data access
+     │
+     └── Atomic operation
+     │
+     ▼
+Exit Critical Section
+     │
+     ▼
+Normal Code</code></pre>
+
+                <p>
+                    Mục đích là bảo vệ dữ liệu hoặc thao tác cần tính nhất quán.
+                </p>
+
+                <h2>18. Tại sao phải Disable Interrupt trong Critical Section?</h2>
+
+                <p>
+                    Giả sử một biến dùng chung được cập nhật bởi task và ISR:
+                </p>
+
+                <pre><code>Task:
+sharedCounter = sharedCounter + 1
+
+ISR:
+sharedCounter = sharedCounter + 1</code></pre>
+
+                <p>
+                    Nếu hai phần thực thi truy cập dữ liệu không được bảo vệ đúng cách, có thể xảy ra
+                    race condition hoặc dữ liệu không nhất quán.
+                </p>
+
+                <pre><code>Task
+ │
+ │ read sharedCounter
+ │
+ ├───────────────┐
+ │               │
+ │          Interrupt
+ │               │
+ │               ▼
+ │              ISR
+ │               │
+ │               ▼
+ │          modify data
+ │               │
+ └───────────────┘
+       tiếp tục</code></pre>
+
+                <p>
+                    Một critical section phù hợp có thể ngăn interruption ở thời điểm nhạy cảm.
+                </p>
+
+                <h2>19. Không nên Disable Interrupt quá lâu</h2>
+
+                <p>
+                    Disable interrupt quá lâu có thể gây ra latency cho các event khác.
+                </p>
+
+                <pre><code>Disable Interrupt
+      │
+      ├── 10 µs
+      │      → có thể chấp nhận tùy hệ thống
+      │
+      ├── 100 µs
+      │      → cần đánh giá timing
+      │
+      └── quá lâu
+             → Event latency
+             → Missed deadline
+             → System timing problem</code></pre>
+
+                <div class="note">
+                    Không có một con số thời gian "đúng" cho mọi ECU. Thời gian critical section
+                    phải được xác định dựa trên timing requirements và interrupt latency của hệ thống.
+                </div>
+
+                <h2>20. Enable/Disable toàn bộ Interrupt vs một Source</h2>
+
+                <p>
+                    Cần phân biệt giữa việc disable một interrupt source và việc disable interrupt
+                    ở mức CPU/global hoặc một nhóm interrupt.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phạm vi</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Disable CAN RX interrupt</td>
+                            <td>Chỉ ngăn receive interrupt source đó.</td>
+                        </tr>
+                        <tr>
+                            <td>Disable CAN error interrupt</td>
+                            <td>Chỉ ngăn error interrupt source đó.</td>
+                        </tr>
+                        <tr>
+                            <td>Disable CPU/global interrupts</td>
+                            <td>Có thể ảnh hưởng đến nhiều interrupt source khác.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    Trong driver code, cần biết chính xác API hoặc register đang tác động lên
+                    interrupt source nào. Không nên gọi một API "Disable Interrupt" và mặc định
+                    rằng nó chỉ ảnh hưởng CAN.
+                </div>
+
+                <h2>21. Interrupt Configuration trong AUTOSAR</h2>
+
+                <p>
+                    Trong AUTOSAR, interrupt handling liên quan đến nhiều thành phần:
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      ▼
+Interrupt Controller / MCU
+      │
+      ▼
+MCAL CAN Driver
+      │
+      ▼
+CAN Driver ISR / Handler
+      │
+      ▼
+CanIf
+      │
+      ▼
+Upper Layer</code></pre>
+
+                <p>
+                    Cấu hình thực tế được tạo/generated bởi configuration tool và phụ thuộc MCU,
+                    CAN peripheral và AUTOSAR implementation.
+                </p>
+
+                <h2>22. Interrupt và CAN Driver</h2>
+
+                <p>
+                    CAN Driver phải phối hợp với CAN Controller để xử lý các event hardware.
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      ├── RX Event
+      ├── TX Event
+      ├── Error Event
+      └── Status Event
+             │
+             ▼
+         Interrupt
+             │
+             ▼
+        CAN Driver
+             │
+             ├── Read status
+             ├── Process event
+             ├── Clear/acknowledge
+             └── Notify upper layer
+                     │
+                     ▼
+                   CanIf</code></pre>
+
+                <h2>23. Interrupt và CanIf</h2>
+
+                <p>
+                    CanIf không phải là Interrupt Controller. CAN Driver xử lý hardware interrupt
+                    và sau đó thông báo sự kiện communication lên CanIf thông qua các cơ chế callback
+                    hoặc notification phù hợp.
+                </p>
+
+                <pre><code>Hardware
+   │
+   ▼
+CAN Controller
+   │
+   ▼
+Interrupt
+   │
+   ▼
+CAN Driver
+   │
+   ▼
+CanIf
+   │
+   ▼
+PduR / COM / Upper Layer</code></pre>
+
+                <div class="note">
+                    Đây là một abstraction quan trọng trong AUTOSAR:
+                    <strong>CAN Driver xử lý hardware-level event, CanIf cung cấp abstraction
+                        cho upper communication layers.</strong>
+                </div>
+
+                <h2>24. Interrupt và SchM</h2>
+
+                <p>
+                    Trong AUTOSAR, <strong>SchM - BSW Scheduler Module</strong> cung cấp cơ chế hỗ
+                    trợ exclusive area và synchronization cho BSW modules.
+                </p>
+
+                <pre><code>CAN Driver
+    │
+    ├── Normal execution
+    │
+    ├── Exclusive Area
+    │
+    └── Interrupt-related handling
+           │
+           ▼
+          SchM
+           │
+           ▼
+     OS / MCU mechanism</code></pre>
+
+                <p>
+                    Cách một project thực hiện critical section và interrupt protection phụ thuộc
+                    AUTOSAR implementation và OS/MCU integration.
+                </p>
+
+                <h2>25. Interrupt và OS</h2>
+
+                <p>
+                    Interrupt và OS task là hai cơ chế thực thi khác nhau nhưng có thể phối hợp.
+                </p>
+
+                <pre><code>CAN Hardware
+     │
+     ▼
+ Interrupt
+     │
+     ▼
+ ISR / Driver Handler
+     │
+     ▼
+ Notification / Event
+     │
+     ▼
+ OS Task
+     │
+     ▼
+ Deferred Processing</code></pre>
+
+                <p>
+                    Việc chuyển xử lý từ ISR sang task giúp tránh để ISR giữ CPU quá lâu.
+                    Tuy nhiên, cách triển khai cụ thể phụ thuộc OS và driver architecture.
+                </p>
+
+                <h2>26. Interrupt và MainFunction</h2>
+
+                <p>
+                    Một số AUTOSAR CAN Driver configuration có thể sử dụng polling cho một số hoạt động
+                    thay vì interrupt.
+                </p>
+
+                <pre><code>Interrupt-based:
+
+CAN HW
+  │
+  ▼
+Interrupt
+  │
+  ▼
+CAN Driver Handler
+
+
+Polling-based:
+
+CAN HW
+  │
+  ▼
+Periodic MainFunction
+  │
+  ▼
+CAN Driver
+  │
+  ▼
+Check Status</code></pre>
+
+                <div class="note">
+                    Vì vậy, khi debug một CAN Driver, trước tiên cần xác định project đang sử dụng
+                    interrupt mode hay polling mode cho chức năng cần kiểm tra.
+                </div>
+
+                <h2>27. Ví dụ: Enable CAN RX Interrupt</h2>
+
+                <p>
+                    Giả sử ECU cần nhận CAN message bằng interrupt.
+                </p>
+
+                <pre><code>1. CAN Controller initialized
+             │
+             ▼
+2. RX configuration ready
+             │
+             ▼
+3. RX interrupt source enabled
+             │
+             ▼
+4. Interrupt controller configured
+             │
+             ▼
+5. CPU interrupt handling enabled
+             │
+             ▼
+6. CAN frame arrives
+             │
+             ▼
+7. RX interrupt occurs
+             │
+             ▼
+8. CAN Driver handles event
+             │
+             ▼
+9. Upper layer notified</code></pre>
+
+                <h2>28. Ví dụ: Disable CAN RX Interrupt</h2>
+
+                <p>
+                    Trong một số tình huống controlled shutdown hoặc reconfiguration, một interrupt
+                    source có thể được disable.
+                </p>
+
+                <pre><code>Communication active
+       │
+       ▼
+Need to stop RX processing
+       │
+       ▼
+Disable RX Interrupt
+       │
+       ▼
+Stop / Reconfigure Controller
+       │
+       ▼
+DeInit or Sleep
+</code></pre>
+
+                <p>
+                    Sequence thực tế phụ thuộc lifecycle của ECU và architecture của project.
+                </p>
+
+                <h2>29. Interrupt trong Sleep/Wake-up</h2>
+
+                <p>
+                    Nội dung này liên kết trực tiếp với Bài 20.
+                    Khi ECU chuyển sang sleep, không phải mọi interrupt đều bị disable giống nhau.
+                </p>
+
+                <pre><code>Normal Operation
+      │
+      ▼
+Sleep Preparation
+      │
+      ├── Disable unnecessary sources
+      ├── Keep wake-up mechanism available
+      └── Configure low-power state
+      │
+      ▼
+     Sleep
+      │
+      ▼
+Wake-up Event
+      │
+      ▼
+Wake-up handling
+      │
+      ▼
+Normal Operation</code></pre>
+
+                <div class="note">
+                    Một wake-up source cần được duy trì theo cách phù hợp với phần cứng. Vì vậy,
+                    "Sleep = disable tất cả interrupts" là cách hiểu không chính xác.
+                </div>
+
+                <h2>30. Debug khi CAN Interrupt không hoạt động</h2>
+
+                <p>
+                    Nếu CAN frame đã xuất hiện trên bus nhưng CPU không xử lý receive interrupt,
+                    có thể debug theo thứ tự:
+                </p>
+
+                <pre><code>CAN frame trên bus?
+        │
+        ▼
+CAN Controller nhận frame?
+        │
+        ▼
+RX Flag được set?
+        │
+        ▼
+RX Interrupt Enable?
+        │
+        ▼
+Interrupt Controller Enable?
+        │
+        ▼
+Interrupt Vector đúng?
+        │
+        ▼
+ISR có được gọi?
+        │
+        ▼
+CAN Driver xử lý?
+        │
+        ▼
+CanIf notification?
+        │
+        ▼
+Upper layer nhận data?</code></pre>
+
+                <h2>31. Debug khi ISR không được gọi</h2>
+
+                <p>
+                    Nếu interrupt flag được set nhưng ISR không được gọi, cần tập trung vào phần
+                    interrupt path.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kiểm tra</th>
+                            <th>Câu hỏi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Interrupt Flag</td>
+                            <td>Event hardware có thực sự xảy ra không?</td>
+                        </tr>
+                        <tr>
+                            <td>Enable Bit</td>
+                            <td>Interrupt source có được enable không?</td>
+                        </tr>
+                        <tr>
+                            <td>INTC</td>
+                            <td>Interrupt Controller có enable/routing đúng không?</td>
+                        </tr>
+                        <tr>
+                            <td>Priority</td>
+                            <td>Priority có phù hợp không?</td>
+                        </tr>
+                        <tr>
+                            <td>Vector</td>
+                            <td>Interrupt vector có trỏ đúng handler không?</td>
+                        </tr>
+                        <tr>
+                            <td>CPU</td>
+                            <td>Global interrupt handling có được cho phép không?</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>32. Debug khi ISR được gọi nhưng message không lên upper layer</h2>
+
+                <p>
+                    Trong trường hợp ISR đã chạy nhưng application không nhận được message,
+                    vấn đề có thể nằm ở phía CAN Driver hoặc upper layer.
+                </p>
+
+                <pre><code>ISR được gọi
+      │
+      ▼
+CAN Driver
+      │
+      ├── Read RX data
+      ├── Read message object
+      ├── Check status
+      └── Notify
+             │
+             ▼
+           CanIf
+             │
+             ▼
+           PduR
+             │
+             ▼
+            COM
+             │
+             ▼
+        Application</code></pre>
+
+                <h2>33. Common Mistakes</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sai lầm</th>
+                            <th>Vấn đề</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Disable tất cả interrupt quá lâu</td>
+                            <td>Có thể gây latency và bỏ lỡ deadline.</td>
+                        </tr>
+                        <tr>
+                            <td>Nhầm flag với enable bit</td>
+                            <td>Không biết event đã xảy ra hay interrupt có được phép hay không.</td>
+                        </tr>
+                        <tr>
+                            <td>Chỉ kiểm tra CAN Driver</td>
+                            <td>Có thể bỏ sót Interrupt Controller hoặc vector.</td>
+                        </tr>
+                        <tr>
+                            <td>ISR xử lý quá nhiều việc</td>
+                            <td>Tăng interrupt latency và ảnh hưởng task khác.</td>
+                        </tr>
+                        <tr>
+                            <td>Disable interrupt mà không biết phạm vi</td>
+                            <td>Có thể vô tình ảnh hưởng source khác.</td>
+                        </tr>
+                        <tr>
+                            <td>Cho rằng Sleep disable tất cả interrupt</td>
+                            <td>Có thể làm mất wake-up mechanism.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>34. Góc nhìn phỏng vấn</h2>
+
+                <p>
+                    Với vị trí Junior Automotive Embedded Software Engineer, một số câu hỏi thường
+                    gặp có thể là:
+                </p>
+
+                <ul>
+                    <li>What is an interrupt?</li>
+                    <li>What is the difference between interrupt and polling?</li>
+                    <li>What is the difference between an interrupt flag and an interrupt enable bit?</li>
+                    <li>Why do we need to disable interrupts in a critical section?</li>
+                    <li>Why should an ISR be short?</li>
+                    <li>What happens if CAN RX interrupt is not triggered?</li>
+                    <li>How would you debug a CAN interrupt issue?</li>
+                    <li>What is the role of the Interrupt Controller?</li>
+                    <li>How does CAN Driver interact with an interrupt?</li>
+                    <li>Can you disable all interrupts during CAN communication?</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Câu trả lời ngắn nên nhớ:</strong>
+                    An interrupt allows the CAN Controller to notify the CPU when an event occurs,
+                    such as reception, transmission completion or an error. Enabling an interrupt
+                    allows a specific interrupt source to request CPU service, while disabling it
+                    prevents that source from generating an interrupt request. In a critical section,
+                    interrupts may be temporarily restricted to protect shared data, but they should
+                    be disabled for the shortest practical time.
+                </div>
+
+                <h2>35. Memory Map</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Interrupt</td>
+                            <td>Cơ chế hardware/software thông báo CPU về một event.</td>
+                        </tr>
+                        <tr>
+                            <td>Interrupt Source</td>
+                            <td>Nguồn tạo interrupt, ví dụ RX, TX hoặc Error.</td>
+                        </tr>
+                        <tr>
+                            <td>Interrupt Flag</td>
+                            <td>Cho biết event đã xảy ra hoặc đang pending theo hardware.</td>
+                        </tr>
+                        <tr>
+                            <td>Interrupt Enable</td>
+                            <td>Cho phép interrupt source tạo interrupt request.</td>
+                        </tr>
+                        <tr>
+                            <td>ISR</td>
+                            <td>Routine xử lý khi CPU nhận interrupt.</td>
+                        </tr>
+                        <tr>
+                            <td>Interrupt Controller</td>
+                            <td>Quản lý, ưu tiên và routing interrupt đến CPU.</td>
+                        </tr>
+                        <tr>
+                            <td>Critical Section</td>
+                            <td>Đoạn code cần được bảo vệ khỏi interruption không mong muốn.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN RX Interrupt</td>
+                            <td>Thông báo receive event.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN TX Interrupt</td>
+                            <td>Thông báo transmission event.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Error Interrupt</td>
+                            <td>Thông báo một số error/status event của CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>Polling</td>
+                            <td>Software chủ động kiểm tra hardware theo chu kỳ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>36. Tóm tắt</h2>
+
+                <p>
+                    Interrupt là cơ chế quan trọng giúp CAN Controller thông báo các event cho CPU.
+                    Trong CAN Driver, interrupt có thể được sử dụng cho reception, transmission,
+                    error handling và các event khác tùy hardware/configuration.
+                </p>
+
+                <pre><code>CAN Controller
+      │
+      ├── RX Event
+      ├── TX Event
+      ├── Error Event
+      └── Status Event
+             │
+             ▼
+      Interrupt Flag
+             │
+             ▼
+      Interrupt Enable
+             │
+             ▼
+   Interrupt Controller
+             │
+             ▼
+            CPU
+             │
+             ▼
+            ISR
+             │
+             ▼
+        CAN Driver
+             │
+             ▼
+           CanIf
+             │
+             ▼
+       Upper Layers</code></pre>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong> Khi debug CAN interrupt, hãy kiểm tra
+                    theo chuỗi <strong>Event → Flag → Interrupt Enable → Interrupt Controller →
+                        Vector → ISR → CAN Driver → Upper Layer</strong>. Nếu xác định được điểm mà
+                    chuỗi này bị ngắt, việc tìm root cause sẽ dễ dàng hơn rất nhiều.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-22.html">← Bài trước</a>
+                    <a class="btn" href="lesson-24.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

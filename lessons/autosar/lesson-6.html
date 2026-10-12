@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 6: Tổng quan tầng Basic Software | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html" class="active" aria-current="page">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 6: Tổng quan tầng Basic Software</h1>
+
+                <p>
+                    <strong>Basic Software (BSW)</strong> là tầng phần mềm nền tảng trong kiến trúc
+                    <strong>AUTOSAR Classic</strong>, nằm bên dưới <strong>Runtime Environment (RTE)</strong>
+                    và cung cấp các dịch vụ cần thiết cho Application Software hoạt động trên ECU.
+                </p>
+
+                <p>
+                    Nếu các bài trước tập trung vào Application Software, RTE và vị trí của chúng
+                    trong kiến trúc AUTOSAR, thì bài này tập trung vào câu hỏi:
+                    <strong>Phần mềm nền tảng bên dưới Application Software gồm những gì và có vai trò gì?</strong>
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Bài này chỉ tập trung vào tổng quan về
+                    <strong>Basic Software (BSW)</strong> và các nhóm thành phần chính của BSW.
+                    Các module cụ thể, API, cấu hình và cách triển khai chi tiết sẽ được
+                    tìm hiểu trong các bài học chuyên sâu sau.
+                </div>
+
+                <h2>1. Basic Software là gì?</h2>
+
+                <p>
+                    <strong>Basic Software (BSW)</strong> là tập hợp các module phần mềm nền tảng
+                    cung cấp những chức năng chung cần thiết cho một ECU.
+                </p>
+
+                <p>
+                    BSW nằm phía dưới RTE và Application Software. Nó giúp hệ thống xử lý
+                    các chức năng liên quan đến hệ điều hành, truyền thông, bộ nhớ,
+                    chẩn đoán, điều khiển phần cứng và nhiều dịch vụ nền tảng khác.
+                </p>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                    <strong>BSW cung cấp nền tảng để Application Software có thể thực hiện
+                    chức năng mà không cần trực tiếp quản lý toàn bộ phần cứng ECU.</strong>
+                </p>
+
+                <h2>2. BSW nằm ở đâu trong kiến trúc AUTOSAR?</h2>
+
+                <p>
+                    Trong kiến trúc AUTOSAR Classic, BSW nằm bên dưới RTE và bên trên Hardware.
+                    BSW được tổ chức thành nhiều nhóm module khác nhau.
+                </p>
+
+                <svg viewBox="0 0 600 470" role="img"
+                    aria-label="Vị trí của Basic Software trong kiến trúc AUTOSAR Classic"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+
+                        <rect x="20" y="20" width="560" height="80" rx="6"
+                            fill="rgba(20,80,107,.18)" />
+
+                        <rect x="20" y="110" width="560" height="65" rx="6"
+                            fill="rgba(224,168,0,.25)" />
+
+                        <rect x="20" y="185" width="560" height="205" rx="6"
+                            fill="rgba(46,139,87,.2)" />
+
+                        <rect x="20" y="400" width="560" height="30" rx="6"
+                            fill="rgba(128,128,128,.2)" />
+
+                    </g>
+
+                    <g font-size="14" fill="currentColor" text-anchor="middle">
+
+                        <text x="300" y="50" font-weight="bold">
+                            Application Software
+                        </text>
+
+                        <text x="300" y="78">
+                            Software Components
+                        </text>
+
+                        <text x="300" y="138" font-weight="bold">
+                            Runtime Environment (RTE)
+                        </text>
+
+                        <text x="300" y="160">
+                            Môi trường giao tiếp của Application
+                        </text>
+
+                        <text x="300" y="215" font-weight="bold">
+                            Basic Software
+                        </text>
+
+                        <text x="300" y="245">
+                            Services
+                        </text>
+
+                        <text x="300" y="275">
+                            ECU Abstraction
+                        </text>
+
+                        <text x="300" y="305">
+                            Microcontroller Abstraction Layer (MCAL)
+                        </text>
+
+                        <text x="300" y="335">
+                            Các module nền tảng của ECU
+                        </text>
+
+                        <text x="300" y="365">
+                            Cung cấp dịch vụ và truy cập Hardware
+                        </text>
+
+                        <text x="300" y="420" font-weight="bold">
+                            Hardware
+                        </text>
+
+                    </g>
+
+                </svg>
+
+                <p>
+                    Có thể thấy BSW là một phần rất lớn trong kiến trúc AUTOSAR Classic,
+                    đóng vai trò kết nối giữa Application Software và phần cứng ECU.
+                </p>
+
+                <h2>3. Tại sao cần Basic Software?</h2>
+
+                <p>
+                    Một ECU không chỉ cần chạy logic ứng dụng. Nó còn cần nhiều chức năng
+                    nền tảng như quản lý bộ nhớ, giao tiếp mạng, chẩn đoán lỗi,
+                    quản lý trạng thái ECU và truy cập phần cứng.
+                </p>
+
+                <p>
+                    Nếu mỗi Application Software phải tự xử lý tất cả những chức năng này,
+                    phần mềm sẽ trở nên phức tạp và phụ thuộc nhiều vào phần cứng.
+                </p>
+
+                <p>
+                    BSW giúp tách những chức năng nền tảng này khỏi Application Software.
+                </p>
+
+                <pre><code>Application Software
+        │
+        ↓
+       RTE
+        │
+        ↓
+       BSW
+        │
+        ├── Services
+        │
+        ├── ECU Abstraction
+        │
+        └── MCAL
+        │
+        ↓
+    Hardware</code></pre>
+
+                <p>
+                    Nhờ cách tổ chức này, Application Software có thể tập trung nhiều hơn
+                    vào <strong>logic chức năng</strong>, trong khi BSW đảm nhiệm các
+                    chức năng nền tảng của ECU.
+                </p>
+
+                <h2>4. Các nhóm chính của Basic Software</h2>
+
+                <p>
+                    Ở mức tổng quan, Basic Software trong AUTOSAR Classic có thể được
+                    nhìn thành các nhóm chính:
+                </p>
+
+                <ul>
+                    <li><strong>Services Layer</strong></li>
+                    <li><strong>ECU Abstraction Layer</strong></li>
+                    <li><strong>Microcontroller Abstraction Layer (MCAL)</strong></li>
+                    <li><strong>Complex Drivers</strong> trong một số trường hợp đặc biệt</li>
+                </ul>
+
+                <p>
+                    Mỗi nhóm có một vai trò khác nhau trong việc cung cấp nền tảng
+                    cho ECU.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Cách phân chia trên chỉ nhằm giúp hình dung
+                    kiến trúc ở mức tổng quan. Các module và mối quan hệ chi tiết giữa
+                    chúng sẽ được trình bày trong những bài học chuyên sâu.
+                </div>
+
+                <h2>5. Services Layer</h2>
+
+                <p>
+                    <strong>Services Layer</strong> là nhóm cung cấp các dịch vụ nền tảng
+                    dùng chung cho hệ thống và Application Software.
+                </p>
+
+                <p>
+                    Các dịch vụ này không chỉ liên quan đến phần cứng mà còn bao gồm
+                    nhiều chức năng quản lý và điều hành ECU.
+                </p>
+
+                <p>
+                    Ở mức tổng quan, Services Layer có thể cung cấp các chức năng như:
+                </p>
+
+                <ul>
+                    <li>Quản lý hệ điều hành và việc thực thi phần mềm.</li>
+                    <li>Quản lý trạng thái và chế độ hoạt động của ECU.</li>
+                    <li>Quản lý bộ nhớ.</li>
+                    <li>Hỗ trợ giao tiếp và truyền thông.</li>
+                    <li>Chẩn đoán hệ thống.</li>
+                    <li>Các dịch vụ nền tảng khác.</li>
+                </ul>
+
+                <pre><code>             Application Software
+                      │
+                      ↓
+                     RTE
+                      │
+                      ↓
+              +---------------+
+              |    Services   |
+              |      Layer    |
+              +---------------+
+               │      │      │
+               ↓      ↓      ↓
+            Memory  Comm.  Diagnostic
+            Services Services Services</code></pre>
+
+                <p>
+                    Có thể hiểu Services Layer là nơi tập trung nhiều dịch vụ
+                    mang tính hệ thống mà các phần mềm phía trên có thể sử dụng.
+                </p>
+
+                <h2>6. ECU Abstraction Layer</h2>
+
+                <p>
+                    <strong>ECU Abstraction Layer</strong> giúp che giấu một phần
+                    sự khác biệt trong cách phần cứng được triển khai trên ECU.
+                </p>
+
+                <p>
+                    Tầng này cung cấp một giao diện trừu tượng hơn cho các thành phần
+                    phía trên khi làm việc với các thiết bị và ngoại vi của ECU.
+                </p>
+
+                <p>
+                    Có thể hình dung:
+                </p>
+
+                <pre><code>        Phần mềm phía trên
+                │
+                ↓
+       ECU Abstraction Layer
+                │
+                ↓
+        Hardware cụ thể của ECU</code></pre>
+
+                <p>
+                    Nhờ lớp trừu tượng này, các thành phần phía trên không cần phải
+                    trực tiếp quan tâm đến tất cả chi tiết của từng loại phần cứng.
+                </p>
+
+                <h2>7. Microcontroller Abstraction Layer (MCAL)</h2>
+
+                <p>
+                    <strong>Microcontroller Abstraction Layer (MCAL)</strong> là lớp
+                    trong BSW có vai trò cung cấp giao tiếp với các chức năng phần cứng
+                    của microcontroller.
+                </p>
+
+                <p>
+                    MCAL nằm gần Hardware hơn so với các lớp BSW phía trên.
+                </p>
+
+                <pre><code>              Services
+                  │
+                  ↓
+          ECU Abstraction
+                  │
+                  ↓
+                 MCAL
+                  │
+                  ↓
+          Microcontroller
+              Hardware</code></pre>
+
+                <p>
+                    MCAL có thể bao gồm các nhóm driver phục vụ cho những chức năng
+                    phần cứng như:
+                </p>
+
+                <ul>
+                    <li>Microcontroller và các chức năng cơ bản.</li>
+                    <li>Digital I/O.</li>
+                    <li>Communication peripherals.</li>
+                    <li>Memory peripherals.</li>
+                    <li>Timer và các chức năng liên quan.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>MCAL</strong> là một chủ đề quan trọng và sẽ được tách thành
+                    bài học riêng. Ở bài này chỉ cần nhớ rằng MCAL là phần của BSW
+                    nằm gần microcontroller hardware và cung cấp lớp trừu tượng cho
+                    các peripheral của microcontroller.
+                </div>
+
+                <h2>8. Complex Drivers</h2>
+
+                <p>
+                    Ngoài các nhóm BSW thông thường, AUTOSAR còn có khái niệm
+                    <strong>Complex Drivers</strong>.
+                </p>
+
+                <p>
+                    Complex Drivers được sử dụng trong những trường hợp một chức năng
+                    đặc biệt cần truy cập phần cứng hoặc xử lý mà các lớp BSW chuẩn
+                    không đáp ứng trực tiếp.
+                </p>
+
+                <pre><code>                Application
+                     │
+                     ↓
+                    RTE
+                     │
+          +----------+----------+
+          │                     │
+          ↓                     ↓
+      Standard BSW       Complex Driver
+          │                     │
+          ↓                     ↓
+        Hardware            Hardware</code></pre>
+
+                <p>
+                    Vì Complex Drivers phục vụ các trường hợp đặc biệt, không nên hiểu
+                    rằng mọi ECU đều phải sử dụng chúng.
+                </p>
+
+                <h2>9. BSW và Hardware</h2>
+
+                <p>
+                    Một trong những vai trò quan trọng của BSW là tạo ra sự phân cách
+                    giữa phần mềm ứng dụng và phần cứng ECU.
+                </p>
+
+                <p>
+                    Luồng tổng quan có thể hình dung:
+                </p>
+
+                <pre><code>Application Software
+        │
+        ↓
+       RTE
+        │
+        ↓
+       BSW
+        │
+        ├── Services
+        │
+        ├── ECU Abstraction
+        │
+        └── MCAL
+        │
+        ↓
+     Hardware</code></pre>
+
+                <p>
+                    Application Software không cần trực tiếp điều khiển từng peripheral
+                    của microcontroller. Các lớp BSW bên dưới đảm nhiệm phần lớn
+                    công việc liên quan đến nền tảng và phần cứng.
+                </p>
+
+                <h2>10. BSW và sự trừu tượng hóa Hardware</h2>
+
+                <p>
+                    Một mục tiêu quan trọng của AUTOSAR là tạo ra sự phân tách giữa
+                    <strong>functional software</strong> và <strong>hardware implementation</strong>.
+                </p>
+
+                <p>
+                    BSW góp phần thực hiện mục tiêu này bằng cách tổ chức các lớp
+                    phần mềm trung gian giữa Application Software và Hardware.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Vai trò tổng quan</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application Software</strong></td>
+                        <td>
+                            Thực hiện logic và chức năng của hệ thống.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE</strong></td>
+                        <td>
+                            Môi trường giao tiếp giữa Application và phần còn lại của hệ thống.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Services</strong></td>
+                        <td>
+                            Cung cấp các dịch vụ nền tảng dùng chung.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>ECU Abstraction</strong></td>
+                        <td>
+                            Cung cấp lớp trừu tượng đối với các thiết bị và phần cứng của ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>MCAL</strong></td>
+                        <td>
+                            Cung cấp giao tiếp với các peripheral của microcontroller.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware</strong></td>
+                        <td>
+                            Phần cứng thực tế của ECU.
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>11. Ví dụ đơn giản về BSW trong ECU</h2>
+
+                <p>
+                    Giả sử một ECU có chức năng điều khiển đèn.
+                    Application Software cần biết trạng thái của một tín hiệu đầu vào
+                    và sau đó quyết định bật hoặc tắt đèn.
+                </p>
+
+                <p>
+                    Ở mức tổng quan, luồng xử lý có thể được hình dung:
+                </p>
+
+                <pre><code>Input / Sensor
+      │
+      ↓
+   Hardware
+      │
+      ↓
+     MCAL
+      │
+      ↓
+ECU Abstraction
+      │
+      ↓
+     BSW
+      │
+      ↓
+     RTE
+      │
+      ↓
+Lighting Control SWC
+      │
+      ↓
+     RTE
+      │
+      ↓
+     BSW
+      │
+      ↓
+     MCAL
+      │
+      ↓
+   Hardware
+      │
+      ↓
+     Lamp</code></pre>
+
+                <p>
+                    Đây chỉ là cách minh họa ở mức khái niệm. Trong hệ thống AUTOSAR
+                    thực tế, luồng dữ liệu có thể đi qua nhiều module và lớp khác nhau
+                    tùy theo chức năng và cấu hình của ECU.
+                </p>
+
+                <h2>12. So sánh các nhóm chính của BSW</h2>
+
+                <table>
+                    <tr>
+                        <th>Nhóm</th>
+                        <th>Vị trí tương đối</th>
+                        <th>Vai trò chính</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Services</strong></td>
+                        <td>Phía trên của BSW</td>
+                        <td>
+                            Cung cấp các dịch vụ nền tảng cho hệ thống.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>ECU Abstraction</strong></td>
+                        <td>Giữa Services và MCAL</td>
+                        <td>
+                            Trừu tượng hóa các thiết bị và phần cứng ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>MCAL</strong></td>
+                        <td>Gần Hardware</td>
+                        <td>
+                            Giao tiếp với các peripheral của microcontroller.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Complex Drivers</strong></td>
+                        <td>Có thể truy cập Hardware theo trường hợp đặc biệt</td>
+                        <td>
+                            Hỗ trợ những chức năng đặc biệt không phù hợp với các lớp chuẩn.
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>13. Mối quan hệ giữa RTE và BSW</h2>
+
+                <p>
+                    RTE và BSW có vai trò khác nhau nhưng liên kết chặt chẽ trong kiến trúc
+                    AUTOSAR Classic.
+                </p>
+
+                <pre><code>Application Software
+        │
+        │  Giao tiếp với hệ thống
+        ↓
+       RTE
+        │
+        │  Sử dụng dịch vụ / môi trường nền tảng
+        ↓
+       BSW
+        │
+        ↓
+     Hardware</code></pre>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                </p>
+
+                <ul>
+                    <li><strong>RTE</strong> tập trung vào môi trường giao tiếp và kết nối của Application.</li>
+                    <li><strong>BSW</strong> cung cấp các chức năng nền tảng của ECU.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, RTE không thay thế BSW và BSW cũng không thay thế RTE.
+                    Hai thành phần này đảm nhiệm những vai trò khác nhau trong kiến trúc.
+                </p>
+
+                <h2>14. Những khái niệm cần nhớ</h2>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa tổng quan</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>BSW</strong></td>
+                        <td>
+                            Tập hợp các module phần mềm nền tảng của AUTOSAR ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Services Layer</strong></td>
+                        <td>
+                            Cung cấp các dịch vụ nền tảng dùng chung cho hệ thống.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>ECU Abstraction</strong></td>
+                        <td>
+                            Cung cấp lớp trừu tượng đối với phần cứng và thiết bị của ECU.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>MCAL</strong></td>
+                        <td>
+                            Lớp BSW gần microcontroller, cung cấp giao tiếp với peripheral.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Complex Drivers</strong></td>
+                        <td>
+                            Hỗ trợ những chức năng đặc biệt cần cách tiếp cận ngoài
+                            các lớp BSW chuẩn.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE ↔ BSW</strong></td>
+                        <td>
+                            RTE kết nối Application với môi trường nền tảng do BSW cung cấp.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>BSW ↔ Hardware</strong></td>
+                        <td>
+                            BSW cung cấp các lớp phần mềm để làm việc với Hardware của ECU.
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>Basic Software (BSW)</strong> là tầng phần mềm nền tảng quan trọng
+                    trong AUTOSAR Classic, nằm bên dưới <strong>RTE</strong> và phía trên
+                    <strong>Hardware</strong>. BSW cung cấp nhiều chức năng nền tảng cho ECU,
+                    bao gồm các dịch vụ hệ thống, giao tiếp với thiết bị ECU và truy cập
+                    microcontroller thông qua các lớp trừu tượng. Ở mức tổng quan, BSW có thể
+                    được nhìn qua các nhóm chính như <strong>Services</strong>,
+                    <strong>ECU Abstraction</strong>, <strong>MCAL</strong> và
+                    <strong>Complex Drivers</strong>. Nhờ BSW, Application Software có thể
+                    tập trung vào logic chức năng thay vì trực tiếp xử lý toàn bộ chi tiết
+                    của Hardware.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-5.html">← Bài trước</a>
+                    <a class="btn" href="lesson-7.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 27: Bus-Off | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html" class="active">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+            </aside>
+
+            <article class="content">
+                <h1>Bài 27: Bus-Off</h1>
+
+                <div class="note">
+                    <strong>Mục tiêu bài học:</strong> Hiểu Bus-Off là gì, tại sao CAN Controller đi vào trạng thái
+                    Bus-Off,
+                    mối quan hệ giữa Bus-Off với TEC/REC, Error Active và Error Passive, cách CAN Controller xử lý
+                    Bus-Off,
+                    vai trò của CAN Driver và các module AUTOSAR liên quan, cũng như cách debug một ECU bị Bus-Off.
+                </div>
+
+                <h2>1. Bus-Off là gì?</h2>
+                <p>
+                    <strong>Bus-Off</strong> là một trạng thái lỗi đặc biệt của CAN Controller.
+                    Khi một node có quá nhiều lỗi trong quá trình truyền CAN, bộ đếm lỗi truyền
+                    có thể tăng đến ngưỡng quy định. Khi đó CAN Controller sẽ chuyển sang trạng thái
+                    <strong>Bus-Off</strong> để tự tách mình khỏi hoạt động truyền trên CAN bus.
+                </p>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                    <strong>Bus-Off là cơ chế bảo vệ của CAN nhằm ngăn một node đang gặp vấn đề
+                        tiếp tục gây ảnh hưởng đến toàn bộ mạng.</strong>
+                </p>
+
+                <pre><code>CAN Node
+   |
+   | Gửi frame
+   v
+CAN Bus
+   |
+   | Phát hiện nhiều lỗi
+   v
+Error Counter tăng
+   |
+   v
+TEC đạt ngưỡng
+   |
+   v
++----------------+
+|    BUS-OFF     |
++----------------+
+   |
+   | Node ngừng tham gia truyền
+   v
+CAN Bus tiếp tục hoạt động với các node khác</code></pre>
+
+                <h2>2. Tại sao CAN cần Bus-Off?</h2>
+                <p>
+                    CAN được sử dụng trong môi trường nhiều ECU cùng chia sẻ một bus.
+                    Nếu một ECU liên tục truyền dữ liệu sai, nó có thể tạo ra rất nhiều Error Frame
+                    hoặc liên tục thất bại khi truyền.
+                </p>
+
+                <p>
+                    Nếu không có cơ chế giới hạn, một node bị lỗi có thể gây ảnh hưởng đến
+                    các node khác. Bus-Off giúp node đó tạm thời rời khỏi hoạt động truyền
+                    để bảo vệ tính ổn định của mạng.
+                </p>
+
+                <div class="note">
+                    <strong>Ý quan trọng:</strong> Bus-Off không phải là CAN Controller bị "crash".
+                    Đây là một trạng thái được định nghĩa bởi cơ chế quản lý lỗi của CAN.
+                </div>
+
+                <h2>3. CAN Error State</h2>
+                <p>
+                    CAN Controller có thể hoạt động qua các trạng thái lỗi khác nhau.
+                    Ở mức khái niệm, ba trạng thái quan trọng là:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Error Active</td>
+                            <td>Node đang hoạt động bình thường về mặt error state.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Passive</td>
+                            <td>Node đã có nhiều lỗi và bị hạn chế hơn trong cách tham gia bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus-Off</td>
+                            <td>Node bị tách khỏi hoạt động truyền CAN do mức lỗi quá cao.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>4. Error Active</h2>
+                <p>
+                    <strong>Error Active</strong> là trạng thái hoạt động bình thường của một CAN node
+                    về mặt error handling.
+                </p>
+
+                <p>
+                    Khi phát hiện lỗi, node ở trạng thái này có thể sử dụng cơ chế
+                    <strong>Active Error Flag</strong> theo quy tắc của CAN để thông báo lỗi trên bus.
+                </p>
+
+                <pre><code>Normal operation
+       |
+       v
++----------------+
+| Error Active   |
++----------------+
+       |
+       | Nhiều lỗi hơn
+       v
++----------------+
+| Error Passive  |
++----------------+
+       |
+       | Lỗi truyền tiếp tục tăng
+       v
++----------------+
+|    Bus-Off     |
++----------------+</code></pre>
+
+                <h2>5. Error Passive</h2>
+                <p>
+                    Khi mức lỗi của node tăng cao hơn ngưỡng cho phép của trạng thái
+                    Error Active, CAN Controller có thể chuyển sang <strong>Error Passive</strong>.
+                </p>
+
+                <p>
+                    Node vẫn có thể tham gia giao tiếp CAN theo các quy tắc tương ứng,
+                    nhưng cách nó báo lỗi và hoạt động trên bus bị hạn chế hơn so với Error Active.
+                </p>
+
+                <div class="note">
+                    Error Passive chưa phải Bus-Off. Một node ở Error Passive vẫn chưa bị loại khỏi bus hoàn toàn.
+                </div>
+
+                <h2>6. TEC và REC là gì?</h2>
+                <p>
+                    CAN sử dụng các bộ đếm lỗi để theo dõi mức độ lỗi của node.
+                    Hai khái niệm quan trọng là:
+                </p>
+
+                <ul>
+                    <li><strong>TEC (Transmit Error Counter):</strong> bộ đếm lỗi liên quan đến việc truyền.</li>
+                    <li><strong>REC (Receive Error Counter):</strong> bộ đếm lỗi liên quan đến việc nhận.</li>
+                </ul>
+
+                <p>
+                    Các counter này không đơn giản chỉ là "số lỗi đã xảy ra".
+                    Chúng được CAN Controller cập nhật theo các quy tắc của CAN error handling.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Counter</th>
+                            <th>Liên quan chủ yếu đến</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TEC</td>
+                            <td>Lỗi liên quan đến truyền</td>
+                        </tr>
+                        <tr>
+                            <td>REC</td>
+                            <td>Lỗi liên quan đến nhận</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>7. TEC có vai trò gì trong Bus-Off?</h2>
+                <p>
+                    Trong cơ chế CAN error confinement, <strong>TEC</strong> có vai trò đặc biệt
+                    đối với việc chuyển sang Bus-Off.
+                </p>
+
+                <p>
+                    Theo quy tắc CAN Classic phổ biến, khi điều kiện Bus-Off được thỏa mãn,
+                    node sẽ chuyển sang Bus-Off khi <strong>TEC đạt ngưỡng tương ứng, thường được biết
+                        đến là 256</strong>.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Giá trị ngưỡng này thuộc cơ chế error confinement của CAN.
+                    Cách phần cứng báo trạng thái, lưu counter hoặc cung cấp API đọc trạng thái
+                    có thể khác nhau tùy CAN Controller.
+                </div>
+
+                <h2>8. Vì sao TEC có thể tăng?</h2>
+                <p>
+                    TEC có thể tăng khi node gặp các lỗi liên quan đến quá trình truyền.
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>Không nhận được ACK hợp lệ.</li>
+                    <li>Phát hiện Bit Error.</li>
+                    <li>Phát hiện một số loại lỗi frame trong quá trình truyền.</li>
+                    <li>CAN bus hoặc các node khác đang hoạt động không đúng.</li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, không nên hiểu rằng mọi lần phát hiện lỗi đều làm TEC tăng cùng một lượng.
+                    CAN Controller sử dụng các quy tắc error confinement cụ thể để cập nhật counter.
+                </p>
+
+                <h2>9. ACK Error và Bus-Off</h2>
+                <p>
+                    Một trường hợp rất thường gặp khi debug Bus-Off là <strong>ACK Error</strong>.
+                </p>
+
+                <p>
+                    Khi một node truyền frame, nó mong muốn nhận được dominant ACK từ một node
+                    khác đã nhận frame hợp lệ. Nếu không có node nào ACK, transmitter có thể
+                    phát hiện ACK Error.
+                </p>
+
+                <pre><code>ECU A
+  |
+  | Transmit CAN Frame
+  v
+CAN Bus
+  |
+  | Không có node ACK
+  v
+ACK Error
+  |
+  v
+Error Counter tăng
+  |
+  v
+Lặp lại nhiều lần
+  |
+  v
+TEC tăng cao
+  |
+  v
+Bus-Off</code></pre>
+
+                <div class="note">
+                    Một ECU duy nhất trên bus có thể gặp ACK Error liên tục khi nó cố truyền,
+                    vì không có node khác để ACK frame.
+                </div>
+
+                <h2>10. Bus-Off không nhất thiết do phần mềm sai</h2>
+                <p>
+                    Một trong những sai lầm phổ biến khi debug Bus-Off là ngay lập tức
+                    cho rằng CAN Driver có bug.
+                </p>
+
+                <p>
+                    Bus-Off có thể xuất phát từ nhiều nguyên nhân khác nhau:
+                </p>
+
+                <ul>
+                    <li>Baud-rate không giống giữa các node.</li>
+                    <li>CAN bit timing không phù hợp.</li>
+                    <li>CAN Clock cấu hình sai.</li>
+                    <li>CAN Transceiver gặp vấn đề.</li>
+                    <li>CANH/CANL hoặc wiring có vấn đề.</li>
+                    <li>Termination không đúng.</li>
+                    <li>Không có node nào ACK.</li>
+                    <li>CAN Controller configuration sai.</li>
+                    <li>Phần mềm liên tục yêu cầu truyền dữ liệu trong điều kiện bus không hợp lệ.</li>
+                </ul>
+
+                <h2>11. Baud-rate và Bus-Off</h2>
+                <p>
+                    Nếu các node sử dụng baud-rate hoặc bit timing không tương thích,
+                    chúng có thể không giải mã đúng các bit trên bus.
+                </p>
+
+                <pre><code>ECU A
+Baud-rate = cấu hình A
+      |
+      | CAN Frame
+      v
+---------------- CAN BUS ----------------
+      ^
+      |
+ECU B
+Baud-rate = cấu hình B khác biệt
+      |
+      X
+  Decode Error
+      |
+      v
+Error Counter
+      |
+      v
+Có thể dẫn đến Bus-Off</code></pre>
+
+                <p>
+                    Vì vậy khi một ECU bị Bus-Off, kiểm tra baud-rate và bit timing
+                    là một trong những bước debug quan trọng.
+                </p>
+
+                <h2>12. Bus-Off và CAN Transceiver</h2>
+                <p>
+                    CAN Controller xử lý phần lớn logic protocol,
+                    trong khi CAN Transceiver đảm nhiệm giao tiếp vật lý giữa controller
+                    và CAN bus.
+                </p>
+
+                <p>
+                    Nếu transceiver, nguồn cấp hoặc wiring gặp vấn đề,
+                    controller có thể nhìn thấy các tín hiệu không hợp lệ và phát sinh lỗi.
+                </p>
+
+                <pre><code>CAN Driver
+    |
+    v
+CAN Controller
+    |
+    v
+CAN Transceiver
+    |
+    v
+CANH / CANL
+    |
+    v
+CAN Bus</code></pre>
+
+                <p>
+                    Do đó debug Bus-Off cần xem cả <strong>software + controller + transceiver + physical bus</strong>.
+                </p>
+
+                <h2>13. Bus-Off và CAN Driver</h2>
+                <p>
+                    CAN Driver là lớp giao tiếp giữa AUTOSAR software stack và CAN Controller.
+                    Khi Controller phát hiện Bus-Off, driver cần xử lý sự kiện tương ứng
+                    theo cấu hình và cơ chế notification của hệ thống.
+                </p>
+
+                <pre><code>CAN Controller
+      |
+      | Bus-Off detected
+      v
+CAN Driver
+      |
+      | Error/Bus-Off notification
+      v
+CAN Interface / CAN State Management
+      |
+      v
+Upper BSW / Application</code></pre>
+
+                <div class="note">
+                    Tên callback, API và trình tự xử lý cụ thể phụ thuộc AUTOSAR release,
+                    CAN Driver implementation và cấu hình của project.
+                </div>
+
+                <h2>14. Bus-Off Notification</h2>
+                <p>
+                    CAN Driver thường cần thông báo cho các lớp phía trên rằng Controller
+                    đã chuyển sang Bus-Off.
+                </p>
+
+                <p>
+                    Điều này cho phép hệ thống biết rằng CAN Controller hiện không thể
+                    hoạt động như một node truyền CAN bình thường.
+                </p>
+
+                <pre><code>Hardware Event
+      |
+      v
+Bus-Off detected
+      |
+      v
+CAN Driver
+      |
+      v
+Bus-Off Notification
+      |
+      v
+CAN Interface / CAN State Management
+      |
+      v
+Communication handling</code></pre>
+
+                <h2>15. Bus-Off và CanSM</h2>
+                <p>
+                    Trong AUTOSAR, <strong>CanSM (CAN State Manager)</strong> có vai trò quản lý
+                    trạng thái giao tiếp CAN của network/channel.
+                </p>
+
+                <p>
+                    Khi xảy ra Bus-Off, thông tin về trạng thái controller có thể được
+                    CanSM sử dụng để thực hiện xử lý phù hợp với cấu hình của hệ thống.
+                </p>
+
+                <p>
+                    Có thể hình dung:
+                </p>
+
+                <pre><code>CAN Controller
+      |
+      v
+CAN Driver
+      |
+      v
+CanIf
+      |
+      v
+CanSM
+      |
+      +---- Communication state
+      |
+      +---- Bus-Off handling/recovery
+      |
+      v
+Upper BSW</code></pre>
+
+                <div class="note">
+                    Không nên coi CanSM là nơi "tự tạo" Bus-Off.
+                    Bus-Off được phát hiện bởi CAN Controller; các BSW module phía trên
+                    xử lý thông tin đó theo kiến trúc AUTOSAR.
+                </div>
+
+                <h2>16. Bus-Off và CanIf</h2>
+                <p>
+                    <strong>CanIf</strong> đóng vai trò abstraction layer giữa CAN Driver
+                    và các module phía trên.
+                </p>
+
+                <p>
+                    Khi CAN Driver phát hiện một trạng thái hoặc sự kiện liên quan đến Bus-Off,
+                    thông tin này có thể được truyền qua các callback/interface được cấu hình
+                    để các module phía trên xử lý.
+                </p>
+
+                <pre><code>CAN Controller
+      ↓
+CAN Driver
+      ↓
+CanIf
+      ↓
+CanSM / Upper Layer</code></pre>
+
+                <h2>17. Bus-Off và Error Notification</h2>
+                <p>
+                    Bus-Off là một dạng trạng thái đặc biệt trong hệ thống error handling của CAN.
+                    Ngoài Bus-Off, CAN Controller còn có thể phát hiện các loại lỗi như:
+                </p>
+
+                <ul>
+                    <li>Bit Error</li>
+                    <li>Stuff Error</li>
+                    <li>CRC Error</li>
+                    <li>Form Error</li>
+                    <li>ACK Error</li>
+                </ul>
+
+                <p>
+                    Các lỗi này có thể dẫn đến thay đổi error counter và cuối cùng
+                    có thể góp phần làm node chuyển sang Bus-Off.
+                </p>
+
+                <h2>18. Bus-Off và Error Frame</h2>
+                <p>
+                    Khi CAN node phát hiện lỗi, CAN protocol có cơ chế Error Frame
+                    để thông báo cho các node khác.
+                </p>
+
+                <p>
+                    Nếu một node liên tục gặp lỗi khi truyền, việc phát sinh lỗi và
+                    retransmission có thể lặp lại nhiều lần. Điều này làm error counter
+                    thay đổi theo các quy tắc của CAN.
+                </p>
+
+                <pre><code>Transmit Frame
+      |
+      v
+Error detected
+      |
+      v
+Error Frame
+      |
+      v
+Transmission handling
+      |
+      v
+Error Counter changes
+      |
+      +---- Error continues
+      |
+      v
+Error Passive
+      |
+      v
+Bus-Off</code></pre>
+
+                <h2>19. Bus-Off và Retransmission</h2>
+                <p>
+                    CAN có cơ chế xử lý truyền lại frame khi xảy ra một số lỗi.
+                    Vì vậy một lỗi trên bus không nhất thiết khiến node lập tức Bus-Off.
+                </p>
+
+                <p>
+                    Nếu lỗi xảy ra lặp lại nhiều lần, error counter có thể tăng dần.
+                    Khi đạt điều kiện Bus-Off, Controller sẽ chuyển sang trạng thái Bus-Off.
+                </p>
+
+                <div class="note">
+                    <strong>Nhớ:</strong> Một lỗi đơn lẻ ≠ Bus-Off.
+                    Bus-Off thường là kết quả của quá trình error confinement khi lỗi truyền
+                    hoặc các điều kiện lỗi lặp lại làm counter tăng đến ngưỡng.
+                </div>
+
+                <h2>20. Điều gì xảy ra khi Controller Bus-Off?</h2>
+                <p>
+                    Khi Controller chuyển sang Bus-Off, node không tiếp tục hoạt động
+                    truyền CAN bình thường như trước.
+                </p>
+
+                <p>
+                    Về mặt khái niệm:
+                </p>
+
+                <pre><code>Before Bus-Off
++-----------------------+
+| CAN Controller Active |
+| TX / RX               |
++-----------------------+
+           |
+           | TEC reaches Bus-Off condition
+           v
++-----------------------+
+|       BUS-OFF         |
+|                       |
+| No normal transmission|
++-----------------------+</code></pre>
+
+                <p>
+                    Các chi tiết như controller mode, trạng thái hardware register,
+                    interrupt và recovery behavior phụ thuộc CAN Controller cụ thể.
+                </p>
+
+                <h2>21. Bus-Off Recovery là gì?</h2>
+                <p>
+                    <strong>Bus-Off Recovery</strong> là quá trình đưa CAN Controller
+                    trở lại trạng thái có thể tham gia CAN communication sau khi Bus-Off,
+                    nếu hệ thống cho phép và cấu hình recovery phù hợp.
+                </p>
+
+                <p>
+                    Đây không phải lúc nào cũng là một thao tác giống nhau giữa mọi
+                    MCU, CAN Controller và AUTOSAR configuration.
+                </p>
+
+                <pre><code>Normal
+  |
+  v
+Bus Error
+  |
+  v
+Error Passive
+  |
+  v
+Bus-Off
+  |
+  | Recovery condition
+  v
+Controller Recovery
+  |
+  v
+Communication Resume</code></pre>
+
+                <h2>22. Có phải Bus-Off luôn tự động Recovery?</h2>
+                <p>
+                    <strong>Không nên mặc định rằng Bus-Off luôn tự động recovery.</strong>
+                </p>
+
+                <p>
+                    Cơ chế recovery phụ thuộc CAN Controller, AUTOSAR configuration
+                    và yêu cầu của hệ thống.
+                </p>
+
+                <p>
+                    Một hệ thống có thể sử dụng cơ chế recovery được hỗ trợ bởi controller,
+                    hoặc cần software thực hiện trình tự xử lý tương ứng.
+                </p>
+
+                <div class="note">
+                    Khi làm việc với một project thực tế, cần kiểm tra:
+                    CAN Controller reference manual, AUTOSAR CAN Driver specification,
+                    generated configuration và yêu cầu của project trước khi kết luận
+                    chính xác recovery được thực hiện như thế nào.
+                </div>
+
+                <h2>23. Recovery không đồng nghĩa với Reset ECU</h2>
+                <p>
+                    Một lỗi Bus-Off không nhất thiết phải dẫn đến reset toàn bộ ECU.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bus-Off Recovery</th>
+                            <th>ECU Reset</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tập trung vào CAN Controller/network communication</td>
+                            <td>Khởi động lại toàn bộ ECU/software system</td>
+                        </tr>
+                        <tr>
+                            <td>Không nhất thiết reset toàn bộ application</td>
+                            <td>Các module có thể được khởi tạo lại</td>
+                        </tr>
+                        <tr>
+                            <td>Phụ thuộc CAN Controller và configuration</td>
+                            <td>Phụ thuộc reset mechanism của MCU/ECU</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>24. Bus-Off Recovery trong hệ thống AUTOSAR</h2>
+                <p>
+                    Ở mức khái niệm, flow có thể được hình dung như sau:
+                </p>
+
+                <pre><code>CAN Controller
+      |
+      | Bus-Off
+      v
+CAN Driver
+      |
+      v
+CanIf
+      |
+      v
+CanSM
+      |
+      | Recovery handling
+      v
+Controller / Communication state
+      |
+      v
+CAN Communication Resume</code></pre>
+
+                <p>
+                    Tùy cấu hình, CanSM có thể quản lý các trạng thái communication
+                    và phối hợp với CanIf/CAN Driver để thực hiện xử lý Bus-Off.
+                </p>
+
+                <h2>25. Bus-Off và DEM</h2>
+                <p>
+                    Trong AUTOSAR, <strong>DEM</strong> có thể được sử dụng để quản lý
+                    diagnostic event nếu project có cấu hình event tương ứng.
+                </p>
+
+                <p>
+                    Tuy nhiên, không nên hiểu rằng:
+                    <strong>mọi Bus-Off đều tự động trở thành một DEM event.</strong>
+                </p>
+
+                <p>
+                    Việc mapping Bus-Off thành diagnostic event phụ thuộc cấu hình
+                    và yêu cầu của hệ thống.
+                </p>
+
+                <pre><code>Bus-Off detected
+      |
+      v
+CAN Driver / CAN Stack
+      |
+      +------------------+
+      |                  |
+      v                  v
+Communication       Diagnostic handling
+Recovery            (nếu được cấu hình)
+                         |
+                         v
+                        DEM</code></pre>
+
+                <h2>26. Bus-Off và DET có giống nhau không?</h2>
+                <p>
+                    <strong>Không.</strong>
+                </p>
+
+                <p>
+                    Bus-Off là một trạng thái lỗi của CAN communication/error confinement.
+                    Trong khi đó, <strong>DET (Default Error Tracer)</strong> chủ yếu phục vụ
+                    việc phát hiện và báo cáo development error trong software.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bus-Off</th>
+                            <th>DET</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lỗi/trạng thái của CAN communication</td>
+                            <td>Development error của software module</td>
+                        </tr>
+                        <tr>
+                            <td>Liên quan CAN error confinement</td>
+                            <td>Liên quan API misuse/configuration/programming issue</td>
+                        </tr>
+                        <tr>
+                            <td>Được phát hiện ở CAN Controller</td>
+                            <td>Thường được kiểm tra trong BSW software</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>27. Ví dụ: ECU bị Bus-Off do không có ACK</h2>
+                <p>
+                    Giả sử ECU A được cấu hình để truyền một CAN message.
+                    Tuy nhiên ECU A là node duy nhất đang hoạt động trên bus.
+                </p>
+
+                <pre><code>ECU A
+  |
+  | TX Message
+  v
+CAN Bus
+  |
+  X  Không có ECU khác ACK
+  |
+  v
+ACK Error
+  |
+  v
+TEC tăng
+  |
+  | Lặp lại
+  v
+TEC tiếp tục tăng
+  |
+  v
+Bus-Off</code></pre>
+
+                <p>
+                    Trong trường hợp này, việc kiểm tra code của CAN Driver có thể không phải
+                    bước đầu tiên. Cần kiểm tra topology và xem có node nào thực sự hoạt động
+                    để ACK frame hay không.
+                </p>
+
+                <h2>28. Ví dụ: Bus-Off do sai Baud-rate</h2>
+                <p>
+                    ECU A sử dụng một bit timing, trong khi các node khác sử dụng
+                    cấu hình không tương thích.
+                </p>
+
+                <pre><code>ECU A
+Bit timing A
+   |
+   | CAN Frame
+   v
+================ CAN BUS ================
+   |
+   X
+Node khác không decode đúng
+   |
+   v
+CAN Errors
+   |
+   v
+TEC / REC thay đổi
+   |
+   v
+Có thể dẫn tới Bus-Off</code></pre>
+
+                <p>
+                    Khi debug trường hợp này, cần kiểm tra CAN clock, prescaler,
+                    time quantum, segment timing và sample point thay vì chỉ nhìn vào
+                    code truyền message.
+                </p>
+
+                <h2>29. Debug Bus-Off: Bước 1 — Xác nhận trạng thái</h2>
+                <p>
+                    Trước tiên phải xác định node thực sự đang ở Bus-Off.
+                </p>
+
+                <ul>
+                    <li>Đọc controller status nếu hardware hỗ trợ.</li>
+                    <li>Kiểm tra Bus-Off interrupt/event.</li>
+                    <li>Kiểm tra CAN Driver notification.</li>
+                    <li>Kiểm tra log của CAN stack.</li>
+                    <li>Kiểm tra CAN analyzer nếu có.</li>
+                </ul>
+
+                <p>
+                    Không nên kết luận "Bus-Off" chỉ vì application không nhận được response.
+                </p>
+
+                <h2>30. Debug Bus-Off: Bước 2 — Kiểm tra TEC/REC</h2>
+                <p>
+                    Nếu CAN Controller cho phép đọc error counter, hãy kiểm tra TEC và REC.
+                </p>
+
+                <pre><code>Check CAN Controller
+        |
+        +---- TEC?
+        |
+        +---- REC?
+        |
+        +---- Error State?
+        |
+        +---- Bus-Off flag?
+        |
+        v
+Determine error direction</code></pre>
+
+                <p>
+                    Nếu TEC tăng nhanh, cần tập trung nhiều hơn vào các vấn đề liên quan
+                    đến transmission.
+                </p>
+
+                <p>
+                    Nếu REC hoặc các error indication liên quan reception thay đổi,
+                    cần kiểm tra khả năng nhận và giải mã dữ liệu trên bus.
+                </p>
+
+                <h2>31. Debug Bus-Off: Bước 3 — Kiểm tra Baud-rate</h2>
+                <p>
+                    Kiểm tra:
+                </p>
+
+                <ul>
+                    <li>CAN Clock.</li>
+                    <li>Prescaler.</li>
+                    <li>Time Quantum.</li>
+                    <li>Sync Segment.</li>
+                    <li>Phase Segment 1.</li>
+                    <li>Phase Segment 2.</li>
+                    <li>SJW.</li>
+                    <li>Sample Point.</li>
+                    <li>Nominal/Data bit rate nếu sử dụng CAN-FD.</li>
+                </ul>
+
+                <div class="note">
+                    Không nên chỉ kiểm tra con số baud-rate hiển thị trong configuration tool.
+                    Bit timing thực tế của Controller mới quyết định cách node lấy mẫu và
+                    đồng bộ trên bus.
+                </div>
+
+                <h2>32. Debug Bus-Off: Bước 4 — Kiểm tra Physical Layer</h2>
+                <p>
+                    Sau software configuration, cần kiểm tra phần vật lý:
+                </p>
+
+                <ul>
+                    <li>CANH và CANL.</li>
+                    <li>CAN Transceiver.</li>
+                    <li>Nguồn cấp cho transceiver.</li>
+                    <li>Ground/reference.</li>
+                    <li>CAN cable.</li>
+                    <li>Termination resistor.</li>
+                    <li>Topology của network.</li>
+                    <li>Tín hiệu trên bus bằng CAN analyzer hoặc oscilloscope nếu cần.</li>
+                </ul>
+
+                <h2>33. Debug Bus-Off: Bước 5 — Kiểm tra Configuration</h2>
+                <p>
+                    Trong AUTOSAR, cần kiểm tra toàn bộ mapping liên quan:
+                </p>
+
+                <pre><code>CAN Controller
+      |
+      +---- Baudrate
+      +---- Controller configuration
+      +---- Hardware Object
+      +---- HRH / HTH
+      +---- Interrupt / Polling
+      +---- Notification
+      |
+      v
+CanIf
+      |
+      +---- Controller mapping
+      +---- PDU mapping
+      |
+      v
+CanSM / Upper Layer</code></pre>
+
+                <p>
+                    Một configuration sai có thể khiến application tưởng rằng CAN
+                    đang hoạt động nhưng Controller thực tế không truyền hoặc không nhận đúng.
+                </p>
+
+                <h2>34. Debug Bus-Off: Flow tổng hợp</h2>
+
+                <pre><code>
+              ECU bị Bus-Off
+                     |
+                     v
+          Xác nhận Controller State
+                     |
+                     v
+              Kiểm tra TEC/REC
+                     |
+                     v
+          Xác định loại CAN Error
+                     |
+          +----------+----------+
+          |                     |
+          v                     v
+     Transmission          Reception
+          |                     |
+          +----------+----------+
+                     |
+                     v
+             Kiểm tra Bit Timing
+                     |
+                     v
+             Kiểm tra Clock
+                     |
+                     v
+          Kiểm tra Transceiver
+                     |
+                     v
+         Kiểm tra CANH / CANL
+                     |
+                     v
+           Kiểm tra Termination
+                     |
+                     v
+        Kiểm tra CAN Traffic/ACK
+                     |
+                     v
+          Kiểm tra CAN Driver
+                     |
+                     v
+        Kiểm tra AUTOSAR Stack
+                     |
+                     v
+            Recovery Handling
+</code></pre>
+
+                <h2>35. Những lỗi thường gặp khi học Bus-Off</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sai lầm</th>
+                            <th>Cách hiểu đúng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bus-Off nghĩa là ECU bị crash</td>
+                            <td>Bus-Off là trạng thái error confinement của CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>Một CAN Error là Bus-Off</td>
+                            <td>Bus-Off thường là kết quả của error counter đạt điều kiện tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus-Off chắc chắn do software</td>
+                            <td>Physical layer, timing, transceiver và network cũng có thể gây lỗi.</td>
+                        </tr>
+                        <tr>
+                            <td>Chỉ cần kiểm tra baud-rate</td>
+                            <td>Cần kiểm tra cả bit timing, clock, wiring, termination và traffic.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus-Off luôn tự recovery</td>
+                            <td>Recovery phụ thuộc Controller và configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus-Off = DET</td>
+                            <td>Bus-Off là CAN communication/error state; DET là development error mechanism.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>36. Góc nhìn phỏng vấn</h2>
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is Bus-Off in CAN?"</strong>, một câu trả lời tốt ở mức fresher có thể là:
+                </p>
+
+                <div class="note">
+                    <strong>Sample answer:</strong>
+                    Bus-Off is a CAN error state where a CAN controller stops participating
+                    in normal transmission after its transmit error counter reaches the
+                    Bus-Off condition. It is a protection mechanism to prevent a faulty node
+                    from continuously disturbing the CAN network. When debugging Bus-Off,
+                    I would check the error counters, CAN error type, baud-rate and bit timing,
+                    clock, transceiver, wiring, termination, and then the CAN Driver and
+                    AUTOSAR communication stack.
+                </div>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What can cause Bus-Off?"</strong>, có thể trả lời theo nhóm:
+                </p>
+
+                <ul>
+                    <li><strong>Protocol:</strong> ACK, Bit, Form hoặc các CAN errors khác.</li>
+                    <li><strong>Timing:</strong> baud-rate, bit timing, clock.</li>
+                    <li><strong>Physical:</strong> transceiver, CANH/CANL, termination.</li>
+                    <li><strong>Configuration:</strong> Controller, hardware object, notification.</li>
+                    <li><strong>Network:</strong> node khác không hoạt động hoặc network topology không đúng.</li>
+                </ul>
+
+                <h2>37. Memory Map — Bus-Off cần nhớ gì?</h2>
+
+                <pre><code>CAN ERROR HANDLING
+│
+├── Error Active
+│
+├── Error Passive
+│
+├── Bus-Off
+│
+├── TEC
+│   └── Transmit Error Counter
+│
+├── REC
+│   └── Receive Error Counter
+│
+├── Common Error Types
+│   ├── Bit Error
+│   ├── Stuff Error
+│   ├── CRC Error
+│   ├── Form Error
+│   └── ACK Error
+│
+├── AUTOSAR
+│   ├── CAN Controller
+│   ├── CAN Driver
+│   ├── CanIf
+│   ├── CanSM
+│   └── DEM (nếu được cấu hình)
+│
+└── Debug
+    ├── Controller State
+    ├── TEC / REC
+    ├── Bit Timing
+    ├── Clock
+    ├── Transceiver
+    ├── Wiring
+    ├── Termination
+    └── CAN Traffic / ACK</code></pre>
+
+                <h2>38. Tóm tắt</h2>
+                <p>
+                    <strong>Bus-Off</strong> là một trong những cơ chế quan trọng nhất
+                    trong CAN error confinement. Khi một CAN node gặp quá nhiều lỗi,
+                    đặc biệt là các lỗi liên quan đến transmission làm TEC tăng đến điều kiện
+                    Bus-Off, CAN Controller sẽ chuyển sang trạng thái Bus-Off và ngừng
+                    hoạt động truyền CAN bình thường.
+                </p>
+
+                <p>
+                    Khi học hoặc debug Bus-Off, cần nhìn vấn đề từ nhiều lớp:
+                    <strong>CAN protocol → error counter → CAN Controller → CAN Driver →
+                        CanIf/CanSM → CAN Transceiver → physical bus</strong>.
+                </p>
+
+                <pre><code>CAN Error
+    ↓
+TEC / REC
+    ↓
+Error Active
+    ↓
+Error Passive
+    ↓
+Bus-Off
+    ↓
+CAN Driver detects / reports
+    ↓
+CanIf / CanSM handling
+    ↓
+Recovery according to configuration
+    ↓
+CAN Communication Resume</code></pre>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    Khi gặp Bus-Off, đừng chỉ nhìn vào code.
+                    Hãy xác định error state và error counter trước, sau đó kiểm tra
+                    CAN timing, clock, transceiver, physical bus, ACK và cuối cùng mới
+                    đi sâu vào CAN Driver/AUTOSAR configuration.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-26.html">← Bài trước</a>
+                    <a class="btn" href="lesson-28.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

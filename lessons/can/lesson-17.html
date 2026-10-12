@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 17: Init và DeInit | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html" class="active">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 17: Init và DeInit</h1>
+
+                <p>
+                    Trong các bài trước, chúng ta đã tìm hiểu kiến trúc CAN Driver,
+                    các module liên quan như CanIf, EcuM, OS, SchM, DET và DEM.
+                    Một trong những vấn đề quan trọng tiếp theo khi làm việc với
+                    CAN Driver là hiểu rõ <strong>Initialization (Init)</strong>
+                    và <strong>Deinitialization (DeInit)</strong>.
+                </p>
+
+                <p>
+                    Init và DeInit quyết định thời điểm CAN Driver được đưa vào
+                    trạng thái có thể hoạt động và thời điểm driver được đưa
+                    trở về trạng thái không hoạt động.
+                    Đây cũng là một trong những khái niệm rất quan trọng khi
+                    debug lỗi CAN communication.
+                </p>
+
+                <div class="note">
+                    <strong>Ý tưởng chính:</strong>
+                    <br><br>
+                    <strong>Init</strong> = chuẩn bị CAN Driver và các thành phần
+                    liên quan để có thể hoạt động.
+                    <br>
+                    <strong>DeInit</strong> = đưa CAN Driver trở về trạng thái
+                    không hoạt động và giải phóng/reset những state cần thiết
+                    theo configuration.
+                    <br><br>
+                    Có thể nhớ đơn giản:
+                    <br>
+                    <strong>Init → Ready to use</strong>
+                    <br>
+                    <strong>DeInit → No longer initialized</strong>
+                </div>
+
+                <h2>1. Init và DeInit là gì?</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Init</strong></td>
+                            <td>
+                                Khởi tạo module và chuẩn bị state/configuration
+                                để module có thể hoạt động.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>DeInit</strong></td>
+                            <td>
+                                Đưa module về trạng thái không initialized
+                                và ngừng hoạt động theo thiết kế.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong AUTOSAR, initialization không đơn giản chỉ là
+                    "set một biến thành TRUE".
+                    CAN Driver cần được chuẩn bị cả software state,
+                    hardware configuration và các thành phần liên quan
+                    tới CAN Controller.
+                </p>
+
+                <pre><code>ECU Startup
+    │
+    ▼
+CAN Driver Init
+    │
+    ├── Software state
+    ├── Configuration
+    ├── CAN Controller
+    ├── Interrupt / polling
+    └── Hardware-related setup
+    │
+    ▼
+CAN Driver Ready</code></pre>
+
+                <h2>2. Tại sao Init quan trọng?</h2>
+
+                <p>
+                    Một CAN Driver chưa được initialized không thể được coi
+                    là sẵn sàng để xử lý CAN communication.
+                </p>
+
+                <p>
+                    Nếu application hoặc upper-layer module gọi API của CAN Driver
+                    trước khi initialization hoàn tất, có thể xảy ra
+                    development error hoặc hành vi không hợp lệ.
+                </p>
+
+                <pre><code>ECU Startup
+    │
+    ▼
+Can_Init()
+    │
+    ▼
+Driver Initialized
+    │
+    ├── Can_SetControllerMode()
+    ├── Can_Write()
+    └── CAN processing
+            │
+            ▼
+       CAN Communication</code></pre>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Init phải hoàn thành trước khi các operation yêu cầu
+                    CAN Driver ở trạng thái initialized được thực hiện.
+                </div>
+
+                <h2>3. Can_Init()</h2>
+
+                <p>
+                    Trong AUTOSAR CAN Driver, API quan trọng nhất cho
+                    initialization là <code>Can_Init()</code>.
+                </p>
+
+                <pre><code>Can_Init(&amp;CanConfig)
+       │
+       ▼
+    CanDrv
+       │
+       ├── Initialize driver state
+       ├── Load / apply configuration
+       ├── Configure CAN controllers
+       └── Prepare CAN hardware
+       │
+       ▼
+CAN Driver initialized</code></pre>
+
+                <p>
+                    Prototype cụ thể có thể phụ thuộc AUTOSAR release
+                    và implementation, nhưng về mặt khái niệm
+                    <code>Can_Init()</code> nhận configuration và sử dụng
+                    configuration đó để đưa driver vào trạng thái hoạt động.
+                </p>
+
+                <h2>4. Configuration trong Can_Init()</h2>
+
+                <p>
+                    CAN Driver không tự biết mọi thông tin về ECU.
+                    Các thông tin cần thiết thường được tạo ra từ
+                    configuration của project.
+                </p>
+
+                <p>
+                    Ví dụ configuration có thể liên quan tới:
+                </p>
+
+                <ul>
+                    <li>CAN Controller.</li>
+                    <li>Hardware Object.</li>
+                    <li>Baudrate / timing configuration.</li>
+                    <li>Tx / Rx configuration.</li>
+                    <li>Interrupt configuration.</li>
+                    <li>CAN controller options.</li>
+                </ul>
+
+                <pre><code>CAN Configuration
+       │
+       ├── Controller configuration
+       ├── Hardware Objects
+       ├── Tx configuration
+       ├── Rx configuration
+       ├── Timing
+       └── Interrupt / Polling settings
+       │
+       ▼
+     Can_Init()
+       │
+       ▼
+   CAN Driver state</code></pre>
+
+                <p>
+                    Configuration thực tế phụ thuộc vào ECU,
+                    MCU, CAN peripheral và vendor implementation.
+                </p>
+
+                <h2>5. Init Software State</h2>
+
+                <p>
+                    Một phần quan trọng của initialization là thiết lập
+                    internal software state của CAN Driver.
+                </p>
+
+                <pre><code>Before Init
+
+Driver State
+    │
+    ▼
+  UNINIT
+
+
+        Can_Init()
+
+
+After Init
+
+Driver State
+    │
+    ▼
+ INITIALIZED
+    │
+    ├── Controller information
+    ├── HTH / HRH information
+    ├── Status
+    └── Runtime data</code></pre>
+
+                <p>
+                    Các state cụ thể và cách biểu diễn nội bộ phụ thuộc
+                    implementation. Sơ đồ trên chỉ nhằm mô tả concept:
+                    trước Init driver chưa sẵn sàng, sau Init driver
+                    đã có configuration và state cần thiết.
+                </p>
+
+                <h2>6. Init CAN Controller</h2>
+
+                <p>
+                    Initialization của CAN Driver có liên quan chặt chẽ
+                    tới CAN Controller.
+                </p>
+
+                <pre><code>Can_Init()
+    │
+    ▼
+CAN Driver
+    │
+    ▼
+CAN Controller Configuration
+    │
+    ├── Timing
+    ├── Mode
+    ├── Tx configuration
+    ├── Rx configuration
+    └── Hardware Objects
+    │
+    ▼
+CAN Controller Ready</code></pre>
+
+                <p>
+                    Tuy nhiên cần phân biệt giữa việc
+                    <strong>initialize driver</strong> và việc
+                    <strong>đưa controller vào trạng thái STARTED</strong>.
+                    Hai khái niệm này không nhất thiết là cùng một operation.
+                </p>
+
+                <div class="note">
+                    <strong>Quan trọng:</strong>
+                    <code>Can_Init()</code> không nên được hiểu đơn giản là
+                    "CAN bắt đầu truyền frame ngay lập tức".
+                    Sau initialization còn có thể cần các bước
+                    controller mode / communication state phù hợp.
+                </div>
+
+                <h2>7. Init không đồng nghĩa với START</h2>
+
+                <p>
+                    Đây là một trong những điểm rất dễ nhầm khi học CAN Driver.
+                </p>
+
+                <pre><code>Can_Init()
+    │
+    ▼
+Driver initialized
+    │
+    ▼
+Controller configured
+    │
+    ▼
+Set Controller Mode
+    │
+    ▼
+Controller STARTED
+    │
+    ▼
+CAN communication</code></pre>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Init</strong></td>
+                            <td>
+                                Khởi tạo driver và configuration.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Controller Mode</strong></td>
+                            <td>
+                                Điều khiển trạng thái hoạt động của CAN Controller.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>STARTED</strong></td>
+                            <td>
+                                Controller được đưa vào trạng thái cho phép
+                                CAN communication theo configuration.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>8. CAN Initialization Flow</h2>
+
+                <svg viewBox="0 0 900 620" role="img" aria-label="CAN initialization flow"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="320" y="25" width="260" height="60" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="63" text-anchor="middle" font-size="21">
+                        ECU Startup
+                    </text>
+
+                    <rect x="320" y="120" width="260" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="158" text-anchor="middle" font-size="20">
+                        EcuM / Startup
+                    </text>
+
+                    <rect x="320" y="215" width="260" height="60" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="253" text-anchor="middle" font-size="20">
+                        Can_Init()
+                    </text>
+
+                    <rect x="320" y="310" width="260" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="348" text-anchor="middle" font-size="20">
+                        Controller Configuration
+                    </text>
+
+                    <rect x="320" y="405" width="260" height="60" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="443" text-anchor="middle" font-size="20">
+                        Controller Ready
+                    </text>
+
+                    <rect x="320" y="500" width="260" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="538" text-anchor="middle" font-size="20">
+                        CAN Communication
+                    </text>
+
+                    <line x1="450" y1="85" x2="450" y2="120" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="180" x2="450" y2="215" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="275" x2="450" y2="310" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="370" x2="450" y2="405" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="465" x2="450" y2="500" stroke="currentColor" stroke-width="2" />
+
+                </svg>
+
+                <p>
+                    Flow thực tế có thể có thêm MCU, PORT, INTC, CanTrcv,
+                    CanIf, CanSM và các module khác.
+                    Thứ tự chính xác phụ thuộc ECU integration và configuration.
+                </p>
+
+                <h2>9. Init và CanIf</h2>
+
+                <p>
+                    CAN Driver không hoạt động độc lập với CanIf.
+                    Trong CAN communication stack, CanIf cũng cần được
+                    initialized trước khi communication flow đầy đủ
+                    có thể hoạt động.
+                </p>
+
+                <pre><code>ECU Startup
+    │
+    ├── CanDrv Init
+    │
+    ├── CanIf Init
+    │
+    ├── CAN communication stack Init
+    │
+    ▼
+Communication Stack Ready</code></pre>
+
+                <p>
+                    Không nên coi sơ đồ trên là một thứ tự API cố định
+                    cho mọi project. Nó chỉ mô tả rằng các module phải
+                    được initialize phù hợp với dependency của hệ thống.
+                </p>
+
+                <h2>10. Init và OS / SchM</h2>
+
+                <p>
+                    OS và SchM cũng có thể liên quan tới lifecycle của CAN Driver.
+                    Ví dụ, nếu CAN Driver sử dụng polling-based MainFunction,
+                    execution environment phải sẵn sàng để MainFunction
+                    được gọi đúng cách.
+                </p>
+
+                <pre><code>ECU Startup
+    │
+    ▼
+OS Ready
+    │
+    ▼
+BSW / CAN Initialization
+    │
+    ▼
+MainFunction configuration
+    │
+    ▼
+CAN Runtime Processing</code></pre>
+
+                <p>
+                    Nếu CAN Driver đã initialized nhưng MainFunction
+                    không được schedule trong polling configuration,
+                    CAN communication vẫn có thể không hoạt động đúng.
+                </p>
+
+                <h2>11. Init và Interrupt</h2>
+
+                <p>
+                    Với interrupt-driven CAN configuration,
+                    interrupt infrastructure cũng phải được cấu hình phù hợp.
+                </p>
+
+                <pre><code>Can_Init()
+    │
+    ▼
+CAN Driver Ready
+    │
+    ▼
+Interrupt Configuration
+    │
+    ▼
+CAN Controller Event
+    │
+    ▼
+INTC
+    │
+    ▼
+ISR
+    │
+    ▼
+CanDrv</code></pre>
+
+                <p>
+                    Vì vậy khi debug CAN RX/TX trong interrupt mode,
+                    không nên chỉ kiểm tra <code>Can_Init()</code>.
+                    Cần kiểm tra cả interrupt configuration,
+                    ISR mapping và execution path.
+                </p>
+
+                <h2>12. Can_Init và DET</h2>
+
+                <p>
+                    Init cũng liên quan tới DET.
+                    Nếu API được gọi với trạng thái hoặc tham số không hợp lệ,
+                    development error có thể được report.
+                </p>
+
+                <pre><code>Can_Init()
+    │
+    ├── Valid configuration?
+    ├── Valid state?
+    └── Correct initialization sequence?
+    │
+    ├── YES
+    │     │
+    │     ▼
+    │   Initialize
+    │
+    └── NO
+          │
+          ▼
+         DET
+          │
+          ▼
+Development Error</code></pre>
+
+                <p>
+                    Điều này giúp developer phát hiện configuration hoặc
+                    integration issue sớm trong quá trình phát triển.
+                </p>
+
+                <h2>13. Can_Init và DEM</h2>
+
+                <p>
+                    Cần phân biệt DET và DEM ngay trong initialization context.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>Thành phần liên quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Can_Init() được gọi sai</td>
+                            <td>DET</td>
+                        </tr>
+                        <tr>
+                            <td>Invalid initialization parameter</td>
+                            <td>DET</td>
+                        </tr>
+                        <tr>
+                            <td>CAN communication timeout sau khi ECU chạy</td>
+                            <td>DEM có thể liên quan</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic event trong runtime</td>
+                            <td>DEM</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Nói cách khác, lỗi trong quá trình sử dụng API Init
+                    và diagnostic fault trong runtime là hai vấn đề khác nhau.
+                </p>
+
+                <h2>14. Khi nào cần DeInit?</h2>
+
+                <p>
+                    <strong>DeInit</strong> được sử dụng khi CAN Driver
+                    cần được đưa ra khỏi trạng thái initialized.
+                </p>
+
+                <p>
+                    Tùy architecture, DeInit có thể liên quan tới:
+                </p>
+
+                <ul>
+                    <li>ECU shutdown.</li>
+                    <li>Reconfiguration.</li>
+                    <li>Special lifecycle transition.</li>
+                    <li>Testing hoặc controlled restart.</li>
+                    <li>Vendor-specific integration scenarios.</li>
+                </ul>
+
+                <pre><code>CAN Communication
+       │
+       ▼
+Stop Communication
+       │
+       ▼
+Controller stopped
+       │
+       ▼
+CAN Driver DeInit
+       │
+       ▼
+Driver not initialized</code></pre>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    DeInit không có nghĩa là ECU luôn luôn phải shutdown.
+                    Việc module có hỗ trợ DeInit, khi nào được gọi
+                    và mức độ cleanup như thế nào phụ thuộc specification,
+                    configuration và integration.
+                </div>
+
+                <h2>15. Can_DeInit()</h2>
+
+                <p>
+                    Một CAN Driver implementation có thể cung cấp
+                    API deinitialization theo AUTOSAR specification/configuration.
+                    Conceptually, operation này đưa driver ra khỏi trạng thái
+                    initialized.
+                </p>
+
+                <pre><code>Can_DeInit()
+      │
+      ▼
+   CanDrv
+      │
+      ├── Stop / disable processing
+      ├── Reset internal state
+      ├── Disable relevant functionality
+      └── Return to uninitialized state
+      │
+      ▼
+    UNINIT</code></pre>
+
+                <p>
+                    Tên API và availability cần được kiểm tra theo đúng
+                    AUTOSAR CAN Driver release và implementation đang sử dụng.
+                    Không nên giả định mọi project đều expose chính xác
+                    cùng một API DeInit.
+                </p>
+
+                <h2>16. DeInit không phải Controller STOP đơn giản</h2>
+
+                <p>
+                    Một điểm dễ nhầm khác là:
+                    <strong>Controller STOP</strong> và
+                    <strong>Driver DeInit</strong> không phải cùng một khái niệm.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operation</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Controller STOP</strong></td>
+                            <td>
+                                Đưa CAN Controller ra khỏi trạng thái
+                                communication đang hoạt động.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Driver DeInit</strong></td>
+                            <td>
+                                Đưa CAN Driver về trạng thái không initialized
+                                theo lifecycle của module.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <pre><code>Driver Initialized
+       │
+       ▼
+Controller STARTED
+       │
+       ▼
+CAN Communication
+       │
+       ▼
+Controller STOPPED
+       │
+       ▼
+Driver DeInit
+       │
+       ▼
+Driver UNINIT</code></pre>
+
+                <h2>17. Init → Runtime → DeInit</h2>
+
+                <svg viewBox="0 0 900 430" role="img" aria-label="Lifecycle Init Runtime DeInit của CAN Driver"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="50" y="145" width="180" height="75" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="140" y="190" text-anchor="middle" font-size="21">
+                        UNINIT
+                    </text>
+
+                    <rect x="360" y="145" width="180" height="75" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="190" text-anchor="middle" font-size="21">
+                        INIT
+                    </text>
+
+                    <rect x="670" y="145" width="180" height="75" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="760" y="190" text-anchor="middle" font-size="21">
+                        RUNTIME
+                    </text>
+
+                    <line x1="230" y1="182" x2="360" y2="182" stroke="currentColor" stroke-width="2" />
+                    <polygon points="355,177 365,182 355,187" fill="currentColor" />
+
+                    <line x1="540" y1="182" x2="670" y2="182" stroke="currentColor" stroke-width="2" />
+                    <polygon points="665,177 675,182 665,187" fill="currentColor" />
+
+                    <text x="275" y="155" font-size="16">
+                        Can_Init()
+                    </text>
+
+                    <text x="570" y="155" font-size="16">
+                        Start / Operation
+                    </text>
+
+                    <path d="M760 220 C760 340, 140 340, 140 220" fill="none" stroke="currentColor" stroke-width="2" />
+
+                    <polygon points="140,220 134,230 146,230" fill="currentColor" />
+
+                    <text x="390" y="330" font-size="16">
+                        Stop / DeInit lifecycle
+                    </text>
+
+                </svg>
+
+                <p>
+                    Sơ đồ trên mô tả lifecycle ở mức khái niệm:
+                    driver bắt đầu ở trạng thái chưa initialized,
+                    sau Init mới bước vào runtime operation,
+                    và có thể trở về trạng thái chưa initialized
+                    khi DeInit được thực hiện.
+                </p>
+
+                <h2>18. Init lại sau DeInit</h2>
+
+                <p>
+                    Một câu hỏi thường gặp là:
+                    "Sau khi DeInit, có thể Init lại không?"
+                </p>
+
+                <p>
+                    Về mặt concept, lifecycle có thể có dạng:
+                </p>
+
+                <pre><code>UNINIT
+  │
+  │ Init
+  ▼
+INITIALIZED
+  │
+  │ Runtime
+  ▼
+ACTIVE
+  │
+  │ DeInit
+  ▼
+UNINIT
+  │
+  │ Init again
+  ▼
+INITIALIZED</code></pre>
+
+                <p>
+                    Tuy nhiên việc hỗ trợ và điều kiện để thực hiện
+                    Init lại phụ thuộc specification, configuration
+                    và integration của module.
+                </p>
+
+                <h2>19. Init và DeInit trong ECU Shutdown</h2>
+
+                <p>
+                    Khi ECU shutdown, communication thường cần được
+                    đưa về trạng thái phù hợp trước khi các module
+                    được shutdown.
+                </p>
+
+                <pre><code>ECU RUNNING
+    │
+    ▼
+Communication Shutdown
+    │
+    ├── Stop CAN communication
+    ├── Stop controller
+    └── Stop related processing
+    │
+    ▼
+CAN Driver DeInit / Shutdown
+    │
+    ▼
+ECU Shutdown / Sleep</code></pre>
+
+                <p>
+                    Thứ tự chính xác phụ thuộc ECU lifecycle và AUTOSAR
+                    integration. Vì vậy không nên coi đây là một
+                    shutdown sequence cố định cho mọi ECU.
+                </p>
+
+                <h2>20. Init và EcuM</h2>
+
+                <p>
+                    EcuM đóng vai trò quan trọng trong ECU lifecycle,
+                    vì vậy Init/DeInit của CAN Driver thường phải phù hợp
+                    với startup và shutdown sequence của ECU.
+                </p>
+
+                <pre><code>Startup
+   │
+   ▼
+EcuM
+   │
+   ▼
+BSW Initialization
+   │
+   ▼
+CanDrv Init
+   │
+   ▼
+CAN Communication
+
+
+Shutdown
+   │
+   ▼
+EcuM
+   │
+   ▼
+Communication shutdown
+   │
+   ▼
+CanDrv DeInit / shutdown
+   │
+   ▼
+ECU Sleep / Off</code></pre>
+
+                <h2>21. Init và CanIf trong startup</h2>
+
+                <p>
+                    CanIf cũng có lifecycle riêng.
+                    Để CAN communication stack hoạt động đúng,
+                    CanIf và CanDrv phải được initialize theo dependency
+                    của configuration.
+                </p>
+
+                <pre><code>ECU Startup
+      │
+      ▼
+  CAN Stack Init
+      │
+      ├── CanDrv
+      │
+      └── CanIf
+            │
+            ▼
+      Communication Ready</code></pre>
+
+                <p>
+                    Nếu một module chưa initialized nhưng module khác
+                    đã bắt đầu sử dụng API của nó, development error
+                    hoặc communication failure có thể xảy ra.
+                </p>
+
+                <h2>22. Init và MainFunction</h2>
+
+                <p>
+                    Với polling configuration, MainFunction thường chỉ
+                    có ý nghĩa khi driver đã được initialized.
+                </p>
+
+                <pre><code>Before Init
+
+OS Task
+   │
+   ▼
+Can_MainFunction_Read()
+   │
+   ▼
+CanDrv
+   │
+   └── Driver not ready
+
+
+After Init
+
+OS Task
+   │
+   ▼
+Can_MainFunction_Read()
+   │
+   ▼
+CanDrv
+   │
+   ▼
+CAN Controller</code></pre>
+
+                <p>
+                    Vì vậy nếu polling path không hoạt động,
+                    cần kiểm tra cả hai phía:
+                    driver đã initialized chưa và MainFunction
+                    có thực sự được schedule không.
+                </p>
+
+                <h2>23. Init và Interrupt Path</h2>
+
+                <p>
+                    Tương tự, interrupt-driven processing cũng phụ thuộc
+                    initialization.
+                </p>
+
+                <pre><code>CAN Controller
+       │
+       │ Interrupt
+       ▼
+      INTC
+       │
+       ▼
+      ISR
+       │
+       ▼
+    CanDrv
+       │
+       ▼
+    CanIf</code></pre>
+
+                <p>
+                    Nếu interrupt được enable quá sớm hoặc configuration
+                    không phù hợp với driver state, có thể xuất hiện
+                    những lỗi integration khó debug.
+                </p>
+
+                <div class="note">
+                    <strong>Debug hint:</strong>
+                    Khi kiểm tra CAN initialization, hãy xác định rõ:
+                    driver state, controller state, interrupt/polling
+                    configuration và execution context.
+                </div>
+
+                <h2>24. Ví dụ Debug: Can_Write() không hoạt động</h2>
+
+                <p>
+                    Giả sử Application gọi <code>Can_Write()</code>
+                    nhưng CAN frame không xuất hiện trên bus.
+                </p>
+
+                <pre><code>Application
+     │
+     ▼
+Can_Write()
+     │
+     ├── Is CanDrv initialized?
+     │
+     ├── Is Controller started?
+     │
+     ├── Is HTH valid?
+     │
+     ├── Is PDU configuration correct?
+     │
+     └── Is CAN hardware ready?
+     │
+     ▼
+CanDrv
+     │
+     ▼
+CAN Controller
+     │
+     ▼
+CAN Bus</code></pre>
+
+                <p>
+                    Trong trường hợp này, cần phân biệt:
+                    <strong>driver chưa Init</strong> và
+                    <strong>driver đã Init nhưng controller chưa STARTED</strong>.
+                </p>
+
+                <h2>25. Ví dụ Debug: CAN RX không hoạt động sau Init</h2>
+
+                <pre><code>Can_Init()
+    │
+    ▼
+Driver initialized
+    │
+    ▼
+CAN Controller configured
+    │
+    ├── Interrupt mode?
+    │       │
+    │       ▼
+    │     ISR path
+    │
+    └── Polling mode?
+            │
+            ▼
+       MainFunction
+            │
+            ▼
+          CanDrv
+            │
+            ▼
+          CanIf</code></pre>
+
+                <p>
+                    Nếu CAN analyzer cho thấy frame đã xuất hiện trên bus
+                    nhưng ECU không nhận được, cần kiểm tra execution path
+                    sau initialization thay vì chỉ kiểm tra
+                    <code>Can_Init()</code>.
+                </p>
+
+                <h2>26. Những lỗi Init thường gặp</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lỗi</th>
+                            <th>Nguyên nhân có thể</th>
+                            <th>Hướng kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Driver vẫn UNINIT</td>
+                            <td>Can_Init chưa được gọi</td>
+                            <td>Kiểm tra startup sequence</td>
+                        </tr>
+                        <tr>
+                            <td>Init error</td>
+                            <td>Configuration / parameter không hợp lệ</td>
+                            <td>Kiểm tra DET và configuration</td>
+                        </tr>
+                        <tr>
+                            <td>Controller không hoạt động</td>
+                            <td>Controller chưa được start</td>
+                            <td>Kiểm tra controller mode</td>
+                        </tr>
+                        <tr>
+                            <td>RX không hoạt động</td>
+                            <td>Interrupt / polling chưa được cấu hình</td>
+                            <td>Kiểm tra INTC / MainFunction</td>
+                        </tr>
+                        <tr>
+                            <td>TX không hoạt động</td>
+                            <td>Controller chưa ready</td>
+                            <td>Kiểm tra Init → Start → Can_Write</td>
+                        </tr>
+                        <tr>
+                            <td>MainFunction không chạy</td>
+                            <td>OS scheduling chưa đúng</td>
+                            <td>Kiểm tra Task / period</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>27. Những lỗi DeInit thường gặp</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lỗi</th>
+                            <th>Nguyên nhân có thể</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DeInit khi module vẫn đang được sử dụng</td>
+                            <td>Lifecycle sequence không đúng</td>
+                        </tr>
+                        <tr>
+                            <td>Communication vẫn được gọi sau DeInit</td>
+                            <td>Upper layer chưa shutdown đúng</td>
+                        </tr>
+                        <tr>
+                            <td>Interrupt vẫn hoạt động</td>
+                            <td>Shutdown / interrupt disable sequence chưa đúng</td>
+                        </tr>
+                        <tr>
+                            <td>MainFunction vẫn chạy</td>
+                            <td>OS scheduling chưa được stop/adjust</td>
+                        </tr>
+                        <tr>
+                            <td>Init lại không hoạt động</td>
+                            <td>Driver state hoặc configuration chưa được reset đúng</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>28. Init và DeInit trong Debugging</h2>
+
+                <p>
+                    Khi CAN không hoạt động, một trong những câu hỏi đầu tiên
+                    nên là:
+                    <strong>"Driver đã được initialize đúng chưa?"</strong>
+                </p>
+
+                <pre><code>CAN Communication Problem
+          │
+          ▼
+Is CanDrv initialized?
+          │
+     ┌────┴────┐
+     │         │
+    NO        YES
+     │         │
+     ▼         ▼
+Check Init   Check Controller
+sequence     state
+               │
+               ▼
+          Check ISR / Polling
+               │
+               ▼
+             CanIf
+               │
+               ▼
+          Upper modules</code></pre>
+
+                <p>
+                    Cách tiếp cận này giúp tránh việc nhảy ngay vào
+                    kiểm tra CAN bus hoặc application khi lỗi thực sự
+                    nằm ở lifecycle của driver.
+                </p>
+
+                <h2>29. Interview Perspective</h2>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is the purpose of Can_Init()?"</strong>
+                </p>
+
+                <pre><code>Can_Init() initializes the CAN Driver
+and prepares its configuration and internal
+state so that the driver can operate.
+
+It may also configure the CAN controller
+according to the generated configuration,
+but initialization should not be confused
+with putting the controller into the STARTED state.</code></pre>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is the difference between Init and Start?"</strong>
+                </p>
+
+                <pre><code>Initialization prepares the driver
+and its configuration for operation.
+
+Starting the controller changes the
+controller state so that CAN communication
+can be performed.
+
+Therefore, Init and Start are related
+but they are not the same operation.</code></pre>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What should you check if CAN communication
+                        does not work after initialization?"</strong>
+                </p>
+
+                <pre><code>I would first verify that the CAN Driver
+was initialized successfully.
+
+Then I would check the controller state,
+CAN configuration, interrupt or polling path,
+OS scheduling if required, and finally
+the CanIf and upper communication layers.</code></pre>
+
+                <h2>30. Memory Map</h2>
+
+                <svg viewBox="0 0 900 500" role="img" aria-label="Memory map Init và DeInit"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="320" y="30" width="260" height="75" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="76" text-anchor="middle" font-size="23">
+                        CAN Driver Lifecycle
+                    </text>
+
+                    <rect x="60" y="170" width="220" height="80" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="170" y="218" text-anchor="middle" font-size="22">
+                        Init
+                    </text>
+
+                    <rect x="340" y="170" width="220" height="80" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="218" text-anchor="middle" font-size="22">
+                        Runtime
+                    </text>
+
+                    <rect x="620" y="170" width="220" height="80" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="730" y="218" text-anchor="middle" font-size="22">
+                        DeInit
+                    </text>
+
+                    <rect x="60" y="350" width="220" height="80" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="170" y="385" text-anchor="middle" font-size="19">
+                        Configuration
+                    </text>
+                    <text x="170" y="412" text-anchor="middle" font-size="16">
+                        Driver Ready
+                    </text>
+
+                    <rect x="340" y="350" width="220" height="80" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="385" text-anchor="middle" font-size="19">
+                        CAN TX / RX
+                    </text>
+                    <text x="450" y="412" text-anchor="middle" font-size="16">
+                        Runtime Processing
+                    </text>
+
+                    <rect x="620" y="350" width="220" height="80" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="730" y="385" text-anchor="middle" font-size="19">
+                        UNINIT
+                    </text>
+                    <text x="730" y="412" text-anchor="middle" font-size="16">
+                        Driver inactive
+                    </text>
+
+                    <line x1="170" y1="250" x2="170" y2="350" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="450" y1="250" x2="450" y2="350" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="730" y1="250" x2="730" y2="350" stroke="currentColor" stroke-width="2" />
+
+                    <line x1="280" y1="210" x2="340" y2="210" stroke="currentColor" stroke-width="2" />
+                    <polygon points="335,205 345,210 335,215" fill="currentColor" />
+
+                    <line x1="560" y1="210" x2="620" y2="210" stroke="currentColor" stroke-width="2" />
+                    <polygon points="615,205 625,210 615,215" fill="currentColor" />
+
+                </svg>
+
+                <div class="note">
+                    <strong>Memory trick:</strong>
+                    <br><br>
+                    <strong>Init → Configure / Prepare</strong>
+                    <br>
+                    <strong>Start → Controller can communicate</strong>
+                    <br>
+                    <strong>Runtime → TX / RX / Processing</strong>
+                    <br>
+                    <strong>Stop → Controller stops communication</strong>
+                    <br>
+                    <strong>DeInit → Driver no longer initialized</strong>
+                </div>
+
+                <h2>31. Tóm tắt</h2>
+
+                <div class="note">
+                    <br><br>
+
+                    <strong>Init</strong> là quá trình chuẩn bị CAN Driver
+                    để có thể hoạt động. Nó bao gồm việc thiết lập
+                    software state, configuration và các thành phần
+                    liên quan tới CAN Controller theo configuration.
+                    <br><br>
+
+                    API quan trọng là <code>Can_Init()</code>, nhưng
+                    cần nhớ rằng <strong>Init không đồng nghĩa với
+                        Controller START</strong>.
+                    Driver có thể đã initialized nhưng controller vẫn
+                    chưa được đưa vào trạng thái communication phù hợp.
+                    <br><br>
+
+                    Một flow conceptual có thể nhớ là:
+                    <br><br>
+
+                    <strong>Can_Init()</strong>
+                    <br>
+                    ↓
+                    <br>
+                    <strong>Controller Configuration</strong>
+                    <br>
+                    ↓
+                    <br>
+                    <strong>Controller Start</strong>
+                    <br>
+                    ↓
+                    <br>
+                    <strong>CAN Communication</strong>
+                    <br><br>
+
+                    <strong>DeInit</strong> đưa CAN Driver trở về trạng thái
+                    không initialized theo lifecycle của module.
+                    DeInit cũng không giống hoàn toàn với Controller STOP.
+                    <br><br>
+
+                    Khi debug CAN không hoạt động, hãy kiểm tra theo thứ tự:
+                    <br><br>
+
+                    <strong>1. Driver đã Init chưa?</strong>
+                    <br>
+                    <strong>2. Controller đã ở state phù hợp chưa?</strong>
+                    <br>
+                    <strong>3. Configuration có đúng không?</strong>
+                    <br>
+                    <strong>4. Interrupt hoặc Polling path có hoạt động không?</strong>
+                    <br>
+                    <strong>5. OS / MainFunction có được execute không?</strong>
+                    <br>
+                    <strong>6. CanIf và upper communication layers có hoạt động không?</strong>
+                    <br><br>
+
+                    Có thể ghi nhớ toàn bộ bài bằng:
+                    <br><br>
+
+                    <strong>Init → Prepare</strong>
+                    <br>
+                    <strong>Start → Communicate</strong>
+                    <br>
+                    <strong>Runtime → Process</strong>
+                    <br>
+                    <strong>Stop → Stop Controller</strong>
+                    <br>
+                    <strong>DeInit → Uninitialize</strong>
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-16.html">← Bài trước</a>
+                    <a class="btn" href="lesson-18.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

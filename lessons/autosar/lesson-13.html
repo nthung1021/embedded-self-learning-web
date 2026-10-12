@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 13: Chi tiết tầng Application Software | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+            <a href="lesson-13.html" class="active" aria-current="page">Bài 13: Chi tiết tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+            <a href="index.html">← Tất cả bài học AUTOSAR</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 13: Chi tiết Tầng Application Software</h1>
+
+            <p>
+                Trong các bài trước, chúng ta đã tìm hiểu Application Software ở mức
+                tổng quan và hiểu được vị trí của nó trong kiến trúc AUTOSAR Classic.
+                Từ bài này, chúng ta bắt đầu đi sâu vào từng thành phần bên trong
+                Application Software và cách chúng phối hợp với nhau.
+            </p>
+
+            <p>
+                Application Software là nơi chứa phần lớn <strong>logic chức năng
+                của ECU</strong>. Thay vì trực tiếp điều khiển phần cứng, Application
+                Software được tổ chức thành các <strong>Software Component (SWC)</strong>
+                và tương tác với phần còn lại của hệ thống thông qua
+                <strong>RTE</strong>.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi của phần này:</strong>
+                Từ Bài 13 trở đi, nội dung sẽ đi sâu hơn so với phần tổng quan.
+                Tuy nhiên, mục tiêu vẫn là hiểu bản chất và cách các thành phần
+                liên kết với nhau trước khi đi vào các cấu hình AUTOSAR hoặc
+                ARXML chuyên sâu.
+            </div>
+
+
+            <h2>1. Application Software là gì?</h2>
+
+            <p>
+                Application Software là tầng chứa các chức năng nghiệp vụ của ECU.
+                Đây là nơi triển khai các logic liên quan trực tiếp đến chức năng
+                mà ECU cần thực hiện.
+            </p>
+
+            <p>
+                Ví dụ, đối với một Body ECU, Application Software có thể chứa
+                các chức năng như:
+            </p>
+
+            <ul>
+                <li>Điều khiển khóa cửa.</li>
+                <li>Điều khiển cửa sổ.</li>
+                <li>Điều khiển đèn ngoại thất.</li>
+                <li>Điều khiển cần gạt nước.</li>
+                <li>Xử lý trạng thái ignition.</li>
+                <li>Giám sát một số điều kiện của ECU.</li>
+            </ul>
+
+            <p>
+                Một đặc điểm quan trọng của Application Software trong AUTOSAR là
+                nó không nên phụ thuộc trực tiếp vào phần cứng cụ thể.
+            </p>
+
+            <pre><code>Application Software
+        │
+        │  RTE
+        ▼
+Basic Software
+        │
+        ▼
+Hardware</code></pre>
+
+            <p>
+                Ví dụ, logic "nếu điều kiện A xảy ra thì bật đèn" thuộc
+                Application Software. Application Software không cần trực tiếp
+                thao tác thanh ghi GPIO để bật đèn.
+            </p>
+
+
+            <h2>2. Software Component - SWC</h2>
+
+            <p>
+                Thành phần quan trọng nhất của Application Software là
+                <strong>Software Component (SWC)</strong>.
+            </p>
+
+            <p>
+                Có thể hiểu SWC là một đơn vị phần mềm đại diện cho một chức năng
+                hoặc một nhóm chức năng có liên quan.
+            </p>
+
+            <pre><code>Application Software
+│
+├── Door Control SWC
+├── Window Control SWC
+├── Exterior Light SWC
+├── Wiper Control SWC
+└── Ignition Control SWC</code></pre>
+
+            <p>
+                Mỗi SWC có thể chứa:
+            </p>
+
+            <ul>
+                <li>Logic xử lý.</li>
+                <li>Các Runnable.</li>
+                <li>Input và Output thông qua Port.</li>
+                <li>Các Interface mà SWC sử dụng.</li>
+                <li>Các Event kích hoạt Runnable.</li>
+            </ul>
+
+            <p>
+                Việc chia Application Software thành các SWC giúp hệ thống có
+                cấu trúc rõ ràng và các chức năng có thể được phát triển,
+                kiểm thử và tái sử dụng độc lập hơn.
+            </p>
+
+
+            <h2>3. Một SWC gồm những thành phần nào?</h2>
+
+            <p>
+                Ở mức khái niệm chi tiết hơn, có thể hình dung một SWC như sau:
+            </p>
+
+            <pre><code>                 Software Component
+        ┌─────────────────────────────────┐
+        │                                 │
+        │        Runnable(s)              │
+        │            │                    │
+        │            ▼                    │
+        │      Application Logic          │
+        │                                 │
+        │   ┌───────────┐ ┌───────────┐   │
+        │   │   Input   │ │  Output   │   │
+        │   │   Port    │ │   Port    │   │
+        │   └───────────┘ └───────────┘   │
+        │                                 │
+        │        Events / Interfaces      │
+        │                                 │
+        └─────────────────────────────────┘</code></pre>
+
+            <p>
+                Các thành phần này có quan hệ với nhau. Ví dụ, một Event có thể
+                kích hoạt một Runnable, Runnable đọc dữ liệu từ Input Port,
+                thực hiện logic và gửi kết quả thông qua Output Port.
+            </p>
+
+
+            <h2>4. Runnable là gì?</h2>
+
+            <p>
+                <strong>Runnable</strong> là một đơn vị thực thi bên trong SWC.
+                Có thể hiểu đơn giản rằng đây là phần code thực hiện một công việc
+                cụ thể của Application Software.
+            </p>
+
+            <p>
+                Một SWC có thể có một hoặc nhiều Runnable.
+            </p>
+
+            <pre><code>Exterior Light SWC
+│
+├── ExtLight_Init
+│
+├── ExtLight_Control
+│
+└── ExtLight_Shutdown</code></pre>
+
+            <p>
+                Mỗi Runnable có thể đảm nhiệm một nhiệm vụ khác nhau.
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li><code>ExtLight_Init</code>: xử lý khởi tạo.</li>
+                <li><code>ExtLight_Control</code>: xử lý logic điều khiển đèn.</li>
+                <li><code>ExtLight_Shutdown</code>: xử lý khi ECU chuyển trạng thái.</li>
+            </ul>
+
+            <p>
+                Tuy nhiên, Runnable không tự chạy một cách tùy ý. Việc một
+                Runnable được thực thi phụ thuộc vào <strong>Event</strong>
+                liên kết với nó.
+            </p>
+
+
+            <h2>5. Event và việc kích hoạt Runnable</h2>
+
+            <p>
+                Event xác định điều kiện khiến một Runnable được kích hoạt.
+                Đây là một phần quan trọng để hiểu cách Application Software
+                thực sự được thực thi.
+            </p>
+
+            <p>
+                Một cách đơn giản có thể hình dung:
+            </p>
+
+            <pre><code>Event
+  │
+  │ kích hoạt
+  ▼
+Runnable
+  │
+  │ thực thi
+  ▼
+Application Logic</code></pre>
+
+            <p>
+                Có nhiều kiểu điều kiện kích hoạt khác nhau. Ở mức cơ bản,
+                chúng ta có thể gặp:
+            </p>
+
+            <ul>
+                <li><strong>Timing Event:</strong> kích hoạt theo chu kỳ thời gian.</li>
+                <li><strong>Data Received Event:</strong> kích hoạt khi có dữ liệu mới.</li>
+                <li><strong>Operation Invoked Event:</strong> liên quan đến việc một operation được gọi.</li>
+                <li><strong>Init Event:</strong> dùng cho quá trình khởi tạo.</li>
+            </ul>
+
+            <p>
+                Ví dụ một Runnable được thực thi mỗi 100 ms:
+            </p>
+
+            <pre><code>Time
+ │
+ ├── 0 ms     → Runnable
+ │
+ ├── 100 ms   → Runnable
+ │
+ ├── 200 ms   → Runnable
+ │
+ ├── 300 ms   → Runnable
+ │
+ └── ...</code></pre>
+
+            <p>
+                Điều này rất quan trọng trong hệ thống embedded vì Application
+                Software thường phải xử lý dữ liệu theo thời gian xác định.
+            </p>
+
+
+            <h2>6. Port của Software Component</h2>
+
+            <p>
+                SWC không giao tiếp trực tiếp với các SWC khác bằng cách truy cập
+                trực tiếp vào code hoặc biến nội bộ của nhau. Thay vào đó,
+                AUTOSAR sử dụng <strong>Port</strong> để định nghĩa điểm giao tiếp
+                của SWC.
+            </p>
+
+            <p>
+                Có thể hình dung Port giống như một "cổng giao tiếp" của SWC:
+            </p>
+
+            <pre><code>        SWC A                       SWC B
+   ┌──────────────┐            ┌──────────────┐
+   │              │            │              │
+   │    Output    ├────────────┼─── Input     │
+   │     Port     │            │     Port     │
+   │              │            │              │
+   └──────────────┘            └──────────────┘</code></pre>
+
+            <p>
+                Port giúp tách biệt <strong>logic bên trong SWC</strong> với
+                <strong>cách SWC giao tiếp với bên ngoài</strong>.
+            </p>
+
+            <p>
+                Đây là một trong những ý tưởng quan trọng của AUTOSAR:
+                Application Software tập trung vào chức năng, còn cơ chế giao tiếp
+                được xử lý thông qua kiến trúc AUTOSAR và RTE.
+            </p>
+
+
+            <h2>7. Sender/Receiver và Client/Server</h2>
+
+            <p>
+                Trong AUTOSAR, hai kiểu giao tiếp quan trọng giữa các Software
+                Component là <strong>Sender/Receiver</strong> và
+                <strong>Client/Server</strong>.
+            </p>
+
+            <h3>7.1. Sender/Receiver</h3>
+
+            <p>
+                Sender/Receiver phù hợp với việc trao đổi dữ liệu hoặc trạng thái.
+                Một SWC gửi dữ liệu và SWC khác nhận dữ liệu.
+            </p>
+
+            <pre><code>SWC A
+  │
+  │ gửi dữ liệu
+  ▼
+RTE
+  │
+  │ truyền dữ liệu
+  ▼
+SWC B
+  │
+  │ đọc dữ liệu
+  ▼
+Application Logic</code></pre>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>Door Status SWC
+       │
+       │ DoorOpen = TRUE
+       ▼
+      RTE
+       │
+       ▼
+Interior Light SWC
+       │
+       ▼
+Bật đèn nội thất</code></pre>
+
+            <h3>7.2. Client/Server</h3>
+
+            <p>
+                Client/Server phù hợp khi một SWC yêu cầu một chức năng được
+                thực hiện bởi SWC hoặc Service khác.
+            </p>
+
+            <pre><code>Client SWC
+    │
+    │ Request
+    ▼
+  RTE
+    │
+    ▼
+Server SWC
+    │
+    │ Execute operation
+    ▼
+  Result
+    │
+    ▼
+Client SWC</code></pre>
+
+            <p>
+                Có thể hình dung Sender/Receiver thiên về
+                <strong>trao đổi dữ liệu</strong>, trong khi Client/Server
+                thiên về <strong>gọi một chức năng hoặc operation</strong>.
+            </p>
+
+
+            <h2>8. Interface là gì?</h2>
+
+            <p>
+                Port xác định điểm giao tiếp của SWC, còn Interface định nghĩa
+                nội dung và cách thức giao tiếp đó.
+            </p>
+
+            <p>
+                Ví dụ về mặt ý tưởng:
+            </p>
+
+            <pre><code>SWC A
+ │
+ │ Output Port
+ │
+ ▼
+Data Interface
+ │
+ ▼
+Input Port
+ │
+ ▼
+SWC B</code></pre>
+
+            <p>
+                Interface giúp hai SWC hiểu được chúng đang trao đổi loại thông
+                tin nào hoặc cung cấp operation nào.
+            </p>
+
+            <p>
+                Vì vậy, khi phân tích một SWC, chúng ta thường cần xem xét ít nhất:
+            </p>
+
+            <ul>
+                <li>SWC cung cấp dữ liệu gì?</li>
+                <li>SWC nhận dữ liệu gì?</li>
+                <li>SWC sử dụng Interface nào?</li>
+                <li>Port nào kết nối với Interface đó?</li>
+            </ul>
+
+
+            <h2>9. RTE đứng giữa Application Software như thế nào?</h2>
+
+            <p>
+                RTE là lớp trung gian giúp Application Software giao tiếp với
+                các thành phần khác mà không cần Application Software biết chi
+                tiết cách giao tiếp được triển khai bên dưới.
+            </p>
+
+            <pre><code>        Application Software
+        ┌───────────────────┐
+        │      SWC A        │
+        │                   │
+        │    Runnable       │
+        └─────────┬─────────┘
+                  │
+                  │ RTE API
+                  ▼
+        ┌───────────────────┐
+        │        RTE        │
+        └─────────┬─────────┘
+                  │
+          ┌───────┴────────┐
+          ▼                ▼
+       SWC khác          BSW</code></pre>
+
+            <p>
+                Ví dụ, nếu Application cần dữ liệu từ một SWC khác, Application
+                không cần biết dữ liệu đó cuối cùng được truyền bằng CAN,
+                LIN hay một cơ chế nội bộ nào.
+            </p>
+
+            <p>
+                RTE cung cấp phần giao tiếp phù hợp để Application Software
+                sử dụng.
+            </p>
+
+
+            <h2>10. Ví dụ: Điều khiển đèn ngoại thất</h2>
+
+            <p>
+                Hãy xét một ví dụ đơn giản về chức năng điều khiển đèn.
+            </p>
+
+            <p>
+                Giả sử hệ thống có:
+            </p>
+
+            <ul>
+                <li>Input: trạng thái công tắc đèn.</li>
+                <li>Application: logic quyết định bật/tắt đèn.</li>
+                <li>Output: yêu cầu điều khiển đèn.</li>
+            </ul>
+
+            <p>
+                Có thể tổ chức Application Software như sau:
+            </p>
+
+            <pre><code>Exterior Light SWC
+│
+├── Input Port
+│      └── LightSwitchStatus
+│
+├── Runnable
+│      └── ExtLightControl_Run
+│
+└── Output Port
+       └── LightCommand</code></pre>
+
+            <p>
+                Luồng xử lý:
+            </p>
+
+            <pre><code>LightSwitchStatus
+       │
+       ▼
+     Input
+      Port
+       │
+       ▼
+ExtLightControl_Run()
+       │
+       │ Application Logic
+       ▼
+ LightCommand
+       │
+       ▼
+    Output
+      Port</code></pre>
+
+            <p>
+                Nếu công tắc chuyển sang trạng thái ON, Runnable có thể xử lý:
+            </p>
+
+            <pre><code>if (LightSwitchStatus == ON)
+{
+    LightCommand = ON;
+}
+else
+{
+    LightCommand = OFF;
+}</code></pre>
+
+            <p>
+                Đây mới là logic Application. Việc tín hiệu cuối cùng đi đến
+                GPIO, CAN, LIN hoặc phần cứng nào không thuộc trách nhiệm trực
+                tiếp của đoạn logic này.
+            </p>
+
+
+            <h2>11. Từ Application đến Hardware</h2>
+
+            <p>
+                Khi kết hợp kiến thức từ các bài trước, chúng ta có thể mở rộng
+                ví dụ trên thành toàn bộ luồng:
+            </p>
+
+            <pre><code>Physical Input
+      │
+      ▼
+   Hardware
+      │
+      ▼
+     MCAL
+      │
+      ▼
+    BSW / Abstraction
+      │
+      ▼
+      RTE
+      │
+      ▼
+Application SWC
+      │
+      │ Application Logic
+      ▼
+      RTE
+      │
+      ▼
+    BSW / MCAL
+      │
+      ▼
+   Hardware
+      │
+      ▼
+Physical Output</code></pre>
+
+            <p>
+                Điểm cần chú ý là Application Software nằm ở phía trên của
+                kiến trúc và tập trung vào <strong>what</strong>:
+                ECU cần thực hiện chức năng gì.
+            </p>
+
+            <p>
+                Các tầng bên dưới chịu trách nhiệm nhiều hơn về <strong>how</strong>:
+                dữ liệu được truyền như thế nào, phần cứng được truy cập ra sao,
+                driver nào được sử dụng và thiết bị nào thực hiện thao tác.
+            </p>
+
+
+            <h2>12. Ví dụ chi tiết hơn: Door Lock</h2>
+
+            <p>
+                Hãy xem xét một chức năng khóa cửa đơn giản.
+            </p>
+
+            <pre><code>                  Door Lock System
+
+       ┌─────────────────────────────┐
+       │     Door Lock Control SWC   │
+       │                             │
+       │ Input:                      │
+       │  - LockRequest              │
+       │  - VehicleSpeed             │
+       │                             │
+       │ Runnable:                   │
+       │  - DoorLockControl_Run      │
+       │                             │
+       │ Output:                     │
+       │  - LockCommand              │
+       └──────────────┬──────────────┘
+                      │
+                      ▼
+                     RTE
+                      │
+                      ▼
+                 BSW / MCAL
+                      │
+                      ▼
+               Door Lock Hardware</code></pre>
+
+            <p>
+                Runnable có thể thực hiện logic ở mức khái niệm:
+            </p>
+
+            <ol>
+                <li>Đọc yêu cầu khóa cửa.</li>
+                <li>Kiểm tra các điều kiện liên quan.</li>
+                <li>Quyết định có cho phép khóa hay không.</li>
+                <li>Tạo yêu cầu điều khiển khóa.</li>
+            </ol>
+
+            <p>
+                Điều quan trọng là logic này có thể được phát triển độc lập
+                tương đối với loại microcontroller cụ thể.
+            </p>
+
+
+            <h2>13. Internal Behavior của SWC</h2>
+
+            <p>
+                Khi đi sâu hơn vào SWC, chúng ta không chỉ quan tâm SWC giao tiếp
+                với bên ngoài như thế nào mà còn phải quan tâm đến
+                <strong>Internal Behavior</strong>.
+            </p>
+
+            <p>
+                Internal Behavior mô tả cách SWC hoạt động bên trong, bao gồm
+                những thành phần như:
+            </p>
+
+            <ul>
+                <li>Runnable.</li>
+                <li>Event kích hoạt Runnable.</li>
+                <li>Data được sử dụng bởi Runnable.</li>
+                <li>Quan hệ giữa Runnable và các Port.</li>
+                <li>Các thông tin liên quan đến việc thực thi.</li>
+            </ul>
+
+            <p>
+                Có thể hình dung:
+            </p>
+
+            <pre><code>SWC
+│
+├── Ports
+│
+├── Interfaces
+│
+└── Internal Behavior
+      │
+      ├── Runnable 1
+      ├── Runnable 2
+      ├── Events
+      └── Data / Execution information</code></pre>
+
+            <p>
+                Đây là một khái niệm quan trọng khi sau này chúng ta bắt đầu
+                đọc và phân tích AUTOSAR configuration hoặc ARXML.
+            </p>
+
+
+            <h2>14. VFB - Virtual Functional Bus</h2>
+
+            <p>
+                Một khái niệm quan trọng khi tìm hiểu Application Software là
+                <strong>Virtual Functional Bus (VFB)</strong>.
+            </p>
+
+            <p>
+                VFB cung cấp một mô hình giao tiếp ở mức trừu tượng cho các
+                Software Component.
+            </p>
+
+            <pre><code>        SWC A                         SWC B
+          │                             │
+          │                             │
+          └─────────── VFB ─────────────┘
+                        │
+                        │
+                 Communication
+                  abstraction</code></pre>
+
+            <p>
+                Nhờ cách tiếp cận này, SWC có thể được thiết kế dựa trên
+                chức năng và giao tiếp cần thiết thay vì ngay lập tức phụ thuộc
+                vào cách hệ thống được triển khai trên một ECU cụ thể.
+            </p>
+
+            <p>
+                Khi triển khai thực tế, các kết nối logic này sẽ được ánh xạ
+                thông qua RTE và các tầng bên dưới.
+            </p>
+
+
+            <h2>15. Application Software trong một ECU</h2>
+
+            <p>
+                Một ECU thực tế thường không chỉ có một SWC.
+                Nhiều SWC có thể cùng tồn tại và phối hợp với nhau.
+            </p>
+
+            <pre><code>                    ECU
+                     │
+          ┌──────────┴──────────┐
+          │ Application Software│
+          │                     │
+          │ ┌─────────────────┐ │
+          │ │ Door Control    │ │
+          │ │ SWC             │ │
+          │ └─────────────────┘ │
+          │                     │
+          │ ┌─────────────────┐ │
+          │ │ Window Control  │ │
+          │ │ SWC             │ │
+          │ └─────────────────┘ │
+          │                     │
+          │ ┌─────────────────┐ │
+          │ │ Light Control   │ │
+          │ │ SWC             │ │
+          │ └─────────────────┘ │
+          │                     │
+          └──────────┬──────────┘
+                     │
+                     ▼
+                    RTE
+                     │
+                     ▼
+                    BSW
+                     │
+                     ▼
+                  Hardware</code></pre>
+
+            <p>
+                Các SWC có thể trao đổi dữ liệu với nhau hoặc sử dụng các
+                Service do BSW cung cấp thông qua kiến trúc AUTOSAR.
+            </p>
+
+
+            <h2>16. Tại sao Application Software không truy cập Hardware trực tiếp?</h2>
+
+            <p>
+                Đây là một trong những điểm quan trọng nhất cần ghi nhớ.
+            </p>
+
+            <p>
+                Nếu Application Software truy cập trực tiếp thanh ghi hoặc
+                peripheral của microcontroller, code sẽ phụ thuộc mạnh vào
+                hardware cụ thể.
+            </p>
+
+            <pre><code>Application
+     │
+     │ Direct register access
+     ▼
+Microcontroller A</code></pre>
+
+            <p>
+                Khi thay đổi microcontroller, phần Application có thể phải
+                thay đổi rất nhiều.
+            </p>
+
+            <p>
+                AUTOSAR cố gắng tách các phần này:
+            </p>
+
+            <pre><code>Application
+     │
+     ▼
+    RTE
+     │
+     ▼
+    BSW
+     │
+     ▼
+    MCAL
+     │
+     ▼
+Hardware</code></pre>
+
+            <p>
+                Nhờ đó, Application Software có mức độ độc lập cao hơn đối với
+                hardware và có thể được tái sử dụng trong những hệ thống
+                tương tự.
+            </p>
+
+
+            <h2>17. Cách phân tích một Application SWC</h2>
+
+            <p>
+                Khi gặp một SWC trong tài liệu thiết kế AUTOSAR, có thể phân tích
+                theo thứ tự sau:
+            </p>
+
+            <ol>
+                <li>
+                    <strong>SWC này thực hiện chức năng gì?</strong>
+                </li>
+
+                <li>
+                    <strong>SWC nhận những dữ liệu nào?</strong>
+                </li>
+
+                <li>
+                    <strong>SWC cung cấp những dữ liệu nào?</strong>
+                </li>
+
+                <li>
+                    <strong>SWC có những Runnable nào?</strong>
+                </li>
+
+                <li>
+                    <strong>Runnable nào được kích hoạt bởi Event nào?</strong>
+                </li>
+
+                <li>
+                    <strong>SWC sử dụng loại Interface nào?</strong>
+                </li>
+
+                <li>
+                    <strong>SWC giao tiếp với SWC nào khác?</strong>
+                </li>
+
+                <li>
+                    <strong>Dữ liệu đi qua RTE như thế nào?</strong>
+                </li>
+
+                <li>
+                    <strong>Cuối cùng dữ liệu được kết nối tới BSW hoặc Hardware nào?</strong>
+                </li>
+            </ol>
+
+            <p>
+                Đây là cách tiếp cận rất hữu ích khi đọc một architecture
+                diagram hoặc thiết kế AUTOSAR thực tế.
+            </p>
+
+
+            <h2>18. Ví dụ tổng hợp</h2>
+
+            <p>
+                Giả sử chúng ta có chức năng:
+                <strong>"Tự động khóa cửa khi xe đạt tốc độ nhất định"</strong>.
+            </p>
+
+            <pre><code>Vehicle Speed
+      │
+      ▼
+  Input Port
+      │
+      ▼
+Door Lock Control SWC
+      │
+      ▼
+Runnable
+DoorLockControl_Run()
+      │
+      ├── Read vehicle speed
+      │
+      ├── Check lock condition
+      │
+      └── Generate LockCommand
+                  │
+                  ▼
+             Output Port
+                  │
+                  ▼
+                 RTE
+                  │
+                  ▼
+             BSW / MCAL
+                  │
+                  ▼
+           Door Lock Hardware</code></pre>
+
+            <p>
+                Trong ví dụ này:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Vehicle Speed</strong> là dữ liệu đầu vào.
+                </li>
+
+                <li>
+                    <strong>Door Lock Control SWC</strong> chứa logic chức năng.
+                </li>
+
+                <li>
+                    <strong>Runnable</strong> thực hiện việc xử lý.
+                </li>
+
+                <li>
+                    <strong>Input/Output Port</strong> định nghĩa giao tiếp.
+                </li>
+
+                <li>
+                    <strong>RTE</strong> cung cấp cơ chế giao tiếp giữa Application
+                    và phần còn lại của hệ thống.
+                </li>
+
+                <li>
+                    <strong>BSW/MCAL</strong> đảm nhiệm phần triển khai phía dưới.
+                </li>
+            </ul>
+
+
+            <h2>19. Những khái niệm cần nhớ</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Application Software</td>
+                        <td>Chứa logic và chức năng của ECU</td>
+                    </tr>
+
+                    <tr>
+                        <td>SWC</td>
+                        <td>Đơn vị phần mềm đại diện cho một chức năng hoặc nhóm chức năng</td>
+                    </tr>
+
+                    <tr>
+                        <td>Runnable</td>
+                        <td>Đơn vị code được thực thi bên trong SWC</td>
+                    </tr>
+
+                    <tr>
+                        <td>Event</td>
+                        <td>Điều kiện kích hoạt Runnable</td>
+                    </tr>
+
+                    <tr>
+                        <td>Port</td>
+                        <td>Điểm giao tiếp của SWC</td>
+                    </tr>
+
+                    <tr>
+                        <td>Interface</td>
+                        <td>Định nghĩa nội dung/cách thức giao tiếp</td>
+                    </tr>
+
+                    <tr>
+                        <td>Sender/Receiver</td>
+                        <td>Cơ chế trao đổi dữ liệu giữa các thành phần</td>
+                    </tr>
+
+                    <tr>
+                        <td>Client/Server</td>
+                        <td>Cơ chế yêu cầu và thực hiện một operation</td>
+                    </tr>
+
+                    <tr>
+                        <td>Internal Behavior</td>
+                        <td>Mô tả cách SWC hoạt động bên trong</td>
+                    </tr>
+
+                    <tr>
+                        <td>VFB</td>
+                        <td>Mô hình giao tiếp chức năng ở mức trừu tượng</td>
+                    </tr>
+
+                    <tr>
+                        <td>RTE</td>
+                        <td>Lớp trung gian hỗ trợ giao tiếp và thực thi của Application Software</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <h2>20. Tóm tắt</h2>
+
+            <div class="note">
+                <strong>Application Software</strong> là nơi chứa logic chức năng
+                của ECU trong AUTOSAR Classic. Application Software được tổ chức
+                thành các <strong>Software Component (SWC)</strong>.
+                <br><br>
+
+                Mỗi SWC có thể chứa nhiều <strong>Runnable</strong>. Runnable
+                được kích hoạt bởi các <strong>Event</strong> và thực hiện
+                application logic.
+                <br><br>
+
+                SWC giao tiếp với bên ngoài thông qua <strong>Port</strong> và
+                <strong>Interface</strong>. Hai kiểu giao tiếp quan trọng là
+                <strong>Sender/Receiver</strong> và <strong>Client/Server</strong>.
+                <br><br>
+
+                <strong>RTE</strong> đóng vai trò trung gian giữa Application
+                Software và các thành phần khác của hệ thống. Nhờ đó,
+                Application Software có thể tập trung vào chức năng thay vì
+                trực tiếp phụ thuộc vào Hardware.
+                <br><br>
+
+                Có thể ghi nhớ chuỗi chính:
+                <br><br>
+
+                <strong>
+                    SWC → Runnable → Event → Port/Interface → RTE → BSW/Hardware
+                </strong>
+            </div>
+
+
+            <div class="pager">
+                <a href="lesson-12.html">← Bài trước</a>
+                <a href="lesson-14.html">Bài tiếp theo →</a>
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

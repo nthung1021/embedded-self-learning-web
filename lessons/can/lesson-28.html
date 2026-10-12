@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 28: Truyền dữ liệu lớn | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html" class="active">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+            </aside>
+
+            <article class="content">
+                <h1>Bài 28: Truyền dữ liệu lớn</h1>
+
+                <div class="note">
+                    <strong>Large Data Transmission:</strong>
+                    Trong CAN, một frame đơn lẻ có kích thước payload giới hạn. Khi cần truyền
+                    một lượng dữ liệu lớn hơn giới hạn của một frame, dữ liệu phải được chia thành
+                    nhiều phần và truyền qua nhiều frame. Trong AUTOSAR, <strong>CanTp</strong>
+                    thường đảm nhiệm cơ chế transport cho các dữ liệu lớn trên CAN.
+                </div>
+
+                <h2>1. Truyền dữ liệu lớn là gì?</h2>
+                <p>
+                    Trong CAN, một CAN frame không thể chứa một lượng dữ liệu tùy ý.
+                    Với <strong>Classic CAN</strong>, payload của một data frame tối đa là
+                    <strong>8 bytes</strong>.
+                </p>
+
+                <p>
+                    Vì vậy, nếu cần truyền một message có kích thước lớn hơn 8 bytes,
+                    chúng ta không thể đặt toàn bộ dữ liệu vào một CAN frame.
+                    Dữ liệu phải được chia thành nhiều frame và truyền theo một cơ chế
+                    transport phù hợp.
+                </p>
+
+                <pre><code>Dữ liệu lớn
+    |
+    | Ví dụ: 100 bytes
+    v
++----------------------+
+| Chia dữ liệu thành   |
+| nhiều phần nhỏ       |
++----------------------+
+    |
+    +---- Frame 1
+    +---- Frame 2
+    +---- Frame 3
+    +---- ...
+    +---- Frame N
+    |
+    v
+CAN Bus</code></pre>
+
+                <h2>2. Tại sao CAN không gửi trực tiếp dữ liệu lớn?</h2>
+                <p>
+                    CAN được thiết kế theo mô hình truyền message với frame có payload
+                    giới hạn. Giới hạn này giúp CAN giữ được đặc tính thời gian thực,
+                    arbitration và kiểm soát truy cập bus.
+                </p>
+
+                <p>
+                    Do đó, khi application cần truyền một lượng dữ liệu lớn,
+                    CAN cần một lớp cao hơn để xử lý việc:
+                </p>
+
+                <ul>
+                    <li>Chia dữ liệu thành nhiều frame.</li>
+                    <li>Đánh số hoặc theo dõi thứ tự các phần dữ liệu.</li>
+                    <li>Ghép các phần lại ở phía nhận.</li>
+                    <li>Kiểm soát tốc độ truyền.</li>
+                    <li>Phát hiện timeout hoặc lỗi trong quá trình truyền.</li>
+                </ul>
+
+                <h2>3. Classic CAN và giới hạn 8 bytes</h2>
+                <p>
+                    Với <strong>Classic CAN</strong>, một Data Frame có payload tối đa 8 bytes.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại CAN</th>
+                            <th>Payload tối đa của một frame</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Classic CAN</td>
+                            <td>8 bytes</td>
+                        </tr>
+                        <tr>
+                            <td>CAN FD</td>
+                            <td>Lớn hơn nhiều so với Classic CAN, tối đa 64 bytes</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    CAN FD cho phép payload lớn hơn trong một frame, nhưng điều đó không có nghĩa
+                    rằng mọi dữ liệu lớn đều có thể gửi trong một frame. Khi dữ liệu vượt quá
+                    payload tối đa của một CAN FD frame, vẫn cần cơ chế transport/segmentation.
+                </div>
+
+                <h2>4. Ví dụ: cần truyền 20 bytes</h2>
+                <p>
+                    Giả sử application muốn truyền một block dữ liệu có kích thước
+                    <strong>20 bytes</strong> trên Classic CAN.
+                </p>
+
+                <p>
+                    Vì một frame chỉ chứa tối đa 8 bytes payload, không thể truyền
+                    20 bytes bằng một frame duy nhất.
+                </p>
+
+                <pre><code>20 bytes dữ liệu
+
++--------+--------+--------+
+| 1 - 8  | 9 - 16 | 17 - 20|
++--------+--------+--------+
+    8 bytes  8 bytes  4 bytes
+
+       ↓       ↓       ↓
+
+    CAN Frame  CAN Frame  CAN Frame</code></pre>
+
+                <p>
+                    Đây là ý tưởng cơ bản của <strong>segmentation</strong>:
+                    chia một message lớn thành nhiều phần nhỏ hơn.
+                </p>
+
+                <h2>5. Segmentation là gì?</h2>
+                <p>
+                    <strong>Segmentation</strong> là quá trình chia một message hoặc PDU lớn
+                    thành nhiều phần nhỏ để có thể truyền qua một transport medium
+                    có giới hạn kích thước frame.
+                </p>
+
+                <pre><code>Large PDU
+    |
+    v
++-----------------------------+
+| Segmentation                 |
++-----------------------------+
+    |
+    +---- Segment 1
+    +---- Segment 2
+    +---- Segment 3
+    +---- Segment 4
+    |
+    v
+CAN Frames</code></pre>
+
+                <p>
+                    Ở phía nhận sẽ có quá trình ngược lại là
+                    <strong>reassembly</strong>.
+                </p>
+
+                <h2>6. Reassembly là gì?</h2>
+                <p>
+                    <strong>Reassembly</strong> là quá trình nhận nhiều frame/segment
+                    và ghép chúng lại thành dữ liệu ban đầu.
+                </p>
+
+                <pre><code>CAN Frame 1
+     |
+CAN Frame 2
+     |
+CAN Frame 3
+     |
+CAN Frame 4
+     |
+     v
++----------------+
+| Reassembly     |
++----------------+
+     |
+     v
+Original Large PDU</code></pre>
+
+                <p>
+                    Vì vậy, truyền dữ liệu lớn cần cả hai phía:
+                    <strong>segmentation ở sender</strong> và
+                    <strong>reassembly ở receiver</strong>.
+                </p>
+
+                <h2>7. CanTp là gì?</h2>
+                <p>
+                    Trong AUTOSAR, <strong>CanTp (CAN Transport Protocol)</strong>
+                    là module được sử dụng để hỗ trợ truyền các PDU có kích thước lớn
+                    hơn khả năng chứa của một CAN frame.
+                </p>
+
+                <p>
+                    CanTp nằm phía trên CAN Interface và phía dưới các module sử dụng
+                    transport protocol, chẳng hạn như DCM trong một hệ thống diagnostic.
+                </p>
+
+                <pre><code>Application / Diagnostic
+          |
+          v
+         DCM
+          |
+          v
+        PduR
+          |
+          v
+       CanTp
+          |
+          v
+       CanIf
+          |
+          v
+      CAN Driver
+          |
+          v
+     CAN Controller
+          |
+          v
+       CAN Bus</code></pre>
+
+                <h2>8. Tại sao cần CanTp?</h2>
+                <p>
+                    Nếu không có transport protocol, upper layer phải tự xử lý
+                    việc chia nhỏ và ghép dữ liệu.
+                </p>
+
+                <p>
+                    CanTp cung cấp một lớp chuyên trách cho việc transport dữ liệu lớn,
+                    giúp upper layer không cần trực tiếp quản lý từng CAN frame.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Không có Transport Layer</th>
+                            <th>Có CanTp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Application tự chia dữ liệu</td>
+                            <td>CanTp xử lý segmentation</td>
+                        </tr>
+                        <tr>
+                            <td>Application tự theo dõi sequence</td>
+                            <td>CanTp quản lý transport sequence</td>
+                        </tr>
+                        <tr>
+                            <td>Application xử lý flow control</td>
+                            <td>CanTp xử lý Flow Control</td>
+                        </tr>
+                        <tr>
+                            <td>Khó tái sử dụng</td>
+                            <td>Transport logic được tách thành module</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>9. Các loại frame của CanTp</h2>
+                <p>
+                    Khi truyền dữ liệu lớn trên CAN theo cơ chế ISO-TP,
+                    bốn loại frame/Protocol Data Unit quan trọng cần nhớ là:
+                </p>
+
+                <ul>
+                    <li><strong>Single Frame (SF)</strong></li>
+                    <li><strong>First Frame (FF)</strong></li>
+                    <li><strong>Consecutive Frame (CF)</strong></li>
+                    <li><strong>Flow Control (FC)</strong></li>
+                </ul>
+
+                <pre><code>Small Data
+    |
+    v
+Single Frame
+    |
+    +----------------------------+
+
+Large Data
+    |
+    v
+First Frame
+    |
+    v
+Flow Control
+    |
+    v
+Consecutive Frame
+    |
+    v
+Consecutive Frame
+    |
+    v
+...</code></pre>
+
+                <h2>10. Single Frame</h2>
+                <p>
+                    <strong>Single Frame (SF)</strong> được sử dụng khi toàn bộ dữ liệu
+                    có thể truyền trong một transport frame.
+                </p>
+
+                <p>
+                    Trong trường hợp này, không cần thực hiện một chuỗi nhiều frame.
+                </p>
+
+                <pre><code>Data
+ |
+ v
++----------------------+
+| Single Frame         |
+| Length + Payload     |
++----------------------+
+ |
+ v
+CAN Bus</code></pre>
+
+                <p>
+                    SF đặc biệt hữu ích với các message nhỏ, vì nó tránh được overhead
+                    của quá trình First Frame → Flow Control → Consecutive Frames.
+                </p>
+
+                <h2>11. First Frame</h2>
+                <p>
+                    Khi dữ liệu lớn hơn khả năng truyền trong một Single Frame,
+                    sender bắt đầu bằng <strong>First Frame (FF)</strong>.
+                </p>
+
+                <p>
+                    First Frame chứa một phần dữ liệu đầu tiên và thông tin giúp receiver
+                    biết kích thước của toàn bộ payload đang được truyền.
+                </p>
+
+                <pre><code>Large PDU
+   |
+   v
++------------------------+
+| First Frame            |
+| Total Length           |
+| First Data             |
++------------------------+
+   |
+   v
+Receiver biết:
+"Message này còn nhiều dữ liệu cần nhận"</code></pre>
+
+                <h2>12. Flow Control Frame</h2>
+                <p>
+                    Sau khi nhận First Frame, receiver có thể gửi
+                    <strong>Flow Control (FC)</strong> để thông báo cho sender
+                    cách tiếp tục truyền.
+                </p>
+
+                <pre><code>Sender                         Receiver
+  |                               |
+  |       First Frame             |
+  |------------------------------>|
+  |                               |
+  |       Flow Control            |
+  |<------------------------------|
+  |                               |
+  |       Consecutive Frame       |
+  |------------------------------>|
+  |       Consecutive Frame       |
+  |------------------------------>|
+  |              ...              |
+</code></pre>
+
+                <h2>13. Flow Status</h2>
+                <p>
+                    Flow Control có thể thông báo trạng thái của receiver.
+                    Ba trạng thái quan trọng trong ISO-TP là:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Flow Status</th>
+                            <th>Ý nghĩa khái niệm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CTS</td>
+                            <td>Clear To Send — receiver cho phép sender tiếp tục truyền.</td>
+                        </tr>
+                        <tr>
+                            <td>WAIT</td>
+                            <td>Receiver yêu cầu sender chờ.</td>
+                        </tr>
+                        <tr>
+                            <td>OVFLW</td>
+                            <td>Receiver không thể tiếp nhận lượng dữ liệu được yêu cầu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    Các tên viết tắt trên thường được gặp khi học ISO-TP/CanTp.
+                    Chi tiết xử lý timeout, số lần WAIT và các tham số liên quan phụ thuộc
+                    specification/configuration của hệ thống.
+                </div>
+
+                <h2>14. Consecutive Frame</h2>
+                <p>
+                    Sau khi receiver cho phép tiếp tục truyền, sender sử dụng
+                    <strong>Consecutive Frame (CF)</strong> để gửi các phần dữ liệu còn lại.
+                </p>
+
+                <pre><code>First Frame
+    |
+    v
+Flow Control
+    |
+    v
+CF #1
+    |
+    v
+CF #2
+    |
+    v
+CF #3
+    |
+    v
+...
+    |
+    v
+Last CF</code></pre>
+
+                <p>
+                    Các Consecutive Frame có sequence number để receiver có thể
+                    kiểm tra thứ tự của các frame.
+                </p>
+
+                <h2>15. Sequence Number</h2>
+                <p>
+                    Khi dữ liệu được chia thành nhiều Consecutive Frame,
+                    receiver cần biết frame nào đến trước, frame nào đến sau.
+                </p>
+
+                <p>
+                    Vì vậy, CF sử dụng <strong>Sequence Number</strong> để theo dõi thứ tự.
+                </p>
+
+                <pre><code>CF #1
+   ↓
+CF #2
+   ↓
+CF #3
+   ↓
+CF #4
+   ↓
+...
+   ↓
+Reassembly</code></pre>
+
+                <p>
+                    Nếu sequence không đúng, receiver có thể phát hiện rằng
+                    quá trình truyền đang có vấn đề thay vì ghép dữ liệu một cách mù quáng.
+                </p>
+
+                <h2>16. Block Size</h2>
+                <p>
+                    <strong>Block Size (BS)</strong> xác định số lượng Consecutive Frame
+                    mà sender có thể truyền trong một block trước khi cần nhận thêm
+                    Flow Control từ receiver.
+                </p>
+
+                <pre><code>Flow Control
+BS = 3
+   |
+   v
+CF #1
+CF #2
+CF #3
+   |
+   v
+Chờ Flow Control tiếp theo
+   |
+   v
+CF #4
+CF #5
+CF #6
+...</code></pre>
+
+                <p>
+                    Block Size giúp receiver kiểm soát lượng dữ liệu mà sender
+                    đang truyền liên tục.
+                </p>
+
+                <h2>17. STmin</h2>
+                <p>
+                    <strong>STmin (Separation Time Minimum)</strong> xác định khoảng thời gian
+                    tối thiểu giữa các Consecutive Frame trong quá trình truyền.
+                </p>
+
+                <pre><code>CF #1
+   |
+   |<---- STmin ---->|
+   |
+CF #2
+   |
+   |<---- STmin ---->|
+   |
+CF #3</code></pre>
+
+                <p>
+                    STmin giúp receiver có đủ thời gian xử lý dữ liệu hoặc giới hạn
+                    tốc độ gửi CF theo yêu cầu của transport protocol.
+                </p>
+
+                <h2>18. Ví dụ truyền 20 bytes</h2>
+                <p>
+                    Giả sử cần truyền 20 bytes trên Classic CAN.
+                    Một flow khái niệm có thể là:
+                </p>
+
+                <pre><code>Sender                              Receiver
+  |                                    |
+  | First Frame                        |
+  |----------------------------------->|
+  |                                    |
+  | Flow Control (CTS)                 |
+  |<-----------------------------------|
+  |                                    |
+  | Consecutive Frame #1               |
+  |----------------------------------->|
+  |                                    |
+  | Consecutive Frame #2               |
+  |----------------------------------->|
+  |                                    |
+  | Consecutive Frame #3               |
+  |----------------------------------->|
+  |                                    |
+  |        Reassembled 20 bytes        |
+  |                                    |
+</code></pre>
+
+                <h2>19. Dữ liệu được chia như thế nào?</h2>
+                <p>
+                    Việc chia dữ liệu phụ thuộc vào loại frame và addressing format
+                    được sử dụng. Vì transport protocol có một phần byte dành cho
+                    thông tin điều khiển, không phải toàn bộ payload của CAN frame
+                    đều dành cho application data.
+                </p>
+
+                <p>
+                    Vì vậy, không nên đơn giản tính:
+                    <strong>"Classic CAN có 8 bytes nên mọi CF luôn chứa đúng 8 bytes application data."</strong>
+                </p>
+
+                <div class="note">
+                    Payload thực tế dành cho application data phụ thuộc PCI/transport
+                    addressing format. Khi làm project, cần xem cấu hình CanTp và
+                    specification tương ứng.
+                </div>
+
+                <h2>20. Sender và Receiver</h2>
+                <p>
+                    Trong một phiên truyền dữ liệu lớn, một node có thể đóng vai trò
+                    <strong>sender</strong> và node còn lại là <strong>receiver</strong>.
+                </p>
+
+                <pre><code>Sender
+  |
+  | First Frame
+  v
+Receiver
+  |
+  | Flow Control
+  v
+Sender
+  |
+  | Consecutive Frames
+  v
+Receiver
+  |
+  | Reassembly
+  v
+Complete Data</code></pre>
+
+                <p>
+                    Đối với chiều ngược lại, vai trò sender/receiver có thể thay đổi.
+                    Vì vậy cần phân biệt rõ <strong>Tx direction</strong> và
+                    <strong>Rx direction</strong> của từng CanTp channel/connection.
+                </p>
+
+                <h2>21. Timeout trong truyền dữ liệu lớn</h2>
+                <p>
+                    Một transport session không thể chờ vô hạn.
+                    Nếu một frame hoặc Flow Control không xuất hiện trong thời gian
+                    mong đợi, CanTp cần phát hiện timeout.
+                </p>
+
+                <pre><code>First Frame
+    |
+    v
+Wait for Flow Control
+    |
+    +---- Received → Continue
+    |
+    +---- Timeout → Abort session</code></pre>
+
+                <p>
+                    Tương tự, sender hoặc receiver có thể phải theo dõi timeout
+                    trong các giai đoạn khác nhau của transport session.
+                </p>
+
+                <div class="note">
+                    Tên timer, timeout value và cơ chế xử lý cụ thể phụ thuộc
+                    ISO-TP/CanTp configuration và AUTOSAR implementation.
+                </div>
+
+                <h2>22. Khi mất một Consecutive Frame</h2>
+                <p>
+                    CAN có cơ chế error detection ở mức frame, nhưng application
+                    vẫn cần transport protocol để đảm bảo sequence của một message lớn.
+                </p>
+
+                <p>
+                    Nếu receiver phát hiện sequence không đúng hoặc transport session
+                    không còn hợp lệ, nó có thể kết thúc session theo cơ chế của CanTp.
+                </p>
+
+                <pre><code>Expected:
+CF #1 → CF #2 → CF #3 → CF #4
+
+Received:
+CF #1 → CF #2 → CF #4
+
+                  X
+          Sequence mismatch
+                  |
+                  v
+          Transport error</code></pre>
+
+                <h2>23. CanTp và PduR</h2>
+                <p>
+                    Trong AUTOSAR, <strong>PduR (PDU Router)</strong> có vai trò
+                    định tuyến PDU giữa các module.
+                </p>
+
+                <p>
+                    Đối với một diagnostic message lớn, flow khái niệm có thể là:
+                </p>
+
+                <pre><code>DCM
+ |
+ v
+PduR
+ |
+ v
+CanTp
+ |
+ v
+CanIf
+ |
+ v
+CAN Driver
+ |
+ v
+CAN Controller
+ |
+ v
+CAN Bus</code></pre>
+
+                <p>
+                    Khi nhận dữ liệu, flow sẽ đi theo chiều ngược lại để CanTp
+                    reassemble dữ liệu trước khi chuyển dữ liệu hoàn chỉnh lên upper layer.
+                </p>
+
+                <h2>24. CanTp và DCM</h2>
+                <p>
+                    Một use case rất phổ biến của CanTp là <strong>diagnostic communication</strong>.
+                </p>
+
+                <p>
+                    Ví dụ, một request/response diagnostic có thể lớn hơn kích thước
+                    mà một Classic CAN frame có thể chứa.
+                    Khi đó CanTp thực hiện segmentation và reassembly.
+                </p>
+
+                <pre><code>Diagnostic Tester
+        |
+        | Large Diagnostic Request
+        v
+      CAN Bus
+        |
+        v
+      CanTp
+        |
+        | Reassembly
+        v
+       PduR
+        |
+        v
+       DCM
+        |
+        v
+Diagnostic Processing</code></pre>
+
+                <h2>25. CanTp không phải CAN Driver</h2>
+                <p>
+                    Đây là điểm rất quan trọng khi học AUTOSAR.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CanTp</th>
+                            <th>CAN Driver</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Transport dữ liệu lớn</td>
+                            <td>Giao tiếp với CAN Controller</td>
+                        </tr>
+                        <tr>
+                            <td>Segmentation/Reassembly</td>
+                            <td>Transmit/Receive CAN frame</td>
+                        </tr>
+                        <tr>
+                            <td>SF/FF/CF/FC</td>
+                            <td>Controller/HW abstraction</td>
+                        </tr>
+                        <tr>
+                            <td>BS/STmin/sequence</td>
+                            <td>CAN hardware configuration và control</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>26. CanTp và CAN-FD</h2>
+                <p>
+                    CAN-FD cung cấp payload lớn hơn Classic CAN, nhưng CanTp vẫn có
+                    vai trò khi message lớn hơn khả năng chứa của một CAN-FD frame
+                    hoặc khi hệ thống yêu cầu transport protocol.
+                </p>
+
+                <pre><code>Classic CAN
+8-byte payload
+    |
+    v
+Large Data
+    |
+    v
+Multiple CAN Frames
+
+CAN FD
+Payload lớn hơn
+    |
+    v
+Large Data
+    |
+    +---- Có thể vừa một CAN-FD frame
+    |
+    +---- Hoặc vẫn cần nhiều frame
+              |
+              v
+            CanTp</code></pre>
+
+                <p>
+                    Vì vậy, không nên đồng nhất:
+                    <strong>CAN-FD = không cần transport protocol</strong>.
+                </p>
+
+                <h2>27. Large Data Transmission trong AUTOSAR</h2>
+                <p>
+                    Một flow tổng quát có thể được mô tả như sau:
+                </p>
+
+                <pre><code>
+        Upper Layer
+            |
+            v
+          PduR
+            |
+            v
+          CanTp
+            |
+     +------+------+
+     |             |
+     v             v
+Segmentation   Flow Control
+     |
+     v
+    CanIf
+     |
+     v
+ CAN Driver
+     |
+     v
+CAN Controller
+     |
+     v
+ CAN Bus
+</code></pre>
+
+                <p>
+                    Ở phía nhận:
+                </p>
+
+                <pre><code>CAN Bus
+   |
+   v
+CAN Controller
+   |
+   v
+CAN Driver
+   |
+   v
+CanIf
+   |
+   v
+CanTp
+   |
+   | Reassembly
+   v
+PduR
+   |
+   v
+Upper Layer</code></pre>
+
+                <h2>28. Ví dụ: Diagnostic Read Data</h2>
+                <p>
+                    Giả sử tester gửi một diagnostic request lớn hơn kích thước
+                    một Classic CAN frame.
+                </p>
+
+                <pre><code>Tester
+  |
+  | Large Request
+  v
+First Frame
+  |
+  v
+ECU
+  |
+  | Flow Control
+  v
+Tester
+  |
+  | Consecutive Frames
+  v
+ECU
+  |
+  v
+CanTp Reassembly
+  |
+  v
+PduR
+  |
+  v
+DCM
+  |
+  v
+Process Request</code></pre>
+
+                <p>
+                    Ở đây application/diagnostic logic không cần trực tiếp điều khiển
+                    từng CF. CanTp đảm nhiệm phần transport.
+                </p>
+
+                <h2>29. Ví dụ: ECU gửi dữ liệu lớn về Tester</h2>
+                <p>
+                    Chiều ngược lại cũng có thể xảy ra.
+                    ECU có một response lớn và cần gửi về tester.
+                </p>
+
+                <pre><code>ECU
+ |
+ | Large Response
+ v
+DCM
+ |
+ v
+PduR
+ |
+ v
+CanTp
+ |
+ | First Frame
+ v
+Tester
+ |
+ | Flow Control
+ v
+ECU
+ |
+ | Consecutive Frames
+ v
+Tester
+ |
+ v
+Reassembly</code></pre>
+
+                <h2>30. Debug Large Data Transmission</h2>
+                <p>
+                    Khi dữ liệu lớn không truyền thành công, không nên chỉ kiểm tra
+                    CAN Driver. Cần kiểm tra theo từng layer.
+                </p>
+
+                <pre><code>Large Data Failure
+       |
+       v
+Application / DCM
+       |
+       v
+PduR
+       |
+       v
+CanTp
+       |
+       +---- SF/FF?
+       +---- FC?
+       +---- CF?
+       +---- Sequence?
+       +---- BS?
+       +---- STmin?
+       +---- Timeout?
+       |
+       v
+CanIf
+       |
+       v
+CAN Driver
+       |
+       v
+CAN Controller
+       |
+       v
+CAN Bus</code></pre>
+
+                <h2>31. Debug: First Frame không xuất hiện</h2>
+                <p>
+                    Nếu tester/application yêu cầu truyền dữ liệu lớn nhưng không thấy
+                    First Frame trên bus, hãy kiểm tra:
+                </p>
+
+                <ul>
+                    <li>Upper layer có thực sự gửi request không?</li>
+                    <li>PduR có route đúng PDU không?</li>
+                    <li>CanTp connection có được cấu hình đúng không?</li>
+                    <li>CanTp có chấp nhận request không?</li>
+                    <li>CanIf có nhận transmission request không?</li>
+                    <li>CAN Driver có nhận được transmit request không?</li>
+                    <li>CAN Controller có đang ở trạng thái cho phép transmission không?</li>
+                </ul>
+
+                <h2>32. Debug: Có First Frame nhưng không có Consecutive Frame</h2>
+                <p>
+                    Đây là trường hợp rất hữu ích để xác định vấn đề nằm ở transport flow.
+                </p>
+
+                <pre><code>First Frame
+    |
+    v
+Receiver
+    |
+    X
+No Consecutive Frame
+    |
+    +---- Flow Control chưa gửi?
+    |
+    +---- FC bị timeout?
+    |
+    +---- CanTp session error?
+    |
+    +---- BS/STmin configuration?
+    |
+    +---- CAN transmission problem?</code></pre>
+
+                <p>
+                    Đầu tiên cần kiểm tra receiver có gửi Flow Control hay không.
+                </p>
+
+                <h2>33. Debug: Có CF nhưng dữ liệu bị sai</h2>
+                <p>
+                    Nếu tất cả frame xuất hiện trên bus nhưng dữ liệu reassembled không đúng,
+                    cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>Sequence Number.</li>
+                    <li>Độ dài tổng của PDU.</li>
+                    <li>Offset khi copy buffer.</li>
+                    <li>Buffer size.</li>
+                    <li>Flow Control.</li>
+                    <li>Addressing configuration.</li>
+                    <li>CanTp channel mapping.</li>
+                    <li>Upper-layer PDU configuration.</li>
+                </ul>
+
+                <div class="note">
+                    Với embedded software, lỗi buffer và offset là nhóm lỗi cần đặc biệt chú ý
+                    khi xử lý dữ liệu lớn.
+                </div>
+
+                <h2>34. Debug: Timeout</h2>
+                <p>
+                    Nếu CanTp báo timeout, hãy xác định chính xác timeout xảy ra ở giai đoạn nào.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Giai đoạn</th>
+                            <th>Cần kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Chờ Flow Control</td>
+                            <td>Receiver có gửi FC không? CAN frame có đến receiver không?</td>
+                        </tr>
+                        <tr>
+                            <td>Chờ Consecutive Frame</td>
+                            <td>Sender có tiếp tục truyền không?</td>
+                        </tr>
+                        <tr>
+                            <td>Chờ transmission hoàn tất</td>
+                            <td>CAN Controller/Driver có TX event không?</td>
+                        </tr>
+                        <tr>
+                            <td>Reassembly</td>
+                            <td>Đủ frame và đúng sequence chưa?</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>35. Common Mistakes</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sai lầm</th>
+                            <th>Cách hiểu đúng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN frame có thể chứa dữ liệu bất kỳ kích thước nào</td>
+                            <td>Payload của mỗi frame bị giới hạn.</td>
+                        </tr>
+                        <tr>
+                            <td>Classic CAN luôn gửi được 8 bytes application data trong mọi trường hợp</td>
+                            <td>Transport protocol có overhead nên payload application thực tế có thể nhỏ hơn.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN-FD không cần CanTp</td>
+                            <td>CAN-FD vẫn có thể cần transport khi dữ liệu lớn hơn một frame.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp là CAN Driver</td>
+                            <td>CanTp xử lý transport; CAN Driver giao tiếp với CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>Chỉ cần First Frame và Consecutive Frame</td>
+                            <td>Flow Control đóng vai trò quan trọng trong multi-frame transfer.</td>
+                        </tr>
+                        <tr>
+                            <td>Sequence Number không quan trọng</td>
+                            <td>Sequence giúp receiver kiểm tra thứ tự các CF.</td>
+                        </tr>
+                        <tr>
+                            <td>BS và STmin giống nhau</td>
+                            <td>BS giới hạn số CF trong block; STmin giới hạn khoảng cách thời gian giữa CF.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>36. Góc nhìn phỏng vấn</h2>
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"How can you transmit large data over CAN?"</strong>, có thể trả lời:
+                </p>
+
+                <div class="note">
+                    <strong>Sample answer:</strong>
+                    Since a CAN frame has a limited payload size, large data cannot always
+                    be transmitted in a single frame. We can use a transport protocol such
+                    as ISO-TP, where the sender segments the data into multiple frames.
+                    For a multi-frame transmission, the sender starts with a First Frame,
+                    the receiver responds with Flow Control, and then the sender transmits
+                    Consecutive Frames. The receiver reassembles those frames into the
+                    original data.
+                </div>
+
+                <p>
+                    Nếu interviewer hỏi:
+                    <strong>"What is the difference between First Frame and Consecutive Frame?"</strong>:
+                </p>
+
+                <ul>
+                    <li><strong>First Frame:</strong> bắt đầu một multi-frame transfer và mang thông tin về tổng độ dài
+                        cùng phần dữ liệu đầu tiên.</li>
+                    <li><strong>Consecutive Frame:</strong> mang các phần dữ liệu tiếp theo và sequence number.</li>
+                </ul>
+
+                <h2>37. Memory Map — Large Data Transmission</h2>
+
+                <pre><code>LARGE DATA TRANSMISSION
+│
+├── Problem
+│   └── CAN Frame payload is limited
+│
+├── Transport
+│   └── CanTp / ISO-TP
+│
+├── Frame Types
+│   ├── SF - Single Frame
+│   ├── FF - First Frame
+│   ├── FC - Flow Control
+│   └── CF - Consecutive Frame
+│
+├── Control
+│   ├── Flow Status
+│   ├── Block Size
+│   ├── STmin
+│   ├── Sequence Number
+│   └── Timeout
+│
+├── AUTOSAR
+│   ├── Upper Layer / DCM
+│   ├── PduR
+│   ├── CanTp
+│   ├── CanIf
+│   ├── CAN Driver
+│   └── CAN Controller
+│
+└── Debug
+    ├── FF
+    ├── FC
+    ├── CF
+    ├── Sequence
+    ├── BS
+    ├── STmin
+    ├── Timeout
+    └── Buffer / PDU configuration</code></pre>
+
+                <h2>38. Tóm tắt</h2>
+                <p>
+                    <strong>Large Data Transmission</strong> là bài toán quan trọng khi sử dụng CAN,
+                    bởi một CAN frame chỉ có payload giới hạn. Khi dữ liệu lớn hơn khả năng
+                    của một frame, dữ liệu cần được chia thành nhiều phần và truyền theo
+                    một transport protocol.
+                </p>
+
+                <p>
+                    Trong AUTOSAR, <strong>CanTp</strong> là module quan trọng cho bài toán này.
+                    Nó xử lý segmentation, reassembly, Flow Control, sequence, Block Size,
+                    STmin và các cơ chế timeout cần thiết cho một transport session.
+                </p>
+
+                <pre><code>Large Data
+    |
+    v
+Segmentation
+    |
+    v
+First Frame
+    |
+    v
+Flow Control
+    |
+    v
+Consecutive Frames
+    |
+    v
+Sequence Checking
+    |
+    v
+Reassembly
+    |
+    v
+Original Large PDU</code></pre>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    Khi gặp một bài toán truyền dữ liệu lớn trên CAN, hãy nhớ chuỗi:
+                    <strong>Large PDU → Segmentation → FF → FC → CF → Reassembly</strong>.
+                    Trong AUTOSAR, hãy liên hệ chuỗi này với
+                    <strong>DCM/PduR → CanTp → CanIf → CAN Driver → CAN Controller → CAN Bus</strong>.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-27.html">← Bài trước</a>
+                    <a class="btn" href="lesson-29.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

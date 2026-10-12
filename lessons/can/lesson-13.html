@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 13: CAN Interact/Depend Modules | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html" class="active">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 13: CAN Interact/Depend Modules</h1>
+
+                <p>
+                    Trong các bài trước, chúng ta đã tìm hiểu CAN Driver, CAN-COM Stack,
+                    phạm vi của CAN Driver và hai tài liệu quan trọng trong AUTOSAR là
+                    <strong>AUTOSAR_SRS_CAN</strong> và <strong>AUTOSAR_SWS_CANDriver</strong>.
+                </p>
+
+                <p>
+                    Tuy nhiên, CAN Driver không hoạt động độc lập. Trong một ECU thực tế,
+                    CanDrv nằm giữa nhiều module AUTOSAR và phải phối hợp với chúng để
+                    thực hiện việc truyền, nhận frame, thay đổi trạng thái controller,
+                    xử lý lỗi và hỗ trợ wake-up.
+                </p>
+
+                <div class="note">
+                    <strong>Ý tưởng quan trọng:</strong>
+                    Không phải mọi module liên quan đến CAN đều gọi trực tiếp vào CAN Driver.
+                    <strong>CanIf</strong> là lớp giao tiếp trung gian quan trọng nhất:
+                    CanDrv chủ yếu nhìn thấy CanIf ở phía trên, còn nhiều module cấp cao như
+                    PduR, COM, CanSM hoặc ComM được tách khỏi phần cứng CAN nhờ lớp CanIf.
+                </div>
+
+                <h2>1. CAN Driver nằm ở đâu trong kiến trúc AUTOSAR?</h2>
+
+                <p>
+                    Trong AUTOSAR Classic Platform, CAN Driver thuộc nhóm
+                    <strong>MCAL (Microcontroller Abstraction Layer)</strong>.
+                    Nó giao tiếp gần với phần cứng CAN Controller và cung cấp
+                    interface chuẩn cho lớp phía trên.
+                </p>
+
+                <svg viewBox="0 0 900 500" role="img" aria-label="Vị trí CAN Driver trong AUTOSAR"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="250" y="25" width="400" height="55" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="58" text-anchor="middle" font-size="18">
+                        Application / SWC
+                    </text>
+
+                    <rect x="250" y="105" width="400" height="55" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="138" text-anchor="middle" font-size="18">
+                        COM / PduR / CanTp / CanNm
+                    </text>
+
+                    <rect x="250" y="185" width="400" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="220" text-anchor="middle" font-size="18">
+                        CanIf
+                    </text>
+
+                    <rect x="250" y="270" width="400" height="65" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="308" text-anchor="middle" font-size="20">
+                        CAN Driver (CanDrv)
+                    </text>
+
+                    <rect x="250" y="360" width="400" height="55" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="393" text-anchor="middle" font-size="18">
+                        CAN Controller
+                    </text>
+
+                    <rect x="250" y="440" width="400" height="45" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="468" text-anchor="middle" font-size="18">
+                        CAN Transceiver / CAN Bus
+                    </text>
+
+                    <line x1="450" y1="80" x2="450" y2="105" stroke="currentColor" stroke-width="2" />
+                    <line x1="450" y1="160" x2="450" y2="185" stroke="currentColor" stroke-width="2" />
+                    <line x1="450" y1="245" x2="450" y2="270" stroke="currentColor" stroke-width="2" />
+                    <line x1="450" y1="335" x2="450" y2="360" stroke="currentColor" stroke-width="2" />
+                    <line x1="450" y1="415" x2="450" y2="440" stroke="currentColor" stroke-width="2" />
+
+                    <text x="675" y="218" font-size="15">
+                        Interface chính
+                    </text>
+
+                    <text x="675" y="304" font-size="15">
+                        Hardware-near
+                    </text>
+                </svg>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                </p>
+
+                <pre><code>Application
+     ↓
+COM / PduR / CanTp / CanNm
+     ↓
+   CanIf
+     ↓
+   CanDrv
+     ↓
+CAN Controller
+     ↓
+CAN Transceiver
+     ↓
+CAN Bus</code></pre>
+
+                <p>
+                    Trong đó, CanIf giúp tách phần giao tiếp CAN khỏi sự khác biệt
+                    giữa các CAN Controller và các CAN Driver của từng nhà cung cấp.
+                </p>
+
+                <h2>2. "Interact" và "Depend" có nghĩa là gì?</h2>
+
+                <p>
+                    Hai khái niệm này khá gần nhau nhưng không hoàn toàn giống nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Interact</td>
+                            <td>
+                                Hai module trao đổi thông tin hoặc gọi interface
+                                của nhau trong một luồng xử lý.
+                            </td>
+                            <td>CanDrv gọi notification của CanIf.</td>
+                        </tr>
+                        <tr>
+                            <td>Depend</td>
+                            <td>
+                                Một module cần service, API, configuration hoặc
+                                infrastructure của module khác để hoạt động đúng.
+                            </td>
+                            <td>
+                                CanDrv cần DET để report development error.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Indirect relation</td>
+                            <td>
+                                Hai module có liên quan trong kiến trúc nhưng
+                                không trực tiếp gọi nhau.
+                            </td>
+                            <td>
+                                CanSM điều khiển CAN communication thông qua CanIf
+                                thay vì trực tiếp điều khiển CanDrv.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Khi đọc tài liệu AUTOSAR, không nên hiểu từ "dependency" theo nghĩa
+                    <em>module A luôn gọi trực tiếp API của module B</em>.
+                    Một dependency có thể là dependency về interface, configuration,
+                    callback hoặc service của hệ thống.
+                </div>
+
+                <h2>3. Module quan trọng nhất: CanIf</h2>
+
+                <p>
+                    Nếu phải chọn một module quan trọng nhất khi học mối quan hệ
+                    của CAN Driver với các module khác, đó là <strong>CanIf
+                        (CAN Interface)</strong>.
+                </p>
+
+                <p>
+                    CanIf nằm ở phía trên CanDrv và cung cấp một interface
+                    chuẩn hóa giữa các module CAN cấp cao và CAN Driver.
+                </p>
+
+                <svg viewBox="0 0 900 360" role="img" aria-label="Quan hệ giữa CanIf và CanDrv"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="60" y="45" width="220" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="170" y="88" text-anchor="middle" font-size="20">
+                        Upper CAN Modules
+                    </text>
+
+                    <rect x="340" y="45" width="220" height="70" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="88" text-anchor="middle" font-size="22">
+                        CanIf
+                    </text>
+
+                    <rect x="620" y="45" width="220" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="730" y="88" text-anchor="middle" font-size="20">
+                        CanDrv
+                    </text>
+
+                    <line x1="280" y1="80" x2="340" y2="80" stroke="currentColor" stroke-width="2" />
+                    <polygon points="335,75 345,80 335,85" fill="currentColor" />
+
+                    <line x1="560" y1="80" x2="620" y2="80" stroke="currentColor" stroke-width="2" />
+                    <polygon points="615,75 625,80 615,85" fill="currentColor" />
+
+                    <rect x="340" y="180" width="220" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="222" text-anchor="middle" font-size="19">
+                        CAN Controller
+                    </text>
+
+                    <line x1="730" y1="115" x2="730" y2="215" stroke="currentColor" stroke-width="2" />
+                    <line x1="730" y1="215" x2="560" y2="215" stroke="currentColor" stroke-width="2" />
+                    <polygon points="565,210 555,215 565,220" fill="currentColor" />
+
+                    <text x="610" y="155" font-size="15">
+                        Hardware control
+                    </text>
+
+                    <text x="350" y="290" font-size="15">
+                        CanIf = abstraction boundary
+                    </text>
+                </svg>
+
+                <p>
+                    Ví dụ, khi CAN Driver nhận được một frame từ hardware,
+                    CanDrv không gửi trực tiếp frame đó tới COM.
+                    Nó thông báo cho CanIf, sau đó CanIf mới quyết định
+                    frame sẽ được chuyển tiếp tới module phía trên nào.
+                </p>
+
+                <h2>4. CanDrv và CanIf tương tác như thế nào?</h2>
+
+                <p>
+                    Có hai luồng cơ bản cần nhớ:
+                    <strong>Transmit</strong> và <strong>Receive</strong>.
+                </p>
+
+                <h3>4.1. Luồng truyền dữ liệu</h3>
+
+                <p>
+                    Khi một PDU cần được truyền ra CAN bus, dữ liệu đi từ các
+                    module cấp cao xuống CanIf, sau đó CanIf yêu cầu CanDrv
+                    truyền frame.
+                </p>
+
+                <pre><code>COM / PduR
+     │
+     ▼
+   CanIf
+     │
+     │ Can_Write(...)
+     ▼
+   CanDrv
+     │
+     ▼
+CAN Controller
+     │
+     ▼
+ CAN Bus
+     │
+     ▼
+Transmission finished
+     │
+     ▼
+   CanDrv
+     │
+     │ Tx Confirmation
+     ▼
+   CanIf
+     │
+     ▼
+PduR / Upper layer</code></pre>
+
+                <p>
+                    API tiêu biểu ở phía CanDrv là:
+                </p>
+
+                <pre><code>Can_Write(
+    Hth,
+    &amp;PduInfo
+);</code></pre>
+
+                <p>
+                    Sau khi hardware hoàn thành việc truyền,
+                    CAN Driver có thể thông báo kết quả truyền tới CanIf
+                    thông qua cơ chế notification được cấu hình.
+                </p>
+
+                <h3>4.2. Luồng nhận dữ liệu</h3>
+
+                <p>
+                    Ở chiều ngược lại, frame xuất hiện trên CAN bus,
+                    CAN Controller nhận frame và báo sự kiện tới CanDrv.
+                </p>
+
+                <pre><code>CAN Bus
+   │
+   ▼
+CAN Controller
+   │
+   ▼
+ CanDrv
+   │
+   │ Rx Indication
+   ▼
+ CanIf
+   │
+   ▼
+PduR / CanTp / Upper CAN layer
+   │
+   ▼
+ COM / Application</code></pre>
+
+                <p>
+                    CanDrv xử lý phần hardware-level như nhận frame,
+                    kiểm tra Hardware Object và chuyển thông tin cần thiết
+                    cho CanIf.
+                </p>
+
+                <div class="note">
+                    <strong>Không nên nhầm:</strong>
+                    CanDrv không phải là nơi quyết định business meaning của
+                    CAN message. Ví dụ CAN ID này là "Vehicle Speed" hay "Engine RPM"
+                    thuộc phạm vi của các lớp giao tiếp/cấu hình cao hơn.
+                </div>
+
+                <h2>5. CanTrcv - CAN Transceiver Driver</h2>
+
+                <p>
+                    <strong>CanTrcv</strong> là driver dành cho CAN Transceiver,
+                    tức phần cứng nằm giữa CAN Controller và physical CAN bus.
+                </p>
+
+                <p>
+                    Điều này dẫn tới một điểm dễ nhầm:
+                </p>
+
+                <pre><code>CanIf
+ ├── CanDrv   → CAN Controller
+ │
+ └── CanTrcv  → CAN Transceiver</code></pre>
+
+                <p>
+                    CanDrv và CanTrcv không phải là cùng một module.
+                    CanDrv xử lý CAN Controller, còn CanTrcv quản lý
+                    trạng thái hoạt động của transceiver.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Quản lý</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CanDrv</td>
+                            <td>CAN Controller</td>
+                            <td>
+                                Controller mode, transmit, receive,
+                                error state, bus-off
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CanTrcv</td>
+                            <td>CAN Transceiver</td>
+                            <td>
+                                Transceiver operating mode,
+                                wake/sleep behavior
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CanIf</td>
+                            <td>Abstraction / mapping</td>
+                            <td>
+                                Chuẩn hóa interface cho các driver phía dưới
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Vì vậy, khi cần thay đổi mode của CAN communication,
+                    CanIf có thể làm việc với cả CanDrv và CanTrcv,
+                    trong khi CanSM ở tầng phía trên có thể điều phối
+                    communication state.
+                </p>
+
+                <h2>6. EcuM - ECU State Manager</h2>
+
+                <p>
+                    <strong>EcuM</strong> quản lý các trạng thái hoạt động
+                    của ECU và có liên quan đến các cơ chế như
+                    startup, shutdown và wake-up.
+                </p>
+
+                <p>
+                    Trong CAN communication, wake-up là một trường hợp đặc biệt.
+                    ECU có thể đang ở trạng thái sleep và một sự kiện CAN
+                    có thể trở thành nguyên nhân khiến ECU cần thức dậy.
+                </p>
+
+                <svg viewBox="0 0 900 390" role="img" aria-label="Quan hệ giữa EcuM, CanIf và CanDrv khi wakeup"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="70" y="50" width="190" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="165" y="93" text-anchor="middle" font-size="20">
+                        EcuM
+                    </text>
+
+                    <rect x="350" y="50" width="200" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="93" text-anchor="middle" font-size="20">
+                        CanIf
+                    </text>
+
+                    <rect x="640" y="50" width="190" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="735" y="93" text-anchor="middle" font-size="20">
+                        CanDrv
+                    </text>
+
+                    <rect x="640" y="205" width="190" height="70" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="735" y="248" text-anchor="middle" font-size="18">
+                        CAN Controller
+                    </text>
+
+                    <line x1="260" y1="85" x2="350" y2="85" stroke="currentColor" stroke-width="2" />
+                    <polygon points="345,80 355,85 345,90" fill="currentColor" />
+
+                    <line x1="550" y1="85" x2="640" y2="85" stroke="currentColor" stroke-width="2" />
+                    <polygon points="635,80 645,85 635,90" fill="currentColor" />
+
+                    <line x1="735" y1="120" x2="735" y2="205" stroke="currentColor" stroke-width="2" />
+
+                    <text x="275" y="70" font-size="15">
+                        Wakeup handling
+                    </text>
+
+                    <text x="575" y="70" font-size="15">
+                        CAN driver
+                    </text>
+
+                    <text x="470" y="170" font-size="15">
+                        CAN wakeup event
+                    </text>
+
+                    <path d="M640 240 C540 300, 360 300, 260 110" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-dasharray="7,6" />
+
+                    <text x="370" y="330" font-size="15">
+                        Thông tin wakeup được đưa lên tầng quản lý ECU
+                    </text>
+                </svg>
+
+                <p>
+                    Điều quan trọng ở đây là không nên kết luận rằng
+                    <strong>EcuM trực tiếp điều khiển mọi hành vi của CanDrv</strong>.
+                    Trong kiến trúc AUTOSAR, nhiều luồng wake-up được thực hiện
+                    qua các interface của CAN communication stack.
+                </p>
+
+                <h2>7. DET - Default Error Tracer</h2>
+
+                <p>
+                    Trong quá trình development, CAN Driver có thể phát hiện
+                    các lỗi liên quan tới việc gọi API sai hoặc cấu hình không hợp lệ.
+                    Khi đó, cơ chế <strong>DET (Default Error Tracer)</strong>
+                    có thể được sử dụng để report development error.
+                </p>
+
+                <pre><code>Application / CanIf
+        │
+        │ gọi API CanDrv không hợp lệ
+        ▼
+     CanDrv
+        │
+        │ Detect Development Error
+        ▼
+      DET
+        │
+        ▼
+ Development Log / Debug Information</code></pre>
+
+                <p>
+                    Ví dụ về mặt khái niệm:
+                </p>
+
+                <pre><code>Can_Write(...)
+        │
+        ├── Parameter hợp lệ
+        │       └── tiếp tục xử lý
+        │
+        └── Parameter/configuration không hợp lệ
+                └── Report Development Error → DET</code></pre>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    DET chủ yếu phục vụ quá trình development và debugging.
+                    Không nên đồng nhất development error với lỗi runtime
+                    của hệ thống hoặc lỗi vật lý trên CAN bus.
+                </div>
+
+                <h2>8. SchM - BSW Scheduler</h2>
+
+                <p>
+                    <strong>SchM (BSW Scheduler)</strong> là một phần của
+                    cơ chế quản lý việc gọi các main functions của BSW.
+                </p>
+
+                <p>
+                    Với CAN Driver, một số processing có thể được thực hiện
+                    theo cơ chế polling thông qua các main functions,
+                    tùy cấu hình và AUTOSAR release.
+                </p>
+
+                <pre><code>BSW Scheduler / OS scheduling
+             │
+             ├── Can_MainFunction_Read()
+             │
+             ├── Can_MainFunction_Write()
+             │
+             ├── Can_MainFunction_BusOff()
+             │
+             └── Can_MainFunction_Wakeup()
+                        │
+                        ▼
+                     CanDrv</code></pre>
+
+                <p>
+                    Vì vậy cần phân biệt hai cơ chế:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cơ chế</th>
+                            <th>Mô tả</th>
+                            <th>Đặc điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Interrupt</td>
+                            <td>
+                                Hardware tạo interrupt khi có sự kiện.
+                            </td>
+                            <td>
+                                Phản ứng nhanh, thường được sử dụng cho
+                                các sự kiện cần xử lý tức thời.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Polling</td>
+                            <td>
+                                Main function được gọi định kỳ để kiểm tra
+                                trạng thái hoặc xử lý sự kiện.
+                            </td>
+                            <td>
+                                Timing phụ thuộc vào chu kỳ scheduler/main function.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Quan trọng:</strong>
+                    Không phải mọi ECU đều sử dụng cùng một cách xử lý.
+                    AUTOSAR cho phép behavior phụ thuộc vào configuration
+                    và khả năng của CAN hardware/driver.
+                </div>
+
+                <h2>9. CanSM và ComM có trực tiếp gọi CanDrv không?</h2>
+
+                <p>
+                    Đây là một câu hỏi rất hay trong phỏng vấn Embedded AUTOSAR.
+                </p>
+
+                <p>
+                    Câu trả lời quan trọng là:
+                    <strong>không nên xem CanSM hoặc ComM là các client trực tiếp
+                        của CanDrv cho việc truyền/nhận CAN frame.</strong>
+                </p>
+
+                <p>
+                    Kiến trúc điển hình được hiểu như sau:
+                </p>
+
+                <pre><code>ComM
+  │
+  ▼
+CanSM
+  │
+  ▼
+CanIf
+  │
+  ├──► CanDrv
+  │
+  └──► CanTrcv</code></pre>
+
+                <p>
+                    ComM chịu trách nhiệm quản lý communication request ở mức
+                    communication management. CanSM quản lý CAN network state,
+                    sau đó các request phù hợp được đưa xuống CanIf.
+                </p>
+
+                <p>
+                    CanIf mới thực hiện việc mapping các yêu cầu đó
+                    tới CAN Driver và CAN Transceiver Driver phù hợp.
+                </p>
+
+                <h2>10. Tổng hợp các module liên quan</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Quan hệ với CanDrv</th>
+                            <th>Vai trò chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>CanIf</strong></td>
+                            <td>Trực tiếp / interface chính</td>
+                            <td>
+                                Abstraction giữa upper communication layers
+                                và CAN Driver
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CanTrcv</strong></td>
+                            <td>Liên quan qua CanIf</td>
+                            <td>
+                                Điều khiển CAN Transceiver
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>EcuM</strong></td>
+                            <td>Liên quan tới wakeup/ECU state</td>
+                            <td>
+                                Startup, shutdown, sleep và wakeup
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>DET</strong></td>
+                            <td>Service hỗ trợ</td>
+                            <td>
+                                Development error reporting
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>SchM</strong></td>
+                            <td>Service/scheduling support</td>
+                            <td>
+                                Main-function scheduling và
+                                BSW synchronization support
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CanSM</strong></td>
+                            <td>Indirect</td>
+                            <td>
+                                CAN network state management
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>ComM</strong></td>
+                            <td>Indirect</td>
+                            <td>
+                                Communication mode/request management
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>PduR</strong></td>
+                            <td>Indirect / upper layer</td>
+                            <td>
+                                Routing PDU giữa các communication modules
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>COM</strong></td>
+                            <td>Indirect / upper layer</td>
+                            <td>
+                                Signal-oriented communication
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>11. Direct Dependency và Indirect Dependency</h2>
+
+                <p>
+                    Một cách rất hữu ích để ghi nhớ kiến trúc là chia các module
+                    thành hai nhóm.
+                </p>
+
+                <svg viewBox="0 0 900 470" role="img" aria-label="Direct và indirect dependencies của CAN Driver"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="330" y="175" width="240" height="80" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="223" text-anchor="middle" font-size="24">
+                        CanDrv
+                    </text>
+
+                    <rect x="60" y="70" width="190" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="155" y="107" text-anchor="middle" font-size="19">
+                        CanIf
+                    </text>
+
+                    <rect x="650" y="70" width="190" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="745" y="107" text-anchor="middle" font-size="19">
+                        DET
+                    </text>
+
+                    <rect x="650" y="350" width="190" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="745" y="387" text-anchor="middle" font-size="19">
+                        EcuM
+                    </text>
+
+                    <rect x="60" y="350" width="190" height="60" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="155" y="387" text-anchor="middle" font-size="19">
+                        SchM / Scheduler
+                    </text>
+
+                    <line x1="250" y1="105" x2="330" y2="190" stroke="currentColor" stroke-width="2" />
+                    <polygon points="325,185 335,192 326,197" fill="currentColor" />
+
+                    <line x1="650" y1="105" x2="570" y2="190" stroke="currentColor" stroke-width="2" />
+                    <polygon points="575,185 565,192 574,197" fill="currentColor" />
+
+                    <line x1="650" y1="380" x2="570" y2="250" stroke="currentColor" stroke-width="2"
+                        stroke-dasharray="7,6" />
+
+                    <line x1="250" y1="380" x2="330" y2="250" stroke="currentColor" stroke-width="2"
+                        stroke-dasharray="7,6" />
+
+                    <text x="65" y="30" font-size="18">
+                        Direct / primary interaction
+                    </text>
+
+                    <text x="65" y="445" font-size="18">
+                        Supporting / indirect relationship
+                    </text>
+                </svg>
+
+                <p>
+                    Tuy nhiên, sơ đồ trên chỉ mang tính khái niệm.
+                    Mức độ "direct" hoặc "indirect" cụ thể phải được xác định
+                    theo interface và AUTOSAR release/configuration đang sử dụng.
+                </p>
+
+                <h2>12. Một ví dụ hoàn chỉnh: gửi một CAN message</h2>
+
+                <p>
+                    Giả sử Application muốn gửi một giá trị tốc độ xe.
+                    Ta có thể hình dung toàn bộ chuỗi như sau:
+                </p>
+
+                <pre><code>1. Application tạo / cập nhật signal
+                │
+                ▼
+2. COM đóng gói signal thành I-PDU
+                │
+                ▼
+3. PduR route PDU
+                │
+                ▼
+4. CanIf xác định CAN PDU / HTH
+                │
+                ▼
+5. CanIf gọi Can_Write(...)
+                │
+                ▼
+6. CanDrv ghi dữ liệu vào CAN Controller
+                │
+                ▼
+7. CAN Controller thực hiện transmission
+                │
+                ▼
+8. CAN message xuất hiện trên bus
+                │
+                ▼
+9. CanDrv nhận sự kiện transmission complete
+                │
+                ▼
+10. CanIf nhận Tx Confirmation
+                │
+                ▼
+11. Upper layer tiếp tục xử lý</code></pre>
+
+                <p>
+                    Qua ví dụ này có thể thấy tại sao mỗi module phải có
+                    một responsibility riêng. Application không cần biết
+                    thanh ghi CAN nằm ở đâu, còn CanDrv cũng không cần biết
+                    message đó biểu diễn "Vehicle Speed" hay "Engine RPM".
+                </p>
+
+                <h2>13. Một ví dụ hoàn chỉnh: nhận một CAN message</h2>
+
+                <pre><code>1. CAN frame xuất hiện trên bus
+                │
+                ▼
+2. CAN Controller nhận frame
+                │
+                ▼
+3. Interrupt hoặc polling
+                │
+                ▼
+4. CanDrv xử lý Hardware Object
+                │
+                ▼
+5. CanDrv gọi Receive Indication
+                │
+                ▼
+6. CanIf nhận L-PDU
+                │
+                ▼
+7. CanIf route tới PduR / CanTp / module phù hợp
+                │
+                ▼
+8. COM giải mã PDU thành signal
+                │
+                ▼
+9. Application sử dụng signal</code></pre>
+
+                <div class="note">
+                    <strong>Tư duy debug:</strong>
+                    Khi message không đến Application, không nên chỉ kiểm tra
+                    Application. Hãy đi ngược từ CAN Bus → CAN Controller →
+                    CanDrv → CanIf → PduR/COM → Application để xác định
+                    message bị mất ở tầng nào.
+                </div>
+
+                <h2>14. CAN Driver không phụ trách những gì?</h2>
+
+                <p>
+                    Hiểu dependency cũng phải đi kèm với hiểu boundary.
+                    Một số nhiệm vụ thường <strong>không thuộc trách nhiệm trực tiếp
+                        của CanDrv</strong>.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhiệm vụ</th>
+                            <th>CanDrv?</th>
+                            <th>Module liên quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Điều khiển CAN Controller</td>
+                            <td><strong>Có</strong></td>
+                            <td>CanDrv</td>
+                        </tr>
+                        <tr>
+                            <td>Đóng gói Signal thành PDU</td>
+                            <td>Không</td>
+                            <td>COM</td>
+                        </tr>
+                        <tr>
+                            <td>Routing PDU</td>
+                            <td>Không</td>
+                            <td>PduR</td>
+                        </tr>
+                        <tr>
+                            <td>Quản lý CAN network state</td>
+                            <td>Không trực tiếp</td>
+                            <td>CanSM</td>
+                        </tr>
+                        <tr>
+                            <td>Quản lý communication mode</td>
+                            <td>Không trực tiếp</td>
+                            <td>ComM / CanSM</td>
+                        </tr>
+                        <tr>
+                            <td>Điều khiển CAN Transceiver</td>
+                            <td>Không trực tiếp</td>
+                            <td>CanTrcv</td>
+                        </tr>
+                        <tr>
+                            <td>Development error tracing</td>
+                            <td>Không phải nơi lưu trữ</td>
+                            <td>DET</td>
+                        </tr>
+                        <tr>
+                            <td>ECU startup / shutdown</td>
+                            <td>Không</td>
+                            <td>EcuM</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>15. Dependency Map cần nhớ khi đi phỏng vấn</h2>
+
+                <p>
+                    Một cách đơn giản để nhớ là sử dụng sơ đồ sau:
+                </p>
+
+                <pre><code>                 ComM
+                   │
+                   ▼
+                 CanSM
+                   │
+                   ▼
+COM ──► PduR ──► CanIf ◄──────── EcuM
+                   │
+            ┌──────┴──────┐
+            │             │
+            ▼             ▼
+         CanDrv        CanTrcv
+            │             │
+            ▼             ▼
+     CAN Controller   CAN Transceiver
+            │             │
+            └──────┬──────┘
+                   ▼
+                 CAN Bus
+
+CanDrv ─────► DET
+CanDrv ◄──── Scheduler / SchM</code></pre>
+
+                <div class="note">
+                    <strong>Memory trick:</strong>
+                    <br>
+                    <strong>CanIf = Interface</strong>
+                    <br>
+                    <strong>CanDrv = Controller</strong>
+                    <br>
+                    <strong>CanTrcv = Transceiver</strong>
+                    <br>
+                    <strong>CanSM = CAN State</strong>
+                    <br>
+                    <strong>ComM = Communication Mode</strong>
+                    <br>
+                    <strong>EcuM = ECU State / Wakeup</strong>
+                    <br>
+                    <strong>DET = Development Error</strong>
+                    <br>
+                    <strong>SchM = Scheduling / BSW support</strong>
+                </div>
+
+                <h2>16. Góc nhìn Debug thực tế</h2>
+
+                <p>
+                    Khi gặp lỗi CAN trong một project AUTOSAR,
+                    việc biết module nào chịu trách nhiệm sẽ giúp
+                    thu hẹp phạm vi debug rất nhanh.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Những nơi nên kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Không gửi được CAN frame</td>
+                            <td>
+                                COM → PduR → CanIf → Can_Write →
+                                CanDrv → CAN Controller
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CAN controller không START</td>
+                            <td>
+                                CanIf → CanDrv → Controller mode /
+                                configuration
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Hardware nhận frame nhưng Application không thấy</td>
+                            <td>
+                                CanDrv → CanIf → PduR/COM
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Bus-off không được xử lý</td>
+                            <td>
+                                CanDrv → CanIf → CanSM
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CAN wakeup không hoạt động</td>
+                            <td>
+                                CAN hardware → CanDrv / CanTrcv →
+                                CanIf → EcuM / wakeup handling
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>API bị gọi sai trong development</td>
+                            <td>
+                                CanDrv → DET
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Polling xử lý quá chậm</td>
+                            <td>
+                                Main Function → Scheduler / SchM →
+                                CAN timing/configuration
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>17. SRS, SWS và Module Dependency liên quan với nhau thế nào?</h2>
+
+                <p>
+                    Sau khi đã học Bài 11 và Bài 12, chúng ta có thể nối lại
+                    ba khái niệm:
+                </p>
+
+                <svg viewBox="0 0 900 420" role="img" aria-label="Quan hệ giữa SRS, SWS và module dependencies"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <rect x="60" y="80" width="210" height="90" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="165" y="118" text-anchor="middle" font-size="21">
+                        AUTOSAR_SRS_CAN
+                    </text>
+                    <text x="165" y="145" text-anchor="middle" font-size="16">
+                        What is required?
+                    </text>
+
+                    <rect x="345" y="80" width="210" height="90" fill="none" stroke="currentColor" stroke-width="3" />
+                    <text x="450" y="118" text-anchor="middle" font-size="21">
+                        AUTOSAR_SWS_CANDriver
+                    </text>
+                    <text x="450" y="145" text-anchor="middle" font-size="16">
+                        Module behavior / interface
+                    </text>
+
+                    <rect x="630" y="80" width="210" height="90" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="735" y="118" text-anchor="middle" font-size="21">
+                        CAN Modules
+                    </text>
+                    <text x="735" y="145" text-anchor="middle" font-size="16">
+                        CanIf / CanTrcv / EcuM...
+                    </text>
+
+                    <line x1="270" y1="125" x2="345" y2="125" stroke="currentColor" stroke-width="2" />
+                    <polygon points="340,120 350,125 340,130" fill="currentColor" />
+
+                    <line x1="555" y1="125" x2="630" y2="125" stroke="currentColor" stroke-width="2" />
+                    <polygon points="625,120 635,125 625,130" fill="currentColor" />
+
+                    <rect x="260" y="255" width="380" height="85" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="450" y="292" text-anchor="middle" font-size="20">
+                        Vendor Implementation
+                    </text>
+                    <text x="450" y="319" text-anchor="middle" font-size="16">
+                        Hardware-specific implementation
+                    </text>
+
+                    <line x1="735" y1="170" x2="595" y2="255" stroke="currentColor" stroke-width="2" />
+                    <line x1="450" y1="170" x2="450" y2="255" stroke="currentColor" stroke-width="2" />
+
+                    <text x="335" y="220" font-size="15">
+                        standardized interface &amp; behavior
+                    </text>
+
+                    <text x="300" y="385" font-size="16">
+                        SWS không mô tả chi tiết cách vendor map từng register của MCU.
+                    </text>
+                </svg>
+
+                <p>
+                    Đây là một điểm quan trọng khi đọc AUTOSAR SWS:
+                    specification chuẩn hóa behavior và interface ở cấp module,
+                    nhưng implementation cụ thể của vendor vẫn có thể khác nhau
+                    ở mức register, interrupt handling nội bộ, driver architecture
+                    và hardware abstraction.
+                </p>
+
+                <h2>18. Checklist ghi nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Câu hỏi</th>
+                            <th>Cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Module nào là interface chính của CanDrv?</td>
+                            <td><strong>CanIf</strong></td>
+                        </tr>
+                        <tr>
+                            <td>CanDrv điều khiển gì?</td>
+                            <td><strong>CAN Controller</strong></td>
+                        </tr>
+                        <tr>
+                            <td>CanTrcv điều khiển gì?</td>
+                            <td><strong>CAN Transceiver</strong></td>
+                        </tr>
+                        <tr>
+                            <td>COM có trực tiếp gọi CanDrv không?</td>
+                            <td>
+                                Không; thông thường đi qua <strong>PduR / CanIf</strong>.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CanSM có trực tiếp xử lý CAN frame không?</td>
+                            <td>
+                                Không; CanSM quản lý CAN network state,
+                                giao tiếp xuống thông qua CanIf.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DET dùng để làm gì?</td>
+                            <td><strong>Development error reporting</strong></td>
+                        </tr>
+                        <tr>
+                            <td>EcuM liên quan tới điểm nào?</td>
+                            <td><strong>ECU state / wakeup</strong></td>
+                        </tr>
+                        <tr>
+                            <td>SchM/Scheduler liên quan tới gì?</td>
+                            <td>
+                                Main-function scheduling và BSW synchronization support.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>19. Tóm tắt</h2>
+
+                <div class="note">
+                    <br><br>
+
+                    CAN Driver không hoạt động độc lập mà nằm trong một hệ thống
+                    nhiều module AUTOSAR.
+                    <br><br>
+
+                    <strong>CanIf</strong> là module giao tiếp quan trọng nhất
+                    giữa CanDrv và các upper-layer communication modules.
+                    <br><br>
+
+                    <strong>CanDrv</strong> chịu trách nhiệm chính với
+                    CAN Controller, trong khi <strong>CanTrcv</strong>
+                    chịu trách nhiệm với CAN Transceiver.
+                    <br><br>
+
+                    <strong>CanSM</strong> và <strong>ComM</strong> quản lý
+                    communication/network state ở các tầng cao hơn,
+                    không phải nơi trực tiếp xử lý CAN frame trong CanDrv.
+                    <br><br>
+
+                    <strong>EcuM</strong> liên quan tới ECU state và wake-up,
+                    còn <strong>DET</strong> hỗ trợ development error reporting.
+                    <br><br>
+
+                    Khi debug, hãy đi theo chain:
+                    <strong>CAN Bus → Controller → CanDrv → CanIf →
+                        PduR/COM → Application</strong>.
+                    Đây là cách rất hiệu quả để xác định lỗi nằm ở tầng nào.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-112.html">← Bài trước</a>
+                    <a class="btn" href="lesson-14.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

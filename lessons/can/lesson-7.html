@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 7: Bit Stuffing | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html" class="active">Bài 7: Bit Stuffing</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 7: Bit Stuffing</h1>
+
+                <p>
+                    CAN truyền dữ liệu theo từng bit trên bus. Để các node có thể duy trì
+                    <strong>đồng bộ thời gian</strong> trong quá trình truyền, CAN sử dụng
+                    một cơ chế đặc biệt gọi là <strong>Bit Stuffing</strong>.
+                </p>
+
+                <p>
+                    Quy tắc cơ bản rất đơn giản:
+                    sau khi xuất hiện <strong>5 bit liên tiếp có cùng giá trị</strong>,
+                    transmitter phải chèn thêm một bit có giá trị ngược lại.
+                </p>
+
+                <div class="note">
+                    <strong>Quy tắc cần nhớ:</strong>
+                    Nếu đã truyền 5 bit liên tiếp giống nhau, bit tiếp theo phải là
+                    <strong>bit ngược lại</strong>.
+                    Bit được chèn vào được gọi là <strong>stuff bit</strong>.
+                </div>
+
+                <h2>1. Tại sao CAN cần Bit Stuffing?</h2>
+
+                <p>
+                    Các node trên CAN bus phải liên tục theo dõi tín hiệu để xác định
+                    giá trị của từng bit. Tuy nhiên, nếu bus xuất hiện quá nhiều bit
+                    liên tiếp có cùng giá trị, số lần chuyển trạng thái trên bus sẽ giảm.
+                </p>
+
+                <p>
+                    Điều này làm giảm cơ hội để các node thực hiện
+                    <strong>resynchronization</strong> trong quá trình nhận frame.
+                </p>
+
+                <p>
+                    Bit stuffing giải quyết vấn đề này bằng cách chủ động tạo thêm
+                    các chuyển đổi trạng thái trên bus.
+                </p>
+
+                <svg viewBox="0 0 760 220" role="img" aria-label="Minh họa bit stuffing tạo thêm chuyển đổi trạng thái"
+                    style="width:100%;height:auto;max-width:760px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+
+                        <line x1="40" y1="70" x2="720" y2="70" />
+
+                        <line x1="40" y1="70" x2="40" y2="110" />
+                        <line x1="110" y1="70" x2="110" y2="110" />
+                        <line x1="180" y1="70" x2="180" y2="110" />
+                        <line x1="250" y1="70" x2="250" y2="110" />
+                        <line x1="320" y1="70" x2="320" y2="110" />
+                        <line x1="390" y1="70" x2="390" y2="110" />
+                        <line x1="460" y1="70" x2="460" y2="110" />
+                        <line x1="530" y1="70" x2="530" y2="110" />
+                        <line x1="600" y1="70" x2="600" y2="110" />
+                        <line x1="670" y1="70" x2="670" y2="110" />
+                        <line x1="720" y1="70" x2="720" y2="110" />
+                    </g>
+
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+
+                        <text x="75" y="135">1</text>
+                        <text x="145" y="135">1</text>
+                        <text x="215" y="135">1</text>
+                        <text x="285" y="135">1</text>
+                        <text x="355" y="135">1</text>
+                        <text x="425" y="135">0</text>
+                        <text x="495" y="135">1</text>
+                        <text x="565" y="135">...</text>
+
+                        <text x="285" y="165">
+                            5 bit liên tiếp giống nhau
+                        </text>
+
+                        <text x="425" y="190">
+                            ↑ stuff bit
+                        </text>
+                    </g>
+                </svg>
+
+                <p>
+                    Trong ví dụ trên, sau năm bit <code>1</code> liên tiếp,
+                    transmitter chèn thêm một bit <code>0</code>.
+                    Sau đó dữ liệu ban đầu mới được tiếp tục truyền.
+                </p>
+
+                <h2>2. Quy tắc Bit Stuffing</h2>
+
+                <p>
+                    Quy tắc của CAN có thể mô tả như sau:
+                </p>
+
+                <ol>
+                    <li>Bắt đầu đếm các bit liên tiếp có cùng giá trị.</li>
+                    <li>Nếu có tối đa 4 bit giống nhau liên tiếp, tiếp tục truyền bình thường.</li>
+                    <li>Sau bit thứ 5, transmitter chèn một bit ngược giá trị.</li>
+                    <li>Sau đó bộ đếm được bắt đầu lại với dữ liệu tiếp theo.</li>
+                </ol>
+
+                <table>
+                    <tr>
+                        <th>Chuỗi dữ liệu</th>
+                        <th>Kết quả stuffing</th>
+                    </tr>
+                    <tr>
+                        <td><code>1111</code></td>
+                        <td>Không cần chèn</td>
+                    </tr>
+                    <tr>
+                        <td><code>11111</code></td>
+                        <td><code>111110</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>00000</code></td>
+                        <td><code>000001</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>111111</code></td>
+                        <td><code>1111101</code></td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Stuff bit không phải là dữ liệu ứng dụng.
+                    Nó được CAN controller tự động thêm vào khi truyền và loại bỏ khi nhận.
+                </div>
+
+                <h2>3. Ví dụ từng bước với chuỗi bit</h2>
+
+                <p>
+                    Giả sử dữ liệu cần truyền có chuỗi:
+                </p>
+
+                <pre><code>1111100000</code></pre>
+
+                <p>
+                    Ta xử lý từng nhóm bit:
+                </p>
+
+                <pre><code>11111 → gặp 5 bit 1 liên tiếp → chèn 0
+
+00000 → gặp 5 bit 0 liên tiếp → chèn 1</code></pre>
+
+                <p>
+                    Chuỗi sau khi stuffing sẽ trở thành:
+                </p>
+
+                <pre><code>111110000001</code></pre>
+
+                <p>
+                    Có thể biểu diễn rõ hơn:
+                </p>
+
+                <pre><code>Dữ liệu ban đầu:
+11111 00000
+
+Sau stuffing:
+11111 0 00000 1
+     ↑        ↑
+   stuff    stuff</code></pre>
+
+                <h2>4. Receiver xử lý Stuff Bit như thế nào?</h2>
+
+                <p>
+                    Bit stuffing không chỉ được thực hiện bởi transmitter.
+                    Receiver cũng phải theo dõi chuỗi bit để nhận biết các bit được chèn.
+                </p>
+
+                <p>
+                    Khi receiver phát hiện:
+                </p>
+
+                <pre><code>5 bit liên tiếp cùng giá trị</code></pre>
+
+                <p>
+                    nó kỳ vọng bit tiếp theo phải là bit ngược lại.
+                    Bit này được nhận diện là <strong>stuff bit</strong> và được loại khỏi
+                    dữ liệu trước khi phần mềm sử dụng nội dung message.
+                </p>
+
+                <svg viewBox="0 0 760 180" role="img" aria-label="Receiver loại bỏ stuff bit"
+                    style="width:100%;height:auto;max-width:760px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="20" y="35" width="110" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="130" y="35" width="110" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="240" y="35" width="110" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="350" y="35" width="110" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="460" y="35" width="110" height="45" fill="rgba(224,168,0,.25)" />
+                        <rect x="570" y="35" width="110" height="45" fill="rgba(46,139,87,.28)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+
+                        <text x="75" y="62">1</text>
+                        <text x="185" y="62">1</text>
+                        <text x="295" y="62">1</text>
+                        <text x="405" y="62">1</text>
+                        <text x="515" y="62">0</text>
+                        <text x="625" y="62">1</text>
+
+                        <text x="515" y="105">stuff bit</text>
+
+                        <text x="350" y="145">
+                            Receiver nhận → phát hiện → loại bỏ stuff bit
+                        </text>
+                    </g>
+                </svg>
+
+                <p>
+                    Nhờ vậy, phần dữ liệu mà application nhìn thấy vẫn là dữ liệu ban đầu,
+                    không chứa các bit được chèn để phục vụ đồng bộ.
+                </p>
+
+                <h2>5. Bit Stuffing giúp đồng bộ như thế nào?</h2>
+
+                <p>
+                    CAN sử dụng các cạnh chuyển đổi của tín hiệu để thực hiện
+                    <strong>resynchronization</strong>.
+                </p>
+
+                <p>
+                    Nếu có quá nhiều bit liên tiếp giống nhau, số lượng cạnh chuyển đổi
+                    sẽ giảm. Việc chèn một bit ngược sau tối đa năm bit cùng giá trị
+                    tạo thêm một transition cần thiết cho quá trình đồng bộ.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Không stuffing</th>
+                        <th>Có stuffing</th>
+                    </tr>
+                    <tr>
+                        <td>Nhiều bit giống nhau liên tiếp</td>
+                        <td>Xuất hiện thêm transition</td>
+                    </tr>
+                    <tr>
+                        <td>Ít cơ hội resynchronization</td>
+                        <td>Nhiều cơ hội resynchronization hơn</td>
+                    </tr>
+                    <tr>
+                        <td>Dễ tích lũy sai lệch timing</td>
+                        <td>Giúp duy trì đồng bộ giữa các node</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Bit stuffing không phải là cơ chế sửa lỗi.
+                    Mục đích chính của nó là hỗ trợ
+                    <strong>đồng bộ hóa và phát hiện lỗi về quy tắc bit</strong>.
+                </div>
+
+                <h2>6. Bit Stuffing được áp dụng ở đâu?</h2>
+
+                <p>
+                    Không phải tất cả các trường của CAN frame đều áp dụng bit stuffing
+                    giống nhau.
+                </p>
+
+                <p>
+                    Trong Classic CAN, bit stuffing được áp dụng từ
+                    <strong>Start of Frame (SOF)</strong> cho đến phần kết thúc của
+                    <strong>Data Field và CRC sequence</strong>, trước các trường
+                    có định dạng cố định ở cuối frame.
+                </p>
+
+                <p>
+                    Có thể hình dung frame đơn giản như sau:
+                </p>
+
+                <svg viewBox="0 0 760 145" role="img" aria-label="Phạm vi bit stuffing trong CAN frame"
+                    style="width:100%;height:auto;max-width:760px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+
+                        <rect x="10" y="35" width="70" height="45" fill="rgba(46,139,87,.28)" />
+
+                        <rect x="80" y="35" width="150" height="45" fill="rgba(46,139,87,.28)" />
+
+                        <rect x="230" y="35" width="180" height="45" fill="rgba(46,139,87,.28)" />
+
+                        <rect x="410" y="35" width="150" height="45" fill="rgba(46,139,87,.28)" />
+
+                        <rect x="560" y="35" width="90" height="45" fill="rgba(224,168,0,.25)" />
+
+                        <rect x="650" y="35" width="100" height="45" fill="rgba(224,168,0,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+
+                        <text x="45" y="62">SOF</text>
+                        <text x="155" y="62">Identifier</text>
+                        <text x="320" y="62">Control + Data</text>
+                        <text x="485" y="62">CRC sequence</text>
+                        <text x="605" y="62">ACK</text>
+                        <text x="700" y="62">EOF</text>
+
+                        <text x="280" y="105">
+                            ← vùng áp dụng bit stuffing →
+                        </text>
+                    </g>
+                </svg>
+
+                <div class="note">
+                    Khi học sâu về CAN frame, cần phân biệt vùng có bit stuffing với
+                    các trường có cấu trúc cố định. Không nên giả định rằng mọi bit
+                    trong toàn bộ frame đều được stuffing theo cùng một quy tắc.
+                </div>
+
+                <h2>7. Stuffing Error là gì?</h2>
+
+                <p>
+                    Receiver biết quy tắc rằng sau năm bit liên tiếp giống nhau phải xuất hiện
+                    một bit ngược lại.
+                </p>
+
+                <p>
+                    Nếu receiver phát hiện một chuỗi vi phạm quy tắc này,
+                    nó có thể xác định rằng đã xảy ra
+                    <strong>Stuffing Error</strong>.
+                </p>
+
+                <p>
+                    Ví dụ, receiver nhận:
+                </p>
+
+                <pre><code>111111</code></pre>
+
+                <p>
+                    Nếu sáu bit này nằm trong vùng đang áp dụng bit stuffing,
+                    sau năm bit <code>1</code> liên tiếp lẽ ra phải xuất hiện một bit
+                    <code>0</code>.
+                </p>
+
+                <p>
+                    Việc xuất hiện thêm một bit <code>1</code> thay vì <code>0</code>
+                    vi phạm quy tắc stuffing.
+                </p>
+
+                <div class="note">
+                    Stuffing Error là một trong các loại lỗi mà CAN controller có thể
+                    phát hiện trong quá trình nhận frame. Phần xử lý Error Frame sẽ được
+                    học kỹ hơn ở bài về <strong>CAN Error Handling</strong>.
+                </div>
+
+                <h2>8. Bit Stuffing và Data Transparency</h2>
+
+                <p>
+                    Một đặc điểm quan trọng của bit stuffing là application không cần
+                    quan tâm đến việc dữ liệu chứa nhiều bit <code>0</code> hoặc
+                    <code>1</code> liên tiếp.
+                </p>
+
+                <p>
+                    Ví dụ, application có thể yêu cầu truyền:
+                </p>
+
+                <pre><code>0x00 0x00 0x00 0x00</code></pre>
+
+                <p>
+                    CAN controller sẽ tự động thực hiện stuffing khi cần.
+                    Application không cần tự chèn các bit này vào dữ liệu.
+                </p>
+
+                <p>
+                    Ở phía nhận, controller cũng tự động loại bỏ stuff bit trước khi
+                    đưa Data Field lên phần mềm.
+                </p>
+
+                <h2>9. Bit Stuffing không làm thay đổi dữ liệu ứng dụng</h2>
+
+                <p>
+                    Có thể xem quá trình truyền như sau:
+                </p>
+
+                <pre><code>Application Data
+       ↓
+CAN Controller
+       ↓
+Bit Stuffing
+       ↓
+CAN Bus
+       ↓
+Destuffing
+       ↓
+CAN Controller
+       ↓
+Application Data</code></pre>
+
+                <p>
+                    Vì stuffing và destuffing được CAN controller xử lý tự động,
+                    application vẫn nhận được đúng chuỗi dữ liệu ban đầu.
+                </p>
+
+                <div class="note">
+                    Đây là một ví dụ điển hình về việc CAN controller che giấu
+                    các chi tiết cấp bit khỏi application software.
+                </div>
+
+                <h2>10. Ảnh hưởng của Bit Stuffing đến độ dài frame</h2>
+
+                <p>
+                    Stuff bit được thêm vào frame nên số lượng bit thực tế truyền trên bus
+                    có thể lớn hơn số bit được tính từ cấu trúc frame cơ bản.
+                </p>
+
+                <p>
+                    Vì số lượng stuff bit phụ thuộc vào chuỗi bit thực tế,
+                    độ dài frame không phải lúc nào cũng cố định hoàn toàn.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Yếu tố</th>
+                        <th>Ảnh hưởng</th>
+                    </tr>
+                    <tr>
+                        <td>Dữ liệu có nhiều bit giống nhau</td>
+                        <td>Có thể cần nhiều stuff bit hơn</td>
+                    </tr>
+                    <tr>
+                        <td>Dữ liệu có nhiều transition</td>
+                        <td>Có thể cần ít stuff bit hơn</td>
+                    </tr>
+                    <tr>
+                        <td>Frame dài hơn</td>
+                        <td>Có nhiều vị trí có khả năng xuất hiện stuffing hơn</td>
+                    </tr>
+                    <tr>
+                        <td>Bit rate cố định</td>
+                        <td>Nhiều bit hơn → thời gian truyền dài hơn</td>
+                    </tr>
+                </table>
+
+                <h2>11. Bit Stuffing và Bus Load</h2>
+
+                <p>
+                    Khi tính toán <strong>bus load</strong>, không nên chỉ lấy kích thước
+                    Data Field rồi suy ra thời gian truyền.
+                </p>
+
+                <p>
+                    Thời gian thực tế còn phụ thuộc vào:
+                </p>
+
+                <ul>
+                    <li>Identifier.</li>
+                    <li>Control field.</li>
+                    <li>CRC.</li>
+                    <li>ACK và các trường khác.</li>
+                    <li>Stuff bits.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, trong các hệ thống automotive có yêu cầu timing nghiêm ngặt,
+                    cần tính đến overhead do bit stuffing khi đánh giá bus utilization
+                    và message latency.
+                </p>
+
+                <h2>12. Bit Stuffing trong CAN FD</h2>
+
+                <p>
+                    CAN FD vẫn sử dụng các cơ chế stuffing trong frame, nhưng phần CRC
+                    có một cơ chế <strong>fixed stuff bit</strong> và
+                    <strong>stuff count</strong> khác với cách xử lý stuffing thông thường
+                    của phần frame trước đó.
+                </p>
+
+                <p>
+                    Đây là một trong những thay đổi của CAN FD nhằm hỗ trợ việc truyền
+                    dữ liệu ở tốc độ cao và tăng khả năng phát hiện lỗi.
+                </p>
+
+                <div class="note">
+                    Với mục tiêu học CAN cơ bản, trước hết cần nắm chắc quy tắc
+                    <strong>5 bit giống nhau → chèn 1 bit ngược</strong>.
+                    Chi tiết về CRC và fixed stuff bit trong CAN FD có thể học ở phần
+                    CAN FD nâng cao.
+                </div>
+
+                <h2>13. Ví dụ xử lý Bit Stuffing trong phần mềm</h2>
+
+                <p>
+                    Trong CAN controller thực tế, bit stuffing thường được phần cứng
+                    xử lý tự động. Tuy nhiên, có thể mô phỏng nguyên tắc bằng phần mềm
+                    như ví dụ dưới đây:
+                </p>
+
+                <pre><code>void stuff_bits(const uint8_t *input,
+                uint8_t *output,
+                uint16_t bit_count)
+{
+    uint8_t last_bit = 0;
+    uint8_t count = 0;
+    uint16_t out_index = 0;
+
+    for (uint16_t i = 0; i &lt; bit_count; i++)
+    {
+        uint8_t bit = get_bit(input, i);
+
+        if (i == 0 || bit != last_bit)
+            count = 1;
+        else
+            count++;
+
+        write_bit(output, out_index++, bit);
+
+        if (count == 5)
+        {
+            write_bit(output, out_index++, !bit);
+
+            count = 0;
+            last_bit = !bit;
+        }
+        else
+        {
+            last_bit = bit;
+        }
+    }
+}</code></pre>
+
+                <div class="note">
+                    Đây chỉ là code minh họa thuật toán. CAN controller thực tế thường
+                    đảm nhiệm stuffing ở tầng phần cứng, vì vậy application hoặc driver
+                    không cần tự thao tác từng bit như ví dụ trên.
+                </div>
+
+                <h2>14. Những điểm dễ nhầm về Bit Stuffing</h2>
+
+                <table>
+                    <tr>
+                        <th>Hiểu nhầm</th>
+                        <th>Thực tế</th>
+                    </tr>
+                    <tr>
+                        <td>Stuff bit là dữ liệu</td>
+                        <td>Không. Đây là bit phục vụ cơ chế truyền CAN.</td>
+                    </tr>
+                    <tr>
+                        <td>Application phải tự chèn stuff bit</td>
+                        <td>Không. CAN controller thực hiện tự động.</td>
+                    </tr>
+                    <tr>
+                        <td>Stuffing dùng để sửa lỗi</td>
+                        <td>Không. Nó chủ yếu hỗ trợ đồng bộ và cung cấp quy tắc để phát hiện stuffing error.</td>
+                    </tr>
+                    <tr>
+                        <td>Mọi bit trong frame đều stuffing giống nhau</td>
+                        <td>Không. Có các trường có quy tắc cố định riêng.</td>
+                    </tr>
+                    <tr>
+                        <td>Frame luôn có cùng số lượng bit</td>
+                        <td>Không. Stuffing có thể làm tăng số bit truyền thực tế.</td>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>Bit Stuffing</strong> là cơ chế CAN sử dụng để hỗ trợ
+                    đồng bộ giữa các node trong quá trình truyền.
+                    <br><br>
+
+                    Quy tắc cơ bản:
+                    sau <strong>5 bit liên tiếp giống nhau</strong>,
+                    transmitter chèn một <strong>bit ngược lại</strong>.
+                    <br><br>
+
+                    Receiver nhận biết và loại bỏ stuff bit để khôi phục chuỗi bit
+                    ban đầu trước khi đưa dữ liệu đến application.
+                    <br><br>
+
+                    Nếu quy tắc stuffing bị vi phạm trong vùng áp dụng,
+                    CAN controller có thể phát hiện <strong>Stuffing Error</strong>.
+                    <br><br>
+
+                    Bit stuffing cũng làm tăng số bit thực tế trên bus,
+                    vì vậy cần được xem xét khi tính toán
+                    <strong>frame length, transmission time và bus load</strong>.
+                    <br><br>
+
+                    Trong CAN FD, cơ chế liên quan đến stuffing trong phần CRC có
+                    những thay đổi như <strong>fixed stuff bit</strong> và
+                    <strong>stuff count</strong>.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-6.html">← Bài trước</a>
+                    <a class="btn" href="lesson-8.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

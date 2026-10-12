@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 24: End-to-End AUTOSAR Data Flows | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html" class="active" aria-current="page">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+            <a href="index.html">← Tất cả bài học AUTOSAR</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 24: End-to-End AUTOSAR Data Flows</h1>
+
+            <p>
+                Đây là bài cuối cùng của chuỗi bài học AUTOSAR.
+                Sau khi đã đi qua Application Software, RTE, BSW, Communication Stack,
+                Memory, Diagnostics, ECU Abstraction, MCAL, Interfaces, Dependencies
+                và Configuration, chúng ta sẽ ghép tất cả các kiến thức đó lại.
+            </p>
+
+            <p>
+                Mục tiêu của bài này là nhìn một chức năng AUTOSAR
+                <strong>từ đầu đến cuối</strong>:
+                dữ liệu bắt đầu từ đâu, đi qua những layer nào,
+                được xử lý ở đâu và cuối cùng tạo ra kết quả gì.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Đây là bài tổng hợp cuối cùng, tập trung vào cách trace
+                End-to-End Data Flow trong AUTOSAR Classic.
+                Bài không nhằm giới thiệu thêm một module mới mà giúp kết nối
+                các kiến thức đã học thành một cách tư duy thống nhất để phân tích,
+                debug và review một hệ thống AUTOSAR.
+            </div>
+
+            <h2>1. End-to-End Data Flow là gì?</h2>
+
+            <p>
+                End-to-End Data Flow là cách nhìn một dữ liệu hoặc một chức năng
+                xuyên suốt từ nguồn tạo dữ liệu đến nơi sử dụng cuối cùng.
+            </p>
+
+            <pre><code>Source
+  ↓
+Input / Communication
+  ↓
+Software Layers
+  ↓
+Application
+  ↓
+Software Layers
+  ↓
+Output
+  ↓
+Physical Result</code></pre>
+
+            <p>
+                Thay vì chỉ nhìn một layer riêng lẻ,
+                chúng ta nhìn toàn bộ đường đi của dữ liệu.
+            </p>
+
+            <h2>2. Vì sao cần học End-to-End Data Flow?</h2>
+
+            <p>
+                Trong một project AUTOSAR thực tế, lỗi thường không nằm hoàn toàn
+                trong một module.
+                Một chức năng không hoạt động có thể do Application,
+                RTE, BSW, communication, configuration, MCAL hoặc hardware.
+            </p>
+
+            <p>
+                Nếu hiểu được data flow,
+                developer có thể nhanh chóng xác định dữ liệu đã đi được đến đâu
+                và lỗi nằm ở đoạn nào.
+            </p>
+
+            <pre><code>Application không nhận dữ liệu
+
+Không nên chỉ hỏi:
+"Code Application có sai không?"
+
+Nên hỏi:
+
+Dữ liệu có tồn tại?
+    ↓
+Có đi vào ECU?
+    ↓
+Có đi qua Stack?
+    ↓
+Có tới RTE?
+    ↓
+Có tới SWC?
+    ↓
+SWC có xử lý đúng?
+</code></pre>
+
+            <h2>3. Bức tranh tổng thể AUTOSAR</h2>
+
+            <pre><code>                    Application SWC
+                           |
+                           v
+                          RTE
+                           |
+                           v
+                          BSW
+                           |
+             +-------------+-------------+
+             |             |             |
+      Communication      Services    ECU Abstraction
+             |             |             |
+             +-------------+-------------+
+                           |
+                          MCAL
+                           |
+                           v
+                    Microcontroller
+                           |
+                           v
+                        Hardware</code></pre>
+
+            <p>
+                Đây là kiến trúc nền tảng mà chúng ta đã học từ các bài trước.
+                End-to-End Data Flow sẽ đi xuyên qua các boundary này.
+            </p>
+
+            <h2>4. Data Flow có thể đi theo hai hướng</h2>
+
+            <p>
+                Một ECU thường có cả luồng dữ liệu đi vào và đi ra.
+            </p>
+
+            <pre><code>Input Flow:
+
+Hardware / Network
+        ↓
+     MCAL / BSW
+        ↓
+       RTE
+        ↓
+   Application
+
+
+Output Flow:
+
+Application
+     ↓
+    RTE
+     ↓
+   BSW / MCAL
+     ↓
+Hardware / Network</code></pre>
+
+            <h2>5. Input Flow và Output Flow</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Flow</th>
+                        <th>Hướng</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Input</td>
+                        <td>Hardware → Application</td>
+                        <td>Button, Sensor</td>
+                    </tr>
+                    <tr>
+                        <td>Network Input</td>
+                        <td>CAN → Application</td>
+                        <td>Vehicle Speed</td>
+                    </tr>
+                    <tr>
+                        <td>Output</td>
+                        <td>Application → Hardware</td>
+                        <td>Lamp, Motor</td>
+                    </tr>
+                    <tr>
+                        <td>Network Output</td>
+                        <td>Application → CAN</td>
+                        <td>Status Message</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>6. Flow 1: Digital Input</h2>
+
+            <p>
+                Hãy bắt đầu bằng một ví dụ đơn giản:
+                ECU đọc trạng thái một button.
+            </p>
+
+            <pre><code>Physical Button
+       ↓
+MCU Pin
+       ↓
+Port / DIO
+       ↓
+MCAL
+       ↓
+ECU Abstraction
+       ↓
+RTE
+       ↓
+Application SWC</code></pre>
+
+            <p>
+                Application cuối cùng nhận được một trạng thái logic,
+                ví dụ <strong>Pressed</strong> hoặc <strong>Released</strong>.
+            </p>
+
+            <h2>7. Digital Input: Hardware</h2>
+
+            <p>
+                Button tạo ra một tín hiệu vật lý.
+                Microcontroller nhận tín hiệu đó thông qua một pin.
+            </p>
+
+            <pre><code>Button
+   |
+   | electrical signal
+   v
+MCU Pin
+   |
+   v
+Digital Input</code></pre>
+
+            <p>
+                Đây là điểm bắt đầu của data flow.
+            </p>
+
+            <h2>8. Digital Input: MCAL</h2>
+
+            <p>
+                MCAL cung cấp driver để phần mềm có thể truy cập
+                chức năng của microcontroller.
+            </p>
+
+            <pre><code>MCU Pin
+   ↓
+MCAL Port / DIO
+   ↓
+Digital State</code></pre>
+
+            <p>
+                Application không cần biết register nào của MCU đang được đọc.
+            </p>
+
+            <h2>9. Digital Input: ECU Abstraction</h2>
+
+            <p>
+                ECU Abstraction có thể cung cấp một abstraction phù hợp hơn
+                với phần còn lại của ECU.
+            </p>
+
+            <pre><code>Hardware-specific
+       ↓
+MCAL
+       ↓
+ECU Abstraction
+       ↓
+Logical Input</code></pre>
+
+            <h2>10. Digital Input: RTE</h2>
+
+            <p>
+                Dữ liệu sau đó được đưa tới Application thông qua
+                cơ chế giao tiếp của AUTOSAR.
+            </p>
+
+            <pre><code>Input
+  ↓
+ECU Abstraction
+  ↓
+RTE
+  ↓
+SWC</code></pre>
+
+            <h2>11. Digital Input: Application</h2>
+
+            <p>
+                Application chỉ quan tâm đến ý nghĩa của dữ liệu.
+            </p>
+
+            <pre><code>ButtonState = PRESSED
+
+        ↓
+
+Application Decision
+
+        ↓
+
+Do something</code></pre>
+
+            <p>
+                Đây chính là lợi ích của abstraction:
+                Application xử lý chức năng thay vì xử lý hardware.
+            </p>
+
+            <h2>12. Flow 2: Digital Output</h2>
+
+            <p>
+                Bây giờ đi theo hướng ngược lại:
+                Application muốn bật một lamp.
+            </p>
+
+            <pre><code>Application SWC
+       ↓
+RTE
+       ↓
+ECU Abstraction
+       ↓
+MCAL
+       ↓
+MCU GPIO
+       ↓
+Lamp</code></pre>
+
+            <h2>13. Digital Output: Application</h2>
+
+            <p>
+                Application đưa ra quyết định:
+            </p>
+
+            <pre><code>Condition = TRUE
+       ↓
+LampCommand = ON</code></pre>
+
+            <p>
+                Đây là application behavior,
+                chưa phải hardware access.
+            </p>
+
+            <h2>14. Digital Output: RTE</h2>
+
+            <p>
+                Command được truyền qua interface phù hợp tới layer tiếp theo.
+            </p>
+
+            <pre><code>Application
+    ↓
+Output Interface
+    ↓
+RTE</code></pre>
+
+            <h2>15. Digital Output: MCAL</h2>
+
+            <p>
+                Cuối cùng MCAL thực hiện việc truy cập microcontroller
+                để thay đổi trạng thái output.
+            </p>
+
+            <pre><code>RTE
+ ↓
+ECU Abstraction
+ ↓
+MCAL
+ ↓
+GPIO
+ ↓
+MCU Pin
+ ↓
+Lamp</code></pre>
+
+            <h2>16. Flow 3: Sensor Input</h2>
+
+            <p>
+                Với sensor, data flow phức tạp hơn một digital input
+                vì dữ liệu có thể cần conversion hoặc communication.
+            </p>
+
+            <pre><code>Physical Sensor
+      ↓
+ADC / SPI / Other Interface
+      ↓
+MCAL
+      ↓
+ECU Abstraction
+      ↓
+RTE
+      ↓
+Application</code></pre>
+
+            <h2>17. Sensor và Raw Data</h2>
+
+            <p>
+                Hardware thường tạo ra raw data.
+                Application thường cần dữ liệu có ý nghĩa.
+            </p>
+
+            <pre><code>Hardware
+   ↓
+Raw Value
+   ↓
+Conversion
+   ↓
+Physical Value
+   ↓
+Application</code></pre>
+
+            <p>
+                Ví dụ raw ADC value có thể được chuyển thành nhiệt độ
+                trước khi Application sử dụng.
+            </p>
+
+            <h2>18. Sensor Data Flow</h2>
+
+            <pre><code>Temperature Sensor
+       ↓
+ADC
+       ↓
+MCAL ADC Driver
+       ↓
+ECU Abstraction
+       ↓
+Temperature Data
+       ↓
+RTE
+       ↓
+Temperature SWC
+       ↓
+Warning SWC</code></pre>
+
+            <h2>19. Flow 4: CAN Receive</h2>
+
+            <p>
+                Đây là một trong những data flow quan trọng nhất trong automotive ECU.
+            </p>
+
+            <pre><code>CAN Bus
+   ↓
+CAN Transceiver
+   ↓
+CAN Controller
+   ↓
+CAN Driver
+   ↓
+CAN Stack
+   ↓
+PDU / Signal Processing
+   ↓
+RTE
+   ↓
+Application SWC</code></pre>
+
+            <h2>20. CAN Receive: Hardware</h2>
+
+            <p>
+                Một ECU khác truyền CAN frame lên bus.
+                Transceiver và CAN Controller nhận tín hiệu.
+            </p>
+
+            <pre><code>Other ECU
+   ↓
+CAN Bus
+   ↓
+Transceiver
+   ↓
+CAN Controller</code></pre>
+
+            <h2>21. CAN Receive: CAN Driver</h2>
+
+            <p>
+                CAN Driver cung cấp lớp software để giao tiếp với
+                CAN Controller của microcontroller.
+            </p>
+
+            <pre><code>CAN Controller
+      ↓
+CAN Driver
+      ↓
+Upper Communication Layer</code></pre>
+
+            <p>
+                Driver không quyết định ý nghĩa của VehicleSpeed hay EngineSpeed.
+                Nó chủ yếu xử lý việc giao tiếp với CAN hardware.
+            </p>
+
+            <h2>22. CAN Receive: Communication Stack</h2>
+
+            <p>
+                Các layer phía trên xử lý communication data
+                theo architecture của AUTOSAR.
+            </p>
+
+            <pre><code>CAN Driver
+    ↓
+CanIf
+    ↓
+PduR / Communication Modules
+    ↓
+COM
+    ↓
+Signal
+    ↓
+RTE</code></pre>
+
+            <p>
+                Đây là nơi raw communication data được đưa lên mức
+                phù hợp hơn cho Application.
+            </p>
+
+            <h2>23. CAN Receive: Application</h2>
+
+            <p>
+                Application cuối cùng có thể sử dụng một giá trị logic
+                như VehicleSpeed.
+            </p>
+
+            <pre><code>CAN Frame
+   ↓
+Communication Stack
+   ↓
+VehicleSpeed Signal
+   ↓
+RTE
+   ↓
+Vehicle Control SWC</code></pre>
+
+            <h2>24. CAN Receive: Toàn bộ Flow</h2>
+
+            <pre><code>+-------------+
+| Other ECU   |
++-------------+
+       |
+       v
++-------------+
+|   CAN Bus   |
++-------------+
+       |
+       v
++-------------+
+| Transceiver |
++-------------+
+       |
+       v
++-------------+
+| CAN Control |
++-------------+
+       |
+       v
++-------------+
+| CAN Driver  |
++-------------+
+       |
+       v
++-------------+
+|   CanIf     |
++-------------+
+       |
+       v
++-------------+
+| Communication|
+|    Stack    |
++-------------+
+       |
+       v
++-------------+
+|     COM     |
++-------------+
+       |
+       v
++-------------+
+|     RTE     |
++-------------+
+       |
+       v
++-------------+
+| Application |
+|     SWC     |
++-------------+</code></pre>
+
+            <h2>25. Flow 5: CAN Transmit</h2>
+
+            <p>
+                CAN transmit đi theo hướng ngược lại.
+            </p>
+
+            <pre><code>Application SWC
+       ↓
+RTE
+       ↓
+COM
+       ↓
+PduR / Communication Stack
+       ↓
+CanIf
+       ↓
+CAN Driver
+       ↓
+CAN Controller
+       ↓
+Transceiver
+       ↓
+CAN Bus</code></pre>
+
+            <h2>26. CAN Transmit: Application</h2>
+
+            <p>
+                Application tạo ra một giá trị cần gửi,
+                ví dụ VehicleStatus.
+            </p>
+
+            <pre><code>Application
+      ↓
+VehicleStatus = ACTIVE</code></pre>
+
+            <p>
+                Dữ liệu này sau đó đi qua communication interface
+                thay vì Application tự tạo từng bit của CAN frame.
+            </p>
+
+            <h2>27. CAN Transmit: COM</h2>
+
+            <p>
+                Communication layer xử lý việc đóng gói dữ liệu
+                theo configuration của communication system.
+            </p>
+
+            <pre><code>Application Signal
+       ↓
+COM
+       ↓
+PDU</code></pre>
+
+            <h2>28. CAN Transmit: CAN Driver</h2>
+
+            <p>
+                Cuối cùng CAN Driver giao tiếp với CAN Controller.
+            </p>
+
+            <pre><code>CanIf
+  ↓
+CAN Driver
+  ↓
+CAN Controller
+  ↓
+CAN Bus</code></pre>
+
+            <h2>29. CAN Transmit: Toàn bộ Flow</h2>
+
+            <pre><code>Application
+     ↓
+RTE
+     ↓
+COM
+     ↓
+PduR / Communication Stack
+     ↓
+CanIf
+     ↓
+CAN Driver
+     ↓
+CAN Controller
+     ↓
+Transceiver
+     ↓
+CAN Bus
+     ↓
+Other ECU</code></pre>
+
+            <h2>30. Flow 6: LIN</h2>
+
+            <p>
+                Tư duy End-to-End cũng áp dụng cho LIN.
+            </p>
+
+            <pre><code>LIN Bus
+   ↓
+LIN Transceiver / Controller
+   ↓
+LIN Driver
+   ↓
+LIN Communication Stack
+   ↓
+RTE
+   ↓
+Application</code></pre>
+
+            <p>
+                Các module cụ thể có thể khác CAN,
+                nhưng nguyên tắc vẫn là:
+                <strong>Hardware → Driver → Communication Stack → RTE → Application</strong>.
+            </p>
+
+            <h2>31. Flow 7: Application gửi dữ liệu qua CAN</h2>
+
+            <p>
+                Hãy xét một ví dụ hoàn chỉnh:
+                Application muốn gửi trạng thái cửa.
+            </p>
+
+            <pre><code>Door Status
+    ↓
+Door SWC
+    ↓
+RTE
+    ↓
+COM
+    ↓
+PDU
+    ↓
+CanIf
+    ↓
+CAN Driver
+    ↓
+CAN Controller
+    ↓
+CAN Bus</code></pre>
+
+            <h2>32. Flow 8: ECU nhận dữ liệu rồi điều khiển Lamp</h2>
+
+            <p>
+                Đây là ví dụ kết hợp Communication và I/O.
+            </p>
+
+            <pre><code>CAN Bus
+   ↓
+CAN Stack
+   ↓
+RTE
+   ↓
+Application SWC
+   ↓
+Decision
+   ↓
+RTE
+   ↓
+ECU Abstraction
+   ↓
+MCAL
+   ↓
+GPIO
+   ↓
+Lamp</code></pre>
+
+            <p>
+                Đây là một End-to-End flow thực tế:
+                dữ liệu bắt đầu từ network và cuối cùng ảnh hưởng đến hardware.
+            </p>
+
+            <h2>33. Ví dụ: Remote Door Lock</h2>
+
+            <p>
+                Giả sử một ECU nhận LockCommand từ CAN
+                và điều khiển door lock actuator.
+            </p>
+
+            <pre><code>Remote ECU
+    ↓
+CAN Bus
+    ↓
+CAN Driver
+    ↓
+Communication Stack
+    ↓
+RTE
+    ↓
+Door Lock SWC
+    ↓
+Lock Decision
+    ↓
+RTE
+    ↓
+I/O Abstraction
+    ↓
+MCAL
+    ↓
+GPIO / PWM
+    ↓
+Door Lock Actuator</code></pre>
+
+            <h2>34. Phân tích Remote Door Lock</h2>
+
+            <p>
+                Có thể chia chức năng thành ba phần:
+            </p>
+
+            <pre><code>Communication
+      ↓
+Application Decision
+      ↓
+Physical Output</code></pre>
+
+            <p>
+                Điều này giúp dễ dàng xác định trách nhiệm của từng layer.
+            </p>
+
+            <h2>35. Flow 9: Sensor → CAN</h2>
+
+            <p>
+                Bây giờ đi theo hướng ngược:
+                sensor được đọc và giá trị được gửi lên CAN.
+            </p>
+
+            <pre><code>Sensor
+   ↓
+MCAL / ECU Abstraction
+   ↓
+RTE
+   ↓
+Sensor SWC
+   ↓
+RTE
+   ↓
+COM
+   ↓
+Communication Stack
+   ↓
+CAN Driver
+   ↓
+CAN Controller
+   ↓
+CAN Bus</code></pre>
+
+            <h2>36. Flow 10: CAN → Sensor-based Decision → Actuator</h2>
+
+            <p>
+                Một ECU có thể kết hợp nhiều nguồn dữ liệu.
+            </p>
+
+            <pre><code>CAN Input --------+
+                  |
+                  v
+              Application
+                  |
+Sensor Input -----+
+                  |
+                  v
+              Decision
+                  |
+                  v
+              Actuator</code></pre>
+
+            <p>
+                Application là nơi có thể kết hợp dữ liệu từ nhiều nguồn
+                để thực hiện functional logic.
+            </p>
+
+            <h2>37. Flow 11: Application → CAN → ECU khác</h2>
+
+            <pre><code>ECU A
+
+Application
+    ↓
+RTE
+    ↓
+COM
+    ↓
+PduR
+    ↓
+CanIf
+    ↓
+CAN Driver
+    ↓
+CAN Controller
+    ↓
+CAN Bus
+    ↓
+CAN Controller
+    ↓
+CAN Driver
+    ↓
+Communication Stack
+    ↓
+RTE
+    ↓
+Application
+
+ECU B</code></pre>
+
+            <p>
+                Đây là một data flow xuyên qua
+                <strong>hai ECU</strong>, không chỉ một ECU.
+            </p>
+
+            <h2>38. End-to-End Data Flow và Interface</h2>
+
+            <p>
+                Từ bài 22, chúng ta biết Interface xác định cách
+                các thành phần giao tiếp.
+            </p>
+
+            <p>
+                Trong End-to-End flow, interface xuất hiện tại nhiều boundary.
+            </p>
+
+            <pre><code>SWC A
+  |
+  | Interface
+  v
+RTE
+  |
+  | Interface / Service
+  v
+BSW
+  |
+  | Driver Interface
+  v
+MCAL
+  |
+  v
+Hardware</code></pre>
+
+            <h2>39. End-to-End Data Flow và Dependency</h2>
+
+            <p>
+                Mỗi đoạn của flow cũng tạo ra dependency.
+            </p>
+
+            <pre><code>Application
+    ↓ depends on
+RTE
+    ↓ depends on
+BSW
+    ↓ depends on
+MCAL
+    ↓ depends on
+Hardware</code></pre>
+
+            <p>
+                Nếu một dependency không được đáp ứng,
+                toàn bộ flow có thể bị gián đoạn.
+            </p>
+
+            <h2>40. End-to-End Data Flow và Configuration</h2>
+
+            <p>
+                Flow không chỉ tồn tại trong code.
+                Nó cần được configuration để các thành phần thực sự được kết nối.
+            </p>
+
+            <pre><code>Architecture
+    ↓
+Interfaces
+    ↓
+Configuration
+    ↓
+Mapping
+    ↓
+Generated RTE / BSW
+    ↓
+Runtime Data Flow</code></pre>
+
+            <h2>41. End-to-End Data Flow và ARXML</h2>
+
+            <p>
+                ARXML có thể mô tả nhiều thông tin cần thiết để tool biết
+                các thành phần và relationship của flow.
+            </p>
+
+            <pre><code>ARXML / Model
+      |
+      +-- SWC
+      +-- Port
+      +-- Interface
+      +-- Data Type
+      +-- Mapping
+      +-- System Information
+      |
+      v
+Configuration Tools</code></pre>
+
+            <h2>42. Từ Requirement đến Data Flow</h2>
+
+            <p>
+                Một data flow tốt nên bắt đầu từ requirement.
+            </p>
+
+            <pre><code>Requirement
+    ↓
+Functional Behavior
+    ↓
+SWC
+    ↓
+Interface
+    ↓
+RTE
+    ↓
+BSW
+    ↓
+MCAL
+    ↓
+Hardware</code></pre>
+
+            <p>
+                Đây là cách liên kết requirement với implementation architecture.
+            </p>
+
+            <h2>43. Ví dụ Requirement</h2>
+
+            <p>
+                Requirement:
+                <strong>
+                    "Khi cửa được khóa, ECU phải bật trạng thái Locked trên network."
+                </strong>
+            </p>
+
+            <pre><code>Door Lock State
+      ↓
+Door Lock SWC
+      ↓
+Output Interface
+      ↓
+RTE
+      ↓
+COM
+      ↓
+CAN Stack
+      ↓
+CAN Driver
+      ↓
+CAN Bus</code></pre>
+
+            <h2>44. Trace Requirement đến Hardware</h2>
+
+            <p>
+                Nếu requirement liên quan đến actuator,
+                flow có thể đi đến hardware.
+            </p>
+
+            <pre><code>Requirement
+    ↓
+Application Decision
+    ↓
+SWC
+    ↓
+RTE
+    ↓
+ECU Abstraction
+    ↓
+MCAL
+    ↓
+MCU
+    ↓
+Actuator</code></pre>
+
+            <p>
+                Đây là cách trace requirement xuyên suốt hệ thống.
+            </p>
+
+            <h2>45. Timing trong End-to-End Flow</h2>
+
+            <p>
+                Data flow không chỉ có hướng đi.
+                Nó còn có yếu tố thời gian.
+            </p>
+
+            <pre><code>Input
+  ↓ t0
+
+Driver
+  ↓ t1
+
+Stack
+  ↓ t2
+
+RTE
+  ↓ t3
+
+Application
+  ↓ t4
+
+Output
+  ↓ t5</code></pre>
+
+            <p>
+                Tổng thời gian từ input đến output có thể ảnh hưởng
+                đến khả năng đáp ứng requirement.
+            </p>
+
+            <h2>46. Latency</h2>
+
+            <p>
+                Latency là thời gian dữ liệu cần để đi từ nguồn đến đích.
+            </p>
+
+            <pre><code>Input Event
+    |
+    |<-------- Latency -------->|
+    |                           |
+    v                           v
+Source                      Consumer</code></pre>
+
+            <p>
+                Khi debug một chức năng real-time,
+                không chỉ hỏi dữ liệu có đến hay không,
+                mà còn cần hỏi dữ liệu đến <strong>khi nào</strong>.
+            </p>
+
+            <h2>47. Timing Dependency</h2>
+
+            <p>
+                Một component có thể nhận dữ liệu đúng nhưng quá muộn.
+                Trong hệ thống automotive, điều này vẫn có thể là lỗi.
+            </p>
+
+            <pre><code>Data received:
+YES
+
+Data received within required timing:
+NO
+
+→ Functional problem</code></pre>
+
+            <h2>48. Data Validity</h2>
+
+            <p>
+                End-to-End flow cũng cần xem xét tính hợp lệ của dữ liệu.
+            </p>
+
+            <pre><code>Source
+  ↓
+Data
+  ↓
+Validation
+  ↓
+Processing
+  ↓
+Consumer</code></pre>
+
+            <p>
+                Dữ liệu có thể bị invalid do sensor,
+                communication error, timeout hoặc configuration.
+            </p>
+
+            <h2>49. Timeout trong Data Flow</h2>
+
+            <p>
+                Nếu một signal không được cập nhật trong khoảng thời gian yêu cầu,
+                consumer có thể xem dữ liệu là timeout.
+            </p>
+
+            <pre><code>Expected:
+Signal update
+ |   |   |   |   |
+ v   v   v   v   v
+
+Actual:
+ |       |            |
+ v       v            v
+
+        Timeout
+           ↓
+     Safe Handling</code></pre>
+
+            <h2>50. Data Flow và Error Propagation</h2>
+
+            <p>
+                Một lỗi ở đầu flow có thể truyền ảnh hưởng đến cuối flow.
+            </p>
+
+            <pre><code>Sensor Error
+     ↓
+Invalid Data
+     ↓
+Application receives invalid input
+     ↓
+Wrong Decision
+     ↓
+Wrong Output</code></pre>
+
+            <p>
+                Vì vậy debugging End-to-End cần tìm
+                <strong>root cause</strong> thay vì chỉ sửa symptom ở cuối flow.
+            </p>
+
+            <h2>51. Debugging End-to-End</h2>
+
+            <p>
+                Một phương pháp hữu ích là chia flow thành các checkpoint.
+            </p>
+
+            <pre><code>Checkpoint 1
+Source
+
+    ↓
+
+Checkpoint 2
+Driver
+
+    ↓
+
+Checkpoint 3
+Communication / Abstraction
+
+    ↓
+
+Checkpoint 4
+RTE
+
+    ↓
+
+Checkpoint 5
+Application
+
+    ↓
+
+Checkpoint 6
+Output</code></pre>
+
+            <p>
+                Tại mỗi checkpoint, xác định dữ liệu có đúng hay không.
+            </p>
+
+            <h2>52. Ví dụ Debug CAN Receive</h2>
+
+            <p>
+                Application không nhận VehicleSpeed.
+            </p>
+
+            <ol>
+                <li>Kiểm tra CAN bus có frame.</li>
+                <li>Kiểm tra CAN Controller.</li>
+                <li>Kiểm tra CAN Driver.</li>
+                <li>Kiểm tra Communication Stack.</li>
+                <li>Kiểm tra signal/PDU mapping.</li>
+                <li>Kiểm tra RTE.</li>
+                <li>Kiểm tra Application.</li>
+            </ol>
+
+            <pre><code>CAN Bus
+  ✓
+  ↓
+CAN Controller
+  ✓
+  ↓
+CAN Driver
+  ✓
+  ↓
+Communication Stack
+  X
+  ↓
+RTE
+  ↓
+Application</code></pre>
+
+            <p>
+                Khi đã xác định checkpoint lỗi,
+                phạm vi tìm kiếm được thu hẹp đáng kể.
+            </p>
+
+            <h2>53. Ví dụ Debug Output</h2>
+
+            <p>
+                Application đã quyết định bật lamp nhưng lamp không sáng.
+            </p>
+
+            <pre><code>Application Decision
+        ✓
+        ↓
+RTE
+        ✓
+        ↓
+I/O Abstraction
+        ✓
+        ↓
+MCAL
+        X
+        ↓
+GPIO
+        ↓
+Lamp</code></pre>
+
+            <p>
+                Khi đó nên tập trung vào MCAL configuration,
+                pin configuration, driver hoặc hardware thay vì sửa Application logic.
+            </p>
+
+            <h2>54. Debug bằng Logging</h2>
+
+            <p>
+                Logging có thể giúp xác định dữ liệu đã đi tới đâu.
+            </p>
+
+            <pre><code>Input:
+Temperature = 80
+
+Application:
+Temperature received = 80
+
+Decision:
+Warning = ON
+
+Output:
+Lamp command = ON</code></pre>
+
+            <p>
+                Nếu một checkpoint không xuất hiện,
+                có thể xác định vị trí cần kiểm tra tiếp.
+            </p>
+
+            <h2>55. Debug bằng Trace</h2>
+
+            <p>
+                Trong môi trường automotive,
+                trace tool hoặc debugger có thể được sử dụng
+                để theo dõi execution và data.
+            </p>
+
+            <pre><code>Event
+ ↓
+Runnable
+ ↓
+Function
+ ↓
+Output
+ ↓
+Communication / Hardware</code></pre>
+
+            <p>
+                Mục tiêu là xác định dữ liệu và execution path
+                có đúng với architecture hay không.
+            </p>
+
+            <h2>56. End-to-End và Unit Test</h2>
+
+            <p>
+                Unit test chỉ kiểm tra một phần của flow.
+            </p>
+
+            <pre><code>Unit Test
+
+Input
+ ↓
+SWC
+ ↓
+Output</code></pre>
+
+            <p>
+                Nó không nhất thiết kiểm tra toàn bộ hardware hoặc communication stack.
+            </p>
+
+            <h2>57. End-to-End và Integration Test</h2>
+
+            <p>
+                Integration test kiểm tra nhiều thành phần cùng hoạt động.
+            </p>
+
+            <pre><code>SWC A
+  ↓
+RTE
+  ↓
+SWC B
+  ↓
+BSW</code></pre>
+
+            <p>
+                Mục tiêu là xác nhận các interface và dependency hoạt động đúng.
+            </p>
+
+            <h2>58. End-to-End và System Test</h2>
+
+            <p>
+                System test có thể kiểm tra toàn bộ chức năng từ input đến output.
+            </p>
+
+            <pre><code>Real Input
+    ↓
+ECU Software
+    ↓
+Communication / Hardware
+    ↓
+Real Output</code></pre>
+
+            <p>
+                Đây là mức gần với behavior thực tế của ECU nhất.
+            </p>
+
+            <h2>59. End-to-End và HIL</h2>
+
+            <p>
+                Trong HIL, một phần hardware hoặc environment có thể được mô phỏng
+                để kiểm tra ECU trong điều kiện kiểm soát được.
+            </p>
+
+            <pre><code>HIL Simulation
+      ↓
+ECU Input
+      ↓
+AUTOSAR Software
+      ↓
+ECU Output
+      ↓
+HIL Observation</code></pre>
+
+            <p>
+                HIL đặc biệt hữu ích khi muốn kiểm tra flow
+                mà không cần toàn bộ vehicle thật.
+            </p>
+
+            <h2>60. Data Flow và Safety</h2>
+
+            <p>
+                Trong automotive, một data flow có thể liên quan đến safety.
+                Nếu dữ liệu sai hoặc mất dữ liệu,
+                hệ thống cần có behavior phù hợp.
+            </p>
+
+            <pre><code>Normal Data
+    ↓
+Normal Processing
+    ↓
+Normal Output
+
+
+Invalid Data
+    ↓
+Detection
+    ↓
+Safe Handling
+    ↓
+Safe Output</code></pre>
+
+            <h2>61. Data Flow và Diagnostic</h2>
+
+            <p>
+                Diagnostic có thể quan sát hoặc phản ứng với lỗi xảy ra
+                trong data flow.
+            </p>
+
+            <pre><code>Data Flow Error
+      ↓
+Error Detection
+      ↓
+Diagnostic Event
+      ↓
+DTC / Diagnostic Information
+      ↓
+Tester</code></pre>
+
+            <p>
+                Vì vậy Diagnostic Stack cũng có thể trở thành một phần
+                của End-to-End analysis khi debug ECU.
+            </p>
+
+            <h2>62. Data Flow và ECU State</h2>
+
+            <p>
+                Một data flow không phải lúc nào cũng hoạt động.
+                ECU state có thể quyết định chức năng có được phép chạy hay không.
+            </p>
+
+            <pre><code>ECU State
+   |
+   +---- Startup → Limited Functions
+   |
+   +---- Run → Normal Data Flow
+   |
+   +---- Sleep → Communication / Function Limited
+   |
+   +---- Shutdown → Data Flow Stopped</code></pre>
+
+            <h2>63. Data Flow và Watchdog</h2>
+
+            <p>
+                Watchdog không trực tiếp xử lý application data,
+                nhưng có thể ảnh hưởng đến toàn bộ flow nếu ECU reset.
+            </p>
+
+            <pre><code>Software Failure
+      ↓
+Watchdog not serviced
+      ↓
+ECU Reset
+      ↓
+Data Flow interrupted
+      ↓
+Startup
+      ↓
+Data Flow restored</code></pre>
+
+            <h2>64. Data Flow và Memory</h2>
+
+            <p>
+                Một chức năng có thể vừa xử lý dữ liệu runtime
+                vừa lưu dữ liệu vào non-volatile memory.
+            </p>
+
+            <pre><code>Application Data
+      |
+      +---- Runtime Processing
+      |
+      +---- Memory Service
+               ↓
+          Memory Stack
+               ↓
+             Flash</code></pre>
+
+            <p>
+                Vì vậy một requirement có thể tạo ra nhiều data flow khác nhau.
+            </p>
+
+            <h2>65. Một Function có nhiều Data Flow</h2>
+
+            <p>
+                Một Application Function hiếm khi chỉ có một đường dữ liệu.
+            </p>
+
+            <pre><code>                 +--> CAN Output
+                 |
+Input --> SWC ---+--> Actuator
+                 |
+                 +--> Memory
+                 |
+                 +--> Diagnostic
+</code></pre>
+
+            <p>
+                Khi phân tích một function lớn,
+                cần xác định tất cả input và output liên quan.
+            </p>
+
+            <h2>66. End-to-End Function Example</h2>
+
+            <p>
+                Xét chức năng:
+                <strong>Vehicle Speed Based Door Lock</strong>.
+            </p>
+
+            <p>
+                ECU nhận VehicleSpeed qua CAN.
+                Application kiểm tra tốc độ và trạng thái cửa,
+                sau đó quyết định khóa cửa.
+            </p>
+
+            <pre><code>CAN VehicleSpeed
+       ↓
+Communication Stack
+       ↓
+RTE
+       ↓
+Door Lock SWC
+       ↑
+Door Status
+       |
+       v
+Decision
+       ↓
+Lock Command
+       ↓
+RTE
+       ↓
+I/O Abstraction
+       ↓
+MCAL
+       ↓
+Door Lock Actuator</code></pre>
+
+            <h2>67. Phân tích Function Example</h2>
+
+            <p>
+                Function này có ít nhất ba nhóm dependency:
+            </p>
+
+            <pre><code>Input Dependency
+    ↓
+VehicleSpeed
+DoorStatus
+
+Processing Dependency
+    ↓
+Door Lock SWC
+
+Output Dependency
+    ↓
+Door Lock Actuator</code></pre>
+
+            <h2>68. Configuration của Function Example</h2>
+
+            <p>
+                Để function hoạt động,
+                nhiều phần configuration phải phù hợp:
+            </p>
+
+            <pre><code>CAN Configuration
+      ↓
+Signal Mapping
+      ↓
+RTE Interface
+      ↓
+SWC Port
+      ↓
+Runnable / Event
+      ↓
+Output Port
+      ↓
+I/O Configuration
+      ↓
+MCAL Configuration</code></pre>
+
+            <h2>69. Nếu VehicleSpeed không cập nhật</h2>
+
+            <p>
+                Không nên kiểm tra Door Lock logic trước.
+                Hãy trace input flow.
+            </p>
+
+            <pre><code>CAN Bus
+   ↓
+CAN Stack
+   ↓
+Signal Mapping
+   ↓
+RTE
+   ↓
+Door Lock SWC</code></pre>
+
+            <p>
+                Nếu dữ liệu không tới SWC,
+                Door Lock logic có thể hoàn toàn không phải nguyên nhân.
+            </p>
+
+            <h2>70. Nếu Door Lock không hoạt động</h2>
+
+            <p>
+                Nếu Application đã tạo đúng Lock Command,
+                cần trace output flow.
+            </p>
+
+            <pre><code>Application
+   ↓
+RTE
+   ↓
+I/O Abstraction
+   ↓
+MCAL
+   ↓
+GPIO
+   ↓
+Actuator</code></pre>
+
+            <p>
+                Điều này giúp phân biệt Application bug
+                và hardware/driver/configuration bug.
+            </p>
+
+            <h2>71. Nếu cả Input và Output đều đúng nhưng Function vẫn sai</h2>
+
+            <p>
+                Khi input và output boundary đều đúng,
+                cần tập trung vào Application logic.
+            </p>
+
+            <pre><code>Input ✓
+   ↓
+Application Logic X
+   ↓
+Output ✓ at interface level
+
+→ Kiểm tra requirement và algorithm</code></pre>
+
+            <p>
+                Đây là ví dụ cho thấy End-to-End tracing giúp cô lập lỗi.
+            </p>
+
+            <h2>72. End-to-End Data Flow và Requirement Verification</h2>
+
+            <p>
+                Requirement có thể được kiểm chứng bằng cách xác định
+                toàn bộ data flow cần thiết để thực hiện nó.
+            </p>
+
+            <pre><code>Requirement
+     ↓
+Input
+     ↓
+Processing
+     ↓
+Output
+     ↓
+Observable Behavior</code></pre>
+
+            <p>
+                Nếu không thể vẽ được flow rõ ràng,
+                requirement hoặc architecture có thể vẫn chưa đủ rõ.
+            </p>
+
+            <h2>73. End-to-End Review Checklist</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>Câu hỏi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Source</td>
+                        <td>Dữ liệu bắt đầu từ đâu?</td>
+                    </tr>
+                    <tr>
+                        <td>Consumer</td>
+                        <td>Dữ liệu cuối cùng được sử dụng ở đâu?</td>
+                    </tr>
+                    <tr>
+                        <td>Interface</td>
+                        <td>Các boundary sử dụng interface nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Mapping</td>
+                        <td>Dữ liệu được map giữa các layer như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Dependency</td>
+                        <td>Flow phụ thuộc vào module nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Timing</td>
+                        <td>Flow có đáp ứng timing requirement không?</td>
+                    </tr>
+                    <tr>
+                        <td>Validity</td>
+                        <td>Dữ liệu invalid được xử lý thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration</td>
+                        <td>Configuration có nhất quán không?</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware</td>
+                        <td>Hardware boundary có đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>Test</td>
+                        <td>Flow được kiểm thử ở mức nào?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>74. End-to-End Debugging Checklist</h2>
+
+            <ol>
+                <li>Xác định requirement hoặc chức năng bị lỗi.</li>
+                <li>Vẽ data flow từ source đến consumer.</li>
+                <li>Đặt checkpoint tại từng architectural boundary.</li>
+                <li>Kiểm tra dữ liệu tại từng checkpoint.</li>
+                <li>Kiểm tra timing.</li>
+                <li>Kiểm tra data validity.</li>
+                <li>Kiểm tra interface và mapping.</li>
+                <li>Kiểm tra configuration.</li>
+                <li>Kiểm tra driver/hardware nếu cần.</li>
+                <li>Xác định root cause trước khi sửa code.</li>
+            </ol>
+
+            <h2>75. Cách tư duy quan trọng nhất</h2>
+
+            <p>
+                Khi gặp một vấn đề AUTOSAR,
+                thay vì hỏi ngay
+                <strong>"Code nào sai?"</strong>,
+                hãy hỏi:
+            </p>
+
+            <pre><code>"Data đang ở đâu?"
+
+        ↓
+
+"Data phải đi đâu?"
+
+        ↓
+
+"Data đi qua những layer nào?"
+
+        ↓
+
+"Ở checkpoint nào data trở nên sai hoặc biến mất?"
+
+        ↓
+
+"Thành phần nào chịu trách nhiệm tại checkpoint đó?"</code></pre>
+
+            <p>
+                Đây là một trong những cách tư duy quan trọng nhất
+                khi làm việc với một hệ thống embedded có nhiều layer.
+            </p>
+
+            <h2>76. Toàn bộ kiến thức AUTOSAR đã học</h2>
+
+            <pre><code>                 AUTOSAR
+
+        +-----------------------+
+        |   Application SWC     |
+        |                       |
+        | Function / Runnable   |
+        +-----------+-----------+
+                    |
+                 Interface
+                    |
+                    v
+        +-----------------------+
+        |          RTE          |
+        |                       |
+        | SWC Communication     |
+        | Service Access        |
+        +-----------+-----------+
+                    |
+                    v
+        +-----------------------+
+        |          BSW          |
+        |                       |
+        | Services              |
+        | Communication         |
+        | Memory                |
+        | Diagnostics           |
+        | ECU Management        |
+        +-----------+-----------+
+                    |
+                    v
+        +-----------------------+
+        |   ECU Abstraction     |
+        +-----------+-----------+
+                    |
+                    v
+        +-----------------------+
+        |         MCAL          |
+        +-----------+-----------+
+                    |
+                    v
+        +-----------------------+
+        |    Microcontroller    |
+        +-----------+-----------+
+                    |
+                    v
+        +-----------------------+
+        |       Hardware        |
+        +-----------------------+</code></pre>
+
+            <h2>77. Data Flow xuyên qua toàn bộ kiến trúc</h2>
+
+            <p>
+                Có thể cô đọng toàn bộ chuỗi bài học thành một nguyên tắc:
+            </p>
+
+            <pre><code>Requirement
+    ↓
+Architecture
+    ↓
+Interface
+    ↓
+Configuration
+    ↓
+Application
+    ↓
+RTE
+    ↓
+BSW
+    ↓
+ECU Abstraction
+    ↓
+MCAL
+    ↓
+Hardware
+    ↓
+Physical / Network Behavior</code></pre>
+
+            <p>
+                Ở chiều ngược lại, dữ liệu từ hardware hoặc network
+                có thể đi theo hướng:
+            </p>
+
+            <pre><code>Hardware / Network
+       ↓
+MCAL
+       ↓
+ECU Abstraction / Communication Stack
+       ↓
+RTE
+       ↓
+Application
+       ↓
+Functional Decision
+       ↓
+Output / Network / Memory / Diagnostic</code></pre>
+
+            <h2>78. Từ góc nhìn Developer</h2>
+
+            <p>
+                Khi bắt đầu làm một task AUTOSAR,
+                developer không nhất thiết phải hiểu toàn bộ ECU ngay lập tức.
+                Có thể bắt đầu bằng việc xác định vị trí của task trong data flow.
+            </p>
+
+            <pre><code>Task của tôi nằm ở đâu?
+
+Application?
+RTE?
+Communication?
+Memory?
+Diagnostic?
+ECU Abstraction?
+MCAL?
+Configuration?</code></pre>
+
+            <p>
+                Sau đó xác định input, output và dependency của task.
+            </p>
+
+            <h2>79. Từ góc nhìn Debugger</h2>
+
+            <p>
+                Khi debug:
+            </p>
+
+            <pre><code>Start from symptom
+       ↓
+Trace backward
+       ↓
+Find first incorrect data/state
+       ↓
+Identify responsible layer
+       ↓
+Find root cause
+       ↓
+Fix source of problem
+       ↓
+Retest End-to-End</code></pre>
+
+            <p>
+                Không nên chỉ sửa nơi cuối cùng phát hiện symptom.
+            </p>
+
+            <h2>80. Từ góc nhìn Architecture Reviewer</h2>
+
+            <p>
+                Khi review architecture,
+                hãy kiểm tra:
+            </p>
+
+            <ul>
+                <li>Flow có rõ ràng không?</li>
+                <li>Boundary giữa các layer có hợp lý không?</li>
+                <li>Interface có rõ ràng không?</li>
+                <li>Dependency có hợp lý không?</li>
+                <li>Hardware dependency có bị đẩy lên quá cao không?</li>
+                <li>Configuration có hỗ trợ architecture không?</li>
+                <li>Timing có được xem xét không?</li>
+                <li>Error handling có tồn tại không?</li>
+                <li>Flow có thể test được không?</li>
+            </ul>
+
+            <h2>81. Từ góc nhìn Tester</h2>
+
+            <p>
+                Tester có thể nhìn data flow theo các checkpoint:
+            </p>
+
+            <pre><code>Input
+  ↓
+Interface
+  ↓
+Processing
+  ↓
+Output
+
+Test từng boundary
+        +
+Test toàn bộ End-to-End</code></pre>
+
+            <p>
+                Điều này giúp phân biệt unit defect,
+                integration defect và system-level defect.
+            </p>
+
+            <h2>82. Từ góc nhìn Fresher Embedded</h2>
+
+            <p>
+                Khi mới tham gia một AUTOSAR project,
+                không cần cố nhớ ngay tất cả module và configuration parameter.
+            </p>
+
+            <p>
+                Quan trọng hơn là có thể trả lời:
+            </p>
+
+            <pre><code>1. Feature này nằm ở đâu?
+2. Input đến từ đâu?
+3. Output đi đâu?
+4. SWC nào chịu trách nhiệm?
+5. Interface nào được sử dụng?
+6. RTE có vai trò gì?
+7. BSW nào liên quan?
+8. MCAL/hardware nào liên quan?
+9. Configuration nào ảnh hưởng?
+10. Nếu lỗi thì trace từ đâu?</code></pre>
+
+            <h2>83. Một Data Flow hoàn chỉnh</h2>
+
+            <p>
+                Hãy ghép tất cả thành một ví dụ cuối cùng:
+                ECU nhận tốc độ xe qua CAN,
+                kiểm tra trạng thái cửa,
+                khóa cửa và gửi trạng thái mới lên CAN.
+            </p>
+
+            <pre><code>                OTHER ECU
+                    |
+                    | VehicleSpeed
+                    v
+                 CAN Bus
+                    |
+                    v
+              CAN Controller
+                    |
+                    v
+                CAN Driver
+                    |
+                    v
+            Communication Stack
+                    |
+                    v
+                   RTE
+                    |
+          +---------+---------+
+          |                   |
+          v                   v
+    VehicleSpeed          DoorStatus
+          |                   |
+          +---------+---------+
+                    |
+                    v
+              Door Lock SWC
+                    |
+                    v
+             Decision Logic
+                    |
+                    v
+               Lock Command
+                    |
+                    v
+                   RTE
+                    |
+                    v
+             ECU Abstraction
+                    |
+                    v
+                  MCAL
+                    |
+                    v
+             Door Actuator
+
+
+Sau đó:
+
+Door Lock Status
+        |
+        v
+      RTE
+        |
+        v
+      COM
+        |
+        v
+Communication Stack
+        |
+        v
+    CAN Driver
+        |
+        v
+     CAN Bus
+        |
+        v
+     OTHER ECU</code></pre>
+
+            <h2>84. Tóm tắt toàn bộ khóa học</h2>
+
+            <div class="note">
+                <strong>Bài 1–12:</strong>
+                Xây dựng nền tảng tổng quan về AUTOSAR Classic,
+                các software layer, hardware, data flow, communication,
+                services và quan hệ giữa các tầng.
+                <br><br>
+
+                <strong>Bài 13–21:</strong>
+                Đi sâu vào Application Software, RTE, BSW,
+                Communication Stack, Memory Stack, ECU State,
+                Diagnostic Stack, ECU Abstraction và MCAL.
+                <br><br>
+
+                <strong>Bài 22–23:</strong>
+                Tìm hiểu Interface, Dependency, Configuration và ARXML,
+                tức là cách các thành phần được kết nối và cấu hình.
+                <br><br>
+
+                <strong>Bài 24:</strong>
+                Ghép toàn bộ kiến thức thành End-to-End Data Flow,
+                từ Requirement → Application → RTE → BSW → MCAL → Hardware
+                và theo chiều ngược lại từ Hardware/Network về Application.
+                <br><br>
+
+                Khi làm việc với AUTOSAR, hãy luôn cố gắng nhìn hệ thống theo ba câu hỏi:
+                <strong>Data đi từ đâu?</strong>,
+                <strong>Data đi qua những layer nào?</strong>,
+                và <strong>Data sai ở đâu?</strong>.
+                Đây là nền tảng để đọc architecture, hiểu dependency,
+                debug và trao đổi với các thành viên khác trong project.
+            </div>
+
+            <div class="pager">
+                <a href="lesson-23.html">← Bài trước</a>
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

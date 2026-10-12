@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 30: Harmonize for CAN Stack | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+
+            <aside class="side">
+                <h3>Nội dung bài học</h3>
+
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Stuffing bit</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html" class="active">Bài 30: Harmonize for CAN Stack</a>
+            </aside>
+
+            <article class="content">
+
+                <h1>Bài 30: Harmonize for CAN Stack</h1>
+
+                <div class="note">
+                    <strong>Mục tiêu bài học:</strong>
+                    Hiểu khái niệm <strong>Harmonize</strong> trong bối cảnh CAN Stack,
+                    cách đồng bộ yêu cầu, configuration, interface, PDU, CAN ID, timing
+                    và trạng thái giữa các layer để toàn bộ CAN communication hoạt động nhất quán.
+                </div>
+
+                <h2>1. Harmonize là gì?</h2>
+
+                <p>
+                    <strong>Harmonize</strong> có thể hiểu đơn giản là
+                    <strong>làm cho các thành phần khác nhau hoạt động thống nhất với nhau</strong>.
+                </p>
+
+                <p>
+                    Trong CAN Stack, một communication path thường đi qua nhiều layer và module.
+                    Nếu mỗi layer sử dụng một configuration hoặc cách hiểu khác nhau,
+                    communication có thể không hoạt động dù từng module riêng lẻ đều có vẻ đúng.
+                </p>
+
+                <pre><code>Application
+     ↓
+   COM
+     ↓
+  PduR
+     ↓
+  CanIf
+     ↓
+  CAN Driver
+     ↓
+CAN Controller
+     ↓
+CAN Transceiver
+     ↓
+   CAN Bus</code></pre>
+
+                <p>
+                    Vì vậy, Harmonize có thể được xem là quá trình
+                    <strong>đảm bảo các layer trong communication stack "hiểu nhau"</strong>.
+                </p>
+
+                <h2>2. Harmonize không phải là một CAN module</h2>
+
+                <p>
+                    Một điểm quan trọng cần nhớ:
+                    <strong>Harmonize không phải tên của một module CAN chuẩn như CanDrv, CanIf hay CanTp.</strong>
+                </p>
+
+                <p>
+                    Trong ngữ cảnh học và phát triển CAN Stack, Harmonize là một cách tiếp cận
+                    để kiểm tra và đồng bộ các thành phần trong hệ thống.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Không nên hiểu Harmonize là một API hoặc một phần tử bắt buộc của AUTOSAR.
+                    Cách sử dụng thuật ngữ này có thể khác nhau tùy project, organization,
+                    toolchain hoặc tài liệu kỹ thuật.
+                </div>
+
+                <h2>3. Tại sao CAN Stack cần Harmonize?</h2>
+
+                <p>
+                    CAN Stack có nhiều layer. Một message được truyền đi không chỉ phụ thuộc vào
+                    CAN Controller mà còn phụ thuộc vào configuration của các layer phía trên.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>COM nghĩ:
+    Message ID = 0x100
+
+PduR nghĩ:
+    TxPdu = PDU_A
+
+CanIf nghĩ:
+    TxPdu A → HTH 2
+
+CAN Driver nghĩ:
+    HTH 2 → Controller 1
+
+Controller:
+    Baudrate = 500 kbit/s
+
+CAN Bus:
+    Network đang chạy ở 500 kbit/s</code></pre>
+
+                <p>
+                    Nếu một trong các thông tin trên không thống nhất,
+                    transmission có thể thất bại.
+                </p>
+
+                <h2>4. Harmonize giữa Requirement và Implementation</h2>
+
+                <p>
+                    Bước đầu tiên là đảm bảo software implementation phù hợp với requirement.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Requirement</th>
+                        <th>Implementation cần phù hợp</th>
+                    </tr>
+                    <tr>
+                        <td>CAN ID = 0x100</td>
+                        <td>CAN configuration phải sử dụng đúng ID</td>
+                    </tr>
+                    <tr>
+                        <td>Cycle time = 10 ms</td>
+                        <td>Scheduling/communication timing phải phù hợp</td>
+                    </tr>
+                    <tr>
+                        <td>DLC = 8</td>
+                        <td>PDU/frame configuration phải phù hợp</td>
+                    </tr>
+                    <tr>
+                        <td>CAN bitrate = 500 kbit/s</td>
+                        <td>Controller bit timing phải phù hợp</td>
+                    </tr>
+                    <tr>
+                        <td>Signal length = 16 bit</td>
+                        <td>Signal mapping phải đúng</td>
+                    </tr>
+                </table>
+
+                <h2>5. Harmonize giữa các CAN Layer</h2>
+
+                <p>
+                    Một communication path có thể chứa nhiều module:
+                </p>
+
+                <pre><code>Application
+    ↓
+COM
+    ↓
+PduR
+    ↓
+CanIf
+    ↓
+CanDrv
+    ↓
+CAN Controller
+    ↓
+CAN Bus</code></pre>
+
+                <p>
+                    Các module này cần thống nhất về PDU,
+                    ID, routing, controller, timing và các thông tin liên quan.
+                </p>
+
+                <h2>6. Harmonize về CAN ID</h2>
+
+                <p>
+                    CAN ID là một trong những thông tin quan trọng nhất cần được đồng bộ.
+                </p>
+
+                <p>
+                    Ví dụ communication matrix quy định:
+                </p>
+
+                <pre><code>Message:
+    EngineSpeed
+
+CAN ID:
+    0x100
+
+DLC:
+    8 bytes</code></pre>
+
+                <p>
+                    Nếu transmitter sử dụng <code>0x100</code> nhưng receiver filter
+                    đang chờ một ID khác, message sẽ không được xử lý như mong đợi.
+                </p>
+
+                <div class="note">
+                    Harmonize không có nghĩa là mọi message phải có cùng CAN ID.
+                    Ý nghĩa là <strong>mỗi message phải có mapping nhất quán giữa sender,
+                        receiver và configuration liên quan</strong>.
+                </div>
+
+                <h2>7. Harmonize về PDU</h2>
+
+                <p>
+                    CAN Stack sử dụng nhiều loại PDU ở các layer khác nhau.
+                    Do đó cần đảm bảo mapping giữa các PDU là chính xác.
+                </p>
+
+                <pre><code>Application Signal
+        ↓
+      I-PDU
+        ↓
+    PduR route
+        ↓
+    CanIf PDU
+        ↓
+ CAN Driver / HTH
+        ↓
+   CAN Controller</code></pre>
+
+                <p>
+                    Nếu PDU ở một layer không được map đúng với PDU của layer tiếp theo,
+                    communication có thể bị mất dù CAN bus vẫn hoạt động bình thường.
+                </p>
+
+                <h2>8. Harmonize về Controller và Channel</h2>
+
+                <p>
+                    Một ECU có thể có nhiều CAN Controller hoặc CAN Channel.
+                </p>
+
+                <pre><code>ECU
+ ├── CAN Controller 0
+ │       ↓
+ │    CAN Channel 0
+ │
+ └── CAN Controller 1
+         ↓
+      CAN Channel 1</code></pre>
+
+                <p>
+                    Vì vậy cần xác định rõ message thuộc CAN network nào và controller nào.
+                </p>
+
+                <div class="note">
+                    <strong>Lỗi thường gặp:</strong>
+                    Message được cấu hình đúng CAN ID nhưng lại được map sang nhầm controller/channel.
+                </div>
+
+                <h2>9. Harmonize về HRH và HTH</h2>
+
+                <p>
+                    Ở mức CAN Driver, Hardware Receive Handle (HRH) và Hardware Transmit Handle (HTH)
+                    liên quan đến cách các CAN hardware objects được sử dụng.
+                </p>
+
+                <pre><code>Reception:
+
+CAN Controller
+      ↓
+   CAN ID
+      ↓
+     HRH
+      ↓
+   CanIf
+      ↓
+    PduR/COM
+
+
+Transmission:
+
+COM/PduR/CanIf
+      ↓
+     HTH
+      ↓
+CAN Controller
+      ↓
+    CAN Bus</code></pre>
+
+                <p>
+                    Nếu HRH/HTH mapping không phù hợp, message có thể không được nhận
+                    hoặc không được truyền qua hardware object mong muốn.
+                </p>
+
+                <h2>10. Harmonize về Baud-rate</h2>
+
+                <p>
+                    Các node trên cùng CAN network phải sử dụng bit timing tương thích.
+                </p>
+
+                <pre><code>CAN Clock
+    ↓
+Prescaler
+    ↓
+Time Quantum
+    ↓
+Bit Timing
+    ↓
+Nominal Bit Rate
+    ↓
+CAN Controller</code></pre>
+
+                <p>
+                    Ví dụ network được thiết kế ở 500 kbit/s nhưng một ECU được cấu hình
+                    sai bitrate, communication có thể xuất hiện CAN error hoặc không nhận được frame đúng.
+                </p>
+
+                <h2>11. Harmonize về CAN-FD</h2>
+
+                <p>
+                    Với CAN-FD, cần chú ý không chỉ nominal bit rate mà còn có thể có
+                    data phase bit rate.
+                </p>
+
+                <pre><code>CAN-FD
+
+Nominal Phase
+     ↓
+Arbitration
+
+Data Phase
+     ↓
+Data transmission
+     ↓
+Higher data rate</code></pre>
+
+                <p>
+                    Do đó configuration của CAN-FD phải phù hợp giữa controller,
+                    transceiver, network và các node liên quan.
+                </p>
+
+                <h2>12. Harmonize về Signal Mapping</h2>
+
+                <p>
+                    CAN message không chỉ có CAN ID.
+                    Các signal bên trong payload cũng phải được mapping đúng.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thông tin</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td>CAN ID</td>
+                        <td>0x100</td>
+                    </tr>
+                    <tr>
+                        <td>Signal</td>
+                        <td>EngineSpeed</td>
+                    </tr>
+                    <tr>
+                        <td>Start bit</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Length</td>
+                        <td>16 bit</td>
+                    </tr>
+                    <tr>
+                        <td>Factor</td>
+                        <td>0.25</td>
+                    </tr>
+                    <tr>
+                        <td>Offset</td>
+                        <td>0</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Nếu CAN ID đúng nhưng start bit hoặc signal length sai,
+                    application vẫn có thể đọc ra giá trị sai.
+                </p>
+
+                <h2>13. Harmonize về Byte Order</h2>
+
+                <p>
+                    Signal mapping cũng cần thống nhất về byte order.
+                </p>
+
+                <p>
+                    Đối với một signal nhiều byte, sender và receiver phải sử dụng
+                    cách diễn giải dữ liệu phù hợp với communication specification.
+                </p>
+
+                <div class="note">
+                    Một frame xuất hiện chính xác trên CAN analyzer chưa có nghĩa
+                    application chắc chắn nhận được giá trị đúng.
+                    Có thể frame đúng nhưng signal mapping sai.
+                </div>
+
+                <h2>14. Harmonize về Timing</h2>
+
+                <p>
+                    Communication specification thường định nghĩa timing của message.
+                </p>
+
+                <pre><code>Message: EngineSpeed
+
+Cycle Time:
+    10 ms
+
+Transmission:
+    Periodic
+
+Timeout:
+    100 ms</code></pre>
+
+                <p>
+                    Các thông tin này cần được phản ánh phù hợp trong communication stack.
+                </p>
+
+                <p>
+                    Nếu sender gửi mỗi 10 ms nhưng receiver hoặc supervision
+                    được cấu hình với timeout không phù hợp, hệ thống có thể phát hiện
+                    communication failure không đúng thực tế.
+                </p>
+
+                <h2>15. Harmonize về Sender và Receiver</h2>
+
+                <p>
+                    Mỗi message cần xác định rõ sender và receiver.
+                </p>
+
+                <pre><code>ECU_A
+  │
+  │ CAN ID 0x100
+  ↓
+CAN Bus
+  ↓
+ECU_B
+  ↓
+EngineSpeed signal</code></pre>
+
+                <p>
+                    Nếu communication matrix nói ECU_A là sender nhưng software configuration
+                    lại cấu hình ECU_B là transmitter, system design và implementation không còn nhất quán.
+                </p>
+
+                <h2>16. Harmonize giữa Communication Matrix và AUTOSAR Configuration</h2>
+
+                <p>
+                    Communication Matrix thường là nguồn thông tin quan trọng để xây dựng configuration.
+                </p>
+
+                <pre><code>Communication Matrix
+        ↓
+Message / Signal
+        ↓
+PDU Configuration
+        ↓
+COM / PduR / CanIf
+        ↓
+CAN Driver
+        ↓
+Hardware</code></pre>
+
+                <p>
+                    Một trong những nhiệm vụ quan trọng khi integration là đảm bảo
+                    configuration được tạo ra phù hợp với communication specification.
+                </p>
+
+                <h2>17. Harmonize giữa CanIf và CAN Driver</h2>
+
+                <p>
+                    CanIf đóng vai trò abstraction giữa upper layer và CAN Driver.
+                </p>
+
+                <pre><code>Upper Layer
+     ↓
+   CanIf
+     ↓
+ CAN Driver
+     ↓
+CAN Controller</code></pre>
+
+                <p>
+                    Do đó các thông tin như controller, hardware object, PDU và notification
+                    cần được mapping nhất quán.
+                </p>
+
+                <h2>18. Harmonize về Reception</h2>
+
+                <p>
+                    Một reception path có thể được hình dung:
+                </p>
+
+                <pre><code>CAN Bus
+   ↓
+CAN Controller
+   ↓
+CAN ID / Filter
+   ↓
+HRH
+   ↓
+CAN Driver
+   ↓
+CanIf
+   ↓
+PduR
+   ↓
+COM / CanTp
+   ↓
+Application / DCM</code></pre>
+
+                <p>
+                    Harmonize nghĩa là kiểm tra toàn bộ chain này,
+                    thay vì chỉ kiểm tra một module.
+                </p>
+
+                <h2>19. Harmonize về Transmission</h2>
+
+                <p>
+                    Transmission path đi theo chiều ngược lại:
+                </p>
+
+                <pre><code>Application
+   ↓
+COM / PduR / CanTp
+   ↓
+CanIf
+   ↓
+CAN Driver
+   ↓
+HTH
+   ↓
+CAN Controller
+   ↓
+CAN Transceiver
+   ↓
+CAN Bus</code></pre>
+
+                <p>
+                    Chỉ cần một mapping sai, frame có thể không xuất hiện trên bus.
+                </p>
+
+                <h2>20. Harmonize về Network Management</h2>
+
+                <p>
+                    CAN communication không chỉ có data message.
+                    Network Management cũng có thể tham gia vào trạng thái communication của ECU.
+                </p>
+
+                <pre><code>Application Communication
+          │
+          ↓
+       CAN Stack
+          │
+          ├── Data Communication
+          │
+          └── Network Management
+                    ↓
+                 Sleep /
+                 Wake-up</code></pre>
+
+                <p>
+                    Các module như CanNm, CanSM, CanIf và CanTrcv cần có configuration
+                    phù hợp để network management và communication state không mâu thuẫn.
+                </p>
+
+                <h2>21. Harmonize với CanTp</h2>
+
+                <p>
+                    Khi sử dụng CAN Transport Protocol, cần đồng bộ thêm các thông tin
+                    liên quan đến transport communication.
+                </p>
+
+                <pre><code>Diagnostic Data
+      ↓
+    DCM
+      ↓
+    PduR
+      ↓
+   CanTp
+      ↓
+   CanIf
+      ↓
+ CAN Driver
+      ↓
+ CAN Network</code></pre>
+
+                <p>
+                    Các thông tin như addressing, PDU mapping, timeout và transport configuration
+                    phải phù hợp với communication design.
+                </p>
+
+                <h2>22. Harmonize về State</h2>
+
+                <p>
+                    Không chỉ data configuration mà trạng thái của các module cũng cần phù hợp.
+                </p>
+
+                <pre><code>ECU State
+   ↓
+CAN Communication State
+   ↓
+CAN Controller Mode
+   ↓
+CAN Transceiver Mode
+   ↓
+CAN Bus Communication</code></pre>
+
+                <p>
+                    Ví dụ, application có thể muốn truyền message nhưng CAN Controller
+                    vẫn đang ở trạng thái không cho phép communication.
+                </p>
+
+                <h2>23. Harmonize giữa CAN Controller và CAN Transceiver</h2>
+
+                <p>
+                    CAN Controller xử lý protocol logic,
+                    trong khi CAN Transceiver xử lý physical interface.
+                </p>
+
+                <pre><code>CAN Controller
+     │
+     │ TX/RX logic
+     ↓
+CAN Transceiver
+     │
+     │ Physical signaling
+     ↓
+CAN Bus</code></pre>
+
+                <p>
+                    Hai thành phần cần có trạng thái phù hợp để communication hoạt động.
+                </p>
+
+                <h2>24. Harmonize về Error Handling</h2>
+
+                <p>
+                    Khi có lỗi CAN, nhiều layer có thể tham gia xử lý.
+                </p>
+
+                <pre><code>CAN Error
+    ↓
+CAN Controller
+    ↓
+CAN Driver
+    ↓
+CanIf
+    ↓
+CanSM / Upper BSW
+    ↓
+Application / Diagnostic</code></pre>
+
+                <p>
+                    Cách xử lý cụ thể phụ thuộc architecture và configuration,
+                    nhưng điều quan trọng là các layer phải có cách hiểu thống nhất
+                    về trạng thái và error information.
+                </p>
+
+                <h2>25. Harmonize về Bus-Off</h2>
+
+                <p>
+                    Bus-Off là ví dụ điển hình cho vấn đề cần đồng bộ giữa nhiều layer.
+                </p>
+
+                <pre><code>CAN Controller
+      ↓
+   Bus-Off
+      ↓
+CAN Driver detects event
+      ↓
+CanIf / CanSM handling
+      ↓
+Recovery / communication state</code></pre>
+
+                <p>
+                    Nếu controller đã Bus-Off nhưng upper layer vẫn nghĩ communication đang bình thường,
+                    system behavior sẽ không nhất quán.
+                </p>
+
+                <h2>26. Harmonize về Tool Configuration</h2>
+
+                <p>
+                    Trong AUTOSAR project, configuration thường được thực hiện thông qua
+                    các tool khác nhau.
+                </p>
+
+                <p>
+                    Có thể có nhiều configuration artifact liên quan đến:
+                </p>
+
+                <ul>
+                    <li>CAN Controller</li>
+                    <li>CAN Driver</li>
+                    <li>CanIf</li>
+                    <li>COM</li>
+                    <li>PduR</li>
+                    <li>CanTp</li>
+                    <li>CanNm</li>
+                    <li>CanSM</li>
+                    <li>CanTrcv</li>
+                </ul>
+
+                <p>
+                    Harmonize giúp giảm nguy cơ một thông tin được cấu hình khác nhau
+                    ở các tool hoặc module.
+                </p>
+
+                <h2>27. Ví dụ: Harmonize một Message</h2>
+
+                <p>
+                    Giả sử communication specification có:
+                </p>
+
+                <pre><code>Message:
+    VehicleSpeed
+
+CAN ID:
+    0x120
+
+DLC:
+    8
+
+Cycle Time:
+    20 ms
+
+Signal:
+    VehicleSpeed
+
+Length:
+    16 bit</code></pre>
+
+                <p>
+                    Một configuration nhất quán có thể được kiểm tra theo chuỗi:
+                </p>
+
+                <pre><code>VehicleSpeed
+      ↓
+COM Signal
+      ↓
+I-PDU
+      ↓
+PduR / CanIf PDU
+      ↓
+CAN ID = 0x120
+      ↓
+HTH
+      ↓
+CAN Controller
+      ↓
+CAN Channel
+      ↓
+CAN Bus</code></pre>
+
+                <p>
+                    Nếu tất cả thông tin trên khớp với specification,
+                    communication path có tính nhất quán cao hơn.
+                </p>
+
+                <h2>28. Ví dụ: Message không xuất hiện trên CAN Bus</h2>
+
+                <p>
+                    Giả sử application gọi transmission nhưng CAN analyzer không thấy frame.
+                </p>
+
+                <p>
+                    Không nên chỉ kiểm tra CAN Driver.
+                    Có thể kiểm tra theo chain:
+                </p>
+
+                <pre><code>Application
+    ↓
+COM/PduR
+    ↓
+CanIf
+    ↓
+CAN Driver
+    ↓
+HTH
+    ↓
+CAN Controller
+    ↓
+CAN Transceiver
+    ↓
+CAN Bus
+    ↓
+CAN Analyzer</code></pre>
+
+                <p>
+                    Tại mỗi điểm, kiểm tra configuration có phù hợp với các layer còn lại hay không.
+                </p>
+
+                <h2>29. Ví dụ: Frame có trên Bus nhưng Application sai giá trị</h2>
+
+                <p>
+                    Đây là trường hợp đặc biệt quan trọng.
+                </p>
+
+                <pre><code>CAN Analyzer:
+    ID = 0x120
+    Data = đúng
+
+Application:
+    VehicleSpeed = sai</code></pre>
+
+                <p>
+                    Khi đó CAN physical communication có thể hoàn toàn bình thường.
+                    Cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>CAN ID mapping</li>
+                    <li>PDU mapping</li>
+                    <li>Signal start bit</li>
+                    <li>Signal length</li>
+                    <li>Byte order</li>
+                    <li>Factor</li>
+                    <li>Offset</li>
+                    <li>Data type</li>
+                </ul>
+
+                <h2>30. Quy trình Harmonize CAN Stack</h2>
+
+                <p>
+                    Một quy trình thực tế có thể bắt đầu từ requirement và đi xuống hardware:
+                </p>
+
+                <pre><code>1. Requirement
+       ↓
+2. Communication Matrix
+       ↓
+3. Message / Signal definition
+       ↓
+4. PDU configuration
+       ↓
+5. COM / PduR / CanIf
+       ↓
+6. CAN Driver
+       ↓
+7. Controller / Hardware Object
+       ↓
+8. Baud-rate / Bit Timing
+       ↓
+9. Transceiver
+       ↓
+10. CAN Bus
+       ↓
+11. Verification</code></pre>
+
+                <h2>31. Checklist Harmonize</h2>
+
+                <table>
+                    <tr>
+                        <th>Hạng mục</th>
+                        <th>Câu hỏi kiểm tra</th>
+                    </tr>
+                    <tr>
+                        <td>CAN ID</td>
+                        <td>ID giữa specification và configuration có giống nhau không?</td>
+                    </tr>
+                    <tr>
+                        <td>PDU</td>
+                        <td>PDU có được mapping đúng giữa các layer không?</td>
+                    </tr>
+                    <tr>
+                        <td>Controller</td>
+                        <td>Message thuộc đúng CAN Controller không?</td>
+                    </tr>
+                    <tr>
+                        <td>HRH/HTH</td>
+                        <td>Hardware object mapping có đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>Baud-rate</td>
+                        <td>Bit timing có phù hợp với network không?</td>
+                    </tr>
+                    <tr>
+                        <td>Signal</td>
+                        <td>Start bit, length, byte order có đúng không?</td>
+                    </tr>
+                    <tr>
+                        <td>Timing</td>
+                        <td>Cycle time và timeout có phù hợp không?</td>
+                    </tr>
+                    <tr>
+                        <td>State</td>
+                        <td>Controller và transceiver có ở trạng thái phù hợp không?</td>
+                    </tr>
+                    <tr>
+                        <td>Network</td>
+                        <td>ECU có được map đúng CAN network không?</td>
+                    </tr>
+                </table>
+
+                <h2>32. Debugging theo tư duy Harmonize</h2>
+
+                <p>
+                    Khi gặp lỗi communication, thay vì hỏi:
+                    <strong>"Module nào bị lỗi?"</strong>,
+                    hãy hỏi:
+                    <strong>"Thông tin giữa các module có đang thống nhất không?"</strong>
+                </p>
+
+                <pre><code>Requirement
+    ↓
+Configuration
+    ↓
+Interface
+    ↓
+PDU
+    ↓
+CAN ID
+    ↓
+Hardware Object
+    ↓
+Controller
+    ↓
+Transceiver
+    ↓
+Bus
+    ↓
+Receiver</code></pre>
+
+                <p>
+                    Cách tiếp cận này giúp tìm được các lỗi integration
+                    mà việc kiểm tra từng module riêng lẻ có thể bỏ sót.
+                </p>
+
+                <h2>33. Common Mistakes</h2>
+
+                <ul>
+                    <li>CAN ID giữa sender và receiver không phù hợp.</li>
+                    <li>Nhầm CAN Controller hoặc CAN Channel.</li>
+                    <li>Mapping sai PDU.</li>
+                    <li>Mapping sai HRH hoặc HTH.</li>
+                    <li>Baud-rate không phù hợp.</li>
+                    <li>Signal start bit hoặc length sai.</li>
+                    <li>Byte order không phù hợp với specification.</li>
+                    <li>Cycle time hoặc timeout không đúng.</li>
+                    <li>Controller và transceiver ở trạng thái không phù hợp.</li>
+                    <li>Chỉ kiểm tra CAN Driver mà bỏ qua upper layer.</li>
+                    <li>Chỉ nhìn CAN Analyzer mà không kiểm tra application mapping.</li>
+                </ul>
+
+                <h2>34. Góc nhìn phỏng vấn</h2>
+
+                <p>
+                    <strong>Q: What do you mean by harmonization in a CAN stack?</strong>
+                </p>
+
+                <p>
+                    Có thể trả lời:
+                </p>
+
+                <div class="note">
+                    <strong>Answer:</strong>
+                    Harmonization means making sure that the configuration and interfaces
+                    of different CAN stack layers are consistent with each other and with
+                    the communication requirements. For example, CAN IDs, PDUs, hardware
+                    objects, controllers, timing, signal mapping and communication states
+                    should be correctly aligned from the application layer down to the CAN hardware.
+                </div>
+
+                <p>
+                    Một câu trả lời ngắn hơn:
+                </p>
+
+                <div class="note">
+                    <strong>Short Answer:</strong>
+                    Harmonization is about making all CAN stack layers and configurations
+                    consistent so that the complete communication path works correctly.
+                </div>
+
+                <h2>35. Memory Map — Harmonize for CAN Stack</h2>
+
+                <pre><code>                 HARMONIZE
+                     │
+       ┌─────────────┼─────────────┐
+       ↓             ↓             ↓
+   Requirement   Configuration   Hardware
+       │             │             │
+       ↓             ↓             ↓
+Communication   COM/PduR/CanIf   Controller
+   Matrix             │             │
+       │              ↓             ↓
+       └──────→ CAN ID / PDU ←─────┘
+                     │
+                     ↓
+                  HRH/HTH
+                     │
+                     ↓
+                CAN Channel
+                     │
+                     ↓
+                Transceiver
+                     │
+                     ↓
+                  CAN Bus
+                     │
+                     ↓
+                 Receiver</code></pre>
+
+                <h2>36. Tóm tắt</h2>
+
+                <p>
+                    <strong>Harmonize for CAN Stack</strong> là tư duy rất quan trọng khi
+                    làm integration và debugging CAN Stack.
+                </p>
+
+                <p>
+                    Một CAN communication path không chỉ phụ thuộc vào CAN Driver.
+                    Nó liên quan đến nhiều layer từ application, COM, PduR, CanIf,
+                    CAN Driver, CAN Controller, CAN Transceiver cho tới CAN Bus.
+                </p>
+
+                <pre><code>Requirement
+     ↓
+Communication Matrix
+     ↓
+Signal / PDU
+     ↓
+COM
+     ↓
+PduR
+     ↓
+CanIf
+     ↓
+CAN Driver
+     ↓
+CAN Controller
+     ↓
+CAN Transceiver
+     ↓
+CAN Bus
+     ↓
+Receiver</code></pre>
+
+                <p>
+                    Nếu các thành phần này được cấu hình và mapping nhất quán,
+                    communication sẽ có cơ sở để hoạt động đúng theo requirement.
+                    Ngược lại, chỉ một mismatch nhỏ về CAN ID, PDU, controller,
+                    timing hoặc signal mapping cũng có thể khiến toàn bộ communication
+                    không hoạt động như mong đợi.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm quan trọng nhất:</strong>
+                    Khi debug CAN Stack, đừng chỉ hỏi "module nào sai?".
+                    Hãy kiểm tra xem <strong>requirement → configuration → interface → PDU →
+                        CAN ID → hardware → bus → receiver</strong> có được đồng bộ với nhau hay không.
+                    Đó chính là tư duy Harmonize.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-29.html">← Bài trước</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            EmLearn - 2026
+        </div>
+    </footer>
+
+</body>
+
+</html>

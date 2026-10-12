@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 4: Tổng quan tầng Application Software | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html" class="active" aria-current="page">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 4: Tổng quan tầng Application Software</h1>
+
+                <p>
+                    <strong>Application Software Layer</strong> là tầng nằm trên cùng trong kiến trúc
+                    AUTOSAR Classic. Đây là nơi chứa các phần mềm thực hiện những chức năng
+                    nghiệp vụ của ECU.
+                </p>
+
+                <p>
+                    Nếu ở Bài 3 chúng ta nhìn toàn bộ kiến trúc từ trên xuống dưới, thì bài này
+                    tập trung riêng vào câu hỏi:
+                    <strong>Application Software là gì, chứa những gì và đóng vai trò như thế nào?</strong>
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Bài này chỉ tập trung vào tổng quan. Các khái niệm như
+                    SWC, Port, Interface, Runnable và Event sẽ được tìm hiểu chi tiết ở các bài
+                    chuyên sâu sau.
+                </div>
+
+                <h2>1. Application Software là gì?</h2>
+
+                <p>
+                    Application Software là phần mềm chứa <strong>logic chức năng của ECU</strong>.
+                    Nó quyết định ECU cần thực hiện chức năng gì dựa trên dữ liệu đầu vào và
+                    trạng thái của hệ thống.
+                </p>
+
+                <p>
+                    Ví dụ, một ECU thân xe có thể chứa các chức năng:
+                </p>
+
+                <ul>
+                    <li>Điều khiển đèn.</li>
+                    <li>Điều khiển khóa cửa.</li>
+                    <li>Điều khiển cửa sổ.</li>
+                    <li>Giám sát trạng thái cửa.</li>
+                    <li>Xử lý trạng thái đánh lửa.</li>
+                    <li>Giám sát một số điều kiện của xe.</li>
+                </ul>
+
+                <p>
+                    Như vậy, Application Software tập trung vào
+                    <strong>“ECU cần làm gì”</strong>, thay vì tập trung vào
+                    <strong>“phần cứng thực hiện nó như thế nào”</strong>.
+                </p>
+
+                <h2>2. Application Software nằm ở đâu?</h2>
+
+                <p>
+                    Application Software nằm ở phía trên của kiến trúc AUTOSAR Classic:
+                </p>
+
+                <svg viewBox="0 0 600 360" role="img"
+                    aria-label="Vị trí của Application Software trong AUTOSAR Classic"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+
+                        <rect x="20" y="20" width="560" height="85" rx="6"
+                            fill="rgba(20,80,107,.18)" />
+
+                        <rect x="20" y="115" width="560" height="55" rx="6"
+                            fill="rgba(224,168,0,.25)" />
+
+                        <rect x="20" y="180" width="560" height="125" rx="6"
+                            fill="rgba(46,139,87,.2)" />
+
+                        <rect x="20" y="315" width="560" height="25" rx="6"
+                            fill="rgba(128,128,128,.2)" />
+
+                    </g>
+
+                    <g font-size="14" fill="currentColor" text-anchor="middle">
+
+                        <text x="300" y="47" font-weight="bold">
+                            Application Software
+                        </text>
+
+                        <text x="300" y="76">
+                            Các chức năng của ECU
+                        </text>
+
+                        <text x="300" y="147" font-weight="bold">
+                            RTE
+                        </text>
+
+                        <text x="300" y="210" font-weight="bold">
+                            Basic Software
+                        </text>
+
+                        <text x="300" y="240">
+                            Services / ECU Abstraction / MCAL
+                        </text>
+
+                        <text x="300" y="270">
+                            Phần mềm nền tảng
+                        </text>
+
+                        <text x="300" y="333" font-weight="bold">
+                            Hardware
+                        </text>
+
+                    </g>
+
+                </svg>
+
+                <p>
+                    Application Software không nằm trực tiếp trên phần cứng. Nó sử dụng
+                    các lớp bên dưới để giao tiếp với phần còn lại của ECU.
+                </p>
+
+                <h2>3. Application Software được tổ chức như thế nào?</h2>
+
+                <p>
+                    Trong AUTOSAR, Application Software không được tổ chức thành một khối
+                    duy nhất. Nó được chia thành các <strong>Software Component (SWC)</strong>.
+                </p>
+
+                <p>
+                    Có thể hình dung:
+                </p>
+
+                <pre><code>Application Software
+        │
+        ├── Software Component A
+        │
+        ├── Software Component B
+        │
+        └── Software Component C</code></pre>
+
+                <p>
+                    Mỗi SWC có thể đảm nhiệm một chức năng hoặc một phần chức năng của hệ thống.
+                    Cách tổ chức này giúp phần mềm được chia thành những thành phần có trách nhiệm
+                    tương đối rõ ràng.
+                </p>
+
+                <div class="note">
+                    <strong>SWC</strong> là một trong những khái niệm quan trọng nhất khi học
+                    Application Layer. Cấu trúc bên trong SWC sẽ được học chi tiết ở bài sau.
+                </div>
+
+                <h2>4. Ví dụ về các Software Component</h2>
+
+                <p>
+                    Giả sử một ECU điều khiển thân xe có các chức năng liên quan đến cửa:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Software Component</th>
+                        <th>Chức năng tổng quan</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Door Control SWC</strong></td>
+                        <td>Xử lý logic điều khiển cửa.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Window Control SWC</strong></td>
+                        <td>Xử lý chức năng điều khiển cửa sổ.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Door Status SWC</strong></td>
+                        <td>Xử lý thông tin trạng thái cửa.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Lighting Control SWC</strong></td>
+                        <td>Xử lý logic điều khiển đèn.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Đây chỉ là ví dụ minh họa. Cách chia SWC thực tế phụ thuộc vào thiết kế
+                    của hệ thống và yêu cầu của dự án.
+                </p>
+
+                <h2>5. Application Software nhận và sử dụng dữ liệu như thế nào?</h2>
+
+                <p>
+                    Application Software thường cần dữ liệu từ nhiều nguồn khác nhau để thực hiện
+                    chức năng. Ví dụ, một SWC có thể cần thông tin về:
+                </p>
+
+                <ul>
+                    <li>Trạng thái công tắc.</li>
+                    <li>Tốc độ xe.</li>
+                    <li>Trạng thái cửa.</li>
+                    <li>Thông tin nhận từ mạng CAN.</li>
+                    <li>Dữ liệu từ cảm biến.</li>
+                </ul>
+
+                <p>
+                    Ở mức tổng quan, Application Software không cần biết tất cả dữ liệu này
+                    được lấy trực tiếp từ phần cứng bằng cách nào. Các tầng bên dưới và
+                    RTE cung cấp môi trường để Application Software sử dụng dữ liệu.
+                </p>
+
+                <pre><code>Input / Network / Sensor
+          ↓
+     Software Layer
+          ↓
+         RTE
+          ↓
+ Application Software
+          ↓
+   ECU Function</code></pre>
+
+                <h2>6. Application Software và RTE</h2>
+
+                <p>
+                    Application Software giao tiếp với các thành phần khác thông qua
+                    <strong>RTE (Runtime Environment)</strong>.
+                </p>
+
+                <p>
+                    Vì vậy, Application Software có thể được nhìn ở mức tổng quan như sau:
+                </p>
+
+                <pre><code>+-----------------------------+
+|    Application Software     |
+|                             |
+|   SWC A    SWC B    SWC C   |
++-------------↓---------------+
+              |
+             RTE
+              |
++-------------↓---------------+
+|      Basic Software         |
++-------------↓---------------+
+|          Hardware           |
++-----------------------------+</code></pre>
+
+                <p>
+                    RTE tạo ra ranh giới giữa phần Application và phần mềm nền tảng.
+                    Điều này giúp Application Software không phải trực tiếp phụ thuộc vào
+                    cách các module BSW được triển khai.
+                </p>
+
+                <h2>7. Application Software không trực tiếp điều khiển Hardware</h2>
+
+                <p>
+                    Một đặc điểm quan trọng của kiến trúc AUTOSAR là Application Software
+                    được tách khỏi Hardware.
+                </p>
+
+                <p>
+                    Ví dụ, khi Application cần bật một thiết bị:
+                </p>
+
+                <pre><code>Application
+     ↓
+    RTE
+     ↓
+    BSW
+     ↓
+   MCAL
+     ↓
+  Hardware</code></pre>
+
+                <p>
+                    Application chỉ tập trung vào logic chức năng, trong khi các tầng bên dưới
+                    đảm nhiệm việc cung cấp dịch vụ và truy cập phần cứng.
+                </p>
+
+                <p>
+                    Đây chính là một trong những ý tưởng quan trọng của kiến trúc AUTOSAR:
+                    <strong>tách chức năng ứng dụng khỏi việc triển khai phần cứng</strong>.
+                </p>
+
+                <h2>8. Application Software và khả năng tái sử dụng</h2>
+
+                <p>
+                    Việc tách Application Software khỏi Hardware giúp phần mềm ứng dụng
+                    có khả năng được tái sử dụng tốt hơn trong những hệ thống có kiến trúc
+                    phần cứng khác nhau.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thiết kế trực tiếp với Hardware</th>
+                        <th>Thiết kế theo AUTOSAR</th>
+                    </tr>
+
+                    <tr>
+                        <td>Application phụ thuộc nhiều vào phần cứng.</td>
+                        <td>Application được tách khỏi phần cứng thông qua các lớp bên dưới.</td>
+                    </tr>
+
+                    <tr>
+                        <td>Thay đổi hardware có thể ảnh hưởng application.</td>
+                        <td>Các thay đổi bên dưới được giới hạn trong các layer liên quan.</td>
+                    </tr>
+
+                    <tr>
+                        <td>Khó tái sử dụng logic.</td>
+                        <td>Dễ tổ chức logic thành các Software Component.</td>
+                    </tr>
+                </table>
+
+                <h2>9. Ví dụ tổng quan về một chức năng</h2>
+
+                <p>
+                    Giả sử hệ thống cần bật đèn khi nhận được một điều kiện phù hợp.
+                    Application Software có thể được hình dung như sau:
+                </p>
+
+                <pre><code>Input:
+Trạng thái điều kiện
+       ↓
+Lighting Control SWC
+       ↓
+Kiểm tra logic
+       ↓
+Yêu cầu bật đèn
+       ↓
+       RTE
+       ↓
+      BSW
+       ↓
+    Hardware
+       ↓
+      Đèn</code></pre>
+
+                <p>
+                    Điểm quan trọng là <strong>Lighting Control SWC</strong> chỉ tập trung
+                    vào logic điều khiển đèn. Nó không cần chứa toàn bộ code xử lý phần cứng.
+                </p>
+
+                <h2>10. Những khái niệm cần nhớ</h2>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa tổng quan</th>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application Software</strong></td>
+                        <td>Phần mềm thực hiện các chức năng của ECU.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Software Component (SWC)</strong></td>
+                        <td>Đơn vị tổ chức chức năng trong Application Software.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RTE</strong></td>
+                        <td>Lớp trung gian giúp Application giao tiếp với hệ thống bên dưới.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Application Logic</strong></td>
+                        <td>Logic quyết định ECU cần thực hiện chức năng gì.</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Hardware Independence</strong></td>
+                        <td>Giảm sự phụ thuộc của Application Software vào phần cứng cụ thể.</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>Application Software Layer</strong> là tầng chứa logic chức năng của ECU.
+                    Trong AUTOSAR, Application Software được tổ chức thành các
+                    <strong>Software Component (SWC)</strong>. Application tập trung vào việc
+                    ECU cần thực hiện chức năng gì, trong khi RTE và các tầng BSW bên dưới
+                    cung cấp môi trường để thực hiện những chức năng đó. Việc tách Application
+                    khỏi Hardware giúp kiến trúc rõ ràng hơn và hỗ trợ khả năng tái sử dụng
+                    phần mềm.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-3.html">← Bài trước</a>
+                    <a class="btn" href="lesson-5.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

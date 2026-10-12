@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 18: ECU State và System Services | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html" class="active" aria-current="page">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+            <a href="index.html">← Tất cả bài học AUTOSAR</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 18: ECU State và System Services</h1>
+
+            <p>
+                Một ECU không chỉ cần Application Software, Communication Stack
+                hay Memory Stack. ECU còn cần một nhóm dịch vụ nền để quản lý
+                toàn bộ vòng đời hoạt động của hệ thống.
+            </p>
+
+            <p>
+                ECU phải biết khi nào khởi động, khi nào Application được phép
+                chạy, khi nào Communication được bật, khi nào cần chuyển sang
+                Sleep và khi nào phải thực hiện Shutdown. Trong quá trình đó,
+                các System Services như OS, Watchdog, Diagnostic và các dịch vụ
+                quản lý hệ thống cung cấp nền tảng để ECU hoạt động ổn định.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Bài này đi sâu vào ECU State, ECU State Management và các
+                System Services quan trọng trong AUTOSAR Classic. Trọng tâm là
+                vòng đời ECU, quan hệ giữa ECU State và BSW/Application,
+                cùng cách các System Services hỗ trợ hệ thống. Chưa đi sâu
+                vào API hoặc cấu hình ARXML cụ thể.
+            </div>
+
+            <h2>1. ECU State là gì?</h2>
+
+            <p>
+                ECU State mô tả trạng thái hoạt động hiện tại của ECU.
+                Tùy kiến trúc hệ thống, ECU có thể trải qua nhiều trạng thái
+                khác nhau trong vòng đời của nó.
+            </p>
+
+            <p>
+                Một mô hình đơn giản:
+            </p>
+
+            <pre><code>Power Off
+    |
+    v
+Startup
+    |
+    v
+Run
+    |
+    +---------> Sleep
+    |             |
+    |             v
+    |          Wake-up
+    |             |
+    |             v
+    +---------- Run
+    |
+    v
+Shutdown
+    |
+    v
+Power Off
+</code></pre>
+
+            <p>
+                Điều quan trọng là Application không tự ý quyết định toàn bộ
+                vòng đời của ECU. Các thành phần System/ECU Management
+                phối hợp để điều khiển những chuyển đổi trạng thái này.
+            </p>
+
+            <h2>2. Vì sao ECU cần State Management?</h2>
+
+            <p>
+                Một ECU có rất nhiều Software Component và BSW module.
+                Nếu mỗi module tự quyết định khi nào được khởi động hoặc
+                dừng, hệ thống sẽ rất khó kiểm soát.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>Application
+     |
+     +---- Communication
+     |
+     +---- Memory
+     |
+     +---- Diagnostic
+     |
+     +---- Watchdog
+     |
+     +---- OS
+</code></pre>
+
+            <p>
+                Tất cả các thành phần này cần được khởi tạo và điều phối
+                theo một trình tự phù hợp.
+            </p>
+
+            <p>
+                ECU State Management giúp tạo ra một trạng thái hệ thống
+                thống nhất để các thành phần biết ECU đang ở giai đoạn nào.
+            </p>
+
+            <h2>3. Vòng đời cơ bản của ECU</h2>
+
+            <p>
+                Có thể chia vòng đời ECU thành các giai đoạn chính:
+            </p>
+
+            <ol>
+                <li>Power On.</li>
+                <li>Initialization / Startup.</li>
+                <li>Run.</li>
+                <li>Sleep hoặc Low Power.</li>
+                <li>Wake-up.</li>
+                <li>Shutdown.</li>
+            </ol>
+
+            <pre><code>+----------+
+| Power On |
++----+-----+
+     |
+     v
++----------+
+| Startup  |
++----+-----+
+     |
+     v
++----------+
+|   Run    |
++----+-----+
+     |
+     +--------------+
+     |              |
+     v              v
++----------+    +----------+
+|  Sleep   |    | Shutdown |
++----+-----+    +----+-----+
+     |               |
+     | Wake-up       v
+     |            Power Off
+     v
++----------+
+|   Run    |
++----------+
+</code></pre>
+
+            <h2>4. Startup là gì?</h2>
+
+            <p>
+                Startup là quá trình ECU chuyển từ trạng thái chưa hoạt động
+                sang trạng thái có thể thực thi Application và các chức năng
+                của hệ thống.
+            </p>
+
+            <p>
+                Có thể hình dung:
+            </p>
+
+            <pre><code>Power On
+   |
+   v
+MCU Start
+   |
+   v
+Basic Software Initialization
+   |
+   v
+OS Start
+   |
+   v
+System Services Ready
+   |
+   v
+Communication / Memory Ready
+   |
+   v
+Application Ready
+   |
+   v
+Run
+</code></pre>
+
+            <p>
+                Trình tự thực tế có thể phức tạp hơn và phụ thuộc vào
+                kiến trúc ECU.
+            </p>
+
+            <h2>5. Startup không chỉ là "chạy main()"</h2>
+
+            <p>
+                Trong một hệ thống embedded đơn giản, chúng ta có thể hình dung:
+            </p>
+
+            <pre><code>main()
+  |
+  v
+initialize()
+  |
+  v
+while(1)
+</code></pre>
+
+            <p>
+                Nhưng trong AUTOSAR, startup bao gồm nhiều lớp và module.
+            </p>
+
+            <pre><code>Startup
+   |
+   +---- MCU / Hardware Initialization
+   |
+   +---- MCAL Initialization
+   |
+   +---- BSW Initialization
+   |
+   +---- OS Initialization
+   |
+   +---- System Services
+   |
+   +---- Communication
+   |
+   +---- Memory
+   |
+   +---- Application
+</code></pre>
+
+            <p>
+                Vì vậy khi phân tích ECU startup, cần nhìn toàn bộ
+                Software Stack thay vì chỉ nhìn Application.
+            </p>
+
+            <h2>6. Initialization của BSW</h2>
+
+            <p>
+                Basic Software chứa rất nhiều module cần được khởi tạo.
+            </p>
+
+            <pre><code>BSW Initialization
+       |
+       +---- MCAL
+       |
+       +---- ECU Abstraction
+       |
+       +---- Communication
+       |
+       +---- Memory
+       |
+       +---- Diagnostic
+       |
+       +---- System Services
+       |
+       +---- OS
+</code></pre>
+
+            <p>
+                Mục tiêu là đưa hệ thống vào trạng thái mà các module
+                cần thiết có thể hoạt động ổn định.
+            </p>
+
+            <h2>7. Khi nào Application được chạy?</h2>
+
+            <p>
+                Application không nên được coi là đã sẵn sàng ngay khi
+                ECU vừa được cấp nguồn.
+            </p>
+
+            <p>
+                Một số nền tảng phía dưới phải được chuẩn bị trước.
+            </p>
+
+            <pre><code>Power On
+   |
+   v
+Hardware Ready
+   |
+   v
+MCAL Ready
+   |
+   v
+OS Ready
+   |
+   v
+BSW Services Ready
+   |
+   v
+RTE Ready
+   |
+   v
+Application Ready
+</code></pre>
+
+            <p>
+                Điều này giải thích tại sao ECU State Management và RTE/BSW
+                có quan hệ chặt chẽ với nhau.
+            </p>
+
+            <h2>8. Run State</h2>
+
+            <p>
+                Run là trạng thái ECU đang thực hiện các chức năng chính.
+            </p>
+
+            <pre><code>+-----------------------------+
+|            RUN              |
+|                             |
+| Application                 |
+| Communication              |
+| Diagnostics                |
+| Memory Services            |
+| OS Tasks                   |
+| Watchdog                   |
++-----------------------------+
+</code></pre>
+
+            <p>
+                Trong trạng thái này, các SWC và BSW module được thực thi
+                theo cấu hình và yêu cầu của hệ thống.
+            </p>
+
+            <h2>9. Sleep State</h2>
+
+            <p>
+                Với một số ECU, khi không cần hoạt động đầy đủ, hệ thống có thể
+                chuyển sang trạng thái Sleep hoặc Low Power.
+            </p>
+
+            <p>
+                Mục tiêu chính là giảm mức tiêu thụ năng lượng.
+            </p>
+
+            <pre><code>RUN
+ |
+ | No longer needed
+ v
+Sleep
+ |
+ | Reduced activity
+ v
+Low Power
+</code></pre>
+
+            <p>
+                Trong Sleep, không phải tất cả Software Component đều tiếp tục
+                hoạt động giống như khi Run.
+            </p>
+
+            <h2>10. Wake-up</h2>
+
+            <p>
+                ECU có thể cần thức dậy khi xảy ra một sự kiện.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Nhận tín hiệu từ CAN.</li>
+                <li>Thay đổi trạng thái hệ thống.</li>
+                <li>Tín hiệu từ một Hardware input.</li>
+                <li>Timer hoặc sự kiện hệ thống.</li>
+            </ul>
+
+            <pre><code>Sleep
+  |
+  | Wake-up Event
+  v
+Wake-up Handling
+  |
+  v
+Initialize / Restore
+  |
+  v
+Run
+</code></pre>
+
+            <h2>11. Shutdown</h2>
+
+            <p>
+                Shutdown là quá trình ECU chuyển từ trạng thái hoạt động
+                sang trạng thái không hoạt động hoặc chuẩn bị mất nguồn.
+            </p>
+
+            <pre><code>Run
+ |
+ v
+Shutdown Request
+ |
+ +---- Stop Application activities
+ |
+ +---- Finish required Communication
+ |
+ +---- Save persistent data
+ |
+ +---- Stop Services
+ |
+ v
+Power Off / Sleep
+</code></pre>
+
+            <p>
+                Shutdown không đơn giản là tắt CPU ngay lập tức.
+                Một số dữ liệu hoặc trạng thái có thể cần được xử lý trước.
+            </p>
+
+            <h2>12. ECU State Management</h2>
+
+            <p>
+                ECU State Management có nhiệm vụ điều phối các trạng thái
+                của ECU và các chuyển đổi giữa chúng.
+            </p>
+
+            <pre><code>              ECU State Management
+                       |
+          +------------+------------+
+          |            |            |
+          v            v            v
+       Startup        Run       Shutdown
+                       |
+                       v
+                    Sleep
+                       |
+                       v
+                    Wake-up
+</code></pre>
+
+            <p>
+                Nó không thay thế tất cả các System Services.
+                Thay vào đó, nó phối hợp với chúng.
+            </p>
+
+            <h2>13. ECU State Management và BSW</h2>
+
+            <p>
+                ECU State Management tương tác với nhiều BSW module.
+            </p>
+
+            <pre><code>              ECU State Management
+                       |
+        +--------------+--------------+
+        |              |              |
+        v              v              v
+      OS          Communication     Memory
+        |              |              |
+        +--------------+--------------+
+                       |
+                       v
+                  Application
+</code></pre>
+
+            <p>
+                Ví dụ, khi chuyển sang Shutdown, Memory có thể cần hoàn tất
+                việc lưu dữ liệu trước khi ECU thực sự tắt.
+            </p>
+
+            <h2>14. ECU State và RTE</h2>
+
+            <p>
+                RTE là cầu nối giữa Application và BSW.
+                Vì vậy trạng thái của ECU ảnh hưởng đến khả năng hoạt động
+                của Application.
+            </p>
+
+            <pre><code>ECU State
+    |
+    v
+System Ready?
+    |
+    v
+RTE
+    |
+    v
+Application
+</code></pre>
+
+            <p>
+                Một SWC chỉ nên thực hiện các chức năng phù hợp với trạng thái
+                hệ thống hiện tại.
+            </p>
+
+            <h2>15. System Services là gì?</h2>
+
+            <p>
+                System Services là nhóm dịch vụ nền cung cấp các chức năng
+                dùng chung cho nhiều thành phần trong ECU.
+            </p>
+
+            <p>
+                Một số nhóm quan trọng:
+            </p>
+
+            <ul>
+                <li>Operating System.</li>
+                <li>Watchdog.</li>
+                <li>ECU State Management.</li>
+                <li>Diagnostic Services.</li>
+                <li>Communication Services.</li>
+                <li>Memory Services.</li>
+                <li>Time-related Services.</li>
+                <li>Development / Error Handling Services.</li>
+            </ul>
+
+            <h2>16. Tại sao cần System Services?</h2>
+
+            <p>
+                Nếu mỗi Application tự triển khai các chức năng nền như
+                scheduling, watchdog, memory management và error handling,
+                phần mềm sẽ bị trùng lặp và khó quản lý.
+            </p>
+
+            <pre><code>Without System Services:
+
+SWC A -> Own Timer
+SWC B -> Own Scheduler
+SWC C -> Own Error Handling
+SWC D -> Own Watchdog Logic
+
+        |
+        v
+
+Complexity tăng
+</code></pre>
+
+            <p>
+                System Services cung cấp các chức năng dùng chung:
+            </p>
+
+            <pre><code>             System Services
+                    |
+       +------------+------------+
+       |            |            |
+       v            v            v
+      SWC A        SWC B        SWC C
+</code></pre>
+
+            <h2>17. Operating System</h2>
+
+            <p>
+                OS là một trong những System Services quan trọng nhất
+                trong AUTOSAR Classic.
+            </p>
+
+            <p>
+                OS cung cấp nền tảng để quản lý việc thực thi các Task,
+                scheduling, timing và các cơ chế đồng bộ.
+            </p>
+
+            <pre><code>                 OS
+                  |
+       +----------+----------+
+       |          |          |
+       v          v          v
+    Task A     Task B     Task C
+       |          |          |
+       v          v          v
+     SWC /      SWC /      BSW /
+     BSW        BSW        Services
+</code></pre>
+
+            <h2>18. Task là gì?</h2>
+
+            <p>
+                Task là đơn vị thực thi được OS quản lý.
+            </p>
+
+            <p>
+                Một Task có thể thực hiện một hoặc nhiều hoạt động theo
+                cấu hình của hệ thống.
+            </p>
+
+            <pre><code>OS
+ |
+ +---- Task 1
+ |       |
+ |       +---- Runnable A
+ |
+ +---- Task 2
+ |       |
+ |       +---- Runnable B
+ |
+ +---- Task 3
+         |
+         +---- BSW processing
+</code></pre>
+
+            <p>
+                Điều này liên kết trực tiếp với khái niệm Runnable đã học
+                trong Application Software.
+            </p>
+
+            <h2>19. OS và Runnable</h2>
+
+            <p>
+                Application Runnable không tự chạy độc lập.
+                Một cơ chế scheduling phải kích hoạt nó.
+            </p>
+
+            <pre><code>Timing Event
+     |
+     v
+RTE
+     |
+     v
+OS Scheduling
+     |
+     v
+Task
+     |
+     v
+Runnable
+     |
+     v
+Application Code
+</code></pre>
+
+            <p>
+                Vì vậy có thể nhìn mối quan hệ:
+            </p>
+
+            <pre><code>ECU State
+    |
+    v
+OS
+    |
+    v
+Task
+    |
+    v
+Runnable
+    |
+    v
+SWC
+</code></pre>
+
+            <h2>20. OS và Priority</h2>
+
+            <p>
+                Khi nhiều Task cần chạy, hệ thống cần có cơ chế quyết định
+                Task nào được thực thi trước.
+            </p>
+
+            <pre><code>Task A   Priority = High
+Task B   Priority = Medium
+Task C   Priority = Low
+</code></pre>
+
+            <p>
+                Priority là một phần quan trọng của scheduling.
+                Task quan trọng hoặc có yêu cầu thời gian nghiêm ngặt
+                có thể cần được ưu tiên phù hợp.
+            </p>
+
+            <h2>21. Timing và OS</h2>
+
+            <p>
+                Embedded System thường có yêu cầu timing rõ ràng.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>Runnable A -> every 10 ms
+Runnable B -> every 100 ms
+Runnable C -> event triggered
+</code></pre>
+
+            <p>
+                OS và các cơ chế timing giúp đảm bảo các hoạt động này
+                được kích hoạt theo kiến trúc của hệ thống.
+            </p>
+
+            <h2>22. Watchdog</h2>
+
+            <p>
+                Watchdog là cơ chế giúp phát hiện trường hợp Software
+                không còn hoạt động đúng như mong đợi.
+            </p>
+
+            <p>
+                Ý tưởng đơn giản:
+            </p>
+
+            <pre><code>Software
+   |
+   | Periodically alive
+   v
+Watchdog
+   |
+   +---- Alive -> Continue
+   |
+   +---- No response -> Fault Handling
+</code></pre>
+
+            <p>
+                Nếu phần mềm bị treo hoặc không thực hiện được một hoạt động
+                cần thiết, Watchdog có thể phát hiện tình trạng bất thường
+                và hệ thống có thể thực hiện một hành động phục hồi phù hợp.
+            </p>
+
+            <h2>23. Watchdog và Safety</h2>
+
+            <p>
+                Trong automotive, việc phát hiện Software Failure rất quan trọng.
+                Watchdog là một trong những cơ chế hỗ trợ giám sát hoạt động
+                của ECU.
+            </p>
+
+            <p>
+                Có thể hình dung:
+            </p>
+
+            <pre><code>Application / OS
+       |
+       | Healthy?
+       v
+   Watchdog
+       |
+   +---+---+
+   |       |
+   v       v
+ OK      Failure
+           |
+           v
+      Recovery Action
+</code></pre>
+
+            <p>
+                Cơ chế phục hồi cụ thể phụ thuộc vào thiết kế hệ thống.
+            </p>
+
+            <h2>24. Diagnostic Services</h2>
+
+            <p>
+                Diagnostic Services cung cấp các chức năng giúp phát hiện,
+                lưu trữ và xử lý thông tin liên quan đến lỗi của ECU.
+            </p>
+
+            <pre><code>System
+  |
+  | Fault
+  v
+Diagnostic
+  |
+  +---- Detect
+  |
+  +---- Record
+  |
+  +---- Report
+  |
+  +---- Clear / Recover
+</code></pre>
+
+            <p>
+                Diagnostic có thể liên quan đến Application, BSW,
+                Communication và Memory.
+            </p>
+
+            <h2>25. Diagnostic Event</h2>
+
+            <p>
+                Một lỗi trong hệ thống có thể được biểu diễn như một
+                Diagnostic Event.
+            </p>
+
+            <pre><code>Sensor Failure
+      |
+      v
+Application / BSW
+      |
+      v
+Diagnostic Event
+      |
+      v
+Diagnostic Management
+</code></pre>
+
+            <p>
+                Diagnostic system sau đó có thể quản lý trạng thái của event
+                theo yêu cầu của hệ thống.
+            </p>
+
+            <h2>26. Diagnostic và Memory</h2>
+
+            <p>
+                Một số thông tin diagnostic có thể cần được lưu persistent.
+            </p>
+
+            <pre><code>Fault Event
+    |
+    v
+Diagnostic
+    |
+    v
+Persistent Data
+    |
+    v
+NvM
+    |
+    v
+NVRAM
+</code></pre>
+
+            <p>
+                Đây là một ví dụ rõ ràng về việc nhiều System Services
+                phối hợp với nhau.
+            </p>
+
+            <h2>27. Diagnostic và Communication</h2>
+
+            <p>
+                Diagnostic Tester có thể giao tiếp với ECU thông qua
+                một Communication Network.
+            </p>
+
+            <pre><code>Diagnostic Tester
+       |
+       v
+Communication Bus
+       |
+       v
+Communication Stack
+       |
+       v
+Diagnostic Stack
+       |
+       v
+ECU Services
+</code></pre>
+
+            <p>
+                Vì vậy Diagnostic, Communication và ECU State Management
+                có thể cùng tham gia vào một diagnostic operation.
+            </p>
+
+            <h2>28. Time Services</h2>
+
+            <p>
+                Nhiều chức năng ECU cần biết thời gian hoặc khoảng thời gian
+                giữa các sự kiện.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>Timeout.</li>
+                <li>Periodic execution.</li>
+                <li>Communication timeout.</li>
+                <li>Monitoring interval.</li>
+                <li>Diagnostic timing.</li>
+            </ul>
+
+            <pre><code>Event A
+   |
+   | Start Timer
+   v
+[ Timer ]
+   |
+   | Timeout
+   v
+Event B
+</code></pre>
+
+            <p>
+                Time-related mechanisms có thể được cung cấp bởi nhiều
+                thành phần khác nhau của hệ thống.
+            </p>
+
+            <h2>29. Error Handling</h2>
+
+            <p>
+                System Services cũng liên quan đến việc phát hiện và xử lý
+                các lỗi phần mềm.
+            </p>
+
+            <pre><code>Software Error
+      |
+      v
+Error Detection
+      |
+      v
+Error Handling
+      |
+      +---- Log
+      |
+      +---- Diagnostic
+      |
+      +---- Recovery
+      |
+      +---- Safe State
+</code></pre>
+
+            <p>
+                Mục tiêu không chỉ là phát hiện lỗi mà còn đưa hệ thống
+                về trạng thái phù hợp.
+            </p>
+
+            <h2>30. Safe State</h2>
+
+            <p>
+                Trong một số trường hợp lỗi nghiêm trọng, ECU có thể cần
+                chuyển chức năng liên quan sang một trạng thái an toàn.
+            </p>
+
+            <pre><code>Normal Operation
+       |
+       v
+Fault Detected
+       |
+       v
+Evaluate Fault
+       |
+       v
+Safe State
+</code></pre>
+
+            <p>
+                Safe State cụ thể phụ thuộc vào chức năng của ECU.
+                Không phải mọi lỗi đều dẫn tới việc toàn bộ ECU shutdown.
+            </p>
+
+            <h2>31. ECU State và Communication</h2>
+
+            <p>
+                Communication cũng có thể thay đổi theo ECU State.
+            </p>
+
+            <pre><code>                 ECU State
+                     |
+        +------------+------------+
+        |            |            |
+        v            v            v
+     Startup        Run         Sleep
+        |            |            |
+        v            v            v
+ Communication  Communication  Reduced /
+ Initialization    Active       Disabled
+</code></pre>
+
+            <p>
+                Ví dụ, khi ECU Sleep, không phải tất cả Communication
+                activities đều tiếp tục hoạt động giống như Run.
+            </p>
+
+            <h2>32. ECU State và Memory</h2>
+
+            <p>
+                Memory cũng có hành vi khác nhau tùy trạng thái.
+            </p>
+
+            <pre><code>Startup
+   |
+   v
+Read Persistent Data
+   |
+   v
+Run
+   |
+   v
+Update Runtime Data
+   |
+   v
+Shutdown
+   |
+   v
+Save Persistent Data
+</code></pre>
+
+            <p>
+                Đây là mối liên hệ trực tiếp giữa Bài 17 và bài học hiện tại.
+            </p>
+
+            <h2>33. ECU State và Watchdog</h2>
+
+            <p>
+                Watchdog cũng cần được quản lý phù hợp với trạng thái ECU.
+            </p>
+
+            <pre><code>Startup
+   |
+   v
+Initialize Watchdog
+   |
+   v
+Run
+   |
+   v
+Periodic Monitoring
+   |
+   +---- Fault
+   |       |
+   |       v
+   |    Recovery
+   |
+   v
+Shutdown
+</code></pre>
+
+            <p>
+                Không nên hiểu rằng Watchdog luôn hoạt động theo đúng một cách
+                trong mọi trạng thái của ECU.
+            </p>
+
+            <h2>34. Một ECU State Transition hoàn chỉnh</h2>
+
+            <p>
+                Hãy xét một ECU bắt đầu từ Power On:
+            </p>
+
+            <pre><code>1. Power On
+      |
+      v
+2. Startup
+      |
+      +---- Initialize MCU
+      |
+      +---- Initialize MCAL
+      |
+      +---- Initialize BSW
+      |
+      +---- Start OS
+      |
+      +---- Initialize Services
+      |
+      v
+3. Run
+      |
+      +---- Application active
+      +---- Communication active
+      +---- Diagnostic active
+      |
+      v
+4. Sleep Request
+      |
+      v
+5. Sleep
+      |
+      | Wake-up event
+      v
+6. Wake-up
+      |
+      v
+7. Run
+      |
+      | Shutdown request
+      v
+8. Shutdown
+      |
+      v
+9. Power Off
+</code></pre>
+
+            <h2>35. Ví dụ: ECU điều khiển đèn</h2>
+
+            <p>
+                Giả sử một Body ECU điều khiển hệ thống đèn.
+            </p>
+
+            <h3>Startup</h3>
+
+            <pre><code>Power On
+   |
+   v
+Initialize ECU
+   |
+   v
+Initialize I/O
+   |
+   v
+Initialize Communication
+   |
+   v
+Application Ready
+</code></pre>
+
+            <h3>Run</h3>
+
+            <pre><code>Application
+   |
+   +---- Read switch status
+   |
+   +---- Receive CAN command
+   |
+   +---- Control lamp
+   |
+   +---- Monitor faults
+</code></pre>
+
+            <h3>Shutdown</h3>
+
+            <pre><code>Shutdown Request
+   |
+   +---- Finish required operations
+   |
+   +---- Save necessary data
+   |
+   +---- Stop services
+   |
+   v
+Sleep / Power Off
+</code></pre>
+
+            <h2>36. Ví dụ: ECU nhận CAN Wake-up</h2>
+
+            <p>
+                Một ECU đang ở trạng thái Sleep có thể nhận một sự kiện
+                wake-up phù hợp.
+            </p>
+
+            <pre><code>Sleep
+  |
+  | CAN Wake-up Event
+  v
+Wake-up Detection
+  |
+  v
+ECU State Management
+  |
+  v
+Initialize / Resume Services
+  |
+  v
+Communication Ready
+  |
+  v
+Application Running
+</code></pre>
+
+            <p>
+                Đây là ví dụ cho thấy Communication Hardware và ECU State
+                có thể phối hợp với nhau.
+            </p>
+
+            <h2>37. Startup Failure</h2>
+
+            <p>
+                Nếu một thành phần quan trọng không khởi tạo được,
+                ECU có thể không đi tới Run State bình thường.
+            </p>
+
+            <pre><code>Startup
+   |
+   v
+Initialize BSW
+   |
+   X
+Critical Service Failed
+   |
+   v
+Error Handling
+   |
+   +---- Retry
+   |
+   +---- Diagnostic
+   |
+   +---- Safe State
+   |
+   +---- Controlled Shutdown
+</code></pre>
+
+            <p>
+                Hành động cụ thể phụ thuộc vào yêu cầu của hệ thống.
+            </p>
+
+            <h2>38. Debugging khi ECU không vào Run State</h2>
+
+            <p>
+                Nếu ECU không thể chuyển sang Run, có thể kiểm tra theo thứ tự:
+            </p>
+
+            <ol>
+                <li>Power và Hardware có hoạt động không?</li>
+                <li>MCU có khởi động không?</li>
+                <li>MCAL có initialize thành công không?</li>
+                <li>OS có start không?</li>
+                <li>Các BSW Services quan trọng có sẵn sàng không?</li>
+                <li>Communication có initialize thành công không?</li>
+                <li>Memory initialization có thành công không?</li>
+                <li>RTE có sẵn sàng không?</li>
+                <li>Application có được phép chạy không?</li>
+                <li>ECU State Management có nhận được điều kiện chuyển trạng thái không?</li>
+            </ol>
+
+            <h2>39. Debugging khi ECU liên tục reset</h2>
+
+            <p>
+                Một ECU liên tục reset có thể có nhiều nguyên nhân.
+            </p>
+
+            <pre><code>ECU Start
+   |
+   v
+Run
+   |
+   v
+Fault
+   |
+   v
+Reset
+   |
+   v
+Startup
+   |
+   v
+Run
+   |
+   v
+Fault
+   |
+   v
+Reset
+   |
+  ...
+</code></pre>
+
+            <p>
+                Các khả năng cần xem xét có thể bao gồm:
+            </p>
+
+            <ul>
+                <li>Watchdog timeout.</li>
+                <li>Software exception.</li>
+                <li>Memory problem.</li>
+                <li>Hardware problem.</li>
+                <li>Initialization failure.</li>
+                <li>System state transition không đúng.</li>
+            </ul>
+
+            <p>
+                Không nên mặc định rằng nguyên nhân là Watchdog chỉ vì
+                ECU đang reset.
+            </p>
+
+            <h2>40. Debugging khi ECU không Wake-up</h2>
+
+            <p>
+                Nếu ECU đang Sleep nhưng không thức dậy như mong đợi,
+                có thể phân tích:
+            </p>
+
+            <pre><code>Wake-up Event
+      |
+      v
+Hardware Detection
+      |
+      v
+MCAL / Driver
+      |
+      v
+ECU State Management
+      |
+      v
+System Services
+      |
+      v
+Run State
+</code></pre>
+
+            <p>
+                Cần xác định event có xuất hiện hay không và nó dừng
+                ở boundary nào.
+            </p>
+
+            <h2>41. System Services và Separation of Concerns</h2>
+
+            <p>
+                Mỗi System Service có một vai trò riêng.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Vai trò chính</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ECU State Management</td>
+                        <td>Quản lý trạng thái và chuyển trạng thái ECU</td>
+                    </tr>
+                    <tr>
+                        <td>OS</td>
+                        <td>Scheduling và quản lý thực thi</td>
+                    </tr>
+                    <tr>
+                        <td>Watchdog</td>
+                        <td>Giám sát hoạt động của Software</td>
+                    </tr>
+                    <tr>
+                        <td>Diagnostic</td>
+                        <td>Phát hiện và quản lý thông tin lỗi</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Services</td>
+                        <td>Quản lý dữ liệu persistent</td>
+                    </tr>
+                    <tr>
+                        <td>Communication Services</td>
+                        <td>Hỗ trợ trao đổi dữ liệu</td>
+                    </tr>
+                    <tr>
+                        <td>Time Services</td>
+                        <td>Hỗ trợ timing và timeout</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>42. System Services không phải Application Logic</h2>
+
+            <p>
+                Một lỗi phổ biến là đưa quá nhiều logic chức năng vào
+                System Services.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <pre><code>Không nên:
+
+OS
+ |
+ +---- Decide whether headlights should turn on
+</code></pre>
+
+            <p>
+                Quyết định chức năng như đèn có bật hay không thuộc về
+                Application logic.
+            </p>
+
+            <p>
+                OS cung cấp nền tảng để Application được thực thi đúng cách.
+            </p>
+
+            <h2>43. System Services và Application</h2>
+
+            <p>
+                Application sử dụng System Services thay vì tự xây dựng
+                toàn bộ chức năng nền.
+            </p>
+
+            <pre><code>Application
+    |
+    +---- uses OS
+    |
+    +---- uses Communication
+    |
+    +---- uses Memory
+    |
+    +---- uses Diagnostic
+    |
+    +---- uses Timing
+    |
+    v
+System Services
+</code></pre>
+
+            <p>
+                Đây là một trong những nguyên tắc giúp AUTOSAR tăng khả năng
+                tái sử dụng và chuẩn hóa Software.
+            </p>
+
+            <h2>44. Quan hệ giữa ECU State và các Stack</h2>
+
+            <p>
+                ECU State Management không hoạt động độc lập.
+                Nó liên kết với nhiều Stack đã học.
+            </p>
+
+            <pre><code>                    ECU State
+                        |
+       +----------------+----------------+
+       |                |                |
+       v                v                v
+Communication        Memory            OS
+       |                |                |
+       v                v                v
+   CAN/LIN/ETH       NvM/Flash        Tasks
+       |                |                |
+       +----------------+----------------+
+                        |
+                        v
+                    Application
+</code></pre>
+
+            <h2>45. Một ví dụ tổng hợp</h2>
+
+            <p>
+                Xét một ECU nhận lệnh qua CAN, xử lý trong Application,
+                lưu trạng thái và sau đó chuyển sang Sleep.
+            </p>
+
+            <h3>Bước 1 - Startup</h3>
+
+            <pre><code>Power On
+   |
+   v
+ECU State Management
+   |
+   +---- Initialize OS
+   +---- Initialize Communication
+   +---- Initialize Memory
+   |
+   v
+Run
+</code></pre>
+
+            <h3>Bước 2 - Receive CAN</h3>
+
+            <pre><code>CAN Bus
+   |
+   v
+Communication Stack
+   |
+   v
+RTE
+   |
+   v
+Application
+</code></pre>
+
+            <h3>Bước 3 - Process Command</h3>
+
+            <pre><code>Application
+   |
+   v
+Process Command
+   |
+   v
+Update State
+</code></pre>
+
+            <h3>Bước 4 - Save State</h3>
+
+            <pre><code>Application
+   |
+   v
+NvM
+   |
+   v
+Memory Stack
+   |
+   v
+NVRAM
+</code></pre>
+
+            <h3>Bước 5 - Sleep</h3>
+
+            <pre><code>Run
+ |
+ v
+Sleep Request
+ |
+ v
+ECU State Management
+ |
+ v
+Sleep
+</code></pre>
+
+            <h3>Bước 6 - Wake-up</h3>
+
+            <pre><code>Wake-up Event
+     |
+     v
+ECU State Management
+     |
+     v
+Communication / Services
+     |
+     v
+Application
+     |
+     v
+Run
+</code></pre>
+
+            <p>
+                Ví dụ này kết nối trực tiếp các bài học về Application,
+                RTE, Communication Stack, Memory Stack và System Services
+                thành một flow hoàn chỉnh.
+            </p>
+
+            <h2>46. Checklist phân tích ECU State</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>Nội dung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>ECU đang ở State nào?</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>State tiếp theo là gì?</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Điều kiện chuyển State là gì?</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>BSW nào tham gia vào transition?</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Communication đang ở trạng thái nào?</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Memory có cần đọc hoặc ghi dữ liệu không?</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>OS và Task đã sẵn sàng chưa?</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Watchdog đang được quản lý như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Application đã được phép chạy chưa?</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Nếu transition thất bại, hệ thống xử lý thế nào?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>47. Checklist phân tích System Services</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Câu hỏi cần đặt ra</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>OS</td>
+                        <td>Task/Runnable nào được scheduling?</td>
+                    </tr>
+                    <tr>
+                        <td>Watchdog</td>
+                        <td>ECU phát hiện Software failure như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Diagnostic</td>
+                        <td>Lỗi được detect và quản lý như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Memory</td>
+                        <td>Dữ liệu nào cần persistent?</td>
+                    </tr>
+                    <tr>
+                        <td>Communication</td>
+                        <td>ECU trao đổi dữ liệu qua network như thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>Time</td>
+                        <td>Timing và timeout được quản lý thế nào?</td>
+                    </tr>
+                    <tr>
+                        <td>ECU State</td>
+                        <td>ECU chuyển giữa các trạng thái như thế nào?</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>48. Các khái niệm cần nhớ</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ECU State</td>
+                        <td>Trạng thái hoạt động hiện tại của ECU</td>
+                    </tr>
+                    <tr>
+                        <td>Startup</td>
+                        <td>Quá trình đưa ECU từ Power On đến trạng thái sẵn sàng</td>
+                    </tr>
+                    <tr>
+                        <td>Run</td>
+                        <td>Trạng thái ECU thực hiện chức năng chính</td>
+                    </tr>
+                    <tr>
+                        <td>Sleep</td>
+                        <td>Trạng thái giảm hoạt động để tiết kiệm năng lượng</td>
+                    </tr>
+                    <tr>
+                        <td>Wake-up</td>
+                        <td>Quá trình đưa ECU từ Sleep trở lại hoạt động</td>
+                    </tr>
+                    <tr>
+                        <td>Shutdown</td>
+                        <td>Quá trình ECU dừng hoạt động có kiểm soát</td>
+                    </tr>
+                    <tr>
+                        <td>ECU State Management</td>
+                        <td>Điều phối ECU State và State Transition</td>
+                    </tr>
+                    <tr>
+                        <td>OS</td>
+                        <td>Quản lý Task và scheduling</td>
+                    </tr>
+                    <tr>
+                        <td>Watchdog</td>
+                        <td>Giám sát hoạt động của Software</td>
+                    </tr>
+                    <tr>
+                        <td>Diagnostic</td>
+                        <td>Phát hiện và quản lý thông tin lỗi</td>
+                    </tr>
+                    <tr>
+                        <td>System Services</td>
+                        <td>Các dịch vụ nền dùng chung cho ECU</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>49. Tóm tắt</h2>
+
+            <div class="note">
+
+                <p>
+                    ECU State và System Services chịu trách nhiệm tạo ra
+                    nền tảng vận hành cho toàn bộ ECU. ECU không chỉ đơn giản
+                    là chạy Application liên tục mà phải quản lý nhiều trạng thái
+                    như Startup, Run, Sleep, Wake-up và Shutdown.
+                </p>
+
+                <p>
+                    Một flow đơn giản:
+                </p>
+
+                <pre><code>Power On
+    -> Startup
+    -> Run
+    -> Sleep
+    -> Wake-up
+    -> Run
+    -> Shutdown
+    -> Power Off
+</code></pre>
+
+                <p>
+                    Trong quá trình đó, ECU State Management phối hợp với
+                    nhiều System Services:
+                </p>
+
+                <pre><code>                    ECU State Management
+                             |
+       +---------------------+---------------------+
+       |          |          |          |          |
+       v          v          v          v          v
+      OS      Watchdog   Diagnostic  Memory   Communication
+       |          |          |          |          |
+       +----------+----------+----------+----------+
+                             |
+                             v
+                        Application
+</code></pre>
+
+                <p>
+                    Ba ý quan trọng cần nhớ:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>ECU State Management</strong> điều phối vòng đời
+                        và trạng thái hoạt động của ECU.
+                    </li>
+                    <li>
+                        <strong>System Services</strong> cung cấp các chức năng
+                        nền dùng chung như OS, Watchdog, Diagnostic, Memory,
+                        Communication và Timing.
+                    </li>
+                    <li>
+                        Các System Services không thay thế Application Logic;
+                        chúng cung cấp nền tảng để Application và BSW hoạt động
+                        đúng, ổn định và có tổ chức.
+                    </li>
+                </ul>
+
+                <p>
+                    Khi phân tích một ECU, hãy luôn đặt câu hỏi:
+                    ECU đang ở State nào, State tiếp theo là gì, điều kiện
+                    chuyển State là gì và những System Services nào tham gia
+                    vào quá trình đó.
+                </p>
+
+            </div>
+
+            <div class="pager">
+                <a href="lesson-17.html">← Bài trước</a>
+                <a href="lesson-19.html">Bài tiếp theo →</a>
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>

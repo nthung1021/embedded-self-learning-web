@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 9: CAN-COM Stack | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+                <a href="lesson-1.html">Bài 1: Định nghĩa CAN</a>
+                <a href="lesson-2.html">Bài 2: Cấu trúc vật lý của CAN</a>
+                <a href="lesson-3.html">Bài 3: Các loại CAN Frame</a>
+                <a href="lesson-4.html">Bài 4: CAN-FD và Classic CAN</a>
+                <a href="lesson-5.html">Bài 5: ID Tiêu chuẩn và ID mở rộng</a>
+                <a href="lesson-6.html">Bài 6: Bus Arbitration</a>
+                <a href="lesson-7.html">Bài 7: Bit Stuffing</a>
+                <a href="lesson-8.html">Bài 8: AUTOSAR CAN-Driver</a>
+                <a href="lesson-9.html" class="active">Bài 9: CAN-COM Stack</a>
+                <a href="lesson-10.html">Bài 10: CAN-Driver Scope</a>
+                <a href="lesson-11.html">Bài 11: AUTOSAR_SRS_CAN</a>
+                <a href="lesson-12.html">Bài 12: AUTOSAR_SWS_CANDriver</a>
+                <a href="lesson-13.html">Bài 13: CAN Interact/Depend Modules</a>
+                <a href="lesson-14.html">Bài 14: CAN - MCU/PORT/INTC Modules</a>
+                <a href="lesson-15.html">Bài 15: CAN-IF, EcuM, OS, SchM</a>
+                <a href="lesson-16.html">Bài 16: DET và DEM</a>
+                <a href="lesson-17.html">Bài 17: Init và DeInit</a>
+                <a href="lesson-18.html">Bài 18: State Machine</a>
+                <a href="lesson-19.html">Bài 19: Transmission và Reception</a>
+                <a href="lesson-20.html">Bài 20: Sleep và Wake-up</a>
+                <a href="lesson-21.html">Bài 21: Set Baud-rate</a>
+                <a href="lesson-22.html">Bài 22: Theo dõi Bus-Error</a>
+                <a href="lesson-23.html">Bài 23: Bật và Tắt Interrupts</a>
+                <a href="lesson-24.html">Bài 24: Pretended Networking</a>
+                <a href="lesson-25.html">Bài 25: OptoLyzer MOCCA FD</a>
+                <a href="lesson-26.html">Bài 26: CANNM, CANTP và CANTRCV</a>
+                <a href="lesson-27.html">Bài 27: Bus-Off</a>
+                <a href="lesson-28.html">Bài 28: Truyền dữ liệu lớn</a>
+                <a href="lesson-29.html">Bài 29: Topology, Mapping và Communication</a>
+                <a href="lesson-30.html">Bài 30: Harmonize for CAN Stack</a>
+                <a href="index.html">← Tất cả bài học</a>
+            </aside>
+
+            <article>
+                <h1>Bài 9: CAN-COM Stack</h1>
+
+                <p>
+                    Ở Bài 8, chúng ta đã tìm hiểu <strong>CAN Driver (CanDrv)</strong> và cách AUTOSAR
+                    giao tiếp với CAN Controller. Tuy nhiên, trong một ECU thực tế, application không nên
+                    trực tiếp xử lý từng CAN frame ở mức hardware. AUTOSAR cung cấp một
+                    <strong>CAN Communication Stack</strong> gồm nhiều module để biến dữ liệu của application
+                    thành CAN message và xử lý CAN message nhận được.
+                </p>
+
+                <p>
+                    Trong bài này, chúng ta sẽ tập trung vào các thành phần quan trọng nhất của CAN communication
+                    stack: <strong>COM, PduR, CanTp, CanIf và CanDrv</strong>, đồng thời tìm hiểu
+                    <strong>Signal, I-PDU, PDU, N-PDU và CAN frame</strong> liên hệ với nhau như thế nào.
+                </p>
+
+                <div class="note">
+                    Ý tưởng quan trọng nhất của bài:
+                    <strong>Application không cần biết CAN Controller hoạt động như thế nào.</strong>
+                    Các lớp AUTOSAR ở giữa đảm nhiệm việc đóng gói, routing và chuyển đổi dữ liệu
+                    trước khi message thực sự đi lên CAN bus.
+                </div>
+
+                <h2>1. CAN Communication Stack là gì?</h2>
+
+                <p>
+                    Trong AUTOSAR Classic Platform, communication stack cung cấp các module phục vụ
+                    việc giao tiếp giữa ECU và mạng trong xe. AUTOSAR phân tách communication stack thành
+                    các tầng có mức abstraction khác nhau, giúp application ít phụ thuộc vào communication
+                    hardware cụ thể.
+                </p>
+
+                <svg viewBox="0 0 640 390" role="img" aria-label="Kiến trúc CAN Communication Stack trong AUTOSAR"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="120" y="15" width="400" height="48" fill="rgba(224,168,0,.25)" />
+                        <rect x="120" y="75" width="400" height="48" fill="rgba(46,139,87,.28)" />
+                        <rect x="120" y="135" width="400" height="48" fill="rgba(160,120,190,.25)" />
+                        <rect x="120" y="195" width="400" height="48" fill="rgba(70,130,180,.25)" />
+                        <rect x="120" y="255" width="400" height="48" fill="rgba(190,120,80,.25)" />
+                        <rect x="120" y="315" width="400" height="48" fill="rgba(120,120,120,.20)" />
+                    </g>
+
+                    <g font-size="13" fill="currentColor" text-anchor="middle">
+                        <text x="320" y="44">Application / SWC</text>
+                        <text x="320" y="104">RTE</text>
+                        <text x="320" y="164">AUTOSAR COM</text>
+                        <text x="320" y="224">PduR / CanTp</text>
+                        <text x="320" y="284">CanIf</text>
+                        <text x="320" y="344">CanDrv → CAN Controller</text>
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="320" y="68">↓</text>
+                        <text x="320" y="128">↓</text>
+                        <text x="320" y="188">↓</text>
+                        <text x="320" y="248">↓</text>
+                        <text x="320" y="308">↓</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Đây là cách nhìn đơn giản hóa. Trong một ECU thực tế, communication stack có thể chứa
+                    nhiều module khác như CAN State Manager, CAN Network Management, Diagnostic Communication
+                    Manager và các transport protocol khác.
+                </p>
+
+                <div class="note">
+                    <strong>CanDrv</strong> thuộc Communication Drivers trong MCAL,
+                    <strong>CanIf</strong> thuộc Communication Hardware Abstraction,
+                    còn <strong>COM và PduR</strong> thuộc các tầng Communication Services.
+                    AUTOSAR định nghĩa rõ sự phân lớp này để tách communication logic khỏi hardware cụ thể.
+                </div>
+
+                <h2>2. Tại sao cần nhiều lớp như vậy?</h2>
+
+                <p>
+                    Hãy tưởng tượng application muốn gửi thông tin tốc độ xe.
+                    Nếu application phải tự biết CAN Controller register, CAN ID, DLC, bit timing
+                    và cách điều khiển hardware, application sẽ phụ thuộc rất chặt vào MCU.
+                </p>
+
+                <p>
+                    Thay vào đó, AUTOSAR chia công việc:
+                </p>
+
+                <ul>
+                    <li><strong>Application:</strong> tạo hoặc sử dụng dữ liệu có ý nghĩa chức năng.</li>
+                    <li><strong>RTE:</strong> cung cấp interface giữa SWC và BSW.</li>
+                    <li><strong>COM:</strong> xử lý communication signal và I-PDU.</li>
+                    <li><strong>PduR:</strong> routing PDU giữa các module.</li>
+                    <li><strong>CanTp:</strong> xử lý CAN transport protocol khi dữ liệu cần truyền nhiều frame.</li>
+                    <li><strong>CanIf:</strong> cung cấp interface thống nhất tới CAN Driver.</li>
+                    <li><strong>CanDrv:</strong> giao tiếp trực tiếp với CAN Controller.</li>
+                </ul>
+
+                <h2>3. Signal là gì?</h2>
+
+                <p>
+                    Ở mức application, chúng ta thường quan tâm đến một giá trị có ý nghĩa,
+                    ví dụ:
+                </p>
+
+                <ul>
+                    <li>Tốc độ động cơ.</li>
+                    <li>Tốc độ xe.</li>
+                    <li>Nhiệt độ động cơ.</li>
+                    <li>Trạng thái công tắc.</li>
+                    <li>Trạng thái đèn.</li>
+                </ul>
+
+                <p>
+                    Những dữ liệu logic này có thể được mô hình hóa dưới dạng
+                    <strong>communication signal</strong>.
+                    Signal không nhất thiết tương ứng với toàn bộ một CAN frame.
+                    Nhiều signal có thể được đóng gói vào cùng một I-PDU.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Signal</th>
+                        <th>Ví dụ</th>
+                        <th>Kích thước minh họa</th>
+                    </tr>
+                    <tr>
+                        <td>VehicleSpeed</td>
+                        <td>Tốc độ xe</td>
+                        <td>16 bit</td>
+                    </tr>
+                    <tr>
+                        <td>EngineSpeed</td>
+                        <td>Tốc độ động cơ</td>
+                        <td>16 bit</td>
+                    </tr>
+                    <tr>
+                        <td>BrakeSwitch</td>
+                        <td>Trạng thái phanh</td>
+                        <td>1 bit</td>
+                    </tr>
+                    <tr>
+                        <td>LightStatus</td>
+                        <td>Trạng thái đèn</td>
+                        <td>2 bit</td>
+                    </tr>
+                </table>
+
+                <h2>4. I-PDU là gì?</h2>
+
+                <p>
+                    <strong>I-PDU (Interaction Layer Protocol Data Unit)</strong> là đơn vị dữ liệu
+                    ở tầng AUTOSAR COM được sử dụng để đóng gói các signal liên quan với nhau.
+                </p>
+
+                <p>
+                    Ví dụ, ECU có thể gom nhiều signal vào một I-PDU:
+                </p>
+
+                <svg viewBox="0 0 700 190" role="img" aria-label="Nhiều signal được đóng gói vào một I-PDU"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="15" y="20" width="150" height="40" fill="rgba(224,168,0,.25)" />
+                        <rect x="15" y="75" width="150" height="40" fill="rgba(224,168,0,.25)" />
+                        <rect x="15" y="130" width="150" height="40" fill="rgba(224,168,0,.25)" />
+
+                        <rect x="260" y="45" width="180" height="100" fill="rgba(46,139,87,.28)" />
+
+                        <rect x="535" y="45" width="145" height="100" fill="rgba(70,130,180,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="90" y="45">VehicleSpeed</text>
+                        <text x="90" y="100">EngineSpeed</text>
+                        <text x="90" y="155">BrakeSwitch</text>
+
+                        <text x="350" y="82">I-PDU</text>
+                        <text x="350" y="103">gồm nhiều</text>
+                        <text x="350" y="124">communication signal</text>
+
+                        <text x="607" y="82">PDU Data</text>
+                        <text x="607" y="103">→ CanIf</text>
+                        <text x="607" y="124">→ CAN frame</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M165 40 L255 75" />
+                        <path d="M165 95 L255 95" />
+                        <path d="M165 150 L255 115" />
+                        <path d="M445 95 L530 95" />
+                    </g>
+                </svg>
+
+                <p>
+                    COM thực hiện các công việc như packing/unpacking signal vào I-PDU,
+                    xử lý các thuộc tính communication của I-PDU và giao tiếp với các module
+                    phía dưới thông qua PDU interface.
+                </p>
+
+                <div class="note">
+                    Đừng nhầm <strong>Signal</strong> với <strong>CAN ID</strong>.
+                    Signal là dữ liệu logic như tốc độ xe; CAN Identifier xác định message trên CAN bus.
+                    Một CAN frame có một Identifier nhưng payload của nó có thể chứa nhiều signal.
+                </div>
+
+                <h2>5. PDU là gì?</h2>
+
+                <p>
+                    Trong AUTOSAR communication stack, thuật ngữ <strong>PDU (Protocol Data Unit)</strong>
+                    được sử dụng ở nhiều tầng. Nội dung và cách diễn giải của PDU phụ thuộc vào layer
+                    đang xét.
+                </p>
+
+                <p>
+                    Vì vậy khi đọc specification, cần chú ý PDU đang được nói tới ở interface nào.
+                    Một cách nhìn đơn giản:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tầng</th>
+                        <th>Đơn vị thường gặp</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>COM</td>
+                        <td>I-PDU</td>
+                        <td>Đóng gói các signal cho communication.</td>
+                    </tr>
+                    <tr>
+                        <td>PduR</td>
+                        <td>PDU</td>
+                        <td>Routing PDU giữa các module.</td>
+                    </tr>
+                    <tr>
+                        <td>CanTp</td>
+                        <td>N-SDU / N-PDU</td>
+                        <td>Đơn vị dữ liệu của transport protocol.</td>
+                    </tr>
+                    <tr>
+                        <td>CanIf</td>
+                        <td>L-PDU</td>
+                        <td>Đơn vị dữ liệu giao tiếp với CAN Driver.</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Đây là cách phân biệt để học stack. Không nên hiểu rằng mỗi PDU luôn là một CAN frame.
+                    Một PDU ở một layer có thể được xử lý hoặc phân mảnh thành các đơn vị khác ở layer khác.
+                </div>
+
+                <h2>6. PduR - PDU Router</h2>
+
+                <p>
+                    <strong>PduR (PDU Router)</strong> chịu trách nhiệm routing PDU giữa các communication
+                    module. Nó không phải là nơi xử lý logic nghiệp vụ của signal và cũng không phải CAN Driver.
+                </p>
+
+                <p>
+                    Ví dụ đơn giản:
+                </p>
+
+                <ul>
+                    <li>COM gửi một I-PDU xuống PduR.</li>
+                    <li>PduR xác định route đã được cấu hình.</li>
+                    <li>PduR chuyển PDU tới CanIf.</li>
+                    <li>CanIf tiếp tục chuyển request tới CanDrv.</li>
+                </ul>
+
+                <svg viewBox="0 0 700 160" role="img" aria-label="PduR định tuyến PDU giữa COM và CanIf"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="15" y="50" width="110" height="55" fill="rgba(224,168,0,.25)" />
+                        <rect x="170" y="50" width="110" height="55" fill="rgba(46,139,87,.28)" />
+                        <rect x="325" y="35" width="150" height="85" fill="rgba(160,120,190,.25)" />
+                        <rect x="520" y="50" width="110" height="55" fill="rgba(70,130,180,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="70" y="82">COM</text>
+                        <text x="225" y="82">I-PDU</text>
+                        <text x="400" y="72">PduR</text>
+                        <text x="400" y="93">Routing</text>
+                        <text x="575" y="82">CanIf</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M130 77 L165 77" />
+                        <path d="M285 77 L320 77" />
+                        <path d="M480 77 L515 77" />
+                    </g>
+                </svg>
+
+                <p>
+                    Routing được xác định bằng configuration. Vì vậy cùng một PDU có thể được cấu hình
+                    để đi tới các destination khác nhau tùy communication architecture của ECU.
+                </p>
+
+                <h2>7. CanIf - CAN Interface</h2>
+
+                <p>
+                    <strong>CanIf</strong> là lớp abstraction giữa communication services và CAN Driver.
+                    Mục tiêu quan trọng của CanIf là cung cấp một interface thống nhất để các module phía trên
+                    không phải phụ thuộc trực tiếp vào implementation cụ thể của CAN Driver.
+                </p>
+
+                <p>
+                    Có thể hình dung:
+                </p>
+
+                <pre><code>Upper Communication Layer
+          ↓
+        CanIf
+          ↓
+        CanDrv
+          ↓
+   CAN Controller</code></pre>
+
+                <p>
+                    CanIf xử lý các thông tin như:
+                </p>
+
+                <ul>
+                    <li>Mapping PDU tới Hardware Object.</li>
+                    <li>CAN Identifier.</li>
+                    <li>Receive filtering theo configuration.</li>
+                    <li>Gọi CAN Driver để truyền message.</li>
+                    <li>Nhận transmit confirmation từ CAN Driver.</li>
+                    <li>Nhận receive indication từ CAN Driver.</li>
+                </ul>
+
+                <div class="note">
+                    Bài 8 tập trung vào <strong>CanDrv</strong>; Bài 9 đặt CanDrv vào communication stack
+                    và cho thấy <strong>CanIf chính là lớp nối giữa communication layer và CAN Driver</strong>.
+                </div>
+
+                <h2>8. CanTp - CAN Transport Protocol</h2>
+
+                <p>
+                    Classic CAN chỉ chứa tối đa 8 byte dữ liệu mỗi frame, còn CAN FD có thể chứa nhiều hơn.
+                    Tuy nhiên trong nhiều ứng dụng, dữ liệu cần truyền có thể lớn hơn kích thước của một CAN frame.
+                    Khi đó cần một transport protocol.
+                </p>
+
+                <p>
+                    <strong>CanTp</strong> là module AUTOSAR dùng để truyền dữ liệu lớn qua CAN bằng cách
+                    chia dữ liệu thành nhiều CAN frame và ghép chúng lại ở phía nhận.
+                </p>
+
+                <svg viewBox="0 0 700 210" role="img" aria-label="CanTp chia dữ liệu lớn thành nhiều frame CAN"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="20" y="60" width="150" height="70" fill="rgba(224,168,0,.25)" />
+                        <rect x="250" y="35" width="120" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="250" y="90" width="120" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="250" y="145" width="120" height="45" fill="rgba(46,139,87,.28)" />
+                        <rect x="450" y="60" width="180" height="70" fill="rgba(70,130,180,.25)" />
+                    </g>
+
+                    <g font-size="12" fill="currentColor" text-anchor="middle">
+                        <text x="95" y="88">Dữ liệu lớn</text>
+                        <text x="95" y="108">ví dụ diagnostic</text>
+
+                        <text x="310" y="63">CAN Frame 1</text>
+                        <text x="310" y="118">CAN Frame 2</text>
+                        <text x="310" y="173">CAN Frame N</text>
+
+                        <text x="540" y="88">Dữ liệu được</text>
+                        <text x="540" y="108">ghép lại</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M175 95 L245 60" />
+                        <path d="M175 95 L245 112" />
+                        <path d="M175 95 L245 167" />
+                        <path d="M375 60 L445 95" />
+                        <path d="M375 112 L445 95" />
+                        <path d="M375 167 L445 95" />
+                    </g>
+                </svg>
+
+                <p>
+                    CanTp không chỉ đơn giản là "chia dữ liệu". Nó còn quản lý các thông tin và cơ chế
+                    cần thiết của transport protocol, chẳng hạn flow control và thứ tự truyền/nhận.
+                </p>
+
+                <p>
+                    Một use case quan trọng của CanTp là <strong>diagnostic communication</strong>,
+                    ví dụ khi ECU cần trao đổi một lượng dữ liệu diagnostic lớn hơn kích thước của một
+                    CAN frame đơn lẻ.
+                </p>
+
+                <div class="note">
+                    <strong>COM</strong> thường phù hợp với communication signal/I-PDU định kỳ hoặc event-driven,
+                    trong khi <strong>CanTp</strong> giải quyết bài toán truyền dữ liệu lớn cần transport protocol.
+                    Đây là hai khái niệm khác nhau.
+                </div>
+
+                <h2>9. Luồng truyền một CAN message</h2>
+
+                <p>
+                    Bây giờ hãy ghép các module lại thành một flow hoàn chỉnh.
+                    Giả sử application muốn gửi các signal như VehicleSpeed và EngineSpeed.
+                </p>
+
+                <svg viewBox="0 0 720 190" role="img"
+                    aria-label="Luồng truyền CAN message qua AUTOSAR communication stack"
+                    style="width:100%;height:auto;max-width:700px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="10" y="55" width="90" height="55" fill="rgba(224,168,0,.25)" />
+                        <rect x="125" y="55" width="90" height="55" fill="rgba(46,139,87,.28)" />
+                        <rect x="240" y="55" width="90" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="355" y="55" width="90" height="55" fill="rgba(160,120,190,.25)" />
+                        <rect x="470" y="55" width="90" height="55" fill="rgba(70,130,180,.25)" />
+                        <rect x="585" y="55" width="120" height="55" fill="rgba(190,120,80,.25)" />
+                    </g>
+
+                    <g font-size="11" fill="currentColor" text-anchor="middle">
+                        <text x="55" y="87">SWC</text>
+                        <text x="170" y="87">RTE</text>
+                        <text x="285" y="87">COM</text>
+                        <text x="400" y="87">PduR</text>
+                        <text x="515" y="87">CanIf</text>
+                        <text x="645" y="80">CanDrv</text>
+                        <text x="645" y="97">→ CAN HW</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M100 82 L120 82" />
+                        <path d="M215 82 L235 82" />
+                        <path d="M330 82 L350 82" />
+                        <path d="M445 82 L465 82" />
+                        <path d="M560 82 L580 82" />
+                    </g>
+
+                    <g font-size="10" fill="currentColor" text-anchor="middle">
+                        <text x="112" y="70">data</text>
+                        <text x="227" y="70">signal</text>
+                        <text x="342" y="70">I-PDU</text>
+                        <text x="457" y="70">PDU</text>
+                        <text x="572" y="70">L-PDU</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Có thể tóm tắt quá trình:
+                </p>
+
+                <ol>
+                    <li>SWC tạo hoặc cập nhật dữ liệu ứng dụng.</li>
+                    <li>RTE cung cấp communication interface cho SWC.</li>
+                    <li>COM đóng gói các signal vào I-PDU.</li>
+                    <li>PduR route PDU tới destination tương ứng.</li>
+                    <li>CanIf chuyển PDU thành yêu cầu truyền phù hợp với CAN interface.</li>
+                    <li>CanDrv điều khiển CAN Controller.</li>
+                    <li>CAN Controller tạo CAN frame và truyền lên bus.</li>
+                </ol>
+
+                <h2>10. Luồng nhận một CAN message</h2>
+
+                <p>
+                    Chiều nhận diễn ra theo hướng ngược lại.
+                    Một CAN frame xuất hiện trên bus, CAN Controller nhận frame và communication stack
+                    đưa dữ liệu lên application.
+                </p>
+
+                <pre><code>CAN Bus
+   ↓
+CAN Controller
+   ↓
+CanDrv
+   ↓
+CanIf
+   ↓
+PduR
+   ↓
+COM
+   ↓
+RTE
+   ↓
+SWC</code></pre>
+
+                <p>
+                    COM sau khi nhận I-PDU có thể unpack các bit tương ứng thành những signal mà application
+                    quan tâm. Ví dụ một CAN message chứa VehicleSpeed và EngineSpeed thì COM có thể tách
+                    chúng thành hai communication signal riêng.
+                </p>
+
+                <div class="note">
+                    Đây là điểm rất quan trọng khi debug:
+                    <strong>CAN frame có thể xuất hiện đúng trên bus nhưng application vẫn nhận sai dữ liệu</strong>.
+                    Khi đó lỗi có thể nằm ở CAN ID, PDU mapping, signal position, length, byte order,
+                    scaling hoặc configuration của COM chứ không nhất thiết nằm ở CAN Driver.
+                </div>
+
+                <h2>11. Signal Packing và Unpacking</h2>
+
+                <p>
+                    Một CAN payload thường chứa nhiều signal được đặt tại những bit position khác nhau.
+                    COM cần biết configuration của từng signal để thực hiện packing khi truyền
+                    và unpacking khi nhận.
+                </p>
+
+                <p>
+                    Ví dụ minh họa một payload 8 byte:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Bit</th>
+                        <th>Signal</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td>0 – 15</td>
+                        <td>VehicleSpeed</td>
+                        <td>16 bit</td>
+                    </tr>
+                    <tr>
+                        <td>16 – 31</td>
+                        <td>EngineSpeed</td>
+                        <td>16 bit</td>
+                    </tr>
+                    <tr>
+                        <td>32</td>
+                        <td>BrakeSwitch</td>
+                        <td>1 bit</td>
+                    </tr>
+                    <tr>
+                        <td>33 – 34</td>
+                        <td>GearPosition</td>
+                        <td>2 bit</td>
+                    </tr>
+                    <tr>
+                        <td>35 – 63</td>
+                        <td>Reserved / Other signals</td>
+                        <td>29 bit</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Trong project thực tế, các thông tin này thường được tạo từ system/network configuration
+                    và được configuration tool sinh thành dữ liệu cấu hình cho COM stack.
+                </p>
+
+                <h2>12. Periodic và Event-Triggered Communication</h2>
+
+                <p>
+                    Không phải CAN message nào cũng được gửi theo cùng một cách.
+                    Một message có thể được truyền theo chu kỳ hoặc khi một sự kiện xảy ra,
+                    tùy communication configuration.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Kiểu truyền</th>
+                        <th>Ví dụ</th>
+                        <th>Đặc điểm</th>
+                    </tr>
+                    <tr>
+                        <td>Periodic</td>
+                        <td>VehicleSpeed mỗi 10 ms</td>
+                        <td>Được gửi theo chu kỳ cấu hình.</td>
+                    </tr>
+                    <tr>
+                        <td>Event-triggered</td>
+                        <td>DoorStatus thay đổi</td>
+                        <td>Gửi khi giá trị hoặc sự kiện phù hợp xảy ra.</td>
+                    </tr>
+                    <tr>
+                        <td>Mixed</td>
+                        <td>Status message</td>
+                        <td>Có thể kết hợp periodic và event behavior tùy configuration.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Vì vậy khi debug một message "không gửi", cần biết trước communication requirement:
+                    message đó có phải periodic message không, chu kỳ bao nhiêu, event nào kích hoạt nó,
+                    và COM/PDU configuration có đúng không.
+                </p>
+
+                <h2>13. COM Stack và CAN Driver khác nhau thế nào?</h2>
+
+                <table>
+                    <tr>
+                        <th>Đặc điểm</th>
+                        <th>CAN COM Stack</th>
+                        <th>CAN Driver</th>
+                    </tr>
+                    <tr>
+                        <td>Mức abstraction</td>
+                        <td>Cao hơn</td>
+                        <td>Thấp, gần hardware</td>
+                    </tr>
+                    <tr>
+                        <td>Xử lý Signal</td>
+                        <td>Có</td>
+                        <td>Không</td>
+                    </tr>
+                    <tr>
+                        <td>PDU routing</td>
+                        <td>Có, thông qua PduR</td>
+                        <td>Không</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Controller register</td>
+                        <td>Không truy cập trực tiếp</td>
+                        <td>Có thể phải xử lý thông qua implementation của driver</td>
+                    </tr>
+                    <tr>
+                        <td>CAN bit timing</td>
+                        <td>Không trực tiếp điều khiển</td>
+                        <td>Liên quan tới controller configuration</td>
+                    </tr>
+                    <tr>
+                        <td>Hardware abstraction</td>
+                        <td>CanIf</td>
+                        <td>Driver implementation</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Có thể nhớ đơn giản:
+                    <strong>COM Stack quan tâm "dữ liệu nào cần truyền"</strong>,
+                    còn <strong>CAN Driver quan tâm "làm thế nào để CAN Controller truyền nó"</strong>.
+                </div>
+
+                <h2>14. CAN COM Stack và CAN FD</h2>
+
+                <p>
+                    Communication stack có thể hỗ trợ CAN FD nếu các module, configuration và hardware
+                    tương ứng hỗ trợ tính năng này. Ở phía trên, application vẫn có thể làm việc với
+                    communication data mà không cần tự xử lý từng bit của CAN FD frame.
+                </p>
+
+                <p>
+                    Phần CAN-specific ở các tầng thấp hơn sẽ đảm nhiệm việc chuyển dữ liệu thành format
+                    phù hợp với CAN hoặc CAN FD. Điều này tiếp tục thể hiện mục tiêu abstraction của AUTOSAR.
+                </p>
+
+                <div class="note">
+                    CAN FD tăng khả năng của communication technology, nhưng không có nghĩa là
+                    application phải tự biết cách tạo FDF, BRS hay CRC. Những chi tiết protocol thấp hơn
+                    được xử lý bởi communication stack và CAN controller/driver theo cấu hình.
+                </div>
+
+                <h2>15. Một ví dụ hoàn chỉnh</h2>
+
+                <p>
+                    Giả sử ECU A cần gửi tốc độ xe <code>100 km/h</code> tới ECU B.
+                    Một flow đơn giản có thể được hình dung như sau:
+                </p>
+
+                <ol>
+                    <li>SWC trên ECU A cập nhật giá trị <code>VehicleSpeed = 100</code>.</li>
+                    <li>Thông qua RTE, dữ liệu được cung cấp cho communication stack.</li>
+                    <li>COM đặt giá trị vào vị trí signal đã được cấu hình trong I-PDU.</li>
+                    <li>PduR route I-PDU tới CanIf.</li>
+                    <li>CanIf xác định CAN configuration tương ứng.</li>
+                    <li>CanDrv được yêu cầu truyền message.</li>
+                    <li>CAN Controller tạo frame với CAN Identifier tương ứng.</li>
+                    <li>Frame được truyền trên CAN bus.</li>
+                    <li>ECU B nhận frame thông qua CAN Controller.</li>
+                    <li>CanDrv → CanIf → PduR → COM xử lý frame.</li>
+                    <li>COM unpack VehicleSpeed.</li>
+                    <li>SWC trên ECU B đọc giá trị thông qua RTE.</li>
+                </ol>
+
+                <pre><code>ECU A                                      ECU B
+
+SWC                                       SWC
+ ↓                                         ↑
+RTE                                       RTE
+ ↓                                         ↑
+COM                                       COM
+ ↓                                         ↑
+PduR                                      PduR
+ ↓                                         ↑
+CanIf                                     CanIf
+ ↓                                         ↑
+CanDrv                                    CanDrv
+ ↓                                         ↑
+CAN Controller ───── CAN BUS ───── CAN Controller</code></pre>
+
+                <h2>16. Checklist khi debug CAN COM Stack</h2>
+
+                <p>
+                    Khi một signal không đến được ECU đích, nên kiểm tra từ trên xuống dưới
+                    thay vì chỉ kiểm tra CAN bus.
+                </p>
+
+                <ul>
+                    <li><strong>Application:</strong> SWC có cập nhật giá trị đúng không?</li>
+                    <li><strong>RTE:</strong> communication interface có được gọi đúng không?</li>
+                    <li><strong>COM:</strong> signal có nằm trong đúng I-PDU không?</li>
+                    <li><strong>Signal configuration:</strong> bit position, length, byte order có đúng không?</li>
+                    <li><strong>I-PDU:</strong> transmission mode và cycle/event configuration có đúng không?</li>
+                    <li><strong>PduR:</strong> route của PDU có đúng destination không?</li>
+                    <li><strong>CanIf:</strong> PDU có được map tới đúng CAN configuration/HTH không?</li>
+                    <li><strong>CanDrv:</strong> controller có STARTED và có chấp nhận transmission request không?</li>
+                    <li><strong>CAN Bus:</strong> frame có thực sự xuất hiện trên bus không?</li>
+                    <li><strong>Receiver:</strong> CAN ID/filter/HRH và COM signal mapping có đúng không?</li>
+                </ul>
+
+                <div class="note">
+                    Một phương pháp debug rất hiệu quả là dùng CAN analyzer để xác nhận frame ở bus trước.
+                    Nếu frame đúng trên bus nhưng application sai, tập trung kiểm tra từ CanIf/PduR/COM trở lên.
+                    Nếu frame chưa xuất hiện trên bus, tập trung kiểm tra từ CanIf/CanDrv xuống hardware.
+                </div>
+
+                <h2>17. Những khái niệm cần nhớ</h2>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa ngắn gọn</th>
+                    </tr>
+                    <tr>
+                        <td>Signal</td>
+                        <td>Dữ liệu logic mà application/communication sử dụng.</td>
+                    </tr>
+                    <tr>
+                        <td>I-PDU</td>
+                        <td>Đơn vị dữ liệu của communication interaction, có thể chứa nhiều signal.</td>
+                    </tr>
+                    <tr>
+                        <td>PduR</td>
+                        <td>Định tuyến PDU giữa các communication module.</td>
+                    </tr>
+                    <tr>
+                        <td>CanTp</td>
+                        <td>Transport protocol cho việc truyền dữ liệu lớn qua CAN.</td>
+                    </tr>
+                    <tr>
+                        <td>CanIf</td>
+                        <td>Abstraction interface giữa communication stack và CAN Driver.</td>
+                    </tr>
+                    <tr>
+                        <td>CanDrv</td>
+                        <td>Driver giao tiếp với CAN Controller.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Frame</td>
+                        <td>Frame thực sự được truyền trên CAN bus.</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>CAN Communication Stack</strong> giúp AUTOSAR tách application khỏi CAN hardware.
+                    <strong>COM</strong> xử lý Signal và I-PDU; <strong>PduR</strong> định tuyến PDU;
+                    <strong>CanTp</strong> xử lý transport protocol cho dữ liệu lớn;
+                    <strong>CanIf</strong> cung cấp abstraction tới CAN Driver;
+                    và <strong>CanDrv</strong> giao tiếp trực tiếp với CAN Controller.
+                    Luồng truyền có thể nhớ theo chuỗi:
+                    <strong>SWC → RTE → COM → PduR → CanIf → CanDrv → CAN Controller → CAN Bus</strong>.
+                    Chiều nhận đi theo hướng ngược lại.
+                </div>
+
+                <div class="pager">
+                    <a class="btn ghost" href="lesson-8.html">← Bài trước</a>
+                    <a class="btn" href="lesson-10.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

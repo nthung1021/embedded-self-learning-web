@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 9: Tổng quan Communication Stack | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="bar">
+        <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+        <nav aria-label="Chính">
+            <a href="../../index.html">Trang chủ</a>
+            <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+            <a href="../../quizzes/index.html">Kiểm tra</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="layout">
+
+        <aside class="side">
+            <h4>Danh sách bài học</h4>
+            <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+            <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+            <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+            <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+            <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+            <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+            <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+            <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+            <a href="lesson-9.html" class="active" aria-current="page">Bài 9: Tổng quan Communication Stack</a>
+            <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+            <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+            <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+            <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+            <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+            <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+            <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+            <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+            <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+            <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+            <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+            <a href="lesson-21.html">Bài 21: MCAL</a>
+            <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+            <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+            <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+            <a href="index.html">← Tất cả bài học AUTOSAR</a>
+        </aside>
+
+        <article>
+
+            <h1>Bài 9: Tổng quan Communication Stack</h1>
+
+            <p>
+                Trong một ECU, Application Software không chỉ xử lý dữ liệu
+                nội bộ mà còn cần trao đổi dữ liệu với các ECU khác thông qua
+                mạng xe như CAN, LIN hoặc Ethernet.
+            </p>
+
+            <p>
+                Để thực hiện việc truyền và nhận dữ liệu một cách có cấu trúc,
+                AUTOSAR sử dụng một nhóm các software module được gọi chung là
+                <strong>Communication Stack</strong>.
+            </p>
+
+            <div class="note">
+                <strong>Phạm vi bài học:</strong>
+                Bài này chỉ tập trung vào khái niệm và cấu trúc tổng quan của
+                Communication Stack trong AUTOSAR Classic. Các module cụ thể
+                như COM, PduR, CanIf, CanTp và CAN Driver sẽ được tìm hiểu
+                chi tiết ở các bài sau.
+            </div>
+
+
+            <h2>1. Communication Stack là gì?</h2>
+
+            <p>
+                Communication Stack là tập hợp các software module chịu trách
+                nhiệm hỗ trợ việc trao đổi dữ liệu giữa ECU với các phần khác
+                trong hệ thống.
+            </p>
+
+            <p>
+                Dữ liệu có thể được truyền theo hai hướng:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Transmit (TX):</strong>
+                    ECU gửi dữ liệu ra mạng.
+                </li>
+
+                <li>
+                    <strong>Receive (RX):</strong>
+                    ECU nhận dữ liệu từ mạng.
+                </li>
+            </ul>
+
+            <p>
+                Communication Stack tạo ra một chuỗi xử lý trung gian giữa
+                Application Software và phần cứng giao tiếp của ECU.
+            </p>
+
+
+            <h2>2. Communication Stack nằm ở đâu?</h2>
+
+            <p>
+                Communication Stack chủ yếu nằm trong tầng
+                <strong>Basic Software (BSW)</strong>.
+            </p>
+
+            <p>
+                Nhìn ở mức tổng quan, luồng giao tiếp có thể hình dung như sau:
+            </p>
+
+            <pre><code>+--------------------------------------+
+|       Application Software           |
+|              SWC                     |
++------------------+-------------------+
+                   |
+                   | RTE
+                   v
++--------------------------------------+
+|       Communication Stack            |
+|                                      |
+|   COM / PduR / Interface / Driver    |
++------------------+-------------------+
+                   |
+                   v
++--------------------------------------+
+|       Communication Hardware         |
+|       CAN / LIN / Ethernet           |
++--------------------------------------+</code></pre>
+
+            <p>
+                Vì vậy, Application Software không cần trực tiếp điều khiển
+                CAN Controller hoặc các phần cứng giao tiếp.
+            </p>
+
+
+            <h2>3. Tại sao cần Communication Stack?</h2>
+
+            <p>
+                Nếu Application Software phải trực tiếp xử lý phần cứng mạng,
+                mỗi ứng dụng sẽ phải biết rất nhiều chi tiết về giao tiếp.
+                Điều này làm phần mềm khó phát triển, khó bảo trì và khó tái sử dụng.
+            </p>
+
+            <p>
+                Communication Stack giúp tách Application Software khỏi các
+                chi tiết của communication hardware.
+            </p>
+
+            <p>
+                Một số lợi ích chính:
+            </p>
+
+            <ul>
+                <li>
+                    Tách Application Software khỏi phần cứng giao tiếp.
+                </li>
+
+                <li>
+                    Chuẩn hóa cách các software module trao đổi dữ liệu.
+                </li>
+
+                <li>
+                    Hỗ trợ nhiều loại communication protocol.
+                </li>
+
+                <li>
+                    Giúp các software module có thể được tái sử dụng dễ dàng hơn.
+                </li>
+
+                <li>
+                    Phân chia rõ trách nhiệm giữa Application và BSW.
+                </li>
+            </ul>
+
+
+            <h2>4. Các nhóm thành phần chính</h2>
+
+            <p>
+                Ở mức tổng quan, Communication Stack có thể được chia thành
+                nhiều lớp hoặc nhóm module khác nhau.
+            </p>
+
+            <pre><code>Application
+     |
+     v
+    RTE
+     |
+     v
++----------------------+
+| Communication        |
+| Services             |
+|                      |
+|       COM            |
++----------+-----------+
+           |
+           v
++----------------------+
+| Routing              |
+|                      |
+|       PduR           |
++----------+-----------+
+           |
+           v
++----------------------+
+| Communication        |
+| Interface            |
+|                      |
+|       CanIf          |
+|       LinIf          |
+|       EthIf          |
++----------+-----------+
+           |
+           v
++----------------------+
+| Communication Driver |
+|                      |
+|       CanDrv         |
+|       LinDrv         |
+|       Eth Driver     |
++----------+-----------+
+           |
+           v
++----------------------+
+| Communication        |
+| Controller / HW      |
++----------------------+</code></pre>
+
+            <p>
+                Đây là cách nhìn đơn giản hóa để hiểu hướng đi của dữ liệu.
+                Không phải mọi loại communication đều sử dụng chính xác cùng
+                một tập module.
+            </p>
+
+
+            <h2>5. Communication Services</h2>
+
+            <p>
+                Ở phía trên của Communication Stack là các thành phần cung cấp
+                communication services cho Application Software.
+            </p>
+
+            <p>
+                Một thành phần quan trọng là <strong>COM</strong>.
+                Ở mức tổng quan, COM giúp Application Software trao đổi dữ liệu
+                thông qua các cơ chế communication của AUTOSAR thay vì phải
+                trực tiếp làm việc với CAN Controller hoặc hardware.
+            </p>
+
+            <p>
+                Có thể hiểu đơn giản:
+            </p>
+
+            <pre><code>Application
+     |
+     |  "Tôi muốn gửi dữ liệu"
+     v
+    RTE
+     |
+     v
+    COM
+     |
+     v
+Communication Stack
+     |
+     v
+Network</code></pre>
+
+            <p>
+                Các khái niệm chi tiết như Signal, I-PDU và cách COM xử lý dữ
+                liệu sẽ được tìm hiểu riêng ở các bài chuyên sâu hơn.
+            </p>
+
+
+            <h2>6. PDU Router</h2>
+
+            <p>
+                <strong>PduR (PDU Router)</strong> có vai trò định tuyến dữ liệu
+                giữa các communication module.
+            </p>
+
+            <p>
+                Có thể hình dung PduR như một điểm trung gian quyết định dữ liệu
+                cần được chuyển tiếp đến module communication nào.
+            </p>
+
+            <pre><code>       COM
+        |
+        v
+      +-----+
+      | PduR|
+      +-----+
+       /   \
+      /     \
+     v       v
+  CanIf     LinIf</code></pre>
+
+            <p>
+                Nhờ đó, các module phía trên không cần phải phụ thuộc trực tiếp
+                vào từng communication interface cụ thể.
+            </p>
+
+
+            <h2>7. Communication Interface</h2>
+
+            <p>
+                Communication Interface nằm giữa các thành phần communication
+                phía trên và communication driver phía dưới.
+            </p>
+
+            <p>
+                Ví dụ với CAN, một interface quan trọng là
+                <strong>CanIf</strong>.
+            </p>
+
+            <pre><code>       Communication Services
+                 |
+                 v
+                PduR
+                 |
+                 v
+               CanIf
+                 |
+                 v
+              CanDrv
+                 |
+                 v
+           CAN Controller</code></pre>
+
+            <p>
+                Interface giúp các tầng phía trên không cần trực tiếp làm việc
+                với các chi tiết thấp của CAN Controller.
+            </p>
+
+            <p>
+                Tương tự, các communication technology khác có thể có interface
+                tương ứng.
+            </p>
+
+
+            <h2>8. Communication Driver</h2>
+
+            <p>
+                Communication Driver là phần mềm nằm gần phần cứng giao tiếp
+                hơn trong stack.
+            </p>
+
+            <p>
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li><strong>CAN Driver:</strong> giao tiếp với CAN Controller.</li>
+                <li><strong>LIN Driver:</strong> giao tiếp với LIN Controller.</li>
+                <li>
+                    <strong>Ethernet Driver:</strong>
+                    hỗ trợ giao tiếp với phần cứng Ethernet.
+                </li>
+            </ul>
+
+            <p>
+                Ở mức tổng quan, driver chịu trách nhiệm cung cấp cách thức
+                software giao tiếp với communication hardware.
+            </p>
+
+            <p>
+                Các chi tiết như Controller, Transceiver, HTH, HRH hay các API
+                của CAN Driver sẽ được tìm hiểu trong các bài học chuyên sâu.
+            </p>
+
+
+            <h2>9. Luồng truyền dữ liệu TX</h2>
+
+            <p>
+                Khi Application muốn gửi dữ liệu đến một ECU khác, dữ liệu
+                có thể đi qua Communication Stack theo hướng từ trên xuống.
+            </p>
+
+            <pre><code>Application
+     |
+     v
+    RTE
+     |
+     v
+    COM
+     |
+     v
+   PduR
+     |
+     v
+   CanIf
+     |
+     v
+  CAN Driver
+     |
+     v
+CAN Controller
+     |
+     v
+    CAN Bus</code></pre>
+
+            <p>
+                Mỗi thành phần thực hiện một phần trách nhiệm khác nhau.
+                Application tập trung vào chức năng của hệ thống, trong khi
+                Communication Stack xử lý việc đưa dữ liệu ra communication
+                network.
+            </p>
+
+
+            <h2>10. Luồng nhận dữ liệu RX</h2>
+
+            <p>
+                Khi ECU nhận dữ liệu từ network, luồng xử lý diễn ra theo
+                hướng ngược lại.
+            </p>
+
+            <pre><code>    CAN Bus
+       |
+       v
+CAN Controller
+       |
+       v
+  CAN Driver
+       |
+       v
+     CanIf
+       |
+       v
+      PduR
+       |
+       v
+      COM
+       |
+       v
+      RTE
+       |
+       v
+ Application</code></pre>
+
+            <p>
+                Application chỉ nhận dữ liệu ở mức phù hợp với chức năng của nó,
+                thay vì phải trực tiếp xử lý các chi tiết của CAN Controller.
+            </p>
+
+
+            <h2>11. Communication Stack và nhiều loại Network</h2>
+
+            <p>
+                Một ECU có thể sử dụng nhiều communication technology khác nhau.
+                Ví dụ:
+            </p>
+
+            <ul>
+                <li>CAN</li>
+                <li>LIN</li>
+                <li>Ethernet</li>
+            </ul>
+
+            <p>
+                Ở mức kiến trúc, Application có thể vẫn giữ được sự tách biệt
+                tương đối với communication hardware.
+            </p>
+
+            <pre><code>                 Application
+                      |
+                     RTE
+                      |
+             Communication Layer
+                      |
+          +-----------+-----------+
+          |           |           |
+        CAN          LIN      Ethernet
+          |           |           |
+       CAN HW      LIN HW    Ethernet HW</code></pre>
+
+            <p>
+                Đây là một trong những ý tưởng quan trọng của AUTOSAR:
+                <strong>tách chức năng ứng dụng khỏi chi tiết triển khai phần cứng
+                và communication.</strong>
+            </p>
+
+
+            <h2>12. Ví dụ đơn giản: ECU nhận tốc độ xe</h2>
+
+            <p>
+                Giả sử một ECU cần nhận thông tin tốc độ xe từ một ECU khác
+                thông qua CAN.
+            </p>
+
+            <p>
+                Ở mức tổng quan, luồng dữ liệu có thể được mô tả:
+            </p>
+
+            <pre><code>ECU A
+  |
+  |  Speed data
+  v
+CAN Bus
+  |
+  v
+CAN Controller
+  |
+  v
+CAN Driver
+  |
+  v
+CanIf
+  |
+  v
+PduR
+  |
+  v
+COM
+  |
+  v
+RTE
+  |
+  v
+Application SWC</code></pre>
+
+            <p>
+                Application SWC cuối cùng có thể sử dụng thông tin tốc độ để
+                thực hiện một chức năng khác, ví dụ điều khiển hiển thị hoặc
+                xử lý logic của ECU.
+            </p>
+
+            <p>
+                Application không cần biết toàn bộ chi tiết về cách dữ liệu
+                được truyền qua CAN Bus.
+            </p>
+
+
+            <h2>13. Communication Stack và kiến trúc AUTOSAR</h2>
+
+            <p>
+                Communication Stack là một ví dụ rõ ràng cho cách AUTOSAR
+                phân chia trách nhiệm giữa các tầng.
+            </p>
+
+            <pre><code>+--------------------------------------+
+|        Application Software          |
+|              SWC                     |
++--------------------------------------+
+                 |
+                 v
++--------------------------------------+
+|                 RTE                  |
++--------------------------------------+
+                 |
+                 v
++--------------------------------------+
+|      Communication Stack             |
+|                                      |
+| COM → PduR → Interface → Driver      |
++--------------------------------------+
+                 |
+                 v
++--------------------------------------+
+|        Communication Hardware       |
+|        CAN / LIN / Ethernet          |
++--------------------------------------+</code></pre>
+
+            <p>
+                Nhìn theo hướng này, ta có thể thấy:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Application:</strong>
+                    thực hiện chức năng của ECU.
+                </li>
+
+                <li>
+                    <strong>RTE:</strong>
+                    cung cấp môi trường giao tiếp giữa Application và BSW.
+                </li>
+
+                <li>
+                    <strong>Communication Stack:</strong>
+                    xử lý việc trao đổi dữ liệu qua network.
+                </li>
+
+                <li>
+                    <strong>Hardware:</strong>
+                    thực hiện việc truyền và nhận tín hiệu vật lý.
+                </li>
+            </ul>
+
+
+            <h2>14. Communication Stack cần nhớ những gì?</h2>
+
+            <p>
+                Khi mới học AUTOSAR, không cần ghi nhớ ngay tất cả các module
+                và API. Trước tiên nên hiểu các ý chính sau:
+            </p>
+
+            <ul>
+                <li>
+                    Communication Stack nằm chủ yếu trong BSW.
+                </li>
+
+                <li>
+                    Nó tạo cầu nối giữa Application và communication hardware.
+                </li>
+
+                <li>
+                    Dữ liệu TX đi từ Application xuống hardware.
+                </li>
+
+                <li>
+                    Dữ liệu RX đi từ hardware lên Application.
+                </li>
+
+                <li>
+                    COM, PduR, Communication Interface và Communication Driver
+                    có những trách nhiệm khác nhau trong stack.
+                </li>
+
+                <li>
+                    Application không nên phụ thuộc trực tiếp vào chi tiết của
+                    CAN/LIN/Ethernet hardware.
+                </li>
+
+                <li>
+                    Communication Stack giúp kiến trúc phần mềm có tính
+                    module hóa và dễ tái sử dụng hơn.
+                </li>
+            </ul>
+
+
+            <h2>15. Tóm tắt</h2>
+
+            <div class="note">
+                <p>
+                    <strong>Communication Stack</strong> là nhóm các software
+                    module trong AUTOSAR BSW hỗ trợ ECU truyền và nhận dữ liệu
+                    qua các communication network.
+                </p>
+
+                <p>
+                    Luồng dữ liệu tổng quát có thể hình dung:
+                </p>
+
+                <pre><code>Application
+    ↕
+   RTE
+    ↕
+   COM
+    ↕
+   PduR
+    ↕
+Communication Interface
+    ↕
+Communication Driver
+    ↕
+Communication Hardware
+    ↕
+ CAN / LIN / Ethernet Network</code></pre>
+
+                <p>
+                    Điều quan trọng nhất cần nhớ là Communication Stack giúp
+                    <strong>tách Application Software khỏi các chi tiết của
+                    communication hardware</strong>, đồng thời chia quá trình
+                    truyền nhận dữ liệu thành các tầng có trách nhiệm rõ ràng.
+                </p>
+            </div>
+
+
+            <div class="pager">
+                <a class="btn" href="lesson-8.html">
+                    ← Bài trước
+                </a>
+
+                <a class="btn" href="lesson-10.html">
+                    Bài tiếp theo →
+                </a>
+            </div>
+
+        </article>
+
+    </div>
+</main>
+
+<footer>
+    EmLearn - 2026
+</footer>
+
+</body>
+</html>
