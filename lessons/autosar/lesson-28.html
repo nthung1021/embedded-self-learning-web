@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 28: DCM - Diagnostic Service Processing (DSP) | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html" class="active" aria-current="page">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 28: DCM - Diagnostic Service Processing (DSP)</h1>
+
+                <p>
+                    Trong AUTOSAR Classic, DCM (Diagnostic Communication Manager)
+                    xử lý giao tiếp chẩn đoán giữa diagnostic tester và ECU.
+                    Bên trong DCM, DSP (Diagnostic Service Processing) đảm nhận
+                    phần xử lý nội dung của các dịch vụ chẩn đoán.
+                </p>
+
+                <p>
+                    Khi tester gửi một request, DSP phân tích dữ liệu nhận được,
+                    kiểm tra định dạng và các tham số thuộc phạm vi dịch vụ,
+                    lấy dữ liệu hoặc gọi những thành phần cần thiết, sau đó
+                    xây dựng kết quả xử lý để DCM trả về tester.
+                </p>
+
+                <p>
+                    Các dịch vụ như đọc dữ liệu theo DID, ghi dữ liệu, đọc thông tin
+                    DTC, điều khiển routine hoặc điều khiển I/O có thể yêu cầu
+                    DSP tương tác với những thành phần khác nhau trong ECU.
+                    Vì vậy, hiểu DSP giúp chúng ta biết một diagnostic request
+                    thực sự được xử lý như thế nào bên trong phần mềm.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào kiến trúc xử lý dịch vụ của DSP,
+                    cấu trúc request/response, các nhóm diagnostic service,
+                    tương tác với DEM và Application Software, xử lý đồng bộ/
+                    bất đồng bộ và phương pháp debug. Cấu hình chi tiết trên
+                    từng công cụ và quá trình sinh code sẽ được dành cho
+                    Bài 29: DCM Generator.
+                </div>
+
+                <h2>1. DSP là gì?</h2>
+
+                <p>
+                    DSP là viết tắt của <strong>Diagnostic Service Processing</strong>.
+                    Đây là một trong ba sub-module chính của DCM, bên cạnh
+                    DSL (Diagnostic Session Layer) và DSD (Diagnostic Service Dispatcher).
+                </p>
+
+                <p>
+                    DSP tiếp nhận yêu cầu xử lý dịch vụ từ DSD. Sau đó, DSP phân tích
+                    request, kiểm tra định dạng và các tham số liên quan, lấy dữ liệu
+                    hoặc yêu cầu thực hiện chức năng tương ứng, rồi chuẩn bị kết quả
+                    để DCM tạo diagnostic response.
+                </p>
+
+                <p>Các trách nhiệm tổng quát của DSP gồm:</p>
+
+                <ul>
+                    <li>Phân tích cấu trúc và nội dung của diagnostic request.</li>
+                    <li>Kiểm tra độ dài, định dạng và tham số thuộc phạm vi của service.</li>
+                    <li>Thực hiện hoặc điều phối việc xử lý diagnostic service.</li>
+                    <li>Lấy dữ liệu từ nguồn dữ liệu đã được cấu hình.</li>
+                    <li>Gọi hoặc phối hợp với Application Software, DEM và các module BSW liên quan.</li>
+                    <li>Xử lý kết quả thành công, lỗi hoặc trạng thái xử lý chưa hoàn tất.</li>
+                    <li>Chuẩn bị dữ liệu response theo quy tắc của diagnostic service.</li>
+                </ul>
+
+                <p>
+                    Phạm vi thực tế phụ thuộc dịch vụ, cấu hình DCM và phiên bản
+                    AUTOSAR. Không phải mọi service đều có cùng cách triển khai
+                    hoặc sử dụng cùng một nhóm module khác.
+                </p>
+
+                <h2>2. DSP nằm ở đâu trong kiến trúc DCM?</h2>
+
+                <p>
+                    DSP nằm bên trong DCM và phối hợp với DSD để xử lý request.
+                    DSD chịu trách nhiệm dispatch request, còn DSP xử lý nội dung
+                    của dịch vụ được lựa chọn.
+                </p>
+
+                <pre><code>             Diagnostic Tester
+                     |
+                     v
+           Communication / Transport
+                     |
+                     v
+                    PduR
+                     |
+                     v
+             +-------------------+
+             |        DCM        |
+             |-------------------|
+             |        DSL        |
+             |          |        |
+             |          v        |
+             |        DSD        |
+             |          |        |
+             |          v        |
+             |        DSP        |
+             +-------------------+
+                        |
+              +---------+----------+
+              |         |          |
+              v         v          v
+          Application  DEM      Other BSW
+           / SWC      DTC Data   Modules
+              |
+              v
+       Dữ liệu / kết quả xử lý
+
+        Response quay lại qua DCM
+              |
+              v
+             PduR
+              |
+              v
+       Communication / Transport
+              |
+              v
+       Diagnostic Tester</code></pre>
+
+                <p>
+                    Sơ đồ là góc nhìn khái niệm. Các kết nối thực tế và interface
+                    sử dụng phụ thuộc vào cấu hình ECU, loại service và phiên bản
+                    AUTOSAR đang áp dụng.
+                </p>
+
+                <h2>3. Phân biệt DSL, DSD và DSP</h2>
+
+                <p>
+                    Ba sub-module của DCM có những trách nhiệm khác nhau.
+                    Nếu không phân biệt đúng, khi debug rất dễ nhầm lỗi định tuyến,
+                    lỗi điều kiện chấp nhận request với lỗi trong logic xử lý dịch vụ.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sub-module</th>
+                            <th>Trách nhiệm chính</th>
+                            <th>Ví dụ câu hỏi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSL</td>
+                            <td>Quản lý luồng request/response, timing và trạng thái chẩn đoán liên quan.</td>
+                            <td>Request đã được tiếp nhận chưa? Response có được truyền theo luồng phù hợp không?</td>
+                        </tr>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Kiểm tra điều kiện dispatch và điều phối service request.</td>
+                            <td>Service được hỗ trợ không? Request có đủ điều kiện để được dispatch không?</td>
+                        </tr>
+                        <tr>
+                            <td>DSP</td>
+                            <td>Phân tích request và thực hiện phần xử lý dịch vụ tương ứng.</td>
+                            <td>Dữ liệu cần lấy ở đâu? Thao tác có thành công không? Response cần chứa thông tin nào?</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong thực tế, một số kiểm tra có thể liên quan đến nhiều phần của DCM.
+                    Chẳng hạn, DSD kiểm tra những điều kiện dispatch chung, trong khi DSP
+                    kiểm tra định dạng và các tham số đặc thù của dịch vụ. Ranh giới
+                    chính xác cần được hiểu theo AUTOSAR specification và cấu hình tương ứng.
+                </p>
+
+                <h2>4. Luồng xử lý tổng quát của DSP</h2>
+
+                <p>
+                    Khi DSD yêu cầu DSP xử lý một diagnostic service, DSP thực hiện
+                    một chuỗi công việc tổng quát.
+                </p>
+
+                <ol>
+                    <li>Nhận request và thông tin dịch vụ từ đường xử lý nội bộ của DCM.</li>
+                    <li>Phân tích cấu trúc và dữ liệu của request.</li>
+                    <li>Kiểm tra độ dài, định dạng và các tham số cần thiết.</li>
+                    <li>Lấy dữ liệu hoặc gọi chức năng được cấu hình cho service.</li>
+                    <li>Kiểm tra kết quả từ nguồn dữ liệu hoặc thành phần được gọi.</li>
+                    <li>Xây dựng kết quả phản hồi theo định dạng của service.</li>
+                    <li>Trả kết quả cho các thành phần DCM liên quan để hoàn tất response.</li>
+                </ol>
+
+                <pre><code>                 DSD
+                  |
+                  | Request cần xử lý
+                  v
+                 DSP
+                  |
+                  v
+        Phân tích request message
+                  |
+                  v
+        Kiểm tra format và tham số
+                  |
+                  v
+        Thực hiện service / lấy dữ liệu
+                  |
+                  v
+        Kiểm tra kết quả xử lý
+                  |
+                  v
+        Chuẩn bị response data
+                  |
+                  v
+                 DSD
+                  |
+                  v
+                 DSL
+                  |
+                  v
+          Communication Stack</code></pre>
+
+                <p>
+                    DSP không tự thay thế các module giao tiếp ở bên dưới.
+                    Nó xử lý nội dung dịch vụ; việc truyền response cuối cùng
+                    vẫn cần đi qua những thành phần giao tiếp phù hợp.
+                </p>
+
+                <h2>5. Request và Response trong góc nhìn DSP</h2>
+
+                <p>
+                    Diagnostic request là dữ liệu mà tester gửi để yêu cầu ECU
+                    thực hiện một dịch vụ. Request thường chứa SID và những tham số
+                    hoặc dữ liệu bổ sung tùy loại service.
+                </p>
+
+                <p>
+                    Response là kết quả ECU gửi lại. Tùy dịch vụ và kết quả xử lý,
+                    response có thể chứa dữ liệu được yêu cầu, xác nhận thao tác
+                    thành công hoặc thông tin lỗi theo quy tắc UDS.
+                </p>
+
+                <pre><code>Request:
+[ SID ][ Parameters ][ Optional Data ]
+             |
+             v
+      DSP xử lý dịch vụ
+             |
+             v
+Positive Response:
+[ Positive SID ][ Result / Data ]
+
+Hoặc:
+
+Negative Response:
+[ 0x7F ][ Request SID ][ NRC ]</code></pre>
+
+                <p>
+                    Đây là biểu diễn khái quát. Cấu trúc byte thực tế phụ thuộc
+                    service và các điều kiện giao thức tương ứng.
+                </p>
+
+                <h2>6. DSP kiểm tra định dạng và độ dài request</h2>
+
+                <p>
+                    Trước khi thực hiện chức năng được yêu cầu, DSP phải xác định
+                    request có đủ dữ liệu cần thiết và phù hợp với cấu trúc của service.
+                    Một request sai định dạng không nên được chuyển thành thao tác
+                    ứng dụng như thể nó hợp lệ.
+                </p>
+
+                <p>Các nhóm kiểm tra có thể bao gồm:</p>
+
+                <ul>
+                    <li>Độ dài request có đủ cho SID và các tham số bắt buộc không.</li>
+                    <li>Các trường dữ liệu có nằm đúng vị trí theo định dạng service không.</li>
+                    <li>Các tham số có sử dụng giá trị được hỗ trợ không.</li>
+                    <li>Sub-function hoặc giá trị lựa chọn có hợp lệ trong ngữ cảnh service không.</li>
+                    <li>Dữ liệu đầu vào có đáp ứng các ràng buộc được xác định cho service không.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, một request đọc DID cần có các byte định danh DID.
+                    Nếu phần định danh bị thiếu, DSP không thể xác định đầy đủ
+                    dữ liệu cần đọc.
+                </p>
+
+                <p>
+                    Với các lỗi độ dài hoặc định dạng theo quy tắc áp dụng,
+                    NRC 0x13 (Incorrect Message Length or Invalid Format) là
+                    một mã phản hồi thường gặp.
+                </p>
+
+                <h2>7. DSP và Negative Response Code</h2>
+
+                <p>
+                    Trong một số trường hợp, DSP phát hiện lỗi trong quá trình
+                    phân tích hoặc xử lý service và phải trả kết quả lỗi cho DCM.
+                    DCM sau đó xây dựng negative response theo quy tắc áp dụng.
+                </p>
+
+                <p>
+                    Cần nhớ rằng không phải mọi NRC đều do DSP tự quyết định.
+                    Một request cũng có thể bị từ chối ở giai đoạn dispatch của DSD,
+                    hoặc không được phản hồi theo một số quy tắc suppression.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã NRC</th>
+                            <th>Tên</th>
+                            <th>Ví dụ ngữ cảnh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x13</td>
+                            <td>Incorrect Message Length or Invalid Format</td>
+                            <td>Request không đáp ứng định dạng hoặc độ dài được yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>0x22</td>
+                            <td>Conditions Not Correct</td>
+                            <td>Điều kiện thực hiện service không được đáp ứng, khi NRC này là phản hồi phù hợp với tình huống.</td>
+                        </tr>
+                        <tr>
+                            <td>0x31</td>
+                            <td>Request Out Of Range</td>
+                            <td>Dữ liệu hoặc tham số nằm ngoài phạm vi được cho phép.</td>
+                        </tr>
+                        <tr>
+                            <td>0x72</td>
+                            <td>General Programming Failure</td>
+                            <td>Một số tình huống liên quan đến hoạt động lập trình không thành công.</td>
+                        </tr>
+                        <tr>
+                            <td>0x78</td>
+                            <td>Response Pending</td>
+                            <td>Quá trình xử lý vẫn đang tiếp tục theo cơ chế timing áp dụng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Bảng này chỉ là ví dụ tham khảo. NRC cụ thể phải phù hợp với
+                    nguyên nhân, service, trạng thái xử lý và quy tắc UDS tương ứng.
+                    Không nên chọn mã lỗi chỉ vì nó có vẻ mô tả gần giống hiện tượng.
+                </p>
+
+                <h2>8. DSP xử lý ReadDataByIdentifier (SID 0x22)</h2>
+
+                <p>
+                    ReadDataByIdentifier là một trong những dịch vụ phổ biến nhất
+                    khi kiểm tra khả năng chẩn đoán của ECU. Tester sử dụng SID 0x22
+                    để yêu cầu đọc dữ liệu thông qua một hoặc nhiều Data Identifier (DID)
+                    được hỗ trợ.
+                </p>
+
+                <p>
+                    Mỗi DID đại diện cho một nhóm dữ liệu được xác định theo cấu hình
+                    và yêu cầu của ECU. Ví dụ, DID có thể đại diện cho thông tin nhận dạng,
+                    trạng thái hoạt động hoặc một giá trị đo lường.
+                </p>
+
+                <p>Luồng xử lý khái quát:</p>
+
+                <ol>
+                    <li>DSP nhận request đọc DID.</li>
+                    <li>DSP phân tích DID được yêu cầu.</li>
+                    <li>Kiểm tra DID có được hỗ trợ và request có đúng định dạng hay không.</li>
+                    <li>Lấy dữ liệu thông qua nguồn dữ liệu hoặc interface đã được cấu hình.</li>
+                    <li>Kiểm tra kết quả đọc và tạo phần dữ liệu response.</li>
+                    <li>Chuyển kết quả cho DCM để hoàn tất phản hồi.</li>
+                </ol>
+
+                <pre><code>Tester
+  |
+  | ReadDataByIdentifier (0x22)
+  | Ví dụ: 22 F1 90
+  v
+DCM / DSD
+  |
+  v
+DSP
+  |
+  | Phân tích DID 0xF190
+  |
+  | Kiểm tra DID được hỗ trợ
+  |
+  v
+Nguồn dữ liệu được cấu hình
+  |
+  | Trả dữ liệu DID
+  v
+DSP xây dựng response
+  |
+  v
+DCM gửi response về tester</code></pre>
+
+                <p>
+                    Ví dụ 0xF190 thường được dùng để minh họa DID nhận dạng VIN trong
+                    các hệ thống UDS. Tuy nhiên, dữ liệu thực tế, cách hỗ trợ và cấu hình
+                    của DID phải được kiểm tra theo ECU cụ thể.
+                </p>
+
+                <h2>9. Ví dụ: Đọc DID cung cấp nhiệt độ</h2>
+
+                <p>
+                    Giả sử ECU có một DID được cấu hình để trả về nhiệt độ đo được
+                    bởi một cảm biến. Giá trị đo được do phần mềm ứng dụng hoặc
+                    một thành phần khác cung cấp.
+                </p>
+
+                <pre><code>Temperature Sensor
+        |
+        v
+Sensor Driver / I/O
+        |
+        v
+Application Software
+        |
+        | Cung cấp giá trị nhiệt độ
+        v
+DID Data Interface
+        |
+        v
+       DSP
+        |
+        | Xử lý request đọc DID
+        | Lấy dữ liệu
+        | Định dạng response
+        v
+    Diagnostic Tester</code></pre>
+
+                <p>
+                    Trong thiết kế này, DSP không nhất thiết trực tiếp đọc cảm biến
+                    vật lý. Nó sử dụng nguồn dữ liệu đã được kết nối trong cấu hình.
+                    Cách thức lấy dữ liệu phụ thuộc vào data interface và thiết kế ECU.
+                </p>
+
+                <p>
+                    Nếu tester nhận giá trị không đúng, cần kiểm tra cả DID mapping,
+                    nguồn dữ liệu, đơn vị đo, phép chuyển đổi giá trị và quá trình
+                    đóng gói dữ liệu vào response.
+                </p>
+
+                <h2>10. DSP xử lý WriteDataByIdentifier (SID 0x2E)</h2>
+
+                <p>
+                    WriteDataByIdentifier cho phép tester yêu cầu ghi dữ liệu vào
+                    một DID có hỗ trợ chức năng ghi. Việc ghi dữ liệu chỉ được thực hiện
+                    khi service, DID và những điều kiện liên quan được cấu hình cho phép.
+                </p>
+
+                <p>Luồng xử lý khái quát:</p>
+
+                <ol>
+                    <li>DSP phân tích request và DID đích.</li>
+                    <li>Kiểm tra định dạng và độ dài dữ liệu.</li>
+                    <li>Xác định DID có hỗ trợ ghi hay không.</li>
+                    <li>Chuyển dữ liệu đến interface hoặc thành phần chịu trách nhiệm ghi.</li>
+                    <li>Đánh giá kết quả ghi.</li>
+                    <li>Chuẩn bị response theo kết quả và quy tắc service.</li>
+                </ol>
+
+                <pre><code>Tester gửi WriteDataByIdentifier
+                |
+                v
+              DSP
+                |
+                | Kiểm tra DID và dữ liệu
+                |
+                v
+       Interface ghi dữ liệu
+                |
+                v
+      Application / BSW / Memory
+                |
+                | Kết quả ghi
+                v
+              DSP
+                |
+                v
+       Positive / Negative Response</code></pre>
+
+                <p>
+                    Không phải mọi DID đều cho phép ghi. Một số dữ liệu chỉ có thể
+                    đọc, trong khi dữ liệu khác chỉ cho phép ghi trong một session
+                    hoặc điều kiện bảo mật nhất định.
+                </p>
+
+                <p>
+                    Việc ghi dữ liệu cũng không đồng nghĩa với việc dữ liệu chắc chắn
+                    được lưu trữ lâu dài. Kết quả phụ thuộc vào nơi lưu, cơ chế ghi và
+                    yêu cầu của hệ thống.
+                </p>
+
+                <h2>11. DSP và dữ liệu được cung cấp bởi Application Software</h2>
+
+                <p>
+                    Application Software thường thực hiện các chức năng nghiệp vụ
+                    của ECU. Khi một diagnostic service cần truy cập dữ liệu ứng dụng,
+                    DSP phải sử dụng đường kết nối được cấu hình để lấy dữ liệu hoặc
+                    yêu cầu ứng dụng thực hiện một thao tác.
+                </p>
+
+                <p>
+                    Ví dụ, một SWC có thể quản lý trạng thái cửa xe. Một DID được
+                    cấu hình để trả về trạng thái đó khi tester gửi request đọc dữ liệu.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | Request đọc DID
+       v
+      DCM
+       |
+       v
+      DSP
+       |
+       | Interface được cấu hình
+       v
+      RTE / SWC
+       |
+       | Trạng thái cửa xe
+       v
+      DSP
+       |
+       | Định dạng dữ liệu
+       v
+Diagnostic Response</code></pre>
+
+                <p>
+                    RTE xuất hiện trong sơ đồ khi đường kết nối được thiết kế
+                    thông qua RTE. Không phải mọi hoạt động của DCM đều trực tiếp
+                    gọi RTE theo cùng một cách; cách tích hợp phụ thuộc service và
+                    cấu hình AUTOSAR của dự án.
+                </p>
+
+                <h2>12. DSP xử lý ReadDTCInformation (SID 0x19)</h2>
+
+                <p>
+                    ReadDTCInformation là dịch vụ UDS dùng để truy vấn thông tin
+                    về Diagnostic Trouble Code (DTC). Trong AUTOSAR Classic,
+                    DSP phối hợp với DEM để thực hiện những yêu cầu đọc thông tin
+                    DTC thuộc phạm vi dịch vụ được hỗ trợ.
+                </p>
+
+                <p>
+                    DEM (Diagnostic Event Manager) quản lý diagnostic event và
+                    những dữ liệu DTC thuộc phạm vi trách nhiệm của nó. DSP không
+                    thay thế DEM và cũng không nhất thiết lưu toàn bộ thông tin DTC.
+                </p>
+
+                <pre><code>Diagnostic Tester
+        |
+        | ReadDTCInformation (0x19)
+        v
+       DCM
+        |
+        v
+       DSP
+        |
+        | Yêu cầu thông tin DTC
+        v
+       DEM
+        |
+        | Kết quả phù hợp với request
+        v
+       DSP
+        |
+        | Định dạng response
+        v
+Diagnostic Tester</code></pre>
+
+                <p>
+                    Loại thông tin được trả về phụ thuộc sub-function của SID 0x19,
+                    khả năng của ECU và cấu hình liên quan. Không phải mọi ECU đều
+                    hỗ trợ tất cả các sub-function hoặc các loại thông tin DTC.
+                </p>
+
+                <h2>13. DSP và ClearDiagnosticInformation (SID 0x14)</h2>
+
+                <p>
+                    ClearDiagnosticInformation là dịch vụ yêu cầu xóa thông tin
+                    chẩn đoán trong phạm vi được cho phép. Trong AUTOSAR Classic,
+                    việc xử lý dữ liệu DTC liên quan thường yêu cầu sự phối hợp với DEM.
+                </p>
+
+                <p>Luồng khái quát:</p>
+
+                <ol>
+                    <li>Tester gửi request SID 0x14 cùng thông tin phạm vi liên quan.</li>
+                    <li>DSP phân tích request theo cấu trúc dịch vụ.</li>
+                    <li>DSP chuyển yêu cầu phù hợp đến DEM.</li>
+                    <li>DEM xử lý yêu cầu theo trạng thái và cấu hình.</li>
+                    <li>DSP sử dụng kết quả để hoàn tất xử lý dịch vụ.</li>
+                </ol>
+
+                <p>
+                    Một request xóa DTC không có nghĩa mọi dữ liệu chẩn đoán trong ECU
+                    sẽ bị xóa. Phạm vi và kết quả phải tuân theo định nghĩa của dịch vụ,
+                    khả năng triển khai và cấu hình liên quan.
+                </p>
+
+                <p>
+                    Nếu dịch vụ thất bại, cần xác định lỗi phát sinh trong phân tích
+                    request, interface DCM–DEM hay trong quá trình xử lý của DEM.
+                </p>
+
+                <h2>14. DSP phối hợp với DEM như thế nào?</h2>
+
+                <p>
+                    DEM và DSP có trách nhiệm khác nhau nhưng thường phối hợp trong
+                    các dịch vụ truy vấn hoặc thao tác liên quan đến lỗi chẩn đoán.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Trách nhiệm</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSP</td>
+                            <td>Xử lý request thuộc dịch vụ chẩn đoán và chuẩn bị dữ liệu response.</td>
+                            <td>Nhận request đọc DTC và xác định loại thông tin cần trả.</td>
+                        </tr>
+                        <tr>
+                            <td>DEM</td>
+                            <td>Quản lý diagnostic event và dữ liệu DTC thuộc phạm vi của DEM.</td>
+                            <td>Cung cấp thông tin DTC phù hợp với yêu cầu được gửi đến.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi phân tích một lỗi đọc DTC, cần phân biệt request có được xử lý
+                    đúng bởi DSP hay không với dữ liệu mà DEM cung cấp. Tester nhận
+                    response không như mong đợi chưa đủ để kết luận lỗi nằm trong DSP.
+                </p>
+
+                <h2>15. DSP xử lý RoutineControl (SID 0x31)</h2>
+
+                <p>
+                    RoutineControl cho phép tester yêu cầu một routine được ECU hỗ trợ
+                    thực hiện hoặc cung cấp trạng thái. Một routine có thể là thao tác
+                    kiểm tra, quy trình chẩn đoán hoặc chức năng đặc thù của dự án.
+                </p>
+
+                <p>
+                    SID 0x31 thường kết hợp sub-function và Routine Identifier (RID)
+                    để xác định thao tác và routine đích. Những thao tác thông thường
+                    gồm yêu cầu bắt đầu, dừng hoặc hỏi kết quả routine, tùy khả năng
+                    được cấu hình.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | RoutineControl (0x31)
+       | Sub-function + RID + Parameters
+       v
+      DCM / DSD
+       |
+       v
+      DSP
+       |
+       | Xác định routine được cấu hình
+       v
+Routine Interface / Application / BSW
+       |
+       | Kết quả hoặc trạng thái
+       v
+      DSP
+       |
+       v
+Diagnostic Response</code></pre>
+
+                <p>
+                    DSP không tự định nghĩa hành vi nghiệp vụ của tất cả các routine.
+                    Routine cụ thể có thể được triển khai trong Application Software
+                    hoặc thành phần phù hợp khác theo thiết kế ECU.
+                </p>
+
+                <h2>16. Ví dụ về một routine chẩn đoán</h2>
+
+                <p>
+                    Giả sử ECU hỗ trợ một routine kiểm tra trạng thái của một chức năng
+                    khi xe đứng yên. Tester yêu cầu bắt đầu routine bằng một RID đã
+                    được định nghĩa trong dự án.
+                </p>
+
+                <p>Luồng xử lý khái quát:</p>
+
+                <ol>
+                    <li>DSP phân tích SID, sub-function, RID và tham số.</li>
+                    <li>DSP xác định routine đã được cấu hình.</li>
+                    <li>Request được chuyển đến phần triển khai routine phù hợp.</li>
+                    <li>Routine thực hiện kiểm tra và cung cấp trạng thái hoặc kết quả.</li>
+                    <li>DSP xử lý kết quả để tạo response tương ứng.</li>
+                </ol>
+
+                <p>
+                    Nếu routine cần thời gian dài, việc phản hồi có thể liên quan
+                    đến cơ chế xử lý bất đồng bộ và timing của diagnostic communication.
+                    Cách triển khai cụ thể phụ thuộc service và cấu hình.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    RID và hành vi routine thường phụ thuộc thiết kế của ECU.
+                    Không nên suy luận rằng một RID bất kỳ sẽ có cùng chức năng trên
+                    tất cả các ECU.
+                </div>
+
+                <h2>17. DSP và InputOutputControlByIdentifier (SID 0x2F)</h2>
+
+                <p>
+                    InputOutputControlByIdentifier cho phép tester yêu cầu điều khiển
+                    một đối tượng I/O được hỗ trợ, chẳng hạn yêu cầu một chức năng
+                    chấp nhận giá trị điều khiển cụ thể trong điều kiện được cho phép.
+                </p>
+
+                <p>
+                    Loại I/O, giá trị có thể điều khiển và các điều kiện an toàn
+                    phụ thuộc cấu hình và yêu cầu của ECU.
+                </p>
+
+                <p>
+                    DSP xử lý request theo định nghĩa của dịch vụ và chuyển yêu cầu
+                    đến interface hoặc thành phần chịu trách nhiệm thực hiện điều khiển.
+                    DSP không nhất thiết trực tiếp thao tác thanh ghi phần cứng.
+                </p>
+
+                <pre><code>Tester gửi IO Control request
+             |
+             v
+            DCM
+             |
+             v
+            DSP
+             |
+             | Kiểm tra request và tham số
+             v
+Interface điều khiển I/O
+             |
+             v
+Application / BSW / I/O Layer
+             |
+             v
+Phản hồi kết quả điều khiển
+             |
+             v
+            DSP
+             |
+             v
+      Diagnostic Response</code></pre>
+
+                <p>
+                    Các điều kiện cho phép điều khiển I/O cần được thiết kế cẩn thận.
+                    Diagnostic request không nên tự động vượt qua các điều kiện an toàn
+                    hoặc điều kiện vận hành của ECU.
+                </p>
+
+                <h2>18. DSP và SecurityAccess (SID 0x27)</h2>
+
+                <p>
+                    SecurityAccess là dịch vụ UDS liên quan đến cơ chế truy cập được
+                    bảo vệ. Tùy cấu hình, dịch vụ có thể sử dụng một quy trình xác thực
+                    dựa trên seed và key.
+                </p>
+
+                <p>
+                    DSP tham gia xử lý nội dung request thuộc dịch vụ SecurityAccess
+                    theo cấu hình DCM và phối hợp với cơ chế liên quan để xử lý kết quả.
+                    Trạng thái security level được quản lý theo kiến trúc DCM, trong đó
+                    DSL và các phần liên quan có vai trò riêng.
+                </p>
+
+                <p>
+                    Cần phân biệt:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>DSP:</strong> xử lý request của dịch vụ và phối hợp
+                        với phần triển khai security theo cấu hình.
+                    </li>
+                    <li>
+                        <strong>Security mechanism:</strong> xác định cách kiểm tra
+                        thông tin truy cập theo thiết kế hệ thống.
+                    </li>
+                    <li>
+                        <strong>Security Level:</strong> trạng thái truy cập được sử dụng
+                        khi đánh giá những dịch vụ yêu cầu quyền tương ứng.
+                    </li>
+                </ul>
+
+                <p>
+                    Không phải mọi ECU dùng cùng một thuật toán hoặc chính sách security.
+                    Cách triển khai cụ thể phụ thuộc yêu cầu và cơ chế được cấu hình.
+                </p>
+
+                <h2>19. DSP và các dịch vụ lập trình, truyền dữ liệu</h2>
+
+                <p>
+                    Một số ECU hỗ trợ các dịch vụ UDS liên quan đến tải dữ liệu hoặc
+                    lập trình phần mềm, chẳng hạn RequestDownload (0x34),
+                    TransferData (0x36) và RequestTransferExit (0x37).
+                </p>
+
+                <p>
+                    Trong hệ thống có hỗ trợ những dịch vụ này, quá trình xử lý có thể
+                    yêu cầu phối hợp với các thành phần quản lý bộ nhớ, truyền dữ liệu
+                    hoặc phần mềm bootloader.
+                </p>
+
+                <p>
+                    DSP xử lý phần diagnostic service thuộc trách nhiệm của DCM.
+                    Điều đó không có nghĩa DSP thay thế toàn bộ chức năng ghi flash,
+                    quản lý vùng nhớ hoặc điều khiển bootloader.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dịch vụ</th>
+                            <th>Mục đích tổng quát</th>
+                            <th>Thành phần có thể liên quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>RequestDownload (0x34)</td>
+                            <td>Yêu cầu bắt đầu một hoạt động tải dữ liệu theo protocol.</td>
+                            <td>DCM, cơ chế lập trình và thành phần được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>TransferData (0x36)</td>
+                            <td>Truyền các khối dữ liệu trong quá trình transfer.</td>
+                            <td>DCM, bộ xử lý transfer và vùng lưu trữ đích.</td>
+                        </tr>
+                        <tr>
+                            <td>RequestTransferExit (0x37)</td>
+                            <td>Yêu cầu kết thúc giai đoạn transfer theo quy tắc dịch vụ.</td>
+                            <td>DCM và phần xử lý kết thúc transfer được cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những dịch vụ này không nhất thiết được hỗ trợ trong mọi ECU
+                    hoặc trong cùng một cấu hình DCM. Cần kiểm tra kiến trúc thực tế
+                    của hệ thống trước khi xác định phạm vi trách nhiệm của DSP.
+                </p>
+
+                <h2>20. DSP với service xử lý đồng bộ</h2>
+
+                <p>
+                    Với thao tác có thể hoàn thành ngay, phần xử lý service có thể
+                    thực hiện các bước cần thiết và trả kết quả trong cùng một luồng
+                    xử lý logic.
+                </p>
+
+                <p>
+                    Ví dụ, một DID chứa thông tin đã có sẵn trong bộ nhớ có thể được
+                    đọc và đóng gói thành response mà không cần chờ một thao tác dài.
+                </p>
+
+                <pre><code>Request
+   |
+   v
+DSP phân tích request
+   |
+   v
+Lấy dữ liệu có sẵn
+   |
+   v
+Tạo response
+   |
+   v
+Trả kết quả về DCM</code></pre>
+
+                <p>
+                    Tuy nhiên, một thao tác tưởng như đơn giản vẫn có thể cần truy cập
+                    nguồn dữ liệu chậm hơn hoặc phải chờ thành phần khác. Vì vậy,
+                    không nên giả định mọi service hoặc mọi DID đều xử lý đồng bộ.
+                </p>
+
+                <h2>21. DSP với service xử lý bất đồng bộ</h2>
+
+                <p>
+                    Một số diagnostic service có thể cần nhiều thời gian để hoàn thành.
+                    Ví dụ, một routine cần chờ dữ liệu từ module khác hoặc một thao tác
+                    yêu cầu thực hiện theo nhiều bước.
+                </p>
+
+                <p>
+                    Trong trường hợp phù hợp, phần triển khai service có thể thực hiện
+                    công việc theo cơ chế bất đồng bộ. DCM cần quản lý trạng thái
+                    xử lý request và phản hồi đúng theo các quy tắc timing.
+                </p>
+
+                <pre><code>Tester gửi request
+        |
+        v
+      DSP bắt đầu xử lý
+        |
+        v
+Thành phần thực hiện công việc
+        |
+        +---- Hoàn thành sớm
+        |          |
+        |          v
+        |    Final Response
+        |
+        +---- Cần tiếp tục xử lý
+                   |
+                   v
+       DCM xử lý timing / pending
+                   |
+                   v
+          Công việc tiếp tục
+                   |
+                   v
+            Final Response</code></pre>
+
+                <p>
+                    Khi sử dụng cơ chế ResponsePending, NRC 0x78 có ý nghĩa cho biết
+                    quá trình xử lý vẫn đang tiếp tục. Việc sử dụng cơ chế này, timing
+                    và hành vi response tiếp theo phải tuân theo quy tắc UDS và DCM
+                    đang được áp dụng.
+                </p>
+
+                <p>
+                    DSP không tự quyết định mọi khía cạnh của timing giao tiếp.
+                    Phần quản lý response timing có liên hệ với DSL và các quy tắc
+                    giao tiếp tổng thể.
+                </p>
+
+                <h2>22. Xử lý lỗi trong phần xử lý service</h2>
+
+                <p>
+                    Khi một dịch vụ không hoàn thành, DSP cần phân biệt nguyên nhân
+                    và trả kết quả phù hợp theo định nghĩa của service.
+                </p>
+
+                <p>Các nhóm tình huống thường gặp bao gồm:</p>
+
+                <ul>
+                    <li>Request thiếu dữ liệu hoặc sai định dạng.</li>
+                    <li>DID, RID hoặc tham số được yêu cầu không hợp lệ.</li>
+                    <li>Nguồn dữ liệu không thể cung cấp kết quả cần thiết.</li>
+                    <li>Thao tác được yêu cầu không thực hiện thành công.</li>
+                    <li>Điều kiện vận hành hoặc điều kiện nghiệp vụ không được đáp ứng.</li>
+                    <li>Quá trình xử lý chưa hoàn tất trong thời gian phản hồi ban đầu.</li>
+                </ul>
+
+                <p>
+                    NRC phải phản ánh lỗi theo đúng quy tắc của diagnostic service.
+                    Không nên trả cùng một mã lỗi cho tất cả các trường hợp thất bại,
+                    vì điều đó có thể khiến tester hiểu sai nguyên nhân thực tế.
+                </p>
+
+                <h2>23. DSP và Application Software: ranh giới trách nhiệm</h2>
+
+                <p>
+                    DSP xử lý diagnostic service, nhưng dữ liệu hoặc chức năng được
+                    yêu cầu có thể thuộc về Application Software. Hai phần có trách
+                    nhiệm khác nhau và kết nối với nhau thông qua những interface
+                    đã được thiết kế.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DSP</th>
+                            <th>Application Software</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phân tích request chẩn đoán và định dạng service.</td>
+                            <td>Thực hiện logic nghiệp vụ của chức năng ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Xác định dữ liệu cần lấy theo cấu hình diagnostic service.</td>
+                            <td>Cung cấp giá trị hoặc thực hiện thao tác được yêu cầu thông qua interface tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Chuẩn bị phần kết quả diagnostic response.</td>
+                            <td>Trả dữ liệu hoặc trạng thái thực hiện chức năng theo interface.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Việc đọc một DID không nhất thiết yêu cầu Application Software
+                    thực hiện một chức năng mới. Có trường hợp DSP chỉ cần đọc dữ liệu
+                    sẵn có thông qua nguồn được cấu hình.
+                </p>
+
+                <h2>24. DSP và BSW Services khác</h2>
+
+                <p>
+                    Tùy dịch vụ, DSP có thể tương tác với các module BSW ngoài DEM.
+                    Ví dụ, một dịch vụ có thể liên quan đến memory, communication
+                    hoặc một cơ chế quản lý trạng thái đặc thù.
+                </p>
+
+                <p>
+                    DSP đóng vai trò xử lý service ở góc nhìn diagnostic communication.
+                    Module được gọi vẫn chịu trách nhiệm thực hiện chức năng riêng
+                    mà nó cung cấp.
+                </p>
+
+                <p>
+                    Khi một service thất bại, cần xác định kết quả lỗi xuất phát từ:
+                </p>
+
+                <ul>
+                    <li>Việc phân tích hoặc kiểm tra request trong DCM.</li>
+                    <li>Interface kết nối từ DSP đến module khác.</li>
+                    <li>Logic hoặc trạng thái của module được gọi.</li>
+                    <li>Việc đóng gói kết quả và truyền response trở lại tester.</li>
+                </ul>
+
+                <h2>25. DSP và cấu hình dữ liệu chẩn đoán</h2>
+
+                <p>
+                    DSP cần biết cách ánh xạ request đến dữ liệu hoặc chức năng được
+                    hỗ trợ. Những thông tin này thường được xác định thông qua cấu hình
+                    diagnostic service và các interface tương ứng.
+                </p>
+
+                <p>Tùy service, cấu hình có thể mô tả:</p>
+
+                <ul>
+                    <li>Các SID và sub-function được hỗ trợ.</li>
+                    <li>DID, RID hoặc các tham số liên quan đến service.</li>
+                    <li>Nguồn dữ liệu hoặc interface đọc/ghi dữ liệu.</li>
+                    <li>Những điều kiện truy cập và quy tắc xử lý.</li>
+                    <li>Kiểu dữ liệu, độ dài, cách biểu diễn và quy tắc chuyển đổi nếu có.</li>
+                    <li>Các liên kết đến Application Software hoặc module BSW.</li>
+                </ul>
+
+                <p>
+                    Cấu hình cụ thể không hoàn toàn giống nhau giữa các toolchain.
+                    Việc lựa chọn service, khai báo data source và sinh ra code
+                    được cấu hình sẽ được tìm hiểu sâu hơn trong Bài 29.
+                </p>
+
+                <h2>26. Các nguyên nhân khiến dữ liệu DID không chính xác</h2>
+
+                <p>
+                    Một DID được hỗ trợ không có nghĩa dữ liệu trả về luôn đúng.
+                    Khi kết quả sai, cần kiểm tra toàn bộ đường đi dữ liệu từ nguồn
+                    đến diagnostic response.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Hướng kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DID không được nhận diện</td>
+                            <td>Kiểm tra DID có được cấu hình và hỗ trợ trên ECU không.</td>
+                        </tr>
+                        <tr>
+                            <td>Response có độ dài không như mong đợi</td>
+                            <td>Kiểm tra cấu trúc service, độ dài dữ liệu và cấu hình dữ liệu trả về.</td>
+                        </tr>
+                        <tr>
+                            <td>Giá trị đúng nhưng đơn vị sai</td>
+                            <td>Kiểm tra quy tắc chuyển đổi và cách biểu diễn dữ liệu theo dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Giá trị luôn bằng 0 hoặc không thay đổi</td>
+                            <td>Kiểm tra nguồn dữ liệu, trạng thái cập nhật và interface cung cấp giá trị.</td>
+                        </tr>
+                        <tr>
+                            <td>Request thất bại khi đọc dữ liệu</td>
+                            <td>Kiểm tra kết quả từ data provider và điều kiện xử lý dịch vụ.</td>
+                        </tr>
+                        <tr>
+                            <td>Giá trị trả về bị cắt hoặc sai thứ tự byte</td>
+                            <td>Kiểm tra độ dài dữ liệu, layout, byte order và quá trình đóng gói response.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>27. Debug một diagnostic service theo từng bước</h2>
+
+                <p>
+                    Khi một service không hoạt động như mong đợi, nên lần theo request
+                    từ lúc nhận được cho đến khi response được truyền đi.
+                </p>
+
+                <ol>
+                    <li>
+                        <strong>Xác nhận request đầu vào:</strong>
+                        kiểm tra SID, tham số, độ dài và dữ liệu thực tế từ trace.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra DSD:</strong>
+                        xác định request đã vượt qua các điều kiện dispatch hay chưa.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra DSP:</strong>
+                        xác định service handler đã bắt đầu xử lý hay chưa và dữ liệu đầu vào có hợp lệ không.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra nguồn dữ liệu hoặc module được gọi:</strong>
+                        xác nhận interface có được gọi và trả về kết quả phù hợp không.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra kết quả xử lý:</strong>
+                        xác định dữ liệu hoặc trạng thái lỗi được trả về cho DSP.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra response:</strong>
+                        đối chiếu dữ liệu response với định dạng service và kết quả mong đợi.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra đường truyền:</strong>
+                        xác nhận response được chuyển từ DCM qua PduR và communication stack thành công.
+                    </li>
+                </ol>
+
+                <p>
+                    Nếu request chưa đến DSP, cần điều tra đường tiếp nhận hoặc dispatch
+                    trước. Nếu DSP đã gọi thành phần cung cấp dữ liệu nhưng nhận kết quả
+                    sai, cần kiểm tra interface và module đích thay vì chỉ sửa logic DCM.
+                </p>
+
+                <h2>28. Ví dụ debug: Đọc DID trả về dữ liệu sai</h2>
+
+                <p>
+                    Giả sử tester đọc một DID và nhận được giá trị nhiệt độ không đúng
+                    với giá trị quan sát được trong phần mềm ứng dụng.
+                </p>
+
+                <pre><code>Tester gửi request đọc DID
+             |
+             v
+      Kiểm tra request đầu vào
+             |
+             v
+      DSD đã dispatch chưa?
+             |
+             v
+      DSP xử lý đúng DID chưa?
+             |
+             v
+      DSP có đọc đúng nguồn dữ liệu?
+             |
+             v
+      Data provider trả giá trị gì?
+             |
+             v
+      DSP đóng gói dữ liệu thế nào?
+             |
+             v
+      Response được truyền đúng?
+             |
+             v
+      So sánh kết quả với dữ liệu nguồn</code></pre>
+
+                <p>
+                    Với ví dụ này, nguyên nhân có thể nằm trong DID mapping, nguồn dữ liệu,
+                    phép chuyển đổi đơn vị, byte order, độ dài dữ liệu hoặc quá trình
+                    đóng gói response. Cần xác minh bằng trace và cấu hình thay vì
+                    giả định DSP là nguyên nhân duy nhất.
+                </p>
+
+                <h2>29. Checklist khi phân tích DSP</h2>
+
+                <ul>
+                    <li>Request đã được DSD chuyển đến DSP chưa?</li>
+                    <li>SID, sub-function và tham số đầu vào có đúng không?</li>
+                    <li>Độ dài và cấu trúc request có đáp ứng yêu cầu service không?</li>
+                    <li>DID, RID hoặc đối tượng cần thao tác có được hỗ trợ không?</li>
+                    <li>Nguồn dữ liệu hoặc interface đã được cấu hình đúng chưa?</li>
+                    <li>Module được gọi đã trả về kết quả gì?</li>
+                    <li>Kết quả lỗi được chuyển thành NRC phù hợp chưa?</li>
+                    <li>Response có đúng độ dài, định dạng và thứ tự dữ liệu không?</li>
+                    <li>Service có cần xử lý bất đồng bộ hoặc ResponsePending không?</li>
+                    <li>Response có được truyền thành công qua DSL và communication stack không?</li>
+                </ul>
+
+                <h2>30. Những điểm dễ nhầm lẫn</h2>
+
+                <ul>
+                    <li>
+                        <strong>DSP không phải toàn bộ DCM:</strong>
+                        DSP là phần xử lý dịch vụ, còn DSL và DSD có trách nhiệm riêng.
+                    </li>
+                    <li>
+                        <strong>DSP không thay thế Application Software:</strong>
+                        DSP xử lý request chẩn đoán; logic nghiệp vụ vẫn thuộc thành phần được thiết kế để thực hiện chức năng đó.
+                    </li>
+                    <li>
+                        <strong>DSP không thay thế DEM:</strong>
+                        DEM quản lý diagnostic event và các dữ liệu DTC thuộc phạm vi của nó.
+                    </li>
+                    <li>
+                        <strong>Service được hỗ trợ không có nghĩa dữ liệu luôn đúng:</strong>
+                        nguồn dữ liệu, interface, mapping và cách đóng gói vẫn có thể gây lỗi.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra request có thể liên quan cả DSD và DSP:</strong>
+                        DSD tập trung vào điều kiện dispatch, trong khi DSP còn kiểm tra định dạng và tham số chi tiết của service.
+                    </li>
+                    <li>
+                        <strong>ResponsePending không phải response cuối cùng:</strong>
+                        nếu service tiếp tục xử lý, DCM phải quản lý timing và trạng thái theo quy tắc tương ứng.
+                    </li>
+                    <li>
+                        <strong>DSP không trực tiếp thay thế transport layer:</strong>
+                        DSP chuẩn bị kết quả chẩn đoán; các module giao tiếp vẫn chịu trách nhiệm truyền dữ liệu.
+                    </li>
+                </ul>
+
+                <h2>31. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSP</td>
+                            <td>Diagnostic Service Processing.</td>
+                        </tr>
+                        <tr>
+                            <td>SID</td>
+                            <td>Service Identifier, định danh dịch vụ chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>DID</td>
+                            <td>Data Identifier, định danh dữ liệu chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>RID</td>
+                            <td>Routine Identifier, định danh routine được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>DTC</td>
+                            <td>Diagnostic Trouble Code, mã lỗi chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>DEM</td>
+                            <td>Diagnostic Event Manager.</td>
+                        </tr>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Diagnostic Service Dispatcher.</td>
+                        </tr>
+                        <tr>
+                            <td>DSL</td>
+                            <td>Diagnostic Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>NRC</td>
+                            <td>Negative Response Code.</td>
+                        </tr>
+                        <tr>
+                            <td>ResponsePending</td>
+                            <td>Trạng thái phản hồi cho biết yêu cầu vẫn đang được xử lý theo quy tắc timing.</td>
+                        </tr>
+                        <tr>
+                            <td>Data Provider</td>
+                            <td>Thành phần cung cấp dữ liệu cho diagnostic service thông qua interface được cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>32. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        DSP (Diagnostic Service Processing) là sub-module của DCM
+                        chịu trách nhiệm phân tích request và xử lý nội dung của
+                        diagnostic service. Công việc của DSP bao gồm kiểm tra
+                        định dạng, lấy dữ liệu hoặc gọi chức năng tương ứng,
+                        xử lý kết quả và chuẩn bị response.
+                    </p>
+
+                    <p>
+                        Với ReadDataByIdentifier và WriteDataByIdentifier, DSP phối hợp
+                        với nguồn dữ liệu được cấu hình. Với ReadDTCInformation và
+                        ClearDiagnosticInformation, DSP có thể phối hợp với DEM.
+                        Với RoutineControl hoặc InputOutputControlByIdentifier, DSP
+                        có thể kết nối đến phần triển khai chức năng trong Application
+                        Software hoặc thành phần phù hợp khác.
+                    </p>
+
+                    <p>
+                        Khi debug, hãy lần theo chuỗi:
+                        <strong>Request → DSD → DSP → Data Provider / DEM / Application
+                        → Response</strong>. Cách tiếp cận này giúp phân biệt lỗi
+                        ở bước dispatch, logic xử lý dịch vụ, nguồn dữ liệu và
+                        đường truyền response.
+                    </p>
+
+                    <p>
+                        Sau khi đã tìm hiểu DSL, DSD và DSP, bài tiếp theo sẽ tập trung
+                        vào <strong>DCM Generator</strong>: vai trò của công cụ cấu hình,
+                        các đầu ra được sinh, và cách đưa cấu hình DCM vào quá trình
+                        build và tích hợp ECU.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a href="lesson-27.html">← Bài trước</a>
+                    <a href="lesson-29.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

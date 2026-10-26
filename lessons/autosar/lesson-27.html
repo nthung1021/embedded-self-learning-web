@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 27: DCM - Diagnostic Service Dispatcher (DSD) | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html" class="active" aria-current="page">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</h1>
+
+                <p>
+                    Trong AUTOSAR Classic, DCM (Diagnostic Communication Manager)
+                    tiếp nhận và xử lý giao tiếp chẩn đoán giữa diagnostic tester
+                    và ECU. Bên trong DCM, DSD (Diagnostic Service Dispatcher)
+                    là sub-module có nhiệm vụ kiểm tra tính hợp lệ của request,
+                    xác định dịch vụ có được hỗ trợ hay không, đánh giá các điều kiện
+                    thực hiện và điều phối request đến phần xử lý dịch vụ tương ứng.
+                </p>
+
+                <p>
+                    Một diagnostic request đến ECU không phải lúc nào cũng được thực hiện.
+                    Dịch vụ có thể không được hỗ trợ, không phù hợp với Diagnostic Session
+                    hiện tại, yêu cầu một Security Level khác hoặc không đáp ứng điều kiện
+                    hoạt động của ECU. DSD giúp kiểm tra những điều kiện liên quan trước
+                    khi việc xử lý dịch vụ được tiếp tục.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này đi sâu vào vai trò của DSD, Service Identifier (SID),
+                    service table, các bước kiểm tra request, Negative Response Code (NRC),
+                    response suppression và mối quan hệ với DSL/DSP. Phần xử lý dữ liệu
+                    và logic chi tiết bên trong từng diagnostic service sẽ được dành cho
+                    Bài 28: DSP.
+                </div>
+
+                <h2>1. DSD là gì?</h2>
+
+                <p>
+                    DSD là viết tắt của <strong>Diagnostic Service Dispatcher</strong>.
+                    Đây là một trong ba sub-module chính của DCM, bên cạnh DSL và DSP.
+                </p>
+
+                <p>
+                    DSD không đơn thuần là một bộ định tuyến request. Ngoài việc điều phối
+                    request đến phần xử lý phù hợp, DSD còn kiểm tra các điều kiện liên quan
+                    đến việc một diagnostic service có được phép thực hiện hay không.
+                </p>
+
+                <p>Các trách nhiệm chính của DSD gồm:</p>
+
+                <ul>
+                    <li>Phân tích Service Identifier (SID) của diagnostic request.</li>
+                    <li>Kiểm tra dịch vụ có được cấu hình hỗ trợ hay không.</li>
+                    <li>Kiểm tra những điều kiện như session, security level và mode rule.</li>
+                    <li>Kiểm tra sub-function hoặc độ dài tối thiểu của request trong những trường hợp thuộc phạm vi của DSD.</li>
+                    <li>Điều phối request đến DSP hoặc interface xử lý tương ứng.</li>
+                    <li>Phối hợp chuẩn bị positive response, negative response hoặc không gửi response khi có cơ chế suppression được áp dụng.</li>
+                    <li>Theo dõi tiến trình xử lý dịch vụ và phối hợp hoàn tất xử lý sau khi response được truyền.</li>
+                </ul>
+
+                <h2>2. Tại sao cần DSD?</h2>
+
+                <p>
+                    Giả sử một ECU hỗ trợ nhiều dịch vụ chẩn đoán, bao gồm đọc dữ liệu,
+                    đọc DTC, thay đổi session và điều khiển routine. Mỗi dịch vụ có thể
+                    có những điều kiện thực hiện khác nhau.
+                </p>
+
+                <p>
+                    Nếu từng phần xử lý phải tự tìm cách xác định dịch vụ, kiểm tra quyền
+                    truy cập và điều phối response theo cách riêng, kiến trúc sẽ dễ phát sinh
+                    logic trùng lặp và cách xử lý không nhất quán.
+                </p>
+
+                <p>
+                    DSD cung cấp một điểm điều phối chung cho những diagnostic request.
+                    Nhờ đó, các điều kiện chung về service support, session, security
+                    và mode có thể được quản lý theo cấu hình và quy tắc của DCM.
+                </p>
+
+                <p>DSD giúp:</p>
+
+                <ul>
+                    <li>Ngăn request không hợp lệ đi vào phần xử lý dịch vụ.</li>
+                    <li>Tổ chức việc dispatch theo các dịch vụ được cấu hình.</li>
+                    <li>Áp dụng những điều kiện chẩn đoán một cách nhất quán.</li>
+                    <li>Giúp việc kiểm thử và phân tích lỗi request dễ dàng hơn.</li>
+                </ul>
+
+                <h2>3. Vị trí của DSD trong kiến trúc DCM</h2>
+
+                <p>
+                    DSL tiếp nhận và quản lý luồng giao tiếp chẩn đoán, sau đó chuyển
+                    request vào DSD. DSD kiểm tra request và điều phối việc xử lý
+                    dịch vụ. Khi có kết quả, DSD tiếp tục phối hợp tạo response
+                    và chuyển response đến DSL để truyền đi.
+                </p>
+
+                <pre><code>             Diagnostic Tester
+                     |
+                     v
+           Communication / Transport
+                     |
+                     v
+                    PduR
+                     |
+                     v
+             +-----------------+
+             |       DCM       |
+             |-----------------|
+             |       DSL       |
+             |         |       |
+             |         v       |
+             |       DSD       |
+             |         |       |
+             |         v       |
+             |       DSP       |
+             +-----------------+
+                     |
+                     v
+               Response qua DSL
+                     |
+                     v
+                    PduR
+                     |
+                     v
+             Diagnostic Tester</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái niệm. DSD không trực tiếp thay thế PduR
+                    và cũng không đảm nhận toàn bộ logic ứng dụng của diagnostic service.
+                    Các kết nối thực tế phụ thuộc vào cấu hình DCM và phiên bản AUTOSAR.
+                </p>
+
+                <h2>4. Phân biệt DSL, DSD và DSP</h2>
+
+                <p>
+                    Ba sub-module này phối hợp chặt chẽ nhưng không có cùng trách nhiệm.
+                    Phân biệt đúng vai trò của chúng là nền tảng để đọc trace và debug DCM.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sub-module</th>
+                            <th>Trách nhiệm chính</th>
+                            <th>Câu hỏi cần trả lời</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSL</td>
+                            <td>Quản lý luồng request/response, timing và trạng thái chẩn đoán liên quan.</td>
+                            <td>Dữ liệu được tiếp nhận và response được truyền theo luồng nào?</td>
+                        </tr>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Kiểm tra request và điều phối dịch vụ.</td>
+                            <td>Request có được phép thực hiện và cần được chuyển đến đâu?</td>
+                        </tr>
+                        <tr>
+                            <td>DSP</td>
+                            <td>Xử lý chức năng cụ thể của diagnostic service.</td>
+                            <td>Dịch vụ cần lấy dữ liệu hoặc thực hiện hành động gì?</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ với một request đọc DID, DSD kiểm tra service và những điều kiện
+                    liên quan, sau đó chuyển yêu cầu đến phần xử lý phù hợp. DSP hoặc
+                    thành phần được kết nối thực hiện việc lấy giá trị dữ liệu, còn DSD
+                    phối hợp với các thành phần khác để hoàn tất response.
+                </p>
+
+                <h2>5. Luồng xử lý tổng quát của DSD</h2>
+
+                <p>
+                    Một diagnostic request đi qua DSD có thể được hình dung qua các bước:
+                </p>
+
+                <ol>
+                    <li>DSL chuyển request đã tiếp nhận vào DSD.</li>
+                    <li>DSD phân tích SID và xác định service có được hỗ trợ hay không.</li>
+                    <li>DSD kiểm tra những điều kiện truy cập, session, security và mode áp dụng.</li>
+                    <li>DSD kiểm tra sub-function hoặc độ dài tối thiểu của request trong các trường hợp tương ứng.</li>
+                    <li>Nếu request không được chấp nhận, DSD xác định hành vi response theo quy tắc liên quan.</li>
+                    <li>Nếu request hợp lệ, DSD điều phối request đến DSP hoặc phần xử lý đã được cấu hình.</li>
+                    <li>Khi quá trình xử lý hoàn tất, DSD phối hợp tạo response hoặc áp dụng cơ chế suppression.</li>
+                    <li>DSD chuyển response về DSL để tiếp tục truyền qua communication stack.</li>
+                </ol>
+
+                <pre><code>         Request từ DSL
+                |
+                v
+        Phân tích SID
+                |
+                v
+       Service được hỗ trợ?
+          /           \
+       Không           Có
+         |              |
+         v              v
+    NRC hoặc       Kiểm tra các
+    hành vi        điều kiện thực hiện
+    suppression          |
+                         v
+                Request hợp lệ?
+                   /       \
+                Không       Có
+                  |          |
+                  v          v
+             NRC hoặc     Dispatch tới DSP
+             suppression       |
+                               v
+                         Xử lý service
+                               |
+                               v
+                       Kết quả xử lý
+                               |
+                               v
+                     Tạo response hoặc
+                       suppress response
+                               |
+                               v
+                              DSL</code></pre>
+
+                <p>
+                    Sơ đồ trên thể hiện logic khái quát. Thứ tự kiểm tra, các điều kiện
+                    có thể cấu hình và hành vi cụ thể phải được đối chiếu với phiên bản
+                    AUTOSAR và cấu hình DCM của hệ thống.
+                </p>
+
+                <h2>6. Service Identifier (SID) là gì?</h2>
+
+                <p>
+                    SID (Service Identifier) là byte xác định diagnostic service
+                    được yêu cầu trong UDS request. DSD sử dụng SID để xác định
+                    request thuộc dịch vụ nào.
+                </p>
+
+                <p>Một số ví dụ thường gặp:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SID request</th>
+                            <th>Tên dịch vụ UDS</th>
+                            <th>Mục đích khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x10</td>
+                            <td>DiagnosticSessionControl</td>
+                            <td>Yêu cầu chuyển diagnostic session.</td>
+                        </tr>
+                        <tr>
+                            <td>0x11</td>
+                            <td>ECUReset</td>
+                            <td>Yêu cầu thực hiện ECU reset theo điều kiện được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>0x19</td>
+                            <td>ReadDTCInformation</td>
+                            <td>Truy vấn thông tin DTC.</td>
+                        </tr>
+                        <tr>
+                            <td>0x22</td>
+                            <td>ReadDataByIdentifier</td>
+                            <td>Đọc dữ liệu thông qua DID.</td>
+                        </tr>
+                        <tr>
+                            <td>0x27</td>
+                            <td>SecurityAccess</td>
+                            <td>Thực hiện cơ chế security access được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>0x31</td>
+                            <td>RoutineControl</td>
+                            <td>Điều khiển routine được cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Danh sách trên chỉ là ví dụ. Mỗi ECU có thể hỗ trợ tập dịch vụ khác nhau,
+                    và cùng một dịch vụ có thể có những sub-function hoặc điều kiện thực hiện
+                    riêng.
+                </p>
+
+                <h2>7. DSD sử dụng Service Identifier Table</h2>
+
+                <p>
+                    DSD cần biết ECU hỗ trợ những SID nào. AUTOSAR cho phép thông tin
+                    về các service được tổ chức thông qua <strong>Service Identifier Table</strong>,
+                    được xây dựng từ cấu hình DCM.
+                </p>
+
+                <p>
+                    Có thể hình dung bảng này như danh sách những SID mà ECU có thể xử lý.
+                    Khi request đến, DSD tìm SID nhận được trong bảng đang được sử dụng
+                    để xác định service có được hỗ trợ hay không.
+                </p>
+
+                <pre><code>Incoming Diagnostic Request
+             |
+             v
+       Đọc SID request
+             |
+             v
+    Active Service Identifier Table
+             |
+        +----+----+
+        |         |
+      Found    Not found
+        |         |
+        v         v
+ Kiểm tra thêm   NRC 0x11
+ điều kiện       hoặc hành vi
+        |         suppression
+        v
+ Dispatch service</code></pre>
+
+                <p>
+                    Những SID được hỗ trợ, các sub-service và những liên kết với phần
+                    xử lý được xác định qua cấu hình. Không nên giả định mọi SID UDS
+                    tiêu chuẩn đều được triển khai trong một ECU.
+                </p>
+
+                <h2>8. Khi SID không được hỗ trợ</h2>
+
+                <p>
+                    Nếu request chứa một service ID không nằm trong các dịch vụ được
+                    hỗ trợ, DSD không được chuyển request đó vào một phần xử lý dịch vụ
+                    không tương ứng.
+                </p>
+
+                <p>
+                    Trong tình huống UDS thông thường, mã NRC thường gặp là:
+                </p>
+
+                <p>
+                    <strong>NRC 0x11 — Service Not Supported</strong>
+                </p>
+
+                <p>
+                    NRC này cho biết service được yêu cầu không được hỗ trợ trong
+                    phạm vi áp dụng. Tuy nhiên, hành vi response thực tế còn phụ thuộc
+                    quy tắc của protocol, loại addressing và cấu hình của ECU.
+                </p>
+
+                <p>
+                    Cần phân biệt trường hợp service không được hỗ trợ với trường hợp
+                    service có hỗ trợ nhưng bị từ chối do Session, Security hoặc một
+                    điều kiện thực hiện khác.
+                </p>
+
+                <h2>9. Các điều kiện DSD kiểm tra trước khi thực hiện service</h2>
+
+                <p>
+                    DSD không chỉ kiểm tra SID. Trong AUTOSAR Classic R24-11,
+                    quá trình xác minh request bao gồm những điều kiện theo thứ tự
+                    được quy định, với một số nhánh phụ thuộc cấu hình.
+                </p>
+
+                <p>Các nhóm kiểm tra gồm:</p>
+
+                <ol>
+                    <li>
+                        <strong>Manufacturer permission:</strong>
+                        kiểm tra điều kiện hoặc quyền chấp nhận request thông qua
+                        interface tương ứng nếu được cấu hình.
+                    </li>
+                    <li>
+                        <strong>SID verification:</strong>
+                        xác định service có được hỗ trợ hay không.
+                    </li>
+                    <li>
+                        <strong>Authentication-based access control:</strong>
+                        kiểm tra quyền truy cập theo authentication state khi chức năng này được cấu hình.
+                    </li>
+                    <li>
+                        <strong>Diagnostic Session:</strong>
+                        kiểm tra dịch vụ hoặc sub-function có được phép trong session hiện tại hay không.
+                    </li>
+                    <li>
+                        <strong>Security Access Level:</strong>
+                        kiểm tra service có đáp ứng điều kiện security level hay không.
+                    </li>
+                    <li>
+                        <strong>Supplier permission:</strong>
+                        kiểm tra điều kiện chấp nhận request thông qua interface tương ứng nếu được cấu hình.
+                    </li>
+                    <li>
+                        <strong>Mode rules:</strong>
+                        kiểm tra các điều kiện mode được cấu hình cho service hoặc sub-service.
+                    </li>
+                </ol>
+
+                <p>
+                    Những kiểm tra thực tế không phải tất cả đều được bật trong mọi dự án.
+                    Chức năng authentication và một số permission interface phụ thuộc
+                    cấu hình và yêu cầu hệ thống.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    DSD chịu trách nhiệm kiểm tra những điều kiện dispatch thuộc phạm vi
+                    của nó. Việc một request qua được DSD không có nghĩa toàn bộ hành động
+                    nghiệp vụ chắc chắn thành công; DSP hoặc thành phần được gọi vẫn có
+                    thể phát hiện điều kiện lỗi khi xử lý dịch vụ.
+                </div>
+
+                <h2>10. Kiểm tra Diagnostic Session</h2>
+
+                <p>
+                    Một dịch vụ được hỗ trợ vẫn có thể không được phép thực hiện trong
+                    Diagnostic Session hiện tại.
+                </p>
+
+                <p>
+                    Ví dụ, ECU có thể cho phép đọc một số thông tin ở Default Session,
+                    nhưng yêu cầu Extended Diagnostic Session đối với một dịch vụ khác.
+                    DSD kiểm tra điều kiện session theo cấu hình của service hoặc sub-service.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>NRC thường gặp theo UDS/DCM</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Service không được phép trong session hiện tại.</td>
+                            <td>0x7F</td>
+                            <td>Service Not Supported in Active Session.</td>
+                        </tr>
+                        <tr>
+                            <td>Service được phép, nhưng sub-function không được phép trong session hiện tại.</td>
+                            <td>0x7E</td>
+                            <td>Sub-function Not Supported in Active Session.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cần phân biệt kiểm tra session thông thường của DSD với việc xử lý
+                    dịch vụ DiagnosticSessionControl (SID 0x10) để chuyển session.
+                    DSD không tự chịu trách nhiệm cho toàn bộ logic của dịch vụ SID 0x10.
+                </p>
+
+                <h2>11. Kiểm tra Security Access Level</h2>
+
+                <p>
+                    Security Access Level được sử dụng để giới hạn quyền thực hiện
+                    một số dịch vụ hoặc sub-service. DSD kiểm tra security level hiện tại
+                    và đối chiếu với điều kiện đã được cấu hình.
+                </p>
+
+                <p>
+                    Nếu một service hoặc sub-service yêu cầu security level khác với
+                    trạng thái hiện tại, request có thể bị từ chối.
+                </p>
+
+                <p>
+                    NRC thường gặp cho trường hợp này là:
+                </p>
+
+                <p>
+                    <strong>NRC 0x33 — Security Access Denied</strong>
+                </p>
+
+                <p>
+                    DSD không tự thực hiện toàn bộ cơ chế lấy seed, gửi key hoặc quản lý
+                    security level. Những chức năng đó thuộc cơ chế SecurityAccess và
+                    các thành phần quản lý trạng thái có liên quan. DSD sử dụng trạng thái
+                    hiện tại để đánh giá quyền thực hiện dịch vụ.
+                </p>
+
+                <h2>12. Authentication và quyền truy cập service</h2>
+
+                <p>
+                    Những cấu hình DCM hỗ trợ authentication có thể giới hạn service
+                    theo vai trò hoặc quyền truy cập của diagnostic connection.
+                    DSD có thể kiểm tra quyền ở mức SID hoặc sub-function theo
+                    cấu hình và cơ chế authentication áp dụng.
+                </p>
+
+                <p>
+                    Trong một số trường hợp, request bị từ chối do thiếu quyền
+                    authentication có thể dẫn đến:
+                </p>
+
+                <p>
+                    <strong>NRC 0x34 — Authentication Required</strong>
+                </p>
+
+                <p>
+                    Cơ chế này khác với Security Access Level. Authentication state
+                    và security level là những khái niệm riêng, dù chúng đều có thể
+                    ảnh hưởng đến việc một dịch vụ được phép thực hiện hay không.
+                </p>
+
+                <p>
+                    Việc có kiểm tra authentication hay không phụ thuộc phiên bản
+                    AUTOSAR, cấu hình DCM và yêu cầu của dự án. Không nên giả định
+                    mọi ECU đều bật cùng một cơ chế.
+                </p>
+
+                <h2>13. Kiểm tra Mode Rules</h2>
+
+                <p>
+                    Ngoài session và security, khả năng thực hiện một diagnostic service
+                    còn có thể phụ thuộc trạng thái hoạt động của ECU.
+                </p>
+
+                <p>
+                    Ví dụ, một thao tác chẩn đoán có thể chỉ được chấp nhận khi ECU
+                    đang ở trạng thái cho phép, hoặc khi một điều kiện của hệ thống
+                    đáp ứng yêu cầu dự án.
+                </p>
+
+                <p>
+                    AUTOSAR DCM hỗ trợ cấu hình các mode rule cho service và sub-service.
+                    DSD kiểm tra điều kiện được tham chiếu và xử lý kết quả theo cấu hình.
+                </p>
+
+                <p>
+                    Không có một NRC duy nhất áp dụng cho mọi mode rule bị vi phạm.
+                    Mã phản hồi cụ thể phụ thuộc vào quy tắc và cấu hình của ECU.
+                </p>
+
+                <h2>14. Manufacturer và Supplier Permission</h2>
+
+                <p>
+                    DSD có thể phối hợp với interface notification được cấu hình để
+                    yêu cầu phía manufacturer hoặc supplier đánh giá điều kiện của request.
+                </p>
+
+                <p>
+                    Những kiểm tra này có thể được sử dụng khi điều kiện chấp nhận
+                    một dịch vụ phụ thuộc logic hoặc trạng thái đặc thù của dự án.
+                    Ví dụ, trong một trạng thái vận hành nhất định, một nhóm request
+                    có thể không được phép xử lý.
+                </p>
+
+                <p>
+                    Tùy kết quả từ interface, DSD có thể tiếp tục xử lý, tạo negative
+                    response phù hợp hoặc áp dụng hành vi không phản hồi theo những
+                    quy tắc được quy định.
+                </p>
+
+                <p>
+                    Đây là những điểm tích hợp có thể cấu hình, không có nghĩa mọi
+                    dự án đều phải triển khai cùng một tập notification interface.
+                </p>
+
+                <h2>15. Kiểm tra Sub-function</h2>
+
+                <p>
+                    Nhiều UDS service có một sub-function để chỉ định hành vi cụ thể
+                    bên trong service. Khi đó, chỉ kiểm tra SID là chưa đủ.
+                </p>
+
+                <p>
+                    Ví dụ, DiagnosticSessionControl có những sub-function tương ứng
+                    với các loại session. RoutineControl cũng sử dụng sub-function
+                    để phân biệt các thao tác điều khiển routine.
+                </p>
+
+                <p>
+                    Nếu service có sub-function nhưng giá trị được yêu cầu không được
+                    hỗ trợ theo cấu hình, NRC thường gặp là:
+                </p>
+
+                <p>
+                    <strong>NRC 0x12 — Sub-function Not Supported</strong>
+                </p>
+
+                <p>
+                    Hành vi kiểm tra cụ thể phụ thuộc loại service. Một số dịch vụ có
+                    quy tắc đặc biệt, vì vậy không nên áp dụng nguyên tắc chung một cách
+                    máy móc cho mọi service.
+                </p>
+
+                <h2>16. Kiểm tra độ dài tối thiểu của request</h2>
+
+                <p>
+                    DSD cũng có thể kiểm tra request có đủ độ dài tối thiểu cần thiết
+                    trước khi tiếp tục xử lý hay không.
+                </p>
+
+                <p>
+                    Ví dụ, một request yêu cầu đọc dữ liệu cần có những byte định danh
+                    tương ứng. Nếu request ngắn hơn độ dài tối thiểu được yêu cầu,
+                    DSD có thể từ chối trước khi dispatch đến phần xử lý dịch vụ.
+                </p>
+
+                <p>
+                    NRC thường gặp là:
+                </p>
+
+                <p>
+                    <strong>NRC 0x13 — Incorrect Message Length or Invalid Format</strong>
+                </p>
+
+                <p>
+                    Kiểm tra độ dài tối thiểu không thay thế toàn bộ việc xác minh
+                    cấu trúc dữ liệu của từng service. Những kiểm tra riêng về tham số,
+                    định dạng và dữ liệu thuộc service có thể tiếp tục được thực hiện
+                    trong DSP hoặc phần xử lý cụ thể.
+                </p>
+
+                <h2>17. DSD chuyển request đến DSP như thế nào?</h2>
+
+                <p>
+                    Khi request vượt qua các kiểm tra cần thiết, DSD xác định phần
+                    xử lý tương ứng và chuyển request đến DSP hoặc interface xử lý
+                    được cấu hình.
+                </p>
+
+                <p>
+                    Việc liên kết service với phần xử lý có thể dựa trên cấu hình.
+                    Vì vậy, một SID được hỗ trợ không nhất thiết có nghĩa toàn bộ
+                    việc xử lý được viết trực tiếp bên trong DSD.
+                </p>
+
+                <pre><code>DSL
+ |
+ v
+DSD
+ |
+ +-- Kiểm tra SID
+ |
+ +-- Kiểm tra điều kiện dispatch
+ |
+ +-- Kiểm tra sub-function / độ dài tối thiểu
+ |
+ v
+Phần xử lý được cấu hình
+ |
+ +-- DSP service interpreter
+ |
+ +-- Hoặc interface xử lý phù hợp
+ |
+ v
+Kết quả xử lý
+ |
+ v
+DSD chuẩn bị response hoặc
+xử lý theo cơ chế suppression
+ |
+ v
+DSL</code></pre>
+
+                <p>
+                    Trong Bài 28, chúng ta sẽ đi sâu hơn vào DSP: cách từng service
+                    đọc dữ liệu, gọi interface ứng dụng hoặc module BSW, và tạo kết quả
+                    xử lý tương ứng.
+                </p>
+
+                <h2>18. Positive Response</h2>
+
+                <p>
+                    Khi phần xử lý dịch vụ hoàn tất thành công và quy tắc chẩn đoán
+                    yêu cầu trả response, DSD phối hợp xây dựng positive response.
+                </p>
+
+                <p>
+                    Với nhiều UDS service tiêu chuẩn, positive response SID thường
+                    được xác định bằng cách cộng 0x40 vào request SID. Ví dụ,
+                    request SID 0x22 thường có positive response SID 0x62.
+                </p>
+
+                <p>
+                    Response còn có thể chứa những byte dữ liệu hoặc tham số kết quả
+                    do phần xử lý dịch vụ cung cấp.
+                </p>
+
+                <pre><code>Request:
+22 F1 90
+ |
+ | 0x22 = ReadDataByIdentifier
+ v
+DSD kiểm tra và dispatch
+ |
+ v
+DSP / nguồn dữ liệu cung cấp kết quả
+ |
+ v
+Positive Response:
+62 F1 90 [Dữ liệu trả về]</code></pre>
+
+                <p>
+                    Đây chỉ là ví dụ về cách nhận diện SID; giá trị DID và dữ liệu
+                    thực tế phụ thuộc ECU. Một số service có quy tắc response riêng,
+                    vì vậy cần đối chiếu chuẩn của service tương ứng.
+                </p>
+
+                <h2>19. Negative Response và NRC</h2>
+
+                <p>
+                    Khi request không được chấp nhận hoặc việc xử lý dịch vụ phát sinh
+                    lỗi cần phản hồi, DCM có thể trả negative response với NRC phù hợp.
+                    DSD đảm nhiệm các trường hợp từ chối trong phạm vi kiểm tra và
+                    điều phối của nó, đồng thời xử lý kết quả lỗi được trả từ DSP.
+                </p>
+
+                <p>
+                    Cấu trúc negative response UDS thông thường có dạng:
+                </p>
+
+                <pre><code>7F [Request SID] [NRC]</code></pre>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>7F 22 11</code></pre>
+
+                <p>
+                    Trong ví dụ trên, tester gửi request có SID 0x22 nhưng ECU trả
+                    NRC 0x11. Điều này biểu thị service không được hỗ trợ trong
+                    trường hợp áp dụng, chứ không nhất thiết là lỗi truyền thông.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NRC</th>
+                            <th>Tên</th>
+                            <th>Ý nghĩa khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x11</td>
+                            <td>ServiceNotSupported</td>
+                            <td>Service không được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>0x12</td>
+                            <td>SubFunctionNotSupported</td>
+                            <td>Sub-function không được hỗ trợ trong trường hợp áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>0x13</td>
+                            <td>IncorrectMessageLengthOrInvalidFormat</td>
+                            <td>Request không đủ độ dài tối thiểu hoặc không đúng định dạng theo quy tắc liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>0x22</td>
+                            <td>ConditionsNotCorrect</td>
+                            <td>Điều kiện thực hiện dịch vụ không được đáp ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>0x33</td>
+                            <td>SecurityAccessDenied</td>
+                            <td>Điều kiện Security Access không được đáp ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>0x34</td>
+                            <td>AuthenticationRequired</td>
+                            <td>Yêu cầu quyền authentication trong cấu hình có áp dụng cơ chế này.</td>
+                        </tr>
+                        <tr>
+                            <td>0x7E</td>
+                            <td>SubFunctionNotSupportedInActiveSession</td>
+                            <td>Sub-function không được phép trong session hiện tại.</td>
+                        </tr>
+                        <tr>
+                            <td>0x7F</td>
+                            <td>ServiceNotSupportedInActiveSession</td>
+                            <td>Service không được phép trong session hiện tại.</td>
+                        </tr>
+                        <tr>
+                            <td>0x78</td>
+                            <td>ResponsePending</td>
+                            <td>ECU đang tiếp tục xử lý và chưa có response cuối cùng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Bảng này là tài liệu tham khảo nhanh. Không phải mọi NRC đều
+                    do DSD tự tạo, và NRC cụ thể phải phù hợp service, nguyên nhân
+                    lỗi và quy tắc UDS đang được áp dụng.
+                </p>
+
+                <h2>20. Suppress Positive Response là gì?</h2>
+
+                <p>
+                    Một số UDS request có thể yêu cầu ECU không gửi positive response.
+                    Cơ chế này được gọi là <strong>Suppress Positive Response Message
+                    Indication Bit (SPRMIB)</strong>.
+                </p>
+
+                <p>
+                    Đối với các service có sub-function và hỗ trợ cơ chế này, bit
+                    tương ứng trong byte sub-function có thể yêu cầu suppress positive
+                    response. DSD kiểm tra và xử lý cờ này theo cấu hình và quy tắc service.
+                </p>
+
+                <p>
+                    Khi việc suppress positive response được chấp nhận, ECU vẫn thực hiện
+                    dịch vụ theo quy tắc, nhưng có thể không gửi positive response như
+                    trong luồng thông thường.
+                </p>
+
+                <p>
+                    Điều quan trọng là việc suppress positive response không đồng nghĩa
+                    request bị từ chối. Đây là hành vi response được yêu cầu hoặc được
+                    quy định trong giao thức.
+                </p>
+
+                <h2>21. Suppress Positive Response không có nghĩa suppress mọi response</h2>
+
+                <p>
+                    Cần phân biệt việc suppress positive response với việc không gửi
+                    bất kỳ response nào.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Suppress Positive Response:</strong>
+                        không gửi positive response trong trường hợp cơ chế này được áp dụng.
+                    </li>
+                    <li>
+                        <strong>Negative Response:</strong>
+                        có thể vẫn cần được gửi nếu có lỗi hoặc điều kiện từ chối theo quy tắc.
+                    </li>
+                    <li>
+                        <strong>ResponsePending:</strong>
+                        nếu request cần tiếp tục xử lý theo quy tắc timing, response pending
+                        và response cuối cùng phải tuân theo quy định tương ứng.
+                    </li>
+                </ul>
+
+                <p>
+                    Trong AUTOSAR DCM, khi cơ chế ResponsePending được sử dụng,
+                    cờ suppress positive response phải được xử lý theo yêu cầu
+                    của specification để response cuối cùng cần thiết không bị
+                    suppress sai cách.
+                </p>
+
+                <h2>22. Functional Addressing và Negative Response Suppression</h2>
+
+                <p>
+                    Trong chẩn đoán UDS, cần phân biệt Physical Addressing và
+                    Functional Addressing.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Physical Addressing:</strong>
+                        request hướng đến một ECU cụ thể.
+                    </li>
+                    <li>
+                        <strong>Functional Addressing:</strong>
+                        request được gửi theo địa chỉ chức năng, có thể hướng đến
+                        nhiều ECU có liên quan.
+                    </li>
+                </ul>
+
+                <p>
+                    Với Functional Addressing, tiêu chuẩn UDS quy định những trường hợp
+                    negative response được suppress để tránh nhiều ECU cùng phát response
+                    không cần thiết. DCM thực hiện việc này theo quy tắc và các loại NRC
+                    áp dụng cho functional request.
+                </p>
+
+                <p>
+                    Vì vậy, nếu tester không nhận response trong một trường hợp functional
+                    addressing, chưa thể kết luận rằng ECU không nhận được request.
+                    Cần kiểm tra addressing mode, loại dịch vụ, trạng thái xử lý và
+                    quy tắc suppression.
+                </p>
+
+                <h2>23. Vì sao đôi khi ECU không gửi response?</h2>
+
+                <p>
+                    Khi debug, không nên mặc định mọi request đều phải nhận được
+                    một response nhìn thấy trên tester. Một số tình huống có thể
+                    khiến DCM không phát response theo hành vi được quy định.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>Giải thích khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Positive response được suppress</td>
+                            <td>Service được xử lý nhưng positive response không được gửi theo cơ chế SPRMIB.</td>
+                        </tr>
+                        <tr>
+                            <td>Negative response bị suppress</td>
+                            <td>Trong những trường hợp functional addressing và NRC được quy định, DCM có thể không gửi negative response.</td>
+                        </tr>
+                        <tr>
+                            <td>Permission interface không chấp nhận request</td>
+                            <td>Tùy kết quả và quy tắc notification, DSD có thể kết thúc request mà không gửi response.</td>
+                        </tr>
+                        <tr>
+                            <td>Lỗi trong đường truyền response</td>
+                            <td>DSD có thể đã tạo response nhưng việc truyền qua DSL, PduR hoặc communication stack chưa hoàn tất thành công.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các ví dụ trên có hành vi và điều kiện riêng. Khi điều tra lỗi,
+                    cần xác định request đã bị từ chối ở bước kiểm tra, bị suppress,
+                    hay đã tạo response nhưng thất bại trong quá trình truyền.
+                </p>
+
+                <h2>24. DSD theo dõi tiến trình thực hiện request</h2>
+
+                <p>
+                    DSD không chỉ tham gia vào thời điểm request mới đến. Nó còn
+                    phối hợp theo dõi việc xử lý dịch vụ và hoàn tất quá trình truyền
+                    response.
+                </p>
+
+                <p>
+                    Khi DSP xử lý dịch vụ, quá trình có thể hoàn thành ngay hoặc cần
+                    tiếp tục qua nhiều bước, ví dụ khi phải chờ dữ liệu từ một thành
+                    phần khác. DSD cần xử lý kết quả theo cơ chế tương ứng của DCM.
+                </p>
+
+                <p>
+                    Sau khi response được chuyển đến DSL và quá trình truyền có kết quả,
+                    các thông tin confirmation cần được chuyển tiếp theo luồng nội bộ.
+                    Điều này giúp DCM hoàn tất trạng thái xử lý service request.
+                </p>
+
+                <p>
+                    Chi tiết về thao tác bất đồng bộ, xử lý dữ liệu và callback của
+                    từng service sẽ được tìm hiểu sâu hơn trong Bài 28.
+                </p>
+
+                <h2>25. DSD và các response phân đoạn</h2>
+
+                <p>
+                    Một diagnostic response đôi khi có kích thước lớn hơn khả năng
+                    truyền trong một phần dữ liệu đơn lẻ của transport đang sử dụng.
+                    Khi đó, response có thể cần được truyền theo nhiều đoạn.
+                </p>
+
+                <p>
+                    DSD phối hợp đưa response vào luồng truyền của DCM. DSL và các
+                    module transport đảm nhận phần cơ chế truyền tải tương ứng với
+                    protocol và cấu hình, chẳng hạn phân đoạn ở transport layer.
+                </p>
+
+                <p>
+                    Cần phân biệt:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>DSD:</strong>
+                        điều phối service và xây dựng kết quả chẩn đoán trong phạm vi DCM.
+                    </li>
+                    <li>
+                        <strong>DSL:</strong>
+                        quản lý luồng giao tiếp và chuyển response đến đường truyền.
+                    </li>
+                    <li>
+                        <strong>Transport module:</strong>
+                        xử lý các cơ chế truyền tải cần thiết cho giao thức.
+                    </li>
+                </ul>
+
+                <h2>26. Ví dụ hoàn chỉnh: Request đọc DID hợp lệ</h2>
+
+                <p>
+                    Giả sử tester gửi request đọc một DID mà ECU hỗ trợ. DID được cấu hình,
+                    quyền truy cập phù hợp và điều kiện session hiện tại cho phép thực hiện.
+                </p>
+
+                <pre><code>Tester gửi:
+22 F1 90
+       |
+       v
+      PduR
+       |
+       v
+      DSL
+       |
+       v
+      DSD
+       |
+       +-- SID 0x22 có được hỗ trợ?
+       |
+       +-- Điều kiện truy cập có hợp lệ?
+       |
+       +-- Session / Security / Mode có phù hợp?
+       |
+       v
+   Request được chấp nhận
+       |
+       v
+ DSP hoặc data provider
+       |
+       v
+    Dữ liệu trả về
+       |
+       v
+      DSD
+       |
+       v
+   Positive response
+       |
+       v
+      DSL -> PduR -> Tester</code></pre>
+
+                <p>
+                    Trong ví dụ này, DSD không tự đo đạc hoặc tính toán dữ liệu của DID.
+                    DSD kiểm tra và điều phối request; phần xử lý dịch vụ lấy giá trị
+                    từ nguồn dữ liệu theo cấu hình và trả kết quả để DCM xây dựng response.
+                </p>
+
+                <h2>27. Ví dụ: Request bị từ chối do Session</h2>
+
+                <p>
+                    Giả sử tester gửi một service được hỗ trợ, nhưng service đó chỉ
+                    được phép trong Extended Diagnostic Session. ECU hiện đang ở
+                    Default Session.
+                </p>
+
+                <pre><code>Tester gửi service request
+          |
+          v
+         DSL
+          |
+          v
+         DSD
+          |
+          | Kiểm tra SID: supported
+          |
+          | Kiểm tra session:
+          | service không được phép
+          | trong session hiện tại
+          |
+          v
+  Negative response theo quy tắc
+          |
+          v
+         DSL
+          |
+          v
+         Tester</code></pre>
+
+                <p>
+                    Trong tình huống này, nếu áp dụng quy tắc UDS tương ứng,
+                    NRC 0x7F là mã thường gặp cho service không được hỗ trợ
+                    trong active session. Nếu vấn đề nằm ở sub-function thì
+                    NRC 0x7E có thể được áp dụng.
+                </p>
+
+                <p>
+                    Điểm quan trọng là service có thể được hỗ trợ trên ECU,
+                    nhưng vẫn không được phép thực hiện trong session hiện tại.
+                </p>
+
+                <h2>28. Ví dụ: Request không đủ độ dài</h2>
+
+                <p>
+                    Giả sử request cần một SID và một nhóm tham số tối thiểu,
+                    nhưng dữ liệu nhận được bị thiếu một phần.
+                </p>
+
+                <pre><code>Request nhận được
+       |
+       v
+      DSD
+       |
+       | Kiểm tra độ dài tối thiểu
+       |
+       v
+Request không đủ độ dài
+       |
+       v
+NRC 0x13 theo quy tắc áp dụng</code></pre>
+
+                <p>
+                    Ví dụ này minh họa một trường hợp DSD có thể từ chối request
+                    trước khi dispatch vào DSP. Tuy nhiên, các kiểm tra định dạng
+                    và tính hợp lệ sâu hơn vẫn có thể được thực hiện bởi phần
+                    xử lý dịch vụ tương ứng.
+                </p>
+
+                <h2>29. Khi debug DSD, nên kiểm tra từ đâu?</h2>
+
+                <p>
+                    Nếu tester gửi request nhưng ECU trả kết quả không như mong đợi,
+                    nên lần theo các bước kiểm tra và điều phối của DSD.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Hướng kiểm tra ban đầu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>NRC 0x11</td>
+                            <td>Kiểm tra SID, service được cấu hình và Service Identifier Table đang hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <td>NRC 0x12</td>
+                            <td>Kiểm tra sub-function có được hỗ trợ và cấu hình cho service hay không.</td>
+                        </tr>
+                        <tr>
+                            <td>NRC 0x13</td>
+                            <td>Kiểm tra byte request, độ dài tối thiểu và định dạng dữ liệu được yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>NRC 0x7E hoặc 0x7F</td>
+                            <td>Kiểm tra Diagnostic Session hiện tại và cấu hình quyền thực hiện service/sub-function.</td>
+                        </tr>
+                        <tr>
+                            <td>NRC 0x33</td>
+                            <td>Kiểm tra security level hiện tại và điều kiện Security Access của service.</td>
+                        </tr>
+                        <tr>
+                            <td>NRC 0x34</td>
+                            <td>Kiểm tra authentication configuration, authentication state và quyền truy cập được yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Không có response</td>
+                            <td>Kiểm tra suppression, functional addressing, permission interface, trạng thái xử lý và đường truyền response.</td>
+                        </tr>
+                        <tr>
+                            <td>Request hợp lệ nhưng không có kết quả đúng</td>
+                            <td>Kiểm tra request đã được dispatch tới DSP chưa, và phần xử lý dịch vụ có trả kết quả đúng không.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    NRC thường giúp thu hẹp phạm vi điều tra nhưng không phải lúc nào
+                    cũng xác định được nguyên nhân cuối cùng. Cần kết hợp trace, log,
+                    cấu hình DCM và trạng thái của các module liên quan.
+                </p>
+
+                <h2>30. Checklist khi phân tích DSD</h2>
+
+                <ul>
+                    <li>SID trong request có đúng với service dự kiến không?</li>
+                    <li>Service có được khai báo trong cấu hình DCM không?</li>
+                    <li>Sub-function có được hỗ trợ hay không?</li>
+                    <li>Request có đủ độ dài tối thiểu không?</li>
+                    <li>Diagnostic Session hiện tại có cho phép service không?</li>
+                    <li>Security Level và Authentication State có đáp ứng điều kiện không?</li>
+                    <li>Các mode rule có được đáp ứng không?</li>
+                    <li>Manufacturer hoặc supplier permission interface có từ chối request không?</li>
+                    <li>Request đã được dispatch đến đúng phần xử lý chưa?</li>
+                    <li>Response có được tạo, bị suppress hay gặp vấn đề trong đường truyền?</li>
+                    <li>Confirmation và trạng thái hoàn tất request có được xử lý đúng không?</li>
+                </ul>
+
+                <h2>31. Những điểm dễ nhầm lẫn</h2>
+
+                <ul>
+                    <li>
+                        <strong>DSD không chỉ là bộ định tuyến:</strong>
+                        DSD còn kiểm tra SID, điều kiện truy cập và những điều kiện dispatch khác.
+                    </li>
+                    <li>
+                        <strong>Service supported không có nghĩa luôn được phép thực hiện:</strong>
+                        Session, security, authentication và mode rule vẫn có thể khiến request bị từ chối.
+                    </li>
+                    <li>
+                        <strong>NRC 0x11 khác NRC 0x7F:</strong>
+                        0x11 biểu thị service không được hỗ trợ; 0x7F biểu thị service không được phép trong active session.
+                    </li>
+                    <li>
+                        <strong>NRC 0x12 khác NRC 0x7E:</strong>
+                        0x12 biểu thị sub-function không được hỗ trợ; 0x7E biểu thị sub-function không được phép trong active session.
+                    </li>
+                    <li>
+                        <strong>DSD không thay thế DSP:</strong>
+                        DSD điều phối và đánh giá điều kiện; DSP hoặc thành phần được kết nối thực hiện phần xử lý dịch vụ cụ thể.
+                    </li>
+                    <li>
+                        <strong>Không có response chưa chắc là lỗi:</strong>
+                        Cần kiểm tra suppression, functional addressing và các điều kiện từ chối theo cấu hình.
+                    </li>
+                </ul>
+
+                <h2>32. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Diagnostic Service Dispatcher.</td>
+                        </tr>
+                        <tr>
+                            <td>SID</td>
+                            <td>Service Identifier.</td>
+                        </tr>
+                        <tr>
+                            <td>Service Identifier Table</td>
+                            <td>Bảng thông tin các service được cấu hình hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>NRC</td>
+                            <td>Negative Response Code.</td>
+                        </tr>
+                        <tr>
+                            <td>SPRMIB</td>
+                            <td>Suppress Positive Response Message Indication Bit.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Session</td>
+                            <td>Trạng thái session chẩn đoán hiện tại của ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Security Access Level</td>
+                            <td>Trạng thái security access dùng để kiểm soát quyền thực hiện dịch vụ.</td>
+                        </tr>
+                        <tr>
+                            <td>Authentication State</td>
+                            <td>Trạng thái xác thực của diagnostic connection khi cơ chế này được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode Rule</td>
+                            <td>Điều kiện mode được cấu hình để kiểm soát việc thực hiện service hoặc sub-service.</td>
+                        </tr>
+                        <tr>
+                            <td>Functional Addressing</td>
+                            <td>Cơ chế gửi request theo địa chỉ chức năng, có thể hướng đến nhiều ECU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>33. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        DSD (Diagnostic Service Dispatcher) là sub-module của DCM
+                        chịu trách nhiệm kiểm tra tính hợp lệ của diagnostic request
+                        và điều phối request đến phần xử lý dịch vụ phù hợp.
+                    </p>
+
+                    <p>
+                        DSD sử dụng SID và thông tin cấu hình để kiểm tra service có
+                        được hỗ trợ không. Tùy trường hợp và cấu hình, DSD còn kiểm tra
+                        Diagnostic Session, Security Access Level, Authentication State,
+                        Mode Rules, sub-function và độ dài tối thiểu của request.
+                    </p>
+
+                    <p>
+                        Nếu request không được chấp nhận, DSD xử lý negative response
+                        hoặc suppression theo quy tắc áp dụng. Nếu request hợp lệ, DSD
+                        chuyển yêu cầu đến DSP hoặc interface xử lý tương ứng, rồi phối hợp
+                        chuẩn bị response và hoàn tất quy trình giao tiếp.
+                    </p>
+
+                    <p>
+                        Khi debug, hãy xác định request bị từ chối ở bước kiểm tra nào,
+                        đã được dispatch đến DSP hay chưa, và response có được tạo,
+                        suppress hoặc truyền thành công hay không. Đây là cách phân biệt
+                        lỗi DSD với lỗi DSL, DSP và Communication Stack.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a href="lesson-26.html">← Bài trước</a>
+                    <a href="lesson-28.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

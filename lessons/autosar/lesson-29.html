@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 29: DCM Generator | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html" class="active" aria-current="page">Bài 29: DCM Generator</a>
+
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 29: DCM Generator</h1>
+
+                <p>
+                    Trong AUTOSAR Classic, DCM (Diagnostic Communication Manager)
+                    đảm nhiệm việc xử lý giao tiếp chẩn đoán giữa diagnostic tester
+                    và ECU. Để DCM hoạt động đúng với từng ECU, đội phát triển cần
+                    cấu hình các dịch vụ chẩn đoán, DID, session, security, interface
+                    dữ liệu và những tham số liên quan.
+                </p>
+
+                <p>
+                    Những thông tin này không nhất thiết được viết thủ công trực tiếp
+                    vào mã nguồn C. Thay vào đó, chúng được biểu diễn trong các mô hình
+                    hoặc dữ liệu cấu hình AUTOSAR, sau đó được công cụ cấu hình và
+                    generator xử lý để tạo ra các thành phần cần thiết cho ECU.
+                </p>
+
+                <p>
+                    <strong>DCM Generator</strong> là cách gọi chung cho công cụ hoặc
+                    bước sinh đầu ra cấu hình DCM trong quy trình phát triển AUTOSAR.
+                    Generator giúp chuyển cấu hình đã được thiết lập thành những
+                    thành phần phần mềm có thể tích hợp vào quá trình build.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào vai trò của DCM Generator, đầu vào cấu hình,
+                    quy trình validate và generate, các loại đầu ra, mối quan hệ với
+                    ARXML và RTE, cách tích hợp code được sinh ra, cùng các lỗi thường gặp.
+                    Tên file, giao diện và cách tổ chức generator cụ thể phụ thuộc
+                    toolchain và nhà cung cấp AUTOSAR stack.
+                </div>
+
+                <h2>1. DCM Generator là gì?</h2>
+
+                <p>
+                    DCM Generator là công cụ hoặc thành phần trong toolchain dùng để
+                    xử lý cấu hình DCM và sinh ra những đầu ra phù hợp với cách triển
+                    khai phần mềm của dự án.
+                </p>
+
+                <p>
+                    Trong một dự án AUTOSAR, DCM phải biết ECU hỗ trợ dịch vụ nào,
+                    dữ liệu nào có thể được đọc hoặc ghi, những session nào được sử dụng,
+                    các điều kiện truy cập ra sao và dữ liệu được kết nối với thành phần
+                    nào trong hệ thống.
+                </p>
+
+                <p>
+                    Generator sử dụng dữ liệu cấu hình cùng các định nghĩa module
+                    để tạo ra những thành phần cấu hình cần thiết. Nhờ đó, phần mềm
+                    có thể sử dụng một cấu hình thống nhất thay vì dựa vào việc chỉnh
+                    sửa thủ công nhiều vị trí trong mã nguồn.
+                </p>
+
+                <p>Các mục tiêu chính của DCM Generator gồm:</p>
+
+                <ul>
+                    <li>Chuyển các tham số cấu hình thành dữ liệu mà DCM có thể sử dụng.</li>
+                    <li>Tạo các file cấu hình hoặc header theo yêu cầu của implementation.</li>
+                    <li>Kiểm tra và phát hiện một số lỗi hoặc mâu thuẫn trong cấu hình.</li>
+                    <li>Hỗ trợ liên kết các dịch vụ chẩn đoán với interface đã được khai báo.</li>
+                    <li>Giảm việc sửa mã cấu hình bằng tay.</li>
+                    <li>Giúp tái tạo kết quả cấu hình nhất quán khi cấu hình đầu vào không thay đổi.</li>
+                </ul>
+
+                <h2>2. Tại sao DCM cần Generator?</h2>
+
+                <p>
+                    Một ECU có thể hỗ trợ nhiều diagnostic service và mỗi service
+                    có thể chứa nhiều tham số cấu hình. Ví dụ, một hệ thống có nhiều DID,
+                    các routine riêng, nhiều session, security level và những nguồn
+                    dữ liệu khác nhau.
+                </p>
+
+                <p>
+                    Nếu đội phát triển viết thủ công toàn bộ dữ liệu cấu hình C,
+                    việc thêm hoặc thay đổi service có thể buộc phải sửa nhiều file.
+                    Điều này làm tăng nguy cơ thiếu khai báo, sai liên kết hoặc sử dụng
+                    các tham số không nhất quán.
+                </p>
+
+                <p>
+                    Generator giúp tự động chuyển cấu hình thành đầu ra phù hợp với
+                    implementation của DCM. Tuy nhiên, nó không tự quyết định ECU
+                    cần cung cấp chức năng chẩn đoán nào; những yêu cầu đó vẫn phải
+                    được xác định và cấu hình bởi đội phát triển.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Không sử dụng generator phù hợp</th>
+                            <th>Sử dụng generator trong quy trình cấu hình</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dễ phát sinh nhiều thay đổi thủ công ở mã cấu hình.</td>
+                            <td>Cấu hình được chuyển đổi theo quy tắc của toolchain.</td>
+                        </tr>
+                        <tr>
+                            <td>Các khai báo có thể không nhất quán giữa nhiều file.</td>
+                            <td>Đầu ra được sinh từ một tập cấu hình đã được xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Việc lặp lại quá trình tạo cấu hình khó kiểm soát.</td>
+                            <td>Có thể tái tạo đầu ra từ cấu hình và phiên bản công cụ tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Việc kiểm tra phụ thuộc nhiều vào thao tác thủ công.</td>
+                            <td>Các lỗi cấu hình mà công cụ nhận diện được có thể bị phát hiện sớm.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>3. Phân biệt DCM với DCM Generator</h2>
+
+                <p>
+                    DCM và DCM Generator có liên quan nhưng không phải cùng một thứ.
+                    DCM là module phần mềm tham gia xử lý diagnostic communication
+                    khi ECU hoạt động. Generator là công cụ được sử dụng trong quá
+                    trình phát triển để tạo ra những đầu ra cấu hình phù hợp.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DCM</th>
+                            <th>DCM Generator</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Là module BSW trong ECU.</td>
+                            <td>Là công cụ hoặc bước sinh đầu ra trong môi trường phát triển.</td>
+                        </tr>
+                        <tr>
+                            <td>Xử lý các diagnostic request và response khi phần mềm chạy.</td>
+                            <td>Xử lý dữ liệu cấu hình trước khi phần mềm được build hoặc tích hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Thực thi hành vi đã được triển khai và cấu hình.</td>
+                            <td>Tạo các thành phần cấu hình phù hợp với implementation.</td>
+                        </tr>
+                        <tr>
+                            <td>Được tích hợp vào executable của ECU.</td>
+                            <td>Thường chạy trong môi trường phát triển, không phải thành phần xử lý request trên ECU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể hiểu đơn giản: DCM là phần mềm thực hiện chức năng chẩn đoán,
+                    còn Generator giúp tạo ra cấu hình cần thiết để DCM hoạt động
+                    theo yêu cầu của ECU.
+                </p>
+
+                <h2>4. Generator nằm ở đâu trong quy trình AUTOSAR?</h2>
+
+                <p>
+                    Generator là một phần của quy trình cấu hình và tích hợp ECU.
+                    Nó được sử dụng sau khi các tham số cấu hình cần thiết đã được
+                    thiết lập hoặc cập nhật, và trước khi những đầu ra được sử dụng
+                    trong quá trình build phần mềm hoàn chỉnh.
+                </p>
+
+                <pre><code>Yêu cầu chẩn đoán của dự án
+              |
+              v
+      Thiết kế diagnostic service
+              |
+              v
+      Mô hình và cấu hình AUTOSAR
+        (ARXML / ECUC Values)
+              |
+              v
+       Kiểm tra cấu hình
+           (Validate)
+              |
+              v
+        DCM Generator
+              |
+              v
+      Generated Configuration
+         / Source / Header
+              |
+              v
+       Tích hợp với DCM stack
+       và các module liên quan
+              |
+              v
+          Compile / Link
+              |
+              v
+       ECU Software Executable
+              |
+              v
+       Kiểm thử chẩn đoán ECU</code></pre>
+
+                <p>
+                    Đây là luồng tổng quát. Trong toolchain cụ thể, configure,
+                    validate và generate có thể được tích hợp trong một công cụ
+                    hoặc chia thành nhiều công cụ và bước riêng biệt.
+                </p>
+
+                <h2>5. Các đầu vào của DCM Generator</h2>
+
+                <p>
+                    Generator không thể tự suy ra đầy đủ cấu hình DCM chỉ từ yêu cầu
+                    "ECU cần hỗ trợ chẩn đoán". Nó cần các thông tin cấu hình và
+                    định nghĩa module phù hợp với dự án.
+                </p>
+
+                <p>Các đầu vào thường liên quan đến những nhóm sau:</p>
+
+                <ul>
+                    <li>
+                        <strong>ECU Configuration:</strong>
+                        các giá trị cấu hình DCM và những thông tin liên quan
+                        đến module BSW khác.
+                    </li>
+                    <li>
+                        <strong>Module Description:</strong>
+                        định nghĩa tham số, cấu trúc và các ràng buộc cấu hình
+                        mà implementation hỗ trợ.
+                    </li>
+                    <li>
+                        <strong>Diagnostic Configuration:</strong>
+                        service, session, DID, RID, security và các thành phần
+                        chẩn đoán được hỗ trợ.
+                    </li>
+                    <li>
+                        <strong>Interface Description:</strong>
+                        thông tin kết nối tới Application Software, RTE, DEM hoặc
+                        các thành phần khác khi cần.
+                    </li>
+                    <li>
+                        <strong>Toolchain và stack version:</strong>
+                        phiên bản tool và implementation tương ứng với cấu hình.
+                    </li>
+                </ul>
+
+                <p>
+                    Không phải mọi generator đều đọc các đầu vào này từ những file
+                    tách biệt. Một số công cụ tích hợp chúng trong cùng môi trường
+                    cấu hình và quản lý dữ liệu nội bộ.
+                </p>
+
+                <h2>6. ARXML có vai trò gì?</h2>
+
+                <p>
+                    ARXML là định dạng XML được AUTOSAR sử dụng để trao đổi và lưu
+                    trữ nhiều loại mô hình, mô tả hệ thống và dữ liệu cấu hình.
+                    Trong quy trình cấu hình ECU, dữ liệu liên quan đến BSW có thể
+                    được biểu diễn thông qua các cấu trúc cấu hình theo định nghĩa AUTOSAR.
+                </p>
+
+                <p>
+                    DCM Generator có thể sử dụng dữ liệu cấu hình DCM từ mô hình
+                    hoặc ECU Configuration Description để tạo đầu ra phù hợp.
+                    Cấu hình còn phải tương thích với định nghĩa tham số module
+                    và implementation của toolchain.
+                </p>
+
+                <pre><code>                 ARXML
+                   |
+                   v
+       ECU Configuration Description
+                   |
+                   v
+       Tham số cấu hình module DCM
+                   |
+                   v
+              DCM Generator
+                   |
+                   v
+       Code / dữ liệu cấu hình được sinh</code></pre>
+
+                <p>
+                    Cần phân biệt ARXML với code được sinh. ARXML là dữ liệu mô tả
+                    cấu hình hoặc mô hình; file C và header là đầu ra nguồn có thể
+                    được implementation sử dụng sau bước generate.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Không phải mọi file ARXML trong dự án đều là cấu hình DCM.
+                    Một dự án có thể chứa nhiều loại ARXML khác nhau, chẳng hạn mô tả
+                    SWC, ECU Extract và dữ liệu cấu hình BSW.
+                </div>
+
+                <h2>7. ECU Configuration Values và cấu hình BSW</h2>
+
+                <p>
+                    Trong phương pháp AUTOSAR, ECU Configuration Values là một
+                    tập dữ liệu cấu hình chứa các tham số liên quan đến ECU,
+                    bao gồm cấu hình các BSW module. Mỗi generator có thể lấy
+                    phần thông tin thuộc phạm vi của module mà nó phụ trách.
+                </p>
+
+                <p>
+                    Điều này có nghĩa cấu hình của DCM không tồn tại hoàn toàn
+                    độc lập với hệ thống. Một số cấu hình của nó có thể liên quan
+                    đến các module giao tiếp, DEM, RTE, OS hoặc những thành phần
+                    khác trong ECU.
+                </p>
+
+                <p>
+                    Ví dụ, một service chẩn đoán có thể cần một nguồn dữ liệu từ
+                    Application Software. Khi đó, cấu hình phải thể hiện được
+                    mối liên hệ phù hợp giữa diagnostic service và interface cung
+                    cấp dữ liệu. Generator xử lý cấu hình theo những định nghĩa
+                    và ràng buộc mà toolchain hỗ trợ.
+                </p>
+
+                <h2>8. Các nhóm cấu hình mà DCM Generator có thể xử lý</h2>
+
+                <p>
+                    DCM có nhiều nhóm tham số. Cấu hình cần phản ánh các chức năng
+                    và dịch vụ mà ECU thực sự hỗ trợ.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm cấu hình</th>
+                            <th>Ví dụ nội dung</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Protocol và connection</td>
+                            <td>Thông tin protocol chẩn đoán và kết nối tương ứng.</td>
+                            <td>Xác định các đường giao tiếp chẩn đoán được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>DSL</td>
+                            <td>Session, timing, buffer và những tham số quản lý giao tiếp.</td>
+                            <td>Thiết lập hành vi giao tiếp chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Service, sub-service và những điều kiện dispatch được cấu hình.</td>
+                            <td>Xác định các dịch vụ có thể được chấp nhận và điều phối.</td>
+                        </tr>
+                        <tr>
+                            <td>DSP - DID</td>
+                            <td>DID, data element, độ dài dữ liệu và các interface liên quan.</td>
+                            <td>Khai báo dữ liệu mà ECU cung cấp hoặc cho phép cập nhật qua chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>DSP - Routine</td>
+                            <td>Routine Identifier và các thông tin liên kết với routine.</td>
+                            <td>Khai báo các routine chẩn đoán được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>DSP - Security</td>
+                            <td>Security level và các tham số liên quan đến cơ chế truy cập.</td>
+                            <td>Thiết lập hành vi security theo cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>Interface kết nối</td>
+                            <td>Kết nối dữ liệu đến Application Software, RTE hoặc DEM.</td>
+                            <td>Cho phép phần xử lý dịch vụ sử dụng dữ liệu hoặc chức năng cần thiết.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các mục trên chỉ minh họa những nhóm cấu hình phổ biến.
+                    Sự hiện diện và cách tổ chức từng tham số phải được xác định
+                    theo phiên bản AUTOSAR và implementation mà dự án sử dụng.
+                </p>
+
+                <h2>9. Quy trình cấu hình DCM trước khi generate</h2>
+
+                <p>
+                    Generator chỉ có thể tạo đầu ra đúng khi cấu hình đầu vào phù hợp.
+                    Vì vậy, trước khi generate, kỹ sư cần kiểm tra cấu hình có đáp ứng
+                    yêu cầu chẩn đoán của ECU hay không.
+                </p>
+
+                <ol>
+                    <li>
+                        <strong>Xác định yêu cầu:</strong>
+                        liệt kê service, DID, RID, session, security và các điều kiện
+                        cần hỗ trợ.
+                    </li>
+                    <li>
+                        <strong>Thiết lập cấu hình DCM:</strong>
+                        khai báo các tham số tương ứng trong công cụ.
+                    </li>
+                    <li>
+                        <strong>Khai báo các interface:</strong>
+                        xác định nguồn dữ liệu và các thành phần xử lý liên quan.
+                    </li>
+                    <li>
+                        <strong>Liên kết cấu hình:</strong>
+                        đảm bảo các tham chiếu đến module hoặc interface được kết nối đúng.
+                    </li>
+                    <li>
+                        <strong>Chạy kiểm tra cấu hình:</strong>
+                        phát hiện tham số thiếu, giá trị không hợp lệ hoặc liên kết không nhất quán.
+                    </li>
+                    <li>
+                        <strong>Xem lại kết quả validation:</strong>
+                        xử lý lỗi trước khi sinh đầu ra.
+                    </li>
+                </ol>
+
+                <p>
+                    Một cấu hình có thể hợp lệ về cú pháp nhưng vẫn chưa đáp ứng
+                    đúng yêu cầu chức năng. Ví dụ, công cụ có thể chấp nhận khai báo
+                    DID nhưng kỹ sư lại ánh xạ DID đó đến sai nguồn dữ liệu.
+                </p>
+
+                <h2>10. Validation khác Generation như thế nào?</h2>
+
+                <p>
+                    Validation và Generation là hai bước liên quan nhưng có mục đích
+                    khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Validation</th>
+                            <th>Generation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Kiểm tra cấu hình có đáp ứng các quy tắc mà công cụ biết hay không.</td>
+                            <td>Sử dụng cấu hình để sinh ra các đầu ra cần thiết.</td>
+                        </tr>
+                        <tr>
+                            <td>Tập trung vào lỗi cấu trúc, giá trị, tham chiếu hoặc ràng buộc cấu hình.</td>
+                            <td>Tập trung chuyển dữ liệu cấu hình thành code hoặc dữ liệu đầu ra theo implementation.</td>
+                        </tr>
+                        <tr>
+                            <td>Có thể thất bại trước khi tạo file đầu ra.</td>
+                            <td>Có thể thất bại khi cấu hình không thể được chuyển đổi hoặc công cụ gặp vấn đề.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Validation thành công không bảo đảm code sẽ compile hoặc chức năng
+                    chẩn đoán chắc chắn hoạt động đúng. Những điều kiện về compiler,
+                    link, logic ứng dụng và hành vi ECU vẫn phải được kiểm tra ở các
+                    bước tiếp theo.
+                </p>
+
+                <h2>11. DCM Generator sinh ra những gì?</h2>
+
+                <p>
+                    Các đầu ra cụ thể phụ thuộc nhà cung cấp stack và generator.
+                    Thông thường, quy trình cấu hình BSW có thể tạo ra source code,
+                    header file và dữ liệu cấu hình để module sử dụng.
+                </p>
+
+                <p>Ở mức khái niệm, các đầu ra có thể gồm:</p>
+
+                <ul>
+                    <li>
+                        <strong>Configuration source:</strong>
+                        mã nguồn chứa dữ liệu hoặc cấu trúc cấu hình của DCM.
+                    </li>
+                    <li>
+                        <strong>Configuration header:</strong>
+                        các khai báo, macro hoặc định nghĩa cần thiết cho việc tích hợp.
+                    </li>
+                    <li>
+                        <strong>Interface-related outputs:</strong>
+                        các khai báo hoặc thành phần hỗ trợ liên kết với những interface
+                        được cấu hình, nếu toolchain tạo ra chúng.
+                    </li>
+                    <li>
+                        <strong>Generated metadata:</strong>
+                        thông tin bổ trợ phục vụ quá trình build hoặc tích hợp, nếu được công cụ hỗ trợ.
+                    </li>
+                </ul>
+
+                <p>
+                    Không nên giả định rằng mọi dự án đều có một file tên cố định như
+                    <code>Dcm_Cfg.c</code> hoặc <code>Dcm_Cfg.h</code>. Tên file,
+                    cấu trúc thư mục, định dạng dữ liệu và cách liên kết chúng phụ
+                    thuộc implementation đang dùng.
+                </p>
+
+                <h2>12. Generated Code và DCM Implementation</h2>
+
+                <p>
+                    Một implementation DCM thường bao gồm phần code thực hiện hành vi
+                    của module và phần cấu hình đặc thù cho ECU. Generator chủ yếu
+                    đảm nhận những phần có thể suy ra từ cấu hình.
+                </p>
+
+                <pre><code>             DCM Software
+                   |
+          +--------+---------+
+          |                  |
+          v                  v
+  DCM Implementation   DCM Configuration
+  Logic của module     Tham số theo ECU
+          |                  |
+          |                  v
+          |             Generator
+          |                  |
+          |                  v
+          |          Generated Code /
+          |          Configuration Data
+          |                  |
+          +--------+---------+
+                   |
+                   v
+            Compile và Link
+                   |
+                   v
+              ECU Executable</code></pre>
+
+                <p>
+                    Generator không nhất thiết tạo toàn bộ mã nguồn thực thi DCM.
+                    Phần implementation cốt lõi thường được cung cấp trong BSW stack,
+                    còn generator sinh ra các thành phần cấu hình hoặc đầu ra cần thiết
+                    cho implementation đó.
+                </p>
+
+                <p>
+                    Một số toolchain có thể sinh thêm mã kết nối hoặc các thành phần
+                    hỗ trợ khác. Vì vậy, cần phân biệt vai trò khái quát của generator
+                    với cách triển khai cụ thể của nhà cung cấp.
+                </p>
+
+                <h2>13. Generated Code có phải là code ứng dụng không?</h2>
+
+                <p>
+                    Không nhất thiết. Generated code từ cấu hình DCM thường là
+                    code cấu hình hoặc thành phần hỗ trợ tích hợp. Nó khác với
+                    logic nghiệp vụ của Application Software.
+                </p>
+
+                <p>Ví dụ với một DID đọc dữ liệu nhiệt độ:</p>
+
+                <ul>
+                    <li>
+                        Cấu hình DCM khai báo DID cần được hỗ trợ.
+                    </li>
+                    <li>
+                        Cấu hình xác định nguồn dữ liệu hoặc interface phù hợp.
+                    </li>
+                    <li>
+                        Generator tạo đầu ra cấu hình theo implementation.
+                    </li>
+                    <li>
+                        Application Software vẫn phải có khả năng cung cấp giá trị
+                        nhiệt độ thông qua interface được thiết kế.
+                    </li>
+                </ul>
+
+                <p>
+                    Nếu phần triển khai cung cấp dữ liệu chưa tồn tại hoặc trả về
+                    giá trị sai, việc generate thành công không tự sửa được lỗi
+                    nghiệp vụ đó.
+                </p>
+
+                <h2>14. Mối quan hệ giữa DCM Generator và RTE Generator</h2>
+
+                <p>
+                    Trong AUTOSAR Classic, RTE cung cấp cơ chế giao tiếp giữa
+                    Application Software và các thành phần phần mềm khác theo
+                    kiến trúc và cấu hình.
+                </p>
+
+                <p>
+                    Một số dịch vụ DCM cần dữ liệu hoặc thao tác từ SWC. Khi đó,
+                    cấu hình DCM và cấu hình RTE phải phù hợp với interface được
+                    sử dụng. DCM Generator và RTE Generator có trách nhiệm riêng,
+                    nhưng đầu ra của chúng cần được tích hợp nhất quán.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DCM Generator</th>
+                            <th>RTE Generator</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sinh đầu ra cấu hình DCM dựa trên các tham số chẩn đoán và liên kết liên quan.</td>
+                            <td>Sinh các thành phần RTE cần thiết từ mô hình SWC, interface và cấu hình hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Phục vụ việc xử lý diagnostic service theo cấu hình ECU.</td>
+                            <td>Phục vụ giao tiếp giữa SWC và các thành phần AUTOSAR theo cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>Cần liên kết phù hợp với các interface mà DCM sử dụng.</td>
+                            <td>Cần cung cấp các interface và thành phần RTE tương ứng với cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Nếu DCM được cấu hình tham chiếu đến interface không khớp với
+                    mô hình RTE, công cụ có thể phát hiện lỗi cấu hình hoặc quá trình
+                    build có thể thất bại. Cách biểu diễn interface phụ thuộc thiết kế
+                    và toolchain cụ thể.
+                </p>
+
+                <h2>15. Ví dụ: Cấu hình DID và quá trình generate</h2>
+
+                <p>
+                    Giả sử ECU cần hỗ trợ một DID để đọc thông tin nhận dạng.
+                    Trong ví dụ này, DID là <code>0xF190</code>, thường được dùng
+                    để minh họa dữ liệu VIN trong UDS.
+                </p>
+
+                <p>Quy trình khái quát:</p>
+
+                <ol>
+                    <li>Kỹ sư xác định DID và yêu cầu dữ liệu trong tài liệu dự án.</li>
+                    <li>Khai báo DID trong cấu hình DCM nếu implementation và dự án hỗ trợ.</li>
+                    <li>Xác định cách cung cấp dữ liệu, kích thước và interface cần thiết.</li>
+                    <li>Kiểm tra các tham số và liên kết cấu hình.</li>
+                    <li>Chạy DCM Generator để tạo đầu ra theo toolchain.</li>
+                    <li>Tích hợp đầu ra vào build, cùng phần cung cấp dữ liệu tương ứng.</li>
+                    <li>Compile, link và kiểm thử request đọc DID trên ECU hoặc môi trường kiểm thử.</li>
+                </ol>
+
+                <pre><code>Yêu cầu: ECU hỗ trợ DID 0xF190
+                  |
+                  v
+        Cấu hình DID trong DCM
+                  |
+                  v
+        Khai báo nguồn dữ liệu
+                  |
+                  v
+            Validation
+                  |
+                  v
+          DCM Generator
+                  |
+                  v
+      Đầu ra cấu hình được sinh
+                  |
+                  v
+       Tích hợp Application / RTE
+                  |
+                  v
+             Build ECU
+                  |
+                  v
+      Tester gửi request 0x22
+                  |
+                  v
+      Kiểm thử dữ liệu response</code></pre>
+
+                <p>
+                    Ví dụ trên chỉ minh họa quy trình. Các tham số chi tiết, cách
+                    định nghĩa DID và interface cung cấp dữ liệu phải tuân theo
+                    phiên bản AUTOSAR, implementation và yêu cầu thực tế của ECU.
+                </p>
+
+                <h2>16. Ví dụ: Cấu hình một Routine</h2>
+
+                <p>
+                    Giả sử một ECU cần hỗ trợ routine kiểm tra một chức năng.
+                    Tester có thể yêu cầu routine thông qua dịch vụ RoutineControl
+                    (SID 0x31), dùng RID do dự án định nghĩa.
+                </p>
+
+                <p>
+                    Để hoạt động đúng, cấu hình phải mô tả service và routine được
+                    hỗ trợ, đồng thời xác định cách kết nối đến phần triển khai
+                    chức năng nếu cần.
+                </p>
+
+                <pre><code>Yêu cầu RoutineControl
+           |
+           v
+Xác định SID / sub-function / RID
+           |
+           v
+Cấu hình DCM
+           |
+           v
+Xác định liên kết đến Routine Handler
+           |
+           v
+Validation và Generation
+           |
+           v
+Tích hợp phần triển khai routine
+           |
+           v
+Build và kiểm thử ECU</code></pre>
+
+                <p>
+                    Generator có thể tạo đầu ra cấu hình và liên kết cần thiết,
+                    nhưng routine thực tế vẫn phải được triển khai theo kiến trúc
+                    của dự án nếu nó yêu cầu logic riêng.
+                </p>
+
+                <h2>17. Generator có kiểm tra được tất cả lỗi không?</h2>
+
+                <p>
+                    Không. Generator và bước validation chỉ có thể phát hiện những
+                    vấn đề mà công cụ và các quy tắc kiểm tra của nó nhận diện được.
+                    Một số vấn đề chỉ xuất hiện ở các bước compile, link, runtime
+                    hoặc kiểm thử chức năng.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại lỗi</th>
+                            <th>Khả năng phát hiện</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lỗi cấu trúc cấu hình</td>
+                            <td>Thường có thể phát hiện ở bước validation.</td>
+                            <td>Tham số bắt buộc bị thiếu.</td>
+                        </tr>
+                        <tr>
+                            <td>Lỗi tham chiếu</td>
+                            <td>Có thể phát hiện khi kiểm tra cấu hình.</td>
+                            <td>Tham chiếu đến một interface không tồn tại hoặc không phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Lỗi tương thích công cụ</td>
+                            <td>Có thể được phát hiện trong lúc import, validate hoặc generate.</td>
+                            <td>Cấu hình không được hỗ trợ bởi phiên bản generator đang dùng.</td>
+                        </tr>
+                        <tr>
+                            <td>Lỗi compile</td>
+                            <td>Được phát hiện ở bước biên dịch.</td>
+                            <td>Kiểu dữ liệu hoặc khai báo không tương thích với compiler/implementation.</td>
+                        </tr>
+                        <tr>
+                            <td>Lỗi link</td>
+                            <td>Được phát hiện ở bước liên kết.</td>
+                            <td>Thiếu phần triển khai cho một symbol được tham chiếu.</td>
+                        </tr>
+                        <tr>
+                            <td>Lỗi logic runtime</td>
+                            <td>Thường cần kiểm thử hoặc phân tích khi chạy.</td>
+                            <td>DID trả về sai dữ liệu dù cấu hình hợp lệ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Vì vậy, trạng thái generate thành công chỉ chứng minh công cụ
+                    đã tạo được các đầu ra theo những điều kiện kiểm tra mà nó hỗ trợ.
+                    Nó không phải bằng chứng đầy đủ rằng mọi chức năng chẩn đoán
+                    hoạt động đúng.
+                </p>
+
+                <h2>18. Các loại lỗi thường gặp khi generate DCM</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Nguyên nhân có thể</th>
+                            <th>Hướng xử lý</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Thiếu tham số bắt buộc</td>
+                            <td>Cấu hình chưa hoàn chỉnh.</td>
+                            <td>Đối chiếu thông báo lỗi và cấu hình tham số liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Giá trị cấu hình không hợp lệ</td>
+                            <td>Giá trị nằm ngoài miền hoặc không đáp ứng ràng buộc.</td>
+                            <td>Kiểm tra loại tham số, giá trị được hỗ trợ và điều kiện áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Tham chiếu không hợp lệ</td>
+                            <td>Đối tượng được tham chiếu bị thiếu, đổi tên hoặc không tương thích.</td>
+                            <td>Kiểm tra reference và mô hình liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Không tìm thấy interface</td>
+                            <td>Cấu hình DCM chưa khớp với SWC, RTE hoặc module liên quan.</td>
+                            <td>So sánh cấu hình interface và cấu hình tích hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Trùng lặp hoặc xung đột khai báo</td>
+                            <td>Các định danh hoặc cấu hình không phù hợp với quy tắc áp dụng.</td>
+                            <td>Kiểm tra DID, RID, service và các tham chiếu có liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Generator không nhận định dạng đầu vào</td>
+                            <td>Sai schema, sai phiên bản hoặc thiếu hỗ trợ trong toolchain.</td>
+                            <td>Xác minh phiên bản AUTOSAR và định dạng mà công cụ hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Generate thất bại sau khi cập nhật tool</td>
+                            <td>Cấu hình hoặc module description không tương thích với phiên bản mới.</td>
+                            <td>Kiểm tra release note, dependency và yêu cầu chuyển đổi cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>19. Lỗi compile sau khi generate</h2>
+
+                <p>
+                    Một generator có thể tạo ra đầu ra thành công, nhưng source code
+                    vẫn có thể không compile được khi tích hợp vào dự án.
+                </p>
+
+                <p>Những nguyên nhân có thể bao gồm:</p>
+
+                <ul>
+                    <li>Thiếu header hoặc include path cần thiết.</li>
+                    <li>Phiên bản generated code không khớp với DCM implementation.</li>
+                    <li>Kiểu dữ liệu hoặc khai báo không tương thích với compiler.</li>
+                    <li>Cấu hình compiler hoặc phần tích hợp chưa được cập nhật.</li>
+                    <li>File generated code không được đưa vào build.</li>
+                    <li>Các file cấu hình liên quan sử dụng những phiên bản không tương thích.</li>
+                </ul>
+
+                <p>
+                    Khi gặp lỗi compile, cần kiểm tra thông báo từ compiler và
+                    xác định lỗi nằm trong generated code, implementation của stack
+                    hay cấu hình build. Không nên kết luận generator luôn là nguyên
+                    nhân chỉ vì lỗi xuất hiện sau khi generate.
+                </p>
+
+                <h2>20. Lỗi linker sau khi generate</h2>
+
+                <p>
+                    Linker kết nối các object file và thư viện để tạo executable.
+                    Nếu một symbol mà generated code tham chiếu không có phần
+                    triển khai phù hợp, bước link có thể thất bại.
+                </p>
+
+                <p>Ví dụ, dự án có thể gặp vấn đề khi:</p>
+
+                <ul>
+                    <li>Thiếu implementation cho callback hoặc interface cần thiết.</li>
+                    <li>File source của module liên quan chưa được đưa vào build.</li>
+                    <li>Generated code tham chiếu đến một symbol không tồn tại trong phiên bản stack đang dùng.</li>
+                    <li>Cấu hình RTE hoặc các module phụ thuộc chưa đồng bộ.</li>
+                </ul>
+
+                <p>
+                    Cách xử lý là xác định symbol bị thiếu, tìm nơi khai báo và
+                    triển khai, rồi kiểm tra xem thành phần đó đã được tích hợp
+                    đúng vào quá trình build hay chưa.
+                </p>
+
+                <h2>21. Vì sao không nên sửa trực tiếp Generated Code?</h2>
+
+                <p>
+                    Generated code được tạo ra từ cấu hình và quy tắc của generator.
+                    Nếu sửa trực tiếp file được sinh ra, những thay đổi đó có thể
+                    bị ghi đè khi chạy generator lần tiếp theo.
+                </p>
+
+                <p>
+                    Ngoài ra, việc chỉnh sửa trực tiếp cũng làm cho source code không
+                    còn phản ánh đúng cấu hình đã lưu. Điều này gây khó khăn khi
+                    tái tạo build, review thay đổi và kiểm tra tính nhất quán.
+                </p>
+
+                <p>Nên ưu tiên quy trình sau:</p>
+
+                <ol>
+                    <li>Xác định thay đổi hành vi mong muốn.</li>
+                    <li>Thay đổi tham số hoặc mô hình cấu hình phù hợp.</li>
+                    <li>Chạy validation để phát hiện lỗi.</li>
+                    <li>Chạy generator để tái tạo đầu ra.</li>
+                    <li>Review thay đổi của generated code.</li>
+                    <li>Compile, link và kiểm thử lại.</li>
+                </ol>
+
+                <div class="note">
+                    <strong>Nguyên tắc quan trọng:</strong>
+                    Sửa cấu hình hoặc phần source được thiết kế để phát triển,
+                    không sửa tùy tiện file được sinh tự động. Nếu nhà cung cấp
+                    quy định một file là generated artifact, hãy tuân theo quy trình
+                    tích hợp và bảo trì của stack đó.
+                </div>
+
+                <h2>22. Generated Code có nên được đưa vào Git?</h2>
+
+                <p>
+                    Việc có đưa generated code vào version control hay không phụ thuộc
+                    quy định của dự án và quy trình build. Một số dự án lưu đầu ra
+                    generated code để phục vụ build và review; một số dự án khác
+                    tái sinh chúng từ cấu hình đã được quản lý.
+                </p>
+
+                <p>
+                    Điều quan trọng là phải xác định rõ nguồn dữ liệu được xem là
+                    nguồn chuẩn, cách tạo lại đầu ra và cách kiểm tra thay đổi giữa
+                    các lần generate.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nội dung</th>
+                            <th>Điểm cần quản lý</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cấu hình DCM</td>
+                            <td>Lưu và review thay đổi cấu hình theo quy trình dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Generated Code</td>
+                            <td>Tuân theo quy định dự án về việc lưu trữ và tái sinh.</td>
+                        </tr>
+                        <tr>
+                            <td>Generator version</td>
+                            <td>Ghi nhận phiên bản công cụ cần thiết để tái tạo kết quả.</td>
+                        </tr>
+                        <tr>
+                            <td>Build configuration</td>
+                            <td>Đảm bảo đầu ra được sử dụng đúng trong build system.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Nếu generated code được quản lý trong Git, việc review diff
+                    có thể giúp phát hiện thay đổi cấu hình ngoài dự kiến.
+                    Nếu dự án tái sinh code, cần đảm bảo cấu hình, tool version
+                    và các dependency được quản lý đủ để tái tạo kết quả.
+                </p>
+
+                <h2>23. Cấu hình DCM và phiên bản toolchain</h2>
+
+                <p>
+                    AUTOSAR có những release khác nhau, đồng thời nhà cung cấp BSW
+                    và công cụ có thể hỗ trợ những phiên bản hoặc phạm vi tính năng
+                    khác nhau.
+                </p>
+
+                <p>
+                    Khi cấu hình được tạo bởi phiên bản công cụ khác với phiên bản
+                    mà dự án đang sử dụng, các vấn đề có thể xuất hiện ở bước import,
+                    validation, generation hoặc build.
+                </p>
+
+                <p>Cần theo dõi ít nhất những thông tin sau:</p>
+
+                <ul>
+                    <li>Phiên bản AUTOSAR release và schema liên quan.</li>
+                    <li>Phiên bản DCM implementation.</li>
+                    <li>Phiên bản generator và toolchain cấu hình.</li>
+                    <li>Phiên bản các module BSW có dependency.</li>
+                    <li>Quy trình migration khi cập nhật cấu hình hoặc tool.</li>
+                </ul>
+
+                <p>
+                    Không nên giả định rằng cấu hình của một phiên bản có thể được
+                    sử dụng nguyên trạng trong mọi phiên bản khác. Cần kiểm tra tài liệu
+                    và khả năng tương thích mà nhà cung cấp xác nhận.
+                </p>
+
+                <h2>24. Kiểm tra các thay đổi sau khi generate</h2>
+
+                <p>
+                    Sau khi generator hoàn tất, nên kiểm tra kết quả thay vì lập tức
+                    chuyển sang compile mà không review.
+                </p>
+
+                <p>Các bước có thể bao gồm:</p>
+
+                <ol>
+                    <li>Xem thông báo của generator và xác nhận không còn lỗi.</li>
+                    <li>Kiểm tra danh sách file đầu ra và thời điểm tạo file.</li>
+                    <li>So sánh generated code với phiên bản trước nếu dự án quản lý diff.</li>
+                    <li>Đảm bảo thay đổi đầu ra phù hợp với cấu hình vừa chỉnh sửa.</li>
+                    <li>Kiểm tra những dependency và interface liên quan.</li>
+                    <li>Xác nhận build system sử dụng đúng các file được sinh mới.</li>
+                </ol>
+
+                <p>
+                    Một build có thể vô tình tiếp tục sử dụng generated code cũ
+                    nếu các file đầu ra không được cập nhật hoặc build system
+                    không tham chiếu đúng vị trí. Vì vậy, việc theo dõi đầu ra
+                    là một phần quan trọng trong quy trình.
+                </p>
+
+                <h2>25. Vì sao generate thành công nhưng service vẫn không hoạt động?</h2>
+
+                <p>
+                    Đây là tình huống thường gây nhầm lẫn: cấu hình hợp lệ và
+                    code đã được sinh ra, nhưng tester vẫn không nhận được dữ liệu
+                    hoặc response như mong đợi.
+                </p>
+
+                <p>Có thể cần điều tra những nhóm nguyên nhân sau:</p>
+
+                <ul>
+                    <li>
+                        Service chưa được cấu hình đúng với yêu cầu thực tế.
+                    </li>
+                    <li>
+                        DID hoặc RID trỏ đến sai nguồn dữ liệu hoặc handler.
+                    </li>
+                    <li>
+                        Session, security hoặc các điều kiện truy cập không phù hợp.
+                    </li>
+                    <li>
+                        Interface giữa DCM, RTE, Application Software hoặc DEM chưa hoạt động đúng.
+                    </li>
+                    <li>
+                        Generated code đã tạo nhưng chưa được đưa vào build hiện tại.
+                    </li>
+                    <li>
+                        Lỗi runtime nằm trong implementation hoặc logic của thành phần được gọi.
+                    </li>
+                    <li>
+                        Response bị ảnh hưởng bởi timing, transport hoặc các module giao tiếp liên quan.
+                    </li>
+                </ul>
+
+                <p>
+                    Generator chỉ là một phần của quy trình. Kiểm thử trên ECU hoặc
+                    môi trường mô phỏng phù hợp vẫn cần thiết để xác nhận hành vi
+                    thực tế của diagnostic service.
+                </p>
+
+                <h2>26. Quy trình debug lỗi DCM Generator</h2>
+
+                <p>
+                    Khi quá trình generate hoặc build thất bại, có thể chia việc
+                    điều tra thành những giai đoạn riêng.
+                </p>
+
+                <pre><code>              Thay đổi cấu hình
+                     |
+                     v
+               Configuration
+                     |
+                     v
+                 Validation
+                     |
+             +-------+-------+
+             |               |
+          Có lỗi          Không lỗi
+             |               |
+             v               v
+     Kiểm tra message     Generation
+     và tham số              |
+                             v
+                     Kiểm tra đầu ra
+                             |
+                             v
+                       Compile / Link
+                             |
+                      +------+------+
+                      |             |
+                    Fail          Pass
+                      |             |
+                      v             v
+               Phân loại lỗi    Runtime Test
+                      |             |
+                      v             v
+               Sửa đúng nơi    Kiểm tra service
+                      |
+                      v
+                Generate lại</code></pre>
+
+                <p>
+                    Phân chia như vậy giúp tránh việc sửa cấu hình DCM khi lỗi
+                    thực tế nằm ở compiler hoặc linker. Ngược lại, cũng tránh việc
+                    xử lý một lỗi tham chiếu trong cấu hình bằng những thay đổi
+                    không phù hợp ở mã nguồn.
+                </p>
+
+                <h2>27. Ví dụ debug: Generator báo thiếu interface</h2>
+
+                <p>
+                    Giả sử cấu hình DCM có một DID cần lấy dữ liệu từ Application
+                    Software. Khi chạy generator, công cụ báo rằng một tham chiếu
+                    interface không hợp lệ hoặc không thể giải quyết.
+                </p>
+
+                <p>Cách điều tra phù hợp:</p>
+
+                <ol>
+                    <li>Đọc thông báo lỗi và xác định chính xác tham chiếu bị lỗi.</li>
+                    <li>Kiểm tra DID và data element đang sử dụng tham chiếu đó.</li>
+                    <li>Kiểm tra interface được khai báo trong mô hình hoặc cấu hình.</li>
+                    <li>Kiểm tra kết nối giữa DCM và interface theo toolchain đang dùng.</li>
+                    <li>Kiểm tra tên, kiểu dữ liệu và các tham chiếu đã được cập nhật đầy đủ chưa.</li>
+                    <li>Chạy lại validation trước khi generate lần nữa.</li>
+                </ol>
+
+                <p>
+                    Trong trường hợp này, thay đổi cấu hình tham chiếu thường là
+                    hướng cần xem xét đầu tiên. Sửa generated code không giải quyết
+                    được nguyên nhân nếu nguồn cấu hình vẫn chứa tham chiếu không hợp lệ.
+                </p>
+
+                <h2>28. Ví dụ debug: Generator thành công nhưng DID sai dữ liệu</h2>
+
+                <p>
+                    Giả sử DCM Generator chạy thành công, build hoàn tất và ECU
+                    trả response cho request đọc DID. Tuy nhiên, giá trị trả về
+                    không khớp với dữ liệu thực tế trong Application Software.
+                </p>
+
+                <pre><code>Yêu cầu đọc DID
+       |
+       v
+Service được cấu hình?
+       |
+       v
+Generated Configuration có được build?
+       |
+       v
+DID trỏ đến nguồn dữ liệu nào?
+       |
+       v
+Nguồn dữ liệu trả giá trị gì?
+       |
+       v
+DSP định dạng dữ liệu thế nào?
+       |
+       v
+Response gửi đến tester
+       |
+       v
+So sánh giá trị thực tế</code></pre>
+
+                <p>
+                    Nếu cấu hình và generation hợp lệ, cần tiếp tục kiểm tra
+                    DID mapping, interface, đơn vị dữ liệu, kích thước và
+                    quá trình đóng gói response. Thành công của generator không
+                    chứng minh rằng logic cung cấp dữ liệu đã đúng.
+                </p>
+
+                <h2>29. Checklist trước khi bàn giao cấu hình DCM</h2>
+
+                <ul>
+                    <li>Danh sách service và DID đáp ứng yêu cầu của dự án.</li>
+                    <li>Các tham số bắt buộc và giá trị cấu hình đã được kiểm tra.</li>
+                    <li>Các tham chiếu tới interface và module liên quan hợp lệ.</li>
+                    <li>Validation hoàn tất theo quy trình của toolchain.</li>
+                    <li>Generator chạy thành công và đầu ra được cập nhật.</li>
+                    <li>Generated code được tích hợp đúng vào build system.</li>
+                    <li>Compile và link thành công.</li>
+                    <li>Các phần triển khai cần thiết của Application hoặc BSW đã có mặt.</li>
+                    <li>Diagnostic service được kiểm thử bằng tester hoặc môi trường test phù hợp.</li>
+                    <li>Phiên bản cấu hình, generator và dependency được ghi nhận.</li>
+                    <li>Các thay đổi được review và quản lý theo quy trình dự án.</li>
+                </ul>
+
+                <h2>30. Checklist khi đọc một dự án đã có DCM Generator</h2>
+
+                <p>
+                    Khi tham gia một dự án mới, không nên bắt đầu bằng việc thay đổi
+                    cấu hình ngay. Trước hết, hãy tìm hiểu cách dự án tổ chức quá trình
+                    cấu hình và build.
+                </p>
+
+                <ul>
+                    <li>Công cụ nào được sử dụng để cấu hình DCM?</li>
+                    <li>Đâu là nguồn cấu hình chính thức của dự án?</li>
+                    <li>DCM implementation thuộc nhà cung cấp nào và phiên bản nào?</li>
+                    <li>Generator được chạy độc lập hay nằm trong một workflow tổng thể?</li>
+                    <li>Generated files được lưu trong repository hay được tạo lại khi build?</li>
+                    <li>Những module nào có dependency trực tiếp với DCM?</li>
+                    <li>Cách kiểm tra lỗi validation và lưu log generator là gì?</li>
+                    <li>Quy trình kiểm thử DCM sau khi generate gồm những bước nào?</li>
+                </ul>
+
+                <p>
+                    Những câu hỏi này giúp xác định đúng workflow trước khi can thiệp
+                    vào cấu hình và giảm nguy cơ làm thay đổi các artifact không liên quan.
+                </p>
+
+                <h2>31. Tổng kết chuỗi 5 bài về DCM</h2>
+
+                <p>
+                    Sau năm bài học, chúng ta đã tìm hiểu DCM từ kiến trúc,
+                    các sub-module bên trong đến quy trình cấu hình và sinh đầu ra.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bài học</th>
+                            <th>Nội dung chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bài 25: DCM</td>
+                            <td>Khái niệm, vị trí, vai trò và luồng chẩn đoán tổng quát.</td>
+                        </tr>
+                        <tr>
+                            <td>Bài 26: DSL</td>
+                            <td>Quản lý session, request/response, timing và trạng thái chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>Bài 27: DSD</td>
+                            <td>Kiểm tra request, điều kiện dispatch, điều phối dịch vụ và response.</td>
+                        </tr>
+                        <tr>
+                            <td>Bài 28: DSP</td>
+                            <td>Xử lý nội dung service, lấy dữ liệu và phối hợp với những module liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Bài 29: DCM Generator</td>
+                            <td>Cấu hình DCM, validation, generation, tích hợp đầu ra và debug lỗi.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>32. Những điểm dễ nhầm lẫn</h2>
+
+                <ul>
+                    <li>
+                        <strong>DCM khác DCM Generator:</strong>
+                        DCM là module xử lý chẩn đoán khi ECU chạy; Generator là
+                        công cụ hỗ trợ quá trình phát triển.
+                    </li>
+                    <li>
+                        <strong>ARXML khác generated code:</strong>
+                        ARXML lưu mô hình hoặc dữ liệu cấu hình; generated code là
+                        một dạng đầu ra được tạo từ cấu hình.
+                    </li>
+                    <li>
+                        <strong>Generate thành công không có nghĩa build thành công:</strong>
+                        Compiler và linker vẫn có thể phát hiện lỗi tích hợp.
+                    </li>
+                    <li>
+                        <strong>Build thành công không có nghĩa service hoạt động đúng:</strong>
+                        Chức năng thực tế cần được kiểm thử.
+                    </li>
+                    <li>
+                        <strong>Generator không tự viết toàn bộ logic ứng dụng:</strong>
+                        Các chức năng dữ liệu hoặc routine đặc thù vẫn cần implementation
+                        và interface phù hợp.
+                    </li>
+                    <li>
+                        <strong>Không nên sửa trực tiếp generated files một cách tùy tiện:</strong>
+                        Thay đổi cần được thực hiện ở đúng nguồn cấu hình hoặc source
+                        được thiết kế để phát triển.
+                    </li>
+                </ul>
+
+                <h2>33. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DCM Generator</td>
+                            <td>Công cụ hoặc bước sinh đầu ra cấu hình DCM.</td>
+                        </tr>
+                        <tr>
+                            <td>ARXML</td>
+                            <td>Định dạng XML dùng cho mô hình và dữ liệu AUTOSAR.</td>
+                        </tr>
+                        <tr>
+                            <td>ECUC</td>
+                            <td>ECU Configuration, mô hình/dữ liệu cấu hình ECU và các tham số liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU Configuration Values</td>
+                            <td>Tập dữ liệu giá trị cấu hình được dùng trong quy trình cấu hình ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>BSW Module Description</td>
+                            <td>Mô tả module BSW, bao gồm thông tin tham số và cấu trúc cấu hình mà toolchain sử dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Validation</td>
+                            <td>Kiểm tra cấu hình theo các quy tắc được công cụ hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Generation</td>
+                            <td>Chuyển cấu hình thành những đầu ra theo implementation.</td>
+                        </tr>
+                        <tr>
+                            <td>Generated Code</td>
+                            <td>Code được sinh tự động từ cấu hình hoặc mô hình.</td>
+                        </tr>
+                        <tr>
+                            <td>RTE Generator</td>
+                            <td>Công cụ sinh các thành phần RTE từ cấu hình AUTOSAR tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Build</td>
+                            <td>Quy trình biên dịch, liên kết và tạo phần mềm có thể chạy trên ECU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>34. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        DCM Generator là thành phần của quy trình phát triển AUTOSAR,
+                        dùng để chuyển cấu hình DCM thành những đầu ra phù hợp với
+                        implementation của BSW stack. Đầu vào có thể bao gồm ECU
+                        Configuration Values, các mô tả cấu hình module và những
+                        thông tin liên quan đến interface.
+                    </p>
+
+                    <p>
+                        Quy trình thông thường gồm cấu hình DCM, validation,
+                        generation, kiểm tra đầu ra, tích hợp vào build, compile/link
+                        và kiểm thử chẩn đoán. DCM Generator hỗ trợ tự động hóa nhưng
+                        không thay thế thiết kế service, logic ứng dụng hoặc kiểm thử
+                        chức năng của ECU.
+                    </p>
+
+                    <p>
+                        Khi debug, hãy phân biệt lỗi cấu hình, lỗi generator,
+                        lỗi compile/link và lỗi runtime. Xác định đúng giai đoạn
+                        phát sinh lỗi sẽ giúp xử lý đúng nguyên nhân và tránh
+                        thay đổi không cần thiết ở generated code.
+                    </p>
+
+                    <p>
+                        Với Bài 29, chuỗi 5 bài về DCM đã hoàn thành:
+                        <strong>DCM → DSL → DSD → DSP → DCM Generator</strong>.
+                        Đây là nền tảng để tiếp tục tìm hiểu sâu hơn về cấu hình
+                        diagnostic service và cách tích hợp Diagnostic Stack trong
+                        một dự án AUTOSAR Classic thực tế.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a href="lesson-28.html">← Bài trước</a>
+                    <a href="lesson-30.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

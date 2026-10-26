@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 30: Flash Bootloader (FBL) | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html" class="active" aria-current="page">Bài 30: Flash Bootloader (FBL)</a>
+
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 30: Flash Bootloader (FBL)</h1>
+
+                <p>
+                    Trong một ECU automotive, Application Software thực hiện những
+                    chức năng chính của hệ thống, chẳng hạn điều khiển động cơ,
+                    quản lý cửa xe, điều khiển chiếu sáng hoặc giám sát cảm biến.
+                    Trong suốt vòng đời sản phẩm, phần mềm này có thể cần được cập nhật
+                    để sửa lỗi, bổ sung chức năng hoặc đáp ứng yêu cầu mới.
+                </p>
+
+                <p>
+                    Flash Bootloader (FBL) là phần mềm hỗ trợ quá trình lập trình
+                    hoặc cập nhật firmware của ECU. FBL tiếp nhận các yêu cầu lập trình
+                    theo giao thức được hỗ trợ, kiểm soát quá trình ghi dữ liệu vào
+                    bộ nhớ Flash và xác minh kết quả theo chính sách của hệ thống.
+                </p>
+
+                <p>
+                    Khác với Application Software, FBL được thiết kế để hỗ trợ quá trình
+                    lập trình ECU. Nó cần hoạt động trong giai đoạn khởi động phù hợp,
+                    quản lý bộ nhớ một cách an toàn và đưa ECU đến trạng thái khởi động
+                    hợp lệ sau khi quá trình lập trình kết thúc.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài học giới thiệu FBL, Boot Manager, memory layout, giao tiếp
+                    chẩn đoán, quy trình download và programming, Flash Driver,
+                    xác minh firmware, bảo mật, phục hồi lỗi và phương pháp kiểm thử.
+                    Đây là góc nhìn kiến trúc tổng quát; quy trình thực tế phụ thuộc
+                    OEM, nhà cung cấp bootloader, MCU và cấu hình của từng ECU.
+                </div>
+
+                <h2>1. Flash Bootloader là gì?</h2>
+
+                <p>
+                    FBL là viết tắt của <strong>Flash Bootloader</strong>.
+                    Đây là phần mềm hỗ trợ việc nạp hoặc cập nhật firmware được lưu
+                    trong bộ nhớ không mất dữ liệu khi tắt nguồn, chẳng hạn bộ nhớ Flash
+                    của microcontroller.
+                </p>
+
+                <p>
+                    Trong nhiều ECU automotive, FBL có thể nhận firmware mới thông qua
+                    giao tiếp như CAN, CAN FD hoặc Ethernet, tùy vào phần cứng và
+                    yêu cầu của dự án. Người dùng hoặc kỹ thuật viên không nhất thiết
+                    phải tháo ECU ra để kết nối trực tiếp với một thiết bị nạp chuyên dụng.
+                </p>
+
+                <p>
+                    Các nhiệm vụ thường gặp của FBL bao gồm:
+                </p>
+
+                <ul>
+                    <li>Khởi động trong giai đoạn được thiết kế sau khi ECU reset.</li>
+                    <li>Kiểm tra điều kiện để ở lại chế độ bootloader hoặc khởi chạy Application.</li>
+                    <li>Tiếp nhận yêu cầu lập trình từ tester hoặc công cụ cập nhật.</li>
+                    <li>Kiểm tra quyền truy cập trước các thao tác lập trình.</li>
+                    <li>Quản lý việc xóa và ghi vùng Flash được phép cập nhật.</li>
+                    <li>Kiểm tra tính toàn vẹn hoặc tính xác thực của firmware theo chính sách hệ thống.</li>
+                    <li>Đánh dấu trạng thái phần mềm và hỗ trợ khởi chạy phiên bản hợp lệ.</li>
+                </ul>
+
+                <p>
+                    Những chức năng cụ thể có thể khác nhau đáng kể giữa các nền tảng.
+                    Không phải mọi FBL đều có cùng tập dịch vụ, cách lưu metadata hoặc
+                    chiến lược phục hồi sau lỗi.
+                </p>
+
+                <h2>2. Vì sao ECU cần Flash Bootloader?</h2>
+
+                <p>
+                    Sau khi xe được sản xuất và đưa vào sử dụng, phần mềm của ECU
+                    vẫn có thể cần được cập nhật. Việc cập nhật có thể xảy ra trong
+                    quá trình phát triển, kiểm thử, sản xuất hoặc bảo dưỡng.
+                </p>
+
+                <p>
+                    Nếu mỗi lần cập nhật đều phải tháo ECU và nạp trực tiếp bằng thiết bị
+                    chuyên dụng, quy trình bảo trì sẽ trở nên phức tạp hơn. FBL cho phép
+                    hệ thống tiếp nhận và xử lý dữ liệu firmware qua giao tiếp mà ECU
+                    hỗ trợ.
+                </p>
+
+                <p>
+                    FBL cũng giúp kiểm soát các bước cần thiết để một bản cập nhật
+                    được thực hiện có trật tự. Việc ghi firmware không chỉ là chuyển
+                    các byte vào bộ nhớ: hệ thống còn cần quản lý vùng nhớ, xác minh
+                    dữ liệu và quyết định phần mềm nào được phép khởi chạy.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhu cầu</th>
+                            <th>Vai trò của FBL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cập nhật phần mềm ECU</td>
+                            <td>Tiếp nhận và xử lý quá trình lập trình theo giao thức được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Bảo vệ vùng nhớ</td>
+                            <td>Giới hạn những khu vực được phép xóa hoặc ghi.</td>
+                        </tr>
+                        <tr>
+                            <td>Kiểm tra firmware</td>
+                            <td>Thực hiện hoặc phối hợp xác minh firmware theo chính sách của ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Khởi động sau cập nhật</td>
+                            <td>Đánh giá trạng thái phần mềm và hỗ trợ chuyển sang Application phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Phân tích lỗi lập trình</td>
+                            <td>Cung cấp trạng thái hoặc phản hồi giúp xác định bước lập trình không thành công.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>3. Phân biệt FBL và Application Software</h2>
+
+                <p>
+                    FBL và Application Software là hai phần mềm có mục đích khác nhau.
+                    Application thực hiện chức năng của ECU khi vận hành, còn FBL
+                    hỗ trợ quá trình lập trình và chuyển đổi giữa trạng thái bootloader
+                    với trạng thái chạy ứng dụng.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Flash Bootloader</th>
+                            <th>Application Software</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tập trung vào khởi động, lập trình firmware và kiểm tra tính hợp lệ của phần mềm.</td>
+                            <td>Tập trung vào chức năng nghiệp vụ và điều khiển của ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Hoạt động khi ECU ở chế độ bootloader hoặc trong giai đoạn khởi động tương ứng.</td>
+                            <td>Hoạt động khi ECU chuyển sang chế độ chạy ứng dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Cần các chức năng lập trình Flash và giao tiếp cần thiết cho quá trình cập nhật.</td>
+                            <td>Cần các chức năng vận hành như điều khiển, giao tiếp, giám sát và xử lý tín hiệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Thường được bảo vệ khỏi những thao tác cập nhật thông thường của Application.</td>
+                            <td>Có thể là mục tiêu của quá trình reprogramming do FBL quản lý.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, khi ECU đang hoạt động bình thường, Application có thể
+                    điều khiển một hệ thống chiếu sáng. Khi cần cập nhật firmware,
+                    ECU được đưa vào chế độ lập trình phù hợp để FBL tiếp nhận
+                    phần mềm mới. Sau khi cập nhật và xác minh thành công,
+                    ECU có thể khởi chạy Application mới theo thiết kế.
+                </p>
+
+                <h2>4. FBL có phải là một BSW module tiêu chuẩn của AUTOSAR?</h2>
+
+                <p>
+                    Cần phân biệt kiến trúc AUTOSAR Classic với giải pháp Flash Bootloader
+                    cụ thể của một dự án. AUTOSAR Classic định nghĩa kiến trúc phần mềm,
+                    các module và phương pháp cấu hình để hỗ trợ tích hợp ECU. Tuy nhiên,
+                    không nên giả định rằng mọi ECU đều có cùng một FBL, cùng tên module
+                    hoặc cùng cấu trúc triển khai.
+                </p>
+
+                <p>
+                    Trong thực tế, FBL thường được cung cấp hoặc điều chỉnh bởi nhà cung cấp,
+                    OEM hoặc đội phát triển dự án. Một giải pháp có thể sử dụng các thành phần
+                    BSW phù hợp với AUTOSAR; giải pháp khác có thể dùng kiến trúc bootloader
+                    tối giản với các module và interface riêng.
+                </p>
+
+                <p>
+                    Vì vậy, khi đọc tài liệu dự án, cần xác định:
+                </p>
+
+                <ul>
+                    <li>FBL có sử dụng AUTOSAR-conformant BSW hay không.</li>
+                    <li>Các thành phần diagnostic và communication nào được tích hợp.</li>
+                    <li>FBL có dùng chung module DCM với Application hay có diagnostic handler riêng.</li>
+                    <li>Boot Manager được tích hợp vào FBL hay là một thành phần riêng.</li>
+                    <li>Những quy tắc OEM nào chi phối quy trình lập trình và xác minh phần mềm.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Không có một cấu trúc file, danh sách module hoặc quy trình FBL
+                    duy nhất có thể áp dụng nguyên trạng cho mọi ECU automotive.
+                </div>
+
+                <h2>5. Vị trí của FBL trong quá trình khởi động ECU</h2>
+
+                <p>
+                    Sau khi ECU được cấp nguồn hoặc reset, phần mềm phải quyết định
+                    thành phần nào sẽ chạy tiếp theo. Tùy thiết kế, MCU có thể bắt đầu
+                    từ vùng reset, chạy một boot manager, hoặc đi vào bootloader
+                    được bố trí làm thành phần phần mềm đầu tiên.
+                </p>
+
+                <p>
+                    Một Boot Manager, nếu có, có thể quyết định chạy FBL hay Application.
+                    Trong những thiết kế khác, chính FBL thực hiện các bước đánh giá
+                    trạng thái rồi quyết định ở lại chế độ lập trình hoặc chuyển sang
+                    Application.
+                </p>
+
+                <pre><code>                 ECU Reset
+                     |
+                     v
+          MCU Startup / Boot Manager
+                     |
+                     v
+          Kiểm tra điều kiện khởi động
+                     |
+              +------+------+
+              |             |
+              v             v
+     Cần lập trình      Application
+     hoặc App lỗi       hợp lệ và
+              |         không cần FBL
+              v             |
+             FBL            |
+              |             |
+              v             |
+       Chờ yêu cầu từ       |
+       diagnostic tester   |
+              |             |
+              |             |
+              +------+------+
+                     |
+                     v
+       Application hợp lệ được chọn
+                     |
+                     v
+              Application Start</code></pre>
+
+                <p>
+                    Sơ đồ mang tính khái quát. Vị trí của Boot Manager, FBL và
+                    các bước kiểm tra có thể khác nhau giữa các implementation.
+                </p>
+
+                <h2>6. Boot Manager là gì?</h2>
+
+                <p>
+                    Boot Manager là thành phần quản lý quyết định khởi động.
+                    Trong một số kiến trúc, nó chạy trước Application và FBL,
+                    sau đó chọn phần mềm tiếp theo dựa trên các điều kiện như
+                    yêu cầu reprogramming và trạng thái hợp lệ của Application.
+                </p>
+
+                <p>
+                    Không phải mọi ECU đều có Boot Manager tách biệt. Một số
+                    thiết kế đưa logic lựa chọn vào chính bootloader hoặc sử dụng
+                    cơ chế khởi động do nền tảng cung cấp.
+                </p>
+
+                <p>Các câu hỏi thường được Boot Manager hoặc logic startup xem xét:</p>
+
+                <ul>
+                    <li>Có yêu cầu chuyển vào chế độ lập trình hay không?</li>
+                    <li>Application có được đánh dấu hợp lệ không?</li>
+                    <li>Những điều kiện cần thiết để chạy Application đã đáp ứng chưa?</li>
+                    <li>Firmware nào được chọn để khởi chạy nếu ECU hỗ trợ nhiều vùng phần mềm?</li>
+                    <li>Hệ thống cần ở lại bootloader để phục hồi hay có thể chạy Application?</li>
+                </ul>
+
+                <p>
+                    Boot Manager và FBL có thể là hai thành phần khác nhau, nhưng
+                    mục tiêu chung là đảm bảo ECU khởi động vào phần mềm phù hợp
+                    với trạng thái hiện tại.
+                </p>
+
+                <h2>7. Khi nào ECU ở lại chế độ FBL?</h2>
+
+                <p>
+                    FBL thường không giữ ECU trong chế độ lập trình ở mọi lần khởi động.
+                    Hệ thống cần có điều kiện để quyết định khi nào tiếp tục chạy Application
+                    và khi nào chờ yêu cầu lập trình.
+                </p>
+
+                <p>Những điều kiện phổ biến có thể gồm:</p>
+
+                <ul>
+                    <li>Có cờ hoặc thông tin yêu cầu reprogramming được thiết lập.</li>
+                    <li>Application hiện tại không vượt qua kiểm tra tính hợp lệ.</li>
+                    <li>Boot Manager chọn FBL theo chính sách khởi động.</li>
+                    <li>ECU đang ở trạng thái bảo trì hoặc lập trình đã được xác định.</li>
+                    <li>Quy trình khôi phục yêu cầu tiếp tục ở chế độ bootloader.</li>
+                </ul>
+
+                <p>
+                    Cờ yêu cầu lập trình có thể được lưu theo cách phù hợp với kiến trúc,
+                    ví dụ trong RAM hoặc vùng nhớ không mất dữ liệu. Cơ chế cụ thể
+                    phụ thuộc thiết kế ECU và yêu cầu về độ tin cậy.
+                </p>
+
+                <p>
+                    Không nên chỉ dựa vào một cờ duy nhất nếu hệ thống yêu cầu thêm
+                    điều kiện an toàn, bảo mật hoặc xác minh tính hợp lệ của firmware.
+                </p>
+
+                <h2>8. Kiến trúc tổng quát của Flash Bootloader</h2>
+
+                <p>
+                    FBL thường là một hệ thống gồm nhiều thành phần phối hợp,
+                    chứ không chỉ là một hàm ghi Flash. Những thành phần cần có
+                    phụ thuộc giao tiếp, MCU, yêu cầu OEM và mức độ bảo vệ cần thiết.
+                </p>
+
+                <pre><code>                Flash Bootloader
+                       |
+        +--------------+----------------+
+        |              |                |
+        v              v                v
+  Diagnostic       Programming      Boot / State
+  Interface        Manager          Management
+        |              |                |
+        +--------------+----------------+
+                       |
+             +---------+---------+
+             |                   |
+             v                   v
+        Communication       Memory / Flash
+        Stack / Driver      Driver / Services
+             |                   |
+             +---------+---------+
+                       |
+                       v
+              MCU / Flash Memory
+
+      Thành phần tùy chọn theo dự án:
+      - Security / Crypto
+      - Firmware Validation
+      - Boot Manager
+      - Recovery Support
+      - Application-FBL Interface</code></pre>
+
+                <p>
+                    Sơ đồ thể hiện các nhóm chức năng thường gặp, không phải cấu trúc
+                    bắt buộc cho mọi sản phẩm. Một số implementation tích hợp nhiều
+                    chức năng trong cùng một thành phần; các implementation khác
+                    tách rõ communication, programming và boot management.
+                </p>
+
+                <h2>9. Các thành phần chính trong FBL</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Trách nhiệm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Boot / State Management</td>
+                            <td>Quản lý trạng thái khởi động, lập trình và chuyển đổi sang Application.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Interface</td>
+                            <td>Tiếp nhận và xử lý các yêu cầu chẩn đoán liên quan đến lập trình.</td>
+                        </tr>
+                        <tr>
+                            <td>Communication Stack</td>
+                            <td>Đưa dữ liệu giữa tester và FBL qua giao tiếp được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Programming Manager</td>
+                            <td>Điều phối các bước lập trình và quản lý tiến trình download.</td>
+                        </tr>
+                        <tr>
+                            <td>Flash Driver</td>
+                            <td>Thực hiện thao tác xóa, ghi hoặc những thao tác bộ nhớ cần thiết trên nền tảng.</td>
+                        </tr>
+                        <tr>
+                            <td>Firmware Validation</td>
+                            <td>Kiểm tra tính toàn vẹn hoặc tính xác thực của phần mềm theo chính sách hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Security / Crypto</td>
+                            <td>Hỗ trợ kiểm tra quyền truy cập, chữ ký hoặc các cơ chế mã hóa khi được sử dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Application-FBL Interface</td>
+                            <td>Trao đổi trạng thái cần thiết giữa Application và bootloader khi kiến trúc yêu cầu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>10. Memory Layout là gì?</h2>
+
+                <p>
+                    Memory Layout mô tả cách các vùng bộ nhớ được phân chia và sử dụng.
+                    Với một ECU có FBL, vùng nhớ cần được thiết kế để xác định những nơi
+                    chứa bootloader, Application, dữ liệu cấu hình và thông tin trạng thái
+                    liên quan đến quá trình cập nhật.
+                </p>
+
+                <p>Một memory layout minh họa có thể gồm:</p>
+
+                <pre><code>Địa chỉ cao
++----------------------------------+
+| Vùng dữ liệu / Metadata          |
+| - Application validity           |
+| - Software version / Status      |
+| - Thông tin cập nhật              |
++----------------------------------+
+| Application Region               |
+| - Application code               |
+| - Hằng số / dữ liệu khởi tạo      |
++----------------------------------+
+| FBL / Bootloader Region          |
+| - Startup / Programming Logic    |
+| - Diagnostic / Communication     |
+| - Flash Programming Support      |
++----------------------------------+
+Địa chỉ thấp</code></pre>
+
+                <p>
+                    Đây chỉ là hình minh họa, không phải thứ tự địa chỉ bắt buộc.
+                    Vị trí và kích thước các vùng phụ thuộc MCU, linker script,
+                    bộ nhớ vật lý và thiết kế hệ thống.
+                </p>
+
+                <p>
+                    Nếu ECU dùng hai vùng Application, A/B partition hoặc cơ chế
+                    cập nhật khác, layout còn có thể chứa thêm vùng phần mềm dự phòng
+                    hoặc thông tin giúp lựa chọn phiên bản được khởi chạy.
+                </p>
+
+                <h2>11. Vì sao cần bảo vệ vùng nhớ của FBL?</h2>
+
+                <p>
+                    FBL là thành phần hỗ trợ cập nhật firmware. Nếu vùng nhớ chứa
+                    FBL bị ghi đè hoặc bị hỏng trong một quá trình cập nhật Application,
+                    ECU có thể mất khả năng tiếp nhận những yêu cầu lập trình tiếp theo.
+                </p>
+
+                <p>
+                    Vì vậy, nhiều thiết kế bảo vệ vùng chứa bootloader khỏi những
+                    thao tác ghi thông thường dành cho Application. Cách bảo vệ có thể
+                    dựa trên cấu trúc vùng nhớ, cơ chế của MCU, quyền truy cập phần cứng
+                    và chính sách của sản phẩm.
+                </p>
+
+                <p>
+                    Phạm vi bảo vệ không chỉ nằm ở phần mềm. Thiết kế cần xem xét
+                    cả khả năng ghi Flash, quyền truy cập vùng nhớ và các điều kiện
+                    khởi động trên phần cứng thực tế.
+                </p>
+
+                <h2>12. Quyết định chạy Application hay FBL</h2>
+
+                <p>
+                    Khi ECU khởi động, hệ thống cần xác định Application có thể
+                    được khởi chạy hay chưa. Một thiết kế điển hình sẽ đánh giá
+                    yêu cầu lập trình và trạng thái hợp lệ của Application.
+                </p>
+
+                <pre><code>            Reset
+              |
+              v
+    Kiểm tra reprogramming request
+              |
+       +------+------+
+       |             |
+      Có            Không
+       |             |
+       v             v
+   Vào FBL      Kiểm tra Application
+                       |
+                 +-----+-----+
+                 |           |
+               Hợp lệ      Không hợp lệ
+                 |           |
+                 v           v
+          Start Application  Vào FBL /
+                             Recovery Mode</code></pre>
+
+                <p>
+                    Việc kiểm tra Application hợp lệ có thể gồm các tiêu chí khác
+                    nhau, chẳng hạn trạng thái cập nhật, tính toàn vẹn dữ liệu
+                    hoặc xác minh mật mã. Một kiểm tra CRC đơn giản không tự động
+                    chứng minh rằng firmware được phát hành bởi nguồn đáng tin cậy.
+                </p>
+
+                <h2>13. Application-FBL Interface</h2>
+
+                <p>
+                    Application và FBL là những phần mềm riêng biệt nhưng có thể cần
+                    trao đổi một số thông tin để quản lý quá trình khởi động và cập nhật.
+                    Giao tiếp này thường được gọi là Application-FBL Interface.
+                </p>
+
+                <p>Thông tin trao đổi có thể liên quan đến:</p>
+
+                <ul>
+                    <li>Yêu cầu chuyển ECU sang chế độ bootloader.</li>
+                    <li>Trạng thái hoặc kết quả của lần cập nhật trước.</li>
+                    <li>Thông tin cho biết Application có được xem là hợp lệ hay không.</li>
+                    <li>Dữ liệu dùng để phối hợp quá trình khởi động theo thiết kế.</li>
+                </ul>
+
+                <p>
+                    Cơ chế trao đổi có thể sử dụng RAM, vùng nhớ không mất dữ liệu,
+                    metadata hoặc một interface do dự án định nghĩa. Không nên giả định
+                    mọi hệ thống đều sử dụng cùng một kiểu cờ hoặc cùng một cấu trúc dữ liệu.
+                </p>
+
+                <h2>14. FBL có luôn sử dụng DCM không?</h2>
+
+                <p>
+                    Không nên mặc định rằng tất cả FBL đều tích hợp một DCM đầy đủ
+                    giống Application ECU. Tùy giải pháp, FBL có thể sử dụng một
+                    implementation diagnostic riêng, một stack tối giản hoặc các thành
+                    phần AUTOSAR phù hợp với yêu cầu lập trình.
+                </p>
+
+                <p>
+                    Nếu FBL hỗ trợ UDS, các request lập trình thường được xử lý theo
+                    những dịch vụ chẩn đoán mà implementation và OEM quy định.
+                    Tuy nhiên, danh sách service và cách tổ chức nội bộ không nhất thiết
+                    giống hoàn toàn DCM của Application.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Diagnostic trong Application</th>
+                            <th>Diagnostic trong FBL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hỗ trợ những dịch vụ chẩn đoán phục vụ vận hành, bảo dưỡng và truy vấn dữ liệu.</td>
+                            <td>Tập trung vào những dịch vụ cần cho lập trình, xác minh và điều khiển quá trình cập nhật.</td>
+                        </tr>
+                        <tr>
+                            <td>Có thể tương tác với nhiều SWC, DEM và dịch vụ BSW.</td>
+                            <td>Thường giữ phạm vi chức năng gọn hơn để đáp ứng yêu cầu tài nguyên và lập trình.</td>
+                        </tr>
+                        <tr>
+                            <td>Phụ thuộc vào kiến trúc Application ECU.</td>
+                            <td>Phụ thuộc vào bootloader implementation và quy trình programming của OEM.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là sự khác biệt về mục đích thiết kế, không phải quy tắc rằng
+                    mọi Application luôn lớn hơn hoặc mọi FBL luôn tối giản.
+                </p>
+
+                <h2>15. Giao tiếp giữa tester và FBL</h2>
+
+                <p>
+                    Để cập nhật ECU, tester cần gửi các yêu cầu lập trình đến FBL.
+                    Những request này có thể đi qua CAN, CAN FD, Ethernet hoặc giao
+                    tiếp khác được ECU hỗ trợ.
+                </p>
+
+                <p>
+                    Communication Stack chịu trách nhiệm đưa dữ liệu từ bus đến
+                    phần xử lý trong FBL. Với CAN, quá trình truyền những thông điệp
+                    vượt quá khả năng tải của một frame có thể cần transport protocol
+                    phù hợp. Với Ethernet, kiến trúc có thể sử dụng DoIP theo cấu hình.
+                </p>
+
+                <pre><code>       Diagnostic / Flash Tester
+                  |
+                  v
+          CAN / CAN FD / Ethernet
+                  |
+                  v
+         Communication / Transport
+                  |
+                  v
+          FBL Diagnostic Handler
+                  |
+                  v
+          Programming Manager
+                  |
+                  v
+              Flash Driver
+                  |
+                  v
+             Flash Memory</code></pre>
+
+                <p>
+                    FBL không trực tiếp thay thế mọi lớp giao tiếp. Cấu trúc và những
+                    module được sử dụng phụ thuộc vào giao tiếp mà dự án yêu cầu.
+                </p>
+
+                <h2>16. UDS và quy trình lập trình FBL</h2>
+
+                <p>
+                    Nhiều ECU sử dụng UDS (Unified Diagnostic Services) cho giao tiếp
+                    chẩn đoán, bao gồm các thao tác liên quan đến reprogramming.
+                    Tùy cấu hình, tester và FBL trao đổi các request để chuyển trạng thái,
+                    kiểm tra quyền truy cập, tải dữ liệu và xác nhận kết quả.
+                </p>
+
+                <p>Một số dịch vụ thường gặp trong quy trình programming gồm:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SID</th>
+                            <th>Dịch vụ</th>
+                            <th>Mục đích tổng quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x10</td>
+                            <td>DiagnosticSessionControl</td>
+                            <td>Yêu cầu chuyển diagnostic session được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>0x27</td>
+                            <td>SecurityAccess</td>
+                            <td>Thực hiện cơ chế security access khi được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>0x29</td>
+                            <td>Authentication</td>
+                            <td>Hỗ trợ quy trình authentication nếu implementation và yêu cầu ECU sử dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>0x31</td>
+                            <td>RoutineControl</td>
+                            <td>Yêu cầu thực hiện routine, có thể bao gồm các thao tác programming được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>0x34</td>
+                            <td>RequestDownload</td>
+                            <td>Khởi tạo quá trình tải dữ liệu theo điều kiện được chấp nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>0x36</td>
+                            <td>TransferData</td>
+                            <td>Truyền các khối dữ liệu trong quá trình download.</td>
+                        </tr>
+                        <tr>
+                            <td>0x37</td>
+                            <td>RequestTransferExit</td>
+                            <td>Kết thúc giai đoạn transfer theo quy tắc của service.</td>
+                        </tr>
+                        <tr>
+                            <td>0x11</td>
+                            <td>ECUReset</td>
+                            <td>Yêu cầu reset ECU khi điều kiện cho phép.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là những ví dụ phổ biến, không phải danh sách bắt buộc của
+                    mọi FBL. Trình tự thực tế, các routine ID, quy trình bảo mật và
+                    điều kiện chấp nhận phải tuân thủ đặc tả của OEM và implementation.
+                </p>
+
+                <h2>17. Programming Session và quyền truy cập</h2>
+
+                <p>
+                    Trước khi thực hiện các thao tác lập trình, FBL thường cần đảm bảo
+                    request đến từ một quy trình được chấp nhận và các điều kiện
+                    chẩn đoán cần thiết đã được đáp ứng.
+                </p>
+
+                <p>
+                    Tùy thiết kế, quá trình này có thể bao gồm việc chuyển sang session
+                    lập trình, kiểm tra SecurityAccess hoặc thực hiện authentication.
+                    Những bước bảo vệ này giúp giới hạn các thao tác nhạy cảm theo
+                    chính sách của ECU.
+                </p>
+
+                <p>
+                    Cần phân biệt quyền truy cập với tính hợp lệ của firmware.
+                    Một tester có quyền gửi request lập trình không đồng nghĩa với
+                    việc mọi file được tải xuống đều là firmware hợp lệ hoặc đáng tin cậy.
+                </p>
+
+                <h2>18. Xóa vùng Flash trước khi ghi</h2>
+
+                <p>
+                    Flash memory có những quy tắc vật lý khi ghi và xóa dữ liệu.
+                    Tùy công nghệ bộ nhớ, thao tác cập nhật thường cần xóa những vùng
+                    Flash phù hợp trước khi ghi dữ liệu mới.
+                </p>
+
+                <p>
+                    FBL điều phối quá trình này và sử dụng Flash Driver hoặc một
+                    cơ chế tương ứng để thực hiện thao tác bộ nhớ. Vùng được xóa
+                    phải nằm trong phạm vi đã được xác định cho quá trình lập trình.
+                </p>
+
+                <p>
+                    Ở góc nhìn kiến trúc, có thể chia công việc thành:
+                </p>
+
+                <ol>
+                    <li>Xác định vùng nhớ mục tiêu và kiểm tra điều kiện cho phép cập nhật.</li>
+                    <li>Kiểm tra các điều kiện bảo vệ và trạng thái programming.</li>
+                    <li>Yêu cầu Flash Driver thực hiện thao tác xóa vùng thích hợp.</li>
+                    <li>Kiểm tra kết quả thao tác và xử lý lỗi nếu có.</li>
+                    <li>Chuyển sang bước download khi trạng thái bộ nhớ đáp ứng yêu cầu.</li>
+                </ol>
+
+                <p>
+                    Cách chia sector, block, page và các điều kiện xóa cụ thể phụ thuộc MCU
+                    và Flash Driver. Không nên giả định mọi MCU đều sử dụng cùng kích thước
+                    vùng xóa hoặc cùng giới hạn lập trình.
+                </p>
+
+                <h2>19. RequestDownload - bắt đầu tải firmware</h2>
+
+                <p>
+                    UDS RequestDownload (SID 0x34) là dịch vụ thường dùng để bắt đầu
+                    một giai đoạn tải dữ liệu. Request chứa thông tin cần thiết để
+                    xác định cách FBL chấp nhận transfer theo protocol và cấu hình.
+                </p>
+
+                <p>
+                    Khi tiếp nhận request, FBL cần xác định việc tải có được phép
+                    thực hiện hay không và các giới hạn transfer phù hợp với
+                    implementation.
+                </p>
+
+                <p>Về mặt chức năng, quá trình có thể bao gồm:</p>
+
+                <ul>
+                    <li>Kiểm tra trạng thái programming và các điều kiện liên quan.</li>
+                    <li>Kiểm tra vùng nhớ mục tiêu thuộc phạm vi được phép cập nhật.</li>
+                    <li>Chuẩn bị trạng thái của quá trình transfer.</li>
+                    <li>Thiết lập các giới hạn dữ liệu phù hợp với implementation.</li>
+                    <li>Phản hồi kết quả chấp nhận hoặc từ chối request.</li>
+                </ul>
+
+                <p>
+                    Chi tiết request, cách biểu diễn địa chỉ và kích thước vùng tải
+                    phụ thuộc giao thức cùng đặc tả download của ECU.
+                </p>
+
+                <h2>20. TransferData - truyền các khối firmware</h2>
+
+                <p>
+                    Sau khi quá trình download được chấp nhận, tester truyền dữ liệu
+                    thành các khối bằng dịch vụ TransferData (SID 0x36).
+                    FBL nhận các khối dữ liệu và chuyển chúng đến phần xử lý
+                    programming theo cấu hình.
+                </p>
+
+                <pre><code>          Flash / Diagnostic Tester
+                     |
+                     | TransferData block
+                     v
+                    FBL
+                     |
+                     | Kiểm tra trạng thái transfer
+                     v
+              Programming Manager
+                     |
+                     v
+                 Flash Driver
+                     |
+                     v
+                Flash Memory
+                     |
+                     | Kết quả ghi
+                     v
+                    FBL
+                     |
+                     | Phản hồi trạng thái
+                     v
+                   Tester</code></pre>
+
+                <p>
+                    Việc truyền dữ liệu có thể gồm nhiều block. FBL cần xử lý
+                    trạng thái transfer, phát hiện các trường hợp bất thường
+                    theo quy tắc protocol và kiểm tra kết quả ghi.
+                </p>
+
+                <p>
+                    Không nên nhầm việc một block đã được nhận qua communication
+                    với việc dữ liệu đó chắc chắn đã được ghi thành công vào Flash.
+                    Hai bước này có thể có trạng thái và lỗi khác nhau.
+                </p>
+
+                <h2>21. RequestTransferExit - hoàn tất giai đoạn transfer</h2>
+
+                <p>
+                    RequestTransferExit (SID 0x37) thường được sử dụng để báo kết thúc
+                    giai đoạn chuyển dữ liệu theo protocol. FBL có thể cần hoàn tất
+                    các xử lý còn lại liên quan đến transfer trước khi tiến hành
+                    kiểm tra firmware hoặc chuyển sang bước tiếp theo.
+                </p>
+
+                <p>
+                    Việc nhận được RequestTransferExit không tự động có nghĩa toàn
+                    bộ firmware đã được xác minh và sẵn sàng khởi chạy.
+                </p>
+
+                <p>
+                    Tùy thiết kế, quá trình còn có thể cần kiểm tra kích thước dữ liệu,
+                    tính toàn vẹn, chữ ký, metadata hoặc những điều kiện khác trước khi
+                    đánh dấu phần mềm hợp lệ.
+                </p>
+
+                <h2>22. Quy trình programming end-to-end</h2>
+
+                <p>
+                    Một quy trình programming thường gồm nhiều bước phối hợp từ khi
+                    tester bắt đầu session đến khi ECU quay lại trạng thái vận hành.
+                    Trình tự chi tiết được xác định bởi đặc tả của dự án.
+                </p>
+
+                <pre><code>Tester yêu cầu programming
+             |
+             v
+Chuyển session phù hợp
+             |
+             v
+Kiểm tra quyền truy cập
+             |
+             v
+Kiểm tra điều kiện programming
+             |
+             v
+Xóa vùng nhớ được phép cập nhật
+             |
+             v
+RequestDownload
+             |
+             v
+TransferData (nhiều block)
+             |
+             v
+RequestTransferExit
+             |
+             v
+Xác minh firmware / metadata
+             |
+             v
+Cập nhật trạng thái hợp lệ
+             |
+             v
+ECU Reset
+             |
+             v
+Kiểm tra quyết định khởi động
+             |
+             v
+Khởi chạy Application hợp lệ</code></pre>
+
+                <p>
+                    Một số hệ thống có thể chèn thêm bước kiểm tra phụ thuộc,
+                    xác minh dữ liệu, kiểm tra checksum, xác minh chữ ký hoặc
+                    thực hiện các routine dành riêng cho OEM. Vì vậy, đây là
+                    sơ đồ tham khảo chứ không phải một chuỗi dịch vụ bắt buộc
+                    giống nhau trên mọi ECU.
+                </p>
+
+                <h2>23. Flash Driver là gì?</h2>
+
+                <p>
+                    Flash Driver là thành phần thực hiện những thao tác bộ nhớ
+                    cần thiết cho quá trình lập trình. Nó cung cấp khả năng
+                    tương tác với Flash memory theo yêu cầu của MCU và thiết kế ECU.
+                </p>
+
+                <p>Các nhóm chức năng có thể bao gồm:</p>
+
+                <ul>
+                    <li>Thực hiện thao tác xóa vùng nhớ được phép.</li>
+                    <li>Ghi dữ liệu vào các vùng Flash được cấu hình.</li>
+                    <li>Trả trạng thái hoặc mã lỗi cho phần programming manager.</li>
+                    <li>Áp dụng những ràng buộc về địa chỉ, kích thước và alignment.</li>
+                    <li>Tuân thủ các điều kiện đặc thù của controller và bộ nhớ.</li>
+                </ul>
+
+                <p>
+                    FBL và Flash Driver không phải lúc nào cũng là cùng một module.
+                    FBL quản lý quy trình lập trình ở mức hệ thống, còn Flash Driver
+                    cung cấp chức năng tác động đến phần cứng bộ nhớ.
+                </p>
+
+                <h2>24. Vì sao Flash Driver đôi khi cần chạy trong RAM?</h2>
+
+                <p>
+                    Một số MCU có những giới hạn khi thực hiện thao tác trên một vùng
+                    Flash, chẳng hạn hạn chế việc đọc hoặc thực thi code từ cùng vùng
+                    trong lúc erase/program đang diễn ra.
+                </p>
+
+                <p>
+                    Vì lý do đó, một số implementation có thể cần đặt các routine
+                    lập trình hoặc phần code hỗ trợ tương ứng vào RAM trong thời gian
+                    thao tác Flash.
+                </p>
+
+                <p>
+                    Đây không phải quy tắc áp dụng cho mọi MCU. Khả năng đọc trong lúc
+                    ghi, cấu trúc bank Flash và yêu cầu thực thi phụ thuộc tài liệu
+                    của microcontroller cùng Flash Driver được sử dụng.
+                </p>
+
+                <p>
+                    Khi debug, nếu một lỗi chỉ xuất hiện lúc ghi Flash, cần xem xét
+                    cả cách thực thi Flash Driver, vùng nhớ code/data và các giới hạn
+                    của phần cứng, thay vì chỉ điều tra diagnostic request.
+                </p>
+
+                <h2>25. Xác minh firmware sau khi download</h2>
+
+                <p>
+                    Sau khi dữ liệu được truyền và ghi, FBL thường cần xác minh
+                    rằng kết quả đáp ứng các yêu cầu của ECU trước khi cho phép
+                    Application được khởi chạy.
+                </p>
+
+                <p>
+                    Tùy thiết kế, các phương pháp có thể gồm:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Kiểm tra checksum hoặc CRC:</strong>
+                        phát hiện một số dạng sai lệch dữ liệu ngoài ý muốn.
+                    </li>
+                    <li>
+                        <strong>Hash:</strong>
+                        tạo giá trị tóm tắt dữ liệu để so sánh hoặc làm đầu vào
+                        cho bước xác minh tiếp theo.
+                    </li>
+                    <li>
+                        <strong>Digital Signature Verification:</strong>
+                        kiểm tra chữ ký số nhằm đánh giá tính xác thực của firmware
+                        theo khóa và chính sách được tin cậy.
+                    </li>
+                    <li>
+                        <strong>Metadata Validation:</strong>
+                        kiểm tra version, kích thước, định danh hoặc thông tin
+                        quản lý phiên bản theo yêu cầu.
+                    </li>
+                    <li>
+                        <strong>Dependency Check:</strong>
+                        kiểm tra các điều kiện phụ thuộc giữa những phần mềm
+                        được cập nhật nếu hệ thống hỗ trợ.
+                    </li>
+                </ul>
+
+                <p>
+                    CRC có thể hữu ích để phát hiện lỗi dữ liệu, nhưng bản thân CRC
+                    không phải cơ chế xác thực nguồn phát hành. Một hệ thống có yêu cầu
+                    bảo mật cao cần lựa chọn cơ chế kiểm tra phù hợp với threat model
+                    và chính sách sản phẩm.
+                </p>
+
+                <h2>26. Software Integrity và Software Authenticity</h2>
+
+                <p>
+                    Hai khái niệm này liên quan nhưng không đồng nghĩa với nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Câu hỏi cần trả lời</th>
+                            <th>Ví dụ cơ chế</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Software Integrity</td>
+                            <td>Dữ liệu phần mềm có bị thay đổi hoặc hỏng so với giá trị kỳ vọng hay không?</td>
+                            <td>CRC, hash hoặc phép kiểm tra dữ liệu tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Authenticity</td>
+                            <td>Phần mềm có thực sự đến từ nguồn được tin cậy theo chính sách xác minh hay không?</td>
+                            <td>Kiểm tra chữ ký số bằng cơ chế và khóa tin cậy.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một firmware có thể không bị lỗi dữ liệu nhưng vẫn không đáng tin cậy
+                    nếu nguồn phát hành không được xác minh. Ngược lại, một chữ ký hợp lệ
+                    không có nghĩa mọi chức năng của phần mềm đều không có lỗi.
+                </p>
+
+                <h2>27. Secure Boot và FBL</h2>
+
+                <p>
+                    Secure Boot là một cơ chế nhằm đảm bảo phần mềm được chọn để khởi chạy
+                    đáp ứng các điều kiện xác thực được định nghĩa. Tùy kiến trúc, quá trình
+                    này có thể do phần cứng, Boot Manager hoặc các thành phần bảo mật
+                    phối hợp thực hiện.
+                </p>
+
+                <p>
+                    FBL có thể tham gia vào chuỗi xác minh firmware trước khi cập nhật
+                    được kích hoạt. Tuy nhiên, Secure Boot và quá trình xác minh firmware
+                    sau download không nhất thiết là cùng một bước hoặc cùng một thành phần.
+                </p>
+
+                <p>
+                    Một hệ thống có thể xác minh firmware trước khi cho phép ghi,
+                    sau khi ghi, hoặc kiểm tra lại trong quá trình khởi động,
+                    tùy yêu cầu bảo mật và kiến trúc được lựa chọn.
+                </p>
+
+                <p>
+                    Do đó, không nên suy luận rằng chỉ cần FBL kiểm tra firmware một lần
+                    thì toàn bộ chuỗi khởi động đã được bảo vệ. Phải đánh giá đầy đủ
+                    cơ chế tin cậy và trách nhiệm của từng thành phần.
+                </p>
+
+                <h2>28. Chuyện gì xảy ra nếu mất nguồn giữa quá trình cập nhật?</h2>
+
+                <p>
+                    Một trong những yêu cầu quan trọng nhất của FBL là xử lý các tình huống
+                    bất thường khi programming chưa hoàn tất. Mất nguồn, reset ngoài ý muốn,
+                    lỗi communication hoặc lỗi Flash có thể khiến vùng Application đang
+                    cập nhật chưa ở trạng thái hợp lệ.
+                </p>
+
+                <p>
+                    ECU không nên mặc định khởi chạy phần mềm chưa được xác minh.
+                    Boot logic cần kiểm tra trạng thái cập nhật và quyết định tiếp tục,
+                    phục hồi hoặc giữ ECU ở chế độ bootloader theo thiết kế.
+                </p>
+
+                <pre><code>      Đang cập nhật Application
+                  |
+                  v
+          Phát sinh gián đoạn
+                  |
+                  v
+         ECU khởi động trở lại
+                  |
+                  v
+       Kiểm tra trạng thái cập nhật
+                  |
+          +-------+--------+
+          |                |
+          v                v
+  Application hợp lệ   Update chưa hợp lệ
+          |                |
+          v                v
+    Có thể khởi chạy   Giữ FBL / Recovery
+                       hoặc cập nhật lại</code></pre>
+
+                <p>
+                    Sơ đồ là mô hình khái niệm. Khả năng tiếp tục transfer,
+                    cập nhật lại hoặc phục hồi phụ thuộc bootloader, memory layout
+                    và dữ liệu trạng thái mà hệ thống lưu giữ.
+                </p>
+
+                <h2>29. Single-Bank và A/B Update</h2>
+
+                <p>
+                    Kiến trúc bộ nhớ ảnh hưởng lớn đến chiến lược cập nhật firmware.
+                    Hai cách tổ chức thường được nhắc đến là cập nhật tại vùng
+                    Application hiện tại và sử dụng hai vùng phần mềm.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>Single-Bank / cập nhật tại chỗ</th>
+                            <th>A/B hoặc hai vùng phần mềm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cách lưu</td>
+                            <td>Vùng Application chính được cập nhật trực tiếp theo thiết kế.</td>
+                            <td>Có thể duy trì một vùng phần mềm khác trong khi cập nhật vùng còn lại.</td>
+                        </tr>
+                        <tr>
+                            <td>Yêu cầu bộ nhớ</td>
+                            <td>Có thể tiết kiệm dung lượng Flash hơn.</td>
+                            <td>Cần thêm dung lượng hoặc vùng lưu trữ phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Phục hồi sau lỗi</td>
+                            <td>Phụ thuộc FBL, tính sẵn sàng của bootloader và chiến lược recovery.</td>
+                            <td>Có thể chọn lại vùng phần mềm trước đó nếu kiến trúc hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Độ phức tạp</td>
+                            <td>Phụ thuộc cơ chế cập nhật và khả năng phục hồi.</td>
+                            <td>Cần quản lý trạng thái, xác minh và chuyển đổi giữa các vùng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Không phải mọi ECU đều có đủ Flash để triển khai A/B, và A/B
+                    cũng không tự động đảm bảo phục hồi thành công nếu logic xác minh
+                    hoặc quản lý trạng thái bị thiết kế sai.
+                </p>
+
+                <h2>30. FBL và quản lý trạng thái programming</h2>
+
+                <p>
+                    Quá trình lập trình nên được quản lý theo trạng thái để hệ thống
+                    biết chính xác đang ở giai đoạn nào và được phép thực hiện thao tác gì.
+                </p>
+
+                <p>
+                    Một mô hình trạng thái minh họa có thể gồm:
+                </p>
+
+                <pre><code>              Idle
+                |
+                v
+       Programming Requested
+                |
+                v
+         Access Accepted
+                |
+                v
+          Erase in Progress
+                |
+                v
+          Download Ready
+                |
+                v
+          Transfer in Progress
+                |
+                v
+          Transfer Completed
+                |
+                v
+            Verification
+                |
+          +-----+-----+
+          |           |
+          v           v
+       Success      Failure
+          |           |
+          v           v
+     Mark Valid    Recovery / Error
+          |
+          v
+       ECU Reset</code></pre>
+
+                <p>
+                    Đây là ví dụ để hiểu state management, không phải state machine
+                    tiêu chuẩn áp dụng nguyên trạng cho mọi FBL. Một số implementation
+                    có thể tách nhỏ hoặc kết hợp các trạng thái.
+                </p>
+
+                <p>
+                    Quản lý trạng thái giúp tránh các thao tác không đúng thứ tự,
+                    chẳng hạn ghi dữ liệu trước khi vùng nhớ được chuẩn bị hoặc
+                    kích hoạt Application trước khi xác minh xong.
+                </p>
+
+                <h2>31. FBL và các lớp Communication</h2>
+
+                <p>
+                    FBL cần một con đường giao tiếp để nhận dữ liệu lập trình từ tester.
+                    Tùy giao thức, kiến trúc có thể bao gồm những module hoặc lớp
+                    khác nhau để nhận, định tuyến và vận chuyển dữ liệu.
+                </p>
+
+                <p>
+                    Với một FBL sử dụng CAN, luồng dữ liệu có thể đi qua CAN Driver,
+                    CanIf, CanTp hoặc các thành phần tương ứng của implementation.
+                    Nếu dùng Ethernet/DoIP, các module thuộc đường giao tiếp Ethernet
+                    và transport sẽ thay đổi theo hệ thống.
+                </p>
+
+                <p>
+                    Vì vậy, khi tester không kết nối được với FBL, không nên chỉ điều tra
+                    logic lập trình Flash. Cần kiểm tra đường communication từ network
+                    đến diagnostic handler của bootloader.
+                </p>
+
+                <h2>32. FBL liên quan đến DCM như thế nào?</h2>
+
+                <p>
+                    DCM và FBL có thể cùng liên quan đến UDS, nhưng mục tiêu sử dụng
+                    không giống nhau. DCM trong Application ECU thường hỗ trợ các
+                    dịch vụ chẩn đoán phục vụ truy vấn và điều khiển theo cấu hình.
+                    FBL tập trung vào việc tiếp nhận và thực hiện quy trình lập trình.
+                </p>
+
+                <p>
+                    Một sản phẩm có thể tái sử dụng một số cơ chế hoặc module liên quan
+                    giữa hai môi trường, nhưng không nên giả định rằng FBL luôn dùng
+                    nguyên toàn bộ cấu hình DCM của Application.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DCM trong Application</th>
+                            <th>Diagnostic trong FBL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Đọc dữ liệu, truy vấn DTC và xử lý các service vận hành được hỗ trợ.</td>
+                            <td>Hỗ trợ những service cần thiết cho programming theo cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>Có thể phối hợp nhiều SWC và module BSW.</td>
+                            <td>Cần các thành phần communication, programming, memory và validation phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Thường phục vụ chẩn đoán trong quá trình vận hành hoặc bảo dưỡng.</td>
+                            <td>Phục vụ quá trình cập nhật và kiểm tra firmware.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>33. FBL và bảo mật firmware</h2>
+
+                <p>
+                    Quy trình lập trình có thể ảnh hưởng trực tiếp đến phần mềm điều khiển
+                    ECU. Vì vậy, bảo mật không chỉ là kiểm tra xem request có hợp lệ
+                    theo protocol hay không; hệ thống còn cần kiểm soát ai được phép
+                    thực hiện thao tác và firmware nào được phép sử dụng.
+                </p>
+
+                <p>Các nhóm cơ chế có thể được áp dụng gồm:</p>
+
+                <ul>
+                    <li>
+                        <strong>Access Control:</strong>
+                        hạn chế thao tác programming theo quyền truy cập và trạng thái hệ thống.
+                    </li>
+                    <li>
+                        <strong>Firmware Authentication:</strong>
+                        xác minh nguồn phát hành hoặc chữ ký firmware khi được yêu cầu.
+                    </li>
+                    <li>
+                        <strong>Integrity Verification:</strong>
+                        kiểm tra dữ liệu đã tải và ghi theo tiêu chí được thiết kế.
+                    </li>
+                    <li>
+                        <strong>Protected Memory:</strong>
+                        hạn chế việc sửa đổi các vùng nhớ quan trọng.
+                    </li>
+                    <li>
+                        <strong>Version and Dependency Checks:</strong>
+                        kiểm tra phiên bản và điều kiện tương thích nếu kiến trúc hỗ trợ.
+                    </li>
+                </ul>
+
+                <p>
+                    Cơ chế bảo mật cần phù hợp với kiến trúc tổng thể. Chẳng hạn,
+                    kiểm tra quyền truy cập ở giai đoạn diagnostic request không thay
+                    thế việc xác minh firmware trước khi cho phép thực thi.
+                </p>
+
+                <h2>34. Vì sao không nên nhầm checksum với chữ ký số?</h2>
+
+                <p>
+                    Checksum hoặc CRC thường dùng để phát hiện một số dạng lỗi dữ liệu.
+                    Chúng hữu ích trong việc kiểm tra tính toàn vẹn theo một quy tắc
+                    xác định, nhưng không tự chứng minh dữ liệu được tạo bởi một
+                    nguồn phát hành đáng tin cậy.
+                </p>
+
+                <p>
+                    Chữ ký số được dùng để xác minh dữ liệu dựa trên cơ chế mật mã
+                    và khóa tin cậy. Nếu hệ thống sử dụng chữ ký số, cách quản lý khóa,
+                    xác minh chữ ký và quyết định chấp nhận firmware phải được thiết kế
+                    đúng theo chính sách bảo mật.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cơ chế</th>
+                            <th>Mục tiêu chính</th>
+                            <th>Giới hạn cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CRC / Checksum</td>
+                            <td>Phát hiện một số dạng sai lệch dữ liệu.</td>
+                            <td>Không tự xác minh nguồn phát hành.</td>
+                        </tr>
+                        <tr>
+                            <td>Cryptographic Hash</td>
+                            <td>Tạo giá trị tóm tắt dữ liệu phục vụ so sánh hoặc bước xác minh.</td>
+                            <td>Bản thân hash không xác thực ai đã tạo dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Digital Signature</td>
+                            <td>Xác minh chữ ký bằng cơ chế mật mã và khóa tin cậy.</td>
+                            <td>Hiệu quả phụ thuộc việc bảo vệ khóa và chính sách xác minh.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>35. FBL Updater là gì?</h2>
+
+                <p>
+                    Một số hệ thống hỗ trợ cập nhật chính bootloader. Đây là nhu cầu
+                    đặc biệt vì FBL tham gia vào việc khởi động và phục hồi firmware.
+                    Quy trình cập nhật FBL vì vậy cần được kiểm soát cẩn thận.
+                </p>
+
+                <p>
+                    FBL Updater là một thành phần hoặc quy trình được thiết kế để
+                    cập nhật bootloader theo chính sách của sản phẩm. Nó có thể yêu cầu
+                    một kiến trúc hỗ trợ riêng, cơ chế bảo vệ vùng nhớ và cách phục hồi
+                    khi cập nhật không hoàn tất.
+                </p>
+
+                <p>
+                    Không phải mọi ECU đều cho phép cập nhật FBL qua cùng một quy trình
+                    programming của Application. Trong nhiều thiết kế, FBL được bảo vệ
+                    chặt hơn và chỉ có thể cập nhật theo một quy trình riêng.
+                </p>
+
+                <h2>36. Kiểm thử Flash Bootloader</h2>
+
+                <p>
+                    FBL cần được kiểm thử cả ở mức chức năng bình thường và các tình huống
+                    lỗi có thể xảy ra trong quá trình lập trình.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm kiểm thử</th>
+                            <th>Mục tiêu</th>
+                            <th>Ví dụ tình huống</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Boot Decision</td>
+                            <td>Kiểm tra việc lựa chọn FBL hoặc Application.</td>
+                            <td>Application hợp lệ, reprogramming request đang bật hoặc Application không hợp lệ.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Communication</td>
+                            <td>Xác nhận tester có thể giao tiếp với FBL theo cấu hình.</td>
+                            <td>Kiểm tra request, response và timeout.</td>
+                        </tr>
+                        <tr>
+                            <td>Programming Flow</td>
+                            <td>Xác nhận những bước download được xử lý đúng thứ tự.</td>
+                            <td>Session, download, transfer, transfer exit và reset.</td>
+                        </tr>
+                        <tr>
+                            <td>Memory Operation</td>
+                            <td>Kiểm tra kết quả thao tác bộ nhớ theo yêu cầu phần cứng.</td>
+                            <td>Erase/write failure hoặc trạng thái vùng nhớ không hợp lệ.</td>
+                        </tr>
+                        <tr>
+                            <td>Firmware Validation</td>
+                            <td>Xác minh rằng phần mềm chỉ được chấp nhận khi đáp ứng chính sách.</td>
+                            <td>Dữ liệu không khớp checksum hoặc chữ ký không được xác minh.</td>
+                        </tr>
+                        <tr>
+                            <td>Recovery</td>
+                            <td>Kiểm tra khả năng xử lý lỗi và khôi phục về trạng thái cho phép.</td>
+                            <td>Transfer bị gián đoạn hoặc Application chưa hợp lệ sau reset.</td>
+                        </tr>
+                        <tr>
+                            <td>Integration</td>
+                            <td>Kiểm tra tương tác giữa FBL, tester, MCU và các module liên quan.</td>
+                            <td>Kiểm thử trên bench hoặc hệ thống tích hợp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những kiểm thử này cần được thực hiện trong môi trường kỹ thuật
+                    được kiểm soát và theo quy trình an toàn của dự án, đặc biệt khi
+                    thao tác trên ECU thật hoặc phần mềm có ảnh hưởng đến chức năng xe.
+                </p>
+
+                <h2>37. FBL có cần kiểm thử với HIL không?</h2>
+
+                <p>
+                    HIL (Hardware-in-the-Loop) là một phương pháp kiểm thử trong đó
+                    ECU thật hoặc phần cứng mục tiêu được kết nối với môi trường mô phỏng.
+                    HIL có thể hữu ích khi cần kiểm tra tương tác của FBL với các thành
+                    phần hệ thống và những điều kiện vận hành được mô phỏng.
+                </p>
+
+                <p>
+                    Tuy nhiên, HIL không nhất thiết thay thế toàn bộ các phương pháp khác.
+                    Việc xác minh FBL có thể bao gồm kiểm thử phần mềm, kiểm thử trên
+                    hardware bench, kiểm thử giao tiếp với tester và các bài kiểm thử
+                    tích hợp theo kế hoạch của dự án.
+                </p>
+
+                <p>
+                    Việc chọn môi trường kiểm thử phải dựa trên mục tiêu, rủi ro,
+                    phần cứng cần kiểm tra và khả năng mô phỏng của hệ thống.
+                </p>
+
+                <h2>38. Các lỗi thường gặp khi làm việc với FBL</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Nguyên nhân có thể</th>
+                            <th>Hướng điều tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ECU không vào FBL</td>
+                            <td>Điều kiện boot request chưa được thỏa mãn hoặc logic startup chọn Application.</td>
+                            <td>Kiểm tra quyết định khởi động, trạng thái request và Application validity.</td>
+                        </tr>
+                        <tr>
+                            <td>Tester không kết nối được</td>
+                            <td>Communication configuration, addressing hoặc trạng thái FBL không phù hợp.</td>
+                            <td>Kiểm tra bus, transport, diagnostic handler và cấu hình tester.</td>
+                        </tr>
+                        <tr>
+                            <td>Request programming bị từ chối</td>
+                            <td>Session, quyền truy cập hoặc điều kiện programming không đáp ứng.</td>
+                            <td>Đối chiếu response và yêu cầu của quy trình programming.</td>
+                        </tr>
+                        <tr>
+                            <td>Xóa Flash thất bại</td>
+                            <td>Vùng nhớ không hợp lệ, thao tác không đáp ứng yêu cầu MCU hoặc Flash Driver gặp lỗi.</td>
+                            <td>Kiểm tra memory layout, trạng thái driver và thông báo lỗi phần cứng.</td>
+                        </tr>
+                        <tr>
+                            <td>TransferData thất bại</td>
+                            <td>Lỗi truyền dữ liệu, trạng thái transfer hoặc thao tác ghi bộ nhớ.</td>
+                            <td>Xác định lỗi xuất hiện ở communication, programming manager hay Flash Driver.</td>
+                        </tr>
+                        <tr>
+                            <td>Download hoàn thành nhưng firmware không hợp lệ</td>
+                            <td>Kiểm tra dữ liệu, metadata hoặc xác minh firmware không đạt yêu cầu.</td>
+                            <td>Đối chiếu log transfer, validation result và quy tắc đánh dấu Application hợp lệ.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU không chạy Application sau reset</td>
+                            <td>Application chưa hợp lệ, trạng thái cập nhật chưa hoàn tất hoặc lỗi startup.</td>
+                            <td>Kiểm tra boot decision, validity metadata và các điều kiện khởi động.</td>
+                        </tr>
+                        <tr>
+                            <td>FBL chạy nhưng ghi Flash không thành công</td>
+                            <td>Flash Driver, cấu hình bộ nhớ hoặc điều kiện phần cứng không phù hợp.</td>
+                            <td>Kiểm tra giới hạn của MCU, cấu hình driver và log programming.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>39. Ví dụ debug: ECU không vào chế độ FBL</h2>
+
+                <p>
+                    Giả sử kỹ sư gửi yêu cầu đưa ECU vào chế độ programming, reset ECU,
+                    nhưng Application vẫn khởi chạy bình thường.
+                </p>
+
+                <p>
+                    Thay vì kết luận bootloader bị lỗi, cần kiểm tra chuỗi quyết định:
+                </p>
+
+                <ol>
+                    <li>Yêu cầu programming có được chấp nhận và ghi nhận không?</li>
+                    <li>Thông tin yêu cầu có tồn tại sau reset theo cơ chế thiết kế không?</li>
+                    <li>Boot Manager hoặc FBL có đọc được trạng thái yêu cầu không?</li>
+                    <li>Có điều kiện nào khiến hệ thống xóa hoặc bỏ qua yêu cầu không?</li>
+                    <li>Logic khởi động đang chọn FBL hay Application?</li>
+                    <li>Có log hoặc dấu hiệu nào xác nhận nhánh khởi động đã được chọn?</li>
+                </ol>
+
+                <pre><code>Request chuyển sang FBL
+          |
+          v
+Trạng thái yêu cầu được ghi nhận?
+          |
+          v
+Reset ECU
+          |
+          v
+Boot logic đọc trạng thái
+          |
+          v
+Chọn FBL hay Application
+          |
+          v
+Đối chiếu với kết quả khởi động thực tế</code></pre>
+
+                <p>
+                    Trình tự cụ thể phụ thuộc cơ chế Application-FBL Interface và
+                    startup implementation. Mục tiêu của quá trình debug là xác định
+                    chính xác bước đầu tiên có kết quả khác với thiết kế dự kiến.
+                </p>
+
+                <h2>40. Ví dụ debug: Download thành công nhưng Application không chạy</h2>
+
+                <p>
+                    Giả sử công cụ programming báo truyền dữ liệu thành công,
+                    nhưng sau reset ECU không khởi chạy Application mới.
+                </p>
+
+                <p>
+                    Cần phân biệt kết quả truyền dữ liệu với trạng thái firmware hợp lệ.
+                    Communication có thể thành công trong khi bước ghi Flash, xác minh
+                    hoặc cập nhật metadata vẫn gặp vấn đề.
+                </p>
+
+                <pre><code>Download được báo hoàn tất
+             |
+             v
+Kiểm tra Transfer Exit
+             |
+             v
+Kiểm tra trạng thái ghi Flash
+             |
+             v
+Kiểm tra Integrity / Signature
+             |
+             v
+Kiểm tra Application Validity
+             |
+             v
+Kiểm tra Boot Decision sau reset
+             |
+             v
+Xác định bước không đạt yêu cầu</code></pre>
+
+                <p>
+                    Không nên bỏ qua bước validation chỉ vì tester đã nhận được
+                    positive response cho một giai đoạn transfer. Việc chấp nhận
+                    firmware để khởi chạy phải dựa trên tiêu chí của toàn hệ thống.
+                </p>
+
+                <h2>41. Quy trình phân tích FBL theo từng lớp</h2>
+
+                <p>
+                    Khi phân tích một lỗi FBL, cách tiếp cận theo từng lớp giúp phân
+                    biệt lỗi phần mềm giao tiếp, lỗi programming và lỗi quản lý khởi động.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lớp điều tra</th>
+                            <th>Câu hỏi cần trả lời</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Boot Decision</td>
+                            <td>ECU đã chọn đúng FBL hoặc Application chưa?</td>
+                        </tr>
+                        <tr>
+                            <td>Communication</td>
+                            <td>Request và response có đi qua đường giao tiếp đúng không?</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Handling</td>
+                            <td>Request có được chấp nhận theo trạng thái và điều kiện hiện tại không?</td>
+                        </tr>
+                        <tr>
+                            <td>Programming Manager</td>
+                            <td>State machine của quá trình download có chuyển trạng thái đúng không?</td>
+                        </tr>
+                        <tr>
+                            <td>Flash Driver</td>
+                            <td>Thao tác xóa/ghi bộ nhớ có được thực hiện thành công không?</td>
+                        </tr>
+                        <tr>
+                            <td>Validation</td>
+                            <td>Firmware có đạt các tiêu chí toàn vẹn và xác thực được yêu cầu không?</td>
+                        </tr>
+                        <tr>
+                            <td>Activation / Startup</td>
+                            <td>Application đã được chọn và khởi chạy theo trạng thái hợp lệ chưa?</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>42. Checklist khi tìm hiểu FBL trong một dự án</h2>
+
+                <ul>
+                    <li>FBL được cung cấp bởi OEM, vendor hay đội phát triển nội bộ?</li>
+                    <li>Boot Manager có phải một thành phần riêng không?</li>
+                    <li>ECU sử dụng CAN, CAN FD, Ethernet hay giao tiếp nào cho programming?</li>
+                    <li>Diagnostic protocol và các dịch vụ programming được hỗ trợ là gì?</li>
+                    <li>Memory layout chia vùng FBL, Application và metadata như thế nào?</li>
+                    <li>Flash Driver do thành phần nào cung cấp?</li>
+                    <li>Những điều kiện nào cho phép chuyển sang programming mode?</li>
+                    <li>Firmware được kiểm tra toàn vẹn và xác thực bằng cơ chế nào?</li>
+                    <li>Hệ thống quản lý trạng thái Application hợp lệ ra sao?</li>
+                    <li>Điều gì xảy ra khi download hoặc validation thất bại?</li>
+                    <li>Các bước reset và startup sau cập nhật được quản lý như thế nào?</li>
+                    <li>Những log, trace và kết quả kiểm thử nào có thể dùng để debug?</li>
+                </ul>
+
+                <h2>43. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>FBL</td>
+                            <td>Flash Bootloader, phần mềm hỗ trợ lập trình hoặc cập nhật firmware.</td>
+                        </tr>
+                        <tr>
+                            <td>Boot Manager</td>
+                            <td>Thành phần hoặc logic quyết định phần mềm sẽ được khởi chạy.</td>
+                        </tr>
+                        <tr>
+                            <td>Flash Driver</td>
+                            <td>Thành phần thực hiện các thao tác bộ nhớ Flash theo nền tảng.</td>
+                        </tr>
+                        <tr>
+                            <td>Memory Layout</td>
+                            <td>Cách tổ chức và phân chia những vùng bộ nhớ của ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Programming Session</td>
+                            <td>Session chẩn đoán phục vụ các chức năng lập trình được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>RequestDownload (0x34)</td>
+                            <td>Dịch vụ UDS khởi tạo giai đoạn tải dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>TransferData (0x36)</td>
+                            <td>Dịch vụ truyền các khối dữ liệu trong transfer.</td>
+                        </tr>
+                        <tr>
+                            <td>RequestTransferExit (0x37)</td>
+                            <td>Dịch vụ kết thúc giai đoạn transfer theo protocol.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Integrity</td>
+                            <td>Tính toàn vẹn của dữ liệu phần mềm.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Authenticity</td>
+                            <td>Tính xác thực của phần mềm theo nguồn và chính sách tin cậy.</td>
+                        </tr>
+                        <tr>
+                            <td>Secure Boot</td>
+                            <td>Cơ chế giúp chỉ khởi chạy phần mềm đáp ứng chính sách xác minh được thiết kế.</td>
+                        </tr>
+                        <tr>
+                            <td>Application Validity</td>
+                            <td>Trạng thái cho biết Application đáp ứng các điều kiện hợp lệ đã xác định.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>44. Những điểm dễ nhầm lẫn</h2>
+
+                <ul>
+                    <li>
+                        <strong>FBL không phải Application Software:</strong>
+                        FBL hỗ trợ lập trình firmware; Application thực hiện chức năng của ECU.
+                    </li>
+                    <li>
+                        <strong>FBL không nhất thiết sử dụng toàn bộ DCM của Application:</strong>
+                        Kiến trúc diagnostic của bootloader phụ thuộc implementation và dự án.
+                    </li>
+                    <li>
+                        <strong>Download thành công không đồng nghĩa firmware hợp lệ:</strong>
+                        Hệ thống vẫn cần hoàn thành các bước xác minh theo chính sách.
+                    </li>
+                    <li>
+                        <strong>CRC khác xác minh chữ ký:</strong>
+                        CRC phát hiện một số dạng sai lệch dữ liệu, còn chữ ký số hỗ trợ xác minh nguồn phát hành.
+                    </li>
+                    <li>
+                        <strong>Flash Driver khác FBL:</strong>
+                        Flash Driver cung cấp chức năng bộ nhớ, còn FBL điều phối quy trình lập trình.
+                    </li>
+                    <li>
+                        <strong>Boot Manager không nhất thiết là module riêng:</strong>
+                        Logic quyết định khởi động có thể nằm trong một thành phần khác theo thiết kế.
+                    </li>
+                    <li>
+                        <strong>FBL có thể khác nhau giữa các ECU:</strong>
+                        Memory layout, communication, programming sequence và security đều phụ thuộc yêu cầu thực tế.
+                    </li>
+                </ul>
+
+                <h2>45. Tài liệu tham khảo</h2>
+
+                <p>
+                    Các tài liệu sau có thể giúp bạn tìm hiểu sâu hơn về AUTOSAR Classic,
+                    bootloader architecture và quy trình reprogramming. Tài liệu cụ thể
+                    cần được lựa chọn theo implementation và release của dự án.
+                </p>
+
+                <ul>
+                    <li>
+                        <a href="https://www.autosar.org/standards/classic-platform" target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Classic Platform
+                        </a>
+                        — kiến trúc phần mềm, BSW và phương pháp cấu hình AUTOSAR.
+                    </li>
+                    <li>
+                        <a href="https://www.vector.com/en/product/microsar-bootloader/" target="_blank" rel="noopener noreferrer">
+                            Vector MICROSAR Bootloader
+                        </a>
+                        — ví dụ về bootloader, Flash Driver, lập trình qua bus và các chức năng bảo vệ.
+                    </li>
+                    <li>
+                        <a href="https://certification.vector.com/mod/glossary/showentry.php?eid=1774" target="_blank" rel="noopener noreferrer">
+                            Vector Glossary: FBL
+                        </a>
+                        — khái niệm Flash Bootloader.
+                    </li>
+                </ul>
+
+                <h2>46. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        Flash Bootloader (FBL) là phần mềm hỗ trợ lập trình hoặc
+                        cập nhật firmware trong ECU. Tùy kiến trúc, FBL hoặc Boot Manager
+                        chịu trách nhiệm lựa chọn chế độ khởi động, tiếp nhận yêu cầu
+                        lập trình và điều phối quá trình cập nhật phần mềm.
+                    </p>
+
+                    <p>
+                        Một quy trình programming có thể bao gồm chuyển session,
+                        kiểm tra quyền truy cập, xóa vùng nhớ, RequestDownload,
+                        TransferData, RequestTransferExit, xác minh firmware,
+                        cập nhật trạng thái hợp lệ và reset ECU. Trình tự cụ thể
+                        phải tuân theo đặc tả OEM và implementation của dự án.
+                    </p>
+
+                    <p>
+                        FBL phối hợp với communication stack, diagnostic handler,
+                        Programming Manager và Flash Driver. Tùy yêu cầu sản phẩm,
+                        hệ thống còn có thể sử dụng checksum, hash, chữ ký số,
+                        Secure Boot hoặc các cơ chế phục hồi khi cập nhật bị gián đoạn.
+                    </p>
+
+                    <p>
+                        Khi debug, hãy lần theo toàn bộ quá trình:
+                        <strong>Boot Decision → Diagnostic Communication →
+                        Programming → Flash Operation → Firmware Validation →
+                        Application Startup</strong>.
+                        Cách tiếp cận này giúp xác định lỗi nằm ở quyết định khởi động,
+                        giao tiếp, lập trình bộ nhớ, xác minh hay quá trình kích hoạt
+                        Application.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a href="lesson-29.html">← Bài trước</a>
+                    <a href="lesson-31.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

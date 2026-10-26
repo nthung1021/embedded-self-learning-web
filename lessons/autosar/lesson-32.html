@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 32: OBD | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html" class="active" aria-current="page">Bài 32: OBD</a>
+
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 32: OBD</h1>
+
+                <p>
+                    Trong quá trình vận hành xe, các hệ thống điều khiển cần theo dõi
+                    trạng thái của những thành phần có ảnh hưởng đến hoạt động của
+                    phương tiện. Khi phát hiện một số lỗi, đặc biệt là những lỗi
+                    liên quan đến kiểm soát khí thải trong các hệ thống OBD được
+                    quy định, xe cần lưu thông tin chẩn đoán và có thể bật đèn
+                    cảnh báo trên bảng đồng hồ.
+                </p>
+
+                <p>
+                    OBD (On-Board Diagnostics) là hệ thống chẩn đoán tích hợp trên xe,
+                    sử dụng các chức năng giám sát và phần mềm điều khiển để phát hiện
+                    những tình trạng bất thường thuộc phạm vi được hỗ trợ. Diagnostic
+                    tester có thể kết nối với xe để đọc mã lỗi, xem dữ liệu vận hành
+                    và kiểm tra trạng thái của các chức năng giám sát.
+                </p>
+
+                <p>
+                    OBD-II là thế hệ hệ thống chẩn đoán trên xe được triển khai theo
+                    những yêu cầu kỹ thuật và quy định áp dụng tại từng thị trường.
+                    Trong các hệ thống OBD liên quan đến khí thải, mục tiêu quan trọng
+                    là theo dõi các thành phần có ảnh hưởng đến khí thải, phát hiện
+                    lỗi và cung cấp thông tin để hỗ trợ sửa chữa.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào OBD/OBD-II, MIL, DTC, Freeze Frame,
+                    Readiness Monitor, Diagnostic Trouble Code, các Mode và PID
+                    thường gặp, cách đọc dữ liệu từ tester, mối quan hệ giữa OBD
+                    và UDS, cùng các vấn đề thường gặp khi kiểm tra và debug.
+                    Các yêu cầu pháp lý cụ thể phụ thuộc thị trường, loại xe,
+                    năm sản xuất và tiêu chuẩn áp dụng.
+                </div>
+
+                <h2>1. OBD là gì?</h2>
+
+                <p>
+                    OBD là viết tắt của <strong>On-Board Diagnostics</strong>.
+                    Đây là hệ thống chẩn đoán được tích hợp trong xe, có khả năng
+                    theo dõi một số hệ thống và thành phần, phát hiện những tình trạng
+                    bất thường theo các điều kiện giám sát đã được định nghĩa.
+                </p>
+
+                <p>
+                    Trong OBD-II liên quan đến khí thải, khi hệ thống phát hiện
+                    một lỗi đáp ứng điều kiện quy định, nó có thể lưu Diagnostic
+                    Trouble Code (DTC), ghi nhận những thông tin liên quan và
+                    điều khiển Malfunction Indicator Lamp (MIL).
+                </p>
+
+                <p>
+                    Diagnostic tester có thể sử dụng đường giao tiếp được hỗ trợ
+                    để truy xuất những thông tin này. Kỹ thuật viên dựa trên mã lỗi,
+                    dữ liệu vận hành và kết quả kiểm tra để xác định nguyên nhân.
+                </p>
+
+                <p>Những chức năng phổ biến của OBD gồm:</p>
+
+                <ul>
+                    <li>Giám sát các hệ thống và thành phần thuộc phạm vi OBD.</li>
+                    <li>Phát hiện những lỗi đáp ứng tiêu chí chẩn đoán.</li>
+                    <li>Lưu và cung cấp các mã lỗi chẩn đoán.</li>
+                    <li>Điều khiển MIL theo các điều kiện được quy định.</li>
+                    <li>Cung cấp dữ liệu vận hành và thông tin liên quan đến quá trình phát hiện lỗi.</li>
+                    <li>Cho biết các self-test hoặc readiness monitor đã hoàn thành hay chưa.</li>
+                </ul>
+
+                <h2>2. OBD và OBD-II khác nhau như thế nào?</h2>
+
+                <p>
+                    OBD là tên gọi chung của On-Board Diagnostics. OBD-I thường được
+                    dùng để chỉ các hệ thống chẩn đoán đời đầu, với phạm vi giám sát
+                    và cách triển khai khác nhau giữa các nhà sản xuất.
+                </p>
+
+                <p>
+                    OBD-II phát triển theo hướng tiêu chuẩn hóa hơn về giao tiếp,
+                    thông tin chẩn đoán và yêu cầu giám sát. Tuy nhiên, các quy định
+                    và phạm vi hỗ trợ cụ thể vẫn phụ thuộc thị trường và loại xe.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>OBD-I</th>
+                            <th>OBD-II</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phạm vi tiêu chuẩn hóa</td>
+                            <td>Có thể khác nhau đáng kể giữa các hãng và hệ thống.</td>
+                            <td>Có các yêu cầu chung hơn về chẩn đoán và giao tiếp theo quy định áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Dữ liệu chẩn đoán</td>
+                            <td>Phụ thuộc nhiều vào từng nhà sản xuất.</td>
+                            <td>Có những dịch vụ và nhóm dữ liệu được tiêu chuẩn hóa.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic trouble code</td>
+                            <td>Định dạng và cách truy xuất có thể mang tính riêng của hãng.</td>
+                            <td>Có hệ thống DTC tiêu chuẩn cho những hạng mục thuộc phạm vi áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Thiết bị chẩn đoán</td>
+                            <td>Có thể cần thiết bị hoặc quy trình riêng cho từng hệ thống.</td>
+                            <td>Thiết bị OBD tương thích có thể truy cập các chức năng chung được hỗ trợ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Bảng trên chỉ so sánh ở mức khái quát. Không nên kết luận rằng
+                    mọi xe OBD-II đều có phần cứng, giao thức hoặc tập chức năng
+                    hoàn toàn giống nhau.
+                </p>
+
+                <h2>3. Mục tiêu chính của OBD-II</h2>
+
+                <p>
+                    Trong những chương trình OBD liên quan đến khí thải, hệ thống
+                    được thiết kế để giám sát các thành phần và điều kiện có khả năng
+                    làm tăng lượng khí thải khi gặp lỗi hoặc suy giảm hiệu năng.
+                </p>
+
+                <p>
+                    Khi một điều kiện bất thường được phát hiện, hệ thống có thể lưu
+                    mã lỗi và bật MIL nếu những điều kiện áp dụng đã được đáp ứng.
+                    Thông tin này giúp kỹ thuật viên xác định khu vực cần kiểm tra,
+                    thay vì chỉ dựa vào dấu hiệu bên ngoài.
+                </p>
+
+                <p>Các mục tiêu thường gặp gồm:</p>
+
+                <ul>
+                    <li>Phát hiện lỗi trong những hệ thống được yêu cầu giám sát.</li>
+                    <li>Thông báo cho người lái khi có tình trạng cần được kiểm tra.</li>
+                    <li>Cung cấp dữ liệu hỗ trợ chẩn đoán và sửa chữa.</li>
+                    <li>Ghi nhận trạng thái và kết quả của các chức năng tự kiểm tra.</li>
+                    <li>Hỗ trợ các chương trình kiểm tra phát thải theo quy định của thị trường.</li>
+                </ul>
+
+                <p>
+                    OBD không thay thế việc kiểm tra vật lý hoặc quy trình sửa chữa.
+                    Một DTC thường chỉ ra điều kiện bất thường mà hệ thống đã phát hiện;
+                    nó không nhất thiết xác định chính xác linh kiện cần thay thế.
+                </p>
+
+                <h2>4. Kiến trúc tổng quát của OBD</h2>
+
+                <p>
+                    OBD không phải một module phần mềm đơn lẻ. Hệ thống thường bao
+                    gồm các cảm biến, bộ điều khiển, các thuật toán giám sát,
+                    bộ nhớ lưu trạng thái chẩn đoán, MIL và interface giao tiếp
+                    với thiết bị bên ngoài.
+                </p>
+
+                <pre><code>       Sensors / Vehicle Components
+                    |
+                    v
+           ECU Control Software
+                    |
+                    v
+          Diagnostic Monitoring
+                    |
+          +---------+----------+
+          |                    |
+          v                    v
+      DTC / Status         MIL Control
+          |
+          v
+     Diagnostic Data
+          |
+          v
+      OBD Interface
+          |
+          v
+     Diagnostic Tester</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái niệm. Trên một xe thực tế, chức năng OBD
+                    có thể liên quan đến nhiều ECU và các thành phần quản lý
+                    dữ liệu chẩn đoán khác nhau.
+                </p>
+
+                <h2>5. OBD giám sát những gì?</h2>
+
+                <p>
+                    Phạm vi giám sát phụ thuộc vào loại phương tiện, động cơ,
+                    thị trường và yêu cầu áp dụng. Với hệ thống OBD-II liên quan
+                    đến khí thải, những nhóm chức năng có thể được giám sát gồm:
+                </p>
+
+                <ul>
+                    <li>Misfire detection: phát hiện hiện tượng bỏ máy.</li>
+                    <li>Fuel system monitoring: giám sát hoạt động điều khiển nhiên liệu.</li>
+                    <li>Comprehensive component monitoring: giám sát một số thành phần điện/điện tử liên quan.</li>
+                    <li>Catalyst monitoring: đánh giá hiệu quả bộ xúc tác theo chiến lược giám sát.</li>
+                    <li>Oxygen sensor monitoring: giám sát các cảm biến oxy hoặc cảm biến liên quan.</li>
+                    <li>Evaporative emission system monitoring: giám sát hệ thống kiểm soát hơi nhiên liệu khi được trang bị.</li>
+                    <li>EGR hoặc các hệ thống kiểm soát khí thải khác khi áp dụng.</li>
+                    <li>Những monitor bổ sung dành cho loại động cơ và hệ thống cụ thể.</li>
+                </ul>
+
+                <p>
+                    Không phải tất cả những monitor này đều hiện diện trên mọi xe.
+                    Ví dụ, một số monitor liên quan đến nhiên liệu hoặc hệ thống
+                    xử lý khí thải sẽ khác nhau giữa động cơ xăng và diesel.
+                </p>
+
+                <h2>6. Diagnostic Link Connector (DLC)</h2>
+
+                <p>
+                    DLC là Diagnostic Link Connector, đầu nối được dùng để kết nối
+                    thiết bị chẩn đoán với xe. Nhiều hệ thống OBD-II sử dụng đầu nối
+                    16 chân theo quy định tương ứng.
+                </p>
+
+                <p>
+                    Qua DLC, thiết bị chẩn đoán có thể giao tiếp với hệ thống OBD
+                    theo giao thức mà xe hỗ trợ. Tuy nhiên, loại giao thức, cách định
+                    tuyến và phạm vi dữ liệu không thể được xác định chỉ từ hình dạng
+                    vật lý của đầu nối.
+                </p>
+
+                <p>
+                    Cần phân biệt:
+                </p>
+
+                <ul>
+                    <li><strong>DLC:</strong> đầu nối vật lý.</li>
+                    <li><strong>Diagnostic Protocol:</strong> quy tắc trao đổi dữ liệu.</li>
+                    <li><strong>Diagnostic Tester:</strong> thiết bị gửi request và hiển thị kết quả.</li>
+                    <li><strong>ECU:</strong> bộ điều khiển trả lời request trong phạm vi được hỗ trợ.</li>
+                </ul>
+
+                <h2>7. OBD Scanner là gì?</h2>
+
+                <p>
+                    OBD Scanner là thiết bị hoặc phần mềm chẩn đoán kết nối với xe
+                    để đọc các thông tin OBD được hỗ trợ. Scanner có thể hiển thị
+                    mã lỗi, dữ liệu trực tiếp, trạng thái MIL và readiness monitor.
+                </p>
+
+                <p>
+                    Một số thiết bị hỗ trợ các chức năng OBD chung; các thiết bị
+                    chuyên dụng của nhà sản xuất có thể cung cấp thêm những chức năng
+                    mở rộng theo hãng.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm thiết bị</th>
+                            <th>Khả năng khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Generic OBD Scanner</td>
+                            <td>Truy cập các dịch vụ và dữ liệu OBD chung mà xe hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>OEM Diagnostic Tester</td>
+                            <td>Có thể hỗ trợ thêm dịch vụ riêng của hãng, nhiều ECU và các chức năng lập trình hoặc cấu hình được phép.</td>
+                        </tr>
+                        <tr>
+                            <td>Development Diagnostic Tool</td>
+                            <td>Hỗ trợ phân tích request/response, trace và dữ liệu chẩn đoán trong quá trình phát triển.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Không nên cho rằng một scanner phổ thông có thể truy cập mọi
+                    chức năng UDS hoặc mọi ECU trên xe. Khả năng thực tế phụ thuộc
+                    thiết bị, giao thức, quyền truy cập và implementation của xe.
+                </p>
+
+                <h2>8. MIL là gì?</h2>
+
+                <p>
+                    MIL là viết tắt của <strong>Malfunction Indicator Lamp</strong>.
+                    Đây là đèn báo lỗi liên quan đến những chức năng mà hệ thống OBD
+                    có trách nhiệm giám sát theo quy định áp dụng. Trên xe, MIL thường
+                    được nhận biết qua biểu tượng động cơ hoặc thông báo như
+                    "Check Engine".
+                </p>
+
+                <p>
+                    Khi một lỗi đáp ứng những điều kiện kích hoạt được quy định,
+                    hệ thống OBD có thể yêu cầu bật MIL. Trạng thái MIL cũng có thể
+                    được cung cấp qua dữ liệu chẩn đoán.
+                </p>
+
+                <p>
+                    MIL bật không nhất thiết có nghĩa động cơ sẽ ngừng hoạt động.
+                    Nó cho biết hệ thống đã xác định một tình trạng cần được kiểm tra.
+                    Mức độ nghiêm trọng và hành động tiếp theo phải dựa vào hướng dẫn
+                    của nhà sản xuất và tình trạng xe thực tế.
+                </p>
+
+                <p>
+                    Trên nhiều xe, MIL nhấp nháy có thể báo hiệu một tình trạng misfire
+                    nghiêm trọng có nguy cơ gây hư hại bộ xúc tác. Cách xử lý cụ thể
+                    cần theo tài liệu hướng dẫn của xe; không nên tiếp tục vận hành
+                    trong tình trạng nguy hiểm chỉ để thử nghiệm.
+                </p>
+
+                <h2>9. DTC là gì?</h2>
+
+                <p>
+                    DTC là viết tắt của <strong>Diagnostic Trouble Code</strong>.
+                    Đây là mã lỗi được hệ thống chẩn đoán ghi nhận khi phát hiện
+                    một điều kiện bất thường đáp ứng tiêu chí tương ứng.
+                </p>
+
+                <p>
+                    Ví dụ, P0301 thường được dùng để chỉ tình trạng phát hiện misfire
+                    ở cylinder 1 trong hệ thống sử dụng cách định nghĩa DTC tương ứng.
+                    Ý nghĩa chính xác cần được đối chiếu với tiêu chuẩn DTC và
+                    tài liệu xe.
+                </p>
+
+                <p>
+                    DTC giúp thu hẹp phạm vi điều tra nhưng không nhất thiết xác định
+                    linh kiện hỏng. Một lỗi liên quan đến cảm biến có thể do cảm biến,
+                    dây dẫn, nguồn điện, đầu nối hoặc điều kiện hệ thống khác gây ra.
+                </p>
+
+                <h2>10. Cấu trúc DTC thường gặp</h2>
+
+                <p>
+                    Một DTC OBD-II truyền thống thường được hiển thị dưới dạng
+                    mã chữ và số, ví dụ P0301. Ký tự đầu tiên biểu thị nhóm hệ thống
+                    mà mã lỗi thuộc về.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ký tự</th>
+                            <th>Nhóm hệ thống</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>P</td>
+                            <td>Powertrain: động cơ, hệ truyền động và các chức năng liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>B</td>
+                            <td>Body: các chức năng thân xe.</td>
+                        </tr>
+                        <tr>
+                            <td>C</td>
+                            <td>Chassis: các chức năng khung gầm.</td>
+                        </tr>
+                        <tr>
+                            <td>U</td>
+                            <td>Network / Communication: các lỗi liên quan đến giao tiếp giữa các hệ thống.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các nhóm P/B/C/U thường thấy trong hệ thống DTC trên xe,
+                    nhưng không phải tất cả những mã này đều thuộc tập DTC khí thải
+                    chung của OBD. OBD emissions có tập mã và quy tắc áp dụng riêng.
+                </p>
+
+                <h2>11. DTC generic và DTC manufacturer-specific</h2>
+
+                <p>
+                    Trong hệ thống DTC được tiêu chuẩn hóa, có những mã được định
+                    nghĩa chung và những mã dành cho nhà sản xuất theo các quy tắc
+                    phân bổ của tiêu chuẩn.
+                </p>
+
+                <p>
+                    Với nhiều mã P-code truyền thống, chữ số đầu sau ký tự P giúp
+                    phân biệt những nhóm mã chuẩn hóa chung và nhóm dành cho nhà
+                    sản xuất. Tuy nhiên, cách giải mã đầy đủ phải tuân theo định nghĩa
+                    DTC tương ứng.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Generic DTC:</strong> có định nghĩa chung theo tiêu chuẩn
+                        áp dụng, giúp các thiết bị tương thích hiểu được ý nghĩa mã.
+                    </li>
+                    <li>
+                        <strong>Manufacturer-specific DTC:</strong> được định nghĩa
+                        theo phạm vi của nhà sản xuất; cần tài liệu phù hợp để giải thích.
+                    </li>
+                </ul>
+
+                <p>
+                    Scanner có thể hiển thị cùng một chuỗi mã nhưng phần giải thích
+                    vẫn phụ thuộc cơ sở dữ liệu và phiên bản thông tin DTC mà thiết bị
+                    sử dụng. Không nên dựa vào mô tả chung trên Internet để kết luận
+                    chắc chắn nguyên nhân hư hỏng của một chiếc xe.
+                </p>
+
+                <h2>12. Stored, Pending và Permanent DTC</h2>
+
+                <p>
+                    Trong OBD-II, một hệ thống có thể cung cấp các trạng thái DTC
+                    khác nhau nhằm phân biệt tình trạng phát hiện lỗi và kết quả giám sát.
+                    Các trạng thái cụ thể và cách quản lý phụ thuộc chuẩn áp dụng.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại DTC</th>
+                            <th>Ý nghĩa khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Stored / Confirmed DTC</td>
+                            <td>Mã lỗi đã được ghi nhận theo những điều kiện xác nhận của hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Pending DTC</td>
+                            <td>Mã cho biết lỗi đã được phát hiện ở mức chưa nhất thiết đáp ứng mọi điều kiện để trở thành mã được xác nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>Permanent DTC</td>
+                            <td>Mã được quản lý theo cơ chế permanent DTC; việc xóa không đơn giản chỉ dựa vào lệnh xóa thông thường từ scanner.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ba khái niệm trên không nên được dùng thay thế cho nhau.
+                    Một mã pending có thể cung cấp thông tin về lỗi mới phát hiện,
+                    còn permanent DTC có các điều kiện quản lý và xóa riêng theo
+                    quy định áp dụng.
+                </p>
+
+                <h2>13. Freeze Frame là gì?</h2>
+
+                <p>
+                    Freeze Frame là tập dữ liệu ghi lại một số điều kiện vận hành
+                    của xe tại thời điểm liên quan đến việc phát hiện một lỗi.
+                    Nó giúp kỹ thuật viên biết hệ thống đang ở trạng thái nào
+                    khi sự kiện chẩn đoán xảy ra.
+                </p>
+
+                <p>Thông tin Freeze Frame có thể bao gồm:</p>
+
+                <ul>
+                    <li>Engine speed (RPM).</li>
+                    <li>Vehicle speed.</li>
+                    <li>Engine coolant temperature.</li>
+                    <li>Calculated engine load.</li>
+                    <li>Những tham số vận hành khác mà hệ thống cung cấp.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, một DTC được ghi nhận khi động cơ đang hoạt động ở một
+                    dải tốc độ và tải nhất định. Freeze Frame có thể giúp tái dựng
+                    bối cảnh đó để hỗ trợ việc kiểm tra.
+                </p>
+
+                <p>
+                    Freeze Frame không phải bản ghi video toàn bộ hoạt động của xe
+                    và cũng không phải lúc nào chứa đủ dữ liệu để xác định nguyên nhân.
+                    Số lượng bản ghi, dữ liệu được lưu và quy tắc cập nhật phụ thuộc
+                    implementation cùng tiêu chuẩn áp dụng.
+                </p>
+
+                <h2>14. Readiness Monitor là gì?</h2>
+
+                <p>
+                    Readiness Monitor là trạng thái cho biết một chức năng tự giám sát
+                    thuộc hệ thống OBD đã hoàn thành những phép kiểm tra cần thiết
+                    hay chưa.
+                </p>
+
+                <p>
+                    Một monitor có thể ở trạng thái complete hoặc incomplete.
+                    Incomplete không nhất thiết đồng nghĩa với lỗi: đôi khi hệ thống
+                    chưa có đủ điều kiện vận hành để hoàn thành bài kiểm tra.
+                </p>
+
+                <p>
+                    Ví dụ, sau khi bộ nhớ liên quan bị xóa hoặc ắc quy được ngắt kết nối,
+                    một số monitor có thể cần thời gian hoặc điều kiện vận hành phù hợp
+                    trước khi hoàn tất lại các self-test.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Complete / Ready</td>
+                            <td>Monitor đã hoàn thành bài kiểm tra theo trạng thái được báo cáo.</td>
+                        </tr>
+                        <tr>
+                            <td>Incomplete / Not Ready</td>
+                            <td>Monitor chưa hoàn thành hoặc chưa có đủ dữ liệu để báo kết quả đầy đủ.</td>
+                        </tr>
+                        <tr>
+                            <td>Not Supported</td>
+                            <td>Monitor không áp dụng hoặc không được hỗ trợ theo cấu hình tương ứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Điều kiện chấp nhận readiness trong kiểm định phụ thuộc quy định
+                    của từng thị trường và loại xe. Không nên suy luận rằng trạng thái
+                    incomplete luôn là lỗi hoặc luôn được phép bỏ qua.
+                </p>
+
+                <h2>15. Continuous và Non-continuous Monitor</h2>
+
+                <p>
+                    Các chức năng giám sát OBD thường được chia thành hai nhóm
+                    lớn theo cách hệ thống thực hiện kiểm tra.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm</th>
+                            <th>Đặc điểm</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Continuous Monitor</td>
+                            <td>Những chức năng được giám sát liên tục hoặc theo chu kỳ thường xuyên khi các điều kiện cho phép.</td>
+                            <td>Misfire, fuel system và một số thành phần liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Non-continuous Monitor</td>
+                            <td>Những phép kiểm tra chỉ chạy khi điều kiện cho phép, chẳng hạn nhiệt độ, tải hoặc trạng thái vận hành phù hợp.</td>
+                            <td>Catalyst, evaporative system, oxygen sensor hoặc một số hệ thống xử lý khí thải khác.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Danh sách monitor áp dụng phụ thuộc cấu hình xe và các yêu cầu
+                    quy định. Không nên giả định mọi loại động cơ đều có cùng
+                    danh sách monitor hoặc cùng điều kiện để hoàn thành monitor.
+                </p>
+
+                <h2>16. Diagnostic Test Mode là gì?</h2>
+
+                <p>
+                    Trong hệ thống OBD truyền thống sử dụng các diagnostic test mode
+                    của SAE J1979 hoặc ISO 15031-5, Mode xác định nhóm dịch vụ mà
+                    thiết bị chẩn đoán yêu cầu.
+                </p>
+
+                <p>
+                    Mỗi Mode có chức năng riêng, chẳng hạn đọc dữ liệu hiện tại,
+                    đọc Freeze Frame hoặc truy vấn DTC. Một Mode có thể cần PID
+                    hoặc tham số bổ sung để chỉ rõ thông tin được yêu cầu.
+                </p>
+
+                <p>
+                    Đây là mô hình khác với cách gọi SID trong UDS. OBD Mode thường
+                    được biểu diễn bằng một byte service/mode trong giao thức OBD
+                    tương ứng, còn UDS dùng SID theo định nghĩa của ISO 14229.
+                </p>
+
+                <h2>17. Các OBD Mode thường gặp</h2>
+
+                <p>
+                    Bảng dưới đây giới thiệu các Mode phổ biến trong hệ thống OBD
+                    truyền thống. Không phải mọi xe đều hỗ trợ mọi Mode; khả năng
+                    hỗ trợ phụ thuộc loại xe, năm sản xuất, tiêu chuẩn và giao thức.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>Tên / Chức năng</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mode 01</td>
+                            <td>Current Powertrain Data</td>
+                            <td>Đọc dữ liệu vận hành hiện tại và trạng thái monitor được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 02</td>
+                            <td>Freeze Frame Data</td>
+                            <td>Đọc dữ liệu đóng băng liên quan đến điều kiện phát hiện lỗi.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 03</td>
+                            <td>Stored Emissions-Related DTCs</td>
+                            <td>Đọc những mã lỗi phát thải đã được ghi nhận theo phạm vi dịch vụ.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 04</td>
+                            <td>Clear / Reset Emissions-Related Diagnostic Information</td>
+                            <td>Yêu cầu xóa hoặc reset một số thông tin chẩn đoán phát thải theo quy tắc áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 05</td>
+                            <td>Oxygen Sensor Monitoring Test Results</td>
+                            <td>Đọc kết quả kiểm tra monitor cảm biến oxy trong các hệ thống hỗ trợ Mode này.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 06</td>
+                            <td>On-board Monitoring Test Results</td>
+                            <td>Đọc kết quả của những bài kiểm tra monitor được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 07</td>
+                            <td>Pending DTCs</td>
+                            <td>Đọc những DTC đang ở trạng thái pending theo phạm vi dịch vụ.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 08</td>
+                            <td>Control of On-board System, Test or Component</td>
+                            <td>Yêu cầu điều khiển các hệ thống, bài kiểm tra hoặc thành phần được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 09</td>
+                            <td>Vehicle Information</td>
+                            <td>Đọc những thông tin nhận dạng xe được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 0A</td>
+                            <td>Permanent DTCs</td>
+                            <td>Đọc các DTC permanent trong những hệ thống hỗ trợ chức năng này.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cách diễn giải và phạm vi dữ liệu cụ thể phải theo phiên bản
+                    tiêu chuẩn OBD đang dùng. Đặc biệt, Mode 05 có thể không được
+                    sử dụng theo cùng cách trên các hệ thống mới hơn; hãy kiểm tra
+                    khả năng hỗ trợ thực tế thay vì mặc định mọi xe đều có Mode này.
+                </p>
+
+                <h2>18. Mode 01 - Đọc dữ liệu hiện tại</h2>
+
+                <p>
+                    Mode 01 cho phép tester yêu cầu một số dữ liệu vận hành hiện tại
+                    của hệ thống powertrain. Những dữ liệu này thường được xác định
+                    bằng PID (Parameter Identifier).
+                </p>
+
+                <p>
+                    Một số PID phổ biến có thể bao gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PID</th>
+                            <th>Dữ liệu</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x01</td>
+                            <td>Monitor Status Since DTCs Cleared</td>
+                            <td>Trạng thái liên quan đến MIL, DTC và các monitor được định nghĩa.</td>
+                        </tr>
+                        <tr>
+                            <td>0x05</td>
+                            <td>Engine Coolant Temperature</td>
+                            <td>Nhiệt độ nước làm mát động cơ theo cách biểu diễn chuẩn tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0C</td>
+                            <td>Engine RPM</td>
+                            <td>Tốc độ quay động cơ.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0D</td>
+                            <td>Vehicle Speed</td>
+                            <td>Tốc độ xe theo đơn vị được định nghĩa.</td>
+                        </tr>
+                        <tr>
+                            <td>0x11</td>
+                            <td>Absolute Throttle Position</td>
+                            <td>Vị trí bướm ga tuyệt đối theo cách biểu diễn quy định.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Thiết bị chẩn đoán thường kiểm tra danh sách PID mà xe hỗ trợ
+                    trước khi yêu cầu những dữ liệu tiếp theo. Việc một PID được
+                    tiêu chuẩn hóa không có nghĩa mọi xe đều phải hỗ trợ nó trong
+                    mọi cấu hình.
+                </p>
+
+                <h2>19. PID là gì?</h2>
+
+                <p>
+                    PID là viết tắt của <strong>Parameter Identifier</strong>.
+                    PID xác định loại thông tin mà client muốn đọc trong những
+                    OBD service sử dụng cơ chế PID.
+                </p>
+
+                <p>
+                    Ví dụ, trong Mode 01, PID 0x0C dùng để đọc Engine RPM.
+                    Response sẽ chứa những byte dữ liệu mà tester cần giải mã
+                    theo công thức quy định.
+                </p>
+
+                <p>
+                    Vì các PID có thể có độ dài dữ liệu và cách chuyển đổi khác nhau,
+                    không nên giải mã dữ liệu chỉ bằng cách đọc trực tiếp giá trị
+                    hexadecimal thành số thập phân.
+                </p>
+
+                <h2>20. Ví dụ giải mã Engine RPM</h2>
+
+                <p>
+                    Với PID 0x0C trong OBD truyền thống, dữ liệu tốc độ động cơ
+                    sử dụng hai byte A và B. Giá trị RPM được tính theo công thức:
+                </p>
+
+                <pre><code>RPM = ((A * 256) + B) / 4</code></pre>
+
+                <p>
+                    Giả sử dữ liệu trả về của PID gồm:
+                </p>
+
+                <pre><code>A = 0x1A = 26
+B = 0xF8 = 248</code></pre>
+
+                <p>
+                    Trước tiên, kết hợp hai byte thành giá trị 16-bit:
+                </p>
+
+                <pre><code>Raw = 26 * 256 + 248
+    = 6904</code></pre>
+
+                <p>
+                    Sau đó áp dụng công thức chuyển đổi:
+                </p>
+
+                <pre><code>RPM = 6904 / 4
+    = 1726 rpm</code></pre>
+
+                <p>
+                    Như vậy, giá trị tương ứng là 1726 rpm. Đây là ví dụ minh họa
+                    cách giải mã PID, không phải giá trị được bảo đảm trên mọi xe.
+                </p>
+
+                <h2>21. Mode 02 - Freeze Frame Data</h2>
+
+                <p>
+                    Mode 02 cho phép tester truy vấn dữ liệu Freeze Frame mà hệ thống
+                    OBD lưu giữ theo tiêu chuẩn áp dụng.
+                </p>
+
+                <p>
+                    Trong khi Mode 01 cung cấp dữ liệu hiện tại, Mode 02 giúp khôi phục
+                    một số điều kiện vận hành liên quan đến thời điểm phát hiện lỗi.
+                    Hai loại dữ liệu này có mục đích khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>Loại dữ liệu</th>
+                            <th>Mục đích chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mode 01</td>
+                            <td>Dữ liệu hiện tại</td>
+                            <td>Quan sát trạng thái được ECU cung cấp tại thời điểm truy vấn.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 02</td>
+                            <td>Freeze Frame</td>
+                            <td>Phân tích điều kiện vận hành được ghi lại khi lỗi được phát hiện.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi một lỗi không xuất hiện liên tục, Freeze Frame có thể
+                    cung cấp manh mối hữu ích. Tuy vậy, dữ liệu cần được diễn giải
+                    cùng DTC và kết quả kiểm tra thực tế.
+                </p>
+
+                <h2>22. Mode 03 - Đọc Stored DTC</h2>
+
+                <p>
+                    Mode 03 được sử dụng để truy vấn những DTC thuộc phạm vi
+                    phát thải đã được lưu theo cơ chế OBD áp dụng.
+                </p>
+
+                <p>
+                    Khi nhận được response, tester giải mã các mã lỗi và hiển thị
+                    nội dung tương ứng. Nếu cần giải thích chính xác, thiết bị phải
+                    sử dụng dữ liệu DTC phù hợp với tiêu chuẩn và xe đang kiểm tra.
+                </p>
+
+                <p>
+                    Ví dụ, trong hệ thống OBD truyền thống, request Mode 03 thường
+                    được biểu diễn bằng byte service 0x03. Response có thể mang
+                    dữ liệu DTC ở định dạng đã được xác định bởi tiêu chuẩn.
+                </p>
+
+                <p>
+                    Không nên kết luận rằng Mode 03 chứa toàn bộ DTC của tất cả
+                    các ECU trên xe. Nó phục vụ tập thông tin được xác định trong
+                    phạm vi dịch vụ OBD đó.
+                </p>
+
+                <h2>23. Mode 04 - Clear / Reset Diagnostic Information</h2>
+
+                <p>
+                    Mode 04 cho phép tester yêu cầu xóa hoặc reset một số thông tin
+                    chẩn đoán phát thải trong phạm vi được quy định.
+                </p>
+
+                <p>
+                    Đây không phải một thao tác chỉ đơn giản xóa dòng chữ trên scanner.
+                    Việc xóa thông tin có thể ảnh hưởng đến trạng thái DTC,
+                    Freeze Frame và readiness monitor, tùy tiêu chuẩn cũng như
+                    cách hệ thống quản lý dữ liệu.
+                </p>
+
+                <p>
+                    Đặc biệt, permanent DTC không nhất thiết bị xóa chỉ bằng lệnh
+                    Mode 04. Chúng có các điều kiện quản lý riêng, thường liên quan
+                    đến việc monitor xác nhận tình trạng lỗi đã được khắc phục.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý khi kiểm thử:</strong>
+                    Trước khi xóa thông tin chẩn đoán, hãy ghi nhận DTC, Freeze Frame
+                    và các trạng thái cần thiết theo quy trình kiểm thử. Nếu xóa quá sớm,
+                    một số dữ liệu hữu ích để phân tích nguyên nhân có thể không còn sẵn.
+                </div>
+
+                <h2>24. Mode 05, Mode 06 và Mode 07</h2>
+
+                <p>
+                    Ba Mode này liên quan đến các dạng dữ liệu giám sát và kết quả
+                    chẩn đoán khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>Vai trò</th>
+                            <th>Điểm cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mode 05</td>
+                            <td>Đọc kết quả monitor cảm biến oxy trong những hệ thống hỗ trợ.</td>
+                            <td>Khả năng sử dụng phụ thuộc hệ thống và phương pháp chẩn đoán được áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 06</td>
+                            <td>Đọc kết quả của các bài kiểm tra monitor được hỗ trợ.</td>
+                            <td>Dữ liệu cần được diễn giải theo định nghĩa test ID và các giá trị liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode 07</td>
+                            <td>Truy vấn pending DTC thuộc phạm vi OBD tương ứng.</td>
+                            <td>Hữu ích khi theo dõi những lỗi mới phát hiện chưa nhất thiết được xác nhận.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Mode 06 đặc biệt hữu ích trong phân tích chuyên sâu vì có thể
+                    cung cấp kết quả của những monitor cụ thể. Tuy nhiên, việc giải
+                    mã test result, giá trị giới hạn và trạng thái cần theo định nghĩa
+                    data identifier cùng thông tin xe.
+                </p>
+
+                <h2>25. Mode 08 - Điều khiển hệ thống hoặc thành phần</h2>
+
+                <p>
+                    Mode 08 được định nghĩa để hỗ trợ những chức năng điều khiển
+                    hoặc kiểm tra hệ thống, test hay component trong các implementation
+                    phù hợp.
+                </p>
+
+                <p>
+                    Phạm vi và khả năng hỗ trợ của Mode này phụ thuộc phiên bản
+                    tiêu chuẩn và hệ thống xe. Không nên giả định mọi xe đều cung cấp
+                    cùng một tập lệnh điều khiển.
+                </p>
+
+                <p>
+                    Những thao tác có thể ảnh hưởng đến hoạt động của hệ thống
+                    cần được thực hiện theo điều kiện cho phép và quy trình kiểm thử.
+                    Diagnostic service không nên được sử dụng để bỏ qua các yêu cầu
+                    an toàn hoặc điều kiện vận hành của xe.
+                </p>
+
+                <h2>26. Mode 09 - Vehicle Information</h2>
+
+                <p>
+                    Mode 09 dùng để truy vấn những thông tin nhận dạng xe được hỗ trợ
+                    theo dịch vụ OBD tương ứng.
+                </p>
+
+                <p>
+                    Dữ liệu có thể bao gồm thông tin VIN, thông tin hiệu chuẩn hoặc
+                    những định danh được quy định cho hệ thống. Các loại dữ liệu và
+                    cách biểu diễn phụ thuộc tiêu chuẩn, xe và cấu hình.
+                </p>
+
+                <p>
+                    Khi sử dụng dữ liệu nhận dạng để kiểm tra phần mềm hoặc sản phẩm,
+                    cần xác minh cách diễn giải và nguồn gốc dữ liệu theo quy trình
+                    của dự án; không nên suy ra tất cả các thông tin cấu hình chỉ
+                    từ một trường dữ liệu duy nhất.
+                </p>
+
+                <h2>27. Mode 0A - Permanent DTC</h2>
+
+                <p>
+                    Trong hệ thống hỗ trợ Mode 0A, tester có thể truy vấn các
+                    permanent DTC. Các mã này được quản lý theo cơ chế đặc biệt
+                    nhằm cung cấp thông tin về lỗi phát thải đã được ghi nhận
+                    theo các quy tắc tương ứng.
+                </p>
+
+                <p>
+                    Permanent DTC không đơn giản là một bản sao của stored DTC.
+                    Trạng thái và điều kiện xóa của chúng có thể khác nhau.
+                </p>
+
+                <p>
+                    Khi đọc Mode 0A, cần xem cả trạng thái lỗi, các monitor liên quan
+                    và điều kiện được áp dụng cho xe. Việc một permanent DTC vẫn
+                    tồn tại không tự động có nghĩa lệnh xóa thông thường đã thất bại;
+                    có thể cần monitor hoàn thành việc xác nhận theo quy tắc OBD.
+                </p>
+
+                <h2>28. PID và cách diễn giải dữ liệu OBD</h2>
+
+                <p>
+                    Một PID chỉ xác định loại dữ liệu được yêu cầu. Để sử dụng dữ liệu
+                    đúng, tester còn cần biết độ dài, công thức chuyển đổi, đơn vị
+                    và cách biểu diễn.
+                </p>
+
+                <p>
+                    Ví dụ, một byte có thể đại diện trực tiếp cho giá trị đã được
+                    quy định, nhưng dữ liệu khác cần hai byte, nhiều byte hoặc
+                    phép chuyển đổi phức tạp hơn.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông tin cần biết</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PID</td>
+                            <td>Xác định tham số được yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Data Length</td>
+                            <td>Cho biết số byte dữ liệu tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Conversion Formula</td>
+                            <td>Quy tắc đổi dữ liệu thô thành giá trị có ý nghĩa.</td>
+                        </tr>
+                        <tr>
+                            <td>Unit</td>
+                            <td>Đơn vị của giá trị sau khi giải mã.</td>
+                        </tr>
+                        <tr>
+                            <td>Support Information</td>
+                            <td>Cho biết PID nào được hệ thống hỗ trợ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Vì vậy, khi phát triển một OBD decoder, không nên chỉ tạo
+                    bảng PID và gán một kiểu dữ liệu chung cho mọi thông số.
+                    Phần mềm phải sử dụng đúng quy tắc của từng PID.
+                </p>
+
+                <h2>29. Xác định PID được hỗ trợ</h2>
+
+                <p>
+                    Một scanner không nên mặc định mọi PID trong tiêu chuẩn đều
+                    được ECU hỗ trợ. Các dịch vụ OBD có thể cung cấp thông tin
+                    về nhóm PID được hỗ trợ.
+                </p>
+
+                <p>
+                    Scanner có thể sử dụng thông tin này để lựa chọn những request
+                    tiếp theo. Điều này giúp tránh yêu cầu một tham số mà ECU không
+                    thể cung cấp theo cấu hình hiện tại.
+                </p>
+
+                <pre><code>Tester truy vấn danh sách PID được hỗ trợ
+                     |
+                     v
+             ECU trả support bitmap
+                     |
+                     v
+           Tester giải mã danh sách PID
+                     |
+                     v
+         Chọn những PID có thể truy vấn
+                     |
+                     v
+           Đọc dữ liệu cần thiết</code></pre>
+
+                <p>
+                    Các quy tắc bitmap và các vùng PID được hỗ trợ phải được giải mã
+                    theo định nghĩa dịch vụ tương ứng. Không nên coi support bitmap
+                    là một chuỗi PID thông thường.
+                </p>
+
+                <h2>30. OBD DTC, UDS DTC và CAN ID có khác nhau không?</h2>
+
+                <p>
+                    Có. Đây là ba khái niệm thuộc những tầng hoặc phạm vi khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN ID</td>
+                            <td>Identifier của CAN message, phục vụ arbitration và phân biệt message trên bus.</td>
+                        </tr>
+                        <tr>
+                            <td>UDS SID</td>
+                            <td>Service Identifier, chỉ dịch vụ UDS được yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>OBD Mode</td>
+                            <td>Định danh nhóm dịch vụ theo mô hình OBD truyền thống sử dụng SAE J1979/ISO 15031-5.</td>
+                        </tr>
+                        <tr>
+                            <td>DTC</td>
+                            <td>Diagnostic Trouble Code, mã mô tả một lỗi hoặc tình trạng được hệ thống chẩn đoán phát hiện.</td>
+                        </tr>
+                        <tr>
+                            <td>PID</td>
+                            <td>Parameter Identifier, định danh dữ liệu được yêu cầu trong các OBD service sử dụng PID.</td>
+                        </tr>
+                        <tr>
+                            <td>DID</td>
+                            <td>Data Identifier, định danh dữ liệu trong những UDS service như ReadDataByIdentifier.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một CAN ID không phải DTC và cũng không phải PID.
+                    Tương tự, PID trong OBD truyền thống không thể tự động được
+                    coi là cùng một khái niệm với DID trong UDS.
+                </p>
+
+                <h2>31. OBD và UDS khác nhau như thế nào?</h2>
+
+                <p>
+                    UDS và OBD đều được dùng trong chẩn đoán ô tô, nhưng mục đích
+                    và phạm vi của chúng khác nhau.
+                </p>
+
+                <p>
+                    UDS cung cấp bộ dịch vụ chẩn đoán rộng, có thể được sử dụng
+                    để đọc dữ liệu, quản lý session, điều khiển các chức năng được
+                    hỗ trợ và phục vụ reprogramming. OBD tập trung vào các chức năng
+                    chẩn đoán theo yêu cầu OBD, đặc biệt là những yêu cầu liên quan
+                    đến phát thải trong các quy định áp dụng.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>UDS</th>
+                            <th>OBD truyền thống</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Định danh dịch vụ</td>
+                            <td>SID và các tham số theo từng service.</td>
+                            <td>Mode cùng PID hoặc tham số tương ứng khi dịch vụ sử dụng chúng.</td>
+                        </tr>
+                        <tr>
+                            <td>Phạm vi chức năng</td>
+                            <td>Rộng, phụ thuộc service và cấu hình ECU.</td>
+                            <td>Tập trung vào chức năng và thông tin OBD được yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Dữ liệu</td>
+                            <td>Có thể sử dụng DID và những loại dữ liệu khác theo service.</td>
+                            <td>Có các PID và dữ liệu OBD tiêu chuẩn tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Tiêu chuẩn điển hình</td>
+                            <td>ISO 14229 và các tiêu chuẩn transport/session phù hợp.</td>
+                            <td>SAE J1979 và ISO 15031-5 cùng các tài liệu liên quan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Sự khác biệt này không có nghĩa hai hệ thống hoàn toàn độc lập.
+                    OBD có thể được triển khai trên nền tảng sử dụng các dịch vụ
+                    và hạ tầng giao tiếp dựa trên UDS.
+                </p>
+
+                <h2>32. OBD-on-UDS là gì?</h2>
+
+                <p>
+                    OBD-on-UDS là cách triển khai các chức năng chẩn đoán OBD
+                    dựa trên hạ tầng dịch vụ và giao tiếp liên quan đến UDS theo
+                    tiêu chuẩn áp dụng. SAE J1979-2 mô tả các yêu cầu giao tiếp
+                    dành cho OBD-on-UDS.
+                </p>
+
+                <p>
+                    Mục tiêu là cung cấp các thông tin và chức năng OBD theo yêu cầu
+                    của quy định, đồng thời sử dụng mô hình giao tiếp tương ứng
+                    với nền tảng UDS.
+                </p>
+
+                <p>
+                    Tuy nhiên, OBD-on-UDS không có nghĩa mọi UDS service đều là
+                    service OBD. Chỉ những dịch vụ, dữ liệu và quy tắc thuộc
+                    phạm vi OBD áp dụng mới có ý nghĩa trong quy trình OBD tương ứng.
+                </p>
+
+                <pre><code>      External Diagnostic Tester
+                  |
+                  v
+          OBD Test Requirements
+                  |
+                  v
+           OBD-on-UDS Services
+                  |
+                  v
+           UDS / Diagnostic Stack
+                  |
+                  v
+          Communication / Transport
+                  |
+                  v
+                 ECU</code></pre>
+
+                <p>
+                    Chi tiết triển khai phụ thuộc tiêu chuẩn hiện hành, quy định
+                    của thị trường và kiến trúc ECU. Không nên giả định mọi xe
+                    đều dùng OBD-on-UDS theo cùng một cấu hình.
+                </p>
+
+                <h2>33. OBD hoạt động như thế nào trong AUTOSAR Classic?</h2>
+
+                <p>
+                    Trong một ECU sử dụng AUTOSAR Classic, DCM có thể đảm nhiệm
+                    những chức năng xử lý diagnostic service liên quan đến UDS
+                    và OBD theo cấu hình, implementation và yêu cầu của dự án.
+                </p>
+
+                <p>
+                    Với các thông tin DTC liên quan, DCM có thể phối hợp với DEM.
+                    Dữ liệu vận hành có thể được cung cấp từ Application Software
+                    hoặc những thành phần liên quan thông qua interface phù hợp.
+                </p>
+
+                <pre><code>          External Diagnostic Tester
+                      |
+                      v
+               CAN / DoIP Stack
+                      |
+                      v
+                     PduR
+                      |
+                      v
+                     DCM
+                      |
+            +---------+---------+
+            |                   |
+            v                   v
+        OBD / UDS            DEM
+       Service Logic      DTC / Events
+            |
+            v
+      Application / BSW Data
+            |
+            v
+      Diagnostic Response</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái niệm, không phải kiến trúc bắt buộc cho
+                    mọi ECU. Các module, service và interface thực tế phụ thuộc
+                    AUTOSAR release, implementation và yêu cầu của dự án.
+                </p>
+
+                <h2>34. Quy trình đọc dữ liệu OBD</h2>
+
+                <p>
+                    Khi một tester muốn đọc dữ liệu OBD, quy trình bắt đầu bằng
+                    việc xác định dịch vụ, gửi request, nhận response và giải mã
+                    dữ liệu theo định nghĩa tương ứng.
+                </p>
+
+                <ol>
+                    <li>Xác định xe và diagnostic protocol đang được sử dụng.</li>
+                    <li>Kết nối tester với interface được hỗ trợ.</li>
+                    <li>Kiểm tra chức năng OBD hoặc PID nào được hỗ trợ.</li>
+                    <li>Gửi request theo Mode/PID cần đọc.</li>
+                    <li>Nhận response và kiểm tra trạng thái xử lý.</li>
+                    <li>Giải mã dữ liệu theo đúng độ dài, công thức và đơn vị.</li>
+                    <li>Đối chiếu kết quả với dữ liệu tham chiếu hoặc yêu cầu kiểm thử.</li>
+                </ol>
+
+                <pre><code>Tester
+  |
+  | Chọn OBD Mode / PID
+  v
+ECU nhận request
+  |
+  | Kiểm tra service và dữ liệu yêu cầu
+  v
+Lấy dữ liệu chẩn đoán
+  |
+  v
+Tạo response
+  |
+  v
+Tester nhận dữ liệu
+  |
+  v
+Giải mã và hiển thị kết quả</code></pre>
+
+                <p>
+                    Nếu không có response, cần phân biệt lỗi ở giao tiếp,
+                    request không phù hợp, service không được hỗ trợ hoặc
+                    trạng thái hoạt động của ECU.
+                </p>
+
+                <h2>35. Ví dụ đọc Engine RPM qua OBD</h2>
+
+                <p>
+                    Giả sử tester muốn đọc tốc độ quay động cơ bằng Mode 01,
+                    PID 0x0C.
+                </p>
+
+                <pre><code>OBD Request Payload:
+01 0C
+
+01 : Current Powertrain Data
+0C : Engine RPM</code></pre>
+
+                <p>
+                    Trong hệ thống OBD truyền thống, response có thể được biểu diễn
+                    ở mức payload dịch vụ như sau:
+                </p>
+
+                <pre><code>OBD Response Payload:
+41 0C A B
+
+41 : Positive response tương ứng với Mode 01
+0C : PID được trả lời
+A B: Hai byte dữ liệu RPM</code></pre>
+
+                <p>
+                    Ví dụ nếu A = 0x1A và B = 0xF8, tốc độ quay được giải mã thành
+                    1726 rpm theo công thức của PID 0x0C.
+                </p>
+
+                <p>
+                    Đây là payload dịch vụ minh họa, không phải toàn bộ CAN frame.
+                    Nếu đang xem CAN trace, dữ liệu trên bus còn phụ thuộc transport
+                    protocol, addressing và cách message được phân đoạn hoặc đóng gói.
+                </p>
+
+                <h2>36. Đọc DTC và phân tích kết quả</h2>
+
+                <p>
+                    Một tester có thể sử dụng dịch vụ OBD phù hợp để truy vấn
+                    những DTC thuộc phạm vi được hỗ trợ. Sau khi nhận mã lỗi,
+                    bước tiếp theo là tìm hiểu trạng thái và bối cảnh của lỗi.
+                </p>
+
+                <p>Quy trình phân tích có thể gồm:</p>
+
+                <ol>
+                    <li>Đọc DTC và xác định mã thuộc hệ thống nào.</li>
+                    <li>Kiểm tra loại DTC và trạng thái tương ứng.</li>
+                    <li>Đọc Freeze Frame nếu dữ liệu có sẵn.</li>
+                    <li>Kiểm tra readiness monitor liên quan.</li>
+                    <li>Đối chiếu dữ liệu hiện tại với dữ liệu tại thời điểm lỗi được ghi nhận.</li>
+                    <li>Thực hiện kiểm tra bổ sung theo tài liệu sửa chữa và yêu cầu của xe.</li>
+                </ol>
+
+                <p>
+                    Ví dụ, một DTC liên quan đến cảm biến không nhất thiết có nghĩa
+                    cảm biến đã hỏng. Kỹ thuật viên còn phải xem nguồn cấp, dây dẫn,
+                    đầu nối, tín hiệu và các điều kiện vận hành có thể gây ra lỗi.
+                </p>
+
+                <h2>37. Xóa DTC có đồng nghĩa sửa được lỗi không?</h2>
+
+                <p>
+                    Không. Xóa thông tin chẩn đoán và sửa nguyên nhân lỗi là
+                    hai việc hoàn toàn khác nhau.
+                </p>
+
+                <p>
+                    Nếu phần cứng hoặc điều kiện vận hành vẫn có vấn đề,
+                    monitor có thể phát hiện lại lỗi trong những chu kỳ kiểm tra sau.
+                    Một số trạng thái DTC cũng có quy tắc lưu và xóa riêng.
+                </p>
+
+                <p>
+                    Sau khi sửa chữa, cần kiểm tra hệ thống theo quy trình thích hợp,
+                    xác nhận lỗi đã được xử lý và theo dõi các monitor liên quan.
+                    Chỉ dựa vào việc MIL tắt hoặc một mã lỗi không còn xuất hiện
+                    ngay sau khi xóa là chưa đủ để kết luận mọi chức năng đã hoạt động đúng.
+                </p>
+
+                <h2>38. Readiness chưa hoàn thành có nghĩa là xe bị lỗi?</h2>
+
+                <p>
+                    Không nhất thiết. Incomplete readiness có nghĩa một hoặc nhiều
+                    monitor chưa hoàn thành các điều kiện kiểm tra cần thiết
+                    theo trạng thái được báo cáo.
+                </p>
+
+                <p>
+                    Điều này có thể xảy ra sau khi bộ nhớ chẩn đoán được xóa,
+                    ắc quy bị ngắt kết nối hoặc xe chưa trải qua các điều kiện
+                    vận hành cần thiết cho monitor.
+                </p>
+
+                <p>
+                    Tuy nhiên, readiness incomplete cũng không chứng minh rằng
+                    hệ thống đang hoàn toàn tốt. Nó cho biết hệ thống chưa có
+                    kết quả đầy đủ cho những monitor đó. Cần xác định monitor
+                    nào chưa hoàn thành và kiểm tra trong bối cảnh của xe.
+                </p>
+
+                <h2>39. Các lỗi thường gặp khi sử dụng hoặc debug OBD</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Nguyên nhân có thể</th>
+                            <th>Hướng kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Scanner không kết nối được</td>
+                            <td>Vấn đề DLC, giao thức, nguồn điện hoặc kết nối với ECU.</td>
+                            <td>Kiểm tra interface, trạng thái ECU và khả năng giao tiếp được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>PID không được hỗ trợ</td>
+                            <td>ECU không cung cấp PID đó trong cấu hình hiện tại.</td>
+                            <td>Kiểm tra support information và định nghĩa PID.</td>
+                        </tr>
+                        <tr>
+                            <td>Giá trị PID không hợp lý</td>
+                            <td>Giải mã sai công thức, độ dài hoặc đơn vị.</td>
+                            <td>Đối chiếu định nghĩa dữ liệu và raw bytes.</td>
+                        </tr>
+                        <tr>
+                            <td>Không có DTC nhưng MIL từng bật</td>
+                            <td>Trạng thái lỗi có thể đã thay đổi hoặc scanner chưa đọc đúng phạm vi thông tin.</td>
+                            <td>Kiểm tra các loại DTC được hỗ trợ, trạng thái và tài liệu xe.</td>
+                        </tr>
+                        <tr>
+                            <td>Readiness incomplete</td>
+                            <td>Monitor chưa chạy hoặc chưa có đủ điều kiện kiểm tra.</td>
+                            <td>Xem monitor nào chưa hoàn tất và trạng thái hệ thống hiện tại.</td>
+                        </tr>
+                        <tr>
+                            <td>Permanent DTC vẫn còn sau khi xóa</td>
+                            <td>Permanent DTC có điều kiện xóa riêng theo quy định áp dụng.</td>
+                            <td>Kiểm tra trạng thái monitor và quy tắc quản lý permanent DTC.</td>
+                        </tr>
+                        <tr>
+                            <td>Scanner hiển thị mô tả DTC không rõ ràng</td>
+                            <td>Cơ sở dữ liệu DTC hoặc thông tin ứng dụng không phù hợp.</td>
+                            <td>Đối chiếu tiêu chuẩn DTC và tài liệu của nhà sản xuất.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>40. Debug một trường hợp PID trả về sai</h2>
+
+                <p>
+                    Giả sử scanner hiển thị tốc độ động cơ khác với giá trị
+                    mà kỹ sư quan sát ở nguồn dữ liệu của ECU.
+                </p>
+
+                <pre><code>Tester gửi Mode / PID
+         |
+         v
+Kiểm tra request được gửi
+         |
+         v
+Kiểm tra response raw bytes
+         |
+         v
+Xác nhận PID và độ dài dữ liệu
+         |
+         v
+Áp dụng công thức chuẩn
+         |
+         v
+Kiểm tra đơn vị và cách hiển thị
+         |
+         v
+So sánh với nguồn dữ liệu ECU</code></pre>
+
+                <p>
+                    Cần phân biệt lỗi lấy dữ liệu từ ECU với lỗi giải mã ở tester.
+                    Nếu raw bytes đúng nhưng giá trị hiển thị sai, nguyên nhân có
+                    thể nằm ở công thức hoặc cách diễn giải. Nếu raw bytes đã sai,
+                    cần tiếp tục kiểm tra nguồn dữ liệu và quá trình xử lý ở ECU.
+                </p>
+
+                <h2>41. Checklist khi phân tích một hệ thống OBD</h2>
+
+                <ul>
+                    <li>Đã xác định loại xe, thị trường và chuẩn OBD liên quan chưa?</li>
+                    <li>Diagnostic interface và transport được sử dụng là gì?</li>
+                    <li>Scanner có giao tiếp đúng với xe không?</li>
+                    <li>Những Mode và PID nào được hệ thống hỗ trợ?</li>
+                    <li>Dữ liệu raw có được giải mã theo đúng tiêu chuẩn không?</li>
+                    <li>DTC thuộc loại nào và trạng thái của nó là gì?</li>
+                    <li>MIL có đang được yêu cầu bật hay không?</li>
+                    <li>Freeze Frame có thông tin liên quan đến lỗi không?</li>
+                    <li>Readiness monitor nào đã hoàn thành và monitor nào chưa?</li>
+                    <li>Đã phân biệt xóa mã lỗi với sửa nguyên nhân lỗi chưa?</li>
+                    <li>Đã đối chiếu kết quả với tài liệu xe và yêu cầu của thị trường chưa?</li>
+                </ul>
+
+                <h2>42. Những điểm dễ nhầm lẫn</h2>
+
+                <ul>
+                    <li>
+                        <strong>OBD không phải một DTC:</strong>
+                        OBD là hệ thống chẩn đoán trên xe; DTC là mã lỗi được hệ thống
+                        ghi nhận và cung cấp.
+                    </li>
+                    <li>
+                        <strong>OBD Mode khác UDS SID:</strong>
+                        chúng thuộc những mô hình dịch vụ khác nhau, dù một số triển
+                        khai có thể kết hợp OBD với hạ tầng UDS.
+                    </li>
+                    <li>
+                        <strong>PID khác DID:</strong>
+                        PID thường được dùng trong OBD truyền thống; DID được sử dụng
+                        trong những UDS service như ReadDataByIdentifier.
+                    </li>
+                    <li>
+                        <strong>CAN ID khác SID và PID:</strong>
+                        CAN ID dùng cho message trên CAN; SID định danh UDS service;
+                        PID định danh một tham số OBD.
+                    </li>
+                    <li>
+                        <strong>Stored DTC, Pending DTC và Permanent DTC khác nhau:</strong>
+                        chúng được quản lý theo những trạng thái và điều kiện riêng.
+                    </li>
+                    <li>
+                        <strong>Readiness incomplete không nhất thiết là lỗi:</strong>
+                        monitor có thể chưa hoàn thành do chưa đáp ứng điều kiện kiểm tra.
+                    </li>
+                    <li>
+                        <strong>Xóa DTC không có nghĩa đã sửa lỗi:</strong>
+                        nguyên nhân lỗi vẫn có thể tồn tại và bị phát hiện lại.
+                    </li>
+                    <li>
+                        <strong>Không phải mọi xe hỗ trợ tất cả Mode/PID:</strong>
+                        cần kiểm tra phạm vi tiêu chuẩn và cấu hình thực tế.
+                    </li>
+                </ul>
+
+                <h2>43. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>OBD</td>
+                            <td>On-Board Diagnostics.</td>
+                        </tr>
+                        <tr>
+                            <td>OBD-II</td>
+                            <td>Thế hệ OBD với các yêu cầu chẩn đoán theo tiêu chuẩn và quy định áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>DLC</td>
+                            <td>Diagnostic Link Connector.</td>
+                        </tr>
+                        <tr>
+                            <td>MIL</td>
+                            <td>Malfunction Indicator Lamp.</td>
+                        </tr>
+                        <tr>
+                            <td>DTC</td>
+                            <td>Diagnostic Trouble Code.</td>
+                        </tr>
+                        <tr>
+                            <td>PID</td>
+                            <td>Parameter Identifier.</td>
+                        </tr>
+                        <tr>
+                            <td>Freeze Frame</td>
+                            <td>Dữ liệu ghi lại một số điều kiện vận hành liên quan đến thời điểm phát hiện lỗi.</td>
+                        </tr>
+                        <tr>
+                            <td>Readiness Monitor</td>
+                            <td>Trạng thái cho biết một chức năng giám sát đã hoàn thành self-test hay chưa.</td>
+                        </tr>
+                        <tr>
+                            <td>Pending DTC</td>
+                            <td>DTC ở trạng thái pending theo cơ chế quản lý lỗi áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Permanent DTC</td>
+                            <td>DTC được quản lý theo cơ chế permanent trong hệ thống hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>SAE J1979</td>
+                            <td>Tiêu chuẩn liên quan đến các diagnostic test mode của OBD.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-5</td>
+                            <td>Tiêu chuẩn về các dịch vụ chẩn đoán liên quan đến phát thải.</td>
+                        </tr>
+                        <tr>
+                            <td>OBD-on-UDS</td>
+                            <td>Cách triển khai chẩn đoán OBD dựa trên dịch vụ và hạ tầng UDS theo tiêu chuẩn áp dụng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>44. Tài liệu tham khảo</h2>
+
+                <p>
+                    Các tài liệu dưới đây giúp tìm hiểu sâu hơn về OBD, định nghĩa
+                    DTC, dữ liệu chẩn đoán và OBD-on-UDS. Khi làm việc trên ECU thực tế,
+                    cần lựa chọn phiên bản tiêu chuẩn phù hợp với yêu cầu của xe và
+                    thị trường.
+                </p>
+
+                <ul>
+                    <li>
+                        <a href="https://www.iso.org/standard/66368.html" target="_blank" rel="noopener noreferrer">
+                            ISO 15031-5 — Emissions-related diagnostic services
+                        </a>
+                        — định nghĩa các dịch vụ OBD liên quan đến phát thải,
+                        format request/response và timing.
+                    </li>
+                    <li>
+                        <a href="https://www.iso.org/standard/66369.html" target="_blank" rel="noopener noreferrer">
+                            ISO 15031-6 — Diagnostic trouble code definitions
+                        </a>
+                        — định dạng và quy tắc định nghĩa DTC tiêu chuẩn.
+                    </li>
+                    <li>
+                        <a href="https://saemobilus.sae.org/standards/j1979_202505-e-e-diagnostic-test-modes" target="_blank" rel="noopener noreferrer">
+                            SAE J1979 — E/E Diagnostic Test Modes
+                        </a>
+                        — các diagnostic test mode và dữ liệu OBD liên quan.
+                    </li>
+                    <li>
+                        <a href="https://saemobilus.sae.org/standards/j1979-2_202104-e-e-diagnostic-test-modes-obdonuds" target="_blank" rel="noopener noreferrer">
+                            SAE J1979-2 — OBD-on-UDS
+                        </a>
+                        — các yêu cầu giao tiếp OBD dựa trên UDS.
+                    </li>
+                    <li>
+                        <a href="https://ww2.arb.ca.gov/resources/fact-sheets/board-diagnostic-ii-obd-ii-systems-fact-sheet" target="_blank" rel="noopener noreferrer">
+                            California Air Resources Board — OBD-II Systems Fact Sheet
+                        </a>
+                        — tổng quan về giám sát, MIL, DTC và readiness monitor trong OBD-II.
+                    </li>
+                </ul>
+
+                <h2>45. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        OBD (On-Board Diagnostics) là hệ thống chẩn đoán tích hợp
+                        trên xe, hỗ trợ giám sát những chức năng được quy định,
+                        phát hiện lỗi, lưu DTC và cung cấp dữ liệu cho diagnostic tester.
+                        Trong OBD-II liên quan đến khí thải, MIL và readiness monitor
+                        là những thành phần quan trọng của hệ thống chẩn đoán.
+                    </p>
+
+                    <p>
+                        OBD truyền thống sử dụng các Mode và PID để xác định dịch vụ
+                        và dữ liệu cần truy vấn. Các chức năng thường gặp gồm đọc
+                        dữ liệu hiện tại, Freeze Frame, DTC, readiness, thông tin xe
+                        và những kết quả giám sát được hỗ trợ.
+                    </p>
+
+                    <p>
+                        OBD và UDS có phạm vi khác nhau. UDS cung cấp bộ dịch vụ chẩn đoán
+                        rộng, trong khi OBD tập trung vào các chức năng được yêu cầu
+                        trong phạm vi OBD áp dụng. OBD-on-UDS cho phép triển khai
+                        những chức năng OBD trên cơ sở dịch vụ và hạ tầng UDS theo
+                        tiêu chuẩn tương ứng.
+                    </p>
+
+                    <p>
+                        Khi debug, hãy phân biệt request, Mode/PID, DTC, MIL, Freeze Frame
+                        và readiness. Một mã lỗi không nhất thiết chỉ ra duy nhất linh
+                        kiện hỏng; kết quả chẩn đoán cần được đối chiếu với dữ liệu vận hành,
+                        tài liệu kỹ thuật và kết quả kiểm tra thực tế.
+                    </p>
+
+                    <p>
+                        Với Bài 31 và Bài 32, chúng ta đã lần lượt tìm hiểu UDS và OBD:
+                        hai nền tảng quan trọng để tiếp tục học về diagnostic
+                        communication, DCM, ECU testing và automotive embedded software.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a href="lesson-31.html">← Bài trước</a>
+                    <a href="lesson-33.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 25: DCM | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html" class="active" aria-current="page">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 25: DCM</h1>
+
+                <p>
+                    Trong AUTOSAR Classic, DCM (Diagnostic Communication Manager)
+                    là module thuộc Basic Software (BSW), chịu trách nhiệm quản lý
+                    giao tiếp chẩn đoán giữa thiết bị chẩn đoán bên ngoài và ECU.
+                    DCM tiếp nhận các yêu cầu chẩn đoán, kiểm tra các điều kiện xử lý,
+                    điều phối việc thực hiện dịch vụ và trả kết quả về cho thiết bị chẩn đoán.
+                </p>
+
+                <p>
+                    DCM là thành phần quan trọng khi phát triển các chức năng chẩn đoán
+                    cho ECU, chẳng hạn như đọc dữ liệu, truy vấn mã lỗi, điều khiển
+                    phiên chẩn đoán hoặc thực hiện các thao tác chẩn đoán được cho phép.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài 25 giới thiệu DCM, vị trí trong AUTOSAR, nhiệm vụ chính,
+                    các module liên quan và luồng xử lý chẩn đoán tổng quát.
+                    Ba sub-module DSL, DSD, DSP và DCM Generator sẽ được phân tích
+                    riêng trong các bài 26 đến 29.
+                </div>
+
+                <h2>1. DCM là gì?</h2>
+
+                <p>
+                    DCM là viết tắt của <strong>Diagnostic Communication Manager</strong>.
+                    Trong AUTOSAR Classic, đây là module BSW cung cấp các chức năng
+                    giao tiếp chẩn đoán theo những giao thức và dịch vụ được cấu hình
+                    cho ECU.
+                </p>
+
+                <p>
+                    Khi kỹ thuật viên sử dụng diagnostic tester để gửi yêu cầu tới ECU,
+                    DCM tiếp nhận yêu cầu thông qua đường giao tiếp chẩn đoán của hệ thống.
+                    Sau đó, DCM xử lý hoặc điều phối yêu cầu tương ứng và gửi phản hồi
+                    trở lại tester.
+                </p>
+
+                <p>Ví dụ, tester có thể yêu cầu ECU:</p>
+
+                <ul>
+                    <li>Đọc một giá trị dữ liệu được xác định bằng DID.</li>
+                    <li>Đọc thông tin về các Diagnostic Trouble Code (DTC).</li>
+                    <li>Xóa thông tin lỗi nếu dịch vụ và điều kiện thực hiện được cho phép.</li>
+                    <li>Chuyển sang một diagnostic session khác.</li>
+                    <li>Thực hiện một routine chẩn đoán đã được cấu hình.</li>
+                </ul>
+
+                <p>
+                    Các chức năng cụ thể phụ thuộc vào phiên bản AUTOSAR,
+                    cấu hình DCM, yêu cầu của dự án và cách ECU triển khai các dịch vụ.
+                </p>
+
+                <h2>2. Vì sao ECU cần DCM?</h2>
+
+                <p>
+                    Một ECU không chỉ thực hiện chức năng điều khiển trong quá trình
+                    vận hành xe. ECU còn cần cung cấp thông tin để hỗ trợ phát triển,
+                    kiểm thử, sản xuất, bảo dưỡng và phân tích lỗi.
+                </p>
+
+                <p>
+                    Nếu mỗi chức năng ứng dụng tự xây dựng cơ chế nhận request,
+                    kiểm tra quyền truy cập, xử lý session và tạo response riêng,
+                    phần mềm sẽ khó quản lý, khó kiểm thử và khó duy trì tính nhất quán.
+                </p>
+
+                <p>DCM giúp tổ chức các trách nhiệm chẩn đoán thành một module chung:</p>
+
+                <ul>
+                    <li>Quản lý luồng request và response chẩn đoán.</li>
+                    <li>Kiểm tra dịch vụ có được hỗ trợ và có đủ điều kiện thực hiện hay không.</li>
+                    <li>Quản lý các trạng thái chẩn đoán liên quan, như session và security level.</li>
+                    <li>Phối hợp với các module cung cấp dữ liệu hoặc thực hiện chức năng chẩn đoán.</li>
+                    <li>Giảm sự phụ thuộc giữa diagnostic communication và logic ứng dụng.</li>
+                </ul>
+
+                <h2>3. DCM nằm ở đâu trong kiến trúc AUTOSAR Classic?</h2>
+
+                <p>
+                    DCM thuộc BSW Service Layer. Ở góc nhìn chẩn đoán,
+                    DCM nằm giữa đường truyền thông chẩn đoán và các thành phần
+                    cung cấp dữ liệu hoặc chức năng bên trong ECU.
+                </p>
+
+                <pre><code>          External Diagnostic Tester
+                     |
+                     | Diagnostic Request
+                     v
+          Communication / Transport
+             (ví dụ: DoCAN hoặc DoIP)
+                     |
+                     v
+                    PduR
+                     |
+                     v
+              +-------------+
+              |     DCM     |
+              |-------------|
+              | DSL         |
+              | DSD         |
+              | DSP         |
+              +-------------+
+                 |       |
+                 |       +------------------+
+                 v                          v
+                DEM                    Application
+           Diagnostic Data            / BSW Services
+                 |                          |
+                 +------------+-------------+
+                              |
+                         Response Data
+                              |
+                              v
+                             DCM
+                              |
+                             PduR
+                              |
+                    Communication / Transport
+                              |
+                              v
+                    External Diagnostic Tester</code></pre>
+
+                <p>
+                    Sơ đồ trên là góc nhìn khái quát. Các kết nối thực tế,
+                    interface và đường xử lý phụ thuộc giao thức chẩn đoán,
+                    cấu hình ECU và phiên bản AUTOSAR được sử dụng.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    DCM không đứng trực tiếp thay thế toàn bộ Communication Stack.
+                    Các module giao tiếp bên dưới đảm nhận việc chuyển dữ liệu qua
+                    network và transport layer; DCM tập trung vào xử lý giao tiếp
+                    và dịch vụ chẩn đoán ở phía ECU.
+                </div>
+
+                <h2>4. DCM và Diagnostic Communication</h2>
+
+                <p>
+                    Diagnostic Communication là hoạt động trao đổi thông tin chẩn đoán
+                    giữa tester và ECU. Tester gửi request để yêu cầu một hành động
+                    hoặc một thông tin; ECU gửi response thể hiện kết quả xử lý.
+                </p>
+
+                <p>
+                    DCM quản lý phần xử lý chẩn đoán ở phía ECU. Trong hệ thống sử dụng
+                    UDS, các request có thể chứa Service Identifier (SID), các tham số
+                    và dữ liệu liên quan đến dịch vụ được yêu cầu.
+                </p>
+
+                <p>
+                    DCM không chỉ chuyển tiếp nguyên vẹn dữ liệu từ tester đến ứng dụng.
+                    DCM còn phải xử lý các quy tắc chẩn đoán phù hợp với dịch vụ,
+                    trạng thái hiện tại và cấu hình của ECU.
+                </p>
+
+                <h2>5. Những dịch vụ chẩn đoán thường gặp</h2>
+
+                <p>
+                    Trong một ECU hỗ trợ UDS, DCM có thể quản lý nhiều nhóm dịch vụ
+                    chẩn đoán. Bảng dưới đây chỉ đưa ra ví dụ để hình dung mục đích
+                    sử dụng; không có nghĩa mọi ECU đều hỗ trợ tất cả các dịch vụ này.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm dịch vụ</th>
+                            <th>Mục đích</th>
+                            <th>Ví dụ sử dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Diagnostic Session Control</td>
+                            <td>Thay đổi diagnostic session nếu được cho phép.</td>
+                            <td>Chuyển từ Default Session sang Extended Session.</td>
+                        </tr>
+                        <tr>
+                            <td>Read Data By Identifier</td>
+                            <td>Đọc dữ liệu được cung cấp thông qua DID.</td>
+                            <td>Đọc một giá trị hoặc thông tin nhận dạng ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Read DTC Information</td>
+                            <td>Truy vấn thông tin lỗi chẩn đoán.</td>
+                            <td>Đọc danh sách hoặc trạng thái DTC được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Clear Diagnostic Information</td>
+                            <td>Yêu cầu xóa thông tin chẩn đoán trong phạm vi được phép.</td>
+                            <td>Xóa thông tin DTC theo điều kiện và phạm vi cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>Security Access</td>
+                            <td>Thực hiện cơ chế truy cập bảo vệ theo cấu hình.</td>
+                            <td>Kiểm tra quyền truy cập trước một dịch vụ được bảo vệ.</td>
+                        </tr>
+                        <tr>
+                            <td>Routine Control</td>
+                            <td>Yêu cầu khởi chạy, dừng hoặc truy vấn routine được hỗ trợ.</td>
+                            <td>Thực hiện một quy trình kiểm tra chẩn đoán.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Từng dịch vụ có thể có những điều kiện riêng về session,
+                    security, độ dài request, trạng thái ECU và các điều kiện
+                    nghiệp vụ khác. Các điều kiện đó không nhất thiết giống nhau
+                    giữa các dịch vụ hoặc giữa các dự án.
+                </p>
+
+                <h2>6. Luồng xử lý tổng quát của DCM</h2>
+
+                <p>
+                    Khi một diagnostic request đến ECU, có thể hình dung quá trình
+                    xử lý theo các bước tổng quát sau:
+                </p>
+
+                <ol>
+                    <li>Tester gửi diagnostic request.</li>
+                    <li>Communication Stack tiếp nhận và chuyển request đến đúng đường xử lý.</li>
+                    <li>PduR chuyển dữ liệu chẩn đoán tới DCM theo cấu hình.</li>
+                    <li>DCM tiếp nhận và điều phối request qua các thành phần xử lý nội bộ.</li>
+                    <li>DCM kiểm tra những điều kiện cần thiết theo dịch vụ và cấu hình.</li>
+                    <li>Thành phần xử lý dịch vụ lấy dữ liệu hoặc yêu cầu thực hiện hành động phù hợp.</li>
+                    <li>DCM chuẩn bị response và chuyển response về đường truyền thông.</li>
+                    <li>Tester nhận response để đánh giá kết quả request.</li>
+                </ol>
+
+                <p>
+                    Trên thực tế, một số bước có thể diễn ra bất đồng bộ;
+                    request có thể phải chờ kết quả từ module khác hoặc response
+                    có thể được xử lý theo cơ chế thời gian và trạng thái cụ thể.
+                </p>
+
+                <h2>7. Cấu trúc nội bộ của DCM</h2>
+
+                <p>
+                    Theo cách tổ chức của AUTOSAR Classic, DCM được chia thành ba
+                    sub-module chính: DSL, DSD và DSP. Mỗi thành phần đảm nhiệm một
+                    nhóm trách nhiệm khác nhau, phối hợp để xử lý một diagnostic request.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sub-module</th>
+                            <th>Tên đầy đủ</th>
+                            <th>Vai trò tổng quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSL</td>
+                            <td>Diagnostic Session Layer</td>
+                            <td>Quản lý luồng request/response, các trạng thái chẩn đoán và những vấn đề liên quan đến timing.</td>
+                        </tr>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Diagnostic Service Dispatcher</td>
+                            <td>Điều phối yêu cầu chẩn đoán tới phần xử lý dịch vụ phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>DSP</td>
+                            <td>Diagnostic Service Processing</td>
+                            <td>Xử lý nội dung của dịch vụ chẩn đoán và phối hợp lấy dữ liệu hoặc thực hiện thao tác tương ứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <pre><code>                    DCM
+                     |
+          +----------+----------+
+          |          |          |
+          v          v          v
+         DSL        DSD        DSP
+          |          |          |
+          |          |          |
+          +----------+----------+
+                 Phối hợp
+          xử lý diagnostic request
+             và diagnostic response</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái niệm, không phải sơ đồ mô tả đầy đủ mọi interface
+                    nội bộ. Các bài 26, 27 và 28 sẽ lần lượt phân tích rõ hơn trách nhiệm
+                    của từng sub-module.
+                </p>
+
+                <h2>8. Giới thiệu DSL - Diagnostic Session Layer</h2>
+
+                <p>
+                    DSL chịu trách nhiệm với những khía cạnh quan trọng của luồng
+                    giao tiếp chẩn đoán, bao gồm việc tiếp nhận và chuyển tiếp request,
+                    xử lý response, theo dõi các trạng thái chẩn đoán và quản lý
+                    các quy tắc timing thuộc phạm vi của DCM.
+                </p>
+
+                <p>
+                    Ví dụ, một ECU có thể đang ở Default Session hoặc một session khác
+                    mà tester đã yêu cầu chuyển sang. Trạng thái session hiện tại có thể
+                    ảnh hưởng đến việc một dịch vụ chẩn đoán có được thực hiện hay không.
+                </p>
+
+                <p>
+                    DSL còn tham gia vào việc quản lý các thông tin trạng thái chẩn đoán
+                    cần thiết để DCM xử lý yêu cầu. Tuy nhiên, các quy tắc chấp nhận dịch vụ
+                    cụ thể là kết quả phối hợp của nhiều phần trong DCM.
+                </p>
+
+                <p>
+                    Nội dung chi tiết về session, timing, security state và luồng request
+                    sẽ được trình bày trong <strong>Bài 26: DCM - Diagnostic Session Layer (DSL)</strong>.
+                </p>
+
+                <h2>9. Giới thiệu DSD - Diagnostic Service Dispatcher</h2>
+
+                <p>
+                    DSD chịu trách nhiệm điều phối việc xử lý diagnostic service.
+                    Dựa trên request và cấu hình, DSD hỗ trợ xác định cách yêu cầu
+                    được chuyển đến phần xử lý dịch vụ phù hợp.
+                </p>
+
+                <p>
+                    Có thể hình dung DSD như thành phần điều phối trong DCM:
+                    sau khi nhận được thông tin request từ luồng xử lý nội bộ,
+                    DSD tham gia xác định dịch vụ được yêu cầu và phối hợp với
+                    các cơ chế kiểm tra điều kiện xử lý.
+                </p>
+
+                <p>
+                    DSD không đồng nghĩa với phần thực hiện toàn bộ logic nghiệp vụ
+                    của dịch vụ. Việc thực hiện dịch vụ được đảm nhận bởi phần xử lý
+                    tương ứng, chủ yếu là DSP đối với các dịch vụ thuộc phạm vi của nó.
+                </p>
+
+                <p>
+                    Nội dung về dispatching, kiểm tra request và phối hợp response
+                    sẽ được trình bày trong
+                    <strong>Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</strong>.
+                </p>
+
+                <h2>10. Giới thiệu DSP - Diagnostic Service Processing</h2>
+
+                <p>
+                    DSP đảm nhận phần xử lý các dịch vụ chẩn đoán. Tùy dịch vụ và cấu hình,
+                    việc xử lý có thể cần đọc dữ liệu, kiểm tra điều kiện, gọi interface
+                    của ứng dụng hoặc tương tác với những module BSW khác.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <ul>
+                    <li>
+                        Với dịch vụ đọc DID, DSP có thể yêu cầu nguồn dữ liệu tương ứng
+                        cung cấp giá trị cần trả về.
+                    </li>
+                    <li>
+                        Với dịch vụ đọc thông tin lỗi, DSP có thể phối hợp với DEM
+                        để lấy thông tin chẩn đoán.
+                    </li>
+                    <li>
+                        Với dịch vụ Routine Control, DSP có thể kết nối tới phần triển khai
+                        routine phù hợp với cấu hình ECU.
+                    </li>
+                </ul>
+
+                <p>
+                    Vì phải xử lý nhiều loại dịch vụ và dữ liệu khác nhau, DSP có thể
+                    liên quan đến nhiều cấu hình, interface và thành phần cung cấp dữ liệu.
+                </p>
+
+                <p>
+                    Nội dung chi tiết về xử lý dịch vụ, DID, routine và những liên kết
+                    với các module khác sẽ được trình bày trong
+                    <strong>Bài 28: DCM - Diagnostic Service Processing (DSP)</strong>.
+                </p>
+
+                <h2>11. DCM tương tác với PduR như thế nào?</h2>
+
+                <p>
+                    PduR (PDU Router) là module định tuyến Protocol Data Unit (PDU)
+                    giữa những module giao tiếp theo cấu hình. Trong đường chẩn đoán,
+                    PduR đóng vai trò trung gian chuyển dữ liệu request đến DCM
+                    và chuyển response trở lại đường truyền phù hợp.
+                </p>
+
+                <p>
+                    DCM không tự thay thế chức năng định tuyến của PduR.
+                    DCM tập trung xử lý nội dung chẩn đoán, trong khi PduR thực hiện
+                    việc chuyển tiếp dữ liệu giữa các module đã được cấu hình kết nối.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+Communication Stack
+       |
+      PduR
+       |
+      DCM
+       |
+Xử lý Diagnostic Service
+       |
+      DCM
+       |
+      PduR
+       |
+Communication Stack
+       |
+Diagnostic Tester</code></pre>
+
+                <h2>12. DCM khác CanTp hoặc DoIP như thế nào?</h2>
+
+                <p>
+                    DCM và các module transport không có cùng trách nhiệm.
+                    Chúng phối hợp để tạo nên một đường giao tiếp chẩn đoán hoàn chỉnh.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Trách nhiệm chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DCM</td>
+                            <td>Xử lý giao tiếp và dịch vụ chẩn đoán ở phía ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp</td>
+                            <td>Hỗ trợ truyền tải dữ liệu theo Transport Protocol trên CAN, bao gồm xử lý các message cần phân đoạn theo cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>DoIP Stack</td>
+                            <td>Cung cấp các chức năng giao tiếp chẩn đoán trên IP theo kiến trúc và cấu hình được sử dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>PduR</td>
+                            <td>Chuyển tiếp PDU giữa các module được kết nối.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Việc DCM sử dụng những module nào bên dưới phụ thuộc vào
+                    diagnostic protocol và communication stack của ECU.
+                    Không nên giả định mọi dự án đều sử dụng cùng một transport.
+                </p>
+
+                <h2>13. DCM khác DEM như thế nào?</h2>
+
+                <p>
+                    DCM và DEM đều thuộc phạm vi chẩn đoán nhưng giải quyết hai nhóm
+                    vấn đề khác nhau.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>DCM:</strong> Quản lý giao tiếp chẩn đoán với tester,
+                        xử lý request và tổ chức response.
+                    </li>
+                    <li>
+                        <strong>DEM (Diagnostic Event Manager):</strong> Quản lý các
+                        diagnostic event, trạng thái lỗi và những dữ liệu DTC thuộc
+                        phạm vi trách nhiệm của DEM.
+                    </li>
+                </ul>
+
+                <p>
+                    Khi tester yêu cầu đọc thông tin DTC, DCM tiếp nhận và xử lý
+                    yêu cầu chẩn đoán, sau đó phối hợp với DEM để lấy thông tin
+                    cần thiết theo dịch vụ và cấu hình.
+                </p>
+
+                <p>
+                    Vì vậy, không nên xem DCM là nơi chịu trách nhiệm duy nhất
+                    tạo ra và quản lý toàn bộ dữ liệu lỗi của ECU.
+                </p>
+
+                <h2>14. DCM và Application Software</h2>
+
+                <p>
+                    Application Software thực hiện những chức năng điều khiển của ECU,
+                    đồng thời có thể cung cấp dữ liệu hoặc logic cần thiết cho một số
+                    dịch vụ chẩn đoán.
+                </p>
+
+                <p>
+                    DCM không thay thế chức năng nghiệp vụ của Application Software.
+                    Thay vào đó, DCM nhận yêu cầu chẩn đoán và kết nối đến nguồn dữ liệu
+                    hoặc phần triển khai chức năng thích hợp thông qua những interface
+                    được cấu hình.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <ul>
+                    <li>
+                        Application Software tính toán giá trị nhiệt độ hoặc trạng thái
+                        của một chức năng.
+                    </li>
+                    <li>
+                        Một DID được cấu hình để cung cấp thông tin liên quan đến giá trị đó.
+                    </li>
+                    <li>
+                        Khi tester yêu cầu đọc DID, DCM xử lý request và lấy dữ liệu
+                        từ nguồn được kết nối theo cấu hình.
+                    </li>
+                    <li>
+                        DCM chuẩn bị kết quả chẩn đoán và gửi lại tester.
+                    </li>
+                </ul>
+
+                <p>
+                    Cách kết nối cụ thể với ứng dụng phụ thuộc vào loại dịch vụ,
+                    thiết kế ECU và các interface mà dự án sử dụng.
+                </p>
+
+                <h2>15. DCM có liên quan đến những module nào khác?</h2>
+
+                <p>
+                    Ngoài PduR, communication stack, DEM và các nguồn dữ liệu ứng dụng,
+                    DCM có thể tương tác với những module BSW khác để hỗ trợ quản lý
+                    trạng thái, giao tiếp và các điều kiện xử lý chẩn đoán.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Mối quan hệ khái quát với DCM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ComM</td>
+                            <td>Phối hợp các trạng thái giao tiếp cần thiết cho hoạt động chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>BswM</td>
+                            <td>Có thể tham gia điều phối mode hoặc phản ứng của hệ thống theo những thông tin và sự kiện liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>EcuM</td>
+                            <td>Liên quan đến quản lý trạng thái và vòng đời ECU; những quan hệ cụ thể phụ thuộc thiết kế hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>RTE / Application</td>
+                            <td>Cung cấp các kết nối cần thiết để xử lý những dịch vụ có liên quan đến ứng dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>DEM</td>
+                            <td>Cung cấp các chức năng và dữ liệu chẩn đoán thuộc phạm vi quản lý của DEM.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Bảng trên mô tả các mối quan hệ điển hình, không phải danh sách
+                    đầy đủ mọi dependency. Interface bắt buộc, tùy chọn và cách tích hợp
+                    cần được kiểm tra theo phiên bản AUTOSAR và cấu hình của dự án.
+                </p>
+
+                <h2>16. Diagnostic Session là gì?</h2>
+
+                <p>
+                    Diagnostic Session là một trong những trạng thái quan trọng
+                    trong hoạt động chẩn đoán. Session hiện tại xác định bối cảnh
+                    trong đó các dịch vụ được phép hoặc không được phép thực hiện.
+                </p>
+
+                <p>
+                    Trong hệ thống UDS, các ECU có thể hỗ trợ những session như
+                    Default Session, Extended Diagnostic Session hoặc Programming Session.
+                    Việc hỗ trợ từng session và các dịch vụ tương ứng phụ thuộc vào
+                    cấu hình cũng như yêu cầu của ECU.
+                </p>
+
+                <p>
+                    Ví dụ, một dịch vụ có thể được cho phép ở Extended Session
+                    nhưng không được phép ở Default Session. DCM phải xử lý yêu cầu
+                    theo các quy tắc đã được thiết lập.
+                </p>
+
+                <p>
+                    Session không phải là cơ chế bảo mật duy nhất. Quyền truy cập
+                    và các điều kiện bảo vệ khác có thể được đánh giá riêng theo
+                    yêu cầu của dịch vụ.
+                </p>
+
+                <h2>17. Security Level và quyền truy cập chẩn đoán</h2>
+
+                <p>
+                    Một số dịch vụ có thể chỉ được thực hiện khi tester đáp ứng
+                    điều kiện truy cập được yêu cầu. Trong UDS, Security Access
+                    là một ví dụ về cơ chế hỗ trợ bảo vệ các thao tác chẩn đoán.
+                </p>
+
+                <p>
+                    Khi tiếp nhận yêu cầu, DCM cần xử lý các điều kiện quyền truy cập
+                    tương ứng với dịch vụ và cấu hình. Việc một dịch vụ được hỗ trợ
+                    không có nghĩa là tester luôn được phép gọi dịch vụ đó.
+                </p>
+
+                <p>
+                    Cần phân biệt hai câu hỏi:
+                </p>
+
+                <ul>
+                    <li>ECU có hỗ trợ dịch vụ đang được yêu cầu hay không?</li>
+                    <li>Với trạng thái và điều kiện hiện tại, dịch vụ có được phép thực hiện hay không?</li>
+                </ul>
+
+                <p>
+                    Hai điều kiện này liên quan với nhau nhưng không đồng nhất.
+                </p>
+
+                <h2>18. DCM kiểm tra gì trước khi xử lý dịch vụ?</h2>
+
+                <p>
+                    Các điều kiện cụ thể phụ thuộc dịch vụ, nhưng một số nhóm kiểm tra
+                    thường gặp trong quá trình xử lý chẩn đoán bao gồm:
+                </p>
+
+                <ul>
+                    <li>Request có hợp lệ về cấu trúc và độ dài theo yêu cầu của dịch vụ hay không.</li>
+                    <li>Dịch vụ hoặc sub-function được yêu cầu có được hỗ trợ hay không.</li>
+                    <li>Session hiện tại có cho phép thực hiện dịch vụ hay không.</li>
+                    <li>Điều kiện security có được đáp ứng hay không.</li>
+                    <li>Các điều kiện về trạng thái ECU hoặc điều kiện nghiệp vụ có được đáp ứng hay không.</li>
+                    <li>Nguồn dữ liệu hoặc phần xử lý dịch vụ có thể hoàn thành yêu cầu hay không.</li>
+                </ul>
+
+                <p>
+                    Không phải tất cả các kiểm tra trên đều áp dụng cho mọi request
+                    theo cùng một cách. Mỗi dịch vụ có thể có quy tắc xử lý riêng.
+                </p>
+
+                <h2>19. Positive Response và Negative Response</h2>
+
+                <p>
+                    Sau khi xử lý request, DCM có thể chuẩn bị positive response
+                    nếu yêu cầu được xử lý thành công, hoặc negative response nếu
+                    yêu cầu không thể được chấp nhận hay hoàn thành theo quy tắc chẩn đoán.
+                </p>
+
+                <p>
+                    Negative Response Code (NRC) cung cấp thông tin về lý do từ chối
+                    hoặc tình trạng xử lý theo giao thức. Việc chọn NRC cụ thể phụ thuộc
+                    nguyên nhân, quy tắc của dịch vụ và yêu cầu của tiêu chuẩn.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>Hướng xử lý tổng quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Request hợp lệ và dịch vụ hoàn thành</td>
+                            <td>Chuẩn bị positive response với dữ liệu hoặc kết quả tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Request yêu cầu dịch vụ không được hỗ trợ</td>
+                            <td>Xử lý theo quy tắc từ chối phù hợp của giao thức.</td>
+                        </tr>
+                        <tr>
+                            <td>Session hoặc security không đáp ứng điều kiện</td>
+                            <td>Từ chối hoặc xử lý theo cơ chế được quy định cho dịch vụ đó.</td>
+                        </tr>
+                        <tr>
+                            <td>Yêu cầu đang được xử lý nhưng chưa thể hoàn tất</td>
+                            <td>Có thể áp dụng cơ chế phản hồi chờ nếu dịch vụ và điều kiện giao thức cho phép.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Không nên mặc định rằng mọi tình huống lỗi đều dẫn đến cùng một NRC,
+                    hoặc mọi request thất bại đều được phản hồi theo cùng một cách.
+                </p>
+
+                <h2>20. Ví dụ: Tester yêu cầu đọc dữ liệu bằng DID</h2>
+
+                <p>
+                    Giả sử ECU có cấu hình một DID cung cấp giá trị nhiệt độ của một
+                    thành phần. Tester gửi request đọc DID đó bằng một diagnostic service
+                    được ECU hỗ trợ.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | Request đọc DID
+       v
+Communication Stack
+       |
+      PduR
+       |
+      DCM
+       |
+Kiểm tra và điều phối request
+       |
+Lấy dữ liệu từ nguồn đã cấu hình
+       |
+Chuẩn bị diagnostic response
+       |
+      PduR
+       |
+Communication Stack
+       |
+       v
+Diagnostic Tester nhận kết quả</code></pre>
+
+                <p>
+                    Trong ví dụ này, DCM không nhất thiết tự đo nhiệt độ từ sensor.
+                    Giá trị có thể được cung cấp bởi Application Software hoặc nguồn
+                    dữ liệu phù hợp khác theo thiết kế ECU.
+                </p>
+
+                <p>
+                    DCM chịu trách nhiệm xử lý yêu cầu chẩn đoán và đưa dữ liệu
+                    đã lấy được vào response đúng theo cấu hình dịch vụ.
+                </p>
+
+                <h2>21. Ví dụ: Tester yêu cầu đọc DTC</h2>
+
+                <p>
+                    Giả sử tester muốn truy vấn thông tin lỗi đã được ECU ghi nhận.
+                    Request đi theo đường chẩn đoán đến DCM.
+                </p>
+
+                <pre><code>Tester yêu cầu thông tin DTC
+             |
+             v
+            PduR
+             |
+             v
+            DCM
+             |
+             | Xử lý request chẩn đoán
+             v
+            DEM
+             |
+             | Cung cấp thông tin phù hợp
+             v
+            DCM
+             |
+             | Chuẩn bị response
+             v
+            PduR
+             |
+             v
+           Tester</code></pre>
+
+                <p>
+                    Ví dụ này cho thấy vai trò phối hợp giữa DCM và DEM.
+                    DCM quản lý việc giao tiếp với tester, trong khi DEM đảm nhận
+                    các chức năng quản lý diagnostic event và dữ liệu DTC thuộc
+                    phạm vi trách nhiệm của DEM.
+                </p>
+
+                <h2>22. Cấu hình ảnh hưởng đến hoạt động của DCM như thế nào?</h2>
+
+                <p>
+                    Hoạt động thực tế của DCM phụ thuộc đáng kể vào cấu hình ECU.
+                    Cùng một nhóm mã nguồn DCM có thể được sử dụng trong những ECU
+                    có tập dịch vụ và dữ liệu chẩn đoán khác nhau.
+                </p>
+
+                <p>Tùy thiết kế và phiên bản AUTOSAR, cấu hình có thể mô tả:</p>
+
+                <ul>
+                    <li>Các diagnostic protocol và kết nối được hỗ trợ.</li>
+                    <li>Các dịch vụ, sub-function và DID được cấu hình.</li>
+                    <li>Session, security và những điều kiện truy cập của dịch vụ.</li>
+                    <li>Nguồn dữ liệu, interface hoặc callback liên quan đến dịch vụ.</li>
+                    <li>Các thông số buffer, timing và hành vi xử lý request/response.</li>
+                    <li>Các kết nối cần thiết giữa DCM và module BSW hoặc Application Software.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, khi một dịch vụ không hoạt động như mong đợi, cần kiểm tra
+                    cả logic xử lý lẫn cấu hình và các kết nối giữa các module.
+                </p>
+
+                <h2>23. DCM Generator là gì?</h2>
+
+                <p>
+                    Trong quy trình phát triển AUTOSAR, các công cụ cấu hình có thể
+                    sử dụng thông tin mô hình và cấu hình DCM để sinh ra những thành phần
+                    đầu ra cần thiết cho quá trình build và tích hợp ECU.
+                </p>
+
+                <p>
+                    <strong>DCM Generator</strong> là cách gọi khái quát cho chức năng
+                    sinh đầu ra cấu hình DCM trong toolchain. Tên công cụ, giao diện
+                    và chính xác những file được sinh phụ thuộc nhà cung cấp công cụ
+                    và quy trình của dự án.
+                </p>
+
+                <p>
+                    Generator không nên được hiểu đơn giản là công cụ tự viết toàn bộ
+                    logic ứng dụng chẩn đoán. Phần xử lý dữ liệu hoặc routine cụ thể
+                    vẫn có thể yêu cầu code, interface hoặc callback do đội phát triển
+                    cung cấp.
+                </p>
+
+                <p>
+                    Bài 29 sẽ tìm hiểu chi tiết hơn mối quan hệ giữa cấu hình DCM,
+                    công cụ generator, code được sinh ra và quá trình build phần mềm ECU.
+                </p>
+
+                <h2>24. DCM không phải toàn bộ Diagnostic Stack</h2>
+
+                <p>
+                    DCM là một module quan trọng trong hệ thống chẩn đoán AUTOSAR,
+                    nhưng nó không thay thế tất cả các thành phần còn lại.
+                </p>
+
+                <p>Để phân tích một lỗi chẩn đoán, cần phân biệt:</p>
+
+                <ul>
+                    <li>
+                        <strong>Communication Stack:</strong> chịu trách nhiệm truyền
+                        dữ liệu qua network và các lớp giao tiếp liên quan.
+                    </li>
+                    <li>
+                        <strong>DCM:</strong> tiếp nhận và xử lý diagnostic request,
+                        điều phối dịch vụ và chuẩn bị response.
+                    </li>
+                    <li>
+                        <strong>DEM:</strong> quản lý diagnostic event và dữ liệu DTC
+                        thuộc phạm vi của DEM.
+                    </li>
+                    <li>
+                        <strong>Application Software:</strong> cung cấp dữ liệu hoặc
+                        thực hiện chức năng nghiệp vụ khi được kết nối với dịch vụ chẩn đoán.
+                    </li>
+                </ul>
+
+                <h2>25. Khi debug DCM, nên kiểm tra từ đâu?</h2>
+
+                <p>
+                    Khi tester không nhận được kết quả mong muốn, không nên mặc định
+                    rằng lỗi chắc chắn nằm trong chính module DCM. Cần lần theo toàn bộ
+                    đường request và response.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Những hướng kiểm tra ban đầu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tester không nhận được response</td>
+                            <td>Kiểm tra đường truyền, cấu hình communication/transport, PduR, cấu hình DCM và thời gian xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Tester nhận negative response</td>
+                            <td>Đọc NRC và đối chiếu service, session, security, request format cùng các điều kiện xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Đọc DID nhưng dữ liệu không đúng</td>
+                            <td>Kiểm tra DID mapping, nguồn dữ liệu, interface và phần triển khai cung cấp giá trị.</td>
+                        </tr>
+                        <tr>
+                            <td>Yêu cầu đọc DTC không đúng kết quả kỳ vọng</td>
+                            <td>Kiểm tra dịch vụ DCM, cấu hình và dữ liệu do DEM quản lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Dịch vụ hoạt động ở ECU này nhưng không hoạt động ở ECU khác</td>
+                            <td>So sánh cấu hình, dịch vụ được hỗ trợ, interface, phiên bản module và các điều kiện dự án.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là các hướng kiểm tra ban đầu, không phải quy tắc kết luận nguyên nhân.
+                    Chẩn đoán chính xác cần dựa trên log, trace, cấu hình và kết quả kiểm thử thực tế.
+                </p>
+
+                <h2>26. Checklist khi tìm hiểu một hệ thống DCM</h2>
+
+                <ul>
+                    <li>DCM đang sử dụng phiên bản AUTOSAR nào?</li>
+                    <li>ECU hỗ trợ protocol chẩn đoán nào?</li>
+                    <li>Những diagnostic service nào đã được cấu hình?</li>
+                    <li>Request được định tuyến từ communication stack đến DCM như thế nào?</li>
+                    <li>DCM lấy dữ liệu từ DEM, Application Software hoặc module nào khác?</li>
+                    <li>Những điều kiện session, security và timing nào áp dụng cho dịch vụ?</li>
+                    <li>Cấu hình DCM được xử lý bằng công cụ nào và đầu ra được tích hợp ra sao?</li>
+                    <li>Có thể quan sát request, response và lỗi ở những điểm nào trong hệ thống?</li>
+                </ul>
+
+                <h2>27. Lộ trình 5 bài học về DCM</h2>
+
+                <p>
+                    Chuỗi bài học này đi từ kiến trúc tổng quan đến từng thành phần
+                    và cuối cùng là quy trình cấu hình, sinh code.
+                </p>
+
+                <ol>
+                    <li>
+                        <strong>Bài 25: DCM</strong> — Khái niệm, vị trí, trách nhiệm
+                        và luồng xử lý diagnostic communication.
+                    </li>
+                    <li>
+                        <strong>Bài 26: DCM - Diagnostic Session Layer (DSL)</strong> —
+                        Quản lý session, trạng thái chẩn đoán, timing và luồng request/response.
+                    </li>
+                    <li>
+                        <strong>Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</strong> —
+                        Điều phối service request và các kiểm tra liên quan đến việc dispatch.
+                    </li>
+                    <li>
+                        <strong>Bài 28: DCM - Diagnostic Service Processing (DSP)</strong> —
+                        Xử lý dịch vụ, DID, routine và tương tác với nguồn dữ liệu.
+                    </li>
+                    <li>
+                        <strong>Bài 29: DCM Generator</strong> — Vai trò của generator,
+                        cấu hình DCM, đầu ra được sinh và cách tích hợp vào quá trình build.
+                    </li>
+                </ol>
+
+                <h2>28. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DCM</td>
+                            <td>Diagnostic Communication Manager.</td>
+                        </tr>
+                        <tr>
+                            <td>UDS</td>
+                            <td>Unified Diagnostic Services, bộ dịch vụ chẩn đoán được chuẩn hóa.</td>
+                        </tr>
+                        <tr>
+                            <td>SID</td>
+                            <td>Service Identifier, định danh dịch vụ trong request chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>DID</td>
+                            <td>Data Identifier, định danh một loại dữ liệu chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>DTC</td>
+                            <td>Diagnostic Trouble Code, mã lỗi chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>DEM</td>
+                            <td>Diagnostic Event Manager.</td>
+                        </tr>
+                        <tr>
+                            <td>PduR</td>
+                            <td>PDU Router.</td>
+                        </tr>
+                        <tr>
+                            <td>DSL</td>
+                            <td>Diagnostic Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Diagnostic Service Dispatcher.</td>
+                        </tr>
+                        <tr>
+                            <td>DSP</td>
+                            <td>Diagnostic Service Processing.</td>
+                        </tr>
+                        <tr>
+                            <td>NRC</td>
+                            <td>Negative Response Code, mã thể hiện lý do phản hồi âm.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>29. Những điểm dễ nhầm lẫn</h2>
+
+                <ul>
+                    <li>
+                        <strong>DCM không đồng nghĩa với DEM:</strong>
+                        DCM quản lý giao tiếp chẩn đoán; DEM quản lý diagnostic event
+                        và những dữ liệu lỗi thuộc phạm vi của DEM.
+                    </li>
+                    <li>
+                        <strong>DCM không thay thế Communication Stack:</strong>
+                        Request và response vẫn cần được truyền qua các module giao tiếp phù hợp.
+                    </li>
+                    <li>
+                        <strong>Dịch vụ được hỗ trợ không đồng nghĩa luôn được phép thực hiện:</strong>
+                        Session, security và điều kiện riêng của dịch vụ vẫn có thể được áp dụng.
+                    </li>
+                    <li>
+                        <strong>DSP không đồng nghĩa với toàn bộ DCM:</strong>
+                        DSL và DSD còn đảm nhận các trách nhiệm khác trong kiến trúc nội bộ.
+                    </li>
+                    <li>
+                        <strong>Generator không tự tạo toàn bộ chức năng ứng dụng:</strong>
+                        Logic cung cấp dữ liệu và các thao tác đặc thù vẫn phụ thuộc vào thiết kế,
+                        interface và code của dự án.
+                    </li>
+                </ul>
+
+                <h2>30. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        DCM (Diagnostic Communication Manager) là module thuộc
+                        BSW Service Layer trong AUTOSAR Classic, cung cấp cơ chế
+                        giao tiếp và xử lý dịch vụ chẩn đoán giữa tester và ECU.
+                    </p>
+
+                    <p>
+                        DCM tiếp nhận request thông qua đường giao tiếp đã cấu hình,
+                        phối hợp xử lý dịch vụ và chuẩn bị response. Trong quá trình đó,
+                        DCM có thể tương tác với PduR, DEM, Application Software và
+                        các module BSW liên quan.
+                    </p>
+
+                    <p>
+                        DCM gồm ba sub-module chính là DSL, DSD và DSP.
+                        Bài 25 chỉ giới thiệu vai trò tổng quát của chúng;
+                        các bài 26, 27 và 28 sẽ đi sâu vào từng thành phần.
+                        Bài 29 sẽ tập trung vào DCM Generator.
+                    </p>
+
+                    <p>
+                        Khi phân tích DCM, hãy luôn phân biệt ba vấn đề:
+                        request được truyền đến ECU như thế nào, DCM xử lý
+                        yêu cầu theo những điều kiện nào, và dữ liệu hoặc hành động
+                        thực tế được cung cấp bởi thành phần nào.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a href="lesson-24.html">← Bài trước</a>
+                    <a href="lesson-26.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

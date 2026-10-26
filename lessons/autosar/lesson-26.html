@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 26: DCM - Diagnostic Session Layer (DSL) | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html" class="active" aria-current="page">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 26: DCM - Diagnostic Session Layer (DSL)</h1>
+
+                <p>
+                    Trong bài trước, chúng ta đã biết DCM (Diagnostic Communication Manager)
+                    là module thuộc BSW Service Layer, chịu trách nhiệm quản lý giao tiếp
+                    chẩn đoán giữa diagnostic tester và ECU.
+                </p>
+
+                <p>
+                    Trong nội bộ DCM, <strong>DSL (Diagnostic Session Layer)</strong>
+                    đảm nhận các chức năng liên quan đến luồng request/response, timing
+                    của giao tiếp chẩn đoán và quản lý các trạng thái chẩn đoán như
+                    diagnostic session, security level và authentication state.
+                </p>
+
+                <p>
+                    DSL không chỉ quản lý Session như tên gọi có thể khiến chúng ta nghĩ.
+                    Đây là một thành phần có phạm vi rộng hơn, giúp DCM phối hợp việc
+                    tiếp nhận request, truyền response và duy trì hành vi giao tiếp
+                    đúng theo các quy tắc chẩn đoán.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào kiến trúc và hành vi của DSL, các loại
+                    diagnostic session, timing, TesterPresent, trạng thái bảo mật,
+                    tương tác giữa các module và phương pháp debug. Các quy tắc
+                    dispatching của DSD và xử lý chi tiết từng dịch vụ của DSP sẽ
+                    được dành cho Bài 27 và Bài 28.
+                </div>
+
+                <h2>1. DSL là gì?</h2>
+
+                <p>
+                    DSL là viết tắt của <strong>Diagnostic Session Layer</strong>.
+                    Đây là một sub-module của DCM trong AUTOSAR Classic, chịu trách
+                    nhiệm quản lý nhiều khía cạnh của diagnostic communication.
+                </p>
+
+                <p>Các nhóm trách nhiệm chính của DSL bao gồm:</p>
+
+                <ul>
+                    <li>Chuyển diagnostic request đến DSD và nhận yêu cầu truyền response.</li>
+                    <li>Quản lý diagnostic session và theo dõi các non-default session.</li>
+                    <li>Giám sát các giới hạn thời gian của diagnostic communication.</li>
+                    <li>Hỗ trợ hành vi response theo quy tắc chẩn đoán.</li>
+                    <li>Quản lý security level và authentication state theo thiết kế của DCM.</li>
+                    <li>Phối hợp với các module giao tiếp và quản lý communication mode liên quan.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, khi tìm hiểu DSL, cần xem nó là thành phần hỗ trợ quản lý
+                    cả trạng thái lẫn luồng giao tiếp chẩn đoán, chứ không chỉ là nơi
+                    lưu giá trị Session hiện tại.
+                </p>
+
+                <h2>2. Vị trí của DSL trong kiến trúc DCM</h2>
+
+                <p>
+                    DSL nằm bên trong DCM và có quan hệ trực tiếp với DSD.
+                    Dữ liệu chẩn đoán đi qua PduR để đến DCM; DSL tiếp nhận và
+                    điều phối luồng dữ liệu này đến thành phần dispatching.
+                </p>
+
+                <pre><code>           Diagnostic Tester
+                    |
+                    v
+          Communication / Transport
+                    |
+                    v
+                   PduR
+                    |
+                    v
+             +-------------+
+             |     DCM     |
+             |-------------|
+             |     DSL     |
+             |      |      |
+             |      v      |
+             |     DSD     |
+             |      |      |
+             |      v      |
+             |     DSP     |
+             +-------------+
+                    |
+                    v
+       Response quay lại qua DSL
+                    |
+                    v
+                   PduR
+                    |
+                    v
+           Diagnostic Tester</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái niệm. Nó nhằm thể hiện vai trò điều phối của DSL,
+                    không mô tả đầy đủ tất cả các interface hoặc đường gọi nội bộ
+                    trong mọi cấu hình AUTOSAR.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    DSL quản lý luồng giao tiếp và trạng thái; DSD điều phối việc
+                    lựa chọn dịch vụ; DSP xử lý nội dung của những dịch vụ thuộc
+                    phạm vi xử lý của nó.
+                </div>
+
+                <h2>3. Tại sao cần DSL?</h2>
+
+                <p>
+                    Một diagnostic request không chỉ cần được chuyển đến đúng module.
+                    ECU còn phải đảm bảo request được tiếp nhận, xử lý và phản hồi
+                    theo trạng thái chẩn đoán và các giới hạn thời gian phù hợp.
+                </p>
+
+                <p>
+                    Ví dụ, một dịch vụ có thể chỉ được phép thực hiện khi ECU đang
+                    ở Extended Diagnostic Session. Một routine khác có thể mất nhiều
+                    thời gian nên không thể luôn trả kết quả ngay lập tức. Tester cũng
+                    cần biết ECU còn duy trì phiên chẩn đoán hay đã quay lại trạng thái
+                    mặc định.
+                </p>
+
+                <p>
+                    DSL giúp tập trung các trách nhiệm liên quan đến session, timing
+                    và luồng truyền nhận vào một thành phần chung. Nhờ đó, các phần
+                    xử lý dịch vụ không phải tự triển khai toàn bộ cơ chế quản lý
+                    giao tiếp chẩn đoán.
+                </p>
+
+                <h2>4. Các nhóm chức năng chính của DSL</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm chức năng</th>
+                            <th>Trách nhiệm khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Request handling</td>
+                            <td>Tiếp nhận và chuyển request đến DSD theo luồng xử lý của DCM.</td>
+                        </tr>
+                        <tr>
+                            <td>Response handling</td>
+                            <td>Điều phối việc gửi response từ DCM ra đường giao tiếp.</td>
+                        </tr>
+                        <tr>
+                            <td>Session management</td>
+                            <td>Quản lý session hiện tại và thời hạn của non-default session.</td>
+                        </tr>
+                        <tr>
+                            <td>Timing management</td>
+                            <td>Theo dõi giới hạn thời gian như P2Server, P2*Server và S3Server.</td>
+                        </tr>
+                        <tr>
+                            <td>Security state management</td>
+                            <td>Quản lý security level và cung cấp trạng thái liên quan cho những thành phần cần truy cập.</td>
+                        </tr>
+                        <tr>
+                            <td>Authentication state</td>
+                            <td>Quản lý trạng thái authentication theo diagnostic connection khi được hỗ trợ và cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>Protocol and communication handling</td>
+                            <td>Hỗ trợ quản lý protocol, tài nguyên xử lý và các yêu cầu communication liên quan đến diagnostic activity.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Phạm vi triển khai và các tính năng được sử dụng phụ thuộc phiên bản
+                    AUTOSAR, cấu hình ECU và các diagnostic protocol được hỗ trợ.
+                </p>
+
+                <h2>5. Luồng tiếp nhận diagnostic request</h2>
+
+                <p>
+                    Hãy xem một request từ tester đi vào ECU. Sau khi communication
+                    và transport stack tiếp nhận dữ liệu, request được chuyển đến PduR
+                    rồi đi vào DCM.
+                </p>
+
+                <pre><code>Tester gửi request
+        |
+        v
+Communication / Transport
+        |
+        v
+       PduR
+        |
+        v
+       DSL
+        |
+        | Chuyển request và dữ liệu
+        v
+       DSD
+        |
+        | Điều phối dịch vụ phù hợp
+        v
+       DSP / thành phần xử lý liên quan</code></pre>
+
+                <p>
+                    DSL tham gia ở phần quản lý đường đi của request và phối hợp với DSD.
+                    Việc một SID có được hỗ trợ hay một dịch vụ được phép thực hiện trong
+                    session hiện tại là những vấn đề có liên quan đến quá trình dispatching
+                    và được phân tích kỹ hơn trong Bài 27.
+                </p>
+
+                <p>
+                    Nếu DCM đang xử lý một request trên cùng connection mà một request
+                    mới không được chấp nhận theo quy tắc đang áp dụng, request mới có
+                    thể bị từ chối. Hành vi chính xác phụ thuộc protocol, trạng thái
+                    xử lý và các yêu cầu tương ứng.
+                </p>
+
+                <h2>6. Luồng truyền diagnostic response</h2>
+
+                <p>
+                    Sau khi quá trình xử lý dịch vụ tạo ra kết quả, response được
+                    chuyển qua DSD đến DSL. DSL phối hợp việc truyền response từ DCM
+                    ra PduR, sau đó dữ liệu đi qua communication stack để trở lại tester.
+                </p>
+
+                <pre><code>DSP / thành phần xử lý
+        |
+        v
+       DSD
+        |
+        | Yêu cầu truyền response
+        v
+       DSL
+        |
+        v
+       PduR
+        |
+        v
+Communication / Transport
+        |
+        v
+       Tester</code></pre>
+
+                <p>
+                    Quá trình truyền response có thể cần phối hợp với transport layer,
+                    đặc biệt khi dữ liệu phản hồi lớn hoặc cần được phân đoạn thành
+                    nhiều phần. DSL quản lý phần hành vi response thuộc phạm vi DCM,
+                    trong khi việc truyền tải ở cấp giao thức được thực hiện bởi các
+                    module giao tiếp tương ứng.
+                </p>
+
+                <h2>7. Diagnostic Session là gì?</h2>
+
+                <p>
+                    Diagnostic Session là trạng thái chẩn đoán xác định bối cảnh
+                    hoạt động của một phần chức năng chẩn đoán trong ECU. Session
+                    hiện tại có thể ảnh hưởng đến những dịch vụ mà tester được phép
+                    yêu cầu.
+                </p>
+
+                <p>
+                    Ví dụ, một ECU có thể hỗ trợ đọc một số dữ liệu ở Default Session,
+                    nhưng yêu cầu chuyển sang Extended Diagnostic Session trước khi
+                    cho phép thực hiện các dịch vụ nâng cao hơn.
+                </p>
+
+                <p>
+                    DSL quản lý trạng thái session để những thành phần cần thông tin
+                    đó có thể áp dụng đúng điều kiện. DSL không thay thế phần kiểm tra
+                    toàn bộ điều kiện của từng dịch vụ; việc dispatching và xử lý dịch
+                    vụ vẫn liên quan đến các thành phần khác trong DCM.
+                </p>
+
+                <h2>8. Default Session và Non-default Session</h2>
+
+                <p>
+                    Trong UDS, có thể phân biệt Default Session và các non-default
+                    session. Những session được hỗ trợ phụ thuộc cấu hình và yêu cầu
+                    của ECU.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Session</th>
+                            <th>Ý nghĩa khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Default Session</td>
+                            <td>Session mặc định của hoạt động chẩn đoán. ECU khởi đầu với trạng thái session này theo mô hình thông thường.</td>
+                        </tr>
+                        <tr>
+                            <td>Extended Diagnostic Session</td>
+                            <td>Session có thể cung cấp thêm các dịch vụ chẩn đoán so với Default Session, tùy cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>Programming Session</td>
+                            <td>Session có thể được sử dụng cho các chức năng lập trình hoặc cập nhật phần mềm nếu ECU hỗ trợ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Không phải mọi ECU đều hỗ trợ mọi loại session. Số lượng dịch vụ
+                    có sẵn và các điều kiện truy cập trong từng session cũng không
+                    giống nhau giữa các dự án.
+                </p>
+
+                <h2>9. Thay đổi Session qua DiagnosticSessionControl</h2>
+
+                <p>
+                    Trong UDS, dịch vụ <strong>DiagnosticSessionControl (SID 0x10)</strong>
+                    được dùng để yêu cầu chuyển sang một diagnostic session được hỗ trợ.
+                </p>
+
+                <p>
+                    Ví dụ, tester yêu cầu Extended Diagnostic Session. ECU xử lý
+                    request theo những quy tắc tương ứng, và nếu yêu cầu được chấp nhận,
+                    trạng thái session được thay đổi theo quy trình của DCM.
+                </p>
+
+                <pre><code>Tester
+  |
+  | DiagnosticSessionControl (0x10)
+  | Yêu cầu Extended Session
+  v
+DCM
+  |
+  | Xử lý request và điều kiện liên quan
+  v
+Session được chấp nhận?
+  |
+  +---- Không ----> Phản hồi theo quy tắc chẩn đoán
+  |
+  +---- Có -------> Cập nhật session
+                    |
+                    v
+                 Response
+                    |
+                    v
+                  Tester</code></pre>
+
+                <p>
+                    Đây là luồng minh họa. Việc đánh giá SID, sub-function và các điều
+                    kiện riêng của dịch vụ được thực hiện theo cấu hình và trách nhiệm
+                    của các thành phần DCM liên quan.
+                </p>
+
+                <h2>10. S3Server là gì?</h2>
+
+                <p>
+                    <strong>S3Server</strong> là tham số timing liên quan đến việc duy trì
+                    non-default session. Nó giúp ECU phát hiện trường hợp tester không
+                    tiếp tục hoạt động chẩn đoán trong khoảng thời gian được quy định.
+                </p>
+
+                <p>
+                    Khi một non-default session đang hoạt động, DSL theo dõi trạng thái
+                    duy trì session theo quy tắc của diagnostic protocol. Nếu S3Server
+                    hết hạn, DCM chuyển về Default Session theo hành vi được quy định.
+                </p>
+
+                <p>
+                    Vì vậy, S3Server không phải là thời gian tối đa để hoàn thành một
+                    diagnostic request. Nó liên quan đến việc duy trì session, trong khi
+                    P2Server và P2*Server liên quan đến thời gian phản hồi.
+                </p>
+
+                <h2>11. Ví dụ về S3Server</h2>
+
+                <p>
+                    Giả sử tester đã yêu cầu chuyển ECU từ Default Session sang
+                    Extended Diagnostic Session. Sau khi session mới được kích hoạt,
+                    ECU vẫn cần theo dõi hoạt động chẩn đoán tiếp theo.
+                </p>
+
+                <pre><code>Tester yêu cầu Extended Session
+              |
+              v
+       ECU chuyển Session
+              |
+              v
+     Non-default Session đang hoạt động
+              |
+              v
+     DSL theo dõi S3Server
+              |
+       +------+------+
+       |             |
+ Có hoạt động     Hết thời hạn
+ theo quy tắc      S3Server
+       |             |
+       v             v
+Duy trì session  Quay về Default Session</code></pre>
+
+                <p>
+                    Sơ đồ trên chỉ mô tả nguyên tắc. Các điều kiện khởi động,
+                    đặt lại hoặc dừng timer phải tuân theo yêu cầu protocol và
+                    cấu hình DCM; không nên giả định rằng mọi sự kiện đều đặt lại
+                    timer theo cùng một cách.
+                </p>
+
+                <h2>12. P2Server và P2*Server là gì?</h2>
+
+                <p>
+                    Ngoài session timeout, diagnostic communication còn có những
+                    giới hạn về thời gian phản hồi. Hai nhóm tham số thường gặp là
+                    <strong>P2Server</strong> và <strong>P2*Server</strong>.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tham số</th>
+                            <th>Ý nghĩa khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>P2Server</td>
+                            <td>Giới hạn thời gian phản hồi ban đầu của ECU đối với một request theo quy tắc timing được áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>P2*Server</td>
+                            <td>Giới hạn thời gian phản hồi mở rộng được áp dụng khi quá trình xử lý tiếp tục theo cơ chế ResponsePending.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong cấu hình thực tế, tên tham số thường xuất hiện dưới dạng
+                    P2ServerMax và P2StarServerMax. Các giá trị cụ thể phụ thuộc
+                    protocol, session và cấu hình của ECU.
+                </p>
+
+                <p>
+                    P2Server và P2*Server không phải là thời gian timeout của
+                    CAN Driver. Chúng thuộc phạm vi timing của diagnostic communication
+                    ở phía ứng dụng chẩn đoán, trong khi các lớp transport có quy tắc
+                    timing riêng.
+                </p>
+
+                <h2>13. Mối quan hệ giữa P2Server và P2*Server</h2>
+
+                <p>
+                    Giả sử tester yêu cầu một dịch vụ có thể trả kết quả nhanh.
+                    ECU nên cung cấp response theo giới hạn thời gian P2 đang áp dụng.
+                </p>
+
+                <p>
+                    Tuy nhiên, một số thao tác có thể cần thời gian lâu hơn, chẳng hạn
+                    một routine mất nhiều thời gian để hoàn thành. Nếu quy tắc của dịch vụ
+                    cho phép, ECU có thể thông báo rằng quá trình xử lý vẫn đang tiếp tục
+                    và áp dụng cơ chế timing mở rộng.
+                </p>
+
+                <pre><code>Tester gửi request
+        |
+        v
+ECU bắt đầu xử lý
+        |
+        | Trong giới hạn P2
+        |
+        +---- Hoàn thành ----> Response cuối cùng
+        |
+        +---- Chưa hoàn thành
+                    |
+                    v
+       ResponsePending (NRC 0x78)
+                    |
+                    v
+       Tiếp tục xử lý theo P2*
+                    |
+             +------+------+
+             |             |
+       Hoàn thành       Chưa hoàn thành
+             |             |
+             v             v
+       Final response   Áp dụng hành vi
+                        theo quy tắc timing</code></pre>
+
+                <p>
+                    NRC 0x78 là một negative response mang ý nghĩa
+                    <strong>Response Pending</strong>. Nó cho biết ECU chưa hoàn tất
+                    việc xử lý request và sẽ tiếp tục xử lý theo quy tắc của giao thức.
+                </p>
+
+                <p>
+                    Không nên hiểu P2* là quyền xử lý vô thời hạn. Số lần phản hồi
+                    pending, timing tiếp theo và các điều kiện kết thúc phải tuân theo
+                    tiêu chuẩn và cấu hình áp dụng.
+                </p>
+
+                <h2>14. Phân biệt S3Server, P2Server và P2*Server</h2>
+
+                <p>
+                    Đây là ba khái niệm rất dễ nhầm lẫn khi mới tìm hiểu DSL.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tham số</th>
+                            <th>Câu hỏi được giải quyết</th>
+                            <th>Phạm vi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>S3Server</td>
+                            <td>Non-default session có được duy trì hay đã hết thời hạn?</td>
+                            <td>Session inactivity / session maintenance.</td>
+                        </tr>
+                        <tr>
+                            <td>P2Server</td>
+                            <td>ECU phản hồi ban đầu trong giới hạn thời gian cho phép hay không?</td>
+                            <td>Initial response timing.</td>
+                        </tr>
+                        <tr>
+                            <td>P2*Server</td>
+                            <td>ECU tiếp tục phản hồi theo giới hạn timing mở rộng như thế nào?</td>
+                            <td>Extended response timing sau ResponsePending.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một request có thể được xử lý trong non-default session và đồng thời
+                    chịu những quy tắc timing P2/P2*. Nhưng các tham số này giải quyết
+                    những vấn đề khác nhau và không thể thay thế cho nhau.
+                </p>
+
+                <h2>15. TesterPresent là gì?</h2>
+
+                <p>
+                    <strong>TesterPresent (SID 0x3E)</strong> là dịch vụ UDS thường được
+                    sử dụng để thông báo rằng tester vẫn đang duy trì hoạt động chẩn đoán.
+                    Trong bối cảnh session management, dịch vụ này liên quan đến cơ chế
+                    giữ session hoạt động khi tester cần tiếp tục làm việc.
+                </p>
+
+                <p>
+                    Ví dụ, tester chuyển ECU sang Extended Diagnostic Session rồi
+                    thực hiện một chuỗi thao tác. Nếu không còn hoạt động chẩn đoán
+                    theo quy tắc trong khoảng thời gian S3Server, ECU có thể quay về
+                    Default Session.
+                </p>
+
+                <p>
+                    TesterPresent có thể được sử dụng trong tình huống phù hợp để
+                    hỗ trợ duy trì hoạt động chẩn đoán. Tuy nhiên, tester vẫn phải
+                    xử lý đúng các yêu cầu timing và trạng thái response của ECU.
+                </p>
+
+                <h2>16. Ví dụ về TesterPresent và session timeout</h2>
+
+                <pre><code>Tester                           ECU
+   |                              |
+   |-- DiagnosticSessionControl ->|
+   |   Yêu cầu session mới        |
+   |                              |
+   |<--------- Response ----------|
+   |                              |
+   |-- TesterPresent (0x3E) ----->|
+   |                              |
+   |<------ Response/behavior ----|
+   |                              |
+   |  Tiếp tục diagnostic work    |
+   |                              |
+   |-- TesterPresent (0x3E) ----->|
+   |                              |
+   |<------ Response/behavior ----|
+   |                              |
+   |  Không còn hoạt động theo    |
+   |  quy tắc trong thời hạn      |
+   |                              |
+   |                     S3Server hết hạn
+   |                              |
+   |                     ECU về Default Session</code></pre>
+
+                <p>
+                    Response của TesterPresent phụ thuộc vào sub-function và quy tắc
+                    suppression nếu được sử dụng. Vì vậy, không nên giả định rằng mọi
+                    request TesterPresent đều phải tạo ra một response giống nhau.
+                </p>
+
+                <h2>17. Security Level trong DSL</h2>
+
+                <p>
+                    Security Level thể hiện trạng thái truy cập bảo mật của ECU
+                    trong cơ chế chẩn đoán. Một số dịch vụ có thể yêu cầu security
+                    level nhất định trước khi được phép thực hiện.
+                </p>
+
+                <p>
+                    DSL quản lý trạng thái security level theo mô hình của DCM
+                    và cung cấp thông tin đó cho những thành phần cần sử dụng.
+                    Việc đánh giá dịch vụ có được phép thực hiện hay không còn phụ
+                    thuộc quy tắc dispatching, cấu hình và các điều kiện liên quan.
+                </p>
+
+                <p>
+                    Trong UDS, SecurityAccess (SID 0x27) là một dịch vụ liên quan
+                    đến cơ chế truy cập bảo vệ. Tuy nhiên, không nên xem Security Level
+                    là đồng nghĩa với việc mọi yêu cầu đã được xác thực hoặc mọi điều
+                    kiện bảo vệ đều đã được đáp ứng.
+                </p>
+
+                <h2>18. Security Level khác Diagnostic Session như thế nào?</h2>
+
+                <p>
+                    Session và Security Level là hai trạng thái khác nhau.
+                    Chúng có thể cùng được sử dụng khi đánh giá điều kiện thực hiện
+                    một diagnostic service.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Diagnostic Session</td>
+                            <td>Xác định bối cảnh session mà ECU đang sử dụng cho hoạt động chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>Security Level</td>
+                            <td>Biểu thị trạng thái truy cập trong cơ chế security áp dụng cho chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>Authentication State</td>
+                            <td>Biểu thị trạng thái xác thực của một connection theo cơ chế authentication được hỗ trợ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một dịch vụ có thể yêu cầu đồng thời session phù hợp và một
+                    security level cụ thể. Trong những hệ thống hỗ trợ authentication,
+                    trạng thái authentication có thể là điều kiện riêng.
+                </p>
+
+                <h2>19. Authentication State và Diagnostic Session</h2>
+
+                <p>
+                    Trong các phiên bản AUTOSAR và cấu hình hỗ trợ authentication,
+                    DSL còn quản lý authentication state theo diagnostic connection.
+                    Trạng thái này không giống Diagnostic Session hay Security Level.
+                </p>
+
+                <p>
+                    Authentication State phản ánh trạng thái xác thực trong cơ chế
+                    authentication tương ứng. Việc quản lý trạng thái theo connection
+                    giúp DCM phân biệt các kết nối chẩn đoán khi kiến trúc yêu cầu.
+                </p>
+
+                <p>
+                    Không phải mọi ECU đều triển khai cùng một cơ chế authentication.
+                    Khi đọc tài liệu dự án, cần kiểm tra phiên bản AUTOSAR, các dịch vụ
+                    được hỗ trợ và cách các trạng thái này được cấu hình.
+                </p>
+
+                <h2>20. DSL quản lý request buffer như thế nào?</h2>
+
+                <p>
+                    Diagnostic request được truyền dưới dạng dữ liệu. Tùy protocol,
+                    request có thể đến trong một lần truyền hoặc được vận chuyển qua
+                    nhiều phần dữ liệu.
+                </p>
+
+                <p>
+                    DSL phối hợp với PduR và các cơ chế liên quan để nhận dữ liệu,
+                    kiểm tra khả năng tiếp nhận theo tài nguyên hiện có và chuyển request
+                    đến phần dispatching của DCM.
+                </p>
+
+                <p>
+                    Nếu dữ liệu không thể được tiếp nhận theo điều kiện của hệ thống,
+                    chẳng hạn vượt quá dung lượng buffer được cấu hình hoặc xung đột
+                    với request đang được xử lý, việc tiếp nhận có thể không được chấp nhận.
+                    Hành vi cụ thể phụ thuộc trạng thái và quy tắc đang áp dụng.
+                </p>
+
+                <div class="note">
+                    <strong>Phân biệt quan trọng:</strong>
+                    DSL quản lý việc tiếp nhận và điều phối dữ liệu chẩn đoán ở phạm vi
+                    DCM. CanTp hoặc transport module phù hợp mới đảm nhận các chức năng
+                    truyền tải và phân đoạn dữ liệu theo protocol của network.
+                </div>
+
+                <h2>21. DSL phối hợp với PduR như thế nào?</h2>
+
+                <p>
+                    PduR chuyển tiếp PDU giữa những module được kết nối theo cấu hình.
+                    Trong đường chẩn đoán, PduR cung cấp dữ liệu request đến DCM
+                    và là một phần của đường truyền response quay trở lại network.
+                </p>
+
+                <p>
+                    DSL thực hiện phần xử lý thuộc trách nhiệm DCM: phối hợp nhận request,
+                    chuyển dữ liệu tới DSD và điều phối đường phát response. Điều này
+                    không có nghĩa DSL tự đảm nhận mọi công việc định tuyến ở tầng PDU.
+                </p>
+
+                <pre><code>Request:
+Communication / Transport
+           |
+           v
+          PduR
+           |
+           v
+          DSL
+           |
+           v
+          DSD
+
+Response:
+          DSD
+           |
+           v
+          DSL
+           |
+           v
+          PduR
+           |
+           v
+Communication / Transport</code></pre>
+
+                <h2>22. DSL phối hợp với DSD và DSP như thế nào?</h2>
+
+                <p>
+                    DSL, DSD và DSP là ba sub-module với trách nhiệm khác nhau.
+                    Một request cần sự phối hợp giữa chúng thay vì một sub-module
+                    tự xử lý toàn bộ quá trình.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Vai trò trong luồng xử lý</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSL</td>
+                            <td>Quản lý luồng request/response, timing và các trạng thái chẩn đoán liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Phân tích request và điều phối việc xử lý diagnostic service theo cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>DSP</td>
+                            <td>Thực hiện phần xử lý các dịch vụ thuộc phạm vi của DSP, như lấy dữ liệu hoặc phối hợp với các module liên quan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, khi nhận được request đọc DID, DSL giúp đưa request vào
+                    luồng xử lý. DSD xử lý việc dispatch dịch vụ, còn phần xử lý
+                    dịch vụ liên quan đến việc lấy dữ liệu theo cấu hình thuộc trách
+                    nhiệm của DSP hoặc thành phần được kết nối.
+                </p>
+
+                <h2>23. DSL và ComM</h2>
+
+                <p>
+                    ComM (Communication Manager) quản lý các yêu cầu và trạng thái
+                    communication trong ECU. DSL có những tương tác với ComM để hỗ trợ
+                    hành vi communication cần thiết cho hoạt động chẩn đoán.
+                </p>
+
+                <p>
+                    Trong quá trình chẩn đoán, ECU có thể cần duy trì trạng thái giao tiếp
+                    phù hợp để tester tiếp tục gửi request và nhận response. DSL phối hợp
+                    với những chức năng liên quan để đáp ứng yêu cầu communication thuộc
+                    phạm vi của DCM.
+                </p>
+
+                <p>
+                    Mối quan hệ cụ thể phụ thuộc hệ thống. Không nên suy luận rằng chỉ
+                    cần thay đổi Diagnostic Session là toàn bộ communication mode của ECU
+                    chắc chắn sẽ thay đổi theo một cách cố định.
+                </p>
+
+                <h2>24. Communication Mode và Diagnostic Activity</h2>
+
+                <p>
+                    Ở góc nhìn hệ thống, communication có thể được quản lý theo những
+                    mode khác nhau, chẳng hạn Full Communication, Silent Communication
+                    và No Communication.
+                </p>
+
+                <p>
+                    DSL phối hợp những yêu cầu communication liên quan đến chẩn đoán
+                    theo cấu hình. Khả năng gửi hoặc nhận dữ liệu còn phụ thuộc các
+                    module giao tiếp, trạng thái ECU và điều kiện hoạt động thực tế.
+                </p>
+
+                <p>
+                    Vì vậy, nếu diagnostic tester không giao tiếp được với ECU, không
+                    nên chỉ kiểm tra Session hoặc SID. Cần kiểm tra thêm đường truyền,
+                    trạng thái communication và trạng thái chẩn đoán của ECU.
+                </p>
+
+                <h2>25. Ví dụ hoàn chỉnh: Đọc DID trong Extended Session</h2>
+
+                <p>
+                    Hãy xem một tình huống đơn giản. ECU hỗ trợ một DID trong
+                    Extended Diagnostic Session, nhưng DID đó không được phép đọc
+                    ở Default Session theo cấu hình ví dụ.
+                </p>
+
+                <ol>
+                    <li>ECU bắt đầu ở Default Session.</li>
+                    <li>Tester gửi DiagnosticSessionControl (0x10) để yêu cầu Extended Session.</li>
+                    <li>DCM xử lý request và cập nhật session nếu yêu cầu được chấp nhận.</li>
+                    <li>DSL theo dõi trạng thái non-default session và S3Server theo cấu hình.</li>
+                    <li>Tester gửi request đọc DID được hỗ trợ trong Extended Session.</li>
+                    <li>DSL chuyển request vào đường xử lý nội bộ của DCM.</li>
+                    <li>DSD điều phối dịch vụ; DSP hoặc thành phần được cấu hình lấy dữ liệu.</li>
+                    <li>Response quay lại qua DCM và được truyền đến tester.</li>
+                    <li>Nếu non-default session hết thời hạn theo quy tắc S3Server, ECU trở về Default Session.</li>
+                </ol>
+
+                <pre><code>Default Session
+       |
+       | DiagnosticSessionControl (0x10)
+       v
+Extended Session
+       |
+       | DSL duy trì session và theo dõi timing
+       v
+Read DID Request
+       |
+       v
+DSL -> DSD -> DSP / Data Provider
+       |
+       v
+Diagnostic Response
+       |
+       v
+Tester
+
+Nếu S3Server hết hạn theo quy tắc:
+Extended Session -> Default Session</code></pre>
+
+                <p>
+                    Ví dụ này thể hiện việc DSL đồng hành với luồng chẩn đoán,
+                    nhưng không có nghĩa DSL tự đọc DID hoặc tự thực hiện toàn bộ
+                    việc kiểm tra điều kiện của dịch vụ.
+                </p>
+
+                <h2>26. Các lỗi thường gặp liên quan đến DSL</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Hướng kiểm tra ban đầu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ECU quay về Default Session sớm hơn dự kiến</td>
+                            <td>Kiểm tra S3Server, hành vi TesterPresent, trạng thái session và quy tắc timing được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>Tester báo timeout khi chờ response</td>
+                            <td>Đối chiếu P2/P2*, thời gian xử lý dịch vụ, response pending và timing của transport.</td>
+                        </tr>
+                        <tr>
+                            <td>Request không đến được DSD</td>
+                            <td>Kiểm tra đường truyền từ communication stack qua PduR, cấu hình routing và trạng thái tiếp nhận của DCM.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU từ chối request mới</td>
+                            <td>Kiểm tra request trước đã hoàn tất chưa, connection đang hoạt động và các quy tắc tiếp nhận request.</td>
+                        </tr>
+                        <tr>
+                            <td>Session đúng nhưng dịch vụ vẫn bị từ chối</td>
+                            <td>Kiểm tra thêm security level, authentication state, điều kiện dịch vụ và các kiểm tra của DSD.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU không giao tiếp theo dự kiến</td>
+                            <td>Kiểm tra ComM, communication mode, transport, PduR và trạng thái hoạt động của ECU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là những hướng điều tra ban đầu, không phải kết luận nguyên nhân.
+                    Chẩn đoán chính xác cần dựa trên log, trace, cấu hình và kết quả kiểm thử
+                    thực tế của dự án.
+                </p>
+
+                <h2>27. Checklist khi phân tích DSL</h2>
+
+                <ul>
+                    <li>Session ban đầu của ECU là gì?</li>
+                    <li>Những non-default session nào được hỗ trợ?</li>
+                    <li>Giá trị và điều kiện áp dụng của S3Server là gì?</li>
+                    <li>P2Server và P2*Server được cấu hình như thế nào?</li>
+                    <li>TesterPresent có được xử lý theo đúng quy tắc của protocol không?</li>
+                    <li>Đường request từ PduR đến DSL và DSD có hoạt động không?</li>
+                    <li>Response có được chuyển từ DCM về PduR đúng cách không?</li>
+                    <li>Security Level và Authentication State có đáp ứng điều kiện không?</li>
+                    <li>ComM và communication mode có cho phép hoạt động chẩn đoán không?</li>
+                    <li>Hiện tượng xảy ra ở DSL, DSD, DSP hay bên ngoài DCM?</li>
+                </ul>
+
+                <h2>28. Những điểm dễ nhầm lẫn</h2>
+
+                <ul>
+                    <li>
+                        <strong>DSL không chỉ quản lý Session:</strong>
+                        Nó còn quản lý timing, luồng request/response và các trạng thái
+                        chẩn đoán liên quan.
+                    </li>
+                    <li>
+                        <strong>S3Server khác P2Server:</strong>
+                        S3Server liên quan đến việc duy trì non-default session; P2Server
+                        liên quan đến thời gian phản hồi ban đầu.
+                    </li>
+                    <li>
+                        <strong>P2*Server không phải timeout vô hạn:</strong>
+                        Việc phản hồi pending và thời gian xử lý tiếp theo vẫn phải
+                        tuân theo quy tắc protocol.
+                    </li>
+                    <li>
+                        <strong>Session khác Security Level:</strong>
+                        Đây là các trạng thái riêng, có thể cùng được sử dụng để
+                        đánh giá điều kiện thực hiện dịch vụ.
+                    </li>
+                    <li>
+                        <strong>DSL không thay thế DSD/DSP:</strong>
+                        DSL quản lý luồng và trạng thái, DSD điều phối dịch vụ,
+                        còn DSP xử lý các dịch vụ thuộc phạm vi của nó.
+                    </li>
+                    <li>
+                        <strong>Timing của DCM khác timing của transport:</strong>
+                        Cần xác định timeout đang xảy ra ở tầng nào trước khi điều tra.
+                    </li>
+                </ul>
+
+                <h2>29. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSL</td>
+                            <td>Diagnostic Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>UDS</td>
+                            <td>Unified Diagnostic Services.</td>
+                        </tr>
+                        <tr>
+                            <td>SID 0x10</td>
+                            <td>DiagnosticSessionControl.</td>
+                        </tr>
+                        <tr>
+                            <td>SID 0x3E</td>
+                            <td>TesterPresent.</td>
+                        </tr>
+                        <tr>
+                            <td>S3Server</td>
+                            <td>Tham số timing liên quan đến duy trì non-default session.</td>
+                        </tr>
+                        <tr>
+                            <td>P2Server</td>
+                            <td>Timing cho phản hồi ban đầu của ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>P2*Server</td>
+                            <td>Timing phản hồi mở rộng khi xử lý tiếp tục theo cơ chế ResponsePending.</td>
+                        </tr>
+                        <tr>
+                            <td>NRC 0x78</td>
+                            <td>ResponsePending.</td>
+                        </tr>
+                        <tr>
+                            <td>Security Level</td>
+                            <td>Trạng thái truy cập trong cơ chế security của chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>Authentication State</td>
+                            <td>Trạng thái xác thực theo diagnostic connection khi được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>PduR</td>
+                            <td>PDU Router, chuyển tiếp PDU giữa các module được kết nối.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>30. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        DSL (Diagnostic Session Layer) là một sub-module của DCM,
+                        chịu trách nhiệm quản lý luồng request/response, timing và
+                        các trạng thái chẩn đoán quan trọng.
+                    </p>
+
+                    <p>
+                        Diagnostic Session xác định bối cảnh chẩn đoán hiện tại.
+                        S3Server theo dõi việc duy trì non-default session, trong
+                        khi P2Server và P2*Server liên quan đến thời gian phản hồi.
+                        TesterPresent có thể được sử dụng để hỗ trợ duy trì hoạt động
+                        chẩn đoán theo các quy tắc được áp dụng.
+                    </p>
+
+                    <p>
+                        DSL còn quản lý Security Level, authentication state khi
+                        được hỗ trợ, và phối hợp với PduR, DSD, DSP cùng những module
+                        liên quan đến communication.
+                    </p>
+
+                    <p>
+                        Khi debug, hãy phân biệt lỗi về session, response timing,
+                        security state và đường truyền request/response. Việc xác định
+                        đúng phạm vi lỗi sẽ giúp tránh nhầm trách nhiệm của DSL với
+                        DSD, DSP hoặc Communication Stack.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a href="lesson-25.html">← Bài trước</a>
+                    <a href="lesson-27.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>
