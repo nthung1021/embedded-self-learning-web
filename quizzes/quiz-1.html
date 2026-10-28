@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Kiểm tra 1: Tổng hợp 25 bài học CAN | Tự học Embedded</title>
+    <title>Kiểm tra 1: Tổng hợp CAN (100 câu) | Tự học Embedded</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
@@ -22,92 +22,145 @@
     </header>
 
     <main>
-        <h1>Kiểm tra 1: Tổng hợp 25 bài học CAN</h1>
-        <p>50 câu trắc nghiệm, mỗi câu có đúng 1 đáp án. Chọn đáp án rồi bấm "Nộp bài" để xem điểm và giải thích.</p>
+        <div class="qz-wrap">
+            <h1>Kiểm tra 1: Tổng hợp CAN (100 câu)</h1>
+            <p>100 câu trắc nghiệm về CAN, mỗi câu có đúng 1 đáp án. Thứ tự câu hỏi và đáp án được xáo trộn mỗi lần
+                tải trang. Chọn đáp án rồi bấm "Nộp bài" để xem điểm, đáp án đúng và giải thích.</p>
 
-        <form id="quiz">
-            <!-- Các câu hỏi được sinh từ mảng Q ở script bên dưới -->
-            <button class="btn" type="submit">Nộp bài</button><span id="result" role="status"></span>
-        </form>
+            <div class="qz-bar">
+                <span class="qz-count" id="qz-count">Đã trả lời 0/100</span>
+                <div class="qz-prog" aria-hidden="true"><i id="qz-fill"></i></div>
+                <button class="btn" type="button" id="qz-submit">Nộp bài</button>
+                <button class="btn ghost" type="button" id="qz-reset">Làm lại</button>
+            </div>
 
-        <p><a href="index.html">← Danh sách bài kiểm tra</a></p>
+            <div class="qz-result" id="qz-result" role="status" tabindex="-1"></div>
+
+            <div id="qz-list"></div>
+
+            <p><a href="index.html">← Danh sách bài kiểm tra</a></p>
+        </div>
     </main>
 
     <footer>EmLearn - 2026</footer>
 
+    <script src="../js/quiz-bank-can.js"></script>
     <script>
-        /* Mỗi phần tử: [số bài, câu hỏi, ĐÁP ÁN ĐÚNG, sai 1, sai 2, sai 3, giải thích]
-           Đáp án đúng luôn viết ở vị trí đầu; script tự xếp vào vị trí A/B/C/D khác nhau. */
-        var Q = [
-            [1, "CAN là viết tắt của cụm từ nào?", "Controller Area Network", "Central Automotive Network", "Control Access Node", "Car Area Network", "CAN là Controller Area Network."],
-            [1, "Giao thức CAN do hãng nào giới thiệu năm 1986?", "Bosch", "Intel", "Siemens", "Denso", "Hãng Bosch (Đức) giới thiệu CAN năm 1986."],
-            [2, "Điện trở kết cuối của bus CAN tốc độ cao (ISO 11898-2) là bao nhiêu?", "120 Ω ở hai đầu bus", "60 Ω ở mỗi node", "1 kΩ ở hai đầu bus", "Không cần điện trở kết cuối", "Hai điện trở 120 Ω ở hai đầu bus triệt tiêu phản xạ tín hiệu."],
-            [2, "Tắt nguồn mạng và đo giữa CAN_H và CAN_L, bus đúng sẽ cho giá trị khoảng bao nhiêu?", "60 Ω", "30 Ω", "120 Ω", "240 Ω", "Hai điện trở 120 Ω mắc song song cho khoảng 60 Ω."],
-            [2, "Mức dominant trong ISO 11898-2 có điện áp điển hình nào?", "CAN_H ≈ 3,5 V, CAN_L ≈ 1,5 V", "CAN_H ≈ 2,5 V, CAN_L ≈ 2,5 V", "CAN_H ≈ 1,5 V, CAN_L ≈ 3,5 V", "CAN_H ≈ 5 V, CAN_L ≈ 0 V", "Dominant: H khoảng 3,5 V và L khoảng 1,5 V. Recessive: cả hai quanh 2,5 V."],
-            [2, "ISO 11898-3 khác ISO 11898-2 ở điểm chính nào?", "Tốc độ thấp và chịu lỗi dây", "Tốc độ tối đa 8 Mbit/s", "Chỉ dùng cho CAN FD", "Không có tầng vật lý", "11898-3 là CAN tốc độ thấp (tối đa 125 kbit/s), chạy tiếp ở chế độ một dây khi hỏng dây."],
-            [3, "Loại frame nào dùng để yêu cầu một node khác gửi dữ liệu?", "Remote frame", "Data frame", "Error frame", "Overload frame", "Remote frame yêu cầu node khác gửi data frame có cùng Identifier."],
-            [3, "Ở ACK slot, node nhận đúng frame sẽ làm gì?", "Kéo bus xuống dominant", "Gửi recessive", "Gửi error frame", "Không làm gì", "Node nhận đúng ghi dominant vào ACK slot để xác nhận."],
-            [3, "Active error flag gồm bao nhiêu bit và ở mức nào?", "6 bit dominant", "6 bit recessive", "8 bit dominant", "7 bit recessive", "Active error flag là 6 bit dominant, cố tình vi phạm quy tắc bit stuffing."],
-            [4, "CAN FD cho phép tối đa bao nhiêu byte dữ liệu mỗi frame?", "64 byte", "8 byte", "32 byte", "128 byte", "CAN FD tối đa 64 byte, Classic CAN chỉ 8 byte."],
-            [4, "Bit BRS ở mức recessive có nghĩa gì?", "Pha dữ liệu chuyển sang tốc độ cao hơn", "Frame là remote frame", "Node gửi đang ở error passive", "Frame dùng ID 29 bit", "BRS (Bit Rate Switch) recessive: pha dữ liệu chạy ở data bit rate."],
-            [4, "Trong CAN FD, DLC = 9 tương ứng bao nhiêu byte dữ liệu?", "12 byte", "9 byte", "16 byte", "24 byte", "DLC 9 là 12 byte; 10 là 16; 11 là 20; 12 là 24; 13 là 32; 14 là 48; 15 là 64."],
-            [5, "Identifier tiêu chuẩn 11 bit cho tối đa bao nhiêu ID khác nhau?", "2048", "256", "65536", "536870912", "2 mũ 11 bằng 2048."],
-            [5, "Trong kiểu Can_IdType 32 bit của AUTOSAR, bit nào đánh dấu ID mở rộng?", "Bit 31", "Bit 0", "Bit 15", "Bit 28", "Bit 31 bằng 1 cho extended ID; bit 30 dành cho CAN FD."],
-            [6, "Node thua arbitration sẽ làm gì?", "Ngừng gửi và chuyển sang chế độ nhận", "Gửi error frame", "Tiếp tục gửi và ghi đè bit", "Tự tắt khỏi bus", "Node thua dừng truyền, không làm hỏng frame thắng, rồi gửi lại khi bus rảnh."],
-            [6, "Hai node cùng gửi ID 0x100 và 0x200, ID nào thắng arbitration?", "0x100", "0x200", "Cả hai bị hủy", "Ngẫu nhiên", "ID nhỏ hơn có bit dominant sớm hơn nên ưu tiên cao hơn."],
-            [6, "Frame chuẩn và frame mở rộng có cùng 11 bit đầu, frame nào thắng?", "Frame chuẩn", "Frame mở rộng", "Hòa, cả hai gửi lại", "Frame có DLC lớn hơn", "Bit ngay sau ID: frame chuẩn gửi RTR dominant, frame mở rộng gửi RRS recessive, nên frame chuẩn thắng."],
-            [7, "Bit stuffing chèn một bit ngược mức sau bao nhiêu bit giống nhau liên tiếp?", "5 bit", "3 bit", "4 bit", "6 bit", "Sau 5 bit cùng mức, bộ gửi chèn 1 bit ngược mức."],
-            [7, "Bộ nhận thấy 6 bit liên tiếp cùng mức trong vùng áp dụng stuffing sẽ báo lỗi nào?", "Stuff error", "CRC error", "ACK error", "Form error", "Vi phạm quy tắc bit stuffing gây ra stuff error."],
-            [8, "Trong kiến trúc AUTOSAR, CAN Driver thuộc lớp nào?", "MCAL (Microcontroller Abstraction Layer)", "Application Layer", "RTE", "Service Layer", "Can driver là driver của MCAL, truy cập trực tiếp CAN controller."],
-            [9, "Thứ tự đi xuống của một I-PDU từ ứng dụng đến bus trong CAN stack là gì?", "Com → PduR → CanIf → Can", "Com → Can → PduR → CanIf", "CanIf → Com → PduR → Can", "PduR → Com → Can → CanIf", "Com đóng gói signal, PduR định tuyến, CanIf trừu tượng hóa, Can driver gửi qua phần cứng."],
-            [9, "Module nào phân mảnh và ghép lại dữ liệu dài theo ISO 15765-2 trên CAN?", "CanTp", "CanSM", "CanIf", "Com", "CanTp (CAN Transport Protocol) thực hiện segmentation và reassembly."],
-            [10, "Việc nào KHÔNG thuộc phạm vi của CAN Driver?", "Điều khiển chế độ của CAN transceiver", "Khởi tạo CAN controller", "Gửi và nhận frame qua phần cứng", "Cấu hình bit timing", "Transceiver có driver riêng là CanTrcv; Can driver chỉ làm việc với CAN controller."],
-            [11, "AUTOSAR_SRS_CAN là tài liệu gì?", "Đặc tả yêu cầu (Software Requirements Specification) cho CAN", "Mã nguồn tham chiếu của CAN Driver", "Sơ đồ chân vi điều khiển", "Bộ test chấp nhận", "SRS nêu yêu cầu; API và hành vi chi tiết nằm trong SWS."],
-            [12, "Can_Write trả về CAN_BUSY khi nào?", "Hardware transmit object đang bận", "Controller ở trạng thái UNINIT", "ID vượt quá 11 bit", "Frame có DLC bằng 0", "CAN_BUSY báo Tx hardware đang bận; tầng trên (CanIf) sẽ lưu frame và thử lại sau."],
-            [13, "Khi nhận xong một frame, CAN Driver báo lên tầng trên bằng callback nào?", "CanIf_RxIndication", "Com_SendSignal", "Can_Write", "Dem_SetEventStatus", "Can driver gọi CanIf_RxIndication để chuyển frame nhận được lên CanIf."],
-            [14, "Cấu hình chức năng chân TX và RX của CAN controller thuộc trách nhiệm module nào?", "Port", "Com", "CanTp", "Dem", "Module Port cấu hình chân; Mcu cấu hình clock; INTC xử lý ngắt."],
-            [15, "Module nào gọi Can_Init trong quá trình khởi động ECU?", "EcuM (ECU State Manager)", "Com", "Dem", "PduR", "EcuM khởi tạo các driver MCAL, trong đó có Can_Init."],
-            [15, "Các hàm Can_MainFunction_Write và Can_MainFunction_Read thường được gọi bởi ai?", "SchM (Basic Software Scheduler) trong task của OS", "Trực tiếp bởi ứng dụng", "Module Dem", "CAN transceiver", "Các main function định kỳ được SchM lập lịch trong task của OS."],
-            [16, "Lỗi phát triển (development error) của CAN Driver được báo qua hàm nào?", "Det_ReportError", "Dem_ReportErrorStatus", "Com_SendSignal", "EcuM_Shutdown", "Det (Default Error Tracer) nhận lỗi phát triển, ví dụ CAN_E_UNINIT."],
-            [16, "Lỗi sản xuất (production error), ví dụ CAN_E_TIMEOUT, được báo cho module nào?", "Dem", "Det", "PduR", "Port", "Dem (Diagnostic Event Manager) lưu lỗi sản xuất để phục vụ chẩn đoán."],
-            [17, "Sau khi Can_Init thành công, mỗi CAN controller ở trạng thái nào?", "CAN_CS_STOPPED", "CAN_CS_STARTED", "CAN_CS_SLEEP", "CAN_CS_UNINIT", "Sau Can_Init controller ở STOPPED; phải chuyển sang STARTED mới giao tiếp."],
-            [17, "Can_DeInit đưa các CAN controller về trạng thái nào?", "CAN_CS_UNINIT", "CAN_CS_STOPPED", "CAN_CS_STARTED", "CAN_CS_SLEEP", "DeInit trả controller về trạng thái chưa khởi tạo (UNINIT)."],
-            [18, "Muốn chuyển controller từ STOPPED sang STARTED, ta gọi gì?", "Can_SetControllerMode với CAN_T_START", "Can_Init", "Can_DeInit", "Can_CheckWakeup", "Chuyển trạng thái dùng Can_SetControllerMode với transition tương ứng."],
-            [18, "Controller chỉ gửi và nhận frame được khi ở trạng thái nào?", "CAN_CS_STARTED", "CAN_CS_UNINIT", "CAN_CS_STOPPED", "CAN_CS_SLEEP", "Chỉ ở STARTED controller mới tham gia hoạt động trên bus."],
-            [19, "Khi cấu hình nhận frame bằng polling, hàm nào được gọi định kỳ để xử lý frame nhận?", "Can_MainFunction_Read", "Can_SetBaudrate", "Can_DeInit", "Can_CheckWakeup", "Polling dùng Can_MainFunction_Read; chế độ interrupt thì ISR xử lý."],
-            [19, "Hth (Hardware Transmit Handle) được dùng để làm gì?", "Chỉ định hardware object dùng để truyền khi gọi Can_Write", "Chỉ định ID của frame nhận", "Chọn tốc độ truyền", "Đặt chế độ sleep", "Can_Write nhận Hth để biết hardware object nào sẽ gửi frame."],
-            [20, "Hàm và transition nào đưa CAN controller vào chế độ ngủ?", "Can_SetControllerMode với CAN_T_SLEEP", "Can_Write với DLC bằng 0", "Can_SetBaudrate", "Can_DeInit", "CAN_T_SLEEP đưa controller sang trạng thái CAN_CS_SLEEP."],
-            [20, "Can_CheckWakeup dùng để làm gì?", "Kiểm tra controller có sự kiện đánh thức hay không", "Bật ngắt của controller", "Đổi tốc độ truyền", "Gửi frame đánh thức", "Can_CheckWakeup kiểm tra wake-up event khi controller đang ngủ."],
-            [21, "Can_SetBaudrate dùng để làm gì?", "Chọn một cấu hình baud-rate đã khai báo sẵn cho controller", "Tính toán CRC", "Đặt ID cho frame", "Bật chế độ sleep", "Tham số BaudRateConfigID chọn một cấu hình baud-rate trong cấu hình."],
-            [21, "Thông số nào KHÔNG thuộc bit timing của CAN?", "Địa chỉ node", "Prescaler", "Propagation segment", "Phase segment 2", "Bit timing gồm prescaler, Prop_Seg, Phase_Seg1, Phase_Seg2 và SJW; CAN không dùng địa chỉ node."],
-            [22, "Controller vào trạng thái bus-off khi nào?", "Bộ đếm lỗi truyền (TEC) lớn hơn 255", "Bộ đếm lỗi nhận (REC) lớn hơn 127", "Có một CRC error duy nhất", "Mất ACK một lần", "Bus-off xảy ra khi TEC vượt 255."],
-            [22, "Một node chuyển sang error passive khi bộ đếm lỗi đạt bao nhiêu?", "Từ 128 trở lên", "Từ 32 trở lên", "Từ 256 trở lên", "Từ 64 trở lên", "TEC hoặc REC từ 128 trở lên thì node ở error passive."],
-            [22, "Can driver báo bus-off lên CanIf bằng callback nào?", "CanIf_ControllerBusOff", "CanIf_RxIndication", "CanIf_TxConfirmation", "CanIf_SetBaudrate", "Khi bus-off, Can driver gọi CanIf_ControllerBusOff."],
-            [23, "Can_DisableControllerInterrupts thường được dùng vào mục đích nào?", "Bảo vệ vùng găng bằng cách tạm chặn ngắt của controller", "Đổi baud-rate", "Đưa controller vào sleep", "Xóa lỗi bus-off", "Tắt ngắt tạm thời để truy cập dữ liệu dùng chung an toàn."],
-            [23, "Gọi Can_DisableControllerInterrupts hai lần liên tiếp thì cần gọi Can_EnableControllerInterrupts mấy lần để bật lại ngắt?", "Hai lần, vì driver đếm số lần lồng nhau", "Một lần là đủ", "Không cần, ngắt tự bật lại", "Ba lần", "Driver dùng bộ đếm lồng nhau; chỉ khi Enable đủ số lần thì ngắt mới được bật lại."],
-            [24, "Pretended Networking cho phép ECU làm gì?", "Chỉ thức dậy khi nhận frame phù hợp, bỏ qua lưu lượng không liên quan", "Chạy CAN FD ở 8 Mbit/s", "Tự đổi ID của frame", "Bỏ qua mọi frame vĩnh viễn", "Đây là selective wake-up: ECU ngủ và chỉ thức dậy với frame hợp lệ."],
-            [24, "Hàm nào của Can driver dùng để cấu hình ICOM (Pretended Networking)?", "Can_SetIcomConfiguration", "Can_SetBaudrate", "Can_CheckWakeup", "Can_GetVersionInfo", "Can_SetIcomConfiguration chọn cấu hình ICOM cho controller."],
-            [25, "OptoLyzer MOCCA FD thuộc loại công cụ nào?", "Phần cứng giao diện giữa PC và bus CAN/CAN FD để giám sát, phân tích", "Trình biên dịch C cho MCU", "Thư viện AUTOSAR", "Transceiver gắn trên ECU", "Công cụ này dùng để kết nối, ghi và phân tích lưu lượng CAN FD."],
-            [25, "Công cụ phân tích bus CAN giúp ích gì khi debug?", "Quan sát frame, ID, dữ liệu và lỗi trên bus theo thời gian", "Tự sửa lỗi phần cứng", "Tăng tốc độ bus lên tối đa", "Thay thế điện trở kết cuối", "Xem và so sánh lưu lượng, lỗi giúp xác định nguyên nhân sự cố."]
-        ];
+        (function () {
+            var KEYS = 'ABCD';
+            var list = document.getElementById('qz-list');
+            var cnt = document.getElementById('qz-count');
+            var fill = document.getElementById('qz-fill');
+            var res = document.getElementById('qz-result');
+            var btnS = document.getElementById('qz-submit');
+            var btnR = document.getElementById('qz-reset');
+            var cards = [], graded = false;
 
-        var f = document.getElementById('quiz'), btn = f.querySelector('button');
-        Q.forEach(function (d, i) {
-            var pos = (i * 3 + (i >> 2)) % 4, o = d.slice(2, 6), c = o.shift();
-            o.splice(pos, 0, c);
-            var fs = document.createElement('fieldset');
-            fs.className = 'q';
-            fs.dataset.correct = 'abcd'[pos];
-            fs.dataset.explain = d[6];
-            var h = '<legend>Câu ' + (i + 1) + ' (Bài ' + d[0] + '): ' + d[1] + '</legend>';
-            o.forEach(function (t, k) {
-                h += '<label><input type="radio" name="q' + i + '" value="' + 'abcd'[k] + '"> ' + t + '</label>';
+            function shuffle(a) {
+                for (var i = a.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1)), t = a[i];
+                    a[i] = a[j]; a[j] = t;
+                }
+                return a;
+            }
+
+            function update() {
+                var n = cards.filter(function (c) { return c.el.querySelector('input:checked'); }).length;
+                cnt.textContent = 'Đã trả lời ' + n + '/' + cards.length;
+                fill.style.width = (n / cards.length * 100) + '%';
+                return n;
+            }
+
+            function build() {
+                graded = false;
+                list.innerHTML = '';
+                res.className = 'qz-result';
+                res.textContent = '';
+                btnS.disabled = false;
+
+                cards = shuffle(QUIZ_BANK.slice()).map(function (d, i) {
+                    var opts = shuffle([{ t: d[2], ok: true }, { t: d[3] }, { t: d[4] }, { t: d[5] }]);
+                    var sec = document.createElement('section');
+                    sec.className = 'qz-card';
+                    sec.innerHTML =
+                        '<div class="qz-head"><span class="qz-num">Câu ' + (i + 1) + '</span>' +
+                        '<span class="qz-tag">Bài ' + d[0] + '</span></div>' +
+                        '<p class="qz-text" id="qt' + i + '"></p>' +
+                        '<div class="qz-opts" role="radiogroup" aria-labelledby="qt' + i + '"></div>' +
+                        '<p class="qz-fb"></p>';
+                    sec.querySelector('.qz-text').textContent = d[1];
+
+                    var box = sec.querySelector('.qz-opts');
+                    opts.forEach(function (o, k) {
+                        var lb = document.createElement('label');
+                        lb.className = 'qz-opt';
+                        lb.innerHTML = '<input type="radio" name="q' + i + '" value="' + k + '">' +
+                            '<span class="qz-key">' + KEYS[k] + '</span><span class="qz-label"></span>';
+                        lb.querySelector('.qz-label').textContent = o.t;
+                        box.appendChild(lb);
+                        o.el = lb;
+                    });
+                    box.addEventListener('change', function () {
+                        opts.forEach(function (o) {
+                            o.el.classList.toggle('sel', o.el.querySelector('input').checked);
+                        });
+                        update();
+                    });
+                    list.appendChild(sec);
+                    return { el: sec, opts: opts, explain: d[6] };
+                });
+                update();
+            }
+
+            function grade() {
+                if (graded) return;
+                var un = cards.length - update();
+                if (un > 0 && !confirm('Còn ' + un + ' câu chưa trả lời. Bạn vẫn muốn nộp bài?')) return;
+                graded = true;
+                btnS.disabled = true;
+
+                var right = 0, wrong = 0, skip = 0;
+                cards.forEach(function (c) {
+                    var picked = -1, correct = -1;
+                    c.opts.forEach(function (o, k) {
+                        var inp = o.el.querySelector('input');
+                        if (o.ok) correct = k;
+                        if (inp.checked) picked = k;
+                        inp.disabled = true;
+                    });
+                    c.el.classList.add('done');
+                    c.opts[correct].el.classList.add('correct');
+
+                    var msg;
+                    if (picked === correct) {
+                        right++; c.el.classList.add('is-right'); msg = 'Đúng. ';
+                    } else if (picked < 0) {
+                        skip++; c.el.classList.add('is-skip');
+                        msg = 'Chưa trả lời. Đáp án đúng: ' + KEYS[correct] + '. ';
+                    } else {
+                        wrong++; c.el.classList.add('is-wrong');
+                        c.opts[picked].el.classList.add('wrong');
+                        msg = 'Chưa đúng. Đáp án đúng: ' + KEYS[correct] + '. ';
+                    }
+                    c.el.querySelector('.qz-fb').textContent = msg + c.explain;
+                });
+
+                var total = cards.length;
+                res.textContent = 'Điểm: ' + right + '/' + total + ' (' + Math.round(right / total * 100) +
+                    '%). Sai: ' + wrong + '. Bỏ trống: ' + skip + '.';
+                res.className = 'qz-result show';
+                res.scrollIntoView({ block: 'center' });
+                res.focus({ preventScroll: true });
+            }
+
+            btnS.addEventListener('click', grade);
+            btnR.addEventListener('click', function () {
+                build();
+                window.scrollTo(0, 0);
             });
-            fs.innerHTML = h + '<p class="fb"></p>';
-            f.insertBefore(fs, btn);
-        });
+            build();
+        })();
     </script>
-    <script src="../js/quiz.js"></script>
 
 </body>
 

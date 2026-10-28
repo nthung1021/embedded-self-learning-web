@@ -1,115 +1,111 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Kiểm tra 2: Ôn tập tổng hợp 25 bài học CAN | Tự học Embedded</title>
-    <link rel="stylesheet" href="../css/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kiểm tra 2: Tổng hợp 24 bài học AUTOSAR | Tự học Embedded</title>
+<link rel="stylesheet" href="../css/style.css">
 </head>
-
 <body>
 
-    <header class="site-header">
-        <div class="bar">
-            <a class="logo" href="../index.html">Em<span>Learn</span></a>
-            <nav aria-label="Chính">
-                <a href="../index.html">Trang chủ</a>
-                <a href="../lessons/index.html">Bài học</a>
-                <a href="../quizzes/index.html" class="active" aria-current="page">Kiểm tra</a>
-            </nav>
-        </div>
-    </header>
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="../index.html">Em<span>Learn</span></a>
+    <nav aria-label="Chính">
+      <a href="../index.html">Trang chủ</a>
+      <a href="../lessons/index.html">Bài học</a>
+      <a href="../quizzes/index.html" class="active" aria-current="page">Kiểm tra</a>
+    </nav>
+  </div>
+</header>
 
-    <main>
-        <h1>Kiểm tra 2: Ôn tập tổng hợp 25 bài học CAN</h1>
-        <p>50 câu trắc nghiệm mới, mỗi câu có đúng 1 đáp án. Chọn đáp án rồi bấm "Nộp bài" để xem điểm và giải thích.
-        </p>
+<main>
+  <h1>Kiểm tra 2: Tổng hợp 24 bài học AUTOSAR</h1>
+  <p>50 câu trắc nghiệm bao gồm 12 bài tổng quan và 12 bài chi tiết, mỗi câu có đúng 1 đáp án. Chọn đáp án rồi bấm "Nộp bài" để xem điểm và giải thích.</p>
 
-        <form id="quiz">
-            <!-- Các câu hỏi được sinh từ mảng Q ở script bên dưới -->
-            <button class="btn" type="submit">Nộp bài</button><span id="result" role="status"></span>
-        </form>
+  <form id="quiz">
+    <!-- Các câu hỏi được sinh từ mảng Q ở script bên dưới -->
+    <button class="btn" type="submit">Nộp bài</button><span id="result" role="status"></span>
+  </form>
 
-        <p><a href="index.html">← Danh sách bài kiểm tra</a></p>
-    </main>
+  <p><a href="index.html">← Danh sách bài kiểm tra</a></p>
+</main>
 
-    <footer>EmLearn - 2026</footer>
+<footer>EmLearn - 2026</footer>
 
-    <script>
-        /* Mỗi phần tử: [số bài, câu hỏi, ĐÁP ÁN ĐÚNG, sai 1, sai 2, sai 3, giải thích]
-           Đáp án đúng luôn viết ở vị trí đầu; script tự xếp vào vị trí A/B/C/D khác nhau. */
-        var Q = [
-            [1, "Lý do chính khiến ô tô chuyển từ đi dây điểm-điểm sang bus CAN là gì?", "Giảm số dây, trọng lượng và chi phí mà vẫn chia sẻ được dữ liệu giữa nhiều ECU", "Để truyền dữ liệu ở tốc độ hàng Gbit/s", "Để mỗi ECU có một địa chỉ IP riêng", "Để ECU không cần dùng vi điều khiển", "Bus CAN chỉ cần 2 dây tín hiệu dùng chung cho nhiều node, nên nhẹ và rẻ hơn đi dây riêng cho từng cặp thiết bị."],
-            [1, "Mức logic 0 trên bus CAN được gọi là trạng thái nào?", "Dominant", "Recessive", "Idle", "Passive", "Logic 0 là dominant, logic 1 là recessive. Dominant luôn thắng recessive khi hai node gửi cùng lúc."],
-            [2, "Trên cổng OBD-II, tín hiệu CAN_H nối với chân số mấy?", "Chân 6", "Chân 4", "Chân 16", "Chân 2", "Chân 6 là CAN_H và chân 14 là CAN_L."],
-            [2, "CAN transceiver có nhiệm vụ chính nào?", "Chuyển mức logic TX/RX của controller thành tín hiệu vi sai trên bus và ngược lại", "Tạo frame và tính CRC", "Thực hiện arbitration giữa các node", "Lưu trữ cấu hình bit timing", "Frame, CRC và arbitration do CAN controller xử lý; transceiver chỉ lo phần tín hiệu điện trên bus."],
-            [2, "Đoạn dây rẽ (stub) từ bus vào node nên như thế nào ở tốc độ cao?", "Càng ngắn càng tốt", "Càng dài càng tốt để giảm nhiễu", "Dài bằng một nửa chiều dài bus", "Phải gắn thêm điện trở 120 Ω ở mỗi stub", "Stub dài gây phản xạ tín hiệu, làm méo dạng sóng ở tốc độ cao."],
-            [3, "Trường SOF của một frame có đặc điểm nào?", "1 bit dominant", "1 bit recessive", "7 bit recessive", "6 bit dominant", "SOF là 1 bit dominant, báo bắt đầu frame và giúp các node đồng bộ."],
-            [3, "Trường EOF của data frame gồm bao nhiêu bit và ở mức nào?", "7 bit recessive", "7 bit dominant", "3 bit recessive", "8 bit recessive", "EOF là 7 bit recessive; sau đó là 3 bit intermission."],
-            [3, "Overload frame được gửi trong trường hợp nào?", "Node nhận cần thêm thời gian xử lý trước khi nhận frame kế tiếp", "Node phát hiện lỗi CRC", "Node vừa thua arbitration", "Controller chuyển sang bus-off", "Overload frame dùng để trì hoãn frame kế tiếp, chỉ xuất hiện trong khoảng intermission."],
-            [4, "Bit FDF ở mức recessive cho biết điều gì?", "Đây là frame CAN FD", "Đây là remote frame", "Frame dùng Identifier 29 bit", "Node gửi đang ở trạng thái error passive", "FDF (FD Format) recessive nghĩa là frame theo định dạng CAN FD; dominant là Classic CAN."],
-            [4, "Bit ESI trong CAN FD phản ánh điều gì?", "Trạng thái lỗi (active hay passive) của node gửi", "Tốc độ của pha dữ liệu", "Độ dài của trường dữ liệu", "Loại Identifier đang dùng", "ESI (Error State Indicator) recessive nghĩa là node gửi đang ở error passive."],
-            [4, "Nominal bit rate trong CAN FD được dùng cho pha nào?", "Pha arbitration và các trường cuối frame", "Chỉ pha dữ liệu", "Chỉ trường CRC", "Chỉ khi bus đang idle", "Nominal bit rate dùng cho phần đầu (arbitration) và phần cuối (CRC delimiter, ACK, EOF); data bit rate chỉ dùng cho pha dữ liệu."],
-            [5, "Frame mở rộng có Identifier gồm Base ID 11 bit và phần mở rộng bao nhiêu bit?", "18 bit", "8 bit", "29 bit", "16 bit", "11 + 18 = 29 bit."],
-            [5, "Chuẩn J1939 trên xe tải dùng loại Identifier nào?", "29 bit (mở rộng)", "11 bit (tiêu chuẩn)", "16 bit", "32 bit", "J1939 dùng Identifier 29 bit, trong đó có chứa độ ưu tiên và PGN."],
-            [6, "Cơ chế truy cập bus của CAN thường được mô tả là gì?", "CSMA/CR: phân xử không phá hủy theo từng bit", "TDMA: chia khe thời gian cố định", "Token ring", "Polling từ một node master", "Node nào cũng nghe bus trước khi gửi, khi va chạm thì phân xử theo bit để frame ưu tiên cao đi tiếp mà không bị hỏng."],
-            [6, "Trong giai đoạn arbitration, node gửi bit recessive nhưng đọc lại thấy bus là dominant. Node đó làm gì?", "Hiểu mình đã thua arbitration và chuyển sang chế độ nhận", "Gửi error frame", "Gửi lại SOF ngay lập tức", "Tăng ngay bộ đếm TEC", "Đây là tình huống thua arbitration bình thường, không phải lỗi."],
-            [6, "Data frame và remote frame có cùng Identifier cùng tranh bus, frame nào thắng?", "Data frame", "Remote frame", "Hòa, cả hai gửi lại", "Tùy vào giá trị DLC", "Bit RTR của data frame là dominant còn remote frame là recessive, nên data frame thắng."],
-            [7, "Mục đích chính của bit stuffing là gì?", "Đảm bảo có đủ cạnh tín hiệu để các node đồng bộ lại", "Nén dữ liệu để frame ngắn hơn", "Mã hóa dữ liệu", "Tăng độ ưu tiên của frame", "Chuỗi bit giống nhau quá dài làm mất cạnh tín hiệu; bit chèn tạo thêm cạnh để bộ nhận đồng bộ lại."],
-            [7, "Chuỗi bit 0 0 0 0 0 1 sau khi áp dụng bit stuffing trở thành gì?", "0 0 0 0 0 [1] 1", "0 0 0 0 0 [0] 1", "0 0 0 0 [1] 0 1", "Không thay đổi", "Sau 5 bit 0 liên tiếp, bộ gửi chèn thêm một bit 1 (bit ngược mức)."],
-            [8, "Việc nào thuộc trách nhiệm trực tiếp của CAN Driver trong MCAL?", "Truy cập thanh ghi và hardware object của CAN controller", "Đóng gói signal thành I-PDU", "Chuyển mã chẩn đoán UDS", "Tạo và lưu mã lỗi DTC", "Can driver là lớp thấp nhất, làm việc trực tiếp với phần cứng CAN controller."],
-            [9, "Module Com trong CAN stack đảm nhiệm việc gì?", "Chuyển đổi giữa signal của ứng dụng và I-PDU", "Điều khiển CAN transceiver", "Khởi tạo clock cho vi điều khiển", "Lập lịch các task", "Com đóng gói signal thành I-PDU khi gửi và tách signal từ I-PDU khi nhận."],
-            [9, "CanSM (CAN State Manager) chịu trách nhiệm chính điều gì?", "Quản lý chế độ giao tiếp của mạng CAN, kể cả phục hồi bus-off", "Phân mảnh dữ liệu dài theo ISO 15765-2", "Ghi lỗi vào bộ nhớ", "Đóng gói signal thành PDU", "CanSM điều phối trạng thái giao tiếp của từng mạng CAN và xử lý bus-off."],
-            [10, "Module nào nằm ngay phía trên Can driver và che giấu sự khác biệt phần cứng cho các tầng trên?", "CanIf", "Mcu", "Port", "Det", "CanIf (CAN Interface) trừu tượng hóa nhiều CAN controller và transceiver."],
-            [10, "Can driver là thành phần phụ thuộc hay độc lập với vi điều khiển?", "Phụ thuộc vi điều khiển, vì nó thuộc MCAL", "Độc lập hoàn toàn", "Chỉ phụ thuộc vào ứng dụng", "Chỉ phụ thuộc vào hệ điều hành", "MCAL gồm các driver gắn chặt với phần cứng của MCU."],
-            [11, "Khác biệt giữa SRS và SWS trong AUTOSAR là gì?", "SRS nêu yêu cầu cần đạt, SWS đặc tả chi tiết API và hành vi phần mềm", "SRS là mã nguồn, SWS là tài liệu kiểm thử", "SRS dành cho phần cứng, SWS dành cho hệ điều hành", "Hai loại tài liệu hoàn toàn giống nhau", "SRS cho biết cần làm gì; SWS cho biết làm thế nào ở mức giao diện và hành vi."],
-            [12, "Can_Init nhận tham số nào?", "Con trỏ tới cấu trúc cấu hình Can_ConfigType", "ID của frame cần gửi", "Số hiệu controller và tốc độ baud", "Không nhận tham số nào", "Can_Init(const Can_ConfigType* Config) dùng cấu hình sinh từ công cụ cấu hình."],
-            [12, "Can_Write trả về E_OK có nghĩa là gì?", "Frame đã được chấp nhận và đưa vào hardware transmit object", "Frame đã được node khác nhận xong", "Controller đang ở trạng thái bus-off", "Tham số truyền vào bị sai", "E_OK chỉ xác nhận yêu cầu gửi được chấp nhận; việc gửi xong được báo sau bằng TxConfirmation."],
-            [13, "CanIf_TxConfirmation được Can driver gọi khi nào?", "Khi frame đã được truyền xong thành công", "Khi nhận được một frame mới", "Khi controller bị bus-off", "Khi controller chuyển sang sleep", "Đây là callback xác nhận gửi, được gọi sau khi frame lên bus thành công."],
-            [13, "CanIf điều khiển CAN transceiver thông qua module nào?", "CanTrcv", "Mcu", "Dem", "PduR", "Transceiver có driver riêng là CanTrcv; CanIf gọi nó để đổi chế độ."],
-            [14, "Module nào khởi tạo clock và PLL cấp cho CAN controller?", "Mcu", "Dem", "CanTp", "Com", "Mcu driver cấu hình clock, PLL và các thiết lập cấp vi điều khiển."],
-            [14, "Module nào cung cấp cơ chế cấu hình ngắt (vector, mức ưu tiên) cho ISR của CAN controller?", "Bộ điều khiển ngắt INTC cùng với OS", "PduR", "CanSM", "Dem", "INTC gán vector và mức ưu tiên cho ngắt của CAN controller; ISR do Can driver cung cấp."],
-            [15, "Can_MainFunction_BusOff dùng để làm gì?", "Kiểm tra định kỳ sự kiện bus-off khi cấu hình theo kiểu polling", "Gửi frame lên bus", "Đổi baud-rate", "Khởi tạo Can driver", "Ở chế độ polling, SchM gọi hàm này định kỳ để phát hiện bus-off."],
-            [15, "Sự kiện đánh thức từ CAN cuối cùng được báo cho module nào để quyết định khởi động lại ECU?", "EcuM", "Com", "PduR", "Port", "EcuM (ECU State Manager) quản lý quá trình ngủ, đánh thức và khởi động ECU."],
-            [16, "Tham số cấu hình nào bật hoặc tắt việc phát hiện lỗi phát triển của Can driver?", "CanDevErrorDetect", "CanTimeoutDuration", "CanIndex", "CanMainFunctionPeriod", "Khi CanDevErrorDetect bật, driver kiểm tra tham số và trạng thái, rồi báo lỗi lên Det."],
-            [16, "Lỗi CAN_E_UNINIT được báo khi nào?", "Khi gọi một API của Can driver trước khi Can_Init được gọi", "Khi controller bị bus-off", "Khi nhận frame bị lỗi CRC", "Khi baud-rate được cấu hình sai", "CAN_E_UNINIT là lỗi phát triển: dùng driver khi chưa khởi tạo."],
-            [16, "Det khác Dem ở điểm nào?", "Det báo lỗi phát triển khi lập trình; Dem lưu lỗi sản xuất phục vụ chẩn đoán", "Det lưu DTC; Dem báo lỗi tham số", "Cả hai hoàn toàn giống nhau", "Det dùng cho phần cứng; Dem dùng cho ứng dụng", "Det hỗ trợ giai đoạn phát triển, Dem ghi nhận sự cố khi xe vận hành để chẩn đoán."],
-            [17, "Thứ tự khởi tạo hợp lý trước khi dùng CAN là gì?", "Mcu_Init, Port_Init rồi Can_Init", "Can_Init rồi Mcu_Init", "Port_Init rồi Det_Init", "CanIf_Init rồi Mcu_Init", "Clock và chân phải sẵn sàng trước khi khởi tạo CAN controller."],
-            [18, "Transition nào đưa controller từ STARTED về STOPPED?", "CAN_T_STOP", "CAN_T_START", "CAN_T_SLEEP", "CAN_T_WAKEUP", "CAN_T_STOP dừng controller; CAN_T_START làm điều ngược lại."],
-            [18, "Controller đang ở STARTED có thể chuyển thẳng sang SLEEP không?", "Không, phải về STOPPED trước", "Có, bằng CAN_T_SLEEP", "Có, bằng Can_DeInit", "Chỉ có thể khi đang bus-off", "Máy trạng thái chỉ cho phép vào SLEEP từ STOPPED."],
-            [18, "CAN_T_WAKEUP chuyển controller từ trạng thái nào sang trạng thái nào?", "SLEEP sang STOPPED", "STOPPED sang STARTED", "STARTED sang SLEEP", "UNINIT sang STOPPED", "Sau khi thức dậy, controller về STOPPED rồi mới được START."],
-            [19, "Tham số swPduHandle trong Can_PduType được dùng để làm gì?", "Để tầng trên nhận ra PDU nào được xác nhận khi có TxConfirmation", "Chọn tốc độ gửi", "Đặt độ dài dữ liệu", "Chọn controller sẽ gửi", "swPduHandle được trả lại trong callback xác nhận để tầng trên biết PDU nào đã gửi xong."],
-            [19, "Khi truyền ở chế độ polling, hàm nào xử lý việc xác nhận gửi xong?", "Can_MainFunction_Write", "Can_MainFunction_Read", "Can_MainFunction_Wakeup", "Can_MainFunction_BusOff", "Write là main function của phần truyền; Read cho phần nhận."],
-            [20, "Controller phải ở trạng thái nào trước khi được đưa vào SLEEP?", "STOPPED", "STARTED", "UNINIT", "BUS-OFF", "Chỉ từ STOPPED mới dùng CAN_T_SLEEP để vào chế độ ngủ."],
-            [21, "Sample point trong bit timing là gì?", "Thời điểm trong một bit mà bộ nhận đọc giá trị của bit", "Thời điểm bắt đầu SOF", "Số bit trong một frame", "Mức điện áp ngưỡng dominant", "Điểm lấy mẫu thường nằm ở khoảng 75 – 87,5 % thời gian bit."],
-            [21, "Clock CAN 80 MHz, prescaler 10, mỗi bit gồm 16 time quanta thì baud-rate là bao nhiêu?", "500 kbit/s", "1 Mbit/s", "250 kbit/s", "800 kbit/s", "80 MHz chia 10 được 8 MHz; chia tiếp cho 16 time quanta mỗi bit được 500 kbit/s."],
-            [22, "Bit error được phát hiện khi nào?", "Khi node gửi một bit nhưng đọc lại giá trị khác (ngoài vùng arbitration và ACK slot)", "Khi CRC không khớp", "Khi có 6 bit liên tiếp cùng mức", "Khi một trường cố định có giá trị sai", "Node gửi luôn đọc lại bus để so sánh với bit đã gửi."],
-            [22, "Sau khi bus-off, node có thể tham gia lại bus khi nào theo cơ chế của chuẩn?", "Sau khi thấy 128 lần chuỗi 11 bit recessive liên tiếp", "Ngay lập tức", "Sau đúng 1 giây", "Ngay khi nhận một frame hợp lệ", "Đây là điều kiện phục hồi bus-off theo chuẩn; AUTOSAR còn cho phép CanSM chủ động điều khiển việc này."],
-            [23, "Mỗi sự kiện của CAN controller (Tx, Rx, bus-off, wake-up) có thể được cấu hình xử lý theo kiểu nào?", "Interrupt hoặc polling", "Chỉ interrupt", "Chỉ polling", "Chỉ do ứng dụng tự gọi", "Mỗi sự kiện chọn một trong hai kiểu, tùy yêu cầu tải CPU và độ trễ."],
-            [24, "Lợi ích chính của Pretended Networking là gì?", "Giảm tiêu thụ điện bằng cách chỉ thức dậy khi nhận đúng frame cần thiết", "Tăng tốc độ bus", "Tăng số byte dữ liệu mỗi frame", "Thay thế cơ chế arbitration", "ECU bỏ qua lưu lượng không liên quan nên ngủ được lâu hơn."],
-            [24, "Điều kiện khớp frame để đánh thức trong Pretended Networking thường dựa trên gì?", "ID (kèm mask), DLC và nội dung dữ liệu", "Chỉ màu của dây dẫn", "Chỉ baud-rate của bus", "Điện áp của CAN_H", "Có thể cấu hình để so khớp ID, độ dài và payload của frame."],
-            [25, "Trước khi ghi lưu lượng bằng công cụ như OptoLyzer MOCCA FD, cần cấu hình gì cho khớp với bus?", "Bit rate (kể cả data bit rate nếu là CAN FD)", "Địa chỉ IP của ECU", "Số node trên bus", "Mức điện áp chân OBD", "Sai bit rate sẽ làm công cụ liên tục báo lỗi hoặc không nhận được frame."]
-        ];
+<script>
+/* Mỗi phần tử: [số bài, câu hỏi, ĐÁP ÁN ĐÚNG, sai 1, sai 2, sai 3, giải thích]
+   Đáp án đúng luôn viết ở vị trí đầu; script tự xếp vào vị trí A/B/C/D khác nhau. */
+var Q=[
+[1,"AUTOSAR là viết tắt của cụm từ nào?","AUTomotive Open System ARchitecture","Automatic Universal System Architecture","Automotive Unified Software Application Runtime","Advanced Underlying System Abstraction Rules","AUTOSAR là AUTomotive Open System ARchitecture, một chuẩn kiến trúc phần mềm mở cho ECU ô tô."],
+[1,"Mục tiêu chính của AUTOSAR là gì?","Tách phần mềm ứng dụng khỏi phần cứng, tái sử dụng và chuẩn hóa giao diện","Tăng tốc độ xung nhịp của vi điều khiển","Thay thế hoàn toàn các mạng CAN và LIN","Loại bỏ nhu cầu cấu hình phần mềm","Các lớp trừu tượng giúp phần mềm không gắn chặt với một loại vi điều khiển, nhờ đó dễ tái sử dụng và tích hợp."],
+[2,"Thứ tự các lớp của AUTOSAR Classic từ trên xuống dưới là gì?","Application → RTE → Basic Software → Microcontroller","Application → Basic Software → RTE → Microcontroller","RTE → Application → Microcontroller → Basic Software","Basic Software → RTE → Application → Microcontroller","Ứng dụng nằm trên cùng, RTE ở giữa làm lớp kết nối, rồi đến Basic Software và phần cứng ở dưới cùng."],
+[2,"Classic Platform phù hợp nhất với loại ECU nào?","ECU nhúng truyền thống, yêu cầu thời gian thực chặt và cấu hình tĩnh","ECU hiệu năng cao chạy hệ điều hành kiểu POSIX với ứng dụng C++ động","Máy chủ đám mây","Thiết bị không có phần mềm","Loại ECU dùng POSIX và C++ là đối tượng của Adaptive Platform, không phải Classic."],
+[3,"Basic Software (BSW) gồm ba lớp con chính nào?","Services Layer, ECU Abstraction Layer và MCAL","Application, RTE và MCAL","Presentation, Session và Transport","Kernel, Shell và Driver","BSW chia thành Services, ECU Abstraction và Microcontroller Abstraction (MCAL), ngoài ra còn có Complex Drivers."],
+[3,"Lớp nào nằm giữa Application Layer và Basic Software?","RTE (Runtime Environment)","MCAL","Complex Drivers","Microcontroller","RTE là lớp trung gian kết nối các SWC với nhau và với Basic Software."],
+[4,"Software Component (SWC) là gì?","Đơn vị phần mềm ứng dụng đóng gói một chức năng","Một chân của vi điều khiển","Một loại bản tin CAN","Một module của hệ điều hành","SWC là đơn vị cơ bản của tầng ứng dụng, giao tiếp với bên ngoài qua các port."],
+[4,"Runnable trong SWC là gì?","Một hàm C bên trong SWC, được hệ điều hành lập lịch để chạy thông qua RTE","Một file cấu hình ARXML","Một loại ngắt phần cứng","Một giao diện của CAN driver","Runnable là phần chứa logic thực thi của SWC và được gắn vào task của OS."],
+[5,"RTE trong AUTOSAR Classic được tạo ra bằng cách nào?","Được công cụ sinh tự động từ cấu hình hệ thống","Do nhà sản xuất vi điều khiển cung cấp sẵn","Lập trình viên viết tay hoàn toàn","Hệ điều hành tạo ra trong lúc chạy","RTE là code được sinh ra cho từng ECU dựa trên thông tin SWC, port và ánh xạ trong cấu hình."],
+[5,"Vai trò chính của RTE là gì?","Kết nối các SWC với nhau và với Basic Software, che giấu vị trí và cách truyền","Truy cập trực tiếp thanh ghi của vi điều khiển","Lưu mã lỗi chẩn đoán","Điều khiển trực tiếp CAN transceiver","Nhờ RTE, SWC không cần biết đối tác nằm cùng ECU hay trên ECU khác."],
+[6,"Hệ điều hành (OS), NvM và Dem thuộc lớp con nào của Basic Software?","Services Layer","MCAL","ECU Abstraction Layer","Complex Drivers","Services Layer chứa hệ điều hành, quản lý bộ nhớ, chẩn đoán, quản lý ECU và các dịch vụ hệ thống."],
+[6,"Complex Driver (CDD) thường được dùng cho việc gì?","Chức năng đặc thù hoặc ràng buộc thời gian chặt, truy cập phần cứng mà không có module chuẩn","Thay thế hoàn toàn RTE","Chỉ để viết giao diện người dùng","Sinh file ARXML","CDD cho phép tích hợp driver riêng khi các module chuẩn không đáp ứng được."],
+[7,"MCAL có đặc điểm nào sau đây?","Lớp thấp nhất của BSW, truy cập trực tiếp thanh ghi của vi điều khiển","Lớp chứa các SWC ứng dụng","Lớp sinh RTE","Lớp quản lý chế độ ECU","MCAL cung cấp driver cho ngoại vi và gắn chặt với vi điều khiển cụ thể."],
+[7,"ECU Abstraction Layer làm nhiệm vụ gì?","Che giấu sự khác biệt về phần cứng của ECU để các lớp trên không phụ thuộc cách đấu nối","Quản lý bit timing của CAN","Lập lịch các task","Sinh mã lỗi DTC","Lớp này cung cấp API độc lập với việc thiết bị nằm trong MCU hay gắn ngoài trên board."],
+[8,"Dữ liệu từ một cảm biến vật lý đi lên ứng dụng theo thứ tự nào?","Phần cứng → MCAL → ECU Abstraction → RTE → SWC","Phần cứng → RTE → MCAL → SWC","Phần cứng → SWC → RTE → MCAL","Phần cứng → ECU Abstraction → MCAL → SWC","Dữ liệu đi từ lớp thấp đến lớp cao, qua các lớp trừu tượng và RTE trước khi đến SWC."],
+[8,"Cổng Client-Server của SWC dùng để làm gì?","Gọi một dịch vụ (operation) do SWC hoặc module khác cung cấp","Chỉ truyền dữ liệu một chiều theo chu kỳ","Cấu hình chân vi điều khiển","Khởi tạo hệ điều hành","Client-Server là kiểu giao tiếp theo lời gọi hàm, còn Sender-Receiver là kiểu truyền dữ liệu."],
+[9,"Module Com trong Communication Stack làm gì?","Chuyển đổi qua lại giữa signal của ứng dụng và I-PDU","Điều khiển transceiver","Khởi tạo clock cho vi điều khiển","Lưu dữ liệu vào flash","Com đóng gói signal vào I-PDU khi gửi và tách signal ra khi nhận."],
+[9,"Module PduR có nhiệm vụ gì?","Định tuyến I-PDU giữa các module trong stack giao tiếp","Phát hiện lỗi bus-off","Đóng gói signal thành byte dữ liệu","Quản lý nguồn của ECU","PduR (PDU Router) chuyển PDU giữa Com, Dcm, các module truyền thông và các tầng giao diện bus."],
+[10,"EcuM (ECU State Manager) chịu trách nhiệm chính điều gì?","Khởi động, tắt, ngủ và đánh thức ECU","Phân mảnh dữ liệu theo ISO 15765-2","Mô phỏng EEPROM trên flash","Định tuyến PDU","EcuM quản lý vòng đời của ECU, từ khởi động đến shutdown, sleep và wake-up."],
+[10,"BswM (BSW Mode Manager) làm gì?","Tổng hợp yêu cầu chế độ và thực thi các hành động theo quy tắc đã cấu hình","Đóng gói signal thành PDU","Điều khiển trực tiếp chân GPIO","Sinh mã C cho RTE","BswM quyết định hành động của các module dựa trên chế độ và điều kiện do cấu hình định nghĩa."],
+[11,"SWC muốn lưu dữ liệu vào bộ nhớ không bay hơi thì đi qua đâu?","Qua RTE, sử dụng giao diện chuẩn của NvM","Gọi thẳng driver Fls","Đi qua CanIf","Ghi trực tiếp vào thanh ghi flash","Ứng dụng chỉ làm việc với BSW thông qua RTE bằng các giao diện đã chuẩn hóa."],
+[11,"Quy tắc gọi giữa các lớp trong BSW nói chung là gì?","Lớp trên gọi API của lớp dưới; lớp dưới thông báo ngược lên bằng callback hoặc notification","Lớp dưới gọi API của lớp trên bất kỳ lúc nào","Mọi module được gọi lẫn nhau tùy ý","Chỉ các module cùng lớp mới được gọi nhau","Hướng phụ thuộc rõ ràng giúp các lớp thay thế độc lập với nhau."],
+[12,"Để SWC bật hoặc tắt một chân GPIO, đường đi hợp lý nhất là gì?","SWC → RTE → IoHwAb → Dio → chân MCU","SWC → Dio → RTE → IoHwAb","SWC → IoHwAb → RTE → Dio","RTE → SWC → Dio → IoHwAb","SWC gọi qua RTE tới IoHwAb ở ECU Abstraction, rồi xuống driver Dio ở MCAL."],
+[12,"Khi đổi sang vi điều khiển khác mà giữ nguyên chức năng xe, phần nào thường phải thay đổi nhiều nhất?","MCAL và cấu hình phần cứng","Logic của các SWC","Giao diện port của SWC","Thuật toán trong runnable","Nhờ các lớp trừu tượng, phần ứng dụng ít bị ảnh hưởng, còn driver và cấu hình theo MCU phải thay."],
+[13,"R-Port của một SWC là gì?","Port yêu cầu (required), nơi SWC nhận dữ liệu hoặc gọi dịch vụ từ bên ngoài","Port cung cấp dữ liệu ra ngoài","Cổng vật lý trên ECU","Chân CAN_H","R-Port là required port, còn P-Port là provided port."],
+[13,"TimingEvent kích hoạt runnable theo cách nào?","Theo chu kỳ thời gian cố định","Khi có ngắt bus-off","Khi ECU được nạp phần mềm","Chỉ một lần khi ECU tắt","TimingEvent chạy runnable định kỳ, ngoài ra còn các event như DataReceivedEvent và OperationInvokedEvent."],
+[14,"Các hàm dạng Rte_Call_* dùng cho kiểu giao tiếp nào?","Client-Server","Sender-Receiver","Khởi tạo driver","Quản lý chế độ ECU","Rte_Call_* gọi operation qua cổng Client-Server; Rte_Read_* và Rte_Write_* dùng cho Sender-Receiver."],
+[14,"Exclusive Area trong RTE dùng để làm gì?","Bảo vệ truy cập dữ liệu dùng chung giữa các runnable","Chọn baud-rate cho CAN","Khởi tạo clock","Sinh file ARXML","Runnable vào vùng bảo vệ bằng Rte_Enter và rời đi bằng Rte_Exit để tránh xung đột dữ liệu."],
+[15,"Các hàm MainFunction của module BSW được lập lịch bởi ai?","SchM (BSW Scheduler) trong các task của OS","Trực tiếp bởi SWC","Module Dem","CAN transceiver","SchM gọi MainFunction định kỳ và cũng cung cấp cơ chế bảo vệ vùng găng cho BSW."],
+[15,"OS của AUTOSAR Classic dựa trên chuẩn nào?","OSEK/VDX","POSIX (dùng cho Adaptive)","Linux kernel bắt buộc","Windows CE","AUTOSAR OS mở rộng từ OSEK/VDX; Adaptive Platform mới dùng hệ điều hành kiểu POSIX."],
+[16,"Trong CAN stack, module nào nằm giữa PduR và Can driver?","CanIf","Dem","EcuM","IoHwAb","CanIf trừu tượng hóa các CAN driver và transceiver, là giao diện giữa tầng trên và driver."],
+[16,"Module nào vận chuyển dữ liệu lớn hơn một frame CAN, ví dụ cho chẩn đoán UDS?","CanTp","CanIf","Mcu","BswM","CanTp thực hiện phân mảnh và ghép lại dữ liệu theo ISO 15765-2."],
+[17,"Thứ tự đúng của Memory Stack khi ghi dữ liệu xuống flash là gì?","NvM → MemIf → Fee → Fls","Fls → Fee → MemIf → NvM","NvM → Fls → MemIf → Fee","MemIf → NvM → Fls → Fee","NvM nhận yêu cầu từ ứng dụng, MemIf chọn thiết bị, Fee mô phỏng EEPROM và Fls ghi lên flash."],
+[17,"Module Fee dùng để làm gì?","Mô phỏng EEPROM trên bộ nhớ flash","Điều khiển CAN controller","Quản lý watchdog","Chuyển signal thành PDU","Fee (Flash EEPROM Emulation) cho phép dùng flash như EEPROM trong Memory Stack."],
+[18,"Pha nào của EcuM ứng ứng với lúc ECU chạy ứng dụng bình thường?","UP","STARTUP","SHUTDOWN","SLEEP","Trình tự thường là STARTUP → UP → SHUTDOWN hoặc SLEEP."],
+[18,"WdgM (Watchdog Manager) làm gì?","Giám sát việc thực thi chương trình và kích hoạt phản ứng khi vi phạm","Lưu mã lỗi DTC","Định tuyến I-PDU","Sinh RTE","WdgM giám sát kiểu alive, deadline và logical supervision, rồi báo qua watchdog để reset khi cần."],
+[19,"Module Dcm đảm nhiệm điều gì?","Xử lý các yêu cầu chẩn đoán như UDS từ tester","Lưu trữ dữ liệu vào flash","Điều khiển transceiver","Quản lý clock của MCU","Dcm (Diagnostic Communication Manager) nhận yêu cầu chẩn đoán và gọi dịch vụ tương ứng."],
+[19,"Module nào lưu mã lỗi DTC kèm dữ liệu liên quan khi có sự cố?","Dem","Com","CanTp","Port","Dem (Diagnostic Event Manager) quản lý sự kiện lỗi và bộ nhớ lỗi."],
+[20,"IoHwAb cung cấp gì cho SWC?","API truy cập tín hiệu I/O theo ý nghĩa tín hiệu, không phụ thuộc chân hay thiết bị cụ thể","Quyền ghi trực tiếp vào thanh ghi GPIO","Cấu hình bit timing CAN","Lập lịch các task","IoHwAb che giấu chi tiết như chân nào, thiết bị nào, nên ứng dụng dễ tái sử dụng."],
+[20,"CanIf thuộc nhóm nào của ECU Abstraction Layer?","Communication Hardware Abstraction","Memory Hardware Abstraction","Onboard Device Abstraction","I/O Hardware Abstraction","CanIf, LinIf, EthIf nằm ở nhóm Communication Hardware Abstraction."],
+[21,"Dio, Port, Adc và Pwm thuộc nhóm driver nào trong MCAL?","I/O drivers","Communication drivers","Memory drivers","Microcontroller drivers","Đây là các driver cho ngõ vào/ra số, chân, ADC và PWM."],
+[21,"Module nào dùng để đọc và ghi mức logic của một chân đã cấu hình?","Dio","Port","Mcu","CanIf","Port cấu hình chức năng và chiều của chân; Dio đọc hoặc ghi mức logic."],
+[22,"Std_ReturnType có hai giá trị chuẩn nào?","E_OK và E_NOT_OK","TRUE và FALSE","SUCCESS và FAIL","OK và ERROR","Đây là kiểu trả về chuẩn trong Std_Types.h mà các module AUTOSAR dùng chung."],
+[22,"Các kiểu dữ liệu độc lập nền tảng như uint8 và uint16 được định nghĩa ở file nào?","Platform_Types.h","Det.h","Rte_Type.h","Dem_Cfg.h","Platform_Types.h định nghĩa kiểu cơ bản theo từng nền tảng để code module không phụ thuộc compiler."],
+[23,"ARXML là gì?","Định dạng XML dùng để mô tả hệ thống và cấu hình AUTOSAR","Một ngôn ngữ lập trình","Tên một loại vi điều khiển","Một giao thức truyền thông","ARXML chứa mô tả SWC, hệ thống, ECU và cấu hình module BSW."],
+[23,"Loại cấu hình nào cho phép thay đổi một số tham số mà không cần biên dịch lại toàn bộ phần mềm?","Post-build configuration","Pre-compile configuration","Cấu hình bằng macro #define","Cấu hình lúc viết code C","Post-build cho phép nạp tham số riêng sau khi build, trong khi pre-compile cố định lúc biên dịch."],
+[24,"Thứ tự đúng khi một SWC gửi signal lên bus CAN là gì?","RTE → Com → PduR → CanIf → Can","RTE → PduR → Com → Can → CanIf","Com → RTE → CanIf → PduR → Can","Can → CanIf → PduR → Com → RTE","SWC ghi dữ liệu qua RTE, Com đóng gói I-PDU, rồi qua PduR, CanIf và Can driver ra bus."],
+[24,"Signal nhận từ bus đến SWC theo cách nào?","Com cung cấp signal cho RTE và SWC đọc qua Rte_Read","SWC đọc trực tiếp thanh ghi CAN","CanIf gọi thẳng runnable của SWC","Dem chuyển signal lên ứng dụng","Dữ liệu nhận được đi lên qua stack giao tiếp rồi vào RTE, SWC chỉ làm việc với RTE."],
+[24,"Yêu cầu chẩn đoán UDS qua CAN đến Dcm theo chuỗi nào?","Can → CanIf → CanTp → PduR → Dcm","Can → CanIf → Com → RTE → Dcm","Can → PduR → CanIf → Dcm → CanTp","CanIf → Can → Dcm → PduR → CanTp","Dữ liệu chẩn đoán đi qua CanTp để ghép các frame, rồi PduR chuyển lên Dcm."],
+[24,"Để lưu DTC bền vững khi tắt ECU, Dem phối hợp với module nào?","NvM","Com","CanSM","Mcu","Dem dùng NvM để ghi dữ liệu sự kiện lỗi vào bộ nhớ không bay hơi qua Memory Stack."]
+];
 
-        var f = document.getElementById('quiz'), btn = f.querySelector('button');
-        Q.forEach(function (d, i) {
-            var pos = (i * 7 + (i >> 2) + 1) % 4, o = d.slice(2, 6), c = o.shift();
-            o.splice(pos, 0, c);
-            var fs = document.createElement('fieldset');
-            fs.className = 'q';
-            fs.dataset.correct = 'abcd'[pos];
-            fs.dataset.explain = d[6];
-            var h = '<legend>Câu ' + (i + 1) + ' (Bài ' + d[0] + '): ' + d[1] + '</legend>';
-            o.forEach(function (t, k) {
-                h += '<label><input type="radio" name="q' + i + '" value="' + 'abcd'[k] + '"> ' + t + '</label>';
-            });
-            fs.innerHTML = h + '<p class="fb"></p>';
-            f.insertBefore(fs, btn);
-        });
-    </script>
-    <script src="../js/quiz.js"></script>
+var f=document.getElementById('quiz'),btn=f.querySelector('button');
+Q.forEach(function(d,i){
+  var pos=(i*3+(i>>1)+2)%4, o=d.slice(2,6), c=o.shift();
+  o.splice(pos,0,c);
+  var fs=document.createElement('fieldset');
+  fs.className='q';
+  fs.dataset.correct='abcd'[pos];
+  fs.dataset.explain=d[6];
+  var h='<legend>Câu '+(i+1)+' (Bài '+d[0]+'): '+d[1]+'</legend>';
+  o.forEach(function(t,k){
+    h+='<label><input type="radio" name="q'+i+'" value="'+'abcd'[k]+'"> '+t+'</label>';
+  });
+  fs.innerHTML=h+'<p class="fb"></p>';
+  f.insertBefore(fs,btn);
+});
+</script>
+<script src="../js/quiz.js"></script>
 
 </body>
-
 </html>
