@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Kiểm tra 4: Tổng hợp AUTOSAR | Tự học Embedded</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../index.html">Trang chủ</a>
+                <a href="../lessons/index.html">Bài học</a>
+                <a href="../quizzes/index.html" class="active" aria-current="page">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="qz-wrap qz-has-side">
+            <h1>Kiểm tra 4: Tổng hợp AUTOSAR</h1>
+            <p><span id="qz-total"></span> câu trắc nghiệm bao quát 32 bài học AUTOSAR (Đề 2), mỗi câu có đúng 1 đáp án. Thứ tự câu hỏi và đáp án được xáo trộn mỗi lần tải
+                trang. Chọn đáp án rồi bấm "Nộp bài" để xem điểm, đáp án đúng và giải thích.</p>
+
+            <div class="qz-body">
+
+                <aside class="qz-side" aria-label="Danh sách câu hỏi">
+                    <h2 class="qz-side-title">Danh sách câu</h2>
+                    <div class="qz-nav" id="qz-nav"></div>
+
+                    <ul class="qz-legend" id="qz-legend" aria-label="Chú thích trạng thái">
+                        <li><i class="qz-sw"></i>Chưa làm</li>
+                        <li><i class="qz-sw answered"></i>Đã làm</li>
+                        <li><i class="qz-sw correct"></i>Đúng</li>
+                        <li><i class="qz-sw wrong"></i>Sai</li>
+                        <li class="lg-skip"><i class="qz-sw skip"></i>Bỏ trống</li>
+                    </ul>
+
+                    <div class="qz-side-foot">
+                        <span class="qz-count" id="qz-count">Đã làm 0/0</span>
+                        <div class="qz-prog" aria-hidden="true"><i id="qz-fill"></i></div>
+                        <div class="qz-actions">
+                            <button class="btn" type="button" id="qz-submit">Nộp bài</button>
+                            <button class="btn ghost" type="button" id="qz-reset">Làm lại</button>
+                        </div>
+                    </div>
+                </aside>
+
+                <section class="qz-content" aria-label="Câu hỏi">
+                    <div class="qz-result" id="qz-result" role="status" tabindex="-1"></div>
+                    <div id="qz-list"></div>
+                    <p><a href="index.html">← Danh sách bài kiểm tra</a></p>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+    <script src="../js/quiz-bank-AUTOSAR-2.js"></script>
+    <script>
+        (function () {
+            var KEYS = 'ABCD';
+            var STATE_TEXT = { todo: 'chưa làm', answered: 'đã làm', correct: 'đúng', wrong: 'sai', skip: 'bỏ trống' };
+            var list = document.getElementById('qz-list');
+            var nav = document.getElementById('qz-nav');
+            var legend = document.getElementById('qz-legend');
+            var cnt = document.getElementById('qz-count');
+            var fill = document.getElementById('qz-fill');
+            var res = document.getElementById('qz-result');
+            var btnS = document.getElementById('qz-submit');
+            var btnR = document.getElementById('qz-reset');
+            var cards = [], graded = false;
+
+            document.getElementById('qz-total').textContent = QUIZ_BANK.length;
+
+            function shuffle(a) {
+                for (var i = a.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1)), t = a[i];
+                    a[i] = a[j]; a[j] = t;
+                }
+                return a;
+            }
+
+            function mark(c, s) {
+                c.cell.className = 'qz-cell' + (s === 'todo' ? '' : ' ' + s);
+                c.cell.setAttribute('aria-label', 'Câu ' + (c.n + 1) + ', ' + STATE_TEXT[s]);
+            }
+
+            function goTo(el) {
+                var smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                el.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+                el.focus({ preventScroll: true });
+            }
+
+            function update() {
+                var n = 0;
+                cards.forEach(function (c) {
+                    var done = !!c.el.querySelector('input:checked');
+                    if (done) n++;
+                    if (!graded) mark(c, done ? 'answered' : 'todo');
+                });
+                cnt.textContent = 'Đã làm ' + n + '/' + cards.length;
+                fill.style.width = (cards.length ? n / cards.length * 100 : 0) + '%';
+                return n;
+            }
+
+            function build() {
+                graded = false;
+                list.innerHTML = '';
+                nav.innerHTML = '';
+                legend.classList.remove('graded');
+                res.className = 'qz-result';
+                res.textContent = '';
+                btnS.disabled = false;
+
+                cards = shuffle(QUIZ_BANK.slice()).map(function (d, i) {
+                    var opts = shuffle([{ t: d[2], ok: true }, { t: d[3] }, { t: d[4] }, { t: d[5] }]);
+                    var sec = document.createElement('section');
+                    sec.className = 'qz-card';
+                    sec.id = 'qc' + i;
+                    sec.tabIndex = -1;
+                    sec.innerHTML =
+                        '<div class="qz-head"><span class="qz-num">Câu ' + (i + 1) + '</span>' +
+                        '<span class="qz-tag">Bài ' + d[0] + '</span></div>' +
+                        '<p class="qz-text" id="qt' + i + '"></p>' +
+                        '<div class="qz-opts" role="radiogroup" aria-labelledby="qt' + i + '"></div>' +
+                        '<p class="qz-fb"></p>';
+                    sec.querySelector('.qz-text').textContent = d[1];
+
+                    var box = sec.querySelector('.qz-opts');
+                    opts.forEach(function (o, k) {
+                        var lb = document.createElement('label');
+                        lb.className = 'qz-opt';
+                        lb.innerHTML = '<input type="radio" name="q' + i + '" value="' + k + '">' +
+                            '<span class="qz-key">' + KEYS[k] + '</span><span class="qz-label"></span>';
+                        lb.querySelector('.qz-label').textContent = o.t;
+                        box.appendChild(lb);
+                        o.el = lb;
+                    });
+                    box.addEventListener('change', function () {
+                        opts.forEach(function (o) {
+                            o.el.classList.toggle('sel', o.el.querySelector('input').checked);
+                        });
+                        update();
+                    });
+                    list.appendChild(sec);
+
+                    var cell = document.createElement('button');
+                    cell.type = 'button';
+                    cell.textContent = i + 1;
+                    cell.addEventListener('click', function () { goTo(sec); });
+                    nav.appendChild(cell);
+
+                    var c = { n: i, el: sec, cell: cell, opts: opts, explain: d[6] };
+                    mark(c, 'todo');
+                    return c;
+                });
+                update();
+            }
+
+            function grade() {
+                if (graded) return;
+                var un = cards.length - update();
+                if (un > 0 && !confirm('Còn ' + un + ' câu chưa trả lời. Bạn vẫn muốn nộp bài?')) return;
+                graded = true;
+                btnS.disabled = true;
+                legend.classList.add('graded');
+
+                var right = 0, wrong = 0, skip = 0;
+                cards.forEach(function (c) {
+                    var picked = -1, correct = -1;
+                    c.opts.forEach(function (o, k) {
+                        var inp = o.el.querySelector('input');
+                        if (o.ok) correct = k;
+                        if (inp.checked) picked = k;
+                        inp.disabled = true;
+                    });
+                    c.el.classList.add('done');
+                    c.opts[correct].el.classList.add('correct');
+
+                    var msg;
+                    if (picked === correct) {
+                        right++; c.el.classList.add('is-right'); mark(c, 'correct');
+                        msg = 'Đúng. ';
+                    } else if (picked < 0) {
+                        skip++; c.el.classList.add('is-skip'); mark(c, 'skip');
+                        msg = 'Chưa trả lời. Đáp án đúng: ' + KEYS[correct] + '. ';
+                    } else {
+                        wrong++; c.el.classList.add('is-wrong'); mark(c, 'wrong');
+                        c.opts[picked].el.classList.add('wrong');
+                        msg = 'Chưa đúng. Đáp án đúng: ' + KEYS[correct] + '. ';
+                    }
+                    c.el.querySelector('.qz-fb').textContent = msg + c.explain;
+                });
+
+                var total = cards.length;
+                res.textContent = 'Điểm: ' + right + '/' + total + ' (' + Math.round(right / total * 100) +
+                    '%). Sai: ' + wrong + '. Bỏ trống: ' + skip + '.';
+                res.className = 'qz-result show';
+                res.scrollIntoView({ block: 'center' });
+                res.focus({ preventScroll: true });
+            }
+
+            btnS.addEventListener('click', grade);
+            btnR.addEventListener('click', function () {
+                build();
+                window.scrollTo(0, 0);
+            });
+            build();
+        })();
+    </script>
+
+</body>
+
+</html>
