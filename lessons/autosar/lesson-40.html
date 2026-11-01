@@ -1,0 +1,3162 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 40: Chi tiết ISO 14229-3 - UDS on CAN Implementation | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+                <a href="lesson-38.html">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
+                <a href="lesson-39.html">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer Services</a>
+                <a href="lesson-40.html" class="active" aria-current="page">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN Implementation</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 40: Chi tiết ISO 14229-3 - UDS on CAN Implementation</h1>
+
+                <p>
+                    Trong các bài trước, chúng ta đã tìm hiểu
+                    các thành phần quan trọng của hệ thống
+                    Diagnostic Communication:
+                    ISO 14229-1 định nghĩa UDS Application Layer,
+                    ISO 14229-2 định nghĩa Session Layer Services,
+                    ISO 15765-2 định nghĩa Transport Protocol
+                    cho CAN và ISO 11898 định nghĩa
+                    các quy tắc truyền thông CAN.
+                </p>
+
+                <p>
+                    Tuy nhiên, để triển khai UDS trên CAN,
+                    chúng ta cần một tài liệu xác định cách
+                    kết hợp những thành phần này và các yêu cầu
+                    riêng khi sử dụng CAN làm phương tiện
+                    truyền thông chẩn đoán.
+                </p>
+
+                <p>
+                    Đó chính là vai trò của
+                    <strong>ISO 14229-3 - UDS on CAN Implementation (UDSonCAN)</strong>.
+                    Tiêu chuẩn này mô tả application profile
+                    dành riêng cho việc triển khai UDS trên mạng CAN,
+                    đồng thời quy định thêm những yêu cầu
+                    và giới hạn riêng đối với UDS communication.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào ISO 14229-3:2022,
+                    UDS on CAN Implementation, mối quan hệ
+                    giữa ISO 14229-1, ISO 14229-2 và ISO 15765-2,
+                    OSI Model, Service Primitive, UDS Message,
+                    CAN Identifier, Physical và Functional Addressing,
+                    ReadDataByPeriodicIdentifier, UUDT,
+                    Timing Parameter và AUTOSAR CAN Diagnostic Stack.
+                    Bài học cũng hướng dẫn cách đọc CAN Trace,
+                    kiểm tra Diagnostic Configuration,
+                    xây dựng Test Case và phân tích lỗi
+                    trong một dự án Automotive.
+                </div>
+
+                <h2>1. ISO 14229-3 là gì?</h2>
+
+                <p>
+                    ISO 14229-3 là một phần của bộ tiêu chuẩn
+                    Unified Diagnostic Services (UDS),
+                    quy định application profile dành cho
+                    việc triển khai UDS trên mạng CAN.
+                </p>
+
+                <p>
+                    Tên đầy đủ của tài liệu:
+                </p>
+
+                <pre><code>ISO 14229-3:2022
+
+Road vehicles - Unified diagnostic services (UDS) -
+Part 3: Unified diagnostic services on CAN implementation (UDSonCAN)</code></pre>
+
+                <p>
+                    Phiên bản ISO 14229-3:2022 là Edition 2,
+                    được xuất bản tháng 3/2022.
+                    Phiên bản này thay thế ISO 14229-3:2012
+                    trước đó.
+                </p>
+
+                <p>
+                    Tiêu chuẩn định nghĩa application profile
+                    cho UDS communication trên CAN.
+                    Nó tham chiếu những yêu cầu của
+                    ISO 14229-1 và ISO 14229-2,
+                    đồng thời bổ sung những yêu cầu
+                    đặc thù cho việc triển khai UDSonCAN.
+                </p>
+
+                <p>
+                    Hai nhóm nội dung quan trọng:
+                </p>
+
+                <ul>
+                    <li>Các yêu cầu bổ sung dành riêng cho việc triển khai UDS trên CAN.</li>
+                    <li>Các giới hạn hoặc restriction khi triển khai UDS trên CAN.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    ISO 14229-3 không định nghĩa lại toàn bộ
+                    UDS Diagnostic Services.
+                    Nó sử dụng các định nghĩa từ ISO 14229-1
+                    và ISO 14229-2, sau đó bổ sung
+                    những yêu cầu cần thiết cho UDS on CAN.
+                </div>
+
+                <h2>2. Phạm vi của ISO 14229-3</h2>
+
+                <p>
+                    ISO 14229-3 tập trung vào cách áp dụng
+                    UDS trên CAN.
+                    Nó không thay thế những tiêu chuẩn
+                    định nghĩa CAN Protocol, CAN Physical Layer
+                    hoặc Transport Protocol.
+                </p>
+
+                <p>
+                    Một số nội dung thuộc các tiêu chuẩn khác:
+                </p>
+
+                <ul>
+                    <li>CAN Frame Format và CAN Arbitration: ISO 11898-1.</li>
+                    <li>CAN Physical Layer: ISO 11898-2 và các phần liên quan.</li>
+                    <li>ISO-TP Segmentation và Flow Control: ISO 15765-2.</li>
+                    <li>UDS Diagnostic Services: ISO 14229-1.</li>
+                    <li>Session Layer Services: ISO 14229-2.</li>
+                </ul>
+
+                <p>
+                    ISO 14229-3 đóng vai trò kết nối
+                    những quy định của UDS với
+                    môi trường truyền thông CAN.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    ISO 14229-3 không phải là một
+                    CAN Transport Protocol mới.
+                    Chức năng Transport Protocol
+                    vẫn thuộc phạm vi của ISO 15765-2.
+                </div>
+
+                <h2>3. Các phần trong bộ ISO 14229</h2>
+
+                <p>
+                    UDS không chỉ có một tiêu chuẩn duy nhất.
+                    Bộ ISO 14229 được chia thành nhiều phần
+                    để mô tả các lớp giao tiếp và cách triển khai
+                    trên những nền tảng truyền thông khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Phạm vi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 14229-1</td>
+                            <td>UDS Application Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-2</td>
+                            <td>UDS Session Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-3</td>
+                            <td>Unified Diagnostic Services on CAN implementation.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-4</td>
+                            <td>UDS implementation on FlexRay.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-5</td>
+                            <td>UDS implementation on Internet Protocol.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các phần này có mối quan hệ với nhau
+                    nhằm giúp UDS có thể được triển khai
+                    trên những nền tảng truyền thông phù hợp.
+                    Cần kiểm tra trạng thái và phiên bản
+                    của từng phần trước khi sử dụng trong dự án.
+                </p>
+
+                <h2>4. Vị trí của ISO 14229-3 trong kiến trúc UDS</h2>
+
+                <p>
+                    Để hiểu rõ vai trò của ISO 14229-3,
+                    chúng ta cần đặt nó vào mối quan hệ
+                    với những tiêu chuẩn đã học trước đó.
+                </p>
+
+                <pre><code>             UDS Application Layer
+                 ISO 14229-1
+                       |
+                       v
+              UDS Session Layer
+                 ISO 14229-2
+                       |
+                       v
+             UDS on CAN Profile
+                 ISO 14229-3
+                       |
+                       v
+       +-------------------------------+
+       |                               |
+       v                               v
+   Transport Layer               Network Layer
+       ISO 15765-2                  ISO 15765-2
+       |                               |
+       +---------------+---------------+
+                       |
+                       v
+                 CAN Data Link
+                 ISO 11898-1
+                       |
+                       v
+                 CAN Physical
+                 ISO 11898 series</code></pre>
+
+                <p>
+                    ISO 14229-3 là application profile
+                    cho UDSonCAN.
+                    Nó không phải một tầng CAN độc lập
+                    nằm giữa Application Layer
+                    và Transport Layer.
+                </p>
+
+                <h2>5. Phân biệt ISO 14229-3 và ISO 15765-2</h2>
+
+                <p>
+                    Đây là điểm rất dễ gây nhầm lẫn
+                    vì cả hai tiêu chuẩn đều liên quan
+                    đến diagnostic communication trên CAN.
+                </p>
+
+                <h3>5.1. ISO 14229-3</h3>
+
+                <p>
+                    ISO 14229-3 tập trung vào cách triển khai
+                    UDS services trên CAN.
+                    Nó định nghĩa application profile
+                    và các yêu cầu đặc thù cho UDSonCAN.
+                </p>
+
+                <p>
+                    Một số nội dung được đề cập:
+                </p>
+
+                <ul>
+                    <li>Các UDS services được áp dụng trong profile UDSonCAN.</li>
+                    <li>Yêu cầu riêng cho ReadDataByPeriodicIdentifier.</li>
+                    <li>Quy định liên quan đến UUDT periodic transmission.</li>
+                    <li>Timing parameter liên quan đến UDSonCAN.</li>
+                    <li>Ánh xạ các giao diện Service Primitive qua các tầng.</li>
+                </ul>
+
+                <h3>5.2. ISO 15765-2</h3>
+
+                <p>
+                    ISO 15765-2 định nghĩa Transport Protocol
+                    và Network Layer Services dành cho
+                    diagnostic communication trên CAN.
+                    Giao thức này thường được gọi là DoCAN
+                    hoặc ISO-TP.
+                </p>
+
+                <p>
+                    Một số nội dung quan trọng:
+                </p>
+
+                <ul>
+                    <li>Single Frame (SF).</li>
+                    <li>First Frame (FF).</li>
+                    <li>Consecutive Frame (CF).</li>
+                    <li>Flow Control (FC).</li>
+                    <li>Block Size (BS).</li>
+                    <li>Separation Time (STmin).</li>
+                    <li>Network Layer Addressing và Timing.</li>
+                </ul>
+
+                <h3>5.3. Bảng so sánh</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>ISO 14229-3</th>
+                            <th>ISO 15765-2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tên thường dùng</td>
+                            <td>UDSonCAN.</td>
+                            <td>DoCAN / ISO-TP.</td>
+                        </tr>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Application profile cho UDS trên CAN.</td>
+                            <td>Transport Protocol và Network Layer cho CAN diagnostics.</td>
+                        </tr>
+                        <tr>
+                            <td>Quan tâm đến</td>
+                            <td>UDS service implementation trên CAN.</td>
+                            <td>Truyền và nhận message qua CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>ReadDataByPeriodicIdentifier, UUDT.</td>
+                            <td>SF, FF, CF, FC.</td>
+                        </tr>
+                        <tr>
+                            <td>Liên hệ</td>
+                            <td>Sử dụng Transport Layer được định nghĩa bởi ISO 15765-2.</td>
+                            <td>Cung cấp cơ chế vận chuyển cho UDS.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Cách ghi nhớ:</strong>
+                    ISO 14229-3 trả lời câu hỏi
+                    "UDS được triển khai như thế nào trên CAN?".
+                    ISO 15765-2 trả lời câu hỏi
+                    "Diagnostic Message được vận chuyển qua CAN như thế nào?".
+                </div>
+
+                <h2>6. OSI Model khi triển khai UDSonCAN</h2>
+
+                <p>
+                    ISO 14229-3 tổ chức các giao diện
+                    và yêu cầu theo mô hình OSI.
+                    Một điểm cần chú ý là các tầng
+                    Application, Presentation, Session,
+                    Transport, Network, Data Link
+                    và Physical có những vai trò khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>OSI Layer</th>
+                            <th>Vai trò</th>
+                            <th>Tiêu chuẩn liên quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Layer 7 - Application</td>
+                            <td>Diagnostic Service và dữ liệu ứng dụng.</td>
+                            <td>ISO 14229-1.</td>
+                        </tr>
+                        <tr>
+                            <td>Layer 6 - Presentation</td>
+                            <td>Biểu diễn dữ liệu.</td>
+                            <td>ISO 14229 series.</td>
+                        </tr>
+                        <tr>
+                            <td>Layer 5 - Session</td>
+                            <td>Session Layer Services.</td>
+                            <td>ISO 14229-2.</td>
+                        </tr>
+                        <tr>
+                            <td>Layer 4 - Transport</td>
+                            <td>Vận chuyển message.</td>
+                            <td>ISO 15765-2.</td>
+                        </tr>
+                        <tr>
+                            <td>Layer 3 - Network</td>
+                            <td>Network Layer Services và addressing.</td>
+                            <td>ISO 15765-2.</td>
+                        </tr>
+                        <tr>
+                            <td>Layer 2 - Data Link</td>
+                            <td>CAN Data Link.</td>
+                            <td>ISO 11898-1.</td>
+                        </tr>
+                        <tr>
+                            <td>Layer 1 - Physical</td>
+                            <td>Truyền tín hiệu vật lý.</td>
+                            <td>ISO 11898 series.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>6.1. Luồng dữ liệu tổng quát</h3>
+
+                <pre><code>      UDS Diagnostic Service
+              |
+              v
+       Application Layer
+          A_Data
+              |
+              v
+        Session Layer
+          S_Data
+              |
+              v
+       Transport Layer
+          T_Data
+              |
+              v
+        Network Layer
+          N_Data
+              |
+              v
+       Data Link Layer
+          L_Data
+              |
+              v
+        Physical Layer
+              |
+              v
+           CAN Bus</code></pre>
+
+                <p>
+                    Sơ đồ này giúp hình dung cách một
+                    Diagnostic Message đi từ tầng ứng dụng
+                    xuống các tầng thấp hơn để được truyền
+                    qua CAN.
+                </p>
+
+                <h2>7. Các Service Primitive trong ISO 14229-3</h2>
+
+                <p>
+                    Trong bài 39, chúng ta đã tìm hiểu
+                    S_Data và T_Data.
+                    ISO 14229-3 mở rộng góc nhìn bằng cách
+                    mô tả các giao diện Service Primitive
+                    ở nhiều tầng trong kiến trúc UDSonCAN.
+                </p>
+
+                <p>
+                    Các giao diện quan trọng gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Giao diện</th>
+                            <th>OSI Layer</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>A_Data</td>
+                            <td>Application Layer</td>
+                            <td>Trao đổi dữ liệu giữa Application Layer và tầng Session.</td>
+                        </tr>
+                        <tr>
+                            <td>S_Data</td>
+                            <td>Session Layer</td>
+                            <td>Trao đổi dữ liệu ở giao diện Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>T_Data</td>
+                            <td>Transport Layer</td>
+                            <td>Trao đổi dữ liệu ở giao diện Transport Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>N_Data</td>
+                            <td>Network Layer</td>
+                            <td>Trao đổi dữ liệu ở giao diện Network Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>L_Data</td>
+                            <td>Data Link Layer</td>
+                            <td>Trao đổi dữ liệu ở giao diện Data Link Layer.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Mỗi giao diện có thể sử dụng
+                    những primitive như:
+                </p>
+
+                <pre><code>Data.req
+Data.ind
+Data.conf</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><code>req</code> (Request): Yêu cầu tầng dưới thực hiện một thao tác.</li>
+                    <li><code>ind</code> (Indication): Thông báo dữ liệu hoặc sự kiện nhận được cho tầng trên.</li>
+                    <li><code>conf</code> (Confirmation): Thông báo kết quả của một request trước đó.</li>
+                </ul>
+
+                <h2>8. A_Data - Application Layer Interface</h2>
+
+                <p>
+                    A_Data là giao diện Service Primitive
+                    ở Application Layer.
+                    Trong UDSonCAN, các primitive parameter
+                    và giao diện A_Data.req, A_Data.ind
+                    và A_Data.conf được triển khai theo
+                    quy định của ISO 14229-1.
+                </p>
+
+                <p>
+                    Điều này có nghĩa ISO 14229-3
+                    không cần định nghĩa lại toàn bộ
+                    cách Application Layer tạo và xử lý
+                    UDS request/response.
+                    Thay vào đó, tiêu chuẩn tham chiếu
+                    ISO 14229-1.
+                </p>
+
+                <h3>8.1. A_Data.req</h3>
+
+                <p>
+                    A_Data.req được sử dụng khi
+                    Application Layer yêu cầu gửi
+                    một Diagnostic Message.
+                </p>
+
+                <pre><code>Application Layer
+       |
+       | A_Data.req
+       v
+      UDS Stack</code></pre>
+
+                <h3>8.2. A_Data.ind</h3>
+
+                <p>
+                    A_Data.ind thông báo dữ liệu nhận được
+                    cho Application Layer để xử lý
+                    Diagnostic Service.
+                </p>
+
+                <pre><code>      UDS Stack
+           |
+           | A_Data.ind
+           v
+Application Layer</code></pre>
+
+                <h3>8.3. A_Data.conf</h3>
+
+                <p>
+                    A_Data.conf thông báo kết quả
+                    của một request ở giao diện
+                    Application Layer.
+                </p>
+
+                <p>
+                    Cần phân biệt primitive này
+                    với Positive Response hoặc
+                    Negative Response mà ECU gửi
+                    về cho Diagnostic Tester.
+                </p>
+
+                <h2>9. S_Data - Session Layer Interface</h2>
+
+                <p>
+                    S_Data là giao diện giữa
+                    Application Layer và Session Layer
+                    trong quá trình trao đổi message.
+                </p>
+
+                <p>
+                    Ba primitive cơ bản:
+                </p>
+
+                <pre><code>S_Data.req
+S_Data.ind
+S_Data.conf</code></pre>
+
+                <p>
+                    Đây là những nội dung chúng ta đã
+                    tìm hiểu trong bài ISO 14229-2.
+                    Trong ISO 14229-3, S_Data được đặt
+                    vào application profile UDSonCAN
+                    và kết hợp với các giao diện
+                    Transport, Network và Data Link tương ứng.
+                </p>
+
+                <h2>10. T_Data - Transport Layer Interface</h2>
+
+                <p>
+                    T_Data là giao diện Service Primitive
+                    ở Transport Layer.
+                </p>
+
+                <p>
+                    Trong UDSonCAN, Transport Layer
+                    được triển khai dựa trên DoCAN
+                    Transport Protocol và Network Layer
+                    Services của ISO 15765-2.
+                </p>
+
+                <pre><code>S_Data.req
+     |
+     v
+T_Data.req
+     |
+     v
+Transport Protocol
+     |
+     v
+CAN Network</code></pre>
+
+                <p>
+                    Ở tầng này, message có thể được truyền
+                    trực tiếp hoặc phân đoạn thành nhiều frame
+                    tùy theo kích thước và khả năng
+                    của Transport Protocol.
+                </p>
+
+                <h2>11. N_Data - Network Layer Interface</h2>
+
+                <p>
+                    N_Data là giao diện Service Primitive
+                    thuộc Network Layer.
+                </p>
+
+                <p>
+                    Các primitive gồm:
+                </p>
+
+                <pre><code>N_Data.req
+N_Data.ind
+N_Data.conf</code></pre>
+
+                <p>
+                    Network Layer cung cấp các dịch vụ
+                    cần thiết để truyền dữ liệu theo
+                    địa chỉ và quy tắc của giao thức mạng.
+                </p>
+
+                <p>
+                    Trong UDSonCAN, Network Layer
+                    được liên kết với DoCAN Network Layer
+                    Services của ISO 15765-2.
+                </p>
+
+                <h2>12. L_Data - Data Link Layer Interface</h2>
+
+                <p>
+                    L_Data là giao diện Service Primitive
+                    ở Data Link Layer.
+                </p>
+
+                <p>
+                    Đối với UDSonCAN, tầng này liên quan
+                    đến CAN Data Link, được định nghĩa
+                    trong ISO 11898-1.
+                </p>
+
+                <pre><code>N_Data.req
+     |
+     v
+L_Data.req
+     |
+     v
+CAN Data Link
+     |
+     v
+CAN Frame transmission</code></pre>
+
+                <p>
+                    Ở tầng này, dữ liệu được đưa vào
+                    CAN frame với các thông tin như
+                    CAN Identifier, DLC và Data Field.
+                </p>
+
+                <h2>13. Luồng Service Primitive xuyên suốt UDSonCAN</h2>
+
+                <p>
+                    Sau khi tìm hiểu các giao diện riêng lẻ,
+                    chúng ta có thể kết hợp chúng thành
+                    một luồng dữ liệu hoàn chỉnh.
+                </p>
+
+                <pre><code>       UDS Application Layer
+                |
+                | A_Data.req
+                v
+          Session Layer
+                |
+                | S_Data.req
+                v
+         Transport Layer
+                |
+                | T_Data.req
+                v
+          Network Layer
+                |
+                | N_Data.req
+                v
+         Data Link Layer
+                |
+                | L_Data.req
+                v
+          Physical Layer
+                |
+                v
+             CAN Bus</code></pre>
+
+                <p>
+                    Ở phía nhận, dữ liệu được tiếp nhận
+                    và chuyển ngược lên các tầng
+                    thông qua những primitive tương ứng.
+                </p>
+
+                <p>
+                    Trong thực tế, Service Primitive
+                    là mô hình giao diện của tiêu chuẩn.
+                    Chúng không nhất thiết xuất hiện
+                    dưới dạng các function có tên
+                    giống hệt trong source code
+                    của mọi ECU.
+                </p>
+
+                <h2>14. A_PDU và UDS Message</h2>
+
+                <p>
+                    Khi nói về Diagnostic Communication,
+                    chúng ta thường gặp các thuật ngữ:
+                </p>
+
+                <ul>
+                    <li>UDS Message.</li>
+                    <li>A_PDU.</li>
+                    <li>T_PDU.</li>
+                    <li>N_PDU.</li>
+                    <li>CAN Frame.</li>
+                </ul>
+
+                <p>
+                    Chúng có liên hệ với nhau
+                    nhưng không phải cùng một loại dữ liệu.
+                </p>
+
+                <h3>14.1. A_PDU</h3>
+
+                <p>
+                    A_PDU (Application Protocol Data Unit)
+                    là đơn vị dữ liệu thuộc Application Layer.
+                </p>
+
+                <p>
+                    Ví dụ một UDS request:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><code>0x22</code>: Service Identifier - ReadDataByIdentifier.</li>
+                    <li><code>0xF190</code>: Data Identifier được sử dụng trong ví dụ đọc VIN.</li>
+                </ul>
+
+                <p>
+                    Các byte trên tạo thành nội dung
+                    Diagnostic Message ở Application Layer.
+                </p>
+
+                <h3>14.2. T_PDU</h3>
+
+                <p>
+                    T_PDU là đơn vị dữ liệu tại
+                    Transport Layer.
+                    Tầng này có trách nhiệm vận chuyển
+                    dữ liệu từ các tầng phía trên.
+                </p>
+
+                <p>
+                    Tùy theo giao thức, T_PDU có thể
+                    được ánh xạ thành một hoặc nhiều
+                    đơn vị dữ liệu ở tầng thấp hơn.
+                </p>
+
+                <h3>14.3. N_PDU</h3>
+
+                <p>
+                    N_PDU là đơn vị dữ liệu thuộc
+                    Network Layer.
+                    Trong kiến trúc DoCAN,
+                    Network Layer tham gia vào quá trình
+                    chuyển dữ liệu xuống Data Link Layer.
+                </p>
+
+                <h3>14.4. CAN Frame</h3>
+
+                <p>
+                    CAN Frame là đơn vị truyền thông
+                    ở Data Link Layer.
+                    Một CAN frame chứa CAN Identifier,
+                    thông tin điều khiển và Data Field.
+                </p>
+
+                <pre><code>+-------------+------------------+-------------------+
+| CAN ID      | Control / DLC    | Data Field        |
++-------------+------------------+-------------------+
+| Identifier  | Frame control    | Payload bytes     |
++-------------+------------------+-------------------+</code></pre>
+
+                <p>
+                    CAN frame không chứa trực tiếp
+                    toàn bộ cấu trúc UDS trong mọi trường hợp.
+                    Nếu message lớn hơn khả năng mang dữ liệu
+                    của một frame, Transport Protocol
+                    sẽ xử lý việc phân đoạn.
+                </p>
+
+                <h2>15. Mối quan hệ giữa UDS Message, ISO-TP và CAN Frame</h2>
+
+                <p>
+                    Đây là phần rất quan trọng
+                    khi đọc CAN Trace.
+                </p>
+
+                <p>
+                    Hãy lấy một request có nội dung:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    Nếu message có thể truyền trong
+                    một đơn vị truyền phù hợp,
+                    Transport Protocol có thể sử dụng
+                    Single Frame.
+                </p>
+
+                <pre><code>UDS Request
+22 F1 90
+     |
+     v
+ISO-TP
+Single Frame
+     |
+     v
+CAN Frame</code></pre>
+
+                <p>
+                    Nếu message lớn hơn khả năng
+                    truyền của một frame, ISO-TP
+                    có thể phân đoạn dữ liệu.
+                </p>
+
+                <pre><code>Large UDS Message
+        |
+        v
+   ISO-TP Layer
+        |
+        +---- First Frame
+        |
+        +---- Flow Control
+        |
+        +---- Consecutive Frame
+        |
+        +---- Consecutive Frame
+        |
+        v
+     CAN Frames</code></pre>
+
+                <p>
+                    Phần phân đoạn, Flow Control
+                    và ghép message thuộc ISO 15765-2,
+                    không phải chức năng được định nghĩa
+                    lại trong ISO 14229-3.
+                </p>
+
+                <h2>16. UDSonCAN Addressing</h2>
+
+                <p>
+                    Để Diagnostic Tester và ECU
+                    có thể trao đổi dữ liệu,
+                    hệ thống cần xác định địa chỉ
+                    nguồn và địa chỉ đích.
+                </p>
+
+                <p>
+                    Trong diagnostic communication trên CAN,
+                    các khái niệm addressing quan trọng gồm:
+                </p>
+
+                <ul>
+                    <li>Source Address (SA).</li>
+                    <li>Target Address (TA).</li>
+                    <li>Physical Addressing.</li>
+                    <li>Functional Addressing.</li>
+                    <li>CAN Identifier.</li>
+                </ul>
+
+                <h3>16.1. Source Address</h3>
+
+                <p>
+                    Source Address xác định nguồn phát sinh
+                    Diagnostic Message.
+                </p>
+
+                <pre><code>Source: Diagnostic Tester</code></pre>
+
+                <h3>16.2. Target Address</h3>
+
+                <p>
+                    Target Address xác định ECU
+                    hoặc đích nhận của Diagnostic Message.
+                </p>
+
+                <pre><code>Target: ECU A</code></pre>
+
+                <h3>16.3. Physical Addressing</h3>
+
+                <p>
+                    Physical Addressing hướng một request
+                    đến một ECU cụ thể.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | Physical Request
+       v
+      ECU A</code></pre>
+
+                <p>
+                    Đây là kiểu giao tiếp thường gặp
+                    khi Tester muốn đọc dữ liệu,
+                    thực hiện Routine hoặc gửi request
+                    riêng cho một ECU.
+                </p>
+
+                <h3>16.4. Functional Addressing</h3>
+
+                <p>
+                    Functional Addressing hướng request
+                    theo chức năng, cho phép các ECU
+                    phù hợp với yêu cầu tiếp nhận
+                    và xử lý.
+                </p>
+
+                <pre><code>                  Tester
+                     |
+                     |
+              Functional Request
+                     |
+          +----------+----------+
+          |          |          |
+          v          v          v
+        ECU A      ECU B      ECU C</code></pre>
+
+                <p>
+                    Việc ECU nào phản hồi và loại service
+                    nào được phép sử dụng phụ thuộc
+                    Diagnostic Specification và
+                    cấu hình của từng ECU.
+                </p>
+
+                <h3>16.5. CAN Identifier không phải UDS SID</h3>
+
+                <p>
+                    Đây là điểm cần ghi nhớ
+                    khi phân tích CAN Trace.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông tin</th>
+                            <th>Ý nghĩa</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Identifier</td>
+                            <td>Identifier của CAN frame ở Data Link Layer.</td>
+                            <td>0x7E0 - giá trị minh họa.</td>
+                        </tr>
+                        <tr>
+                            <td>UDS SID</td>
+                            <td>Service Identifier của UDS request.</td>
+                            <td>0x22 - ReadDataByIdentifier.</td>
+                        </tr>
+                        <tr>
+                            <td>DID</td>
+                            <td>Data Identifier được truy cập thông qua một số UDS service.</td>
+                            <td>0xF190 - DID minh họa đọc VIN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Ví dụ:</strong>
+                    CAN ID 0x7E0 và UDS SID 0x22
+                    là hai thông tin thuộc hai tầng khác nhau.
+                    Giá trị CAN ID 0x7E0 trong ví dụ
+                    chỉ minh họa cách trình bày;
+                    không nên xem đây là CAN ID bắt buộc
+                    cho mọi ECU hoặc mọi dự án.
+                </div>
+
+                <h2>17. CAN Identifier 11-bit và 29-bit</h2>
+
+                <p>
+                    Trong diagnostic communication,
+                    CAN Identifier có thể được cấu hình
+                    theo Standard Frame Format hoặc
+                    Extended Frame Format.
+                </p>
+
+                <p>
+                    Hai loại CAN Identifier này đã được
+                    học trong bài ISO 11898-1.
+                    Ở bài này, chúng ta tập trung vào
+                    cách chúng liên quan đến UDSonCAN.
+                </p>
+
+                <h3>17.1. 11-bit CAN Identifier</h3>
+
+                <p>
+                    Standard CAN Identifier sử dụng
+                    độ dài 11 bit.
+                </p>
+
+                <pre><code>11-bit CAN Identifier
+
++---------------------------------------+
+|               11 bits                 |
++---------------------------------------+</code></pre>
+
+                <p>
+                    Với diagnostic communication,
+                    CAN ID có thể được cấu hình
+                    cho request và response theo
+                    Diagnostic Network Design.
+                </p>
+
+                <h3>17.2. 29-bit CAN Identifier</h3>
+
+                <p>
+                    Extended CAN Identifier sử dụng
+                    độ dài 29 bit.
+                </p>
+
+                <pre><code>29-bit CAN Identifier
+
++---------------------------------------------------------------+
+|                           29 bits                             |
++---------------------------------------------------------------+</code></pre>
+
+                <p>
+                    Việc sử dụng 29-bit CAN ID cho phép
+                    cấu trúc identifier chứa nhiều
+                    trường thông tin hơn so với
+                    11-bit CAN ID.
+                </p>
+
+                <h3>17.3. So sánh</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>11-bit CAN ID</th>
+                            <th>29-bit CAN ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Identifier length</td>
+                            <td>11 bit.</td>
+                            <td>29 bit.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN frame format</td>
+                            <td>Standard / Base Frame Format.</td>
+                            <td>Extended Frame Format.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic usage</td>
+                            <td>Được sử dụng trong các profile diagnostic tương ứng.</td>
+                            <td>Được sử dụng trong các profile diagnostic tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Address information</td>
+                            <td>Phụ thuộc cách ánh xạ và addressing được cấu hình.</td>
+                            <td>Có thể sử dụng cấu trúc identifier mở rộng theo profile liên quan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    Không nên tự suy ra toàn bộ địa chỉ ECU
+                    chỉ từ việc CAN ID là 11-bit hay 29-bit.
+                    Cần đọc đúng addressing format,
+                    communication matrix và cấu hình
+                    diagnostic của dự án.
+                </div>
+
+                <h2>18. Request CAN ID và Response CAN ID</h2>
+
+                <p>
+                    Trong một hệ thống diagnostic,
+                    request và response thường được
+                    cấu hình với các CAN Identifier riêng.
+                </p>
+
+                <p>
+                    Ví dụ minh họa với một ECU:
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | Request
+       | CAN ID: 0x7E0
+       v
+     ECU A
+       |
+       | Response
+       | CAN ID: 0x7E8
+       v
+Diagnostic Tester</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>0x7E0</code>: Request CAN ID giả định.</li>
+                    <li><code>0x7E8</code>: Response CAN ID giả định.</li>
+                </ul>
+
+                <p>
+                    Đây là ví dụ phổ biến để minh họa
+                    một cách tổ chức diagnostic request/response.
+                    Tuy nhiên, không phải mọi xe đều sử dụng
+                    cặp CAN ID này.
+                </p>
+
+                <h2>19. CAN ID và Arbitration</h2>
+
+                <p>
+                    CAN sử dụng cơ chế arbitration
+                    dựa trên CAN Identifier.
+                    Điều này có nghĩa CAN ID ảnh hưởng
+                    đến quá trình tranh quyền truyền thông
+                    trên bus.
+                </p>
+
+                <p>
+                    Trong một CAN network,
+                    nếu nhiều node cùng bắt đầu truyền,
+                    arbitration sẽ xác định frame nào
+                    tiếp tục truyền.
+                </p>
+
+                <p>
+                    Vì vậy, khi thiết kế diagnostic communication,
+                    việc lựa chọn CAN ID cần phù hợp
+                    với communication matrix và
+                    các yêu cầu của hệ thống.
+                </p>
+
+                <div class="note">
+                    <strong>Phân biệt:</strong>
+                    CAN Identifier được sử dụng cho arbitration
+                    và xác định CAN message ở Data Link Layer.
+                    UDS SID được sử dụng để xác định
+                    Diagnostic Service ở Application Layer.
+                </div>
+
+                <h2>20. Các Diagnostic Services trong UDSonCAN</h2>
+
+                <p>
+                    ISO 14229-3 có phần tổng quan
+                    các Diagnostic Services được áp dụng
+                    trong profile UDSonCAN.
+                </p>
+
+                <p>
+                    Một số UDS services được triển khai
+                    theo ISO 14229-1 và ISO 14229-2
+                    mà không có requirement riêng cho UDSonCAN.
+                    Một số service có requirement đặc thù
+                    được tham chiếu đến các mục riêng
+                    của ISO 14229-3.
+                </p>
+
+                <h3>20.1. Diagnostic và Communication Management</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Diagnostic Service</th>
+                            <th>SID</th>
+                            <th>Ghi chú theo UDSonCAN profile</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DiagnosticSessionControl</td>
+                            <td>0x10</td>
+                            <td>Không có requirement riêng cho UDSonCAN trong bảng tổng quan.</td>
+                        </tr>
+                        <tr>
+                            <td>ECUReset</td>
+                            <td>0x11</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>SecurityAccess</td>
+                            <td>0x27</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>CommunicationControl</td>
+                            <td>0x28</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>TesterPresent</td>
+                            <td>0x3E</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>AccessTimingParameters</td>
+                            <td>0x83</td>
+                            <td>Được đánh dấu Not supported trong bảng tổng quan của profile.</td>
+                        </tr>
+                        <tr>
+                            <td>Authentication</td>
+                            <td>0x29</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>SecuredDataTransmission</td>
+                            <td>0x84</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ControlDTCSetting</td>
+                            <td>0x85</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ResponseOnEvent</td>
+                            <td>0x86</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>LinkControl</td>
+                            <td>0x87</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>20.2. Data Transmission</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Diagnostic Service</th>
+                            <th>SID</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ReadDataByIdentifier</td>
+                            <td>0x22</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ReadMemoryByAddress</td>
+                            <td>0x23</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ReadScalingDataByIdentifier</td>
+                            <td>0x24</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ReadDataByPeriodicIdentifier</td>
+                            <td>0x2A</td>
+                            <td>Có requirement riêng trong ISO 14229-3, mục 8.5.</td>
+                        </tr>
+                        <tr>
+                            <td>DynamicallyDefineDataIdentifier</td>
+                            <td>0x2C</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>WriteDataByIdentifier</td>
+                            <td>0x2E</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>WriteMemoryByAddress</td>
+                            <td>0x3D</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>20.3. Stored Data Transmission và Input/Output Control</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Diagnostic Service</th>
+                            <th>SID</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ReadDTCInformation</td>
+                            <td>0x19</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ClearDiagnosticInformation</td>
+                            <td>0x14</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>InputOutputControlByIdentifier</td>
+                            <td>0x2F</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>20.4. Routine và Upload/Download</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Diagnostic Service</th>
+                            <th>SID</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>RoutineControl</td>
+                            <td>0x31</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>RequestDownload</td>
+                            <td>0x34</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>RequestUpload</td>
+                            <td>0x35</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>TransferData</td>
+                            <td>0x36</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>RequestTransferExit</td>
+                            <td>0x37</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>RequestFileTransfer</td>
+                            <td>0x38</td>
+                            <td>Không có requirement riêng cho UDSonCAN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Ý nghĩa của "No UDSonCAN-specific requirements":</strong>
+                    Điều này không có nghĩa service không được hỗ trợ.
+                    Nó có nghĩa service được triển khai theo
+                    các yêu cầu của ISO 14229-1 và ISO 14229-2
+                    mà không cần yêu cầu riêng bổ sung
+                    trong phần UDSonCAN tương ứng của ISO 14229-3.
+                </div>
+
+                <h2>21. ReadDataByPeriodicIdentifier (0x2A)</h2>
+
+                <p>
+                    Một điểm đáng chú ý trong ISO 14229-3:2022
+                    là ReadDataByPeriodicIdentifier (SID 0x2A)
+                    có các yêu cầu riêng dành cho UDSonCAN.
+                </p>
+
+                <p>
+                    Đây là service cho phép Tester yêu cầu ECU
+                    gửi dữ liệu theo chu kỳ dựa trên
+                    các Periodic Data Identifier được cấu hình.
+                </p>
+
+                <p>
+                    Ví dụ về nhu cầu sử dụng:
+                </p>
+
+                <ul>
+                    <li>Giám sát một số dữ liệu ECU theo chu kỳ.</li>
+                    <li>Thu thập các giá trị diagnostic phục vụ phân tích.</li>
+                    <li>Theo dõi một tập hợp dữ liệu được lựa chọn trong thời gian kiểm tra.</li>
+                </ul>
+
+                <p>
+                    Cần phân biệt service này với
+                    ReadDataByIdentifier (SID 0x22).
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>ReadDataByIdentifier</th>
+                            <th>ReadDataByPeriodicIdentifier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SID</td>
+                            <td>0x22</td>
+                            <td>0x2A</td>
+                        </tr>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Đọc dữ liệu theo request.</td>
+                            <td>Thiết lập hoặc quản lý việc truyền dữ liệu theo chu kỳ.</td>
+                        </tr>
+                        <tr>
+                            <td>Response</td>
+                            <td>Response cho request đọc dữ liệu.</td>
+                            <td>Có thể có các periodic response message sau khi được thiết lập.</td>
+                        </tr>
+                        <tr>
+                            <td>UDSonCAN</td>
+                            <td>Không có requirement riêng trong bảng tổng quan.</td>
+                            <td>Có requirement riêng trong ISO 14229-3.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>22. UUDT - Unacknowledged Unsegmented Data Transfer</h2>
+
+                <p>
+                    Khi làm việc với ReadDataByPeriodicIdentifier,
+                    chúng ta có thể gặp khái niệm UUDT.
+                </p>
+
+                <p>
+                    UUDT là viết tắt của:
+                </p>
+
+                <pre><code>Unacknowledged Unsegmented Data Transfer</code></pre>
+
+                <p>
+                    Đây là cơ chế truyền dữ liệu không yêu cầu
+                    xác nhận ở mức service và không phân đoạn
+                    message thành nhiều phần.
+                </p>
+
+                <p>
+                    Trong ISO 14229-3, UUDT được sử dụng
+                    để mô tả việc truyền các periodic response message
+                    trong một số trường hợp.
+                </p>
+
+                <h3>22.1. Phân biệt UUDT và USDT</h3>
+
+                <p>
+                    Một thuật ngữ khác cần biết là USDT:
+                </p>
+
+                <pre><code>USDT = Unacknowledged Segmented Data Transfer</code></pre>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>UUDT</th>
+                            <th>USDT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tên đầy đủ</td>
+                            <td>Unacknowledged Unsegmented Data Transfer.</td>
+                            <td>Unacknowledged Segmented Data Transfer.</td>
+                        </tr>
+                        <tr>
+                            <td>Segmentation</td>
+                            <td>Không phân đoạn ở cơ chế này.</td>
+                            <td>Có phân đoạn khi cần.</td>
+                        </tr>
+                        <tr>
+                            <td>Acknowledgement</td>
+                            <td>Không có xác nhận ở mức service transfer.</td>
+                            <td>Không có xác nhận ở mức service transfer.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ sử dụng</td>
+                            <td>Periodic response message.</td>
+                            <td>Diagnostic message được truyền qua Transport Protocol với segmentation phù hợp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Không nên hiểu "Unacknowledged" là CAN không có
+                    cơ chế kiểm tra lỗi.
+                    CAN Data Link vẫn có các cơ chế phát hiện lỗi
+                    theo ISO 11898-1.
+                    UUDT/USDT mô tả cơ chế truyền dữ liệu
+                    ở phạm vi service transfer, không phải
+                    cách mô tả toàn bộ cơ chế error detection của CAN.
+                </div>
+
+                <h2>23. Yêu cầu về kích thước UUDT Message</h2>
+
+                <p>
+                    ISO 14229-3 có requirement dành cho
+                    periodic response message được truyền theo UUDT.
+                </p>
+
+                <p>
+                    Nội dung quan trọng là độ dài A_PDU
+                    được tham chiếu bởi một periodicDataIdentifier
+                    không được vượt quá giới hạn của
+                    một message không phân đoạn.
+                </p>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                </p>
+
+                <pre><code>Periodic Data Identifier
+          |
+          v
+      Periodic A_PDU
+          |
+          v
+   Check message length
+          |
+          v
+Must fit unsegmented message limit</code></pre>
+
+                <p>
+                    Điều này giúp periodic response message
+                    phù hợp với cơ chế UUDT đang được sử dụng.
+                </p>
+
+                <h3>23.1. Vì sao cần giới hạn kích thước?</h3>
+
+                <p>
+                    UUDT là cơ chế truyền unsegmented,
+                    do đó message được truyền theo cơ chế này
+                    không được vượt quá giới hạn
+                    message không phân đoạn.
+                </p>
+
+                <p>
+                    Nếu dữ liệu quá lớn, hệ thống cần
+                    xem xét lại cách tổ chức dữ liệu
+                    hoặc cơ chế truyền phù hợp
+                    với yêu cầu của dự án.
+                </p>
+
+                <h2>24. UUDT trong quá trình truyền Periodic Data</h2>
+
+                <p>
+                    Có thể hình dung luồng hoạt động
+                    khái quát như sau:
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | ReadDataByPeriodicIdentifier
+       | SID 0x2A
+       v
+      ECU
+       |
+       | Configure periodic data
+       |
+       v
+   Periodic data source
+       |
+       | Produce periodic response
+       v
+      UUDT
+       |
+       | Unsegmented message
+       v
+    CAN Network
+       |
+       v
+Diagnostic Tester</code></pre>
+
+                <p>
+                    Đây là mô hình khái quát giúp hiểu
+                    vai trò của UUDT.
+                    Chi tiết request format, response format
+                    và các parameter cần tuân theo
+                    ISO 14229-1 và ISO 14229-3 tương ứng.
+                </p>
+
+                <h2>25. Periodic Response và Network Capacity</h2>
+
+                <p>
+                    Khi ECU gửi dữ liệu theo chu kỳ,
+                    hệ thống cần xem xét khả năng
+                    của toàn bộ in-vehicle network.
+                </p>
+
+                <p>
+                    Không chỉ CAN bus của một ECU,
+                    mạng trên xe có thể bao gồm nhiều
+                    network segment và gateway kết nối
+                    các data link khác nhau.
+                </p>
+
+                <p>
+                    Các yếu tố cần xem xét:
+                </p>
+
+                <ul>
+                    <li>Kích thước periodic response message.</li>
+                    <li>Chu kỳ gửi dữ liệu.</li>
+                    <li>Số lượng Periodic Data Identifier được sử dụng.</li>
+                    <li>Khả năng của network segment.</li>
+                    <li>Ảnh hưởng của gateway và các data link khác.</li>
+                    <li>Yêu cầu timing của diagnostic communication.</li>
+                </ul>
+
+                <p>
+                    ISO 14229-3 quy định message length
+                    cho UUDT periodic response không vượt quá
+                    giới hạn của một message không phân đoạn.
+                </p>
+
+                <div class="note">
+                    Trong thiết kế dự án, không nên chỉ kiểm tra
+                    dữ liệu có vừa một CAN frame hay không.
+                    Cần kiểm tra cả giới hạn của cơ chế
+                    unsegmented transfer, cấu hình CAN/DoCAN
+                    và yêu cầu của toàn bộ network.
+                </div>
+
+                <h2>26. Timing Parameter trong UDSonCAN</h2>
+
+                <p>
+                    ISO 14229-3 có phần định nghĩa
+                    các timing parameter liên quan
+                    đến request và response khi
+                    triển khai UDS trên CAN.
+                </p>
+
+                <p>
+                    Một số ký hiệu được sử dụng gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>t_P_Client</td>
+                            <td>Client Application Layer Timer.</td>
+                        </tr>
+                        <tr>
+                            <td>t_P2_Server</td>
+                            <td>Server Application Layer Timer.</td>
+                        </tr>
+                        <tr>
+                            <td>t_P2_CAN_Client</td>
+                            <td>Client Application Layer Timeout Value for CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>t_P2_CAN_Server</td>
+                            <td>Server Application Layer Timeout Value for CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>t_S3_Client</td>
+                            <td>Client Session Layer Timer.</td>
+                        </tr>
+                        <tr>
+                            <td>t_S3_Server</td>
+                            <td>Server Session Layer Timer.</td>
+                        </tr>
+                        <tr>
+                            <td>t_S3_Server_Reload</td>
+                            <td>Server Session Layer Timeout Reload Value.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là những ký hiệu liên quan đến
+                    timing trong profile UDSonCAN.
+                    Giá trị và điều kiện sử dụng cụ thể
+                    cần được tham khảo trực tiếp
+                    trong tiêu chuẩn và cấu hình diagnostic.
+                </p>
+
+                <h3>26.1. P2 CAN Client</h3>
+
+                <p>
+                    P2_CAN_Client là timeout value
+                    ở phía Client dành cho Application Layer
+                    khi sử dụng CAN.
+                </p>
+
+                <p>
+                    Diagnostic Tester cần quản lý
+                    thời gian chờ response phù hợp
+                    với profile UDSonCAN.
+                </p>
+
+                <h3>26.2. P2 CAN Server</h3>
+
+                <p>
+                    P2_CAN_Server là timeout value
+                    ở phía Server dành cho Application Layer
+                    khi sử dụng CAN.
+                </p>
+
+                <p>
+                    ECU cần thực hiện việc phản hồi
+                    theo yêu cầu timing của
+                    Diagnostic Communication.
+                </p>
+
+                <h3>26.3. S3 Client và S3 Server</h3>
+
+                <p>
+                    S3_Client và S3_Server là các timer
+                    liên quan đến Session Layer ở phía
+                    Client và Server.
+                </p>
+
+                <p>
+                    Chúng liên quan đến việc quản lý
+                    trạng thái Diagnostic Session.
+                    Đây là nội dung đã được giới thiệu
+                    trong bài ISO 14229-2.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Timing của UDSonCAN cần được xem xét
+                    cùng với timing của ISO-TP.
+                    P2 CAN và S3 không thay thế
+                    các timeout ở Transport Layer
+                    như N_As, N_Bs hoặc N_Cr.
+                </div>
+
+                <h2>27. ISO 14229-3 và Unsolicited Response Message</h2>
+
+                <p>
+                    Unsolicited Response Message là message
+                    được Server gửi ra mà không phải
+                    là response trực tiếp cho một request mới
+                    đang được xử lý theo cách request/response
+                    thông thường.
+                </p>
+
+                <p>
+                    ISO 14229-3 có phần đề cập đến
+                    unsolicited response message
+                    trong nội dung Application Layer.
+                </p>
+
+                <p>
+                    Khi phân tích các message loại này,
+                    cần xác định:
+                </p>
+
+                <ul>
+                    <li>Message có được định nghĩa trong diagnostic profile hay không?</li>
+                    <li>Message có liên quan đến một service đã được thiết lập trước đó không?</li>
+                    <li>Message có phải periodic response không?</li>
+                    <li>Độ dài message có phù hợp với cơ chế truyền tương ứng không?</li>
+                    <li>Tester có hỗ trợ tiếp nhận loại message đó không?</li>
+                </ul>
+
+                <p>
+                    Không nên mặc định rằng mọi CAN frame
+                    xuất phát từ ECU đều là response
+                    của request gần nhất.
+                </p>
+
+                <h2>28. Transport Layer Mapping trong UDSonCAN</h2>
+
+                <p>
+                    Một phần quan trọng của ISO 14229-3
+                    là cách ánh xạ các giao diện
+                    Service Primitive giữa tầng độc lập
+                    dữ liệu và các tầng phụ thuộc vào CAN.
+                </p>
+
+                <p>
+                    T_PDU được ánh xạ xuống N_PDU,
+                    sau đó tiếp tục được chuyển đến
+                    Data Link Layer thông qua
+                    các giao diện tương ứng.
+                </p>
+
+                <pre><code>       Application Message
+                |
+                v
+              A_PDU
+                |
+                v
+              T_PDU
+                |
+                v
+              N_PDU
+                |
+                v
+         CAN Data Link PDU
+                |
+                v
+            CAN Frame</code></pre>
+
+                <p>
+                    Đây là cách nhìn khái quát về
+                    quá trình ánh xạ dữ liệu giữa
+                    các tầng của UDSonCAN.
+                </p>
+
+                <h3>28.1. T_PDU sang N_PDU</h3>
+
+                <p>
+                    Transport Layer cung cấp dữ liệu
+                    cho Network Layer.
+                    Network Layer tiếp nhận và xử lý
+                    dữ liệu theo quy tắc của DoCAN.
+                </p>
+
+                <h3>28.2. Network Layer sang Data Link Layer</h3>
+
+                <p>
+                    Network Layer chuyển dữ liệu xuống
+                    Data Link Layer thông qua
+                    các primitive tương ứng.
+                </p>
+
+                <p>
+                    Tại đây, dữ liệu được tổ chức
+                    để truyền dưới dạng CAN frame.
+                </p>
+
+                <div class="note">
+                    <strong>Liên hệ với bài 37:</strong>
+                    Những nội dung về SF, FF, CF và FC
+                    mà chúng ta đã học thuộc ISO 15765-2.
+                    ISO 14229-3 sử dụng cơ chế Transport
+                    và Network Layer này trong
+                    application profile UDSonCAN.
+                </div>
+
+                <h2>29. CAN Data Link Layer trong UDSonCAN</h2>
+
+                <p>
+                    Data Link Layer là tầng đảm nhiệm
+                    việc tổ chức CAN frame và các chức năng
+                    truyền nhận dữ liệu tương ứng.
+                </p>
+
+                <p>
+                    Các thành phần quan trọng gồm:
+                </p>
+
+                <ul>
+                    <li>CAN Identifier.</li>
+                    <li>Control Field.</li>
+                    <li>Data Length Code (DLC).</li>
+                    <li>Data Field.</li>
+                    <li>CRC và các thành phần kiểm tra lỗi.</li>
+                    <li>ACK và các cơ chế CAN Data Link liên quan.</li>
+                </ul>
+
+                <p>
+                    Các quy tắc của CAN Data Link Layer
+                    được tham chiếu từ ISO 11898-1.
+                </p>
+
+                <h2>30. Physical Layer trong UDSonCAN</h2>
+
+                <p>
+                    Physical Layer đảm nhiệm việc
+                    truyền tín hiệu điện trên CAN bus.
+                </p>
+
+                <p>
+                    Các thành phần liên quan bao gồm:
+                </p>
+
+                <ul>
+                    <li>CAN Controller.</li>
+                    <li>CAN Transceiver.</li>
+                    <li>CAN_H và CAN_L.</li>
+                    <li>Bus Termination.</li>
+                    <li>Tín hiệu Differential.</li>
+                </ul>
+
+                <p>
+                    ISO 14229-3 không định nghĩa lại
+                    các đặc tính vật lý này.
+                    Khi cần tìm hiểu CAN Physical Layer,
+                    chúng ta cần tham khảo ISO 11898 series.
+                </p>
+
+                <h2>31. Ví dụ tổng hợp: Tester gửi ReadDataByIdentifier</h2>
+
+                <p>
+                    Bây giờ chúng ta sẽ kết hợp
+                    các tầng để mô tả một ví dụ
+                    Diagnostic Communication thực tế.
+                </p>
+
+                <h3>31.1. Tester tạo UDS request</h3>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    Đây là request ReadDataByIdentifier
+                    với DID F190 trong ví dụ đọc VIN.
+                </p>
+
+                <h3>31.2. Application Layer tạo A_PDU</h3>
+
+                <pre><code>A_PDU:
+22 F1 90</code></pre>
+
+                <h3>31.3. Session Layer tiếp nhận dữ liệu</h3>
+
+                <p>
+                    Application Layer sử dụng A_Data.req
+                    và các giao diện Session Layer liên quan
+                    để yêu cầu truyền message.
+                </p>
+
+                <h3>31.4. Transport Layer tiếp nhận message</h3>
+
+                <p>
+                    Transport Layer nhận message
+                    và xử lý việc truyền dữ liệu
+                    thông qua ISO-TP nếu sử dụng DoCAN.
+                </p>
+
+                <h3>31.5. Data Link Layer gửi CAN frame</h3>
+
+                <p>
+                    Dữ liệu được đưa vào CAN frame
+                    theo CAN Identifier và cấu hình
+                    communication của ECU.
+                </p>
+
+                <h3>31.6. ECU nhận request</h3>
+
+                <p>
+                    ECU tiếp nhận CAN frame,
+                    xử lý qua các tầng liên quan,
+                    ghép dữ liệu nếu cần và chuyển
+                    UDS request lên Application Layer.
+                </p>
+
+                <h3>31.7. ECU xử lý Diagnostic Service</h3>
+
+                <p>
+                    ECU xử lý request ReadDataByIdentifier
+                    và truy xuất dữ liệu DID nếu service
+                    và DID được hỗ trợ.
+                </p>
+
+                <h3>31.8. ECU tạo Positive Response</h3>
+
+                <p>
+                    Nếu xử lý thành công,
+                    Positive Response của SID 0x22
+                    sử dụng SID 0x62.
+                </p>
+
+                <pre><code>62 F1 90 ...</code></pre>
+
+                <h3>31.9. ECU gửi response qua CAN</h3>
+
+                <p>
+                    Response đi qua Session Layer,
+                    Transport Layer, Network Layer
+                    và Data Link Layer trước khi
+                    được truyền về Tester.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | 22 F1 90
+       v
+Application Layer
+       |
+       v
+Session Layer
+       |
+       v
+Transport / Network Layer
+       |
+       v
+CAN Data Link
+       |
+       v
+CAN Bus
+       |
+       v
+ECU CAN Data Link
+       |
+       v
+Transport / Network Layer
+       |
+       v
+Session Layer
+       |
+       v
+Application Layer
+       |
+       | 62 F1 90 ...
+       v
+Diagnostic Response</code></pre>
+
+                <h2>32. AUTOSAR CAN Diagnostic Stack</h2>
+
+                <p>
+                    Trong AUTOSAR Classic Platform,
+                    Diagnostic Communication qua CAN
+                    được thực hiện bởi nhiều module khác nhau.
+                </p>
+
+                <p>
+                    Các module quan trọng gồm:
+                </p>
+
+                <ul>
+                    <li>DCM - Diagnostic Communication Manager.</li>
+                    <li>PduR - PDU Router.</li>
+                    <li>CanTp - CAN Transport Layer.</li>
+                    <li>CanIf - CAN Interface.</li>
+                    <li>CanDrv - CAN Driver.</li>
+                    <li>CanTrcv - CAN Transceiver Driver.</li>
+                    <li>CAN Controller - phần cứng CAN của Microcontroller.</li>
+                </ul>
+
+                <h3>32.1. Kiến trúc tổng quát</h3>
+
+                <pre><code>         Diagnostic Tester
+                 |
+                 v
+             CAN Network
+                 |
+                 v
+          CAN Controller
+                 |
+                 v
+              CanDrv
+                 |
+                 v
+              CanIf
+                 |
+                 v
+              PduR
+              /   \
+             /     \
+            v       v
+         CanTp     Dcm
+            \       /
+             \     /
+              \   /
+        Diagnostic Processing</code></pre>
+
+                <p>
+                    Sơ đồ trên chỉ thể hiện quan hệ tổng quát.
+                    Luồng routing cụ thể giữa DCM, PduR,
+                    CanTp, CanIf cần được xem xét
+                    theo cấu hình AUTOSAR của ECU.
+                </p>
+
+                <h2>33. Vai trò của DCM</h2>
+
+                <p>
+                    DCM là module chịu trách nhiệm
+                    xử lý Diagnostic Communication
+                    ở mức UDS trong AUTOSAR Classic.
+                </p>
+
+                <p>
+                    Một số chức năng chính:
+                </p>
+
+                <ul>
+                    <li>Tiếp nhận diagnostic request.</li>
+                    <li>Kiểm tra request và các điều kiện liên quan.</li>
+                    <li>Phân phối request đến service handler.</li>
+                    <li>Quản lý diagnostic session và timing.</li>
+                    <li>Tạo Positive Response hoặc Negative Response.</li>
+                    <li>Phối hợp với DEM và các thành phần khác khi cần.</li>
+                </ul>
+
+                <p>
+                    DCM được chia thành các submodule chính:
+                </p>
+
+                <pre><code>          Diagnostic Communication Manager
+                         |
+             +-----------+-----------+
+             |           |           |
+             v           v           v
+            DSL         DSD         DSP
+             |           |           |
+             |           |           |
+        Session &     Request     Diagnostic
+         Timing      Dispatch     Processing</code></pre>
+
+                <h2>34. Vai trò của PduR</h2>
+
+                <p>
+                    PduR (PDU Router) là module định tuyến
+                    PDU giữa các module communication
+                    trong AUTOSAR.
+                </p>
+
+                <p>
+                    Trong CAN Diagnostic Stack,
+                    PduR giúp định tuyến dữ liệu
+                    giữa DCM và CanTp.
+                </p>
+
+                <p>
+                    PduR cũng tham gia vào luồng
+                    trao đổi dữ liệu giữa các module
+                    communication khác theo cấu hình hệ thống.
+                </p>
+
+                <h2>35. Vai trò của CanTp</h2>
+
+                <p>
+                    CanTp là module thực hiện chức năng
+                    CAN Transport Layer trong AUTOSAR Classic.
+                </p>
+
+                <p>
+                    CanTp triển khai các chức năng
+                    liên quan đến ISO 15765-2,
+                    ví dụ:
+                </p>
+
+                <ul>
+                    <li>Single Frame Transmission.</li>
+                    <li>First Frame Transmission.</li>
+                    <li>Consecutive Frame Transmission.</li>
+                    <li>Flow Control.</li>
+                    <li>Message Segmentation và Reassembly.</li>
+                    <li>Transport Protocol Timing.</li>
+                </ul>
+
+                <p>
+                    CanTp giúp DCM xử lý diagnostic message
+                    mà không cần tự quản lý từng CAN frame.
+                </p>
+
+                <h2>36. Vai trò của CanIf và CanDrv</h2>
+
+                <h3>36.1. CanIf</h3>
+
+                <p>
+                    CanIf (CAN Interface) cung cấp
+                    giao diện chuẩn giữa các module
+                    phía trên và CAN Driver.
+                </p>
+
+                <p>
+                    Một số chức năng chính:
+                </p>
+
+                <ul>
+                    <li>Quản lý CAN L-PDU và các cấu hình liên quan.</li>
+                    <li>Tiếp nhận yêu cầu truyền từ tầng phía trên.</li>
+                    <li>Chuyển yêu cầu đến CAN Driver.</li>
+                    <li>Thông báo dữ liệu nhận được cho tầng phía trên.</li>
+                </ul>
+
+                <h3>36.2. CanDrv</h3>
+
+                <p>
+                    CanDrv (CAN Driver) là driver
+                    điều khiển CAN Hardware của Microcontroller.
+                </p>
+
+                <p>
+                    CanDrv phối hợp với CAN Controller
+                    để thực hiện các hoạt động truyền
+                    và nhận CAN frame.
+                </p>
+
+                <h2>37. Vai trò của CanTrcv</h2>
+
+                <p>
+                    CanTrcv là module điều khiển
+                    CAN Transceiver.
+                </p>
+
+                <p>
+                    CAN Transceiver là thành phần phần cứng
+                    kết nối tín hiệu logic từ CAN Controller
+                    với CAN bus.
+                </p>
+
+                <p>
+                    CanTrcv có thể cung cấp các chức năng:
+                </p>
+
+                <ul>
+                    <li>Điều khiển Transceiver Mode.</li>
+                    <li>Normal Mode.</li>
+                    <li>Standby Mode.</li>
+                    <li>Wake-up Detection theo khả năng phần cứng.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Phân biệt:</strong>
+                    CanTp xử lý Transport Protocol.
+                    CanIf cung cấp giao diện CAN.
+                    CanDrv điều khiển CAN Controller.
+                    CanTrcv điều khiển CAN Transceiver.
+                </div>
+
+                <h2>38. Luồng truyền CAN Diagnostic Request trong AUTOSAR</h2>
+
+                <p>
+                    Khi Diagnostic Tester gửi một UDS request
+                    qua CAN, ECU tiếp nhận dữ liệu qua
+                    các tầng communication.
+                </p>
+
+                <h3>38.1. Luồng nhận request</h3>
+
+                <pre><code>        CAN Bus
+           |
+           v
+      CAN Controller
+           |
+           v
+         CanDrv
+           |
+           v
+         CanIf
+           |
+           v
+         PduR
+           |
+           v
+         CanTp
+           |
+           v
+         PduR
+           |
+           v
+          DCM
+           |
+           v
+      Diagnostic Processing</code></pre>
+
+                <p>
+                    Đây là luồng khái quát để minh họa
+                    các module tham gia.
+                    Thứ tự routing thực tế phụ thuộc
+                    vào cấu hình PduR và các interface
+                    được sử dụng trong AUTOSAR implementation.
+                </p>
+
+                <h3>38.2. Luồng gửi response</h3>
+
+                <pre><code>          DCM
+           |
+           v
+          PduR
+           |
+           v
+         CanTp
+           |
+           v
+          PduR
+           |
+           v
+         CanIf
+           |
+           v
+         CanDrv
+           |
+           v
+      CAN Controller
+           |
+           v
+        CAN Bus</code></pre>
+
+                <p>
+                    Khi DCM tạo response,
+                    dữ liệu được chuyển xuống các module
+                    communication để truyền về
+                    Diagnostic Tester.
+                </p>
+
+                <h2>39. Cấu hình CAN Diagnostic trong AUTOSAR</h2>
+
+                <p>
+                    Trong một dự án AUTOSAR,
+                    CAN Diagnostic Stack cần được
+                    cấu hình phù hợp với
+                    Diagnostic Network Design.
+                </p>
+
+                <p>
+                    Một số thông tin cần quan tâm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Thông tin cấu hình cần quan tâm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DCM</td>
+                            <td>Diagnostic Protocol, Rx/Tx PDU, Diagnostic Session và service configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp</td>
+                            <td>Rx/Tx SDU, addressing format, CAN frame mapping, transport timing.</td>
+                        </tr>
+                        <tr>
+                            <td>PduR</td>
+                            <td>Routing path giữa DCM và CanTp.</td>
+                        </tr>
+                        <tr>
+                            <td>CanIf</td>
+                            <td>CAN L-PDU, CAN Identifier và Hardware Object mapping.</td>
+                        </tr>
+                        <tr>
+                            <td>CanDrv</td>
+                            <td>CAN Controller và hardware configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTrcv</td>
+                            <td>CAN Transceiver configuration và mode control.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>40. CAN Communication Matrix và Diagnostic Configuration</h2>
+
+                <p>
+                    CAN Communication Matrix mô tả cách
+                    các node và message được tổ chức
+                    trong một CAN network.
+                </p>
+
+                <p>
+                    Đối với Diagnostic Communication,
+                    các thông tin cần xem xét gồm:
+                </p>
+
+                <ul>
+                    <li>ECU nào nhận diagnostic request.</li>
+                    <li>ECU nào tạo diagnostic response.</li>
+                    <li>CAN Identifier dành cho request.</li>
+                    <li>CAN Identifier dành cho response.</li>
+                    <li>Standard hoặc Extended CAN ID.</li>
+                    <li>Physical hoặc Functional Addressing.</li>
+                    <li>Protocol và Transport Layer configuration.</li>
+                </ul>
+
+                <p>
+                    Ví dụ minh họa một diagnostic mapping:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ECU</th>
+                            <th>Request CAN ID</th>
+                            <th>Response CAN ID</th>
+                            <th>Addressing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ECU A</td>
+                            <td>0x7E0</td>
+                            <td>0x7E8</td>
+                            <td>Physical.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU B</td>
+                            <td>0x7E1</td>
+                            <td>0x7E9</td>
+                            <td>Physical.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU C</td>
+                            <td>0x7E2</td>
+                            <td>0x7EA</td>
+                            <td>Physical.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các giá trị trong bảng chỉ nhằm minh họa
+                    cách tổ chức một communication matrix.
+                    CAN ID thực tế phải lấy từ tài liệu
+                    của dự án hoặc cấu hình ECU.
+                </p>
+
+                <h2>41. Phân tích CAN Trace khi sử dụng UDSonCAN</h2>
+
+                <p>
+                    Khi debug Diagnostic Communication,
+                    CAN Trace là một trong những nguồn
+                    thông tin quan trọng.
+                </p>
+
+                <p>
+                    Một CAN Trace có thể cho biết:
+                </p>
+
+                <ul>
+                    <li>CAN Identifier.</li>
+                    <li>Frame Format.</li>
+                    <li>DLC.</li>
+                    <li>Data Field.</li>
+                    <li>Timestamp.</li>
+                    <li>Hướng truyền nếu công cụ hỗ trợ.</li>
+                    <li>Transport Protocol Frame Type nếu được giải mã.</li>
+                </ul>
+
+                <h3>41.1. Ví dụ một request đơn giản</h3>
+
+                <p>
+                    Giả sử CAN Trace có một message minh họa:
+                </p>
+
+                <pre><code>CAN ID: 0x7E0
+DLC:    8
+DATA:   03 22 F1 90 00 00 00 00</code></pre>
+
+                <p>
+                    Với ví dụ ISO-TP Classical CAN
+                    normal addressing:
+                </p>
+
+                <ul>
+                    <li><code>0x03</code>: Single Frame PCI, cho biết độ dài UDS payload là 3 byte.</li>
+                    <li><code>0x22</code>: ReadDataByIdentifier.</li>
+                    <li><code>0xF1 0x90</code>: DID F190.</li>
+                </ul>
+
+                <p>
+                    Như vậy, phần UDS request là:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    Phần <code>03</code> là thông tin
+                    điều khiển của ISO-TP,
+                    không phải UDS SID.
+                </p>
+
+                <h3>41.2. Ví dụ response</h3>
+
+                <pre><code>CAN ID: 0x7E8
+DLC:    8
+DATA:   06 62 F1 90 31 32 33 34</code></pre>
+
+                <p>
+                    Với cùng cách diễn giải:
+                </p>
+
+                <ul>
+                    <li><code>0x06</code>: ISO-TP Single Frame PCI, cho biết độ dài UDS payload là 6 byte.</li>
+                    <li><code>0x62</code>: Positive Response cho SID 0x22.</li>
+                    <li><code>0xF1 0x90</code>: DID F190.</li>
+                    <li><code>0x31 0x32 0x33 0x34</code>: Một phần dữ liệu minh họa.</li>
+                </ul>
+
+                <p>
+                    Đây là ví dụ về cách nhận biết
+                    phần ISO-TP PCI và phần UDS payload
+                    trong cùng một CAN frame.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Các giá trị CAN ID và payload trong
+                    hai ví dụ trên được tạo để minh họa
+                    cách đọc trace, không phải một cấu hình
+                    tiêu chuẩn bắt buộc cho tất cả ECU.
+                </div>
+
+                <h2>42. Những lỗi thường gặp khi phân tích UDSonCAN</h2>
+
+                <h3>42.1. Nhầm CAN ID với UDS SID</h3>
+
+                <p>
+                    CAN ID thuộc Data Link Layer,
+                    còn UDS SID thuộc Application Layer.
+                    Hai giá trị này có mục đích khác nhau.
+                </p>
+
+                <h3>42.2. Nhầm ISO 14229-3 với ISO 15765-2</h3>
+
+                <p>
+                    ISO 14229-3 là application profile
+                    cho UDS trên CAN.
+                    ISO 15765-2 định nghĩa Transport Protocol
+                    và Network Layer Services.
+                </p>
+
+                <h3>42.3. Nhầm ISO-TP PCI với UDS Payload</h3>
+
+                <p>
+                    Trong một CAN frame chứa ISO-TP message,
+                    PCI là thông tin điều khiển
+                    của Transport Protocol.
+                    UDS payload bắt đầu phía sau
+                    phần PCI tương ứng.
+                </p>
+
+                <h3>42.4. Cho rằng tất cả UDS Service đều có yêu cầu riêng trong ISO 14229-3</h3>
+
+                <p>
+                    Không phải tất cả service đều có
+                    requirement riêng dành cho UDSonCAN.
+                    Bảng service overview của tiêu chuẩn
+                    phân biệt các service có
+                    UDSonCAN-specific requirements
+                    với những service được thực hiện
+                    theo ISO 14229-1 và ISO 14229-2.
+                </p>
+
+                <h3>42.5. Cho rằng AccessTimingParameters được hỗ trợ giống mọi profile UDS khác</h3>
+
+                <p>
+                    Trong bảng tổng quan service
+                    của ISO 14229-3:2022,
+                    AccessTimingParameters được đánh dấu
+                    Not supported.
+                    Vì vậy, cần kiểm tra đúng profile
+                    đang sử dụng thay vì suy luận
+                    từ một UDS implementation khác.
+                </p>
+
+                <h3>42.6. Nhầm UUDT với ISO-TP Segmentation</h3>
+
+                <p>
+                    UUDT là Unacknowledged Unsegmented
+                    Data Transfer.
+                    ISO-TP segmentation là cơ chế phân đoạn
+                    message của Transport Layer.
+                    Đây là những khái niệm ở
+                    các phạm vi khác nhau.
+                </p>
+
+                <h2>43. Những nội dung cần kiểm tra trong một Automotive Project</h2>
+
+                <p>
+                    Khi tham gia một dự án Automotive Embedded
+                    sử dụng UDSonCAN, có thể sử dụng
+                    các nội dung của bài học này để kiểm tra
+                    Diagnostic Specification và
+                    AUTOSAR Configuration.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hạng mục</th>
+                            <th>Nội dung cần kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>UDS Profile</td>
+                            <td>Phiên bản ISO 14229-3 và các tiêu chuẩn tham chiếu.</td>
+                        </tr>
+                        <tr>
+                            <td>UDS Services</td>
+                            <td>Danh sách service được ECU hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Session</td>
+                            <td>Service được phép sử dụng trong từng session.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Identifier</td>
+                            <td>Request ID, Response ID và loại identifier.</td>
+                        </tr>
+                        <tr>
+                            <td>Addressing</td>
+                            <td>Physical Addressing và Functional Addressing.</td>
+                        </tr>
+                        <tr>
+                            <td>Transport Protocol</td>
+                            <td>ISO-TP configuration, addressing và timing.</td>
+                        </tr>
+                        <tr>
+                            <td>Periodic Data</td>
+                            <td>ReadDataByPeriodicIdentifier và giới hạn message size.</td>
+                        </tr>
+                        <tr>
+                            <td>DCM</td>
+                            <td>Diagnostic Protocol, Rx/Tx PDU và service configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp</td>
+                            <td>CAN Transport Layer configuration và timing.</td>
+                        </tr>
+                        <tr>
+                            <td>PduR</td>
+                            <td>Routing giữa DCM và CanTp.</td>
+                        </tr>
+                        <tr>
+                            <td>CanIf</td>
+                            <td>CAN L-PDU và CAN Identifier configuration.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>44. Ví dụ Test Case cho UDSonCAN</h2>
+
+                <p>
+                    Dưới đây là các test case minh họa
+                    ở mức chức năng.
+                    Đây không phải toàn bộ bộ test chính thức
+                    của ISO 14229-3.
+                    Expected Result cần được xác định
+                    dựa trên Diagnostic Specification
+                    và cấu hình thực tế của ECU.
+                </p>
+
+                <h3>Test Case 1: Kiểm tra UDS Request qua CAN</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_UDSONCAN_001</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra khả năng nhận UDS request qua CAN.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>ECU hoạt động và diagnostic communication đã được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Gửi một request được hỗ trợ qua diagnostic channel đã cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>ECU tiếp nhận request và xử lý theo Diagnostic Specification.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 2: Kiểm tra Physical Addressing</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_UDSONCAN_002</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra khả năng gửi request đến một ECU cụ thể.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>CAN ID và diagnostic addressing đã được xác định.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Gửi physical request đến ECU mục tiêu.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>ECU mục tiêu xử lý request và phản hồi theo cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 3: Kiểm tra ISO-TP Segmentation</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_UDSONCAN_003</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra việc truyền diagnostic message cần nhiều frame.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>Transport Protocol và cấu hình CAN diagnostic đã sẵn sàng.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Thực hiện một message test có kích thước lớn trong môi trường kiểm thử được phê duyệt.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>Message được truyền và ghép lại theo quy định Transport Protocol.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 4: Kiểm tra ReadDataByPeriodicIdentifier</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_UDSONCAN_004</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra chức năng truyền periodic diagnostic response.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>ECU hỗ trợ SID 0x2A và có cấu hình Periodic Data Identifier.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Gửi request thiết lập periodic transmission theo profile được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>ECU truyền periodic response theo cấu hình và giới hạn UUDT tương ứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 5: Kiểm tra CAN Identifier Configuration</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_UDSONCAN_005</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra request/response CAN ID theo cấu hình ECU.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>Có Diagnostic Communication Matrix hoặc CAN Configuration.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Đối chiếu CAN Trace với CAN ID được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>Request và response sử dụng CAN Identifier phù hợp với cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>45. Cách debug lỗi UDSonCAN</h2>
+
+                <p>
+                    Khi nhận được một lỗi diagnostic communication,
+                    nên phân tích từ tầng thấp lên tầng cao
+                    để xác định nguyên nhân.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Tầng cần kiểm tra trước</th>
+                            <th>Hướng phân tích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Không thấy CAN frame</td>
+                            <td>Data Link / Physical</td>
+                            <td>Kiểm tra trạng thái communication và log CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN frame có nhưng ECU không nhận request</td>
+                            <td>CanIf / CanTp</td>
+                            <td>Kiểm tra CAN ID, Rx PDU và routing configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO-TP message không hoàn chỉnh</td>
+                            <td>CanTp / ISO-TP</td>
+                            <td>Kiểm tra frame sequence, Flow Control và Transport Timing.</td>
+                        </tr>
+                        <tr>
+                            <td>DCM không nhận được diagnostic request</td>
+                            <td>PduR / DCM</td>
+                            <td>Kiểm tra routing path và DCM reception.</td>
+                        </tr>
+                        <tr>
+                            <td>DCM nhận request nhưng trả NRC</td>
+                            <td>DCM / UDS Application</td>
+                            <td>Kiểm tra SID, session, security và service condition.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU có xử lý nhưng response không truyền ra CAN</td>
+                            <td>DCM / PduR / CanTp / CanIf</td>
+                            <td>Kiểm tra response path và transmission confirmation.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>46. Những lỗi thường gặp trong AUTOSAR CAN Diagnostic Stack</h2>
+
+                <h3>46.1. Sai CAN ID trong cấu hình CanIf</h3>
+
+                <p>
+                    Nếu CAN Identifier trong cấu hình
+                    không khớp với Diagnostic Communication Matrix,
+                    ECU có thể không tiếp nhận request
+                    theo cách mong đợi.
+                </p>
+
+                <h3>46.2. Sai PduR Routing</h3>
+
+                <p>
+                    Nếu routing giữa DCM và CanTp không đúng,
+                    diagnostic message có thể không được
+                    chuyển đến module đích.
+                </p>
+
+                <h3>46.3. Sai CanTp Configuration</h3>
+
+                <p>
+                    Sai addressing format, Rx/Tx SDU
+                    hoặc timing configuration có thể
+                    dẫn đến lỗi trong quá trình truyền nhận
+                    ISO-TP message.
+                </p>
+
+                <h3>46.4. DCM không hỗ trợ Service được yêu cầu</h3>
+
+                <p>
+                    Một UDS service được định nghĩa
+                    trong ISO 14229-1 không có nghĩa
+                    mọi ECU đều phải triển khai service đó.
+                    Cần kiểm tra Diagnostic Specification
+                    và configuration.
+                </p>
+
+                <h3>46.5. Không phân biệt được lỗi UDS và lỗi Transport</h3>
+
+                <p>
+                    Nếu request chưa được nhận đầy đủ
+                    ở Transport Layer, việc phân tích NRC
+                    ở Application Layer có thể không phù hợp.
+                    Cần kiểm tra luồng message từ CAN frame
+                    đến UDS payload.
+                </p>
+
+                <h2>47. Tổng kết bài học</h2>
+
+                <p>
+                    Qua bài học này, chúng ta đã tìm hiểu
+                    ISO 14229-3 và vai trò của tiêu chuẩn
+                    trong việc triển khai UDS trên CAN.
+                </p>
+
+                <p>
+                    Những nội dung quan trọng cần ghi nhớ:
+                </p>
+
+                <ul>
+                    <li>ISO 14229-3:2022 là Edition 2 của UDS on CAN Implementation.</li>
+                    <li>ISO 14229-3 định nghĩa application profile cho UDS trên CAN.</li>
+                    <li>ISO 14229-3 tham chiếu ISO 14229-1 và ISO 14229-2.</li>
+                    <li>ISO 15765-2 đảm nhiệm Transport Protocol và Network Layer Services cho DoCAN.</li>
+                    <li>ISO 11898-1 định nghĩa CAN Data Link Layer và Physical Signalling.</li>
+                    <li>A_Data, S_Data, T_Data, N_Data và L_Data là các giao diện Service Primitive.</li>
+                    <li>CAN Identifier không giống UDS SID hoặc DID.</li>
+                    <li>ReadDataByPeriodicIdentifier có requirement riêng trong UDSonCAN.</li>
+                    <li>UUDT là Unacknowledged Unsegmented Data Transfer.</li>
+                    <li>AccessTimingParameters được đánh dấu Not supported trong service overview của ISO 14229-3:2022.</li>
+                    <li>Trong AUTOSAR Classic, DCM, PduR, CanTp, CanIf và CanDrv phối hợp để thực hiện diagnostic communication qua CAN.</li>
+                </ul>
+
+                <div class="note">
+                    <p>
+                        ISO 14229-1 định nghĩa UDS Diagnostic Services.
+                        ISO 14229-2 định nghĩa Session Layer Services.
+                        ISO 14229-3 định nghĩa application profile
+                        và các yêu cầu riêng cho UDS trên CAN.
+                    </p>
+
+                    <p>
+                        ISO 15765-2 định nghĩa Transport Protocol
+                        và Network Layer Services cho DoCAN.
+                        ISO 11898-1 định nghĩa CAN Data Link Layer
+                        và Physical Signalling.
+                    </p>
+
+                    <p>
+                        Khi phân tích CAN Trace, cần phân biệt
+                        CAN Identifier, ISO-TP PCI và UDS payload.
+                        Đây là ba thông tin thuộc những phạm vi
+                        khác nhau trong kiến trúc communication.
+                    </p>
+
+                    <p>
+                        ReadDataByPeriodicIdentifier là một
+                        service có yêu cầu riêng trong UDSonCAN.
+                        UUDT được sử dụng để mô tả cơ chế
+                        Unacknowledged Unsegmented Data Transfer,
+                        trong đó message không được phân đoạn
+                        theo cơ chế tương ứng.
+                    </p>
+
+                    <p>
+                        Trong AUTOSAR Classic, DCM, PduR,
+                        CanTp, CanIf, CanDrv và CanTrcv
+                        phối hợp để triển khai CAN Diagnostic Stack.
+                        Mỗi module có trách nhiệm riêng
+                        trong quá trình tiếp nhận và truyền
+                        diagnostic message.
+                    </p>
+
+                    <p>
+                        Khi áp dụng ISO 14229-3 trong dự án,
+                        nên kiểm tra UDS Profile,
+                        Diagnostic Services, CAN Identifier,
+                        Addressing, Transport Protocol,
+                        DCM Configuration và các yêu cầu timing.
+                        Sau đó liên kết chúng với Test Case,
+                        CAN Trace và Test Evidence.
+                    </p>
+
+                    <p>
+                        Qua Bài 38, Bài 39 và Bài 40,
+                        chúng ta đã tìm hiểu ba phần quan trọng
+                        của bộ UDS:
+                        ISO 14229-1 định nghĩa Diagnostic Services,
+                        ISO 14229-2 định nghĩa Session Layer Services,
+                        còn ISO 14229-3 mô tả application profile
+                        khi triển khai UDS trên CAN.
+                    </p>
+                </div>
+
+                <h2>48. Tài liệu tham khảo</h2>
+
+                <p>
+                    Các tài liệu dưới đây có thể được sử dụng
+                    để tìm hiểu sâu hơn về UDSonCAN
+                    và cách triển khai CAN Diagnostic Stack
+                    trong AUTOSAR.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Nội dung tham khảo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/77323.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 14229-3:2022
+                                </a>
+                            </td>
+                            <td>UDS on CAN Implementation (UDSonCAN).</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/87962.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 14229-1
+                                </a>
+                            </td>
+                            <td>UDS Application Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/search.html?q=ISO%2014229-2" target="_blank" rel="noopener noreferrer">
+                                    ISO 14229-2
+                                </a>
+                            </td>
+                            <td>UDS Session Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/84211.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 15765-2:2024
+                                </a>
+                            </td>
+                            <td>DoCAN Transport Protocol and Network Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.autosar.org/fileadmin/standards/R24-11/CP/AUTOSAR_CP_SWS_CANTransportLayer.pdf"
+                                   target="_blank" rel="noopener noreferrer">
+                                    AUTOSAR CP R24-11 - Specification of CAN Transport Layer
+                                </a>
+                            </td>
+                            <td>Đặc tả CanTp trong AUTOSAR Classic.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.autosar.org/fileadmin/standards/R24-11/CP/AUTOSAR_CP_SWS_CANInterface.pdf"
+                                   target="_blank" rel="noopener noreferrer">
+                                    AUTOSAR CP R24-11 - Specification of CAN Interface
+                                </a>
+                            </td>
+                            <td>Đặc tả CanIf trong AUTOSAR Classic.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.autosar.org/fileadmin/standards/R24-11/CP/AUTOSAR_CP_SWS_DiagnosticCommunicationManager.pdf"
+                                   target="_blank" rel="noopener noreferrer">
+                                    AUTOSAR CP R24-11 - SWS Diagnostic Communication Manager
+                                </a>
+                            </td>
+                            <td>Đặc tả DCM và Diagnostic Communication.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.can-cia.org/" target="_blank" rel="noopener noreferrer">
+                                    CAN in Automation (CiA)
+                                </a>
+                            </td>
+                            <td>Tài liệu và bài viết kỹ thuật liên quan đến CAN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-39.html">← Bài trước</a>
+                    <a class="btn" href="lesson-41.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,3893 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html" class="active" aria-current="page">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</h1>
+
+                <p>
+                    Trong các bài trước, chúng ta đã tìm hiểu cách CAN hoạt động
+                    ở Data Link Layer và Physical Layer. Tuy nhiên, CAN Classic
+                    chỉ có thể mang tối đa 8 byte dữ liệu trong một CAN Frame.
+                    Với CAN FD, kích thước data field có thể lên đến 64 byte.
+                </p>
+
+                <p>
+                    Trong khi đó, một yêu cầu chẩn đoán UDS có thể chứa
+                    nhiều byte dữ liệu hơn khả năng truyền của một CAN Frame.
+                    Ví dụ, khi Diagnostic Tester đọc VIN của xe hoặc nhận
+                    một lượng dữ liệu lớn từ ECU, thông điệp có thể cần
+                    được chia thành nhiều frame nhỏ trước khi truyền qua CAN.
+                </p>
+
+                <p>
+                    ISO 15765-2 giải quyết vấn đề này bằng cách định nghĩa
+                    một Transport Protocol và Network Layer Services
+                    dành cho giao tiếp chẩn đoán trên CAN.
+                    Giao thức này thường được gọi là ISO-TP hoặc DoCAN.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào ISO 15765-2:2024, bao gồm vai trò
+                    của Transport Layer, Protocol Control Information (PCI),
+                    Single Frame, First Frame, Consecutive Frame, Flow Control,
+                    Block Size, STmin, Addressing, CAN FD, Timing và Error Handling.
+                    Ngoài phần lý thuyết, bài học hướng dẫn đọc CAN Trace,
+                    phân tích một giao dịch UDS nhiều frame, chuyển yêu cầu
+                    thành Test Case và liên hệ với AUTOSAR CanTp.
+                </div>
+
+                <h2>1. ISO 15765-2 là gì?</h2>
+
+                <p>
+                    ISO 15765-2 là một phần của bộ tiêu chuẩn
+                    ISO 15765, quy định Transport Protocol và
+                    Network Layer Services dành cho Diagnostic
+                    Communication over Controller Area Network (DoCAN).
+                </p>
+
+                <p>
+                    Tên đầy đủ của tài liệu:
+                </p>
+
+                <pre><code>ISO 15765-2:2024
+
+Road vehicles - Diagnostic communication over
+Controller Area Network (DoCAN) -
+
+Part 2: Transport protocol and network layer services</code></pre>
+
+                <p>
+                    Tiêu chuẩn này xác định cách truyền dữ liệu
+                    ở mức Transport Layer và Network Layer
+                    trên các mạng CAN được quy định trong ISO 11898-1.
+                </p>
+
+                <p>
+                    ISO 15765-2 hỗ trợ giao diện dịch vụ trừu tượng
+                    được mô tả trong ISO 14229-2, đồng thời có thể
+                    được sử dụng với nhiều giao thức ứng dụng
+                    như UDS, OBD và WWH-OBD.
+                </p>
+
+                <p>
+                    ISO 15765-2:2024 là Edition 4, được xuất bản
+                    tháng 4/2024 và thay thế ISO 15765-2:2016.
+                </p>
+
+                <h2>2. Vì sao cần ISO 15765-2?</h2>
+
+                <p>
+                    CAN là giao thức truyền thông có giới hạn
+                    kích thước dữ liệu trong mỗi frame.
+                    Với CAN Classic, một frame chỉ mang tối đa
+                    8 byte data field.
+                </p>
+
+                <p>
+                    Tuy nhiên, một thông điệp ở tầng ứng dụng
+                    có thể dài hơn nhiều so với giới hạn này.
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>Đọc thông tin VIN hoặc dữ liệu ECU.</li>
+                    <li>Đọc một vùng dữ liệu có kích thước lớn.</li>
+                    <li>Nhận thông tin chẩn đoán có nhiều trường dữ liệu.</li>
+                    <li>Truyền dữ liệu trong quá trình ECU Reprogramming.</li>
+                    <li>Trao đổi các thông điệp ứng dụng có kích thước lớn hơn CAN payload.</li>
+                </ul>
+
+                <p>
+                    Nếu không có Transport Protocol, mỗi CAN Frame
+                    chỉ có thể truyền một phần dữ liệu và ứng dụng
+                    phải tự xử lý việc phân đoạn, đánh số thứ tự,
+                    ghép dữ liệu và điều khiển luồng truyền.
+                </p>
+
+                <p>
+                    ISO 15765-2 cung cấp một cơ chế chung để
+                    thực hiện những công việc này.
+                </p>
+
+                <pre><code>Application Message
+        |
+        |  Large Data Payload
+        v
+ISO-TP Transport Layer
+        |
+        |  Segmentation
+        v
++----------------------+
+| CAN Frame 1          |
+| CAN Frame 2          |
+| CAN Frame 3          |
+| CAN Frame 4          |
++----------------------+
+        |
+        v
+     CAN Bus
+        |
+        v
+ISO-TP Receiver
+        |
+        |  Reassembly
+        v
+Original Application Message</code></pre>
+
+                <p>
+                    Như vậy, ISO-TP giúp truyền một thông điệp
+                    lớn thông qua nhiều CAN Frame và khôi phục
+                    lại thông điệp ban đầu ở phía nhận.
+                </p>
+
+                <h2>3. ISO-TP và DoCAN có phải là hai giao thức khác nhau?</h2>
+
+                <p>
+                    ISO-TP là cách gọi phổ biến của Transport Protocol
+                    được định nghĩa trong ISO 15765-2.
+                    DoCAN là tên gọi của Diagnostic Communication
+                    over CAN, được sử dụng trong tên tiêu chuẩn
+                    và phạm vi giao tiếp tương ứng.
+                </p>
+
+                <p>
+                    Trong tài liệu kỹ thuật, bạn có thể gặp những cách gọi:
+                </p>
+
+                <ul>
+                    <li>ISO-TP.</li>
+                    <li>DoCAN.</li>
+                    <li>CAN Transport Protocol.</li>
+                    <li>ISO 15765-2 Transport Layer.</li>
+                </ul>
+
+                <p>
+                    Trong phần lớn ngữ cảnh phát triển Automotive,
+                    những cách gọi này thường được sử dụng
+                    để đề cập đến cơ chế Transport Protocol
+                    trên CAN theo ISO 15765-2.
+                </p>
+
+                <h2>4. ISO 15765-2 nằm ở tầng nào?</h2>
+
+                <p>
+                    ISO-TP hoạt động ở Transport Layer và
+                    Network Layer trong mô hình phân tầng
+                    giao tiếp.
+                </p>
+
+                <p>
+                    Có thể hình dung vị trí của nó như sau:
+                </p>
+
+                <pre><code>        Application Layer
+        (UDS / OBD Services)
+                 |
+                 v
+        Transport / Network Layer
+             ISO 15765-2
+                 |
+                 v
+          Data Link Layer
+           ISO 11898-1
+                 |
+                 v
+          Physical Layer
+           ISO 11898-2
+                 |
+                 v
+              CAN Bus</code></pre>
+
+                <p>
+                    Trong mô hình này:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>ISO 14229:</strong>
+                        định nghĩa các dịch vụ chẩn đoán UDS.
+                    </li>
+                    <li>
+                        <strong>ISO 15765-2:</strong>
+                        phân đoạn, truyền và ghép lại thông điệp
+                        chẩn đoán qua CAN.
+                    </li>
+                    <li>
+                        <strong>ISO 11898-1:</strong>
+                        định nghĩa những quy tắc CAN ở Data Link Layer
+                        và Physical Coding Sublayer.
+                    </li>
+                    <li>
+                        <strong>ISO 11898-2:</strong>
+                        định nghĩa High-speed CAN Physical Medium Attachment.
+                    </li>
+                </ul>
+
+                <p>
+                    ISO-TP không thay thế CAN Controller
+                    và cũng không thay thế UDS.
+                    Nó đóng vai trò trung gian giúp truyền
+                    dữ liệu của các dịch vụ ứng dụng
+                    trên mạng CAN.
+                </p>
+
+                <h2>5. Mối quan hệ giữa ISO 14229 và ISO 15765-2</h2>
+
+                <p>
+                    ISO 14229 và ISO 15765-2 thường được sử dụng
+                    cùng nhau khi triển khai UDS over CAN.
+                    Tuy nhiên, hai tiêu chuẩn có nhiệm vụ khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>ISO 14229</th>
+                            <th>ISO 15765-2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phạm vi</td>
+                            <td>UDS Diagnostic Services.</td>
+                            <td>Transport Protocol và Network Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>Định nghĩa</td>
+                            <td>SID, service parameter và response.</td>
+                            <td>SF, FF, CF, FC và cơ chế truyền dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>ReadDataByIdentifier (0x22).</td>
+                            <td>Phân đoạn và ghép lại payload của dịch vụ 0x22.</td>
+                        </tr>
+                        <tr>
+                            <td>Vai trò</td>
+                            <td>Xác định ECU cần thực hiện dịch vụ gì.</td>
+                            <td>Đảm bảo payload của dịch vụ được truyền qua CAN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, Tester gửi yêu cầu UDS ReadDataByIdentifier
+                    với SID 0x22.
+                    ISO 14229 định nghĩa dịch vụ và các tham số,
+                    còn ISO 15765-2 xử lý việc truyền payload
+                    nếu thông điệp cần nhiều CAN Frame.
+                </p>
+
+                <h2>6. CAN payload và ISO-TP payload khác nhau thế nào?</h2>
+
+                <p>
+                    Đây là một khái niệm rất quan trọng khi đọc CAN Trace.
+                </p>
+
+                <p>
+                    CAN Data Field là vùng dữ liệu của một CAN Frame.
+                    Với CAN Classic, vùng này có tối đa 8 byte.
+                    Trong khi đó, ISO-TP payload là dữ liệu
+                    của một thông điệp Transport Layer.
+                </p>
+
+                <p>
+                    ISO-TP sử dụng một phần CAN Data Field
+                    cho Protocol Control Information (PCI).
+                    Phần còn lại mới được sử dụng để chứa
+                    dữ liệu của thông điệp ứng dụng.
+                </p>
+
+                <pre><code>CAN Frame Data Field
++----------+----------------------+
+| PCI      | Application Data     |
++----------+----------------------+
+     |
+     v
+Protocol Control Information
+
+Application Data
+     |
+     v
+UDS / OBD Payload</code></pre>
+
+                <p>
+                    Ví dụ, một CAN Frame có 8 byte data field
+                    không đồng nghĩa với việc nó chứa đủ
+                    8 byte dữ liệu UDS.
+                    Một số byte được sử dụng để xác định
+                    loại ISO-TP frame và các thông tin liên quan.
+                </p>
+
+                <h2>7. Protocol Control Information (PCI)</h2>
+
+                <p>
+                    PCI là phần thông tin điều khiển
+                    được đặt trong CAN Data Field
+                    để xác định loại ISO-TP frame.
+                </p>
+
+                <p>
+                    Với những frame ISO-TP thông dụng,
+                    bốn PCI type chính là:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PCI Type</th>
+                            <th>Giá trị nibble cao</th>
+                            <th>Tên frame</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x0</td>
+                            <td>0000</td>
+                            <td>Single Frame (SF).</td>
+                        </tr>
+                        <tr>
+                            <td>0x1</td>
+                            <td>0001</td>
+                            <td>First Frame (FF).</td>
+                        </tr>
+                        <tr>
+                            <td>0x2</td>
+                            <td>0010</td>
+                            <td>Consecutive Frame (CF).</td>
+                        </tr>
+                        <tr>
+                            <td>0x3</td>
+                            <td>0011</td>
+                            <td>Flow Control (FC).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong cách biểu diễn phổ biến,
+                    nibble cao của byte PCI xác định frame type.
+                    Nibble thấp hoặc các byte tiếp theo
+                    chứa những thông tin bổ sung tùy loại frame.
+                </p>
+
+                <pre><code>Byte 0:
+
++----------------+----------------+
+|  Bits 7..4     |  Bits 3..0      |
++----------------+----------------+
+|  PCI Type      |  PCI Parameter |
++----------------+----------------+</code></pre>
+
+                <p>
+                    Khi phân tích CAN Trace, việc xác định
+                    PCI Type thường là bước đầu tiên
+                    để hiểu một CAN Frame đang thực hiện
+                    chức năng gì trong giao dịch ISO-TP.
+                </p>
+
+                <h2>8. Bốn loại ISO-TP Frame</h2>
+
+                <p>
+                    ISO-TP sử dụng bốn loại frame chính
+                    để thực hiện quá trình truyền dữ liệu:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Frame</th>
+                            <th>Vai trò</th>
+                            <th>Đặc điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Single Frame</td>
+                            <td>Truyền toàn bộ payload trong một CAN Frame.</td>
+                            <td>Không cần phân đoạn.</td>
+                        </tr>
+                        <tr>
+                            <td>First Frame</td>
+                            <td>Bắt đầu một giao dịch truyền nhiều frame.</td>
+                            <td>Chứa thông tin tổng chiều dài payload.</td>
+                        </tr>
+                        <tr>
+                            <td>Consecutive Frame</td>
+                            <td>Truyền những phần dữ liệu tiếp theo.</td>
+                            <td>Có Sequence Number.</td>
+                        </tr>
+                        <tr>
+                            <td>Flow Control</td>
+                            <td>Điều khiển tốc độ và khả năng tiếp nhận dữ liệu.</td>
+                            <td>Chứa Flow Status, Block Size và STmin.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Single Frame được sử dụng khi dữ liệu
+                    nằm gọn trong một CAN Frame.
+                    Nếu dữ liệu dài hơn, sender sử dụng
+                    First Frame, sau đó truyền các
+                    Consecutive Frame theo điều kiện
+                    Flow Control của receiver.
+                </p>
+
+                <h2>9. Single Frame (SF)</h2>
+
+                <p>
+                    Single Frame được sử dụng khi toàn bộ
+                    ISO-TP payload có thể nằm trong
+                    một CAN Frame.
+                </p>
+
+                <p>
+                    Với CAN Classic và Normal Addressing,
+                    byte PCI đầu tiên chứa:
+                </p>
+
+                <ul>
+                    <li>Nibble cao: PCI Type = 0x0.</li>
+                    <li>Nibble thấp: Single Frame Data Length (SF_DL).</li>
+                </ul>
+
+                <p>
+                    Ví dụ payload có 3 byte:
+                </p>
+
+                <pre><code>03 22 F1 90 00 00 00 00
+
+03 : SF PCI, payload length = 3
+22 : UDS SID - ReadDataByIdentifier
+F1 : DID high byte
+90 : DID low byte
+
+00 00 00 00 : Padding (nếu cấu hình sử dụng)</code></pre>
+
+                <p>
+                    Trong ví dụ này, ISO-TP chỉ cần
+                    một CAN Frame để truyền toàn bộ
+                    UDS request.
+                </p>
+
+                <p>
+                    Với CAN Classic sử dụng Normal Addressing,
+                    một Single Frame thông thường có thể
+                    chứa tối đa 7 byte dữ liệu ứng dụng,
+                    vì một byte được sử dụng cho PCI.
+                </p>
+
+                <p>
+                    Dung lượng thực tế còn phụ thuộc
+                    addressing format và CAN Data Length.
+                </p>
+
+                <h2>10. Phân tích Single Frame</h2>
+
+                <p>
+                    Giả sử tester gửi yêu cầu:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    Đây là UDS request ReadDataByIdentifier
+                    với DID F190, thường được dùng
+                    để đọc thông tin VIN.
+                </p>
+
+                <p>
+                    Payload ứng dụng có 3 byte.
+                    Với CAN Classic và Normal Addressing,
+                    ISO-TP tạo Single Frame:
+                </p>
+
+                <pre><code>03 22 F1 90 00 00 00 00</code></pre>
+
+                <p>
+                    Quá trình xử lý:
+                </p>
+
+                <ol>
+                    <li>ISO-TP nhận payload từ tầng ứng dụng.</li>
+                    <li>Kiểm tra payload có phù hợp với Single Frame không.</li>
+                    <li>Tạo PCI với type SF và chiều dài payload.</li>
+                    <li>Đóng gói PCI cùng dữ liệu ứng dụng.</li>
+                    <li>Gửi CAN Frame xuống tầng Data Link.</li>
+                    <li>Receiver nhận frame và loại bỏ PCI.</li>
+                    <li>Chuyển payload ban đầu lên tầng ứng dụng.</li>
+                </ol>
+
+                <p>
+                    Single Frame không cần Flow Control
+                    vì toàn bộ dữ liệu đã được truyền
+                    trong một CAN Frame.
+                </p>
+
+                <h2>11. First Frame (FF)</h2>
+
+                <p>
+                    First Frame được sử dụng khi payload
+                    quá lớn để truyền bằng Single Frame.
+                </p>
+
+                <p>
+                    First Frame chứa:
+                </p>
+
+                <ul>
+                    <li>PCI Type = 0x1.</li>
+                    <li>Thông tin chiều dài tổng thể của payload.</li>
+                    <li>Một phần đầu của payload.</li>
+                </ul>
+
+                <p>
+                    Với CAN Classic và Normal Addressing,
+                    First Frame thông thường có:
+                </p>
+
+                <pre><code>Byte 0:
+    Bits 7..4 : PCI Type = 0001
+    Bits 3..0 : 4 bit cao của FF_DL
+
+Byte 1:
+    8 bit thấp của FF_DL
+
+Byte 2..7:
+    Phần đầu của Application Payload</code></pre>
+
+                <p>
+                    FF_DL là First Frame Data Length,
+                    thể hiện tổng chiều dài của
+                    ISO-TP payload cần truyền.
+                </p>
+
+                <p>
+                    Với cách mã hóa chiều dài thông thường,
+                    First Frame sử dụng trường dài 12-bit.
+                    Khi cần truyền payload lớn hơn phạm vi này,
+                    tiêu chuẩn hỗ trợ dạng mở rộng với
+                    trường chiều dài 32-bit.
+                </p>
+
+                <h2>12. Ví dụ First Frame</h2>
+
+                <p>
+                    Giả sử payload có tổng chiều dài 20 byte.
+                    Với CAN Classic và Normal Addressing,
+                    First Frame được minh họa như sau:
+                </p>
+
+                <pre><code>10 14 62 F1 90 31 48 47
+
+10 14 : FF PCI, total length = 0x014 = 20 bytes
+
+62 F1 90 31 48 47 : 6 byte payload đầu tiên</code></pre>
+
+                <p>
+                    Giải thích:
+                </p>
+
+                <ul>
+                    <li>0x10: PCI Type 1, tức First Frame.</li>
+                    <li>0x14: tổng chiều dài payload là 20 byte.</li>
+                    <li>6 byte sau PCI: phần đầu của thông điệp ứng dụng.</li>
+                </ul>
+
+                <p>
+                    Receiver đọc chiều dài tổng thể
+                    để biết cần nhận thêm bao nhiêu dữ liệu
+                    trước khi có thể hoàn thành
+                    thông điệp ISO-TP.
+                </p>
+
+                <h2>13. Consecutive Frame (CF)</h2>
+
+                <p>
+                    Consecutive Frame được sử dụng để truyền
+                    những phần payload còn lại sau First Frame.
+                </p>
+
+                <p>
+                    Một CF thông thường gồm:
+                </p>
+
+                <ul>
+                    <li>PCI Type = 0x2.</li>
+                    <li>Sequence Number (SN).</li>
+                    <li>Phần tiếp theo của payload.</li>
+                </ul>
+
+                <pre><code>Byte 0:
+
++----------------+----------------+
+| PCI Type = 2   | Sequence Number|
++----------------+----------------+
+
+Byte 1..7:
+    Application Payload</code></pre>
+
+                <p>
+                    Với CAN Classic và Normal Addressing,
+                    một Consecutive Frame có thể mang
+                    tối đa 7 byte dữ liệu ứng dụng.
+                </p>
+
+                <h2>14. Sequence Number (SN)</h2>
+
+                <p>
+                    Sequence Number giúp receiver xác định
+                    thứ tự các Consecutive Frame trong
+                    một giao dịch truyền nhiều frame.
+                </p>
+
+                <p>
+                    SN được chứa trong nibble thấp
+                    của byte PCI trong CF.
+                    Các CF được đánh số theo quy tắc
+                    tuần tự và quay vòng trong phạm vi
+                    4-bit.
+                </p>
+
+                <pre><code>CF 1 : 0x21
+CF 2 : 0x22
+CF 3 : 0x23
+...
+CF 15: 0x2F
+CF 16: 0x20
+CF 17: 0x21</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CF</th>
+                            <th>PCI Byte</th>
+                            <th>Sequence Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CF 1</td>
+                            <td>0x21</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>CF 2</td>
+                            <td>0x22</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>CF 3</td>
+                            <td>0x23</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>CF 15</td>
+                            <td>0x2F</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>CF 16</td>
+                            <td>0x20</td>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Nếu receiver nhận được một CF có
+                    Sequence Number không đúng thứ tự,
+                    giao dịch có thể bị hủy và
+                    tầng Transport báo lỗi.
+                </p>
+
+                <h2>15. Flow Control (FC)</h2>
+
+                <p>
+                    Flow Control là cơ chế cho phép
+                    receiver điều khiển cách sender
+                    tiếp tục truyền dữ liệu sau First Frame.
+                </p>
+
+                <p>
+                    Khi receiver nhận First Frame,
+                    nó có thể gửi Flow Control Frame
+                    để thông báo:
+                </p>
+
+                <ul>
+                    <li>Có thể tiếp tục truyền hay không.</li>
+                    <li>Số Consecutive Frame được phép gửi trước khi cần FC mới.</li>
+                    <li>Khoảng thời gian tối thiểu giữa những CF liên tiếp.</li>
+                </ul>
+
+                <p>
+                    Flow Control Frame có cấu trúc cơ bản:
+                </p>
+
+                <pre><code>Byte 0:
+    PCI Type = 0x3
+    Flow Status (FS)
+
+Byte 1:
+    Block Size (BS)
+
+Byte 2:
+    STmin
+
+Byte 3..:
+    Padding hoặc phần không sử dụng
+    theo CAN format và cấu hình</code></pre>
+
+                <p>
+                    Flow Control thường được gửi
+                    từ receiver về sender,
+                    tức là theo chiều ngược lại
+                    với dữ liệu của giao dịch đang truyền.
+                </p>
+
+                <h2>16. Flow Status (FS)</h2>
+
+                <p>
+                    Flow Status cho biết trạng thái
+                    mà receiver thông báo cho sender.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>FS</th>
+                            <th>Tên</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Continue To Send (CTS)</td>
+                            <td>Receiver cho phép sender tiếp tục truyền CF.</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Wait (WT)</td>
+                            <td>Receiver yêu cầu sender tạm thời chờ.</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Overflow (OVFLW)</td>
+                            <td>Receiver không thể tiếp nhận payload có chiều dài được thông báo.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong trường hợp CTS, sender được phép
+                    tiếp tục truyền CF theo BS và STmin.
+                </p>
+
+                <p>
+                    Trong trường hợp Wait, sender cần
+                    chờ Flow Control tiếp theo theo
+                    quy tắc timing và giới hạn số lần
+                    Wait được phép.
+                </p>
+
+                <p>
+                    Trong trường hợp Overflow, receiver
+                    không thể tiếp nhận thông điệp
+                    và quá trình truyền phải được xử lý
+                    theo quy tắc hủy giao dịch.
+                </p>
+
+                <h2>17. Block Size (BS)</h2>
+
+                <p>
+                    Block Size là số Consecutive Frame
+                    mà sender được phép truyền trước khi
+                    phải chờ một Flow Control Frame tiếp theo.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>BS = 0: sender có thể tiếp tục truyền toàn bộ các CF còn lại mà không cần một FC mới trong block đó.</li>
+                    <li>BS = 4: sender truyền tối đa 4 CF trước khi chờ FC tiếp theo.</li>
+                    <li>BS = 8: sender truyền tối đa 8 CF trước khi chờ FC tiếp theo.</li>
+                </ul>
+
+                <p>
+                    Minh họa với BS = 4:
+                </p>
+
+                <pre><code>Receiver sends FC:
+BS = 4
+
+Sender:
+    CF1
+    CF2
+    CF3
+    CF4
+      |
+      v
+Wait for next FC
+
+Receiver sends another FC:
+BS = 4
+
+Sender:
+    CF5
+    CF6
+    CF7
+    CF8
+      |
+      v
+Wait for next FC</code></pre>
+
+                <p>
+                    Block Size giúp receiver điều chỉnh
+                    lượng dữ liệu được gửi trong từng block,
+                    phù hợp với khả năng xử lý và buffer
+                    của nó.
+                </p>
+
+                <h2>18. STmin - Minimum Separation Time</h2>
+
+                <p>
+                    STmin là viết tắt của
+                    <strong>Minimum Separation Time</strong>.
+                    Đây là khoảng thời gian tối thiểu
+                    mà sender phải duy trì giữa
+                    những Consecutive Frame liên tiếp.
+                </p>
+
+                <p>
+                    Receiver sử dụng STmin để điều khiển
+                    nhịp truyền dữ liệu từ sender.
+                </p>
+
+                <p>
+                    Một số giá trị STmin thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Giá trị byte</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x00</td>
+                            <td>Không yêu cầu khoảng chờ tối thiểu bổ sung.</td>
+                        </tr>
+                        <tr>
+                            <td>0x01 đến 0x7F</td>
+                            <td>Khoảng thời gian từ 1 ms đến 127 ms.</td>
+                        </tr>
+                        <tr>
+                            <td>0xF1 đến 0xF9</td>
+                            <td>Khoảng thời gian từ 100 µs đến 900 µs theo bước 100 µs.</td>
+                        </tr>
+                        <tr>
+                            <td>Các giá trị còn lại</td>
+                            <td>Reserved theo định nghĩa của tiêu chuẩn.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>STmin = 0x05
+
+Minimum Separation Time = 5 ms</code></pre>
+
+                <p>
+                    Khi nhận FC có STmin = 5 ms,
+                    sender phải duy trì khoảng thời gian
+                    tối thiểu tương ứng giữa những CF.
+                </p>
+
+                <p>
+                    STmin không phải thời gian chờ
+                    giữa First Frame và Flow Control.
+                    Nó được sử dụng để điều khiển
+                    khoảng cách giữa những CF liên tiếp.
+                </p>
+
+                <h2>19. Flow Control hoạt động như thế nào?</h2>
+
+                <p>
+                    Khi receiver nhận được First Frame,
+                    nó gửi Flow Control để điều khiển
+                    quá trình truyền tiếp theo.
+                </p>
+
+                <p>
+                    Luồng hoạt động tổng quát:
+                </p>
+
+                <pre><code>Sender                         Receiver
+  |                                |
+  |----------- First Frame ------->|
+  |                                |
+  |<---------- Flow Control -------|
+  |                                |
+  |----------- CF 1 -------------->|
+  |----------- CF 2 -------------->|
+  |----------- CF 3 -------------->|
+  |                                |
+  |      Wait according to BS      |
+  |                                |
+  |<---------- Flow Control -------|
+  |                                |
+  |----------- CF 4 -------------->|
+  |----------- CF 5 -------------->|
+  |                                |
+  |       Complete Transfer        |
+  |                                |</code></pre>
+
+                <p>
+                    Flow Control có thể được gửi
+                    nhiều lần trong một giao dịch,
+                    tùy thuộc vào Block Size
+                    và lượng dữ liệu còn lại.
+                </p>
+
+                <h2>20. BS và STmin khác nhau như thế nào?</h2>
+
+                <p>
+                    Đây là hai tham số thường được sử dụng
+                    cùng nhau trong Flow Control,
+                    nhưng chúng điều khiển những khía cạnh
+                    khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>BS</th>
+                            <th>STmin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tên đầy đủ</td>
+                            <td>Block Size.</td>
+                            <td>Minimum Separation Time.</td>
+                        </tr>
+                        <tr>
+                            <td>Đơn vị</td>
+                            <td>Số lượng CF.</td>
+                            <td>Thời gian.</td>
+                        </tr>
+                        <tr>
+                            <td>Chức năng</td>
+                            <td>Giới hạn số CF trong một block.</td>
+                            <td>Giới hạn tốc độ gửi CF liên tiếp.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>BS = 4.</td>
+                            <td>STmin = 5 ms.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Nếu receiver gửi BS = 4 và STmin = 5 ms,
+                    sender được phép gửi tối đa 4 CF
+                    trong block hiện tại, đồng thời
+                    phải đáp ứng khoảng separation time
+                    tối thiểu giữa những CF.
+                </p>
+
+                <h2>21. N-PDU và cấu trúc ISO-TP</h2>
+
+                <p>
+                    Trong ISO-TP, dữ liệu được tổ chức
+                    thành các Protocol Data Unit (PDU)
+                    ở những tầng khác nhau.
+                </p>
+
+                <p>
+                    Một số thuật ngữ quan trọng:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>N-SDU</td>
+                            <td>Service Data Unit được trao đổi tại giao diện Transport Layer với tầng trên.</td>
+                        </tr>
+                        <tr>
+                            <td>N-PDU</td>
+                            <td>Protocol Data Unit được trao đổi giữa các Transport Layer entity.</td>
+                        </tr>
+                        <tr>
+                            <td>N_PCI</td>
+                            <td>Network Protocol Control Information.</td>
+                        </tr>
+                        <tr>
+                            <td>N_Data</td>
+                            <td>Dữ liệu thuộc Network Layer PDU.</td>
+                        </tr>
+                        <tr>
+                            <td>N_AI</td>
+                            <td>Network Address Information.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một N-PDU có thể chứa:
+                </p>
+
+                <pre><code>N-PDU
++----------------+----------------------+
+| Address Info   | PCI + User Data      |
++----------------+----------------------+
+                       |
+                       v
+                CAN Data Field</code></pre>
+
+                <p>
+                    Cấu trúc cụ thể phụ thuộc
+                    addressing format đang được sử dụng.
+                </p>
+
+                <h2>22. Physical Addressing và Functional Addressing</h2>
+
+                <p>
+                    ISO-TP hỗ trợ những kiểu addressing
+                    khác nhau để xác định cách giao tiếp
+                    giữa sender và receiver.
+                </p>
+
+                <p>
+                    Hai khái niệm quan trọng:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Addressing</th>
+                            <th>Đặc điểm</th>
+                            <th>Ứng dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Physical Addressing</td>
+                            <td>Giao tiếp hướng đến một ECU cụ thể.</td>
+                            <td>Trao đổi request/response giữa tester và một ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Functional Addressing</td>
+                            <td>Gửi yêu cầu đến một nhóm ECU hoặc các ECU thuộc phạm vi nhận.</td>
+                            <td>Những yêu cầu chẩn đoán dạng broadcast được hỗ trợ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Physical Addressing:
+
+Tester -------- Request --------> ECU A
+Tester <------- Response -------- ECU A
+
+
+Functional Addressing:
+
+                  +----------> ECU A
+Tester -- Request +----------> ECU B
+                  +----------> ECU C</code></pre>
+
+                <p>
+                    Functional Addressing không có nghĩa
+                    tất cả ECU sẽ luôn trả lời đồng thời.
+                    Quy tắc nhận request và phản hồi
+                    phụ thuộc loại dịch vụ chẩn đoán.
+                </p>
+
+                <p>
+                    Với các giao dịch UDS cần truyền nhiều frame,
+                    Physical Addressing thường được sử dụng
+                    vì receiver cụ thể cần gửi Flow Control
+                    cho sender. Với Functional Addressing,
+                    cần kiểm tra kỹ giới hạn của dịch vụ
+                    và profile đang áp dụng.
+                </p>
+
+                <h2>23. Addressing Format</h2>
+
+                <p>
+                    Ngoài Physical và Functional Addressing,
+                    ISO-TP còn có những addressing format
+                    để xác định cách thông tin địa chỉ
+                    được thể hiện trong giao tiếp.
+                </p>
+
+                <p>
+                    Những format thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Format</th>
+                            <th>Cách sử dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Normal Addressing</td>
+                            <td>Thông tin địa chỉ được thể hiện thông qua CAN Identifier.</td>
+                        </tr>
+                        <tr>
+                            <td>Extended Addressing</td>
+                            <td>Sử dụng thêm một byte địa chỉ trong CAN Data Field.</td>
+                        </tr>
+                        <tr>
+                            <td>Mixed Addressing</td>
+                            <td>Kết hợp CAN Identifier với một byte Address Extension theo cách định nghĩa.</td>
+                        </tr>
+                        <tr>
+                            <td>Normal Fixed Addressing</td>
+                            <td>Format địa chỉ cố định thường gặp trong những profile sử dụng CAN Identifier 29-bit.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Normal, Extended và Mixed Addressing
+                    không nên bị nhầm với Physical và Functional Addressing.
+                    Một nhóm mô tả cách địa chỉ được biểu diễn,
+                    nhóm còn lại mô tả cách giao tiếp giữa các node.
+                </p>
+
+                <h2>24. Normal Addressing</h2>
+
+                <p>
+                    Trong Normal Addressing, địa chỉ được
+                    xác định thông qua CAN Identifier.
+                    CAN Data Field không cần thêm một byte
+                    Address Extension ở đầu payload.
+                </p>
+
+                <p>
+                    Ví dụ minh họa một giao dịch UDS:
+                </p>
+
+                <pre><code>Request CAN ID : 0x7E0
+Response CAN ID: 0x7E8
+
+Request:
+03 22 F1 90
+
+Response:
+03 7F 22 31</code></pre>
+
+                <p>
+                    Các CAN ID trên thường gặp trong
+                    một số hệ thống chẩn đoán sử dụng
+                    Standard Identifier 11-bit.
+                    Đây chỉ là ví dụ, không phải
+                    quy định chung cho mọi xe.
+                </p>
+
+                <h2>25. Extended Addressing</h2>
+
+                <p>
+                    Extended Addressing sử dụng thêm
+                    một byte Address Extension
+                    ở đầu CAN Data Field.
+                </p>
+
+                <p>
+                    Vì có thêm một byte địa chỉ,
+                    dung lượng còn lại dành cho PCI
+                    và application data sẽ giảm.
+                </p>
+
+                <pre><code>CAN Data Field:
+
++------------+------------+---------------------+
+| Address    | PCI        | Application Data    |
++------------+------------+---------------------+</code></pre>
+
+                <p>
+                    Byte đầu tiên chứa thông tin
+                    Address Extension, sau đó mới đến
+                    PCI và phần dữ liệu ứng dụng.
+                </p>
+
+                <p>
+                    Khi phân tích CAN Trace,
+                    cần kiểm tra addressing format
+                    trước khi xác định vị trí PCI.
+                    Nếu bỏ qua byte địa chỉ,
+                    có thể đọc nhầm PCI Type
+                    và kết luận sai loại frame.
+                </p>
+
+                <h2>26. Mixed Addressing</h2>
+
+                <p>
+                    Mixed Addressing kết hợp CAN Identifier
+                    với một byte Address Extension
+                    theo quy tắc của format tương ứng.
+                </p>
+
+                <p>
+                    Byte bổ sung được sử dụng để
+                    cung cấp thông tin địa chỉ
+                    hoặc phân biệt connection
+                    theo cấu hình mạng.
+                </p>
+
+                <p>
+                    Khi sử dụng Mixed Addressing,
+                    cần xác định:
+                </p>
+
+                <ul>
+                    <li>CAN Identifier cho TX và RX.</li>
+                    <li>Address Extension.</li>
+                    <li>Địa chỉ source và target.</li>
+                    <li>Loại addressing đang được cấu hình.</li>
+                    <li>Cách byte địa chỉ ảnh hưởng đến dung lượng payload.</li>
+                </ul>
+
+                <p>
+                    Không nên sao chép một CAN Trace
+                    sử dụng Normal Addressing để
+                    giải mã một connection đang dùng
+                    Extended hoặc Mixed Addressing.
+                </p>
+
+                <h2>27. CAN Classic và CAN FD trong ISO-TP</h2>
+
+                <p>
+                    ISO 15765-2 hỗ trợ hoạt động
+                    trên những mạng CAN Classic
+                    và CAN FD phù hợp.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>CAN Classic</th>
+                            <th>CAN FD</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Data Field tối đa</td>
+                            <td>8 byte.</td>
+                            <td>64 byte.</td>
+                        </tr>
+                        <tr>
+                            <td>Single Frame</td>
+                            <td>Thường tối đa 7 byte payload với Normal Addressing.</td>
+                            <td>Có thể chứa payload lớn hơn nhờ CAN Data Field dài hơn và cơ chế SF length phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>First Frame</td>
+                            <td>Chứa một phần đầu của payload cùng thông tin chiều dài.</td>
+                            <td>Có thể mang phần dữ liệu đầu tiên lớn hơn CAN Classic.</td>
+                        </tr>
+                        <tr>
+                            <td>Consecutive Frame</td>
+                            <td>Tối đa 7 byte payload trong trường hợp Normal Addressing thông dụng.</td>
+                            <td>Có thể mang nhiều byte payload hơn.</td>
+                        </tr>
+                        <tr>
+                            <td>Flow Control</td>
+                            <td>Điều khiển truyền dữ liệu nhiều frame.</td>
+                            <td>Vẫn sử dụng cơ chế Flow Control theo cấu hình phù hợp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Không nên mặc định tất cả implementation
+                    ISO-TP đều phải hỗ trợ cả CAN Classic
+                    và CAN FD.
+                    Tiêu chuẩn cũng không tự quyết định
+                    CAN CC hay CAN FD phải được sử dụng;
+                    yêu cầu này phụ thuộc tiêu chuẩn ứng dụng
+                    và cấu hình của hệ thống.
+                </p>
+
+                <h2>28. CAN FD Single Frame và Escape Length</h2>
+
+                <p>
+                    CAN FD có khả năng truyền data field
+                    dài hơn CAN Classic.
+                    Vì vậy, Single Frame cần có cách
+                    biểu diễn chiều dài phù hợp
+                    khi payload lớn hơn phạm vi
+                    của trường SF length thông thường.
+                </p>
+
+                <p>
+                    Trong những trường hợp phù hợp,
+                    ISO-TP sử dụng Escape Length Format
+                    với một byte PCI bổ sung để thể hiện
+                    chiều dài payload.
+                </p>
+
+                <pre><code>CAN FD Single Frame (Escape Length):
+
+Byte 0:
+    PCI Type = 0x0
+    SF_DL field = 0
+
+Byte 1:
+    Extended SF Data Length
+
+Byte 2...:
+    Application Payload</code></pre>
+
+                <p>
+                    Ví dụ, với một CAN FD Frame
+                    có data field lớn hơn 8 byte,
+                    cần kiểm tra format PCI
+                    để biết SF length được biểu diễn
+                    theo cách nào.
+                </p>
+
+                <p>
+                    Dung lượng payload tối đa của SF
+                    phụ thuộc CAN_DL, addressing format
+                    và số byte PCI được sử dụng.
+                </p>
+
+                <h2>29. First Frame với Extended Length</h2>
+
+                <p>
+                    Với những thông điệp có chiều dài
+                    vượt phạm vi biểu diễn 12-bit,
+                    ISO-TP hỗ trợ cách mã hóa chiều dài
+                    mở rộng trong First Frame.
+                </p>
+
+                <p>
+                    Thay vì chỉ sử dụng trường chiều dài
+                    12-bit, FF có thể chứa một trường
+                    chiều dài 32-bit theo format mở rộng.
+                </p>
+
+                <p>
+                    Cấu trúc khái quát:
+                </p>
+
+                <pre><code>First Frame - Extended Length:
+
+Byte 0:
+    PCI Type = FF
+
+Byte 1:
+    Extended Length Indicator
+
+Byte 2..5:
+    32-bit Payload Length
+
+Following Bytes:
+    Initial Application Payload</code></pre>
+
+                <p>
+                    Việc sử dụng trường chiều dài mở rộng
+                    cho phép hỗ trợ những thông điệp
+                    có kích thước lớn hơn nhiều so với
+                    trường FF length thông thường.
+                </p>
+
+                <p>
+                    Tuy nhiên, giới hạn payload thực tế
+                    còn phụ thuộc implementation,
+                    buffer, cấu hình và yêu cầu hệ thống.
+                </p>
+
+                <h2>30. Padding trong ISO-TP</h2>
+
+                <p>
+                    Padding là các byte bổ sung
+                    được sử dụng để lấp đầy phần
+                    CAN Data Field còn trống theo
+                    cấu hình và quy tắc áp dụng.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>CAN Data Field:
+
+03 22 F1 90 00 00 00 00
+
+ISO-TP Payload:
+22 F1 90
+
+Padding:
+00 00 00 00</code></pre>
+
+                <p>
+                    Padding không phải application data.
+                    Receiver cần phân biệt payload thực tế
+                    với những byte padding.
+                </p>
+
+                <p>
+                    Những điểm cần chú ý:
+                </p>
+
+                <ul>
+                    <li>Padding được bật hay không phụ thuộc cấu hình.</li>
+                    <li>Giá trị padding có thể phụ thuộc yêu cầu dự án.</li>
+                    <li>Receiver cần áp dụng đúng quy tắc kiểm tra padding.</li>
+                    <li>Padding không được tính vào chiều dài N-SDU.</li>
+                </ul>
+
+                <p>
+                    Trong một số implementation,
+                    padding không đúng độ dài hoặc
+                    giá trị có thể khiến frame bị
+                    từ chối theo cấu hình kiểm tra.
+                </p>
+
+                <h2>31. Timing trong ISO 15765-2</h2>
+
+                <p>
+                    Timing là phần quan trọng để đảm bảo
+                    một giao dịch ISO-TP có thể hoàn thành
+                    trong điều kiện truyền thông phù hợp.
+                </p>
+
+                <p>
+                    Một giao dịch nhiều frame có nhiều
+                    khoảng chờ và thời gian xử lý khác nhau:
+                </p>
+
+                <ul>
+                    <li>Thời gian sender truyền frame.</li>
+                    <li>Thời gian receiver nhận và xử lý First Frame.</li>
+                    <li>Thời gian receiver gửi Flow Control.</li>
+                    <li>Khoảng cách giữa những Consecutive Frame.</li>
+                    <li>Thời gian chờ CF tiếp theo ở phía receiver.</li>
+                    <li>Thời gian chờ Flow Control tiếp theo ở phía sender.</li>
+                </ul>
+
+                <p>
+                    ISO 15765-2:2024 sử dụng những
+                    timing parameter có tên như:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timing Parameter</th>
+                            <th>Nhóm chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>t_TL_As</td>
+                            <td>Transport Layer sender timing - nhóm A.</td>
+                        </tr>
+                        <tr>
+                            <td>t_TL_Ar</td>
+                            <td>Transport Layer receiver timing - nhóm A.</td>
+                        </tr>
+                        <tr>
+                            <td>t_TL_Bs</td>
+                            <td>Transport Layer sender timing - nhóm B.</td>
+                        </tr>
+                        <tr>
+                            <td>t_TL_Br</td>
+                            <td>Transport Layer receiver timing - nhóm B.</td>
+                        </tr>
+                        <tr>
+                            <td>t_TL_Cs</td>
+                            <td>Transport Layer sender timing - nhóm C.</td>
+                        </tr>
+                        <tr>
+                            <td>t_TL_Cr</td>
+                            <td>Transport Layer receiver timing - nhóm C.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi sử dụng các timing parameter,
+                    cần đọc đúng định nghĩa, điều kiện
+                    bắt đầu và kết thúc timer trong tiêu chuẩn.
+                    Không nên tự suy luận ý nghĩa chỉ từ
+                    ký tự A, B hoặc C.
+                </p>
+
+                <h2>32. Timeout trong ISO-TP</h2>
+
+                <p>
+                    Timeout giúp phát hiện những tình huống
+                    giao dịch không thể tiếp tục do
+                    sender hoặc receiver không nhận được
+                    thông tin cần thiết trong thời gian cho phép.
+                </p>
+
+                <p>
+                    Một số tình huống timeout:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>Ý nghĩa</th>
+                            <th>Hướng phân tích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sender không nhận FC</td>
+                            <td>Receiver không gửi Flow Control đúng thời gian.</td>
+                            <td>Kiểm tra FC frame, CAN ID, receiver state và timing.</td>
+                        </tr>
+                        <tr>
+                            <td>Receiver không nhận CF</td>
+                            <td>Sender không tiếp tục truyền dữ liệu theo yêu cầu.</td>
+                            <td>Kiểm tra sender state và CAN trace.</td>
+                        </tr>
+                        <tr>
+                            <td>Sender không truyền frame đúng hạn</td>
+                            <td>Quá trình truyền không hoàn tất theo điều kiện thời gian.</td>
+                            <td>Kiểm tra bus load, driver và scheduling.</td>
+                        </tr>
+                        <tr>
+                            <td>Receiver không xử lý kịp dữ liệu</td>
+                            <td>Receiver có thể không tiếp nhận hoặc xử lý N-SDU đúng hạn.</td>
+                            <td>Kiểm tra buffer, processing và Flow Control behavior.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cần phân biệt timeout ở ISO-TP
+                    với timeout của UDS service.
+                    Hai tầng có thể có những
+                    yêu cầu timing khác nhau.
+                </p>
+
+                <h2>33. Unconfirmed Communication</h2>
+
+                <p>
+                    Một điểm quan trọng trong ISO 15765-2
+                    là Transport Protocol được định nghĩa
+                    theo cơ chế unconfirmed communication.
+                </p>
+
+                <p>
+                    Flow Control không phải là một
+                    xác nhận ứng dụng rằng toàn bộ
+                    thông điệp đã được xử lý thành công.
+                    Nó chủ yếu điều khiển khả năng
+                    tiếp tục truyền dữ liệu.
+                </p>
+
+                <p>
+                    Cần phân biệt ba khái niệm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN ACK</td>
+                            <td>Xác nhận ở mức CAN Data Link cho một CAN Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO-TP Flow Control</td>
+                            <td>Điều khiển tốc độ và khả năng tiếp nhận dữ liệu của receiver.</td>
+                        </tr>
+                        <tr>
+                            <td>UDS Positive Response</td>
+                            <td>Phản hồi ở tầng ứng dụng cho một dịch vụ UDS.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, CAN ACK không chứng minh
+                    ECU đã xử lý xong UDS request.
+                    Tương tự, nhận được FC CTS
+                    cũng không có nghĩa dịch vụ UDS
+                    đã hoàn thành.
+                </p>
+
+                <h2>34. Quá trình truyền một thông điệp nhiều frame</h2>
+
+                <p>
+                    Một giao dịch ISO-TP nhiều frame
+                    thường có những bước:
+                </p>
+
+                <ol>
+                    <li>Application Layer tạo một payload.</li>
+                    <li>Transport Layer xác định payload cần phân đoạn.</li>
+                    <li>Sender tạo First Frame và gửi đến receiver.</li>
+                    <li>Receiver xác định chiều dài tổng thể của thông điệp.</li>
+                    <li>Receiver gửi Flow Control.</li>
+                    <li>Sender gửi các Consecutive Frame theo điều kiện FC.</li>
+                    <li>Receiver kiểm tra Sequence Number và ghép dữ liệu.</li>
+                    <li>Khi đủ payload, receiver chuyển N-SDU lên tầng trên.</li>
+                </ol>
+
+                <pre><code>Application Payload
+        |
+        v
+ISO-TP Sender
+        |
+        v
+   First Frame
+        |
+        v
+ISO-TP Receiver
+        |
+        v
+  Flow Control
+        |
+        v
+   Consecutive Frames
+        |
+        v
+ Sequence Number Check
+        |
+        v
+   Reassembly Buffer
+        |
+        v
+   Complete N-SDU
+        |
+        v
+  Upper Application</code></pre>
+
+                <h2>35. Ví dụ hoàn chỉnh: UDS ReadDataByIdentifier</h2>
+
+                <p>
+                    Hãy xem một tình huống thực tế.
+                    Diagnostic Tester cần đọc VIN từ ECU
+                    bằng UDS ReadDataByIdentifier (SID 0x22).
+                </p>
+
+                <p>
+                    DID F190 thường được sử dụng
+                    cho thông tin VIN trong các profile UDS
+                    tương ứng.
+                    Giả sử ECU trả về 17 ký tự VIN.
+                </p>
+
+                <p>
+                    UDS Response có cấu trúc minh họa:
+                </p>
+
+                <pre><code>62 F1 90 31 48 47 43 4D 38 32 36 33 33
+41 30 30 34 33 35 32</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li>62: Positive Response SID cho request 0x22.</li>
+                    <li>F1 90: DID được trả lời.</li>
+                    <li>Phần còn lại: dữ liệu VIN dạng ASCII.</li>
+                </ul>
+
+                <p>
+                    Tổng payload có 20 byte:
+                    3 byte service và DID, cộng với 17 byte VIN.
+                    Vì CAN Classic chỉ mang tối đa 8 byte
+                    data field và ISO-TP còn cần PCI,
+                    thông điệp phải được phân đoạn.
+                </p>
+
+                <h2>36. Phân đoạn dữ liệu trong ví dụ VIN</h2>
+
+                <p>
+                    Với CAN Classic và Normal Addressing,
+                    First Frame chứa hai byte PCI và
+                    tối đa 6 byte dữ liệu ứng dụng.
+                </p>
+
+                <p>
+                    First Frame:
+                </p>
+
+                <pre><code>10 14 62 F1 90 31 48 47</code></pre>
+
+                <p>
+                    Giải thích:
+                </p>
+
+                <ul>
+                    <li>10: First Frame.</li>
+                    <li>14: tổng chiều dài payload = 20 byte.</li>
+                    <li>62 F1 90 31 48 47: 6 byte đầu tiên của payload.</li>
+                </ul>
+
+                <p>
+                    Sau đó receiver gửi Flow Control:
+                </p>
+
+                <pre><code>30 08 05</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li>30: Flow Control, CTS.</li>
+                    <li>08: Block Size = 8.</li>
+                    <li>05: STmin = 5 ms.</li>
+                </ul>
+
+                <p>
+                    Sender tiếp tục gửi hai Consecutive Frame:
+                </p>
+
+                <pre><code>21 43 4D 38 32 36 33 33
+
+22 41 30 30 34 33 35 32</code></pre>
+
+                <p>
+                    CF đầu tiên có Sequence Number = 1.
+                    CF thứ hai có Sequence Number = 2.
+                </p>
+
+                <p>
+                    Sau khi receiver nhận đủ 20 byte,
+                    nó ghép lại thành payload ban đầu
+                    và chuyển dữ liệu UDS lên tầng ứng dụng.
+                </p>
+
+                <h2>37. Luồng giao tiếp hoàn chỉnh trong ví dụ VIN</h2>
+
+                <p>
+                    Có thể biểu diễn toàn bộ giao dịch
+                    giữa Tester và ECU như sau:
+                </p>
+
+                <pre><code>Tester                                  ECU
+  |                                     |
+  |--------- UDS Request -------------->|
+  |         22 F1 90                    |
+  |                                     |
+  |<-------- First Frame ---------------|
+  |         10 14 ...                   |
+  |                                     |
+  |--------- Flow Control ------------->|
+  |         30 08 05                    |
+  |                                     |
+  |<-------- Consecutive Frame 1 -------|
+  |         21 ...                      |
+  |                                     |
+  |<-------- Consecutive Frame 2 -------|
+  |         22 ...                      |
+  |                                     |
+  |       Reassemble Payload             |
+  |                                     |
+  |       Deliver UDS Response           |
+  |                                     |</code></pre>
+
+                <p>
+                    Trong giao dịch này, cần chú ý:
+                </p>
+
+                <ul>
+                    <li>Tester gửi UDS Request.</li>
+                    <li>ECU gửi UDS Response nhiều frame.</li>
+                    <li>Tester gửi FC để điều khiển quá trình truyền response.</li>
+                    <li>ECU gửi CF theo BS và STmin.</li>
+                    <li>Tester ghép dữ liệu và đưa payload lên UDS Layer.</li>
+                </ul>
+
+                <p>
+                    CAN ID cụ thể và cách cấu hình
+                    địa chỉ phụ thuộc vào hệ thống.
+                    Trong ví dụ này, chỉ tập trung
+                    vào cách hoạt động của ISO-TP.
+                </p>
+
+                <h2>38. Ví dụ phân tích CAN Trace</h2>
+
+                <p>
+                    Giả sử bạn nhận được một CAN Trace
+                    có các dòng như sau:
+                </p>
+
+                <pre><code>Time       CAN ID    Data
+------------------------------------------------
+0.000 ms   0x7E8     10 14 62 F1 90 31 48 47
+0.200 ms   0x7E0     30 08 05 00 00 00 00 00
+5.300 ms   0x7E8     21 43 4D 38 32 36 33 33
+10.400 ms  0x7E8     22 41 30 30 34 33 35 32</code></pre>
+
+                <p>
+                    Có thể phân tích từng dòng:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CAN ID</th>
+                            <th>Data</th>
+                            <th>Giải thích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x7E8</td>
+                            <td>10 14 ...</td>
+                            <td>ECU gửi First Frame, payload có tổng 20 byte.</td>
+                        </tr>
+                        <tr>
+                            <td>0x7E0</td>
+                            <td>30 08 05 ...</td>
+                            <td>Tester gửi Flow Control CTS, BS = 8 và STmin = 5 ms.</td>
+                        </tr>
+                        <tr>
+                            <td>0x7E8</td>
+                            <td>21 ...</td>
+                            <td>ECU gửi Consecutive Frame số 1.</td>
+                        </tr>
+                        <tr>
+                            <td>0x7E8</td>
+                            <td>22 ...</td>
+                            <td>ECU gửi Consecutive Frame số 2.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    CAN ID 0x7E0 và 0x7E8 chỉ là
+                    ví dụ thường gặp trong một số
+                    hệ thống sử dụng 11-bit addressing.
+                    Không nên mặc định những ID này
+                    áp dụng cho mọi dự án.
+                </p>
+
+                <h2>39. Reassembly - Ghép dữ liệu ở phía nhận</h2>
+
+                <p>
+                    Reassembly là quá trình receiver
+                    ghép các phần payload được truyền
+                    trong First Frame và những
+                    Consecutive Frame thành một N-SDU hoàn chỉnh.
+                </p>
+
+                <p>
+                    Khi nhận First Frame, receiver
+                    cần xác định:
+                </p>
+
+                <ul>
+                    <li>Tổng chiều dài payload.</li>
+                    <li>Addressing Information.</li>
+                    <li>Initial Data trong First Frame.</li>
+                    <li>Buffer có đủ khả năng tiếp nhận hay không.</li>
+                    <li>Điều kiện Flow Control cần gửi.</li>
+                </ul>
+
+                <p>
+                    Khi nhận từng CF, receiver cần:
+                </p>
+
+                <ol>
+                    <li>Kiểm tra frame có đúng connection không.</li>
+                    <li>Kiểm tra Sequence Number.</li>
+                    <li>Kiểm tra điều kiện timing.</li>
+                    <li>Copy payload vào buffer.</li>
+                    <li>Cập nhật lượng dữ liệu đã nhận.</li>
+                    <li>Kiểm tra đã nhận đủ chiều dài N-SDU chưa.</li>
+                </ol>
+
+                <p>
+                    Khi đã nhận đủ dữ liệu,
+                    receiver kết thúc giao dịch và
+                    chuyển N-SDU lên tầng trên.
+                </p>
+
+                <h2>40. Error Handling trong ISO-TP</h2>
+
+                <p>
+                    ISO-TP có những cơ chế phát hiện
+                    lỗi xảy ra trong quá trình truyền
+                    nhiều frame.
+                </p>
+
+                <p>
+                    Các lỗi thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lỗi</th>
+                            <th>Ý nghĩa</th>
+                            <th>Hướng phân tích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Flow Control Timeout</td>
+                            <td>Sender không nhận được FC trong thời gian cho phép.</td>
+                            <td>Kiểm tra FC CAN ID, receiver và timing.</td>
+                        </tr>
+                        <tr>
+                            <td>Consecutive Frame Timeout</td>
+                            <td>Receiver không nhận được CF tiếp theo đúng hạn.</td>
+                            <td>Kiểm tra sender state và CAN Trace.</td>
+                        </tr>
+                        <tr>
+                            <td>Wrong Sequence Number</td>
+                            <td>SN của CF không đúng thứ tự mong đợi.</td>
+                            <td>Kiểm tra mất frame, sai thứ tự hoặc lỗi state machine.</td>
+                        </tr>
+                        <tr>
+                            <td>FC Overflow</td>
+                            <td>Receiver không đủ khả năng tiếp nhận payload.</td>
+                            <td>Kiểm tra buffer và giới hạn N-SDU.</td>
+                        </tr>
+                        <tr>
+                            <td>Wait Frame Limit Exceeded</td>
+                            <td>Số lượng FC Wait vượt giới hạn cho phép.</td>
+                            <td>Kiểm tra WFTmax và khả năng xử lý receiver.</td>
+                        </tr>
+                        <tr>
+                            <td>Invalid PCI</td>
+                            <td>PCI không hợp lệ hoặc không phù hợp trạng thái giao dịch.</td>
+                            <td>Kiểm tra addressing và frame format.</td>
+                        </tr>
+                        <tr>
+                            <td>Invalid Padding</td>
+                            <td>Padding không đúng yêu cầu kiểm tra.</td>
+                            <td>Kiểm tra padding configuration.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>41. Sequence Number Error</h2>
+
+                <p>
+                    Sequence Number Error xảy ra khi
+                    receiver nhận được CF có SN không
+                    đúng với giá trị tiếp theo
+                    mà nó đang mong đợi.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Expected:
+CF1 = 0x21
+CF2 = 0x22
+CF3 = 0x23
+
+Received:
+CF1 = 0x21
+CF2 = 0x23</code></pre>
+
+                <p>
+                    Receiver đã nhận CF1 và mong chờ CF2
+                    với Sequence Number = 2,
+                    nhưng lại nhận được frame có SN = 3.
+                </p>
+
+                <p>
+                    Đây là dấu hiệu của một lỗi
+                    trong quá trình truyền hoặc
+                    xử lý sequence của giao dịch.
+                </p>
+
+                <p>
+                    Hướng điều tra:
+                </p>
+
+                <ul>
+                    <li>Kiểm tra CAN Trace tại thời điểm truyền CF.</li>
+                    <li>Kiểm tra frame có bị mất hay không.</li>
+                    <li>Kiểm tra sender có cập nhật SN đúng không.</li>
+                    <li>Kiểm tra receiver state machine.</li>
+                    <li>Kiểm tra timeout và việc reset connection.</li>
+                </ul>
+
+                <h2>42. Flow Control Timeout</h2>
+
+                <p>
+                    Flow Control Timeout xảy ra khi
+                    sender đã gửi First Frame nhưng
+                    không nhận được Flow Control
+                    theo thời gian cho phép.
+                </p>
+
+                <p>
+                    Những nguyên nhân có thể gồm:
+                </p>
+
+                <ul>
+                    <li>Receiver không nhận được First Frame.</li>
+                    <li>Receiver không xử lý được yêu cầu.</li>
+                    <li>Flow Control được gửi với CAN ID không đúng.</li>
+                    <li>Tester hoặc ECU không được cấu hình đúng addressing.</li>
+                    <li>CAN bus gặp vấn đề truyền thông.</li>
+                    <li>Receiver không cung cấp FC trong điều kiện cần thiết.</li>
+                </ul>
+
+                <pre><code>Sender                         Receiver
+  |                                |
+  |--------- First Frame --------->|
+  |                                |
+  |       Wait for FC              |
+  |                                |
+  |       No FC received           |
+  |                                |
+  |---------- Timeout ------------|
+  |                                |
+  v                                v
+Abort transmission          Check receive path</code></pre>
+
+                <p>
+                    Khi debug, cần kiểm tra
+                    xem receiver thực sự đã nhận FF chưa,
+                    thay vì chỉ kiểm tra sender
+                    có gửi FF hay không.
+                </p>
+
+                <h2>43. Receiver Overflow</h2>
+
+                <p>
+                    Receiver Overflow xảy ra khi
+                    receiver không thể tiếp nhận
+                    thông điệp có chiều dài được
+                    thông báo trong First Frame.
+                </p>
+
+                <p>
+                    Nguyên nhân có thể là:
+                </p>
+
+                <ul>
+                    <li>Buffer được cấp phát không đủ.</li>
+                    <li>Giới hạn N-SDU nhỏ hơn chiều dài yêu cầu.</li>
+                    <li>Receiver không hỗ trợ kích thước payload đó.</li>
+                    <li>Upper Layer không cung cấp đủ buffer.</li>
+                    <li>Configuration giữa sender và receiver không tương thích.</li>
+                </ul>
+
+                <p>
+                    Receiver có thể gửi Flow Control
+                    với trạng thái Overflow để thông báo
+                    không thể tiếp nhận thông điệp.
+                </p>
+
+                <p>
+                    Trong dự án ECU, cần kiểm tra
+                    cả giới hạn buffer của CanTp
+                    và khả năng tiếp nhận dữ liệu
+                    của DCM hoặc tầng trên.
+                </p>
+
+                <h2>44. Padding Error</h2>
+
+                <p>
+                    Padding Error có thể xảy ra khi
+                    dữ liệu được truyền có những byte
+                    padding không phù hợp với
+                    quy tắc hoặc cấu hình kiểm tra.
+                </p>
+
+                <p>
+                    Ví dụ, một ECU mong đợi padding
+                    bằng 0x00, nhưng CAN Trace cho thấy
+                    byte padding khác giá trị được cấu hình.
+                </p>
+
+                <p>
+                    Những điểm cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>TX padding có được bật không?</li>
+                    <li>RX padding có được kiểm tra không?</li>
+                    <li>Padding length có phù hợp không?</li>
+                    <li>Padding value có giống giữa hai phía không?</li>
+                    <li>Các CAN Frame có format phù hợp không?</li>
+                </ul>
+
+                <p>
+                    Cần phân biệt padding error với
+                    lỗi UDS payload. Padding không
+                    thuộc dữ liệu ứng dụng.
+                </p>
+
+                <h2>45. Timing Error và STmin Violation</h2>
+
+                <p>
+                    Nếu sender gửi các CF gần nhau
+                    hơn khoảng separation time
+                    mà receiver yêu cầu, giao dịch
+                    có thể vi phạm timing requirement.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Receiver Flow Control:
+
+STmin = 5 ms
+
+Observed CF timestamps:
+
+CF1: 10.000 ms
+CF2: 12.000 ms
+CF3: 17.100 ms</code></pre>
+
+                <p>
+                    Khoảng cách giữa CF1 và CF2
+                    là 2 ms, nhỏ hơn STmin = 5 ms.
+                    Vì vậy, cần điều tra liệu sender
+                    có thực hiện đúng yêu cầu Flow Control
+                    hay không.
+                </p>
+
+                <p>
+                    Khi kiểm tra timing, cần sử dụng
+                    timestamp có độ phân giải phù hợp
+                    và xem xét độ chính xác của công cụ
+                    đo, driver và scheduler.
+                </p>
+
+                <h2>46. Debug một giao dịch ISO-TP không hoàn thành</h2>
+
+                <p>
+                    Giả sử Diagnostic Tester gửi request
+                    đến ECU nhưng không nhận được
+                    toàn bộ response.
+                </p>
+
+                <p>
+                    Không nên lập tức kết luận lỗi
+                    nằm ở DCM hoặc UDS Service.
+                    Cần xác định giao dịch bị dừng
+                    ở bước nào của ISO-TP.
+                </p>
+
+                <pre><code>Diagnostic Request
+       |
+       v
+Check CAN Frame
+       |
+       v
+Check PCI Type
+       |
+       v
+Check FF / FC Exchange
+       |
+       v
+Check BS and STmin
+       |
+       v
+Check CF Sequence
+       |
+       v
+Check N-SDU Length
+       |
+       v
+Check Reassembly
+       |
+       v
+Check Upper-layer Delivery</code></pre>
+
+                <p>
+                    Các thông tin cần thu thập:
+                </p>
+
+                <ul>
+                    <li>CAN ID gửi và nhận.</li>
+                    <li>PCI Type của từng frame.</li>
+                    <li>FF_DL hoặc SF_DL.</li>
+                    <li>Flow Status.</li>
+                    <li>Block Size.</li>
+                    <li>STmin.</li>
+                    <li>Sequence Number.</li>
+                    <li>Timestamp của từng frame.</li>
+                    <li>Transport Layer error log.</li>
+                </ul>
+
+                <h2>47. ISO-TP trong AUTOSAR Classic</h2>
+
+                <p>
+                    Trong AUTOSAR Classic, CAN Transport Layer
+                    được triển khai thông qua module CanTp.
+                </p>
+
+                <p>
+                    CanTp có nhiệm vụ thực hiện những
+                    chức năng chính:
+                </p>
+
+                <ul>
+                    <li>Segmentation dữ liệu khi truyền.</li>
+                    <li>Reassembly dữ liệu khi nhận.</li>
+                    <li>Điều khiển Flow Control.</li>
+                    <li>Phát hiện lỗi trong quá trình truyền nhiều frame.</li>
+                    <li>Hỗ trợ hủy transmission hoặc reception theo interface được định nghĩa.</li>
+                </ul>
+
+                <p>
+                    CanTp không phải toàn bộ ISO 15765-2.
+                    Đây là module AUTOSAR được đặc tả
+                    để triển khai những chức năng
+                    CAN Transport Layer phù hợp với
+                    kiến trúc và interface AUTOSAR.
+                </p>
+
+                <h2>48. Vị trí của CanTp trong AUTOSAR Communication Stack</h2>
+
+                <p>
+                    Trong AUTOSAR Classic, CanTp
+                    nằm giữa các module định tuyến
+                    dữ liệu phía trên và phía dưới.
+                </p>
+
+                <p>
+                    Ở release AUTOSAR Classic R25-11,
+                    Specification of CAN Transport Layer
+                    mô tả CanTp nằm giữa PDU Router
+                    và L-SDU Router (LSduR).
+                </p>
+
+                <pre><code>           DCM / COM
+               |
+               v
+              PduR
+               |
+               v
+              CanTp
+               |
+               v
+              LSduR
+               |
+               v
+          CAN Interface /
+          CAN Driver Path
+               |
+               v
+          CAN Controller
+               |
+               v
+            CAN Bus</code></pre>
+
+                <p>
+                    Lưu ý rằng cấu trúc module
+                    và lower-layer interface có thể
+                    khác giữa các AUTOSAR release.
+                    Một số sơ đồ AUTOSAR đời trước
+                    thường thể hiện CanTp kết nối
+                    trực tiếp với CanIf.
+                    Vì vậy, cần đọc đúng specification
+                    và release đang sử dụng.
+                </p>
+
+                <h2>49. Quan hệ giữa DCM, PduR và CanTp</h2>
+
+                <p>
+                    Trong một ECU sử dụng DCM,
+                    các yêu cầu diagnostic service
+                    có thể được truyền qua CanTp
+                    nếu cần sử dụng CAN Transport Protocol.
+                </p>
+
+                <p>
+                    Vai trò khái quát:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DCM</td>
+                            <td>Xử lý dịch vụ chẩn đoán ở tầng ứng dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>PduR</td>
+                            <td>Định tuyến PDU giữa DCM và các module truyền thông.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp</td>
+                            <td>Phân đoạn và ghép lại dữ liệu ISO-TP.</td>
+                        </tr>
+                        <tr>
+                            <td>LSduR / Lower Layer</td>
+                            <td>Hỗ trợ định tuyến CAN L-SDU đến đường giao tiếp CAN theo kiến trúc release.</td>
+                        </tr>
+                        <tr>
+                            <td>CanIf / Can Driver</td>
+                            <td>Tham gia giao tiếp với CAN Controller theo kiến trúc triển khai.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi một UDS request đến ECU,
+                    các module phía dưới tiếp nhận
+                    và ghép lại dữ liệu trước khi
+                    chuyển payload đầy đủ đến DCM.
+                </p>
+
+                <p>
+                    Khi ECU cần gửi một UDS response
+                    dài, CanTp thực hiện segmentation
+                    trước khi chuyển các frame xuống
+                    lower communication layer.
+                </p>
+
+                <h2>50. AUTOSAR CanTp Configuration</h2>
+
+                <p>
+                    Để CanTp hoạt động đúng,
+                    dự án cần cấu hình những thông tin
+                    liên quan đến connection, PDU
+                    và transport parameters.
+                </p>
+
+                <p>
+                    Những nhóm cấu hình cần quan tâm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm cấu hình</th>
+                            <th>Nội dung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>N-SDU Configuration</td>
+                            <td>Định nghĩa N-SDU truyền và nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>Addressing Format</td>
+                            <td>Normal, Extended, Mixed hoặc format phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN N-PDU</td>
+                            <td>Định nghĩa frame gửi và nhận của ISO-TP.</td>
+                        </tr>
+                        <tr>
+                            <td>Flow Control Parameters</td>
+                            <td>BS, STmin và những tham số liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Timeout Configuration</td>
+                            <td>Những timeout dành cho transmission và reception.</td>
+                        </tr>
+                        <tr>
+                            <td>Buffer Configuration</td>
+                            <td>Khả năng tiếp nhận và lưu dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Padding</td>
+                            <td>Quy tắc padding và giá trị padding.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Data Link Configuration</td>
+                            <td>CAN Classic hoặc CAN FD và thông số liên quan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>51. Các API thường gặp trong AUTOSAR CanTp</h2>
+
+                <p>
+                    AUTOSAR Specification of CAN Transport Layer
+                    mô tả những API và callback cần thiết
+                    để các module khác tương tác với CanTp.
+                </p>
+
+                <p>
+                    Một số API tiêu biểu:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>API</th>
+                            <th>Vai trò khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CanTp_Init</td>
+                            <td>Khởi tạo CanTp theo cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp_Shutdown</td>
+                            <td>Đưa module vào trạng thái shutdown.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp_Transmit</td>
+                            <td>Yêu cầu CanTp truyền một N-SDU.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp_CancelTransmit</td>
+                            <td>Yêu cầu hủy transmission theo interface được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp_CancelReceive</td>
+                            <td>Yêu cầu hủy reception theo interface được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp_ChangeParameter</td>
+                            <td>Thay đổi những transport parameter được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp_ReadParameter</td>
+                            <td>Đọc các parameter được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp_MainFunction</td>
+                            <td>Xử lý những hoạt động định kỳ của module theo cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các API trên là một số thành phần
+                    quan trọng trong AUTOSAR CanTp.
+                    Chữ ký hàm, điều kiện gọi và hành vi
+                    cụ thể phải được kiểm tra trong
+                    release đang sử dụng.
+                </p>
+
+                <h2>52. Buffer Management trong CanTp</h2>
+
+                <p>
+                    Khi nhận một First Frame,
+                    CanTp cần biết liệu tầng trên
+                    có đủ buffer để tiếp nhận
+                    toàn bộ N-SDU hay không.
+                </p>
+
+                <p>
+                    Buffer Management ảnh hưởng
+                    trực tiếp đến khả năng xử lý
+                    thông điệp nhiều frame.
+                </p>
+
+                <p>
+                    Những điểm cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>Maximum N-SDU Length.</li>
+                    <li>Available Buffer Size.</li>
+                    <li>Buffer allocation strategy.</li>
+                    <li>Upper Layer buffer availability.</li>
+                    <li>Number of concurrent connections.</li>
+                    <li>Behavior khi buffer không đủ.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, nếu DCM không thể cung cấp
+                    buffer cần thiết cho một request,
+                    CanTp cần xử lý tình huống này
+                    theo quy tắc và interface
+                    của AUTOSAR implementation.
+                </p>
+
+                <h2>53. Transmission Flow trong CanTp</h2>
+
+                <p>
+                    Trong chiều truyền, một upper layer
+                    có thể gọi CanTp_Transmit()
+                    để yêu cầu truyền một N-SDU.
+                </p>
+
+                <p>
+                    CanTp kiểm tra thông tin cấu hình,
+                    quyết định cách truyền và thực hiện
+                    segmentation nếu cần.
+                </p>
+
+                <pre><code>Upper Layer
+     |
+     | CanTp_Transmit()
+     v
+    CanTp
+     |
+     v
+Check N-SDU Length
+     |
+     v
+Select SF or Multi-frame
+     |
+     v
+Generate ISO-TP Frames
+     |
+     v
+Send through Lower Layer
+     |
+     v
+Transmit Confirmation
+     |
+     v
+Upper Layer Notification</code></pre>
+
+                <p>
+                    Nếu payload phù hợp với Single Frame,
+                    CanTp có thể tạo SF.
+                    Nếu payload cần nhiều frame,
+                    CanTp thực hiện First Frame,
+                    Flow Control và Consecutive Frame
+                    theo state machine tương ứng.
+                </p>
+
+                <h2>54. Reception Flow trong CanTp</h2>
+
+                <p>
+                    Trong chiều nhận, CanTp nhận
+                    các CAN N-PDU từ lower layer
+                    và kiểm tra PCI để xác định
+                    loại ISO-TP frame.
+                </p>
+
+                <p>
+                    Một luồng nhận khái quát:
+                </p>
+
+                <pre><code>Lower Communication Layer
+             |
+             v
+        CanTp Reception
+             |
+             v
+        Read PCI Type
+             |
+      +------+------+------+
+      |      |      |      |
+      v      v      v      v
+      SF     FF     CF     FC
+      |      |      |      |
+      v      v      v      v
+  Deliver  Start  Append  Update
+   N-SDU   RX     Data   TX State
+           Session
+             |
+             v
+        Reassemble N-SDU
+             |
+             v
+        PduR Notification
+             |
+             v
+          DCM / Upper Layer</code></pre>
+
+                <p>
+                    CanTp phải quản lý trạng thái
+                    của connection, dữ liệu đã nhận,
+                    Sequence Number và những timing
+                    liên quan đến giao dịch.
+                </p>
+
+                <h2>55. Ví dụ dự án: DCM nhận UDS request nhiều frame</h2>
+
+                <p>
+                    Giả sử Tester gửi một request UDS
+                    có payload dài hơn khả năng chứa
+                    của một CAN Classic Frame.
+                </p>
+
+                <p>
+                    Luồng xử lý có thể như sau:
+                </p>
+
+                <ol>
+                    <li>CAN Driver nhận CAN Frame đầu tiên.</li>
+                    <li>Lower communication layer chuyển frame đến CanTp.</li>
+                    <li>CanTp nhận diện PCI Type = FF.</li>
+                    <li>CanTp kiểm tra chiều dài thông điệp.</li>
+                    <li>CanTp yêu cầu tài nguyên tiếp nhận từ tầng trên.</li>
+                    <li>CanTp gửi FC theo configuration.</li>
+                    <li>CanTp nhận CF và ghép payload.</li>
+                    <li>CanTp hoàn thành N-SDU.</li>
+                    <li>PduR chuyển payload đến DCM.</li>
+                    <li>DCM xử lý UDS service.</li>
+                </ol>
+
+                <pre><code>Tester
+  |
+  v
+CAN Bus
+  |
+  v
+CAN Driver / Interface
+  |
+  v
+CanTp
+  |
+  | FF / FC / CF Processing
+  v
+Reassembled N-SDU
+  |
+  v
+PduR
+  |
+  v
+DCM
+  |
+  v
+UDS Service Processing</code></pre>
+
+                <p>
+                    Sơ đồ thể hiện luồng chức năng
+                    ở mức khái quát. Các lower-layer
+                    interface cụ thể phụ thuộc
+                    AUTOSAR release và vendor implementation.
+                </p>
+
+                <h2>56. Ví dụ dự án: UDS Response dài được CanTp truyền đi</h2>
+
+                <p>
+                    Giả sử DCM xử lý một request
+                    và tạo một response có chiều dài 100 byte.
+                    Với CAN Classic, payload này
+                    không thể được truyền trong một frame.
+                </p>
+
+                <p>
+                    CanTp cần:
+                </p>
+
+                <ul>
+                    <li>Nhận N-SDU từ upper layer.</li>
+                    <li>Tạo First Frame với chiều dài payload.</li>
+                    <li>Chờ Flow Control từ tester.</li>
+                    <li>Gửi Consecutive Frame theo BS và STmin.</li>
+                    <li>Xử lý các FC tiếp theo nếu cần.</li>
+                    <li>Thông báo kết quả transmission cho upper layer.</li>
+                </ul>
+
+                <p>
+                    Khi kiểm tra dự án, cần đối chiếu
+                    chiều dài N-SDU, số lượng CF,
+                    thời gian truyền và trạng thái
+                    buffer của CanTp.
+                </p>
+
+                <h2>57. Ví dụ Test Case: Single Frame Transmission</h2>
+
+                <p>
+                    Mục tiêu là kiểm tra CanTp
+                    truyền một N-SDU ngắn bằng Single Frame
+                    khi payload đáp ứng điều kiện.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>CANTP-TEST-001</td>
+                        </tr>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Kiểm tra truyền N-SDU phù hợp bằng Single Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>CanTp đã được khởi tạo và TX N-SDU được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Input</td>
+                            <td>UDS payload có chiều dài phù hợp với SF.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Gọi CanTp_Transmit() và quan sát CAN Trace.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>CanTp tạo một SF với PCI và payload đúng.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>CAN Trace và CanTp Tx Confirmation.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>58. Ví dụ Test Case: Multi-frame Transmission</h2>
+
+                <p>
+                    Mục tiêu là kiểm tra CanTp
+                    truyền N-SDU dài thông qua
+                    First Frame và Consecutive Frame.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>CANTP-TEST-002</td>
+                        </tr>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Kiểm tra segmentation của một N-SDU dài.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>CanTp được cấu hình đúng TX connection.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Input</td>
+                            <td>N-SDU lớn hơn dung lượng Single Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Yêu cầu truyền N-SDU và quan sát toàn bộ frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>FF, CF và SN được tạo theo đúng quy tắc.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>CAN Trace, timestamp và Tx Confirmation.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>59. Ví dụ Test Case: Flow Control</h2>
+
+                <p>
+                    Mục tiêu là xác minh sender
+                    tuân thủ BS và STmin được
+                    receiver cung cấp.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>CANTP-TEST-003</td>
+                        </tr>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Kiểm tra Flow Control trong giao dịch nhiều frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>Sender và receiver đã thiết lập đúng connection.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Input</td>
+                            <td>Receiver gửi FC CTS với BS = 4 và STmin = 5 ms.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Quan sát những CF mà sender truyền.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>Sender không vượt quá 4 CF trong block và duy trì separation time tối thiểu.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>CAN Trace và phân tích timestamp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>60. Ví dụ Test Case: Sequence Number Error</h2>
+
+                <p>
+                    Mục tiêu là kiểm tra receiver
+                    phát hiện CF có Sequence Number
+                    không đúng thứ tự.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>CANTP-TEST-004</td>
+                        </tr>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Kiểm tra xử lý sai Sequence Number.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>Receiver đang trong một session nhận nhiều frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Input</td>
+                            <td>CF được nhận với SN không đúng thứ tự dự kiến.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Quan sát trạng thái session và error notification.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>Receiver phát hiện lỗi và xử lý giao dịch theo quy tắc ISO-TP.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>CAN Trace và CanTp error log.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>61. Ví dụ Test Case: Flow Control Timeout</h2>
+
+                <p>
+                    Mục tiêu là xác minh sender
+                    xử lý đúng trường hợp không
+                    nhận được FC theo thời gian cho phép.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>CANTP-TEST-005</td>
+                        </tr>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Kiểm tra xử lý timeout khi chờ Flow Control.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>Sender đã bắt đầu truyền một N-SDU nhiều frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Input</td>
+                            <td>FC không xuất hiện trong khoảng thời gian kiểm tra.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Quan sát timer, trạng thái transmission và notification lỗi.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>Giao dịch được xử lý theo timeout configuration và không tiếp tục truyền sai trạng thái.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>CAN Trace, timestamp và CanTp log.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>62. Ví dụ Test Case: Receiver Buffer Overflow</h2>
+
+                <p>
+                    Mục tiêu là kiểm tra receiver
+                    xử lý trường hợp N-SDU có chiều dài
+                    lớn hơn khả năng tiếp nhận.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>CANTP-TEST-006</td>
+                        </tr>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Kiểm tra xử lý payload vượt giới hạn buffer.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>Receiver được cấu hình giới hạn N-SDU cụ thể.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Input</td>
+                            <td>First Frame thông báo chiều dài vượt khả năng tiếp nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Quan sát Flow Control Status và trạng thái session.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>Receiver xử lý theo khả năng buffer và quy tắc Overflow tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>CAN Trace và buffer/error log.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>63. Debug một hệ thống AUTOSAR CanTp không hoạt động</h2>
+
+                <p>
+                    Khi CanTp không truyền hoặc nhận
+                    được thông điệp, cần xác định
+                    vấn đề nằm ở cấu hình PDU,
+                    addressing, state machine,
+                    buffer hay lower communication layer.
+                </p>
+
+                <p>
+                    Quy trình kiểm tra tổng quát:
+                </p>
+
+                <pre><code>CanTp Communication Failure
+            |
+            v
+Check CanTp Initialization
+            |
+            v
+Check N-SDU Configuration
+            |
+            v
+Check TX / RX CAN ID
+            |
+            v
+Check Addressing Format
+            |
+            v
+Check PDU Routing
+            |
+            v
+Check FF / FC / CF Sequence
+            |
+            v
+Check BS / STmin / Timing
+            |
+            v
+Check Buffer Availability
+            |
+            v
+Check Lower-layer Communication
+            |
+            v
+Identify Root Cause</code></pre>
+
+                <p>
+                    Những thông tin nên thu thập:
+                </p>
+
+                <ul>
+                    <li>CanTp initialization status.</li>
+                    <li>N-SDU ID.</li>
+                    <li>TX và RX PDU mapping.</li>
+                    <li>Addressing Format.</li>
+                    <li>CAN ID và Address Extension.</li>
+                    <li>Flow Control parameters.</li>
+                    <li>Transport Layer timers.</li>
+                    <li>Buffer availability.</li>
+                    <li>CanTp error notification.</li>
+                    <li>CAN Trace và timestamp.</li>
+                </ul>
+
+                <h2>64. Các lỗi thường gặp khi cấu hình CanTp</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Nguyên nhân có thể</th>
+                            <th>Hướng kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Không gửi được SF</td>
+                            <td>N-SDU mapping hoặc TX configuration không đúng.</td>
+                            <td>Kiểm tra N-SDU ID và TX path.</td>
+                        </tr>
+                        <tr>
+                            <td>Gửi FF nhưng không có CF</td>
+                            <td>Không nhận được FC hoặc FC bị sai.</td>
+                            <td>Kiểm tra CAN ID, addressing và FC timeout.</td>
+                        </tr>
+                        <tr>
+                            <td>Nhận FF nhưng không gửi FC</td>
+                            <td>Receiver không có buffer hoặc không nhận diện đúng connection.</td>
+                            <td>Kiểm tra Rx N-SDU và buffer management.</td>
+                        </tr>
+                        <tr>
+                            <td>Sequence Number Error</td>
+                            <td>CF bị thiếu, sai thứ tự hoặc sai state machine.</td>
+                            <td>Kiểm tra CF sequence và CAN Trace.</td>
+                        </tr>
+                        <tr>
+                            <td>STmin Violation</td>
+                            <td>Sender truyền CF nhanh hơn quy định của FC.</td>
+                            <td>Kiểm tra timing và scheduler.</td>
+                        </tr>
+                        <tr>
+                            <td>Receiver Overflow</td>
+                            <td>Buffer hoặc giới hạn N-SDU không đủ.</td>
+                            <td>Kiểm tra buffer và upper-layer configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Padding Error</td>
+                            <td>Padding length hoặc value không thống nhất.</td>
+                            <td>Kiểm tra padding configuration hai phía.</td>
+                        </tr>
+                        <tr>
+                            <td>Chỉ hoạt động với một địa chỉ</td>
+                            <td>Addressing metadata hoặc connection mapping chưa đúng.</td>
+                            <td>Kiểm tra address information và N-SDU mapping.</td>
+                        </tr>
+                        <tr>
+                            <td>Timeout khi truyền dài</td>
+                            <td>Timing, bus load hoặc scheduling không phù hợp.</td>
+                            <td>Phân tích timestamp và timer configuration.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>65. Cách đọc tài liệu ISO 15765-2</h2>
+
+                <p>
+                    ISO 15765-2 có nhiều thuật ngữ,
+                    PDU format, thông số timing
+                    và service primitive.
+                    Vì vậy, không nên bắt đầu
+                    bằng cách đọc ngẫu nhiên
+                    các bảng frame format.
+                </p>
+
+                <p>
+                    Có thể sử dụng quy trình sau:
+                </p>
+
+                <ol>
+                    <li>Đọc Scope để xác định phạm vi giao thức.</li>
+                    <li>Đọc Normative References để biết các tiêu chuẩn liên quan.</li>
+                    <li>Đọc Terms and Definitions để hiểu thuật ngữ.</li>
+                    <li>Đọc Abbreviated Terms để nắm chữ viết tắt.</li>
+                    <li>Đọc Network Layer Services để hiểu giao diện dịch vụ.</li>
+                    <li>Đọc Protocol Data Units để hiểu cấu trúc frame.</li>
+                    <li>Đọc Addressing Information để hiểu cách định địa chỉ.</li>
+                    <li>Đọc Protocol Behavior để hiểu luồng truyền và nhận.</li>
+                    <li>Đọc Timing Parameters để hiểu các timeout.</li>
+                    <li>Đối chiếu với CAN Trace và test case thực tế.</li>
+                </ol>
+
+                <h2>66. Những phần trong ISO 15765-2 nên ưu tiên</h2>
+
+                <p>
+                    Bảng dưới đây giúp xác định
+                    khu vực cần đọc theo từng mục tiêu.
+                    Số điều khoản cụ thể cần kiểm tra
+                    trên bản ISO 15765-2:2024
+                    mà dự án đang sử dụng.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Chủ đề</th>
+                            <th>Nội dung cần tìm</th>
+                            <th>Mục tiêu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Scope</td>
+                            <td>Transport Protocol và Network Layer Services.</td>
+                            <td>Xác định phạm vi áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Terms and Definitions</td>
+                            <td>PCI, N-PDU, N-SDU, SF, FF, CF, FC.</td>
+                            <td>Hiểu thuật ngữ.</td>
+                        </tr>
+                        <tr>
+                            <td>Addressing Information</td>
+                            <td>Physical, Functional và Addressing Format.</td>
+                            <td>Hiểu cách xác định connection.</td>
+                        </tr>
+                        <tr>
+                            <td>Protocol Data Units</td>
+                            <td>SF, FF, CF và FC format.</td>
+                            <td>Đọc CAN Trace.</td>
+                        </tr>
+                        <tr>
+                            <td>Transport Protocol Behavior</td>
+                            <td>Segmentation, Reassembly và Flow Control.</td>
+                            <td>Hiểu state machine.</td>
+                        </tr>
+                        <tr>
+                            <td>Timing Parameters</td>
+                            <td>Sender, Receiver và Network Layer timing.</td>
+                            <td>Debug timeout.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Handling</td>
+                            <td>Unexpected PDU, wrong SN, overflow và timeout.</td>
+                            <td>Phân tích lỗi.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN FD Support</td>
+                            <td>Data Length và PCI format tương ứng.</td>
+                            <td>Kiểm tra CAN FD.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>67. Cách đọc một PCI Frame trong CAN Trace</h2>
+
+                <p>
+                    Khi làm việc với CAN Analyzer,
+                    không nên chỉ nhìn CAN ID và payload.
+                    Cần xác định frame thuộc loại
+                    ISO-TP nào.
+                </p>
+
+                <p>
+                    Một quy trình đọc đơn giản:
+                </p>
+
+                <ol>
+                    <li>Xác định CAN ID.</li>
+                    <li>Xác định CAN Data Length.</li>
+                    <li>Kiểm tra Address Extension nếu có.</li>
+                    <li>Xác định byte PCI.</li>
+                    <li>Đọc PCI Type.</li>
+                    <li>Giải mã SF_DL, FF_DL, SN hoặc Flow Control Parameter.</li>
+                    <li>Đối chiếu payload và timestamp.</li>
+                </ol>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>30 08 05 00 00 00 00 00</code></pre>
+
+                <p>
+                    Nếu đang sử dụng Normal Addressing,
+                    có thể giải mã:
+                </p>
+
+                <ul>
+                    <li>0x3: Flow Control.</li>
+                    <li>0x0: Continue To Send.</li>
+                    <li>0x08: Block Size 8.</li>
+                    <li>0x05: STmin 5 ms.</li>
+                </ul>
+
+                <p>
+                    Nếu connection sử dụng Extended
+                    hoặc Mixed Addressing, phải xử lý
+                    byte địa chỉ trước khi đọc PCI.
+                </p>
+
+                <h2>68. Từ ISO 15765-2 đến Project Requirement</h2>
+
+                <p>
+                    Trong dự án Automotive, những
+                    yêu cầu liên quan đến ISO-TP
+                    cần được chuyển thành requirement
+                    của hệ thống và ECU.
+                </p>
+
+                <p>
+                    Quy trình tổng quát:
+                </p>
+
+                <pre><code>       ISO 15765-2
+             |
+             v
+     Identify Protocol Rule
+             |
+             v
+      Project Requirement
+             |
+             v
+       CanTp Configuration
+             |
+             v
+       Software Integration
+             |
+             v
+       Test Case Definition
+             |
+             v
+       Test Execution
+             |
+             v
+       Evidence Collection
+             |
+             v
+    Requirement Traceability</code></pre>
+
+                <p>
+                    Ví dụ, từ quy tắc liên quan
+                    đến Flow Control, dự án có thể
+                    xác định yêu cầu:
+                    sender phải tuân thủ Block Size
+                    và STmin do receiver gửi.
+                </p>
+
+                <p>
+                    Sau đó, nhóm phát triển cấu hình
+                    các tham số phù hợp trong CanTp
+                    và xây dựng test case để xác minh
+                    hành vi của sender.
+                </p>
+
+                <h2>69. Những tài liệu cần có khi áp dụng ISO 15765-2</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 15765-2</td>
+                            <td>Đặc tả Transport Protocol và Network Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 11898-1</td>
+                            <td>Đặc tả CAN Data Link Layer và Physical Coding Sublayer.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-1</td>
+                            <td>Định nghĩa các UDS Application Services.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-2</td>
+                            <td>Định nghĩa UDS Session Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>Communication Matrix</td>
+                            <td>Xác định CAN ID và thông tin kết nối giữa các node.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Specification</td>
+                            <td>Xác định UDS service và dữ liệu cần trao đổi.</td>
+                        </tr>
+                        <tr>
+                            <td>AUTOSAR CanTp Specification</td>
+                            <td>Đặc tả module CAN Transport Layer trong AUTOSAR.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Trace</td>
+                            <td>Quan sát các frame truyền và nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Specification</td>
+                            <td>Xác định phương pháp và tiêu chí kiểm thử.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>70. Requirement Traceability cho ISO 15765-2</h2>
+
+                <p>
+                    Một Requirement Traceability Matrix
+                    giúp liên kết tiêu chuẩn với
+                    cấu hình, implementation và test result.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Requirement ID</td>
+                            <td>Mã yêu cầu trong dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Source Document</td>
+                            <td>ISO 15765-2:2024.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause Reference</td>
+                            <td>Điều khoản tiêu chuẩn được tham khảo.</td>
+                        </tr>
+                        <tr>
+                            <td>Requirement Description</td>
+                            <td>Yêu cầu kỹ thuật được áp dụng trong dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Configuration</td>
+                            <td>Tham số CanTp hoặc Communication Configuration liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>Test case dùng để xác minh.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Result</td>
+                            <td>Pass hoặc Fail.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>CAN Trace, log hoặc Test Report.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Requirement ID</th>
+                            <th>Project Requirement</th>
+                            <th>Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TP-REQ-001</td>
+                            <td>ECU phải truyền được N-SDU phù hợp bằng SF.</td>
+                            <td>TP-TEST-001: Single Frame Test.</td>
+                        </tr>
+                        <tr>
+                            <td>TP-REQ-002</td>
+                            <td>ECU phải hỗ trợ truyền N-SDU nhiều frame theo cấu hình.</td>
+                            <td>TP-TEST-002: Multi-frame Test.</td>
+                        </tr>
+                        <tr>
+                            <td>TP-REQ-003</td>
+                            <td>Sender phải tuân thủ BS và STmin.</td>
+                            <td>TP-TEST-003: Flow Control Test.</td>
+                        </tr>
+                        <tr>
+                            <td>TP-REQ-004</td>
+                            <td>Receiver phải phát hiện CF có SN không hợp lệ.</td>
+                            <td>TP-TEST-004: Sequence Number Test.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các mã requirement và mô tả trong bảng
+                    là ví dụ do dự án tự xây dựng.
+                    Khi làm dự án thật, cần tham chiếu
+                    đúng điều khoản và phiên bản tiêu chuẩn
+                    đã được phê duyệt.
+                </p>
+
+                <h2>71. Những lỗi dễ nhầm lẫn khi học ISO-TP</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhầm lẫn</th>
+                            <th>Giải thích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO-TP chính là UDS</td>
+                            <td>ISO-TP truyền payload; UDS định nghĩa Diagnostic Services.</td>
+                        </tr>
+                        <tr>
+                            <td>Flow Control là Positive Response</td>
+                            <td>FC điều khiển truyền dữ liệu, không xác nhận UDS service thành công.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN ACK chính là ISO-TP ACK</td>
+                            <td>CAN ACK thuộc Data Link Layer; ISO-TP sử dụng Flow Control.</td>
+                        </tr>
+                        <tr>
+                            <td>BS và STmin giống nhau</td>
+                            <td>BS giới hạn số CF; STmin quy định khoảng separation time.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN ID là UDS SID</td>
+                            <td>CAN ID định danh CAN message; SID xác định UDS service.</td>
+                        </tr>
+                        <tr>
+                            <td>SF luôn mang tối đa 7 byte</td>
+                            <td>Đây là trường hợp CAN Classic với Normal Addressing thông dụng; CAN FD và addressing khác có thể thay đổi dung lượng.</td>
+                        </tr>
+                        <tr>
+                            <td>Functional Addressing luôn có response từ mọi ECU</td>
+                            <td>Việc phản hồi phụ thuộc dịch vụ và quy tắc diagnostic communication.</td>
+                        </tr>
+                        <tr>
+                            <td>Padding là Application Data</td>
+                            <td>Padding là byte bổ sung, không thuộc N-SDU payload.</td>
+                        </tr>
+                        <tr>
+                            <td>FC được gửi sau mỗi CF</td>
+                            <td>FC được gửi theo cơ chế Flow Control và Block Size, không nhất thiết sau từng CF.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO-TP chỉ dùng cho CAN Classic</td>
+                            <td>ISO-TP cũng có thể được sử dụng trên CAN FD khi được hỗ trợ và cấu hình phù hợp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>72. Checklist khi đọc và áp dụng ISO 15765-2</h2>
+
+                <ul>
+                    <li>Đã xác định đúng phiên bản ISO 15765-2 chưa?</li>
+                    <li>Đã hiểu vai trò của Transport Layer và Network Layer chưa?</li>
+                    <li>Đã phân biệt ISO-TP với UDS chưa?</li>
+                    <li>Đã xác định CAN Classic hay CAN FD chưa?</li>
+                    <li>Đã hiểu SF, FF, CF và FC chưa?</li>
+                    <li>Đã hiểu PCI và cách xác định PCI Type chưa?</li>
+                    <li>Đã hiểu SF_DL và FF_DL chưa?</li>
+                    <li>Đã hiểu Sequence Number chưa?</li>
+                    <li>Đã hiểu Flow Status, BS và STmin chưa?</li>
+                    <li>Đã phân biệt Physical và Functional Addressing chưa?</li>
+                    <li>Đã xác định Normal, Extended hoặc Mixed Addressing chưa?</li>
+                    <li>Đã kiểm tra Padding Configuration chưa?</li>
+                    <li>Đã kiểm tra Timing và Timeout Configuration chưa?</li>
+                    <li>Đã kiểm tra Buffer và Maximum N-SDU Length chưa?</li>
+                    <li>Đã hiểu những lỗi ISO-TP thường gặp chưa?</li>
+                    <li>Đã đối chiếu ISO-TP với AUTOSAR CanTp chưa?</li>
+                    <li>Đã kiểm tra PDU Routing và N-SDU Configuration chưa?</li>
+                    <li>Đã có CAN Trace để xác minh chưa?</li>
+                    <li>Đã liên kết Requirement với Test Case chưa?</li>
+                    <li>Đã lưu Test Evidence và cập nhật Traceability chưa?</li>
+                </ul>
+
+                <h2>73. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 15765-2</td>
+                            <td>Diagnostic Communication over CAN - Transport Protocol and Network Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO-TP</td>
+                            <td>CAN Transport Protocol theo ISO 15765-2.</td>
+                        </tr>
+                        <tr>
+                            <td>DoCAN</td>
+                            <td>Diagnostic Communication over CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>PCI</td>
+                            <td>Protocol Control Information.</td>
+                        </tr>
+                        <tr>
+                            <td>SF</td>
+                            <td>Single Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>FF</td>
+                            <td>First Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>CF</td>
+                            <td>Consecutive Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>FC</td>
+                            <td>Flow Control.</td>
+                        </tr>
+                        <tr>
+                            <td>SF_DL</td>
+                            <td>Single Frame Data Length.</td>
+                        </tr>
+                        <tr>
+                            <td>FF_DL</td>
+                            <td>First Frame Data Length.</td>
+                        </tr>
+                        <tr>
+                            <td>SN</td>
+                            <td>Sequence Number.</td>
+                        </tr>
+                        <tr>
+                            <td>FS</td>
+                            <td>Flow Status.</td>
+                        </tr>
+                        <tr>
+                            <td>CTS</td>
+                            <td>Continue To Send.</td>
+                        </tr>
+                        <tr>
+                            <td>BS</td>
+                            <td>Block Size.</td>
+                        </tr>
+                        <tr>
+                            <td>STmin</td>
+                            <td>Minimum Separation Time.</td>
+                        </tr>
+                        <tr>
+                            <td>WFTmax</td>
+                            <td>Maximum Number of Wait Frames được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>N-SDU</td>
+                            <td>Network Layer Service Data Unit.</td>
+                        </tr>
+                        <tr>
+                            <td>N-PDU</td>
+                            <td>Network Layer Protocol Data Unit.</td>
+                        </tr>
+                        <tr>
+                            <td>N_AI</td>
+                            <td>Network Address Information.</td>
+                        </tr>
+                        <tr>
+                            <td>Physical Addressing</td>
+                            <td>Giao tiếp hướng đến một ECU cụ thể.</td>
+                        </tr>
+                        <tr>
+                            <td>Functional Addressing</td>
+                            <td>Giao tiếp hướng đến nhóm ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Reassembly</td>
+                            <td>Ghép các phần dữ liệu thành N-SDU hoàn chỉnh.</td>
+                        </tr>
+                        <tr>
+                            <td>Segmentation</td>
+                            <td>Chia một thông điệp thành nhiều frame.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp</td>
+                            <td>AUTOSAR CAN Transport Layer.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>74. Tài liệu tham khảo</h2>
+
+                <p>
+                    Những tài liệu sau giúp tìm hiểu sâu hơn
+                    về ISO-TP, DoCAN, CAN Transport Layer
+                    và cách triển khai trong AUTOSAR Classic.
+                </p>
+
+                <ul>
+                    <li>
+                        <a href="https://www.iso.org/standard/84211.html"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 15765-2:2024 - Transport Protocol and Network Layer Services
+                        </a>
+                        — tiêu chuẩn chính về DoCAN,
+                        Transport Protocol và Network Layer Services.
+                    </li>
+
+                    <li>
+                        <a href="https://docs.kernel.org/networking/iso15765-2.html"
+                            target="_blank" rel="noopener noreferrer">
+                            Linux Kernel Documentation - ISO 15765-2 (ISO-TP)
+                        </a>
+                        — tài liệu kỹ thuật giải thích ISO-TP,
+                        addressing, SF, FF, CF, FC và các tham số liên quan.
+                    </li>
+
+                    <li>
+                        <a href="https://www.autosar.org/fileadmin/standards/R25-11/CP/AUTOSAR_CP_SWS_CANTransportLayer.pdf"
+                            target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Classic R25-11 - Specification of CAN Transport Layer
+                        </a>
+                        — đặc tả chính thức về chức năng,
+                        API, configuration và các interface của CanTp.
+                    </li>
+
+                    <li>
+                        <a href="https://www.autosar.org/fileadmin/standards/R25-11/CP/AUTOSAR_CP_SWS_PDURouter.pdf"
+                            target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Classic R25-11 - Specification of PDU Router
+                        </a>
+                        — tài liệu về định tuyến PDU giữa các module.
+                    </li>
+
+                    <li>
+                        <a href="https://www.autosar.org/standards/classic-platform"
+                            target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Classic Platform
+                        </a>
+                        — nguồn chính thức để tra cứu các release
+                        và tài liệu AUTOSAR Classic.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/standard/81777.html"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 14229-2 - UDS Session Layer Services
+                        </a>
+                        — tài liệu liên quan đến giao diện dịch vụ
+                        giữa UDS và Transport Layer.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý về tài liệu:</strong>
+                    ISO 15765-2 là tài liệu có bản quyền.
+                    Trang ISO cung cấp thông tin tiêu chuẩn và
+                    phần xem trước, trong khi việc truy cập toàn văn
+                    phải tuân theo điều kiện sử dụng của ISO
+                    hoặc quyền truy cập do tổ chức của bạn cung cấp.
+                    Khi làm dự án, hãy sử dụng phiên bản tiêu chuẩn
+                    được khách hàng hoặc tổ chức phê duyệt.
+                </div>
+
+                <h2>75. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        ISO 15765-2 định nghĩa Transport Protocol
+                        và Network Layer Services cho giao tiếp
+                        chẩn đoán qua CAN. Giao thức thường được
+                        gọi là ISO-TP hoặc DoCAN, được sử dụng
+                        để truyền payload lớn hơn khả năng
+                        chứa của một CAN Frame.
+                    </p>
+
+                    <p>
+                        ISO-TP sử dụng bốn loại frame chính:
+                        Single Frame, First Frame, Consecutive Frame
+                        và Flow Control. SF truyền payload ngắn
+                        trong một frame; FF bắt đầu giao dịch nhiều frame;
+                        CF truyền những phần dữ liệu tiếp theo;
+                        FC điều khiển quá trình truyền thông qua
+                        Flow Status, Block Size và STmin.
+                    </p>
+
+                    <p>
+                        Physical Addressing hướng đến một ECU cụ thể,
+                        còn Functional Addressing hướng đến nhóm ECU.
+                        Các addressing format như Normal, Extended
+                        và Mixed xác định cách thông tin địa chỉ
+                        được biểu diễn trong giao tiếp.
+                    </p>
+
+                    <p>
+                        ISO-TP hỗ trợ CAN Classic và CAN FD
+                        khi implementation và cấu hình tương ứng
+                        cho phép. Khi phân tích CAN Trace,
+                        cần xác định đúng CAN format, addressing,
+                        PCI, chiều dài payload, Sequence Number,
+                        Flow Control và timing.
+                    </p>
+
+                    <p>
+                        Trong AUTOSAR Classic, CanTp là module
+                        thực hiện những chức năng Transport Layer
+                        như segmentation, reassembly,
+                        flow control và error handling.
+                        CanTp phối hợp với PduR và lower-layer
+                        communication modules để truyền dữ liệu
+                        giữa DCM hoặc các upper layer
+                        với CAN network.
+                    </p>
+
+                    <p>
+                        Khi áp dụng ISO 15765-2 trong dự án,
+                        cần đối chiếu tiêu chuẩn với
+                        Diagnostic Specification, Communication Matrix,
+                        AUTOSAR CanTp Configuration và
+                        Test Specification.
+                        Các yêu cầu nên được liên kết
+                        với Test Case và CAN Trace Evidence.
+                    </p>
+
+                    <p>
+                        Điểm quan trọng nhất là phân biệt
+                        UDS Service với ISO-TP Transport Protocol.
+                        UDS xác định nội dung và chức năng
+                        của yêu cầu chẩn đoán, còn ISO-TP
+                        đảm nhiệm việc truyền payload
+                        qua nhiều CAN Frame khi cần thiết.
+                    </p>
+
+                    <p>
+                        Sau Bài 34, Bài 35 và Bài 36,
+                        chúng ta đã tìm hiểu CAN Protocol
+                        và hai loại Physical Layer phổ biến
+                        trong nhóm ISO 11898.
+                        Với Bài 37, chúng ta đã hoàn thiện
+                        phần nền tảng truyền thông chẩn đoán
+                        trên CAN và có thể tiếp tục đi sâu
+                        vào UDS Application Layer theo ISO 14229-1.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-36.html">← Bài trước</a>
+                    <a class="btn" href="lesson-38.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

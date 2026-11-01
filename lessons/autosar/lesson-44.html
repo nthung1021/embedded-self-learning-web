@@ -1,0 +1,2482 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 44: Tổng quan ISO/SAE 21434 - Cybersecurity Engineering | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="lesson-25.html">Bài 25: Diagnostic Communication Manager (DCM)</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+                <a href="lesson-38.html">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
+                <a href="lesson-39.html">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer</a>
+                <a href="lesson-40.html">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN</a>
+                <a href="lesson-41.html">Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP)</a>
+                <a href="lesson-42.html">Bài 42: Tổng quan bộ tiêu chuẩn ISO 15031</a>
+                <a href="lesson-43.html">Bài 43: Tổng quan ISO 26262 - Functional Safety</a>
+                <a href="lesson-44.html" class="active" aria-current="page">Bài 44: Tổng quan ISO/SAE 21434 - Cybersecurity Engineering</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 44: Tổng quan ISO/SAE 21434 - Cybersecurity Engineering</h1>
+
+                <p>
+                    Trong các phương tiện hiện đại, hệ thống điện và điện tử ngày càng được kết
+                    nối với nhiều thành phần khác nhau. Một chiếc xe có thể giao tiếp thông qua
+                    CAN, LIN, Automotive Ethernet, Wi-Fi, Bluetooth, mạng di động và các dịch vụ
+                    kết nối bên ngoài.
+                </p>
+
+                <p>
+                    Bên cạnh những lợi ích về tiện ích, chẩn đoán và cập nhật phần mềm, khả năng
+                    kết nối cũng làm xuất hiện những rủi ro mới liên quan đến an ninh mạng.
+                    Nếu một thành phần điện tử hoặc giao diện giao tiếp không được bảo vệ phù hợp,
+                    hệ thống có thể phải đối mặt với nguy cơ truy cập trái phép, thay đổi dữ liệu
+                    hoặc ảnh hưởng đến hoạt động của phương tiện.
+                </p>
+
+                <p>
+                    Để quản lý các rủi ro này trong quá trình phát triển và vận hành phương tiện,
+                    ngành Automotive sử dụng tiêu chuẩn
+                    <strong>ISO/SAE 21434 - Road Vehicles - Cybersecurity Engineering</strong>.
+                </p>
+
+                <p>
+                    ISO/SAE 21434 đưa ra một framework về Cybersecurity Engineering, bao gồm
+                    quản lý an ninh mạng ở cấp độ tổ chức, quản lý hoạt động theo từng dự án,
+                    phân tích rủi ro, phát triển sản phẩm, kiểm thử, sản xuất, vận hành,
+                    bảo dưỡng và quản lý kết thúc hỗ trợ bảo mật.
+                </p>
+
+                <div class="note">
+                    <strong>Mục tiêu bài học:</strong>
+                    <ul>
+                        <li>Hiểu Automotive Cybersecurity là gì và vì sao cần ISO/SAE 21434.</li>
+                        <li>Nắm được phạm vi áp dụng và vòng đời Cybersecurity Engineering.</li>
+                        <li>Phân biệt Asset, Threat, Vulnerability, Threat Scenario và Risk.</li>
+                        <li>Hiểu tổng quan TARA (Threat Analysis and Risk Assessment).</li>
+                        <li>Nắm được Cybersecurity Goal và Cybersecurity Requirements.</li>
+                        <li>Biết cấu trúc 15 Clause của ISO/SAE 21434:2021.</li>
+                        <li>Hiểu mối quan hệ giữa OEM, Supplier và các hoạt động Distributed Cybersecurity.</li>
+                        <li>Phân biệt ISO/SAE 21434 với ISO 26262 và UNECE R155/R156.</li>
+                    </ul>
+                </div>
+
+
+                <h2>1. ISO/SAE 21434 là gì?</h2>
+
+                <h3>1.1. Khái niệm</h3>
+
+                <p>
+                    <strong>ISO/SAE 21434</strong> là tiêu chuẩn quốc tế về
+                    <strong>Cybersecurity Engineering (Kỹ thuật an ninh mạng)</strong> dành cho
+                    các hệ thống điện và điện tử (Electrical/Electronic - E/E) trên phương tiện
+                    giao thông đường bộ.
+                </p>
+
+                <p>
+                    Tiêu chuẩn được phát triển chung bởi International Organization for
+                    Standardization (ISO) và SAE International, nhằm xây dựng một framework
+                    thống nhất để quản lý rủi ro Cybersecurity trong lĩnh vực Automotive.
+                </p>
+
+                <p>
+                    ISO/SAE 21434 không chỉ tập trung vào việc bảo vệ một ECU hoặc một giao diện
+                    mạng riêng lẻ. Tiêu chuẩn xem xét các hoạt động Cybersecurity xuyên suốt
+                    vòng đời của hệ thống, từ giai đoạn hình thành ý tưởng, phát triển sản phẩm,
+                    sản xuất, vận hành, bảo dưỡng cho đến khi kết thúc hỗ trợ bảo mật.
+                </p>
+
+                <p>
+                    Tiêu chuẩn cũng tạo ra một ngôn ngữ chung để các tổ chức trong chuỗi cung
+                    ứng Automotive có thể trao đổi, phân công và quản lý các rủi ro Cybersecurity.
+                </p>
+
+                <div class="note">
+                    <strong>Cybersecurity Engineering:</strong> Có thể hiểu đơn giản là quá trình
+                    áp dụng các hoạt động kỹ thuật và quản lý nhằm nhận diện, đánh giá và xử lý
+                    những rủi ro an ninh mạng có thể ảnh hưởng đến hệ thống điện và điện tử của
+                    phương tiện trong suốt vòng đời sản phẩm.
+                </div>
+
+
+                <h3>1.2. Vì sao cần Automotive Cybersecurity?</h3>
+
+                <p>
+                    Các phương tiện ngày nay không còn hoạt động hoàn toàn độc lập. Nhiều hệ
+                    thống có khả năng giao tiếp với ECU khác, thiết bị chẩn đoán, máy chủ bên
+                    ngoài hoặc các thiết bị của người dùng.
+                </p>
+
+                <p>
+                    Một số ví dụ về các kết nối và giao diện thường gặp:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>CAN / LIN:</strong> Giao tiếp giữa các ECU và các thành phần
+                        điện tử trong phương tiện.
+                    </li>
+                    <li>
+                        <strong>Automotive Ethernet:</strong> Giao tiếp tốc độ cao giữa các
+                        thành phần điện tử.
+                    </li>
+                    <li>
+                        <strong>DoIP:</strong> Giao tiếp chẩn đoán sử dụng nền tảng Internet
+                        Protocol.
+                    </li>
+                    <li>
+                        <strong>Bluetooth / Wi-Fi:</strong> Kết nối giữa phương tiện và thiết
+                        bị bên ngoài.
+                    </li>
+                    <li>
+                        <strong>Telematics:</strong> Kết nối phương tiện với các dịch vụ hoặc
+                        hệ thống phía bên ngoài.
+                    </li>
+                    <li>
+                        <strong>OTA Update:</strong> Cập nhật phần mềm thông qua kết nối mạng.
+                    </li>
+                </ul>
+
+                <p>
+                    Những giao diện này có thể tạo ra các điểm cần xem xét về Cybersecurity.
+                    Nếu dữ liệu, thông tin xác thực hoặc quyền truy cập không được quản lý phù
+                    hợp, hệ thống có thể phải đối mặt với những nguy cơ như:
+                </p>
+
+                <ul>
+                    <li>Truy cập trái phép vào một thành phần điện tử.</li>
+                    <li>Dữ liệu quan trọng bị đọc hoặc thay đổi ngoài ý muốn.</li>
+                    <li>Phần mềm hoặc cấu hình bị thay đổi không hợp lệ.</li>
+                    <li>Dịch vụ giao tiếp không thể hoạt động bình thường.</li>
+                    <li>Thông tin của phương tiện hoặc người dùng bị tiết lộ.</li>
+                </ul>
+
+                <p>
+                    ISO/SAE 21434 giúp các tổ chức nhận diện và quản lý những rủi ro này một
+                    cách có hệ thống thay vì chỉ xử lý từng vấn đề sau khi chúng xuất hiện.
+                </p>
+
+
+                <h3>1.3. Mục tiêu của ISO/SAE 21434</h3>
+
+                <p>
+                    ISO/SAE 21434 hướng đến việc xây dựng một framework để quản lý Cybersecurity
+                    trong các hệ thống Automotive.
+                </p>
+
+                <p><strong>Một số mục tiêu quan trọng:</strong></p>
+
+                <ul>
+                    <li>
+                        <strong>Cybersecurity Risk Management:</strong> Nhận diện, đánh giá
+                        và quản lý rủi ro an ninh mạng.
+                    </li>
+                    <li>
+                        <strong>Cybersecurity Requirements:</strong> Xây dựng các yêu cầu
+                        bảo mật phù hợp với rủi ro đã xác định.
+                    </li>
+                    <li>
+                        <strong>Secure Product Development:</strong> Tích hợp các hoạt động
+                        Cybersecurity vào quá trình phát triển sản phẩm.
+                    </li>
+                    <li>
+                        <strong>Supply Chain Collaboration:</strong> Phối hợp giữa OEM,
+                        Tier 1, Tier 2 và các nhà cung cấp liên quan.
+                    </li>
+                    <li>
+                        <strong>Continuous Cybersecurity Activities:</strong> Theo dõi,
+                        đánh giá và xử lý các vấn đề bảo mật trong suốt vòng đời sản phẩm.
+                    </li>
+                    <li>
+                        <strong>Cybersecurity Validation:</strong> Xác nhận rằng các mục tiêu
+                        Cybersecurity đã xác định được đáp ứng.
+                    </li>
+                </ul>
+
+
+                <h3>1.4. ISO/SAE 21434 không quy định một công nghệ bảo mật duy nhất</h3>
+
+                <p>
+                    Một điểm quan trọng cần hiểu là ISO/SAE 21434 tập trung vào các yêu cầu
+                    và quy trình Cybersecurity Engineering, không bắt buộc mọi phương tiện
+                    phải sử dụng một thuật toán, giao thức hoặc giải pháp bảo mật cụ thể.
+                </p>
+
+                <p>
+                    Tùy theo kết quả phân tích rủi ro, kiến trúc hệ thống và yêu cầu dự án,
+                    nhà sản xuất có thể lựa chọn những biện pháp kỹ thuật phù hợp.
+                </p>
+
+                <p>
+                    Ví dụ về các nhóm giải pháp có thể được xem xét:
+                </p>
+
+                <ul>
+                    <li>Authentication: Xác thực danh tính của thành phần hoặc thiết bị.</li>
+                    <li>Access Control: Kiểm soát quyền truy cập.</li>
+                    <li>Secure Boot: Xác minh tính hợp lệ của phần mềm trong quá trình khởi động.</li>
+                    <li>Secure Software Update: Bảo vệ tính toàn vẹn và tính xác thực của bản cập nhật.</li>
+                    <li>Cryptographic Protection: Sử dụng các cơ chế mật mã phù hợp.</li>
+                    <li>Key Management: Quản lý khóa mật mã.</li>
+                </ul>
+
+                <div class="note">
+                    ISO/SAE 21434 tập trung vào việc xác định cần bảo vệ điều gì, rủi ro nào
+                    cần được xử lý và yêu cầu bảo mật nào cần đáp ứng. Việc lựa chọn công nghệ
+                    và giải pháp triển khai phụ thuộc vào thiết kế và kết quả đánh giá của dự án.
+                </div>
+
+
+                <h2>2. Phạm vi áp dụng của ISO/SAE 21434</h2>
+
+                <h3>2.1. Các hệ thống thuộc phạm vi tiêu chuẩn</h3>
+
+                <p>
+                    ISO/SAE 21434 áp dụng cho các hệ thống điện và điện tử trên phương tiện
+                    giao thông đường bộ, bao gồm các thành phần và giao diện liên quan.
+                </p>
+
+                <p>
+                    Phạm vi này có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Electronic Control Units (ECUs).</li>
+                    <li>Communication Interfaces.</li>
+                    <li>Hardware Components.</li>
+                    <li>Embedded Software.</li>
+                    <li>Vehicle Networks.</li>
+                    <li>Diagnostic Interfaces.</li>
+                    <li>Connectivity và Telematics Systems.</li>
+                </ul>
+
+                <p>
+                    Tiêu chuẩn được xây dựng để áp dụng cho các hệ thống E/E của phương tiện
+                    sản xuất hàng loạt, bao gồm các thành phần và giao diện có liên quan,
+                    với quá trình phát triển hoặc sửa đổi bắt đầu sau khi tiêu chuẩn được
+                    công bố.
+                </p>
+
+
+                <h3>2.2. Những thành phần cần xem xét về Cybersecurity</h3>
+
+                <p>
+                    Để hiểu phạm vi áp dụng, cần nhìn vào một hệ thống Automotive dưới góc
+                    độ các tài sản (Assets), thành phần và giao diện cần được bảo vệ.
+                </p>
+
+                <p>
+                    Ví dụ, một ECU có thể bao gồm:
+                </p>
+
+                <pre><code>+-----------------------------------+
+|               ECU                 |
+|                                   |
+|  +-----------------------------+  |
+|  |       Embedded Software     |  |
+|  +-----------------------------+  |
+|                                   |
+|  +-----------------------------+  |
+|  |          Hardware           |  |
+|  +-----------------------------+  |
+|                                   |
+|  +-----------------------------+  |
+|  |     Communication Interface |  |
+|  +-----------------------------+  |
+|                                   |
+|  +-----------------------------+  |
+|  |      Configuration / Data   |  |
+|  +-----------------------------+  |
++----------------+------------------+
+                 |
+                 v
+       Vehicle Communication Network</code></pre>
+
+                <p>
+                    Khi xem xét Cybersecurity, nhóm phát triển không chỉ quan tâm đến việc
+                    bảo vệ phần mềm mà còn phải xem xét dữ liệu, giao diện giao tiếp,
+                    cấu hình và những thành phần liên quan.
+                </p>
+
+
+                <h3>2.3. Phạm vi ngoài hệ thống E/E trên xe</h3>
+
+                <p>
+                    Một số thành phần bên ngoài phương tiện, chẳng hạn như Backend Server,
+                    ứng dụng di động hoặc cơ sở hạ tầng dịch vụ, có thể được xem xét khi chúng
+                    có ảnh hưởng đến rủi ro Cybersecurity của phương tiện.
+                </p>
+
+                <p>
+                    Tuy nhiên, không nên hiểu rằng tất cả các hệ thống bên ngoài này đều
+                    tự động nằm trong phạm vi trực tiếp của ISO/SAE 21434. Cần xác định ranh
+                    giới của Item, các giao diện và sự phụ thuộc có liên quan để đánh giá
+                    đúng phạm vi cần quản lý.
+                </p>
+
+
+                <h3>2.4. Vòng đời sản phẩm</h3>
+
+                <p>
+                    ISO/SAE 21434 không giới hạn hoạt động Cybersecurity ở giai đoạn phát triển.
+                    Tiêu chuẩn xem xét các hoạt động xuyên suốt vòng đời sản phẩm.
+                </p>
+
+                <pre><code>+-----------------------+
+|        Concept        |
++-----------+-----------+
+            |
+            v
++-----------------------+
+|   Product Development |
++-----------+-----------+
+            |
+            v
++-----------------------+
+|      Production       |
++-----------+-----------+
+            |
+            v
++-----------------------+
+|      Operations       |
++-----------+-----------+
+            |
+            v
++-----------------------+
+| Maintenance / Updates |
++-----------+-----------+
+            |
+            v
++-----------------------+
+| End of Cybersecurity  |
+| Support / Decommission|
++-----------------------+</code></pre>
+
+                <p>
+                    Ngoài các giai đoạn tuần tự trong sơ đồ, những hoạt động như theo dõi
+                    lỗ hổng, quản lý rủi ro và xử lý sự cố cần được duy trì trong các giai
+                    đoạn phù hợp của vòng đời.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> Cybersecurity không phải hoạt động chỉ
+                    diễn ra trước khi sản phẩm được phát hành. Một hệ thống có thể tiếp tục
+                    xuất hiện lỗ hổng hoặc rủi ro mới trong quá trình vận hành, vì vậy cần
+                    có hoạt động theo dõi và quản lý xuyên suốt vòng đời.
+                </div>
+
+
+                <h2>3. Các khái niệm nền tảng trong Automotive Cybersecurity</h2>
+
+                <h3>3.1. Asset là gì?</h3>
+
+                <p>
+                    <strong>Asset</strong> là tài sản hoặc thành phần có giá trị cần được
+                    bảo vệ khỏi những rủi ro Cybersecurity.
+                </p>
+
+                <p>
+                    Trong một hệ thống Automotive, Asset không nhất thiết chỉ là một thiết
+                    bị vật lý. Nó có thể là dữ liệu, phần mềm, chức năng, thông tin cấu hình
+                    hoặc một thành phần hệ thống.
+                </p>
+
+                <p><strong>Ví dụ về Asset:</strong></p>
+
+                <ul>
+                    <li>Vehicle Configuration Data.</li>
+                    <li>ECU Software.</li>
+                    <li>Diagnostic Information.</li>
+                    <li>Authentication Credentials.</li>
+                    <li>Cryptographic Keys.</li>
+                    <li>Vehicle Communication Services.</li>
+                </ul>
+
+                <p>
+                    Việc xác định Asset giúp nhóm phát triển biết chính xác những thông tin
+                    và thành phần nào cần được bảo vệ.
+                </p>
+
+
+                <h3>3.2. Threat là gì?</h3>
+
+                <p>
+                    <strong>Threat</strong> là một mối đe dọa có khả năng gây ảnh hưởng
+                    đến một Asset hoặc hệ thống.
+                </p>
+
+                <p>
+                    Trong Cybersecurity, Threat có thể xuất phát từ nhiều nguồn khác nhau,
+                    chẳng hạn như hành vi cố ý, sự kiện bên ngoài hoặc các điều kiện có thể
+                    làm ảnh hưởng đến tính bảo mật của hệ thống.
+                </p>
+
+                <p>
+                    Khi đánh giá Threat, nhóm phát triển cần xem xét mục tiêu có thể bị ảnh
+                    hưởng, loại tác động và bối cảnh hệ thống.
+                </p>
+
+
+                <h3>3.3. Vulnerability là gì?</h3>
+
+                <p>
+                    <strong>Vulnerability</strong> là điểm yếu hoặc thiếu sót trong hệ thống
+                    có thể bị khai thác hoặc dẫn đến rủi ro Cybersecurity.
+                </p>
+
+                <p>
+                    Vulnerability có thể xuất hiện ở nhiều vị trí:
+                </p>
+
+                <ul>
+                    <li>Software Design.</li>
+                    <li>Software Implementation.</li>
+                    <li>Hardware Design.</li>
+                    <li>Communication Interface.</li>
+                    <li>Configuration.</li>
+                    <li>Operational Process.</li>
+                </ul>
+
+                <p>
+                    Không phải mọi Vulnerability đều dẫn đến một hậu quả nghiêm trọng như nhau.
+                    Mức độ rủi ro còn phụ thuộc vào Asset bị ảnh hưởng, bối cảnh hệ thống và
+                    khả năng xảy ra của tình huống đe dọa.
+                </p>
+
+
+                <h3>3.4. Threat Scenario là gì?</h3>
+
+                <p>
+                    <strong>Threat Scenario</strong> mô tả một tình huống đe dọa có thể dẫn
+                    đến việc Asset bị ảnh hưởng theo một cách không mong muốn.
+                </p>
+
+                <p>
+                    Một Threat Scenario thường được xem xét trong mối quan hệ giữa:
+                </p>
+
+                <ul>
+                    <li>Asset cần bảo vệ.</li>
+                    <li>Threat có khả năng ảnh hưởng đến Asset.</li>
+                    <li>Điều kiện hoặc bối cảnh xảy ra tình huống.</li>
+                    <li>Hậu quả có thể phát sinh nếu Asset bị ảnh hưởng.</li>
+                </ul>
+
+                <p>
+                    Việc mô tả Threat Scenario giúp nhóm phát triển xác định các tình huống
+                    cần được đánh giá thay vì chỉ liệt kê những mối đe dọa một cách chung chung.
+                </p>
+
+
+                <h3>3.5. Attack Path là gì?</h3>
+
+                <p>
+                    <strong>Attack Path</strong> là đường đi hoặc chuỗi các điều kiện có thể
+                    liên quan đến việc một Threat Scenario tác động đến Asset.
+                </p>
+
+                <p>
+                    Trong quá trình phân tích, nhóm Cybersecurity có thể xem xét các thành phần
+                    và giao diện có liên quan để đánh giá liệu một tình huống đe dọa có khả
+                    năng ảnh hưởng đến Asset hay không.
+                </p>
+
+                <p>
+                    Attack Path là một khái niệm dùng trong hoạt động phân tích rủi ro.
+                    Việc xác định đường đi cần phục vụ mục tiêu đánh giá và phòng ngừa,
+                    không đồng nghĩa với việc thực hiện hoặc thử nghiệm hành vi xâm nhập
+                    trên một phương tiện thực tế.
+                </p>
+
+
+                <h3>3.6. Damage Scenario là gì?</h3>
+
+                <p>
+                    <strong>Damage Scenario</strong> mô tả hậu quả có thể xảy ra đối với
+                    phương tiện, người sử dụng hoặc các bên liên quan khi một tình huống
+                    đe dọa gây ảnh hưởng đến Asset.
+                </p>
+
+                <p>
+                    Ví dụ, việc một dữ liệu cấu hình quan trọng bị thay đổi không hợp lệ
+                    có thể dẫn đến hệ thống hoạt động không đúng như mong đợi.
+                </p>
+
+                <p>
+                    Damage Scenario giúp kết nối một vấn đề Cybersecurity ở cấp độ kỹ thuật
+                    với hậu quả có thể xuất hiện ở cấp độ hệ thống hoặc người sử dụng.
+                </p>
+
+
+                <h3>3.7. Cybersecurity Risk là gì?</h3>
+
+                <p>
+                    <strong>Cybersecurity Risk</strong> là rủi ro liên quan đến khả năng
+                    một tình huống đe dọa xảy ra và gây ra một tác động không mong muốn.
+                </p>
+
+                <p>
+                    Trong ISO/SAE 21434, việc đánh giá rủi ro cần xem xét cả mức độ tác động
+                    (Impact) và tính khả thi của tình huống tấn công (Attack Feasibility)
+                    theo phương pháp được lựa chọn.
+                </p>
+
+                <p>
+                    Kết quả đánh giá được sử dụng để quyết định cách xử lý rủi ro và xác định
+                    các mục tiêu hoặc yêu cầu Cybersecurity tương ứng.
+                </p>
+
+
+                <h3>3.8. Bảng tổng hợp các khái niệm</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Asset</td>
+                            <td>Tài sản, dữ liệu hoặc thành phần cần được bảo vệ.</td>
+                        </tr>
+                        <tr>
+                            <td>Threat</td>
+                            <td>Mối đe dọa có thể gây ảnh hưởng đến Asset.</td>
+                        </tr>
+                        <tr>
+                            <td>Vulnerability</td>
+                            <td>Điểm yếu hoặc thiếu sót có thể dẫn đến rủi ro.</td>
+                        </tr>
+                        <tr>
+                            <td>Threat Scenario</td>
+                            <td>Tình huống đe dọa có thể ảnh hưởng đến Asset.</td>
+                        </tr>
+                        <tr>
+                            <td>Attack Path</td>
+                            <td>Đường đi hoặc chuỗi điều kiện liên quan đến một tình huống đe dọa.</td>
+                        </tr>
+                        <tr>
+                            <td>Damage Scenario</td>
+                            <td>Hậu quả có thể xuất hiện khi tình huống đe dọa gây ảnh hưởng.</td>
+                        </tr>
+                        <tr>
+                            <td>Cybersecurity Risk</td>
+                            <td>Rủi ro được đánh giá dựa trên tác động và khả năng xảy ra.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h2>4. Threat Analysis and Risk Assessment (TARA)</h2>
+
+                <h3>4.1. TARA là gì?</h3>
+
+                <p>
+                    <strong>TARA (Threat Analysis and Risk Assessment)</strong> là hoạt động
+                    phân tích mối đe dọa và đánh giá rủi ro Cybersecurity.
+                </p>
+
+                <p>
+                    TARA giúp nhóm phát triển nhận diện những Asset cần bảo vệ, xây dựng
+                    các Threat Scenario, đánh giá tác động và khả năng xảy ra, từ đó xác định
+                    mức độ rủi ro và phương án xử lý phù hợp.
+                </p>
+
+                <p>
+                    Đây là một hoạt động quan trọng trong quá trình xây dựng Cybersecurity
+                    Concept và xác định các Cybersecurity Goal.
+                </p>
+
+
+                <h3>4.2. Mục đích của TARA</h3>
+
+                <p>
+                    TARA giúp nhóm phát triển trả lời một số câu hỏi quan trọng:
+                </p>
+
+                <ul>
+                    <li>Những Asset nào cần được bảo vệ?</li>
+                    <li>Những Threat Scenario nào có thể ảnh hưởng đến các Asset đó?</li>
+                    <li>Nếu tình huống xảy ra, hậu quả có thể nghiêm trọng đến mức nào?</li>
+                    <li>Khả năng xảy ra của tình huống được đánh giá như thế nào?</li>
+                    <li>Rủi ro nào cần được xử lý và ưu tiên?</li>
+                    <li>Những Cybersecurity Goal nào cần được thiết lập?</li>
+                </ul>
+
+                <p>
+                    Kết quả TARA là cơ sở quan trọng để xác định những yêu cầu bảo mật cần
+                    được đưa vào quá trình phát triển sản phẩm.
+                </p>
+
+
+                <h3>4.3. Các bước tổng quan của TARA</h3>
+
+                <p>
+                    Có thể khái quát quá trình TARA qua những bước chính sau:
+                </p>
+
+                <pre><code>+-----------------------------+
+|        Item Definition      |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|       Asset Identification  |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|   Threat Scenario           |
+|   Identification            |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|       Impact Rating         |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|       Attack Path Analysis  |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|     Attack Feasibility      |
+|          Rating             |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|      Risk Determination     |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|    Risk Treatment Decision  |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| Cybersecurity Goals / Claims|
++-----------------------------+</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái quát để giúp người học hình dung trình tự phân tích.
+                    Trong thực tế, một số hoạt động có thể được thực hiện song song hoặc
+                    lặp lại khi nhóm phát triển có thêm thông tin mới.
+                </p>
+
+
+                <h3>4.4. Item Definition</h3>
+
+                <p>
+                    <strong>Item Definition</strong> là hoạt động xác định phạm vi hệ thống
+                    hoặc thành phần được đưa vào quá trình phân tích Cybersecurity.
+                </p>
+
+                <p>
+                    Nhóm phát triển cần hiểu:
+                </p>
+
+                <ul>
+                    <li>Chức năng chính của Item.</li>
+                    <li>Các thành phần phần cứng và phần mềm.</li>
+                    <li>Các giao diện giao tiếp.</li>
+                    <li>Những thành phần bên ngoài có liên quan.</li>
+                    <li>Các ranh giới của hệ thống và những phụ thuộc quan trọng.</li>
+                </ul>
+
+                <p>
+                    Item Definition tạo cơ sở để xác định Asset và phân tích các tình huống
+                    đe dọa trong phạm vi phù hợp.
+                </p>
+
+
+                <h3>4.5. Asset Identification</h3>
+
+                <p>
+                    Sau khi xác định Item, nhóm phát triển xác định những Asset cần được bảo vệ.
+                </p>
+
+                <p>
+                    Việc nhận diện Asset có thể xem xét các thuộc tính bảo mật thường được
+                    nhắc đến trong Cybersecurity:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Confidentiality:</strong> Bảo đảm thông tin chỉ được truy cập
+                        bởi những đối tượng được phép.
+                    </li>
+                    <li>
+                        <strong>Integrity:</strong> Bảo đảm dữ liệu không bị thay đổi trái phép
+                        hoặc sai lệch ngoài mong muốn.
+                    </li>
+                    <li>
+                        <strong>Availability:</strong> Bảo đảm hệ thống hoặc dữ liệu có thể
+                        được sử dụng khi cần thiết.
+                    </li>
+                </ul>
+
+                <p>
+                    Không phải mọi Asset đều cần mức bảo vệ giống nhau đối với cả ba thuộc tính.
+                    Nhóm phát triển cần xác định thuộc tính nào quan trọng đối với từng Asset
+                    và chức năng tương ứng.
+                </p>
+
+
+                <h3>4.6. Threat Scenario Identification</h3>
+
+                <p>
+                    Sau khi xác định Asset, nhóm phát triển xác định những Threat Scenario
+                    có thể gây ảnh hưởng đến chúng.
+                </p>
+
+                <p>
+                    Một Threat Scenario cần thể hiện được mối liên hệ giữa Asset, tình huống
+                    đe dọa và hậu quả có thể xảy ra.
+                </p>
+
+                <p><strong>Ví dụ ở mức khái niệm:</strong></p>
+
+                <ul>
+                    <li>Asset: Dữ liệu cấu hình quan trọng của ECU.</li>
+                    <li>Threat Scenario: Dữ liệu cấu hình bị thay đổi không hợp lệ.</li>
+                    <li>Damage Scenario: Hệ thống có thể hoạt động không đúng cấu hình dự kiến.</li>
+                </ul>
+
+                <p>
+                    Ví dụ này chỉ nhằm minh họa cách mô tả một tình huống cần được đánh giá.
+                    Việc xác định biện pháp bảo vệ cụ thể cần dựa trên kiến trúc và yêu cầu
+                    Cybersecurity của dự án.
+                </p>
+
+
+                <h3>4.7. Impact Rating</h3>
+
+                <p>
+                    <strong>Impact Rating</strong> là hoạt động đánh giá mức độ tác động
+                    có thể xảy ra khi một Threat Scenario dẫn đến Damage Scenario.
+                </p>
+
+                <p>
+                    ISO/SAE 21434 xem xét các nhóm tác động quan trọng như:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Impact Category</th>
+                            <th>Ký hiệu</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Safety</td>
+                            <td>S</td>
+                            <td>Tác động đến an toàn của người lái, hành khách hoặc những
+                                người tham gia giao thông.</td>
+                        </tr>
+                        <tr>
+                            <td>Financial</td>
+                            <td>F</td>
+                            <td>Tác động về tài chính hoặc chi phí đối với các bên liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Operational</td>
+                            <td>O</td>
+                            <td>Tác động đến khả năng hoạt động hoặc tính sẵn sàng của hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Privacy</td>
+                            <td>P</td>
+                            <td>Tác động đến quyền riêng tư hoặc thông tin cá nhân.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Kết quả Impact Rating giúp nhóm phát triển hiểu được mức độ hậu quả có thể
+                    xuất hiện nếu tình huống đe dọa xảy ra.
+                </p>
+
+
+                <h3>4.8. Attack Path Analysis</h3>
+
+                <p>
+                    <strong>Attack Path Analysis</strong> là hoạt động phân tích các đường đi
+                    hoặc chuỗi điều kiện có thể liên quan đến việc một Threat Scenario tác động
+                    đến Asset.
+                </p>
+
+                <p>
+                    Nhóm Cybersecurity có thể xem xét các giao diện, thành phần và ranh giới
+                    tin cậy trong kiến trúc để hiểu những khu vực cần được bảo vệ.
+                </p>
+
+                <p>
+                    Mục tiêu của hoạt động này là phục vụ đánh giá rủi ro và lựa chọn biện pháp
+                    phòng vệ phù hợp. Việc phân tích phải được thực hiện trong môi trường và
+                    phạm vi được phê duyệt, không thay thế cho quy trình kiểm thử an ninh có
+                    kiểm soát của dự án.
+                </p>
+
+
+                <h3>4.9. Attack Feasibility Rating</h3>
+
+                <p>
+                    <strong>Attack Feasibility Rating</strong> là hoạt động đánh giá mức độ
+                    khả thi của một tình huống tấn công theo phương pháp được lựa chọn.
+                </p>
+
+                <p>
+                    Việc đánh giá có thể xem xét các yếu tố tổng quan như:
+                </p>
+
+                <ul>
+                    <li>Mức độ khó khăn của tình huống.</li>
+                    <li>Khả năng tiếp cận các thành phần liên quan.</li>
+                    <li>Điều kiện cần thiết để tình huống có thể xảy ra.</li>
+                    <li>Năng lực và nguồn lực cần thiết.</li>
+                    <li>Các rào cản bảo mật hiện có.</li>
+                </ul>
+
+                <p>
+                    Kết quả đánh giá giúp xác định mức độ khả thi tương đối của Threat Scenario.
+                    Không nên hiểu đây là một dự đoán chắc chắn về thời điểm hoặc khả năng
+                    một sự kiện sẽ xảy ra.
+                </p>
+
+
+                <h3>4.10. Risk Determination</h3>
+
+                <p>
+                    Sau khi có kết quả Impact Rating và Attack Feasibility Rating, nhóm phát
+                    triển tiến hành xác định mức độ Cybersecurity Risk.
+                </p>
+
+                <p>
+                    Hai nhóm thông tin này đóng vai trò quan trọng:
+                </p>
+
+                <ul>
+                    <li><strong>Impact:</strong> Hậu quả có thể xuất hiện nếu tình huống xảy ra.</li>
+                    <li><strong>Attack Feasibility:</strong> Mức độ khả thi của tình huống đe dọa.</li>
+                </ul>
+
+                <p>
+                    Việc kết hợp hai yếu tố giúp nhóm phát triển xác định rủi ro cần được
+                    ưu tiên xử lý.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> ISO/SAE 21434 cung cấp phương pháp và framework
+                    để đánh giá rủi ro. Không nên tự ý sử dụng một công thức hoặc ngưỡng điểm
+                    đơn giản cho mọi dự án. Phương pháp đánh giá cần nhất quán với quy trình
+                    Cybersecurity Risk Management được tổ chức lựa chọn.
+                </div>
+
+
+                <h3>4.11. Risk Treatment Decision</h3>
+
+                <p>
+                    Sau khi xác định rủi ro, nhóm phát triển cần quyết định cách xử lý phù hợp.
+                </p>
+
+                <p>
+                    Có thể khái quát các hướng xử lý rủi ro như sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Risk Treatment</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Risk Avoidance</td>
+                            <td>Tránh rủi ro bằng cách thay đổi hoặc loại bỏ điều kiện dẫn
+                                đến rủi ro.</td>
+                        </tr>
+                        <tr>
+                            <td>Risk Reduction</td>
+                            <td>Giảm rủi ro bằng cách triển khai các biện pháp bảo vệ phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Risk Sharing</td>
+                            <td>Chia sẻ một phần trách nhiệm hoặc rủi ro với các bên liên quan
+                                theo thỏa thuận phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Risk Retention</td>
+                            <td>Giữ lại rủi ro theo quyết định và quy trình chấp nhận rủi ro
+                                của tổ chức.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Quyết định xử lý rủi ro cần được ghi nhận và có cơ sở phù hợp. Đối với những
+                    rủi ro cần giảm thiểu, nhóm phát triển sẽ xác định các Cybersecurity Goal
+                    và yêu cầu bảo mật liên quan.
+                </p>
+
+
+                <h2>5. Cybersecurity Goals và Cybersecurity Requirements</h2>
+
+                <h3>5.1. Cybersecurity Goal là gì?</h3>
+
+                <p>
+                    <strong>Cybersecurity Goal</strong> là mục tiêu bảo mật cấp cao được xác
+                    định từ quá trình phân tích và đánh giá rủi ro.
+                </p>
+
+                <p>
+                    Cybersecurity Goal mô tả kết quả bảo mật mà hệ thống cần đạt được nhằm
+                    xử lý một hoặc nhiều rủi ro đã nhận diện.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <pre><code>Asset:
+ECU Configuration Data
+
+Threat Scenario:
+Configuration data is modified
+without proper authorization.
+
+Cybersecurity Goal:
+Protect the integrity of configuration
+data throughout the relevant lifecycle.</code></pre>
+
+                <p>
+                    Đây là ví dụ khái niệm. Cybersecurity Goal trong dự án thực tế cần được
+                    xác định từ kết quả TARA và phải có mối liên hệ với những rủi ro được
+                    phân tích.
+                </p>
+
+
+                <h3>5.2. Cybersecurity Requirements là gì?</h3>
+
+                <p>
+                    <strong>Cybersecurity Requirements</strong> là các yêu cầu cụ thể được
+                    xây dựng nhằm giúp hệ thống đáp ứng Cybersecurity Goal.
+                </p>
+
+                <p>
+                    Trong quá trình phát triển sản phẩm, Cybersecurity Requirements có thể
+                    được phân rã và phân bổ xuống các cấp độ kỹ thuật khác nhau.
+                </p>
+
+                <p>
+                    Ví dụ về những nội dung có thể được yêu cầu:
+                </p>
+
+                <ul>
+                    <li>Kiểm soát quyền truy cập vào chức năng quan trọng.</li>
+                    <li>Xác minh tính hợp lệ của dữ liệu nhận được.</li>
+                    <li>Bảo vệ tính toàn vẹn của phần mềm và dữ liệu cấu hình.</li>
+                    <li>Quản lý thông tin xác thực theo quy trình được phê duyệt.</li>
+                    <li>Ghi nhận các sự kiện cần thiết để hỗ trợ theo dõi và xử lý.</li>
+                </ul>
+
+
+                <h3>5.3. Phân rã yêu cầu Cybersecurity</h3>
+
+                <p>
+                    Tương tự cách phân rã Safety Requirements trong ISO 26262, các yêu cầu
+                    Cybersecurity cần được chuyển từ mục tiêu cấp cao thành những yêu cầu
+                    kỹ thuật cụ thể.
+                </p>
+
+                <p>
+                    Có thể hình dung mối quan hệ tổng quan như sau:
+                </p>
+
+                <pre><code>+-----------------------------+
+|       Threat Scenario       |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|    Risk Assessment          |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|     Risk Treatment          |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|     Cybersecurity Goal      |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|  Cybersecurity Requirements |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|     System Architecture     |
++--------------+--------------+
+               |
+       +-------+-------+
+       |               |
+       v               v
++-------------+  +-------------+
+|  Hardware   |  |  Software   |
+| Requirements|  | Requirements|
++------+------+  +------+------+
+       |                |
+       v                v
++-------------+  +-------------+
+| HW Design   |  | SW Design   |
+| & Verification| | & Verification|
++-------------+  +-------------+</code></pre>
+
+                <p>
+                    Sơ đồ trên mô tả mối quan hệ khái quát. Trong dự án thực tế, yêu cầu
+                    Cybersecurity có thể được phân bổ cho nhiều thành phần, giao diện và
+                    quy trình khác nhau tùy theo kiến trúc hệ thống.
+                </p>
+
+
+                <h3>5.4. Cybersecurity Claim</h3>
+
+                <p>
+                    <strong>Cybersecurity Claim</strong> là một nội dung được sử dụng để
+                    thể hiện cơ sở hoặc lập luận liên quan đến việc quản lý rủi ro Cybersecurity.
+                </p>
+
+                <p>
+                    Trong quá trình xử lý rủi ro, có những trường hợp tổ chức quyết định
+                    giữ lại hoặc chia sẻ rủi ro theo quy trình phù hợp. Khi đó, Cybersecurity
+                    Claim có thể được sử dụng để ghi nhận và hỗ trợ lập luận cho quyết định
+                    đã đưa ra.
+                </p>
+
+                <p>
+                    Cần phân biệt Cybersecurity Claim với Cybersecurity Goal:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Cybersecurity Goal:</strong> Mục tiêu bảo mật cần đạt được
+                        để xử lý rủi ro.
+                    </li>
+                    <li>
+                        <strong>Cybersecurity Claim:</strong> Nội dung lập luận hoặc tuyên bố
+                        liên quan đến cơ sở xử lý rủi ro.
+                    </li>
+                </ul>
+
+
+                <h2>6. Cấu trúc bộ tiêu chuẩn ISO/SAE 21434</h2>
+
+                <h3>6.1. Tổng quan 15 Clause</h3>
+
+                <p>
+                    Khác với ISO 26262 được chia thành nhiều Part, ISO/SAE 21434:2021 là
+                    một tiêu chuẩn được tổ chức thành <strong>15 Clause</strong>.
+                </p>
+
+                <p>
+                    Mỗi Clause tập trung vào một nhóm hoạt động hoặc một khía cạnh trong
+                    quá trình Cybersecurity Engineering.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Clause</th>
+                            <th>Tên nội dung</th>
+                            <th>Vai trò chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Clause 1</td>
+                            <td>Scope</td>
+                            <td>Xác định phạm vi áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 2</td>
+                            <td>Normative References</td>
+                            <td>Các tài liệu tham chiếu bắt buộc.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 3</td>
+                            <td>Terms and Definitions</td>
+                            <td>Thuật ngữ và định nghĩa.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 4</td>
+                            <td>General Considerations</td>
+                            <td>Các nguyên tắc và cách tiếp cận chung.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 5</td>
+                            <td>Organizational Cybersecurity Management</td>
+                            <td>Quản lý Cybersecurity ở cấp độ tổ chức.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 6</td>
+                            <td>Project-dependent Cybersecurity Management</td>
+                            <td>Quản lý Cybersecurity theo từng dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 7</td>
+                            <td>Distributed Cybersecurity Activities</td>
+                            <td>Phân công và phối hợp giữa các bên trong chuỗi cung ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 8</td>
+                            <td>Continual Cybersecurity Activities</td>
+                            <td>Các hoạt động Cybersecurity liên tục.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 9</td>
+                            <td>Concept</td>
+                            <td>Phân tích ở giai đoạn Concept.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 10</td>
+                            <td>Product Development</td>
+                            <td>Phát triển sản phẩm.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 11</td>
+                            <td>Cybersecurity Validation</td>
+                            <td>Xác nhận Cybersecurity.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 12</td>
+                            <td>Production</td>
+                            <td>Quản lý Cybersecurity trong sản xuất.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 13</td>
+                            <td>Operations and Maintenance</td>
+                            <td>Quản lý Cybersecurity trong vận hành và bảo dưỡng.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 14</td>
+                            <td>End of Cybersecurity Support and Decommissioning</td>
+                            <td>Kết thúc hỗ trợ bảo mật và loại bỏ sản phẩm.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 15</td>
+                            <td>Threat Analysis and Risk Assessment Methods</td>
+                            <td>Các phương pháp TARA.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Clause 5 đến Clause 15 chứa các mục tiêu, yêu cầu,
+                    khuyến nghị, quyền cho phép và Work Products tương ứng. Không nên hiểu
+                    số thứ tự Clause là một quy trình bắt buộc phải thực hiện tuần tự từ 5
+                    đến 15.
+                </div>
+
+
+                <h3>6.2. Clause 1 - Scope</h3>
+
+                <p>
+                    Clause 1 xác định phạm vi áp dụng của ISO/SAE 21434.
+                </p>
+
+                <p>
+                    Nội dung chính tập trung vào các yêu cầu Cybersecurity Engineering và
+                    quản lý rủi ro Cybersecurity đối với hệ thống E/E trên phương tiện giao
+                    thông đường bộ, bao gồm các thành phần và giao diện có liên quan.
+                </p>
+
+
+                <h3>6.3. Clause 2 - Normative References</h3>
+
+                <p>
+                    Clause 2 liệt kê các tài liệu được tham chiếu mang tính quy phạm trong
+                    tiêu chuẩn.
+                </p>
+
+                <p>
+                    Những tài liệu này có thể cung cấp các yêu cầu hoặc định nghĩa cần thiết
+                    để áp dụng đúng nội dung của ISO/SAE 21434.
+                </p>
+
+
+                <h3>6.4. Clause 3 - Terms and Definitions</h3>
+
+                <p>
+                    Clause 3 tập trung vào những thuật ngữ và định nghĩa được sử dụng xuyên
+                    suốt tiêu chuẩn.
+                </p>
+
+                <p><strong>Một số thuật ngữ quan trọng:</strong></p>
+
+                <ul>
+                    <li>Asset.</li>
+                    <li>Threat Scenario.</li>
+                    <li>Vulnerability.</li>
+                    <li>Damage Scenario.</li>
+                    <li>Cybersecurity Risk.</li>
+                    <li>Cybersecurity Goal.</li>
+                    <li>Cybersecurity Requirement.</li>
+                    <li>Cybersecurity Case.</li>
+                </ul>
+
+
+                <h3>6.5. Clause 4 - General Considerations</h3>
+
+                <p>
+                    Clause 4 cung cấp những xem xét và cách tiếp cận tổng quan đối với
+                    Cybersecurity Engineering trong Automotive.
+                </p>
+
+                <p>
+                    Phần này giúp người đọc hiểu quan điểm chung của tiêu chuẩn về quản lý
+                    rủi ro Cybersecurity, vòng đời sản phẩm và sự phối hợp giữa các hoạt động
+                    kỹ thuật với hoạt động quản lý.
+                </p>
+
+
+                <h3>6.6. Clause 5 - Organizational Cybersecurity Management</h3>
+
+                <p>
+                    Clause 5 tập trung vào việc thiết lập và quản lý các hoạt động Cybersecurity
+                    ở cấp độ tổ chức.
+                </p>
+
+                <p>
+                    Một tổ chức tham gia phát triển sản phẩm Automotive cần có chính sách,
+                    quy trình, trách nhiệm và nguồn lực phù hợp để quản lý Cybersecurity.
+                </p>
+
+                <p><strong>Các nội dung có thể bao gồm:</strong></p>
+
+                <ul>
+                    <li>Cybersecurity Policy.</li>
+                    <li>Cybersecurity Management Process.</li>
+                    <li>Vai trò và trách nhiệm của các bộ phận.</li>
+                    <li>Competence và nhận thức Cybersecurity.</li>
+                    <li>Quản lý thông tin và quy trình liên quan.</li>
+                    <li>Quản lý hoạt động Cybersecurity ở cấp độ tổ chức.</li>
+                </ul>
+
+                <p>
+                    Clause 5 tạo nền tảng để các dự án có thể thực hiện hoạt động Cybersecurity
+                    theo một quy trình thống nhất.
+                </p>
+
+
+                <h3>6.7. Clause 6 - Project-dependent Cybersecurity Management</h3>
+
+                <p>
+                    Clause 6 tập trung vào quản lý Cybersecurity ở cấp độ dự án.
+                </p>
+
+                <p>
+                    Mỗi dự án có thể có phạm vi, kiến trúc, yêu cầu và mức độ rủi ro khác nhau.
+                    Vì vậy, nhóm phát triển cần xác định những hoạt động Cybersecurity phù hợp
+                    với dự án cụ thể.
+                </p>
+
+                <p><strong>Một số nội dung chính:</strong></p>
+
+                <ul>
+                    <li>Project Cybersecurity Planning.</li>
+                    <li>Phân công trách nhiệm trong dự án.</li>
+                    <li>Cybersecurity Management Activities.</li>
+                    <li>Quản lý thay đổi liên quan đến Cybersecurity.</li>
+                    <li>Quản lý các Work Products.</li>
+                </ul>
+
+
+                <h3>6.8. Clause 7 - Distributed Cybersecurity Activities</h3>
+
+                <p>
+                    Trong Automotive, một sản phẩm thường được phát triển bởi nhiều tổ chức
+                    khác nhau.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li><strong>OEM:</strong> Nhà sản xuất phương tiện.</li>
+                    <li><strong>Tier 1:</strong> Nhà cung cấp hệ thống hoặc module cho OEM.</li>
+                    <li><strong>Tier 2:</strong> Nhà cung cấp linh kiện hoặc thành phần cho Tier 1.</li>
+                    <li><strong>Software Supplier:</strong> Nhà cung cấp phần mềm hoặc giải pháp liên quan.</li>
+                </ul>
+
+                <p>
+                    Clause 7 đề cập đến việc phân công và phối hợp các hoạt động Cybersecurity
+                    giữa khách hàng và nhà cung cấp.
+                </p>
+
+                <p><strong>Các nội dung quan trọng:</strong></p>
+
+                <ul>
+                    <li>Xác định phạm vi công việc Cybersecurity của từng bên.</li>
+                    <li>Thỏa thuận trách nhiệm giữa Customer và Supplier.</li>
+                    <li>Trao đổi Cybersecurity Requirements.</li>
+                    <li>Quản lý các Work Products được bàn giao.</li>
+                    <li>Phối hợp xử lý những rủi ro liên quan đến thành phần được cung cấp.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, OEM có thể giao cho Tier 1 phát triển một ECU. Tier 1 tiếp tục sử
+                    dụng các linh kiện hoặc phần mềm từ Tier 2. Khi đó, trách nhiệm và yêu cầu
+                    Cybersecurity cần được phân định rõ giữa các bên.
+                </p>
+
+
+                <h3>6.9. Clause 8 - Continual Cybersecurity Activities</h3>
+
+                <p>
+                    Clause 8 tập trung vào những hoạt động Cybersecurity cần được duy trì
+                    trong suốt vòng đời sản phẩm.
+                </p>
+
+                <p>
+                    Một sản phẩm có thể được phát triển và đưa vào sử dụng trong nhiều năm.
+                    Trong khoảng thời gian đó, các lỗ hổng mới có thể được phát hiện và môi
+                    trường bảo mật cũng có thể thay đổi.
+                </p>
+
+                <p><strong>Một số hoạt động liên quan:</strong></p>
+
+                <ul>
+                    <li>Cybersecurity Monitoring.</li>
+                    <li>Vulnerability Management.</li>
+                    <li>Cybersecurity Event Evaluation.</li>
+                    <li>Cybersecurity Incident Response.</li>
+                    <li>Quản lý thông tin liên quan đến lỗ hổng mới.</li>
+                    <li>Theo dõi các rủi ro mới trong quá trình vận hành.</li>
+                </ul>
+
+                <p>
+                    Clause 8 giúp tổ chức duy trì khả năng theo dõi và phản ứng trước những
+                    thay đổi về Cybersecurity sau khi sản phẩm được phát triển.
+                </p>
+
+
+                <h3>6.10. Clause 9 - Concept</h3>
+
+                <p>
+                    Clause 9 tập trung vào hoạt động Cybersecurity trong giai đoạn Concept.
+                </p>
+
+                <p>
+                    Ở giai đoạn này, nhóm phát triển cần xác định phạm vi Item, nhận diện
+                    rủi ro và thiết lập các mục tiêu bảo mật phù hợp.
+                </p>
+
+                <p><strong>Các hoạt động chính:</strong></p>
+
+                <ul>
+                    <li>Item Definition.</li>
+                    <li>Cybersecurity Risk Assessment.</li>
+                    <li>Cybersecurity Goals.</li>
+                    <li>Cybersecurity Concept.</li>
+                    <li>Cybersecurity Requirements cấp cao.</li>
+                </ul>
+
+                <p>
+                    Kết quả của giai đoạn Concept là cơ sở để chuyển sang quá trình phát
+                    triển sản phẩm ở các cấp độ kỹ thuật.
+                </p>
+
+
+                <h3>6.11. Clause 10 - Product Development</h3>
+
+                <p>
+                    Clause 10 tập trung vào việc phát triển sản phẩm theo các yêu cầu
+                    Cybersecurity đã xác định.
+                </p>
+
+                <p>
+                    Đây là phần có liên hệ trực tiếp với các nhóm phát triển System,
+                    Hardware và Embedded Software.
+                </p>
+
+                <p><strong>Các nội dung chính:</strong></p>
+
+                <ul>
+                    <li>Refinement of Cybersecurity Requirements.</li>
+                    <li>System Architectural Design.</li>
+                    <li>Hardware Development.</li>
+                    <li>Software Development.</li>
+                    <li>Integration and Verification.</li>
+                    <li>Cybersecurity-related Work Products.</li>
+                </ul>
+
+                <p>
+                    Nhóm phát triển cần bảo đảm các yêu cầu Cybersecurity được phân bổ,
+                    triển khai và xác minh phù hợp trong kiến trúc sản phẩm.
+                </p>
+
+
+                <h3>6.12. Clause 11 - Cybersecurity Validation</h3>
+
+                <p>
+                    Clause 11 đề cập đến hoạt động Cybersecurity Validation nhằm xác nhận
+                    các mục tiêu Cybersecurity đã xác định có được đáp ứng trong bối cảnh
+                    sử dụng dự kiến hay không.
+                </p>
+
+                <p>
+                    Hoạt động này xem xét sản phẩm ở cấp độ phù hợp với phạm vi xác nhận,
+                    thay vì chỉ kiểm tra từng module phần mềm độc lập.
+                </p>
+
+                <p>
+                    Kết quả Validation giúp cung cấp bằng chứng rằng những biện pháp
+                    Cybersecurity được thiết kế đã đáp ứng mục tiêu tương ứng.
+                </p>
+
+
+                <h3>6.13. Clause 12 - Production</h3>
+
+                <p>
+                    Clause 12 tập trung vào các hoạt động Cybersecurity trong giai đoạn sản xuất.
+                </p>
+
+                <p>
+                    Những yêu cầu bảo mật cần được xem xét trong quá trình sản xuất để tránh
+                    làm mất đi các đặc tính bảo vệ đã được thiết kế và xác minh trước đó.
+                </p>
+
+                <p>
+                    Tùy theo sản phẩm và quy trình của tổ chức, các nội dung có thể liên quan
+                    đến kiểm soát quy trình, cấu hình, thông tin sản phẩm và các hoạt động
+                    bảo đảm tính nhất quán trong sản xuất.
+                </p>
+
+
+                <h3>6.14. Clause 13 - Operations and Maintenance</h3>
+
+                <p>
+                    Clause 13 tập trung vào Cybersecurity khi sản phẩm đã được đưa vào sử dụng.
+                </p>
+
+                <p>
+                    Trong giai đoạn này, tổ chức cần duy trì khả năng theo dõi những vấn đề
+                    bảo mật mới, đánh giá thông tin về lỗ hổng và xác định các hoạt động
+                    bảo dưỡng hoặc cập nhật phù hợp.
+                </p>
+
+                <p><strong>Một số hoạt động liên quan:</strong></p>
+
+                <ul>
+                    <li>Cybersecurity Monitoring.</li>
+                    <li>Vulnerability Assessment.</li>
+                    <li>Cybersecurity Incident Handling.</li>
+                    <li>Maintenance Activities.</li>
+                    <li>Cybersecurity-related Updates.</li>
+                </ul>
+
+
+                <h3>6.15. Clause 14 - End of Cybersecurity Support and Decommissioning</h3>
+
+                <p>
+                    Clause 14 đề cập đến thời điểm kết thúc hỗ trợ Cybersecurity và hoạt
+                    động loại bỏ sản phẩm khỏi quá trình sử dụng.
+                </p>
+
+                <p>
+                    Khi một phương tiện hoặc thành phần điện tử không còn nhận được hỗ trợ
+                    bảo mật, tổ chức cần xem xét và quản lý những rủi ro còn tồn tại.
+                </p>
+
+                <p>
+                    Những nội dung liên quan có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Thông báo về thời điểm kết thúc hỗ trợ bảo mật.</li>
+                    <li>Quản lý thông tin liên quan đến sản phẩm sau thời điểm hỗ trợ.</li>
+                    <li>Đánh giá những rủi ro còn tồn tại.</li>
+                    <li>Xem xét yêu cầu khi sản phẩm được loại bỏ hoặc ngừng sử dụng.</li>
+                </ul>
+
+
+                <h3>6.16. Clause 15 - Threat Analysis and Risk Assessment Methods</h3>
+
+                <p>
+                    Clause 15 tập trung vào các phương pháp TARA được sử dụng để phân tích
+                    và đánh giá Cybersecurity Risk.
+                </p>
+
+                <p>
+                    Đây là cơ sở phương pháp luận cho các hoạt động nhận diện Asset,
+                    Threat Scenario, Impact Rating, Attack Feasibility và Risk Treatment.
+                </p>
+
+                <p>
+                    Các phương pháp được sử dụng cần phù hợp với phạm vi Item, đặc điểm
+                    sản phẩm và quy trình Cybersecurity Risk Management của tổ chức.
+                </p>
+
+
+                <h2>7. Cybersecurity Lifecycle và mối quan hệ giữa các Clause</h2>
+
+                <h3>7.1. Các nhóm hoạt động chính</h3>
+
+                <p>
+                    Có thể chia các hoạt động trong ISO/SAE 21434 thành một số nhóm lớn
+                    để dễ hình dung.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm hoạt động</th>
+                            <th>Clause liên quan</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>General and Organizational Management</td>
+                            <td>4, 5</td>
+                            <td>Xác định nguyên tắc và quản lý Cybersecurity ở cấp độ tổ chức.</td>
+                        </tr>
+                        <tr>
+                            <td>Project Management</td>
+                            <td>6, 7</td>
+                            <td>Quản lý hoạt động dự án và phối hợp với các bên liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Continual Activities</td>
+                            <td>8</td>
+                            <td>Duy trì hoạt động Cybersecurity xuyên suốt vòng đời.</td>
+                        </tr>
+                        <tr>
+                            <td>Concept</td>
+                            <td>9, 15</td>
+                            <td>Phân tích rủi ro và hình thành mục tiêu bảo mật.</td>
+                        </tr>
+                        <tr>
+                            <td>Product Development</td>
+                            <td>10</td>
+                            <td>Thiết kế, triển khai và xác minh sản phẩm.</td>
+                        </tr>
+                        <tr>
+                            <td>Cybersecurity Validation</td>
+                            <td>11</td>
+                            <td>Xác nhận mục tiêu Cybersecurity.</td>
+                        </tr>
+                        <tr>
+                            <td>Production and Post-development</td>
+                            <td>12, 13, 14</td>
+                            <td>Quản lý Cybersecurity trong sản xuất, vận hành, bảo dưỡng và kết thúc hỗ trợ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>7.2. Mối quan hệ giữa các hoạt động</h3>
+
+                <p>
+                    Các Clause trong ISO/SAE 21434 có mối liên hệ với nhau. Hoạt động
+                    quản lý ở cấp độ tổ chức tạo nền tảng cho dự án; các hoạt động TARA
+                    giúp xác định rủi ro; kết quả phân tích được chuyển thành yêu cầu
+                    Cybersecurity để phát triển sản phẩm.
+                </p>
+
+                <pre><code>+-----------------------------+
+| Organizational Cybersecurity|
+| Management                  |
+|          Clause 5           |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| Project-dependent Management|
+|          Clause 6           |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|       Concept / TARA        |
+|       Clause 9, 15          |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|     Product Development     |
+|          Clause 10          |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|   Cybersecurity Validation  |
+|          Clause 11          |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| Production / Operations     |
+| Maintenance / End Support   |
+|       Clause 12-14          |
++-----------------------------+
+
+Continual Cybersecurity Activities:
+Clause 8
+
+Distributed Cybersecurity Activities:
+Clause 7</code></pre>
+
+                <p>
+                    Sơ đồ này chỉ minh họa mối quan hệ tổng quan. Trong thực tế, Clause 7
+                    và Clause 8 có thể tác động đến nhiều giai đoạn khác nhau, không chỉ
+                    xuất hiện tại một vị trí cố định trong quy trình.
+                </p>
+
+
+                <h2>8. Cybersecurity trong chuỗi cung ứng Automotive</h2>
+
+                <h3>8.1. Vì sao cần Distributed Cybersecurity Activities?</h3>
+
+                <p>
+                    Một sản phẩm Automotive thường được hình thành thông qua sự phối hợp
+                    của nhiều tổ chức.
+                </p>
+
+                <p>
+                    OEM có thể không tự phát triển toàn bộ ECU, phần mềm, vi điều khiển
+                    và các thành phần điện tử. Thay vào đó, các thành phần được cung cấp
+                    bởi nhiều nhà cung cấp khác nhau.
+                </p>
+
+                <p>
+                    Điều này khiến Cybersecurity trở thành trách nhiệm cần được phối hợp
+                    giữa các bên, thay vì chỉ thuộc về một nhóm phát triển duy nhất.
+                </p>
+
+
+                <h3>8.2. Ví dụ về chuỗi cung ứng</h3>
+
+                <pre><code>+-----------------------+
+|          OEM          |
+| Vehicle Manufacturer  |
++-----------+-----------+
+            |
+            v
++-----------------------+
+|        Tier 1         |
+|     ECU Supplier      |
++-----------+-----------+
+            |
+            v
++-----------------------+
+|        Tier 2         |
+| Hardware / Software   |
+| Component Supplier    |
++-----------------------+</code></pre>
+
+                <p>
+                    Trong mô hình này:
+                </p>
+
+                <ul>
+                    <li>OEM xác định yêu cầu và phạm vi Cybersecurity của phương tiện.</li>
+                    <li>Tier 1 thực hiện các hoạt động Cybersecurity đối với ECU hoặc hệ thống được giao.</li>
+                    <li>Tier 2 cung cấp thành phần và thông tin cần thiết theo trách nhiệm đã thỏa thuận.</li>
+                </ul>
+
+                <p>
+                    Việc phân chia trách nhiệm cần được thống nhất để các hoạt động
+                    Cybersecurity không bị bỏ sót hoặc trùng lặp không cần thiết.
+                </p>
+
+
+                <h3>8.3. Supplier Cybersecurity Agreement</h3>
+
+                <p>
+                    Trong quá trình hợp tác, OEM và Supplier cần thống nhất những nội dung
+                    như phạm vi công việc, trách nhiệm, yêu cầu bàn giao và cách phối hợp
+                    xử lý các vấn đề Cybersecurity.
+                </p>
+
+                <p><strong>Một số nội dung cần làm rõ:</strong></p>
+
+                <ul>
+                    <li>Phạm vi Item hoặc Component được giao.</li>
+                    <li>Cybersecurity Requirements áp dụng cho sản phẩm.</li>
+                    <li>Trách nhiệm thực hiện TARA hoặc các hoạt động đánh giá liên quan.</li>
+                    <li>Work Products cần bàn giao.</li>
+                    <li>Quy trình thông báo và xử lý lỗ hổng.</li>
+                    <li>Trách nhiệm hỗ trợ Cybersecurity trong vòng đời sản phẩm.</li>
+                </ul>
+
+                <p>
+                    Clause 7 cung cấp cơ sở để quản lý những hoạt động phân tán này.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> Một thành phần được cung cấp bởi Supplier
+                    vẫn có thể ảnh hưởng đến Cybersecurity của toàn bộ phương tiện. Vì vậy,
+                    việc xác định trách nhiệm và trao đổi yêu cầu giữa các bên là rất quan trọng.
+                </div>
+
+
+                <h2>9. Cybersecurity Verification, Validation và Cybersecurity Case</h2>
+
+                <h3>9.1. Cybersecurity Verification</h3>
+
+                <p>
+                    <strong>Verification</strong> là hoạt động kiểm tra nhằm xác định các
+                    kết quả phát triển có đáp ứng yêu cầu Cybersecurity và đặc tả tương ứng
+                    hay không.
+                </p>
+
+                <p>
+                    Tùy theo phạm vi dự án, hoạt động Verification có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Review Cybersecurity Requirements.</li>
+                    <li>Review System Architecture.</li>
+                    <li>Review Software Design.</li>
+                    <li>Static Analysis.</li>
+                    <li>Kiểm tra việc triển khai các yêu cầu bảo mật.</li>
+                    <li>Kiểm thử các thành phần trong môi trường được phê duyệt.</li>
+                </ul>
+
+
+                <h3>9.2. Cybersecurity Validation</h3>
+
+                <p>
+                    <strong>Cybersecurity Validation</strong> tập trung vào việc xác nhận
+                    các mục tiêu Cybersecurity của Item đã được đáp ứng trong bối cảnh
+                    sử dụng dự kiến.
+                </p>
+
+                <p>
+                    Validation xem xét sản phẩm ở cấp độ phù hợp để đánh giá liệu các mục
+                    tiêu bảo mật đã xác định có được đáp ứng hay không.
+                </p>
+
+                <p>
+                    Validation không nên được hiểu đơn giản là chỉ chạy một số test case
+                    riêng lẻ. Đây là một hoạt động xác nhận dựa trên mục tiêu, phạm vi
+                    và các điều kiện đánh giá đã được xác định.
+                </p>
+
+
+                <h3>9.3. Cybersecurity Case</h3>
+
+                <p>
+                    <strong>Cybersecurity Case</strong> là tập hợp các lập luận và bằng chứng
+                    được sử dụng để hỗ trợ việc chứng minh rằng Cybersecurity của sản phẩm
+                    đã được xử lý phù hợp.
+                </p>
+
+                <p>
+                    Cybersecurity Case có thể liên kết những nội dung như:
+                </p>
+
+                <ul>
+                    <li>Cybersecurity Goals.</li>
+                    <li>Cybersecurity Requirements.</li>
+                    <li>Kết quả TARA.</li>
+                    <li>Thiết kế và các biện pháp bảo mật.</li>
+                    <li>Kết quả Verification và Validation.</li>
+                    <li>Các quyết định xử lý rủi ro.</li>
+                    <li>Các Work Products liên quan.</li>
+                </ul>
+
+                <p>
+                    Mục tiêu là tạo ra cơ sở có thể truy vết để giải thích cách các rủi ro
+                    Cybersecurity đã được nhận diện, đánh giá và xử lý.
+                </p>
+
+
+                <h2>10. Phân biệt ISO/SAE 21434, ISO 26262 và UNECE Regulations</h2>
+
+                <h3>10.1. ISO/SAE 21434 và ISO 26262</h3>
+
+                <p>
+                    Trong các dự án Automotive, ISO/SAE 21434 và ISO 26262 đều liên quan
+                    đến việc bảo vệ các hệ thống điện và điện tử trên phương tiện. Tuy nhiên,
+                    hai tiêu chuẩn tập trung vào hai nhóm vấn đề khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>ISO 26262</th>
+                            <th>ISO/SAE 21434</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lĩnh vực</td>
+                            <td>Functional Safety</td>
+                            <td>Cybersecurity Engineering</td>
+                        </tr>
+                        <tr>
+                            <td>Trọng tâm</td>
+                            <td>Nguy cơ do hành vi bất thường hoặc sự cố của hệ thống E/E.</td>
+                            <td>Rủi ro do các mối đe dọa an ninh mạng.</td>
+                        </tr>
+                        <tr>
+                            <td>Phân tích</td>
+                            <td>Hazard Analysis and Risk Assessment (HARA).</td>
+                            <td>Threat Analysis and Risk Assessment (TARA).</td>
+                        </tr>
+                        <tr>
+                            <td>Đầu ra quan trọng</td>
+                            <td>Safety Goals và Safety Requirements.</td>
+                            <td>Cybersecurity Goals và Cybersecurity Requirements.</td>
+                        </tr>
+                        <tr>
+                            <td>Phạm vi hoạt động</td>
+                            <td>Functional Safety Lifecycle.</td>
+                            <td>Cybersecurity Lifecycle.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một sự kiện Cybersecurity có thể dẫn đến hậu quả liên quan đến Functional
+                    Safety. Vì vậy, hai lĩnh vực này cần được phối hợp trong những dự án mà
+                    rủi ro an ninh mạng có thể ảnh hưởng đến an toàn của phương tiện.
+                </p>
+
+
+                <h3>10.2. ISO/SAE 21434 và UNECE R155</h3>
+
+                <p>
+                    <strong>UNECE Regulation No. 155 (UN R155)</strong> là quy định liên quan
+                    đến Cybersecurity và Cyber Security Management System (CSMS) trong quá trình
+                    phê duyệt kiểu loại phương tiện.
+                </p>
+
+                <p>
+                    ISO/SAE 21434 và UN R155 có mối quan hệ chặt chẽ, nhưng chúng không phải
+                    là cùng một tài liệu.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>ISO/SAE 21434:</strong> Tiêu chuẩn kỹ thuật đưa ra framework
+                        và yêu cầu về Cybersecurity Engineering trong quá trình phát triển
+                        và vòng đời hệ thống E/E.
+                    </li>
+                    <li>
+                        <strong>UN R155:</strong> Quy định về Cybersecurity và CSMS đối với
+                        việc phê duyệt kiểu loại phương tiện thuộc phạm vi áp dụng.
+                    </li>
+                </ul>
+
+                <p>
+                    Các hoạt động theo ISO/SAE 21434 có thể hỗ trợ nhà sản xuất xây dựng và
+                    cung cấp bằng chứng cho hệ thống quản lý Cybersecurity theo yêu cầu của
+                    UN R155.
+                </p>
+
+
+                <h3>10.3. ISO/SAE 21434 và UNECE R156</h3>
+
+                <p>
+                    <strong>UNECE Regulation No. 156 (UN R156)</strong> tập trung vào
+                    Software Updates và Software Update Management System (SUMS).
+                </p>
+
+                <p>
+                    UN R156 liên quan đến việc quản lý quá trình cập nhật phần mềm trên
+                    phương tiện, trong khi tiêu chuẩn ISO 24089 cung cấp các yêu cầu kỹ
+                    thuật về Software Update Engineering.
+                </p>
+
+                <p>
+                    Cybersecurity vẫn có mối liên hệ với hoạt động cập nhật phần mềm.
+                    Ví dụ, một bản cập nhật cần được quản lý để tránh những thay đổi không
+                    hợp lệ hoặc ảnh hưởng đến các đặc tính bảo mật của hệ thống.
+                </p>
+
+                <p>
+                    Vì vậy, trong một dự án Automotive, ISO/SAE 21434 và ISO 24089 có thể
+                    được xem xét cùng nhau tùy theo phạm vi và yêu cầu áp dụng.
+                </p>
+
+
+                <h3>10.4. Bảng tổng hợp</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Lĩnh vực</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 26262</td>
+                            <td>Functional Safety</td>
+                            <td>Quản lý các hoạt động an toàn chức năng của hệ thống E/E.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO/SAE 21434</td>
+                            <td>Cybersecurity Engineering</td>
+                            <td>Quản lý rủi ro an ninh mạng trong vòng đời sản phẩm.</td>
+                        </tr>
+                        <tr>
+                            <td>UN R155</td>
+                            <td>Vehicle Cybersecurity Regulation</td>
+                            <td>Quy định về Cybersecurity và CSMS trong phê duyệt kiểu loại phương tiện.</td>
+                        </tr>
+                        <tr>
+                            <td>UN R156</td>
+                            <td>Software Update Regulation</td>
+                            <td>Quy định về Software Update và SUMS.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 24089</td>
+                            <td>Software Update Engineering</td>
+                            <td>Yêu cầu kỹ thuật đối với quá trình cập nhật phần mềm phương tiện.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    ISO/SAE 21434 là tiêu chuẩn kỹ thuật về Cybersecurity Engineering.
+                    UN R155 và UN R156 là các quy định pháp lý trong lĩnh vực phương tiện.
+                    ISO 24089 tập trung vào kỹ thuật cập nhật phần mềm. Những tài liệu này
+                    có liên quan nhưng không thể thay thế trực tiếp cho nhau.
+                </div>
+
+
+                <h2>11. Cybersecurity trong phát triển Embedded Software</h2>
+
+                <h3>11.1. Vai trò của Embedded Software Engineer</h3>
+
+                <p>
+                    Đối với kỹ sư Embedded Software, Cybersecurity không chỉ là công việc
+                    của một nhóm chuyên trách riêng biệt. Những yêu cầu bảo mật có thể
+                    được phân bổ trực tiếp vào phần mềm và ảnh hưởng đến quá trình thiết
+                    kế, triển khai và kiểm thử.
+                </p>
+
+                <p>
+                    Khi phát triển một Software Component, kỹ sư cần hiểu những yêu cầu
+                    Cybersecurity đã được phân bổ và bảo đảm rằng phần mềm đáp ứng đúng
+                    thiết kế được phê duyệt.
+                </p>
+
+                <p><strong>Một số hoạt động có liên quan:</strong></p>
+
+                <ul>
+                    <li>Phân tích và làm rõ Cybersecurity Requirements.</li>
+                    <li>Hiểu các Asset và rủi ro liên quan đến phần mềm.</li>
+                    <li>Thiết kế Software Architecture theo yêu cầu dự án.</li>
+                    <li>Triển khai các chức năng bảo mật được giao.</li>
+                    <li>Thực hiện Code Review và Static Analysis.</li>
+                    <li>Thực hiện Unit Testing và Integration Testing.</li>
+                    <li>Phân tích và xử lý Defect liên quan đến Cybersecurity.</li>
+                    <li>Quản lý thay đổi và truy vết yêu cầu.</li>
+                    <li>Chuẩn bị tài liệu và bằng chứng xác minh.</li>
+                </ul>
+
+
+                <h3>11.2. Ví dụ về Software Cybersecurity Requirement</h3>
+
+                <p>
+                    Giả sử một ECU có một chức năng nhận và xử lý dữ liệu từ một thành phần
+                    khác trong hệ thống.
+                </p>
+
+                <p>
+                    Một Cybersecurity Requirement có thể yêu cầu phần mềm kiểm tra dữ liệu
+                    hoặc thông tin xác thực theo những điều kiện đã được xác định trước
+                    khi cho phép thực hiện một chức năng quan trọng.
+                </p>
+
+                <p>
+                    Từ yêu cầu đó, nhóm phát triển có thể xác định các hoạt động:
+                </p>
+
+                <ul>
+                    <li>Làm rõ điều kiện dữ liệu được xem là hợp lệ.</li>
+                    <li>Xác định thành phần chịu trách nhiệm kiểm tra.</li>
+                    <li>Thiết kế cách xử lý khi dữ liệu không đáp ứng yêu cầu.</li>
+                    <li>Triển khai theo Software Design được phê duyệt.</li>
+                    <li>Viết Unit Test để xác minh các trường hợp liên quan.</li>
+                    <li>Kiểm tra sự phối hợp với các thành phần khác khi Integration Test.</li>
+                </ul>
+
+                <p>
+                    Ví dụ này chỉ mô tả cách chuyển một yêu cầu bảo mật thành hoạt động
+                    phát triển phần mềm. Hành vi xử lý và các điều kiện kiểm tra cụ thể
+                    cần tuân theo yêu cầu của dự án.
+                </p>
+
+
+                <h3>11.3. Mối liên hệ với quy trình phát triển phần mềm</h3>
+
+                <p>
+                    Trong một dự án Automotive, các hoạt động Cybersecurity có thể được
+                    tích hợp vào quy trình phát triển Embedded Software hiện có.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hoạt động phát triển</th>
+                            <th>Liên hệ với Cybersecurity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Requirement Analysis</td>
+                            <td>Làm rõ Cybersecurity Requirements và phạm vi trách nhiệm.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Design</td>
+                            <td>Xem xét các yêu cầu bảo mật trong kiến trúc và thiết kế phần mềm.</td>
+                        </tr>
+                        <tr>
+                            <td>Implementation</td>
+                            <td>Triển khai các chức năng theo yêu cầu bảo mật được giao.</td>
+                        </tr>
+                        <tr>
+                            <td>Code Review</td>
+                            <td>Review mã nguồn theo các quy tắc và tiêu chí dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Static Analysis</td>
+                            <td>Phân tích mã nguồn để phát hiện các vấn đề tiềm ẩn.</td>
+                        </tr>
+                        <tr>
+                            <td>Unit Testing</td>
+                            <td>Xác minh hành vi của từng đơn vị phần mềm.</td>
+                        </tr>
+                        <tr>
+                            <td>Integration Testing</td>
+                            <td>Kiểm tra sự phối hợp giữa các thành phần phần mềm.</td>
+                        </tr>
+                        <tr>
+                            <td>Defect Management</td>
+                            <td>Ghi nhận, phân tích và xử lý các lỗi liên quan đến bảo mật.</td>
+                        </tr>
+                        <tr>
+                            <td>Configuration Management</td>
+                            <td>Kiểm soát phiên bản phần mềm, cấu hình và tài liệu liên quan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>11.4. Mối liên hệ với AUTOSAR</h3>
+
+                <p>
+                    Trong các dự án sử dụng AUTOSAR Classic, Cybersecurity có thể liên quan
+                    đến nhiều thành phần trong kiến trúc phần mềm.
+                </p>
+
+                <p>
+                    Ví dụ về những nhóm chức năng có thể được xem xét:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Cryptographic Services:</strong> Các dịch vụ mật mã hỗ trợ
+                        những chức năng bảo mật.
+                    </li>
+                    <li>
+                        <strong>Secure Communication:</strong> Các cơ chế hỗ trợ bảo vệ
+                        thông tin trao đổi giữa những thành phần.
+                    </li>
+                    <li>
+                        <strong>Access Control:</strong> Quản lý quyền truy cập vào những
+                        chức năng hoặc tài nguyên phù hợp.
+                    </li>
+                    <li>
+                        <strong>Secure Boot:</strong> Hỗ trợ kiểm tra tính hợp lệ của phần
+                        mềm trong quá trình khởi động, tùy theo kiến trúc triển khai.
+                    </li>
+                </ul>
+
+                <p>
+                    Các chức năng này có thể được triển khai thông qua những thành phần
+                    phần mềm, phần cứng và cơ chế bảo mật khác nhau. ISO/SAE 21434 không
+                    quy định một cấu hình AUTOSAR cố định cho tất cả các dự án.
+                </p>
+
+                <p>
+                    Vì vậy, kỹ sư Embedded Software cần hiểu rõ yêu cầu Cybersecurity
+                    được phân bổ cho thành phần mình phát triển, thay vì mặc định rằng
+                    chỉ cần sử dụng một module bảo mật là đã đáp ứng toàn bộ tiêu chuẩn.
+                </p>
+
+
+                <h2>12. Ví dụ tổng quan về Cybersecurity trong một dự án Embedded</h2>
+
+                <h3>12.1. Bối cảnh dự án</h3>
+
+                <p>
+                    Giả sử một nhóm phát triển đang xây dựng một ECU có chức năng lưu trữ
+                    dữ liệu cấu hình và hỗ trợ cập nhật phần mềm.
+                </p>
+
+                <p>
+                    ECU có thể trao đổi dữ liệu với những thành phần khác của phương tiện
+                    và nhận bản cập nhật theo quy trình được thiết kế.
+                </p>
+
+                <p>
+                    Nhóm phát triển cần xem xét các rủi ro Cybersecurity có thể ảnh hưởng
+                    đến dữ liệu cấu hình và tính toàn vẹn của phần mềm.
+                </p>
+
+
+                <h3>12.2. Các hoạt động phân tích</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hoạt động</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Item Definition</td>
+                            <td>Xác định phạm vi ECU, chức năng, phần mềm và giao diện liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Asset Identification</td>
+                            <td>Xác định dữ liệu cấu hình và phần mềm cần bảo vệ.</td>
+                        </tr>
+                        <tr>
+                            <td>Threat Scenario</td>
+                            <td>Xem xét tình huống dữ liệu hoặc phần mềm bị thay đổi không hợp lệ.</td>
+                        </tr>
+                        <tr>
+                            <td>Impact Rating</td>
+                            <td>Đánh giá hậu quả có thể xảy ra đối với an toàn, tài chính,
+                                hoạt động và quyền riêng tư.</td>
+                        </tr>
+                        <tr>
+                            <td>Attack Feasibility</td>
+                            <td>Đánh giá mức độ khả thi của tình huống theo phương pháp được lựa chọn.</td>
+                        </tr>
+                        <tr>
+                            <td>Risk Determination</td>
+                            <td>Xác định mức độ rủi ro dựa trên kết quả đánh giá.</td>
+                        </tr>
+                        <tr>
+                            <td>Risk Treatment</td>
+                            <td>Quyết định tránh, giảm, chia sẻ hoặc giữ lại rủi ro theo quy trình.</td>
+                        </tr>
+                        <tr>
+                            <td>Cybersecurity Goal</td>
+                            <td>Thiết lập mục tiêu bảo vệ tính toàn vẹn của phần mềm và dữ liệu cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>12.3. Các hoạt động phát triển phần mềm</h3>
+
+                <p>
+                    Sau khi có Cybersecurity Requirements, nhóm Embedded Software có thể
+                    thực hiện các công việc như:
+                </p>
+
+                <ul>
+                    <li>Phân tích các yêu cầu được phân bổ.</li>
+                    <li>Thiết kế phần mềm đáp ứng những yêu cầu đó.</li>
+                    <li>Triển khai các chức năng bảo vệ theo kiến trúc đã thống nhất.</li>
+                    <li>Kiểm tra các trường hợp hợp lệ và không hợp lệ.</li>
+                    <li>Thực hiện Code Review và các hoạt động Verification.</li>
+                    <li>Tích hợp với những thành phần liên quan.</li>
+                    <li>Ghi nhận kết quả và cung cấp bằng chứng kiểm thử.</li>
+                </ul>
+
+
+                <h3>12.4. Kết quả mong đợi</h3>
+
+                <p>
+                    Sau quá trình phát triển và xác minh, dự án cần có các Work Products
+                    và bằng chứng phù hợp để thể hiện:
+                </p>
+
+                <ul>
+                    <li>Rủi ro Cybersecurity đã được nhận diện và đánh giá.</li>
+                    <li>Cybersecurity Goals đã được xác định.</li>
+                    <li>Cybersecurity Requirements đã được phân bổ.</li>
+                    <li>Thiết kế và triển khai đáp ứng các yêu cầu được giao.</li>
+                    <li>Các hoạt động Verification và Validation đã được thực hiện.</li>
+                    <li>Những vấn đề còn tồn tại được ghi nhận và quản lý.</li>
+                </ul>
+
+                <p>
+                    Qua ví dụ này, có thể thấy Cybersecurity Engineering không chỉ là việc
+                    lựa chọn một giải pháp mã hóa hoặc xác thực. Đây là quá trình kết hợp
+                    giữa phân tích rủi ro, quản lý yêu cầu, thiết kế, triển khai, kiểm thử
+                    và theo dõi trong vòng đời sản phẩm.
+                </p>
+
+
+                <h2>13. Những điểm cần ghi nhớ</h2>
+
+                <h3>13.1. ISO/SAE 21434 là tiêu chuẩn về Automotive Cybersecurity</h3>
+
+                <p>
+                    Tiêu chuẩn cung cấp framework và các yêu cầu kỹ thuật để quản lý rủi ro
+                    Cybersecurity của các hệ thống E/E trên phương tiện.
+                </p>
+
+
+                <h3>13.2. Cybersecurity được quản lý xuyên suốt vòng đời</h3>
+
+                <p>
+                    Các hoạt động cần được xem xét từ Concept, phát triển, sản xuất, vận hành,
+                    bảo dưỡng cho đến khi kết thúc hỗ trợ bảo mật.
+                </p>
+
+
+                <h3>13.3. TARA là hoạt động quan trọng trong Cybersecurity Risk Management</h3>
+
+                <p>
+                    TARA giúp nhận diện Asset, Threat Scenario, Damage Scenario, đánh giá
+                    Impact và Attack Feasibility, từ đó xác định mức độ rủi ro và cách xử lý.
+                </p>
+
+
+                <h3>13.4. Cybersecurity Goal và Cybersecurity Requirements có quan hệ với nhau</h3>
+
+                <p>
+                    Cybersecurity Goal mô tả mục tiêu bảo mật cần đạt được. Cybersecurity
+                    Requirements cụ thể hóa mục tiêu đó thành các yêu cầu có thể được
+                    triển khai và xác minh.
+                </p>
+
+
+                <h3>13.5. Cybersecurity là trách nhiệm của nhiều tổ chức</h3>
+
+                <p>
+                    OEM, Tier 1, Tier 2 và những nhà cung cấp liên quan cần phối hợp trong
+                    việc phân công trách nhiệm, trao đổi yêu cầu và quản lý rủi ro.
+                </p>
+
+
+                <h3>13.6. Cybersecurity cần được duy trì sau khi sản phẩm phát hành</h3>
+
+                <p>
+                    Vulnerability Management, Cybersecurity Monitoring và Incident Response
+                    là những hoạt động quan trọng trong quá trình sản phẩm được vận hành.
+                </p>
+
+
+                <h3>13.7. Phân biệt ISO/SAE 21434 với ISO 26262</h3>
+
+                <p>
+                    ISO 26262 tập trung vào Functional Safety, trong khi ISO/SAE 21434
+                    tập trung vào Cybersecurity Engineering. Hai tiêu chuẩn có thể được
+                    áp dụng phối hợp trong cùng một dự án Automotive.
+                </p>
+
+
+                <h2>14. Tình trạng phiên bản và tài liệu tham khảo</h2>
+
+                <h3>14.1. Phiên bản ISO/SAE 21434</h3>
+
+                <p>
+                    Phiên bản được công bố là <strong>ISO/SAE 21434:2021 - Edition 1</strong>,
+                    phát hành vào tháng 08/2021.
+                </p>
+
+                <p>
+                    Tại thời điểm xây dựng bài học, ISO đang triển khai dự án phát triển
+                    phiên bản tiếp theo mang tên <strong>ISO/SAE AWI 21434 - Edition 2</strong>.
+                    Dự án đã được đăng ký vào chương trình làm việc của ISO/TC 22/SC 32
+                    ngày 02/10/2026 và đang trong giai đoạn phát triển.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý về phiên bản:</strong>
+                    ISO/SAE AWI 21434 Edition 2 là dự án tiêu chuẩn đang được phát triển,
+                    chưa phải một phiên bản International Standard đã được xuất bản.
+                    Khi làm việc với tài liệu dự án, cần xác định rõ đang sử dụng
+                    ISO/SAE 21434:2021 hay bản dự thảo mới.
+                </div>
+
+
+                <h3>14.2. Tài liệu tham khảo chính</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Nội dung</th>
+                            <th>Tham khảo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO/SAE 21434:2021</td>
+                            <td>Road Vehicles - Cybersecurity Engineering</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/70918.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO/SAE AWI 21434 - Edition 2</td>
+                            <td>Phiên bản tiếp theo đang được phát triển.</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/95437.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SAE ISO/SAE 21434</td>
+                            <td>Thông tin tiêu chuẩn và phạm vi áp dụng từ SAE International.</td>
+                            <td>
+                                <a href="https://saemobilus.sae.org/standards/isosae21434-road-vehicles-cybersecurity-engineering" target="_blank">
+                                    SAE International
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>UNECE Regulation No. 155</td>
+                            <td>Cyber Security and Cyber Security Management System.</td>
+                            <td>
+                                <a href="https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security" target="_blank">
+                                    UNECE Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>UNECE Regulation No. 156</td>
+                            <td>Software Update and Software Update Management System.</td>
+                            <td>
+                                <a href="https://unece.org/transport/documents/2021/03/standards/un-regulation-no-156-software-update-and-software-update" target="_blank">
+                                    UNECE Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 24089:2023</td>
+                            <td>Road Vehicles - Software Update Engineering.</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/77796.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <div class="note">
+                    <strong>Tổng kết:</strong>
+                    ISO/SAE 21434 là một tiêu chuẩn quan trọng trong lĩnh vực Automotive
+                    Cybersecurity Engineering. Tiêu chuẩn cung cấp framework để các tổ chức
+                    nhận diện Asset, phân tích Threat Scenario, đánh giá Cybersecurity Risk,
+                    xây dựng Cybersecurity Goal và triển khai các yêu cầu bảo mật xuyên suốt
+                    vòng đời sản phẩm. Đối với kỹ sư Embedded Software, việc hiểu ISO/SAE 21434
+                    giúp làm rõ cách các yêu cầu Cybersecurity được chuyển thành thiết kế,
+                    triển khai, kiểm thử và bằng chứng xác minh trong một dự án Automotive.
+                </div>
+
+
+                <div class="pager">
+                    <a class="btn" href="lesson-43.html">← Bài trước</a>
+                    <a class="btn" href="lesson-45.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+</html>

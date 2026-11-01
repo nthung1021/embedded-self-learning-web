@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 43: Tổng quan ISO 26262 - Functional Safety | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="lesson-25.html">Bài 25: Diagnostic Communication Manager (DCM)</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+                <a href="lesson-38.html">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
+                <a href="lesson-39.html">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer</a>
+                <a href="lesson-40.html">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN</a>
+                <a href="lesson-41.html">Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP)</a>
+                <a href="lesson-42.html">Bài 42: Tổng quan bộ tiêu chuẩn ISO 15031</a>
+                <a href="lesson-43.html" class="active" aria-current="page">Bài 43: Tổng quan ISO 26262 - Functional Safety</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 43: Tổng quan ISO 26262 - Functional Safety</h1>
+
+                <p>
+                    Trong quá trình phát triển các hệ thống điện và điện tử trên ô tô, phần mềm
+                    ngày càng đảm nhiệm nhiều chức năng quan trọng như điều khiển động cơ, phanh,
+                    hệ thống lái, túi khí và các hệ thống hỗ trợ người lái.
+                </p>
+
+                <p>
+                    Tuy nhiên, một lỗi trong phần mềm hoặc phần cứng có thể khiến hệ thống hoạt động
+                    không đúng như thiết kế. Đối với một số chức năng trên xe, hành vi bất thường
+                    này có thể tạo ra tình huống nguy hiểm cho người lái, hành khách hoặc những
+                    người tham gia giao thông khác.
+                </p>
+
+                <p>
+                    Để quản lý những rủi ro liên quan đến sự cố của các hệ thống điện và điện tử,
+                    ngành Automotive sử dụng bộ tiêu chuẩn
+                    <strong>ISO 26262 - Road vehicles - Functional safety</strong>.
+                </p>
+
+                <p>
+                    ISO 26262 đưa ra một framework về an toàn chức năng, bao gồm các hoạt động
+                    quản lý, phân tích nguy cơ, xác định yêu cầu an toàn, thiết kế hệ thống,
+                    phát triển phần cứng và phần mềm, kiểm thử, xác nhận cũng như các hoạt động
+                    trong suốt vòng đời sản phẩm.
+                </p>
+
+                <div class="note">
+                    <strong>Mục tiêu bài học:</strong>
+                    <ul>
+                        <li>Hiểu Functional Safety là gì và vì sao ISO 26262 quan trọng trong Automotive.</li>
+                        <li>Nắm được phạm vi áp dụng của ISO 26262.</li>
+                        <li>Hiểu tổng quan Safety Lifecycle và các hoạt động chính.</li>
+                        <li>Nắm được khái niệm Hazard, Risk, HARA và ASIL.</li>
+                        <li>Hiểu mối quan hệ giữa Safety Goal, FSR và TSR.</li>
+                        <li>Biết cấu trúc gồm 12 phần của bộ tiêu chuẩn ISO 26262.</li>
+                        <li>Phân biệt ISO 26262 với SOTIF và Automotive Cybersecurity.</li>
+                    </ul>
+                </div>
+
+
+                <h2>1. ISO 26262 là gì?</h2>
+
+                <h3>1.1. Khái niệm</h3>
+
+                <p>
+                    <strong>ISO 26262</strong> là bộ tiêu chuẩn quốc tế về
+                    <strong>Functional Safety (An toàn chức năng)</strong> dành cho các hệ thống
+                    điện và điện tử (Electrical/Electronic - E/E) được lắp đặt trên các phương
+                    tiện giao thông đường bộ thuộc phạm vi áp dụng.
+                </p>
+
+                <p>
+                    Tiêu chuẩn này xây dựng một quy trình có hệ thống để nhận diện và kiểm soát
+                    những nguy cơ có thể phát sinh khi hệ thống E/E gặp lỗi hoặc hoạt động không
+                    đúng như mong đợi.
+                </p>
+
+                <p>
+                    Thay vì chỉ tập trung vào việc kiểm tra sản phẩm cuối cùng, ISO 26262 yêu cầu
+                    các hoạt động liên quan đến an toàn phải được xem xét xuyên suốt quá trình
+                    phát triển sản phẩm.
+                </p>
+
+                <p>
+                    Những hoạt động này có thể bắt đầu từ giai đoạn xác định chức năng của hệ thống,
+                    tiếp tục qua phân tích nguy cơ, thiết kế kiến trúc, phát triển phần cứng,
+                    phần mềm, tích hợp, kiểm thử và kéo dài đến quá trình vận hành, bảo dưỡng
+                    cũng như loại bỏ sản phẩm.
+                </p>
+
+                <div class="note">
+                    <strong>Functional Safety:</strong> Có thể hiểu đơn giản là khả năng hệ thống
+                    tránh tạo ra rủi ro không thể chấp nhận được do các hành vi bất thường hoặc
+                    sự cố liên quan đến hệ thống điện và điện tử.
+                </div>
+
+
+                <h3>1.2. Vì sao cần Functional Safety?</h3>
+
+                <p>
+                    Một phương tiện hiện đại có thể chứa hàng chục hoặc hàng trăm ECU, các cảm biến,
+                    bộ chấp hành và nhiều hệ thống phần mềm có quan hệ với nhau.
+                </p>
+
+                <p>
+                    Những hệ thống này có thể thực hiện các chức năng quan trọng như:
+                </p>
+
+                <ul>
+                    <li>Engine Control: Điều khiển hoạt động của động cơ.</li>
+                    <li>Brake Control: Điều khiển hệ thống phanh.</li>
+                    <li>Steering Control: Điều khiển hệ thống lái.</li>
+                    <li>Airbag Control: Quản lý hệ thống túi khí.</li>
+                    <li>Powertrain Control: Điều khiển hệ thống truyền động.</li>
+                    <li>Driver Assistance: Hỗ trợ người lái trong một số tình huống.</li>
+                </ul>
+
+                <p>
+                    Nếu một thành phần trong các hệ thống trên gặp lỗi, hệ thống có thể không
+                    thực hiện đúng chức năng được thiết kế.
+                </p>
+
+                <p>
+                    Ví dụ, một hệ thống điều khiển phanh được thiết kế để nhận tín hiệu từ cảm biến,
+                    xử lý dữ liệu và tạo lệnh điều khiển tương ứng. Nếu tín hiệu cảm biến bị sai,
+                    phần mềm xử lý không chính xác hoặc đầu ra điều khiển không được kiểm soát,
+                    hệ thống có thể không đáp ứng đúng yêu cầu.
+                </p>
+
+                <p>
+                    ISO 26262 giúp các nhóm phát triển xác định trước những tình huống có thể gây
+                    nguy hiểm, xác định mức độ rủi ro và đưa ra các yêu cầu an toàn phù hợp để
+                    giảm thiểu những rủi ro đó.
+                </p>
+
+
+                <h3>1.3. Mục tiêu của ISO 26262</h3>
+
+                <p>
+                    ISO 26262 không chỉ hướng đến việc phát hiện lỗi sau khi sản phẩm được hoàn thành.
+                    Tiêu chuẩn này hướng đến việc xây dựng một quy trình phát triển có thể kiểm soát
+                    và chứng minh các yêu cầu an toàn đã được đáp ứng.
+                </p>
+
+                <p><strong>Một số mục tiêu quan trọng:</strong></p>
+
+                <ul>
+                    <li>
+                        <strong>Risk Identification:</strong> Nhận diện các nguy cơ có thể phát sinh
+                        do sự cố của hệ thống E/E.
+                    </li>
+                    <li>
+                        <strong>Risk Assessment:</strong> Đánh giá mức độ rủi ro để xác định yêu cầu
+                        an toàn phù hợp.
+                    </li>
+                    <li>
+                        <strong>Safety Requirements:</strong> Xây dựng các yêu cầu an toàn ở nhiều
+                        cấp độ khác nhau.
+                    </li>
+                    <li>
+                        <strong>Safety-oriented Development:</strong> Đưa các hoạt động an toàn vào
+                        quy trình phát triển phần cứng và phần mềm.
+                    </li>
+                    <li>
+                        <strong>Verification and Validation:</strong> Kiểm tra và xác nhận rằng
+                        thiết kế, triển khai và sản phẩm đáp ứng các yêu cầu an toàn.
+                    </li>
+                    <li>
+                        <strong>Safety Management:</strong> Quản lý trách nhiệm, tài liệu, thay đổi
+                        và các hoạt động an toàn trong suốt vòng đời sản phẩm.
+                    </li>
+                </ul>
+
+
+                <h2>2. Phạm vi áp dụng của ISO 26262</h2>
+
+                <h3>2.1. Các hệ thống thuộc phạm vi tiêu chuẩn</h3>
+
+                <p>
+                    ISO 26262 được xây dựng cho các hệ thống liên quan đến an toàn, có chứa một
+                    hoặc nhiều thành phần điện và/hoặc điện tử, được lắp đặt trên các phương tiện
+                    giao thông đường bộ thuộc phạm vi của tiêu chuẩn.
+                </p>
+
+                <p>
+                    Những hệ thống này có thể bao gồm phần cứng, phần mềm và sự tương tác giữa
+                    nhiều thành phần E/E khác nhau.
+                </p>
+
+                <p><strong>Ví dụ về các hệ thống có thể thuộc phạm vi xem xét:</strong></p>
+
+                <ul>
+                    <li>Electronic Brake Control System.</li>
+                    <li>Electronic Power Steering System.</li>
+                    <li>Engine Management System.</li>
+                    <li>Airbag Control System.</li>
+                    <li>Electronic Stability Control.</li>
+                    <li>Battery Management System trong các ứng dụng phù hợp.</li>
+                    <li>Powertrain và các hệ thống điều khiển điện tử liên quan.</li>
+                </ul>
+
+                <p>
+                    Phạm vi thực tế phụ thuộc vào chức năng, kiến trúc và yêu cầu áp dụng đối với
+                    phương tiện cụ thể.
+                </p>
+
+
+                <h3>2.2. Những nội dung không được ISO 26262 giải quyết trực tiếp</h3>
+
+                <p>
+                    ISO 26262 tập trung vào các nguy cơ có thể phát sinh do hành vi bất thường
+                    của hệ thống E/E liên quan đến an toàn.
+                </p>
+
+                <p>
+                    Tiêu chuẩn không nhằm giải quyết mọi loại nguy cơ có thể xuất hiện trên
+                    phương tiện. Ví dụ, các nguy cơ về điện giật, cháy, khói, nhiệt, bức xạ,
+                    độc tính hoặc ăn mòn không thuộc phạm vi xử lý trực tiếp của ISO 26262,
+                    trừ khi chúng phát sinh trực tiếp từ hành vi bất thường của hệ thống E/E
+                    liên quan đến an toàn.
+                </p>
+
+                <p>
+                    Ngoài ra, ISO 26262 không thay thế toàn bộ các tiêu chuẩn chuyên ngành khác.
+                    Một sản phẩm Automotive có thể cần áp dụng thêm các tiêu chuẩn về hiệu suất
+                    chức năng, an ninh mạng, môi trường hoặc những lĩnh vực an toàn chuyên biệt.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> ISO 26262 tập trung vào nguy cơ do malfunctioning
+                    behaviour của các hệ thống E/E. Tiêu chuẩn không có nghĩa là mọi vấn đề về
+                    an toàn của toàn bộ chiếc xe đều được giải quyết chỉ bằng ISO 26262.
+                </div>
+
+
+                <h3>2.3. Ví dụ về hệ thống E/E có liên quan đến Functional Safety</h3>
+
+                <p>
+                    Giả sử một hệ thống điều khiển điện tử nhận dữ liệu từ cảm biến, xử lý thông tin
+                    bằng phần mềm và gửi tín hiệu điều khiển đến một bộ chấp hành.
+                </p>
+
+                <pre><code>+------------------+
+|      Sensor      |
+|   Input Signal   |
++--------+---------+
+         |
+         v
++------------------+
+|       ECU        |
+|                  |
+| - Input Handling |
+| - Software Logic |
+| - Output Control |
++--------+---------+
+         |
+         v
++------------------+
+|     Actuator     |
+|   Output Action  |
++------------------+</code></pre>
+
+                <p>
+                    Trong kiến trúc này, một sự cố có thể xuất hiện ở nhiều vị trí:
+                </p>
+
+                <ul>
+                    <li>Cảm biến cung cấp dữ liệu không chính xác.</li>
+                    <li>Tín hiệu đầu vào bị lỗi hoặc không được cập nhật đúng cách.</li>
+                    <li>Phần mềm xử lý không đúng yêu cầu.</li>
+                    <li>ECU không phát hiện được một trạng thái bất thường.</li>
+                    <li>Tín hiệu đầu ra không đáp ứng yêu cầu thiết kế.</li>
+                    <li>Thành phần phần cứng gặp lỗi ảnh hưởng đến chức năng.</li>
+                </ul>
+
+                <p>
+                    Functional Safety yêu cầu nhóm phát triển phân tích những tình huống như vậy
+                    và xác định các biện pháp an toàn phù hợp, thay vì chỉ kiểm tra xem chức năng
+                    thông thường có hoạt động hay không.
+                </p>
+
+
+                <h2>3. Functional Safety và Safety Lifecycle</h2>
+
+                <h3>3.1. Safety Lifecycle là gì?</h3>
+
+                <p>
+                    <strong>Safety Lifecycle</strong> là vòng đời của các hoạt động liên quan đến
+                    an toàn chức năng, bắt đầu từ khi hình thành ý tưởng sản phẩm và tiếp tục
+                    xuyên suốt quá trình phát triển, sản xuất, vận hành, bảo dưỡng và kết thúc
+                    vòng đời sản phẩm.
+                </p>
+
+                <p>
+                    ISO 26262 yêu cầu các hoạt động liên quan đến an toàn phải được tổ chức có hệ
+                    thống. Các giai đoạn khác nhau sẽ có những mục tiêu, đầu vào, đầu ra và trách
+                    nhiệm tương ứng.
+                </p>
+
+                <h3>3.2. Các giai đoạn chính</h3>
+
+                <p>
+                    Có thể khái quát Safety Lifecycle thành những giai đoạn chính sau:
+                </p>
+
+                <pre><code>+-----------------------------+
+|      Concept Phase          |
+|                             |
+| - Item Definition           |
+| - Hazard Analysis (HARA)    |
+| - ASIL Classification       |
+| - Functional Safety Concept|
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|     System Development      |
+|                             |
+| - Technical Safety Concept  |
+| - System Architecture       |
+| - System Integration        |
+| - Safety Validation         |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|    Hardware Development    |
+|                             |
+| - Hardware Safety Req.      |
+| - Hardware Architecture     |
+| - Hardware Verification     |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|     Software Development    |
+|                             |
+| - Software Safety Req.      |
+| - Software Architecture     |
+| - Software Implementation   |
+| - Software Verification     |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| Production and Operation    |
+|                             |
+| - Production                |
+| - Operation                 |
+| - Service and Maintenance   |
+| - Decommissioning           |
++-----------------------------+</code></pre>
+
+                <p>
+                    Sơ đồ trên mô tả các nhóm hoạt động lớn để dễ hình dung. Trong thực tế,
+                    Safety Lifecycle có sự tương tác, phản hồi và liên kết giữa các giai đoạn,
+                    không phải một quy trình chỉ đi theo một chiều.
+                </p>
+
+
+                <h3>3.3. Concept Phase</h3>
+
+                <p>
+                    Concept Phase là giai đoạn đầu tiên trong quá trình phát triển an toàn.
+                    Nhóm phát triển xác định hệ thống cần xây dựng, chức năng dự kiến và các
+                    nguy cơ có thể phát sinh khi hệ thống hoạt động không đúng.
+                </p>
+
+                <p><strong>Các hoạt động chính bao gồm:</strong></p>
+
+                <ul>
+                    <li>
+                        <strong>Item Definition:</strong> Xác định hệ thống hoặc chức năng được
+                        đưa vào phạm vi phân tích.
+                    </li>
+                    <li>
+                        <strong>Hazard Analysis and Risk Assessment (HARA):</strong> Phân tích
+                        nguy cơ và đánh giá rủi ro.
+                    </li>
+                    <li>
+                        <strong>ASIL Classification:</strong> Xác định mức Automotive Safety
+                        Integrity Level cho các hazardous event.
+                    </li>
+                    <li>
+                        <strong>Functional Safety Concept:</strong> Xây dựng khái niệm an toàn
+                        chức năng và các Safety Goal tương ứng.
+                    </li>
+                </ul>
+
+
+                <h3>3.4. Product Development</h3>
+
+                <p>
+                    Sau khi xác định các mục tiêu an toàn ở giai đoạn Concept, quá trình phát triển
+                    tiếp tục cụ thể hóa chúng thành kiến trúc và yêu cầu kỹ thuật.
+                </p>
+
+                <p>
+                    Quá trình này thường được chia thành ba cấp độ chính:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>System Level:</strong> Xây dựng kiến trúc hệ thống, xác định các
+                        thành phần và cách phân bổ yêu cầu an toàn.
+                    </li>
+                    <li>
+                        <strong>Hardware Level:</strong> Phát triển và xác minh các thành phần
+                        phần cứng có liên quan đến an toàn.
+                    </li>
+                    <li>
+                        <strong>Software Level:</strong> Phát triển phần mềm, kiến trúc phần mềm,
+                        triển khai và kiểm thử các yêu cầu an toàn.
+                    </li>
+                </ul>
+
+                <p>
+                    Những cấp độ này cần phối hợp với nhau để bảo đảm rằng các yêu cầu an toàn
+                    được triển khai xuyên suốt từ mục tiêu ban đầu đến sản phẩm thực tế.
+                </p>
+
+
+                <h3>3.5. Production, Operation, Service and Decommissioning</h3>
+
+                <p>
+                    Trách nhiệm về Functional Safety không kết thúc khi phần mềm hoặc phần cứng
+                    hoàn tất quá trình phát triển.
+                </p>
+
+                <p>
+                    Trong giai đoạn sau phát triển, cần xem xét các hoạt động như:
+                </p>
+
+                <ul>
+                    <li>Kiểm soát quy trình sản xuất liên quan đến các đặc tính an toàn.</li>
+                    <li>Quản lý thông tin và hướng dẫn vận hành sản phẩm.</li>
+                    <li>Thực hiện bảo dưỡng và dịch vụ theo yêu cầu.</li>
+                    <li>Xử lý các thay đổi hoặc lỗi được phát hiện trong quá trình sử dụng.</li>
+                    <li>Xem xét các yêu cầu liên quan đến kết thúc vòng đời sản phẩm.</li>
+                </ul>
+
+
+                <h2>4. Hazard Analysis and Risk Assessment (HARA)</h2>
+
+                <h3>4.1. Hazard là gì?</h3>
+
+                <p>
+                    <strong>Hazard</strong> là một trạng thái hoặc điều kiện có khả năng dẫn đến
+                    tai nạn khi kết hợp với một tình huống vận hành cụ thể.
+                </p>
+
+                <p>
+                    Trong ISO 26262, việc xác định Hazard thường gắn với khả năng một chức năng
+                    hoặc hệ thống E/E hoạt động sai, không hoạt động hoặc tạo ra hành vi không
+                    mong muốn.
+                </p>
+
+                <p>
+                    Ví dụ, một hệ thống hỗ trợ điều khiển xe có thể gặp một tình huống trong đó
+                    chức năng được kích hoạt hoặc duy trì không đúng như thiết kế. Tình huống này
+                    cần được phân tích để xác định liệu nó có thể tạo ra nguy cơ trong điều kiện
+                    vận hành cụ thể hay không.
+                </p>
+
+
+                <h3>4.2. Risk Assessment là gì?</h3>
+
+                <p>
+                    Sau khi nhận diện Hazard, nhóm phát triển cần đánh giá mức độ rủi ro của
+                    những tình huống có thể xảy ra.
+                </p>
+
+                <p>
+                    Mục đích là xác định mức độ nghiêm trọng của hậu quả, mức độ thường xuyên
+                    hoặc khả năng xuất hiện tình huống vận hành liên quan và khả năng người lái
+                    kiểm soát được tình huống đó.
+                </p>
+
+                <p>
+                    Kết quả đánh giá là cơ sở để phân loại ASIL và xây dựng các Safety Goal
+                    phù hợp.
+                </p>
+
+
+                <h3>4.3. HARA là gì?</h3>
+
+                <p>
+                    <strong>HARA (Hazard Analysis and Risk Assessment)</strong> là hoạt động
+                    phân tích nguy cơ và đánh giá rủi ro trong giai đoạn Concept của ISO 26262.
+                </p>
+
+                <p>
+                    HARA xem xét các Hazard và những tình huống vận hành có liên quan, sau đó
+                    đánh giá chúng dựa trên ba yếu tố:
+                </p>
+
+                <ul>
+                    <li><strong>Severity (S):</strong> Mức độ nghiêm trọng của hậu quả.</li>
+                    <li><strong>Exposure (E):</strong> Mức độ thường xuyên hoặc khả năng xuất
+                        hiện của tình huống vận hành.</li>
+                    <li><strong>Controllability (C):</strong> Khả năng người lái hoặc những người
+                        tham gia giao thông kiểm soát tình huống để tránh tai nạn.</li>
+                </ul>
+
+                <p>
+                    Các yếu tố này được sử dụng kết hợp để xác định ASIL cho từng Hazardous Event.
+                </p>
+
+
+                <h3>4.4. Ba yếu tố của HARA</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Yếu tố</th>
+                            <th>Ký hiệu</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Severity</td>
+                            <td>S</td>
+                            <td>Đánh giá mức độ nghiêm trọng của hậu quả có thể xảy ra.</td>
+                        </tr>
+                        <tr>
+                            <td>Exposure</td>
+                            <td>E</td>
+                            <td>Đánh giá mức độ tiếp xúc hoặc tần suất xuất hiện của tình huống vận hành.</td>
+                        </tr>
+                        <tr>
+                            <td>Controllability</td>
+                            <td>C</td>
+                            <td>Đánh giá khả năng kiểm soát tình huống của người lái hoặc
+                                những người tham gia giao thông.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong hệ thống phân loại của ISO 26262, các yếu tố này có những cấp độ
+                    đánh giá riêng. Chúng không phải là ba thông số độc lập để cộng lại thành
+                    một điểm số đơn giản.
+                </p>
+
+
+                <h3>4.5. Ví dụ minh họa về HARA</h3>
+
+                <p>
+                    Giả sử nhóm phát triển đang phân tích một chức năng điều khiển điện tử
+                    trên phương tiện.
+                </p>
+
+                <p>
+                    Trong một tình huống vận hành nhất định, hệ thống có thể tạo ra một hành vi
+                    không mong muốn. Nhóm phát triển sẽ xem xét những câu hỏi như:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Severity:</strong> Nếu tình huống dẫn đến tai nạn, hậu quả có thể
+                        nghiêm trọng đến mức nào?
+                    </li>
+                    <li>
+                        <strong>Exposure:</strong> Tình huống vận hành này xuất hiện thường xuyên
+                        đến mức nào?
+                    </li>
+                    <li>
+                        <strong>Controllability:</strong> Người lái có khả năng nhận biết và kiểm
+                        soát tình huống để tránh tai nạn hay không?
+                    </li>
+                </ul>
+
+                <p>
+                    Dựa trên kết quả đánh giá, nhóm phát triển xác định ASIL tương ứng và thiết lập
+                    Safety Goal nhằm ngăn chặn hoặc giảm thiểu rủi ro.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> HARA không chỉ đánh giá một lỗi phần mềm riêng lẻ.
+                    Việc phân tích cần xem xét chức năng ở cấp độ hệ thống, các điều kiện vận hành
+                    và những tình huống có thể dẫn đến tai nạn.
+                </div>
+
+
+                <h2>5. Automotive Safety Integrity Level (ASIL)</h2>
+
+                <h3>5.1. ASIL là gì?</h3>
+
+                <p>
+                    <strong>ASIL (Automotive Safety Integrity Level)</strong> là hệ thống phân
+                    loại mức độ yêu cầu về an toàn trong ISO 26262.
+                </p>
+
+                <p>
+                    ASIL được xác định dựa trên kết quả HARA, sử dụng các yếu tố Severity,
+                    Exposure và Controllability.
+                </p>
+
+                <p>
+                    Mục đích của ASIL là xác định mức độ nghiêm ngặt cần thiết đối với các hoạt
+                    động phát triển, phương pháp xác minh, phân tích và các biện pháp an toàn.
+                </p>
+
+                <p>
+                    ISO 26262 có bốn cấp ASIL:
+                </p>
+
+                <ul>
+                    <li>ASIL A</li>
+                    <li>ASIL B</li>
+                    <li>ASIL C</li>
+                    <li>ASIL D</li>
+                </ul>
+
+                <p>
+                    Ngoài ra còn có mức <strong>QM (Quality Management)</strong>, được sử dụng
+                    khi kết quả phân tích không yêu cầu áp dụng các yêu cầu ASIL của ISO 26262
+                    cho Hazardous Event tương ứng.
+                </p>
+
+
+                <h3>5.2. Các cấp độ ASIL</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cấp độ</th>
+                            <th>Ý nghĩa tổng quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>QM</td>
+                            <td>Quản lý chất lượng thông thường; không có yêu cầu ASIL được xác
+                                định cho Hazardous Event tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>ASIL A</td>
+                            <td>Cấp ASIL thấp nhất.</td>
+                        </tr>
+                        <tr>
+                            <td>ASIL B</td>
+                            <td>Mức yêu cầu an toàn cao hơn ASIL A.</td>
+                        </tr>
+                        <tr>
+                            <td>ASIL C</td>
+                            <td>Mức yêu cầu an toàn cao hơn ASIL B.</td>
+                        </tr>
+                        <tr>
+                            <td>ASIL D</td>
+                            <td>Cấp ASIL cao nhất, với các yêu cầu an toàn nghiêm ngặt nhất
+                                trong hệ thống phân loại này.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi cấp ASIL tăng, mức độ nghiêm ngặt của các hoạt động phát triển và
+                    chứng minh an toàn cũng tăng theo. Điều này có thể ảnh hưởng đến yêu cầu
+                    về kiến trúc, phương pháp phân tích, kiểm thử, xác minh và tài liệu.
+                </p>
+
+
+                <h3>5.3. ASIL không phải là gì?</h3>
+
+                <p>
+                    ASIL thường bị hiểu nhầm là một thang điểm đánh giá chất lượng sản phẩm
+                    hoặc mức độ an toàn tổng thể của một chiếc xe.
+                </p>
+
+                <p>
+                    Trên thực tế, ASIL là cấp độ yêu cầu an toàn được xác định cho các
+                    Safety Goal hoặc yêu cầu an toàn liên quan dựa trên kết quả phân tích.
+                </p>
+
+                <ul>
+                    <li>ASIL D không có nghĩa là sản phẩm chắc chắn an toàn tuyệt đối.</li>
+                    <li>ASIL A không có nghĩa là hệ thống có thể bỏ qua hoạt động kiểm thử.</li>
+                    <li>ASIL không chỉ được quyết định dựa trên mức độ nghiêm trọng của hậu quả.</li>
+                    <li>ASIL không phải là điểm số có thể tự chọn theo mong muốn của nhóm phát triển.</li>
+                </ul>
+
+
+                <h3>5.4. ASIL ảnh hưởng đến quá trình phát triển như thế nào?</h3>
+
+                <p>
+                    ASIL được sử dụng để xác định mức độ cần thiết của nhiều hoạt động liên quan
+                    đến phát triển sản phẩm.
+                </p>
+
+                <p><strong>Ví dụ về các hoạt động chịu ảnh hưởng:</strong></p>
+
+                <ul>
+                    <li>Yêu cầu đối với System Architecture.</li>
+                    <li>Thiết kế Hardware và Software Architecture.</li>
+                    <li>Phân tích lỗi và đánh giá các biện pháp an toàn.</li>
+                    <li>Phương pháp Verification và Validation.</li>
+                    <li>Yêu cầu về tính độc lập trong một số hoạt động xác nhận.</li>
+                    <li>Quản lý tài liệu và bằng chứng an toàn.</li>
+                </ul>
+
+                <p>
+                    Những yêu cầu cụ thể còn phụ thuộc vào phần của tiêu chuẩn, loại sản phẩm,
+                    ASIL được xác định và cách áp dụng các yêu cầu liên quan.
+                </p>
+
+
+                <h2>6. Safety Goals và Safety Requirements</h2>
+
+                <h3>6.1. Safety Goal là gì?</h3>
+
+                <p>
+                    <strong>Safety Goal</strong> là mục tiêu an toàn cấp cao được xác định từ
+                    kết quả HARA.
+                </p>
+
+                <p>
+                    Safety Goal mô tả trạng thái an toàn cần đạt được để ngăn chặn hoặc giảm
+                    thiểu một Hazardous Event đã được nhận diện.
+                </p>
+
+                <p>
+                    Mỗi Safety Goal được gắn với một ASIL tương ứng được xác định trong HARA.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <pre><code>Hazard:
+Unexpected behavior of an electronic control function
+
+Hazardous Event:
+The unexpected behavior occurs in a specific
+operational situation.
+
+Safety Goal:
+Prevent the system from entering an unsafe
+operating state.</code></pre>
+
+                <p>
+                    Đây chỉ là ví dụ minh họa về cách hình thành Safety Goal. Trong dự án thực tế,
+                    Safety Goal cần được diễn đạt cụ thể, có thể kiểm chứng và liên kết với
+                    Hazardous Event tương ứng.
+                </p>
+
+
+                <h3>6.2. Functional Safety Requirements (FSR)</h3>
+
+                <p>
+                    Sau khi xác định Safety Goal, nhóm phát triển cần phân rã mục tiêu an toàn
+                    thành các yêu cầu chức năng cụ thể hơn.
+                </p>
+
+                <p>
+                    Các yêu cầu này được gọi là
+                    <strong>Functional Safety Requirements (FSR)</strong>.
+                </p>
+
+                <p>
+                    FSR mô tả những chức năng hoặc biện pháp an toàn mà hệ thống cần thực hiện
+                    để đáp ứng Safety Goal.
+                </p>
+
+                <p><strong>Ví dụ về những nội dung có thể xuất hiện trong FSR:</strong></p>
+
+                <ul>
+                    <li>Giám sát một điều kiện vận hành quan trọng.</li>
+                    <li>Phát hiện trạng thái bất thường theo yêu cầu.</li>
+                    <li>Chuyển hệ thống sang trạng thái an toàn khi cần thiết.</li>
+                    <li>Thông báo hoặc ghi nhận một trạng thái lỗi phù hợp.</li>
+                    <li>Ngăn chặn một đầu ra không đáp ứng điều kiện an toàn.</li>
+                </ul>
+
+
+                <h3>6.3. Technical Safety Requirements (TSR)</h3>
+
+                <p>
+                    <strong>Technical Safety Requirements (TSR)</strong> là các yêu cầu an toàn
+                    được cụ thể hóa ở cấp độ kỹ thuật hệ thống.
+                </p>
+
+                <p>
+                    Trong quá trình phát triển, nhóm kỹ thuật cần xác định cách kiến trúc phần
+                    cứng, phần mềm và các thành phần liên quan phối hợp với nhau để thực hiện
+                    các FSR.
+                </p>
+
+                <p>
+                    TSR có thể mô tả những yêu cầu như:
+                </p>
+
+                <ul>
+                    <li>Thành phần nào chịu trách nhiệm thực hiện một chức năng an toàn.</li>
+                    <li>Tín hiệu nào cần được giám sát.</li>
+                    <li>Cách hệ thống phát hiện một trạng thái bất thường.</li>
+                    <li>Điều kiện kích hoạt một phản ứng an toàn.</li>
+                    <li>Cách các thành phần trao đổi thông tin liên quan đến an toàn.</li>
+                </ul>
+
+
+                <h3>6.4. Hardware và Software Safety Requirements</h3>
+
+                <p>
+                    Các yêu cầu kỹ thuật tiếp tục được phân bổ xuống phần cứng và phần mềm.
+                    Mỗi nhóm phát triển cần triển khai và xác minh những yêu cầu được phân công.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Hardware Safety Requirements:</strong> Các yêu cầu an toàn
+                        được phân bổ cho phần cứng.
+                    </li>
+                    <li>
+                        <strong>Software Safety Requirements:</strong> Các yêu cầu an toàn
+                        được phân bổ cho phần mềm.
+                    </li>
+                </ul>
+
+                <p>
+                    Nhờ việc phân rã theo nhiều cấp độ, Safety Goal cấp cao có thể được chuyển
+                    thành những yêu cầu cụ thể để nhóm System, Hardware và Software triển khai.
+                </p>
+
+
+                <h3>6.5. Quan hệ giữa các loại yêu cầu</h3>
+
+                <p>
+                    Có thể hình dung quan hệ giữa các loại yêu cầu trong quá trình phát triển
+                    an toàn như sau:
+                </p>
+
+                <pre><code>+-----------------------------+
+|      Hazardous Event        |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|         Safety Goal         |
+|                             |
+|   ASIL is assigned          |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| Functional Safety Req.      |
+|            (FSR)             |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| Technical Safety Req.       |
+|            (TSR)             |
++--------------+--------------+
+               |
+       +-------+-------+
+       |               |
+       v               v
++-------------+  +-------------+
+|  Hardware   |  |  Software   |
+| Safety Req. |  | Safety Req. |
++------+------+  +------+------+
+       |                |
+       v                v
++-------------+  +-------------+
+| HW Design   |  | SW Design   |
+| & Testing   |  | & Testing   |
++-------------+  +-------------+</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái quát để giải thích việc phân rã và phân bổ yêu cầu.
+                    Trong thực tế, các yêu cầu còn có quan hệ truy vết, phản hồi và phân bổ
+                    đến những thành phần hệ thống khác nhau.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> Safety Goal trả lời câu hỏi hệ thống cần
+                    đạt được mục tiêu an toàn nào. FSR mô tả các chức năng an toàn cần có.
+                    TSR cụ thể hóa cách các yêu cầu đó được thực hiện ở cấp độ kỹ thuật.
+                </div>
+
+
+                <h2>7. Cấu trúc bộ tiêu chuẩn ISO 26262</h2>
+
+                <h3>7.1. Tổng quan 12 phần</h3>
+
+                <p>
+                    ISO 26262:2018 được tổ chức thành 12 phần, mỗi phần tập trung vào một
+                    nhóm hoạt động hoặc một khía cạnh của Functional Safety.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Part</th>
+                            <th>Tên tiêu chuẩn</th>
+                            <th>Nội dung chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Part 1</td>
+                            <td>Vocabulary</td>
+                            <td>Thuật ngữ và định nghĩa được sử dụng trong ISO 26262.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 2</td>
+                            <td>Management of Functional Safety</td>
+                            <td>Quản lý các hoạt động Functional Safety.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 3</td>
+                            <td>Concept Phase</td>
+                            <td>Giai đoạn xác định khái niệm, Item Definition và HARA.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 4</td>
+                            <td>Product Development at the System Level</td>
+                            <td>Phát triển sản phẩm ở cấp độ hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 5</td>
+                            <td>Product Development at the Hardware Level</td>
+                            <td>Phát triển sản phẩm ở cấp độ phần cứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 6</td>
+                            <td>Product Development at the Software Level</td>
+                            <td>Phát triển sản phẩm ở cấp độ phần mềm.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 7</td>
+                            <td>Production, Operation, Service and Decommissioning</td>
+                            <td>Các hoạt động từ sản xuất đến kết thúc vòng đời sản phẩm.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 8</td>
+                            <td>Supporting Processes</td>
+                            <td>Các quy trình hỗ trợ cho Functional Safety.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 9</td>
+                            <td>ASIL-oriented and Safety-oriented Analyses</td>
+                            <td>Phân tích theo ASIL và phân tích hướng đến an toàn.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 10</td>
+                            <td>Guidelines on ISO 26262</td>
+                            <td>Hướng dẫn áp dụng và giải thích ISO 26262.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 11</td>
+                            <td>Guidelines on Application of ISO 26262 to Semiconductors</td>
+                            <td>Hướng dẫn áp dụng ISO 26262 cho các linh kiện bán dẫn.</td>
+                        </tr>
+                        <tr>
+                            <td>Part 12</td>
+                            <td>Adaptation of ISO 26262 for Motorcycles</td>
+                            <td>Điều chỉnh việc áp dụng ISO 26262 cho xe mô tô.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>7.2. Part 1 - Vocabulary</h3>
+
+                <p>
+                    Part 1 tập trung vào thuật ngữ và định nghĩa được sử dụng xuyên suốt bộ
+                    tiêu chuẩn ISO 26262.
+                </p>
+
+                <p>
+                    Một số thuật ngữ quan trọng bao gồm:
+                </p>
+
+                <ul>
+                    <li>Functional Safety.</li>
+                    <li>Hazard và Hazardous Event.</li>
+                    <li>Safety Goal.</li>
+                    <li>Safety Requirement.</li>
+                    <li>Automotive Safety Integrity Level (ASIL).</li>
+                    <li>Safety Lifecycle.</li>
+                </ul>
+
+                <p>
+                    Đây là phần nền tảng giúp các nhóm phát triển sử dụng thuật ngữ thống nhất
+                    khi đọc, viết và trao đổi các tài liệu Functional Safety.
+                </p>
+
+
+                <h3>7.3. Part 2 - Management of Functional Safety</h3>
+
+                <p>
+                    Part 2 mô tả các hoạt động quản lý cần thiết để tổ chức và kiểm soát
+                    Functional Safety trong dự án.
+                </p>
+
+                <p>
+                    Những nội dung có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Quản lý trách nhiệm và vai trò liên quan đến Functional Safety.</li>
+                    <li>Safety Plan và kế hoạch thực hiện các hoạt động an toàn.</li>
+                    <li>Quản lý Functional Safety trong quá trình phát triển.</li>
+                    <li>Confirmation Measures.</li>
+                    <li>Functional Safety Assessment.</li>
+                    <li>Safety Case và các bằng chứng liên quan.</li>
+                </ul>
+
+
+                <h3>7.4. Part 3 - Concept Phase</h3>
+
+                <p>
+                    Part 3 tập trung vào giai đoạn Concept của quá trình phát triển.
+                </p>
+
+                <p>
+                    Đây là phần quan trọng để xác định hệ thống cần phát triển, nhận diện những
+                    nguy cơ và thiết lập mục tiêu an toàn ban đầu.
+                </p>
+
+                <p><strong>Các hoạt động tiêu biểu:</strong></p>
+
+                <ul>
+                    <li>Item Definition.</li>
+                    <li>Hazard Analysis and Risk Assessment (HARA).</li>
+                    <li>Automotive Safety Integrity Level Classification.</li>
+                    <li>Functional Safety Concept.</li>
+                </ul>
+
+
+                <h3>7.5. Part 4 - Product Development at the System Level</h3>
+
+                <p>
+                    Part 4 đề cập đến quá trình phát triển sản phẩm ở cấp độ hệ thống.
+                </p>
+
+                <p>
+                    Nội dung tập trung vào việc chuyển các yêu cầu an toàn từ giai đoạn Concept
+                    thành yêu cầu kỹ thuật và kiến trúc hệ thống có thể triển khai.
+                </p>
+
+                <p><strong>Những nội dung chính:</strong></p>
+
+                <ul>
+                    <li>Technical Safety Requirements.</li>
+                    <li>Technical Safety Concept.</li>
+                    <li>System Architectural Design.</li>
+                    <li>System Integration and Testing.</li>
+                    <li>Safety Validation.</li>
+                </ul>
+
+
+                <h3>7.6. Part 5 - Product Development at the Hardware Level</h3>
+
+                <p>
+                    Part 5 tập trung vào phát triển phần cứng có liên quan đến Functional Safety.
+                </p>
+
+                <p>
+                    Phần này đề cập đến việc xây dựng yêu cầu phần cứng, thiết kế kiến trúc,
+                    đánh giá và xác minh các đặc tính an toàn của phần cứng.
+                </p>
+
+                <p><strong>Những nội dung liên quan:</strong></p>
+
+                <ul>
+                    <li>Hardware Safety Requirements.</li>
+                    <li>Hardware Design.</li>
+                    <li>Hardware Architectural Metrics.</li>
+                    <li>Hardware Failure Analysis.</li>
+                    <li>Hardware Verification.</li>
+                </ul>
+
+
+                <h3>7.7. Part 6 - Product Development at the Software Level</h3>
+
+                <p>
+                    Part 6 là phần đặc biệt quan trọng đối với các kỹ sư Embedded Software
+                    và Automotive Software.
+                </p>
+
+                <p>
+                    Phần này tập trung vào quá trình phát triển phần mềm có liên quan đến an toàn,
+                    từ phân tích yêu cầu đến thiết kế, triển khai và xác minh.
+                </p>
+
+                <p><strong>Một số nội dung chính:</strong></p>
+
+                <ul>
+                    <li>Software Safety Requirements.</li>
+                    <li>Software Architectural Design.</li>
+                    <li>Software Unit Design and Implementation.</li>
+                    <li>Software Unit Verification.</li>
+                    <li>Software Integration and Verification.</li>
+                </ul>
+
+                <p>
+                    Đây là phần có liên hệ trực tiếp với nhiều hoạt động phát triển phần mềm
+                    nhúng như thiết kế module, lập trình C/C++, kiểm thử unit, kiểm thử integration
+                    và quản lý yêu cầu phần mềm.
+                </p>
+
+
+                <h3>7.8. Part 7 - Production, Operation, Service and Decommissioning</h3>
+
+                <p>
+                    Part 7 tập trung vào những hoạt động liên quan đến Functional Safety sau
+                    giai đoạn phát triển sản phẩm.
+                </p>
+
+                <p>
+                    Những hoạt động này bao gồm sản xuất, vận hành, bảo dưỡng, dịch vụ và kết
+                    thúc vòng đời sản phẩm.
+                </p>
+
+                <p>
+                    Mục tiêu là bảo đảm các yêu cầu an toàn vẫn được duy trì trong quá trình
+                    sản phẩm được sản xuất và sử dụng.
+                </p>
+
+
+                <h3>7.9. Part 8 - Supporting Processes</h3>
+
+                <p>
+                    Part 8 mô tả những quy trình hỗ trợ cần thiết để thực hiện và duy trì
+                    các hoạt động Functional Safety.
+                </p>
+
+                <p><strong>Một số quy trình hỗ trợ:</strong></p>
+
+                <ul>
+                    <li>Configuration Management.</li>
+                    <li>Change Management.</li>
+                    <li>Verification.</li>
+                    <li>Documentation Management.</li>
+                    <li>Requirements Management.</li>
+                    <li>Software Tools Qualification.</li>
+                </ul>
+
+                <p>
+                    Những quy trình này giúp dự án quản lý phiên bản, theo dõi thay đổi,
+                    duy trì tính nhất quán và tạo bằng chứng cho các hoạt động an toàn.
+                </p>
+
+
+                <h3>7.10. Part 9 - ASIL-oriented and Safety-oriented Analyses</h3>
+
+                <p>
+                    Part 9 tập trung vào các phương pháp phân tích hướng đến ASIL và an toàn.
+                </p>
+
+                <p><strong>Một số nội dung chính:</strong></p>
+
+                <ul>
+                    <li>ASIL Decomposition.</li>
+                    <li>Coexistence of Elements.</li>
+                    <li>Analysis of Dependent Failures.</li>
+                    <li>Safety Analyses.</li>
+                </ul>
+
+                <p>
+                    Các hoạt động này hỗ trợ nhóm phát triển đánh giá sự phụ thuộc giữa những
+                    thành phần, nhận diện lỗi có thể ảnh hưởng đến nhiều thành phần và xem xét
+                    những biện pháp cần thiết để đáp ứng yêu cầu an toàn.
+                </p>
+
+
+                <h3>7.11. Part 10 - Guidelines on ISO 26262</h3>
+
+                <p>
+                    Part 10 cung cấp các hướng dẫn giúp người đọc hiểu và áp dụng những nội dung
+                    của ISO 26262.
+                </p>
+
+                <p>
+                    Phần này có vai trò hỗ trợ giải thích các khái niệm, phương pháp và cách
+                    tiếp cận được sử dụng trong các phần khác của bộ tiêu chuẩn.
+                </p>
+
+                <p>
+                    Cần phân biệt Part 10 với các phần quy định yêu cầu phát triển sản phẩm:
+                    Part 10 chủ yếu mang tính hướng dẫn, không thay thế các yêu cầu áp dụng
+                    trong những phần tương ứng.
+                </p>
+
+
+                <h3>7.12. Part 11 - Guidelines on Application of ISO 26262 to Semiconductors</h3>
+
+                <p>
+                    Part 11 đề cập đến hướng dẫn áp dụng ISO 26262 đối với các linh kiện bán dẫn
+                    (Semiconductors) được sử dụng trong hệ thống Automotive.
+                </p>
+
+                <p>
+                    Những linh kiện bán dẫn như Microcontroller, Memory, IC và các thành phần
+                    điện tử khác có thể đóng vai trò quan trọng trong một hệ thống liên quan
+                    đến an toàn.
+                </p>
+
+                <p>
+                    Vì vậy, việc đánh giá các thành phần này cần xem xét đặc tính và những vấn
+                    đề kỹ thuật riêng của công nghệ bán dẫn.
+                </p>
+
+
+                <h3>7.13. Part 12 - Adaptation of ISO 26262 for Motorcycles</h3>
+
+                <p>
+                    Part 12 tập trung vào việc điều chỉnh cách áp dụng ISO 26262 cho phương tiện
+                    hai bánh có động cơ thuộc phạm vi của tiêu chuẩn.
+                </p>
+
+                <p>
+                    Do đặc điểm vận hành và cấu trúc của xe mô tô khác với ô tô, một số hoạt động
+                    đánh giá nguy cơ, xác định tình huống vận hành và tích hợp hệ thống cần được
+                    xem xét theo đặc thù của loại phương tiện này.
+                </p>
+
+
+                <h2>8. Functional Safety trong phát triển Embedded Software</h2>
+
+                <h3>8.1. Vai trò của Embedded Software Engineer</h3>
+
+                <p>
+                    Đối với kỹ sư Embedded Software, Functional Safety không chỉ là một yêu
+                    cầu thuộc về nhóm System hoặc Safety Engineer. Những yêu cầu an toàn có thể
+                    được phân bổ trực tiếp xuống phần mềm và ảnh hưởng đến nhiều hoạt động
+                    phát triển hằng ngày.
+                </p>
+
+                <p>
+                    Ví dụ, khi phát triển một Software Component liên quan đến chức năng an toàn,
+                    kỹ sư phần mềm cần hiểu những yêu cầu được phân bổ, thực hiện đúng thiết kế
+                    và cung cấp bằng chứng xác minh tương ứng.
+                </p>
+
+                <p><strong>Một số hoạt động có liên quan:</strong></p>
+
+                <ul>
+                    <li>Phân tích và làm rõ Software Safety Requirements.</li>
+                    <li>Thiết kế Software Architecture.</li>
+                    <li>Triển khai phần mềm theo yêu cầu và quy trình dự án.</li>
+                    <li>Thực hiện Unit Testing.</li>
+                    <li>Thực hiện Software Integration Testing.</li>
+                    <li>Phân tích và xử lý Defect.</li>
+                    <li>Quản lý thay đổi và truy vết yêu cầu.</li>
+                    <li>Chuẩn bị tài liệu và bằng chứng xác minh.</li>
+                </ul>
+
+
+                <h3>8.2. Ví dụ về Software Safety Requirement</h3>
+
+                <p>
+                    Giả sử một ECU nhận dữ liệu từ cảm biến và sử dụng dữ liệu đó để thực hiện
+                    một chức năng điều khiển.
+                </p>
+
+                <p>
+                    Một yêu cầu an toàn ở cấp độ phần mềm có thể mô tả rằng phần mềm phải phát
+                    hiện dữ liệu đầu vào không hợp lệ theo những điều kiện đã được xác định và
+                    thực hiện hành động xử lý phù hợp.
+                </p>
+
+                <p>
+                    Từ yêu cầu này, nhóm phát triển có thể xác định các hoạt động như:
+                </p>
+
+                <ul>
+                    <li>Kiểm tra tính hợp lệ của dữ liệu đầu vào.</li>
+                    <li>Kiểm tra trạng thái cập nhật của dữ liệu theo yêu cầu.</li>
+                    <li>Xử lý các trường hợp dữ liệu không đáp ứng điều kiện hợp lệ.</li>
+                    <li>Xác minh hành vi phần mềm thông qua Unit Test.</li>
+                    <li>Kiểm tra sự phối hợp với các thành phần khác trong Integration Test.</li>
+                </ul>
+
+                <p>
+                    Những hành động cụ thể phải được xác định từ Safety Requirements và thiết kế
+                    được phê duyệt, không nên tự ý đưa ra một cơ chế xử lý chung cho mọi hệ thống.
+                </p>
+
+
+                <h3>8.3. Mối liên hệ với quy trình phát triển phần mềm</h3>
+
+                <p>
+                    Trong một dự án Automotive, các hoạt động Functional Safety có thể được
+                    tích hợp vào quy trình phát triển phần mềm hiện có.
+                </p>
+
+                <p>
+                    Ví dụ, khi nhận một Software Requirement, nhóm phát triển không chỉ quan
+                    tâm đến chức năng cần triển khai mà còn cần xác định yêu cầu đó có liên quan
+                    đến an toàn hay không, có ASIL được phân bổ hay không và những hoạt động
+                    xác minh nào cần thực hiện.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hoạt động phát triển</th>
+                            <th>Liên hệ với Functional Safety</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Requirement Analysis</td>
+                            <td>Làm rõ yêu cầu phần mềm và các yêu cầu an toàn được phân bổ.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Design</td>
+                            <td>Thiết kế đáp ứng yêu cầu và kiến trúc liên quan đến an toàn.</td>
+                        </tr>
+                        <tr>
+                            <td>Implementation</td>
+                            <td>Triển khai phần mềm theo thiết kế và quy trình được yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Unit Testing</td>
+                            <td>Xác minh hành vi của từng đơn vị phần mềm.</td>
+                        </tr>
+                        <tr>
+                            <td>Integration Testing</td>
+                            <td>Kiểm tra sự phối hợp giữa các thành phần phần mềm.</td>
+                        </tr>
+                        <tr>
+                            <td>Defect Management</td>
+                            <td>Ghi nhận, phân tích và xử lý lỗi có liên quan đến yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Configuration Management</td>
+                            <td>Kiểm soát phiên bản phần mềm, tài liệu và các thay đổi.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h2>9. Verification, Validation và Confirmation Measures</h2>
+
+                <h3>9.1. Verification là gì?</h3>
+
+                <p>
+                    <strong>Verification</strong> là hoạt động kiểm tra nhằm xác định một sản
+                    phẩm hoặc một kết quả công việc có đáp ứng các yêu cầu và đặc tả tương ứng
+                    hay không.
+                </p>
+
+                <p>
+                    Trong phát triển phần mềm, Verification có thể được thực hiện thông qua:
+                </p>
+
+                <ul>
+                    <li>Review yêu cầu và thiết kế.</li>
+                    <li>Code Review.</li>
+                    <li>Static Analysis.</li>
+                    <li>Software Unit Testing.</li>
+                    <li>Software Integration Testing.</li>
+                    <li>Kiểm tra kết quả so với Expected Result.</li>
+                </ul>
+
+                <h3>9.2. Validation là gì?</h3>
+
+                <p>
+                    <strong>Validation</strong> tập trung vào việc xác nhận rằng sản phẩm hoặc
+                    hệ thống đáp ứng mục tiêu an toàn và mục đích sử dụng dự kiến.
+                </p>
+
+                <p>
+                    Trong ISO 26262, Safety Validation được thực hiện để đánh giá xem hệ thống
+                    có đáp ứng Safety Goals trong phạm vi và điều kiện sử dụng đã xác định hay không.
+                </p>
+
+                <h3>9.3. Phân biệt Verification và Validation</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Verification</th>
+                            <th>Validation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Kiểm tra sản phẩm có đáp ứng đặc tả hay không.</td>
+                            <td>Xác nhận sản phẩm đáp ứng mục tiêu và yêu cầu sử dụng dự kiến.</td>
+                        </tr>
+                        <tr>
+                            <td>Trọng tâm</td>
+                            <td>Requirements, Design và Implementation.</td>
+                            <td>Safety Goals và mục đích an toàn cấp cao.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>Unit Test, Integration Test, Review.</td>
+                            <td>Safety Validation ở cấp độ hệ thống.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>9.4. Confirmation Measures</h3>
+
+                <p>
+                    ISO 26262 cũng có các hoạt động xác nhận nhằm đánh giá tính phù hợp và mức
+                    độ đáp ứng của những hoạt động Functional Safety.
+                </p>
+
+                <p>
+                    Một số hoạt động tiêu biểu:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Confirmation Review:</strong> Review độc lập đối với những
+                        work product hoặc kết quả công việc thuộc phạm vi cần xác nhận.
+                    </li>
+                    <li>
+                        <strong>Functional Safety Audit:</strong> Đánh giá xem các quy trình
+                        và hoạt động Functional Safety có được thực hiện phù hợp hay không.
+                    </li>
+                    <li>
+                        <strong>Functional Safety Assessment:</strong> Đánh giá tổng thể về
+                        Functional Safety của sản phẩm hoặc dự án theo yêu cầu tương ứng.
+                    </li>
+                </ul>
+
+                <p>
+                    Những hoạt động này giúp cung cấp thêm bằng chứng rằng các quy trình và
+                    kết quả liên quan đến an toàn đã được xem xét phù hợp.
+                </p>
+
+
+                <h2>10. Phân biệt ISO 26262, ISO 21448 và ISO/SAE 21434</h2>
+
+                <p>
+                    Trong các dự án Automotive hiện đại, ngoài Functional Safety còn có những
+                    lĩnh vực quan trọng khác như Safety of the Intended Functionality và
+                    Cybersecurity.
+                </p>
+
+                <p>
+                    Ba tiêu chuẩn dưới đây có thể cùng được xem xét trong một dự án nhưng
+                    giải quyết những vấn đề khác nhau.
+                </p>
+
+                <h3>10.1. ISO 26262 - Functional Safety</h3>
+
+                <p>
+                    ISO 26262 tập trung vào những nguy cơ có thể phát sinh do hành vi bất thường
+                    hoặc sự cố của hệ thống E/E liên quan đến an toàn.
+                </p>
+
+                <p>
+                    Ví dụ: Một thành phần điện tử bị lỗi và khiến hệ thống điều khiển không
+                    thực hiện đúng chức năng đã thiết kế.
+                </p>
+
+
+                <h3>10.2. ISO 21448 - Safety of the Intended Functionality (SOTIF)</h3>
+
+                <p>
+                    ISO 21448 đề cập đến <strong>Safety of the Intended Functionality (SOTIF)</strong>.
+                </p>
+
+                <p>
+                    SOTIF tập trung vào những nguy cơ phát sinh do sự không đầy đủ trong đặc tả
+                    chức năng dự kiến hoặc do giới hạn về hiệu suất của chức năng được triển khai,
+                    ngay cả khi hệ thống không gặp lỗi theo cách hiểu thông thường của Functional
+                    Safety.
+                </p>
+
+                <p>
+                    Ví dụ, một hệ thống hỗ trợ người lái có thể hoạt động đúng theo thiết kế phần
+                    mềm nhưng vẫn không nhận diện được một tình huống giao thông nằm ngoài giới
+                    hạn khả năng của chức năng.
+                </p>
+
+                <p>
+                    Đây là một vấn đề khác với trường hợp phần mềm hoặc phần cứng bị lỗi.
+                </p>
+
+
+                <h3>10.3. ISO/SAE 21434 - Cybersecurity Engineering</h3>
+
+                <p>
+                    ISO/SAE 21434 tập trung vào quản lý rủi ro an ninh mạng trong quá trình
+                    phát triển và vòng đời của các hệ thống điện và điện tử trên phương tiện.
+                </p>
+
+                <p>
+                    Tiêu chuẩn này đề cập đến việc nhận diện và quản lý các rủi ro liên quan đến
+                    Cybersecurity đối với hệ thống, thành phần và giao diện của phương tiện.
+                </p>
+
+                <p>
+                    Ví dụ, một giao diện giao tiếp có thể trở thành điểm cần xem xét về
+                    Cybersecurity nếu việc truy cập trái phép có thể ảnh hưởng đến hệ thống.
+                </p>
+
+
+                <h3>10.4. Bảng so sánh</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Lĩnh vực</th>
+                            <th>Trọng tâm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 26262</td>
+                            <td>Functional Safety</td>
+                            <td>Nguy cơ do hành vi bất thường hoặc sự cố của hệ thống E/E.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 21448</td>
+                            <td>SOTIF</td>
+                            <td>Nguy cơ do giới hạn hoặc thiếu sót của chức năng dự kiến.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO/SAE 21434</td>
+                            <td>Cybersecurity</td>
+                            <td>Quản lý rủi ro an ninh mạng trong hệ thống Automotive.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    <ul>
+                        <li>ISO 26262: Hệ thống gặp lỗi hoặc có hành vi bất thường.</li>
+                        <li>ISO 21448: Chức năng có thể hoạt động đúng thiết kế nhưng vẫn có giới hạn
+                            gây ra rủi ro.</li>
+                        <li>ISO/SAE 21434: Xem xét rủi ro do các mối đe dọa an ninh mạng.</li>
+                    </ul>
+                    Đây là cách phân biệt tổng quan. Trong một dự án thực tế, các lĩnh vực này
+                    có thể tương tác và cần được phối hợp trong quá trình phát triển.
+                </div>
+
+
+                <h2>11. Ví dụ tổng quan về Functional Safety trong một dự án Embedded</h2>
+
+                <h3>11.1. Bối cảnh dự án</h3>
+
+                <p>
+                    Giả sử một nhóm phát triển đang xây dựng phần mềm cho một ECU điều khiển
+                    một chức năng điện tử trên phương tiện.
+                </p>
+
+                <p>
+                    ECU nhận dữ liệu từ cảm biến, xử lý thông tin và điều khiển đầu ra.
+                    Chức năng này được xác định là có liên quan đến an toàn nên dự án cần
+                    thực hiện các hoạt động theo ISO 26262 tương ứng.
+                </p>
+
+
+                <h3>11.2. Các hoạt động chính</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Giai đoạn</th>
+                            <th>Hoạt động</th>
+                            <th>Kết quả mong đợi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Concept</td>
+                            <td>Item Definition và HARA.</td>
+                            <td>Xác định phạm vi hệ thống, Hazard và ASIL.</td>
+                        </tr>
+                        <tr>
+                            <td>Functional Safety Concept</td>
+                            <td>Xác định Safety Goal và FSR.</td>
+                            <td>Có mục tiêu và yêu cầu an toàn cấp chức năng.</td>
+                        </tr>
+                        <tr>
+                            <td>System Development</td>
+                            <td>Thiết kế Technical Safety Concept và System Architecture.</td>
+                            <td>Có kiến trúc và TSR phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Hardware Development</td>
+                            <td>Phát triển và xác minh phần cứng.</td>
+                            <td>Đáp ứng các Hardware Safety Requirements.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Development</td>
+                            <td>Thiết kế, triển khai và xác minh phần mềm.</td>
+                            <td>Đáp ứng các Software Safety Requirements.</td>
+                        </tr>
+                        <tr>
+                            <td>Integration</td>
+                            <td>Tích hợp và kiểm thử các thành phần.</td>
+                            <td>Xác minh hoạt động phối hợp của hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Safety Validation</td>
+                            <td>Xác nhận các Safety Goals.</td>
+                            <td>Cung cấp bằng chứng đáp ứng mục tiêu an toàn.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>11.3. Vai trò của nhóm Embedded Software</h3>
+
+                <p>
+                    Khi dự án đi vào giai đoạn phát triển phần mềm, kỹ sư Embedded Software
+                    có thể nhận được các Software Safety Requirements đã được phân bổ từ
+                    cấp độ hệ thống.
+                </p>
+
+                <p>
+                    Từ đó, nhóm phần mềm cần:
+                </p>
+
+                <ul>
+                    <li>Đọc và làm rõ các yêu cầu được giao.</li>
+                    <li>Hiểu mức ASIL và các ràng buộc liên quan đến phần mềm.</li>
+                    <li>Thiết kế kiến trúc phần mềm phù hợp.</li>
+                    <li>Triển khai chức năng theo yêu cầu và coding guidelines của dự án.</li>
+                    <li>Thực hiện các hoạt động Unit Verification.</li>
+                    <li>Tích hợp phần mềm và thực hiện Integration Verification.</li>
+                    <li>Ghi nhận kết quả kiểm thử và quản lý các lỗi phát hiện được.</li>
+                    <li>Duy trì liên kết giữa yêu cầu, thiết kế, mã nguồn và kết quả kiểm thử.</li>
+                </ul>
+
+                <p>
+                    Qua ví dụ này, có thể thấy Functional Safety không phải là một công việc
+                    riêng biệt chỉ được thực hiện ở cuối dự án. Đây là một phần được tích hợp
+                    vào nhiều hoạt động của quá trình phát triển sản phẩm.
+                </p>
+
+
+                <h2>12. Những điểm cần ghi nhớ</h2>
+
+                <h3>12.1. ISO 26262 là tiêu chuẩn về Functional Safety</h3>
+
+                <p>
+                    ISO 26262 cung cấp framework để quản lý và phát triển các hệ thống E/E
+                    liên quan đến an toàn trong phạm vi phương tiện giao thông đường bộ.
+                </p>
+
+
+                <h3>12.2. Safety Lifecycle bao phủ nhiều giai đoạn</h3>
+
+                <p>
+                    Functional Safety được xem xét từ Concept, phát triển hệ thống, phần cứng,
+                    phần mềm cho đến sản xuất, vận hành, bảo dưỡng và kết thúc vòng đời sản phẩm.
+                </p>
+
+
+                <h3>12.3. HARA là hoạt động quan trọng trong Concept Phase</h3>
+
+                <p>
+                    HARA phân tích Hazard và đánh giá rủi ro dựa trên Severity, Exposure và
+                    Controllability. Kết quả được sử dụng để xác định ASIL và Safety Goals.
+                </p>
+
+
+                <h3>12.4. ASIL xác định mức yêu cầu an toàn</h3>
+
+                <p>
+                    ISO 26262 có các cấp QM, ASIL A, ASIL B, ASIL C và ASIL D. ASIL được sử dụng
+                    để xác định mức độ nghiêm ngặt cần thiết đối với những hoạt động phát triển
+                    và xác minh liên quan.
+                </p>
+
+
+                <h3>12.5. Safety Requirements được phân rã qua nhiều cấp độ</h3>
+
+                <p>
+                    Safety Goal là mục tiêu an toàn cấp cao. FSR mô tả các yêu cầu chức năng
+                    an toàn, trong khi TSR cụ thể hóa các yêu cầu đó ở cấp độ kỹ thuật hệ thống.
+                    Những yêu cầu tiếp tục được phân bổ xuống Hardware và Software.
+                </p>
+
+
+                <h3>12.6. Part 6 đặc biệt quan trọng đối với Embedded Software</h3>
+
+                <p>
+                    Part 6 tập trung vào phát triển phần mềm và có liên hệ trực tiếp với
+                    Requirement Analysis, Software Architecture, Implementation, Unit Testing
+                    và Integration Testing.
+                </p>
+
+
+                <h3>12.7. Phân biệt Functional Safety, SOTIF và Cybersecurity</h3>
+
+                <p>
+                    ISO 26262, ISO 21448 và ISO/SAE 21434 giải quyết các nhóm vấn đề khác nhau
+                    và có thể được áp dụng phối hợp trong một dự án Automotive.
+                </p>
+
+
+                <h2>13. Tài liệu tham khảo</h2>
+
+                <p>
+                    Các tài liệu dưới đây là nguồn tham khảo chính để tìm hiểu sâu hơn về
+                    ISO 26262 và những tiêu chuẩn có liên quan.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Nội dung</th>
+                            <th>Tham khảo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 26262-1:2018</td>
+                            <td>Vocabulary</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68383.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-2:2018</td>
+                            <td>Management of Functional Safety</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68384.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-3:2018</td>
+                            <td>Concept Phase</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68385.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-4:2018</td>
+                            <td>Product Development at the System Level</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68386.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-5:2018</td>
+                            <td>Product Development at the Hardware Level</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68387.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-6:2018</td>
+                            <td>Product Development at the Software Level</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68388.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-7:2018</td>
+                            <td>Production, Operation, Service and Decommissioning</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68389.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-8:2018</td>
+                            <td>Supporting Processes</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68390.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-9:2018</td>
+                            <td>ASIL-oriented and Safety-oriented Analyses</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68391.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-10:2018</td>
+                            <td>Guidelines on ISO 26262</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68392.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-11:2018</td>
+                            <td>Guidelines on Application of ISO 26262 to Semiconductors</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/69604.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-12:2018</td>
+                            <td>Adaptation of ISO 26262 for Motorcycles</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/69605.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 21448:2022</td>
+                            <td>Safety of the Intended Functionality (SOTIF)</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/77490.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO/SAE 21434:2021</td>
+                            <td>Road Vehicles - Cybersecurity Engineering</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/70918.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <div class="note">
+                    <strong>Tổng kết:</strong>
+                    ISO 26262 là nền tảng quan trọng trong lĩnh vực Functional Safety của
+                    Automotive. Tiêu chuẩn này giúp các nhóm phát triển nhận diện nguy cơ,
+                    đánh giá rủi ro, xác định ASIL, xây dựng Safety Requirements và triển khai
+                    các hoạt động an toàn xuyên suốt vòng đời sản phẩm. Đối với kỹ sư Embedded
+                    Software, việc hiểu ISO 26262 giúp làm rõ cách các yêu cầu an toàn được
+                    chuyển thành thiết kế, mã nguồn, kiểm thử và bằng chứng xác minh trong
+                    một dự án Automotive.
+                </div>
+
+
+                <div class="pager">
+                    <a class="btn" href="lesson-42.html">← Bài trước</a>
+                    <a class="btn" href="lesson-44.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+</html>

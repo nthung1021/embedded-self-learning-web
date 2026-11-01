@@ -1,0 +1,3904 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP) | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+                <a href="lesson-38.html">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
+                <a href="lesson-39.html">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer Services</a>
+                <a href="lesson-40.html">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN Implementation</a>
+                <a href="lesson-41.html" class="active" aria-current="page">Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP)</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP)</h1>
+
+                <p>
+                    Trong các bài trước, chúng ta đã tìm hiểu
+                    cách UDS được triển khai trên CAN thông qua
+                    ISO 14229-3 và cách diagnostic message
+                    được truyền bằng ISO-TP theo ISO 15765-2.
+                </p>
+
+                <p>
+                    Tuy nhiên, CAN không phải công nghệ mạng
+                    duy nhất được sử dụng trong Automotive.
+                    Khi hệ thống xe ngày càng có nhiều ECU,
+                    nhiều chức năng kết nối và nhu cầu truyền
+                    lượng dữ liệu lớn hơn, Ethernet cũng trở thành
+                    một công nghệ truyền thông quan trọng.
+                </p>
+
+                <p>
+                    Để hỗ trợ diagnostic communication
+                    trên nền tảng IP/Ethernet, Automotive
+                    sử dụng <strong>DoIP - Diagnostics over Internet Protocol</strong>,
+                    được quy định trong bộ tiêu chuẩn ISO 13400.
+                </p>
+
+                <p>
+                    DoIP cho phép Diagnostic Tester
+                    giao tiếp với DoIP Entity trong xe
+                    thông qua mạng IP.
+                    DoIP Entity có thể là một ECU hỗ trợ DoIP
+                    hoặc một Vehicle Gateway có khả năng
+                    định tuyến diagnostic message đến
+                    những ECU khác trong xe.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào bộ tiêu chuẩn ISO 13400,
+                    đặc biệt là ISO 13400-2:2025,
+                    DoIP Architecture, DoIP Entity,
+                    Client và Server, IP Addressing,
+                    TCP, UDP, Port 13400, Vehicle Discovery,
+                    Vehicle Announcement, DoIP Header,
+                    Payload Type, Logical Address,
+                    Routing Activation, Diagnostic Message,
+                    ACK/NACK, Alive Check và TLS.
+                    Bài học cũng giới thiệu cách AUTOSAR Classic
+                    triển khai DoIP thông qua các module
+                    DoIP, SoAd, TcpIp, PduR, DCM và Ethernet Stack.
+                </div>
+
+                <h2>1. DoIP là gì?</h2>
+
+                <p>
+                    <strong>DoIP</strong> là viết tắt của
+                    <strong>Diagnostics over Internet Protocol</strong>.
+                </p>
+
+                <p>
+                    Đây là công nghệ cho phép thực hiện
+                    diagnostic communication giữa
+                    Diagnostic Tester và các ECU trên xe
+                    thông qua mạng sử dụng Internet Protocol (IP).
+                </p>
+
+                <p>
+                    Trong Automotive, DoIP thường được
+                    triển khai trên nền tảng Ethernet.
+                    Nó sử dụng các giao thức mạng như
+                    IP, TCP và UDP để thực hiện việc
+                    phát hiện thiết bị, thiết lập kết nối
+                    và truyền diagnostic message.
+                </p>
+
+                <p>
+                    Tên tiêu chuẩn chính:
+                </p>
+
+                <pre><code>ISO 13400
+
+Road vehicles -
+Diagnostic communication over Internet Protocol (DoIP)</code></pre>
+
+                <p>
+                    Trong bộ ISO 13400, ISO 13400-2
+                    là tài liệu quan trọng quy định
+                    Transport Protocol và Network Layer Services
+                    dành cho DoIP.
+                </p>
+
+                <h3>1.1. DoIP được sử dụng để làm gì?</h3>
+
+                <p>
+                    DoIP được sử dụng để hỗ trợ
+                    những hoạt động diagnostic communication
+                    giữa thiết bị kiểm tra bên ngoài
+                    và các ECU trong xe.
+                </p>
+
+                <p>
+                    Một số use case:
+                </p>
+
+                <ul>
+                    <li>Vehicle Discovery: Phát hiện xe hoặc DoIP Entity trong mạng.</li>
+                    <li>Vehicle Identification: Thu thập thông tin nhận dạng xe.</li>
+                    <li>Diagnostic Communication: Gửi UDS Request và nhận Response.</li>
+                    <li>Gateway Routing: Chuyển diagnostic message đến ECU đích.</li>
+                    <li>Connection Management: Quản lý kết nối TCP và trạng thái communication.</li>
+                    <li>ECU Software Update: Hỗ trợ các hoạt động cập nhật phần mềm sử dụng diagnostic service phù hợp.</li>
+                </ul>
+
+                <h3>1.2. DoIP có phải là Internet công cộng không?</h3>
+
+                <p>
+                    Không.
+                    Mặc dù tên tiêu chuẩn chứa cụm từ
+                    "Internet Protocol", DoIP không có nghĩa
+                    là Diagnostic Tester phải kết nối đến
+                    Internet công cộng.
+                </p>
+
+                <p>
+                    DoIP sử dụng bộ giao thức IP
+                    để truyền communication.
+                    Trong thực tế, mạng DoIP thường
+                    nằm trong một mạng Ethernet riêng
+                    của xe hoặc mạng kiểm thử được quản lý.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    DoIP sử dụng Internet Protocol,
+                    nhưng không đồng nghĩa với việc
+                    diagnostic communication phải đi qua Internet.
+                    Mạng Ethernet/IP có thể là mạng nội bộ
+                    và được giới hạn trong kiến trúc xe.
+                </div>
+
+                <h2>2. ISO 13400 là gì?</h2>
+
+                <p>
+                    ISO 13400 là bộ tiêu chuẩn
+                    mô tả Diagnostic Communication
+                    over Internet Protocol (DoIP)
+                    dành cho Road Vehicles.
+                </p>
+
+                <p>
+                    Bộ tiêu chuẩn này xác định các yêu cầu
+                    để Diagnostic Tester có thể phát hiện
+                    và giao tiếp với các DoIP Entity
+                    được cài đặt trong xe.
+                </p>
+
+                <p>
+                    Một trong những tài liệu quan trọng nhất
+                    đối với hoạt động DoIP là:
+                </p>
+
+                <pre><code>ISO 13400-2:2025
+
+Road vehicles -
+Diagnostic communication over Internet Protocol (DoIP) -
+
+Part 2:
+Transport protocol and network layer services</code></pre>
+
+                <p>
+                    ISO 13400-2:2025 là Edition 3,
+                    được xuất bản vào tháng 6/2025.
+                    Tiêu chuẩn quy định yêu cầu cho
+                    diagnostic communication có bảo mật
+                    và không bảo mật giữa DoIP Client
+                    và các DoIP Server trong xe.
+                </p>
+
+                <p>
+                    Phiên bản này sử dụng IP,
+                    Transmission Control Protocol (TCP)
+                    và User Datagram Protocol (UDP)
+                    để thực hiện các hoạt động communication.
+                </p>
+
+                <h3>2.1. Một số chức năng được ISO 13400-2 quy định</h3>
+
+                <p>
+                    Những chức năng bắt buộc được đề cập
+                    trong phạm vi tiêu chuẩn gồm:
+                </p>
+
+                <ul>
+                    <li>Vehicle Network Integration và IP Address Assignment.</li>
+                    <li>Vehicle Announcement và Vehicle Discovery.</li>
+                    <li>Vehicle Basic Status Information Retrieval.</li>
+                    <li>Connection Establishment và Connection Maintenance.</li>
+                    <li>Vehicle Gateway Control.</li>
+                    <li>Data Routing đến và từ các thành phần trong xe.</li>
+                    <li>Error Handling, ví dụ khi xảy ra physical network disconnect.</li>
+                </ul>
+
+                <p>
+                    Một số chức năng tùy chọn:
+                </p>
+
+                <ul>
+                    <li>DoIP Entity Status Monitoring.</li>
+                    <li>Transport Layer Security (TLS).</li>
+                    <li>DoIP Entity Firewall Capabilities.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý về phiên bản:</strong>
+                    ISO 13400-2:2025 là Edition 3
+                    đã được xuất bản.
+                    Một bản Committee Draft cho Edition 4
+                    đang được phát triển, nhưng không nên
+                    xem bản draft này là tiêu chuẩn
+                    đã được xuất bản hoặc thay thế Edition 3.
+                </div>
+
+                <h2>3. Các phần trong bộ ISO 13400</h2>
+
+                <p>
+                    Bộ ISO 13400 được chia thành
+                    nhiều phần để mô tả những khía cạnh
+                    khác nhau của DoIP.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Nội dung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 13400-1</td>
+                            <td>General Information and Use Case Definition. Đây là tài liệu phiên bản cũ, đã được rút lại.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 13400-2</td>
+                            <td>Transport Protocol and Network Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 13400-3</td>
+                            <td>Wired Vehicle Interface based on IEEE 802.3.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 13400-4</td>
+                            <td>Ethernet-based High-speed Data Link Connector.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>3.1. ISO 13400-2</h3>
+
+                <p>
+                    Đây là phần quan trọng nhất
+                    trong bài học này.
+                    Nó định nghĩa các yêu cầu
+                    về Transport Protocol, Network Layer,
+                    DoIP message, Vehicle Discovery,
+                    Routing Activation và những hoạt động
+                    communication khác.
+                </p>
+
+                <h3>3.2. ISO 13400-3</h3>
+
+                <p>
+                    ISO 13400-3 mô tả Wired Vehicle Interface
+                    dựa trên IEEE 802.3.
+                </p>
+
+                <p>
+                    Phần này tập trung vào giao diện vật lý
+                    và Data Link Layer giữa xe và
+                    thiết bị kiểm tra bên ngoài,
+                    bao gồm các yêu cầu về tín hiệu,
+                    dây kết nối và giao diện Ethernet.
+                </p>
+
+                <h3>3.3. ISO 13400-4</h3>
+
+                <p>
+                    ISO 13400-4 định nghĩa các yêu cầu
+                    liên quan đến Ethernet-based High-speed
+                    Data Link Connector.
+                </p>
+
+                <p>
+                    Nội dung này tập trung vào
+                    đầu nối Ethernet phục vụ
+                    diagnostic communication.
+                </p>
+
+                <div class="note">
+                    <strong>Phân biệt:</strong>
+                    ISO 13400-2 tập trung vào
+                    Transport Protocol và Network Layer Services.
+                    ISO 13400-3 và ISO 13400-4
+                    tập trung vào những khía cạnh
+                    của giao diện Ethernet trên xe.
+                </div>
+
+                <h2>4. DoIP trong kiến trúc Automotive</h2>
+
+                <p>
+                    Trong một chiếc xe hiện đại,
+                    các ECU có thể giao tiếp qua
+                    nhiều loại network khác nhau.
+                </p>
+
+                <p>
+                    Một số ECU có thể sử dụng CAN,
+                    một số ECU sử dụng Ethernet
+                    và các ECU khác có thể nằm
+                    trong những network segment riêng.
+                </p>
+
+                <p>
+                    DoIP cho phép Diagnostic Tester
+                    sử dụng mạng IP để giao tiếp với
+                    DoIP Entity hoặc Vehicle Gateway.
+                    Gateway có thể chuyển message
+                    đến những ECU đích trong xe.
+                </p>
+
+                <pre><code>             Diagnostic Tester
+                      |
+                      |
+                  Ethernet
+                      |
+                      v
+              +---------------+
+              |  DoIP Entity  |
+              | Vehicle       |
+              | Gateway       |
+              +---------------+
+                      |
+             +--------+--------+
+             |        |        |
+             v        v        v
+           ECU A    ECU B    ECU C
+             |        |        |
+             v        v        v
+            CAN      CAN    Ethernet
+             |                 |
+             +--------+--------+
+                      |
+                  Vehicle Network</code></pre>
+
+                <p>
+                    Sơ đồ trên chỉ mang tính minh họa.
+                    Kiến trúc thực tế phụ thuộc vào
+                    network topology và cách thiết kế
+                    gateway của từng xe.
+                </p>
+
+                <h2>5. DoIP Entity là gì?</h2>
+
+                <p>
+                    <strong>DoIP Entity</strong> là một thực thể
+                    tham gia vào hoạt động DoIP communication.
+                </p>
+
+                <p>
+                    DoIP Entity có thể thực hiện những chức năng
+                    như tiếp nhận DoIP message, xử lý
+                    các yêu cầu protocol, quản lý kết nối
+                    và chuyển diagnostic message
+                    đến những thành phần phù hợp.
+                </p>
+
+                <p>
+                    Một số loại DoIP Entity:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Entity</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DoIP Client</td>
+                            <td>Thiết bị hoặc phần mềm khởi tạo diagnostic communication, thường là Diagnostic Tester.</td>
+                        </tr>
+                        <tr>
+                            <td>DoIP Gateway</td>
+                            <td>Tiếp nhận DoIP communication và định tuyến message đến các ECU đích.</td>
+                        </tr>
+                        <tr>
+                            <td>DoIP Server</td>
+                            <td>Thực thể phía xe tiếp nhận và xử lý DoIP communication theo vai trò được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>Internal DoIP Client</td>
+                            <td>DoIP Client nằm trong mạng nội bộ của xe.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>6. Client và Server trong DoIP</h2>
+
+                <p>
+                    Trong DoIP, Diagnostic Tester
+                    thường đóng vai trò Client.
+                    Các DoIP Entity trong xe
+                    đóng vai trò Server.
+                </p>
+
+                <p>
+                    Client khởi tạo quá trình giao tiếp
+                    bằng cách phát hiện DoIP Entity,
+                    thiết lập connection và gửi
+                    diagnostic message.
+                </p>
+
+                <p>
+                    Server tiếp nhận những yêu cầu này,
+                    xử lý hoạt động protocol tương ứng
+                    và trả về các message cần thiết.
+                </p>
+
+                <pre><code>        DoIP Client
+     Diagnostic Tester
+              |
+              | Vehicle Discovery
+              |
+              | TCP Connection
+              |
+              | Routing Activation
+              |
+              | Diagnostic Message
+              v
+        DoIP Server
+        Vehicle ECU/Gateway
+              |
+              | DoIP Response
+              v
+        DoIP Client</code></pre>
+
+                <h2>7. DoIP và UDS có giống nhau không?</h2>
+
+                <p>
+                    DoIP và UDS có mối quan hệ
+                    trực tiếp nhưng không phải cùng một giao thức.
+                </p>
+
+                <p>
+                    UDS định nghĩa các Diagnostic Services,
+                    trong khi DoIP cung cấp cơ chế
+                    giao tiếp và vận chuyển diagnostic message
+                    thông qua IP.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>UDS</th>
+                            <th>DoIP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tiêu chuẩn chính</td>
+                            <td>ISO 14229 series.</td>
+                            <td>ISO 13400 series.</td>
+                        </tr>
+                        <tr>
+                            <td>Vai trò</td>
+                            <td>Định nghĩa Diagnostic Services.</td>
+                            <td>Truyền Diagnostic Message qua IP.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>ReadDataByIdentifier, ECUReset.</td>
+                            <td>Vehicle Discovery, Routing Activation, Diagnostic Message.</td>
+                        </tr>
+                        <tr>
+                            <td>Transport</td>
+                            <td>Phụ thuộc profile và giao thức sử dụng.</td>
+                            <td>TCP/IP và UDP/IP theo DoIP.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, Tester có thể gửi
+                    UDS request ReadDataByIdentifier:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    Khi sử dụng DoIP, phần UDS payload này
+                    được đặt bên trong DoIP Diagnostic Message
+                    và truyền qua TCP/IP.
+                </p>
+
+                <div class="note">
+                    <strong>Cách ghi nhớ:</strong>
+                    UDS xác định ECU cần thực hiện
+                    Diagnostic Service nào.
+                    DoIP xác định cách diagnostic message
+                    được trao đổi qua mạng IP.
+                </div>
+
+                <h2>8. DoIP và Ethernet</h2>
+
+                <p>
+                    Ethernet là công nghệ mạng
+                    được sử dụng để kết nối
+                    Diagnostic Tester với DoIP Entity.
+                </p>
+
+                <p>
+                    Trong kiến trúc DoIP,
+                    Ethernet cung cấp nền tảng
+                    Data Link và Physical Layer.
+                    Các tầng phía trên sử dụng IP,
+                    TCP hoặc UDP để thực hiện
+                    các chức năng communication.
+                </p>
+
+                <pre><code>       DoIP Application
+              |
+              v
+          TCP / UDP
+              |
+              v
+              IP
+              |
+              v
+       Ethernet Data Link
+              |
+              v
+       Ethernet Physical
+              |
+              v
+        Ethernet Network</code></pre>
+
+                <p>
+                    Khi làm việc với DoIP,
+                    cần phân biệt Ethernet Frame,
+                    IP Packet, TCP Segment,
+                    UDP Datagram và DoIP Message.
+                </p>
+
+                <h2>9. TCP và UDP trong DoIP</h2>
+
+                <p>
+                    DoIP sử dụng cả TCP và UDP,
+                    nhưng mỗi giao thức có vai trò khác nhau.
+                </p>
+
+                <h3>9.1. TCP - Transmission Control Protocol</h3>
+
+                <p>
+                    TCP là giao thức truyền tải
+                    có kết nối.
+                    Nó cung cấp cơ chế truyền dữ liệu
+                    tin cậy và quản lý thứ tự dữ liệu
+                    trong một connection.
+                </p>
+
+                <p>
+                    Trong DoIP, TCP được sử dụng
+                    cho các hoạt động như:
+                </p>
+
+                <ul>
+                    <li>Thiết lập diagnostic connection.</li>
+                    <li>Routing Activation.</li>
+                    <li>Truyền Diagnostic Message.</li>
+                    <li>Diagnostic Message Acknowledgement.</li>
+                    <li>Alive Check trên connection.</li>
+                </ul>
+
+                <h3>9.2. UDP - User Datagram Protocol</h3>
+
+                <p>
+                    UDP là giao thức truyền dữ liệu
+                    theo dạng datagram và không yêu cầu
+                    thiết lập connection như TCP.
+                </p>
+
+                <p>
+                    Trong DoIP, UDP thường được sử dụng
+                    cho những hoạt động như:
+                </p>
+
+                <ul>
+                    <li>Vehicle Identification Request.</li>
+                    <li>Vehicle Announcement.</li>
+                    <li>Vehicle Discovery.</li>
+                    <li>Một số yêu cầu thông tin trạng thái DoIP Entity.</li>
+                </ul>
+
+                <h3>9.3. So sánh TCP và UDP trong DoIP</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>TCP</th>
+                            <th>UDP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Connection</td>
+                            <td>Connection-oriented.</td>
+                            <td>Connectionless.</td>
+                        </tr>
+                        <tr>
+                            <td>Data Unit</td>
+                            <td>Byte Stream / TCP Segment.</td>
+                            <td>UDP Datagram.</td>
+                        </tr>
+                        <tr>
+                            <td>Reliability</td>
+                            <td>Có cơ chế truyền lại và đảm bảo thứ tự dữ liệu.</td>
+                            <td>Không tự đảm bảo truyền lại hoặc thứ tự datagram.</td>
+                        </tr>
+                        <tr>
+                            <td>DoIP Usage</td>
+                            <td>Diagnostic Communication và Routing Activation.</td>
+                            <td>Vehicle Discovery và Announcement.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    TCP và UDP không được sử dụng
+                    thay thế tùy ý cho nhau.
+                    DoIP quy định loại hoạt động
+                    và payload phù hợp với từng giao thức.
+                </div>
+
+                <h2>10. DoIP Port Number</h2>
+
+                <p>
+                    Trong TCP/IP và UDP/IP,
+                    Port Number được sử dụng để
+                    xác định dịch vụ hoặc điểm giao tiếp
+                    trên một thiết bị mạng.
+                </p>
+
+                <p>
+                    DoIP sử dụng port number tiêu chuẩn:
+                </p>
+
+                <pre><code>13400</code></pre>
+
+                <p>
+                    Port này được đăng ký trong IANA
+                    cho hai loại dịch vụ:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Protocol</th>
+                            <th>Port</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>doip-data</td>
+                            <td>TCP</td>
+                            <td>13400</td>
+                            <td>DoIP Data Communication.</td>
+                        </tr>
+                        <tr>
+                            <td>doip-disc</td>
+                            <td>UDP</td>
+                            <td>13400</td>
+                            <td>DoIP Discovery.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Như vậy, cùng một số port 13400
+                    có thể được đăng ký cho TCP
+                    và UDP với mục đích sử dụng khác nhau.
+                </p>
+
+                <h3>10.1. TCP Port</h3>
+
+                <p>
+                    TCP port 13400 được sử dụng
+                    cho DoIP Data Communication.
+                    Diagnostic Tester có thể thiết lập
+                    TCP connection đến DoIP Entity
+                    thông qua port này.
+                </p>
+
+                <h3>10.2. UDP Port</h3>
+
+                <p>
+                    UDP port 13400 được sử dụng
+                    cho những hoạt động DoIP Discovery
+                    và các chức năng communication
+                    phù hợp với UDP.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Port 13400 là giá trị đăng ký
+                    tiêu chuẩn phổ biến của DoIP.
+                    Trong một dự án, cần kiểm tra
+                    configuration và communication profile
+                    được sử dụng thay vì chỉ dựa
+                    vào một giá trị port riêng lẻ.
+                </div>
+
+                <h2>11. IP Addressing trong DoIP</h2>
+
+                <p>
+                    Vì DoIP sử dụng IP,
+                    mỗi DoIP Entity cần có
+                    thông tin địa chỉ IP phù hợp
+                    để có thể giao tiếp trong mạng.
+                </p>
+
+                <p>
+                    IP Address có thể được thiết lập
+                    theo nhiều cách tùy thuộc vào
+                    network configuration.
+                </p>
+
+                <p>
+                    Một số phương thức thường gặp:
+                </p>
+
+                <ul>
+                    <li>Static IP Address Assignment.</li>
+                    <li>Dynamic Host Configuration Protocol (DHCP).</li>
+                    <li>Automatic IP Configuration theo cơ chế mạng được hỗ trợ.</li>
+                    <li>IPv4 hoặc IPv6 tùy theo implementation.</li>
+                </ul>
+
+                <h3>11.1. Static IP Address</h3>
+
+                <p>
+                    Static IP là địa chỉ IP
+                    được cấu hình cố định
+                    cho một thiết bị mạng.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <pre><code>DoIP Entity
+
+IP Address: 192.168.10.20
+Subnet:     255.255.255.0</code></pre>
+
+                <p>
+                    Các giá trị này chỉ là ví dụ
+                    để minh họa cách biểu diễn IP Address.
+                </p>
+
+                <h3>11.2. DHCP</h3>
+
+                <p>
+                    DHCP (Dynamic Host Configuration Protocol)
+                    là giao thức hỗ trợ cấp phát
+                    thông tin mạng tự động.
+                </p>
+
+                <p>
+                    Thay vì phải cấu hình thủ công
+                    IP Address trên từng thiết bị,
+                    DHCP Server có thể cung cấp
+                    thông tin mạng cho thiết bị phù hợp.
+                </p>
+
+                <h3>11.3. Mối quan hệ giữa IP Address và Logical Address</h3>
+
+                <p>
+                    Đây là điểm rất quan trọng
+                    khi học DoIP.
+                </p>
+
+                <p>
+                    IP Address và Logical Address
+                    là hai loại địa chỉ khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>IP Address</th>
+                            <th>Logical Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phạm vi</td>
+                            <td>Network Layer.</td>
+                            <td>DoIP Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Xác định thiết bị trong mạng IP.</td>
+                            <td>Xác định nguồn hoặc đích trong DoIP communication.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>192.168.10.20.</td>
+                            <td>Giá trị Logical Address 16-bit theo cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    IP Address dùng để xác định
+                    thiết bị trong mạng IP.
+                    Logical Address dùng để xác định
+                    DoIP Entity hoặc ECU đích
+                    trong diagnostic communication.
+                </div>
+
+                <h2>12. Logical Address trong DoIP</h2>
+
+                <p>
+                    Logical Address là thông tin
+                    được DoIP sử dụng để xác định
+                    nguồn và đích của Diagnostic Message.
+                </p>
+
+                <p>
+                    Khác với IP Address,
+                    Logical Address được sử dụng
+                    ở phạm vi DoIP communication.
+                </p>
+
+                <p>
+                    Trong một diagnostic message,
+                    hai thông tin Logical Address
+                    quan trọng là:
+                </p>
+
+                <ul>
+                    <li>Source Address (SA).</li>
+                    <li>Target Address (TA).</li>
+                </ul>
+
+                <h3>12.1. Source Address</h3>
+
+                <p>
+                    Source Address xác định
+                    Logical Address của bên gửi message.
+                </p>
+
+                <p>
+                    Ví dụ, khi Diagnostic Tester
+                    gửi một UDS request,
+                    Source Address đại diện cho Tester.
+                </p>
+
+                <h3>12.2. Target Address</h3>
+
+                <p>
+                    Target Address xác định
+                    Logical Address của bên nhận.
+                </p>
+
+                <p>
+                    Nếu Tester gửi request đến
+                    một ECU phía sau Vehicle Gateway,
+                    Target Address có thể đại diện
+                    cho ECU đó.
+                </p>
+
+                <pre><code>Diagnostic Tester
+Source Address: Tester
+       |
+       | Diagnostic Message
+       | Target Address: ECU A
+       v
+Vehicle Gateway
+       |
+       | Route by Target Logical Address
+       v
+      ECU A</code></pre>
+
+                <h2>13. Vehicle Gateway trong DoIP</h2>
+
+                <p>
+                    Trong một số kiến trúc xe,
+                    Diagnostic Tester không giao tiếp
+                    trực tiếp với từng ECU.
+                    Thay vào đó, Tester giao tiếp
+                    với một Vehicle Gateway hỗ trợ DoIP.
+                </p>
+
+                <p>
+                    Gateway tiếp nhận diagnostic message
+                    và dựa trên thông tin địa chỉ đích
+                    để chuyển message đến ECU phù hợp.
+                </p>
+
+                <pre><code>       Diagnostic Tester
+                |
+                | DoIP Communication
+                v
+        +------------------+
+        |  Vehicle Gateway |
+        |   DoIP Entity    |
+        +------------------+
+                |
+        +-------+-------+
+        |       |       |
+        v       v       v
+      ECU A   ECU B   ECU C
+        |       |       |
+        v       v       v
+       CAN     CAN   Ethernet</code></pre>
+
+                <p>
+                    Gateway có thể kết nối
+                    những network segment khác nhau.
+                    Vì vậy, DoIP cho phép Tester
+                    truy cập các ECU thông qua
+                    một giao diện diagnostic chung.
+                </p>
+
+                <h2>14. Vehicle Discovery</h2>
+
+                <p>
+                    Trước khi gửi diagnostic request,
+                    Diagnostic Tester cần tìm được
+                    DoIP Entity đang có trong mạng.
+                </p>
+
+                <p>
+                    Quá trình phát hiện thiết bị
+                    được gọi là <strong>Vehicle Discovery</strong>.
+                </p>
+
+                <p>
+                    Trong DoIP, Vehicle Discovery
+                    thường sử dụng UDP.
+                </p>
+
+                <p>
+                    Diagnostic Tester gửi
+                    Vehicle Identification Request
+                    để tìm kiếm DoIP Entity phù hợp.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | Vehicle Identification Request
+       | UDP
+       v
+   Ethernet Network
+       |
+       +----------+----------+
+       |          |          |
+       v          v          v
+    DoIP A     DoIP B     DoIP C
+       |          |          |
+       v          v          v
+   Response   Response   Response</code></pre>
+
+                <p>
+                    Các DoIP Entity phù hợp
+                    có thể gửi Vehicle Identification Response
+                    hoặc Vehicle Announcement
+                    theo quy định tương ứng.
+                </p>
+
+                <h2>15. Vehicle Identification Request</h2>
+
+                <p>
+                    Vehicle Identification Request
+                    là message được sử dụng
+                    để yêu cầu DoIP Entity cung cấp
+                    thông tin nhận dạng.
+                </p>
+
+                <p>
+                    Một số loại request thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payload Type</th>
+                            <th>Tên message</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x0001</td>
+                            <td>Vehicle Identification Request</td>
+                            <td>Yêu cầu nhận dạng xe hoặc DoIP Entity.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0002</td>
+                            <td>Vehicle Identification Request with EID</td>
+                            <td>Yêu cầu nhận dạng dựa trên Entity Identification.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0003</td>
+                            <td>Vehicle Identification Request with VIN</td>
+                            <td>Yêu cầu nhận dạng dựa trên VIN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các request này được sử dụng
+                    theo mục đích và điều kiện
+                    tương ứng của DoIP.
+                </p>
+
+                <h2>16. Vehicle Announcement Message</h2>
+
+                <p>
+                    Vehicle Announcement Message (VAM)
+                    là message được DoIP Entity gửi
+                    để thông báo sự hiện diện của nó
+                    trong mạng.
+                </p>
+
+                <p>
+                    Message này giúp Diagnostic Tester
+                    phát hiện DoIP Entity mà không nhất thiết
+                    phải gửi một request nhận dạng
+                    trước đó trong mọi trường hợp.
+                </p>
+
+                <p>
+                    VAM thường được truyền qua UDP
+                    theo những điều kiện được tiêu chuẩn quy định.
+                </p>
+
+                <h3>16.1. Thông tin trong Vehicle Announcement</h3>
+
+                <p>
+                    Vehicle Announcement có thể chứa
+                    những thông tin nhận dạng và trạng thái
+                    như:
+                </p>
+
+                <ul>
+                    <li>Vehicle Identification Number (VIN).</li>
+                    <li>Logical Address của DoIP Entity.</li>
+                    <li>Entity Identification Number (EID).</li>
+                    <li>Group Identification Number (GID).</li>
+                    <li>Thông tin Further Action.</li>
+                    <li>Thông tin synchronization status theo format tương ứng.</li>
+                </ul>
+
+                <p>
+                    Diagnostic Tester có thể sử dụng
+                    những thông tin này để nhận biết
+                    thiết bị và chuẩn bị quá trình
+                    thiết lập connection.
+                </p>
+
+                <h3>16.2. Vehicle Announcement và Vehicle Identification Response</h3>
+
+                <p>
+                    Hai message này có mối quan hệ
+                    về nội dung nhận dạng xe.
+                    Tuy nhiên, cách chúng được gửi
+                    và điều kiện sử dụng có thể khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>Vehicle Identification Response</th>
+                            <th>Vehicle Announcement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Phản hồi yêu cầu nhận dạng.</td>
+                            <td>Thông báo sự hiện diện của DoIP Entity.</td>
+                        </tr>
+                        <tr>
+                            <td>Trigger</td>
+                            <td>Liên quan đến Vehicle Identification Request.</td>
+                            <td>Có thể được gửi theo điều kiện announcement của DoIP.</td>
+                        </tr>
+                        <tr>
+                            <td>Transport</td>
+                            <td>UDP.</td>
+                            <td>UDP.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>17. DoIP Message Structure</h2>
+
+                <p>
+                    Một DoIP message có cấu trúc
+                    chung gồm Generic DoIP Header
+                    và Payload.
+                </p>
+
+                <pre><code>+----------------------------------+
+|       Generic DoIP Header        |
++----------------------------------+
+| Protocol Version                 |
++----------------------------------+
+| Inverse Protocol Version         |
++----------------------------------+
+| Payload Type                     |
++----------------------------------+
+| Payload Length                   |
++----------------------------------+
+|                                  |
+|       Payload                    |
+|                                  |
++----------------------------------+</code></pre>
+
+                <p>
+                    Generic DoIP Header giúp
+                    DoIP Entity xác định phiên bản protocol,
+                    loại payload và độ dài dữ liệu
+                    phía sau header.
+                </p>
+
+                <h2>18. Generic DoIP Header</h2>
+
+                <p>
+                    Generic DoIP Header có độ dài
+                    8 byte.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Size</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Protocol Version</td>
+                            <td>1 byte</td>
+                            <td>Phiên bản DoIP Protocol.</td>
+                        </tr>
+                        <tr>
+                            <td>Inverse Protocol Version</td>
+                            <td>1 byte</td>
+                            <td>Giá trị inverse dùng để kiểm tra consistency.</td>
+                        </tr>
+                        <tr>
+                            <td>Payload Type</td>
+                            <td>2 byte</td>
+                            <td>Xác định loại message.</td>
+                        </tr>
+                        <tr>
+                            <td>Payload Length</td>
+                            <td>4 byte</td>
+                            <td>Độ dài payload tính bằng byte.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <pre><code>Byte 0       : Protocol Version
+Byte 1       : Inverse Protocol Version
+Byte 2 - 3   : Payload Type
+Byte 4 - 7   : Payload Length
+Byte 8 ...  : Payload</code></pre>
+
+                <p>
+                    Khi nhận DoIP message,
+                    thiết bị cần kiểm tra header
+                    trước khi xử lý payload.
+                </p>
+
+                <h2>19. Protocol Version và Inverse Protocol Version</h2>
+
+                <p>
+                    Protocol Version cho biết
+                    phiên bản DoIP Protocol được sử dụng.
+                </p>
+
+                <p>
+                    Inverse Protocol Version là giá trị
+                    inverse của Protocol Version,
+                    được sử dụng như một cơ chế
+                    kiểm tra tính hợp lệ của header.
+                </p>
+
+                <p>
+                    Với ISO 13400-2:2025,
+                    phiên bản DoIP Protocol được
+                    quy định là version 4.
+                </p>
+
+                <pre><code>Protocol Version:         0x04
+Inverse Protocol Version: 0xFB</code></pre>
+
+                <p>
+                    Khi DoIP Entity nhận header,
+                    nó cần kiểm tra mối quan hệ
+                    giữa hai field này theo quy định
+                    của phiên bản protocol tương ứng.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Không nên mặc định mọi DoIP implementation
+                    đều sử dụng cùng một Protocol Version.
+                    Khi kiểm tra communication giữa Tester
+                    và ECU, cần đối chiếu phiên bản
+                    được hai phía hỗ trợ.
+                </div>
+
+                <h2>20. Payload Type</h2>
+
+                <p>
+                    Payload Type là một field quan trọng
+                    trong Generic DoIP Header.
+                </p>
+
+                <p>
+                    Nó cho biết payload phía sau header
+                    thuộc loại message nào.
+                </p>
+
+                <p>
+                    Dựa trên Payload Type,
+                    DoIP Entity có thể xác định
+                    cách diễn giải và xử lý message.
+                </p>
+
+                <p>
+                    Một số Payload Type thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payload Type</th>
+                            <th>Message</th>
+                            <th>Transport thường dùng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x0000</td>
+                            <td>Generic DoIP Header Negative Acknowledgement.</td>
+                            <td>TCP / UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0001</td>
+                            <td>Vehicle Identification Request.</td>
+                            <td>UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0002</td>
+                            <td>Vehicle Identification Request with EID.</td>
+                            <td>UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0003</td>
+                            <td>Vehicle Identification Request with VIN.</td>
+                            <td>UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0004</td>
+                            <td>Vehicle Announcement / Vehicle Identification Response.</td>
+                            <td>UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0005</td>
+                            <td>Routing Activation Request.</td>
+                            <td>TCP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0006</td>
+                            <td>Routing Activation Response.</td>
+                            <td>TCP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0007</td>
+                            <td>Alive Check Request.</td>
+                            <td>TCP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0008</td>
+                            <td>Alive Check Response.</td>
+                            <td>TCP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x4001</td>
+                            <td>DoIP Entity Status Request.</td>
+                            <td>UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x4002</td>
+                            <td>DoIP Entity Status Response.</td>
+                            <td>UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x4003</td>
+                            <td>Diagnostic Power Mode Information Request.</td>
+                            <td>UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x4004</td>
+                            <td>Diagnostic Power Mode Information Response.</td>
+                            <td>UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x8001</td>
+                            <td>Diagnostic Message.</td>
+                            <td>TCP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x8002</td>
+                            <td>Diagnostic Message Positive Acknowledgement.</td>
+                            <td>TCP.</td>
+                        </tr>
+                        <tr>
+                            <td>0x8003</td>
+                            <td>Diagnostic Message Negative Acknowledgement.</td>
+                            <td>TCP.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là các Payload Type quan trọng
+                    giúp chúng ta hiểu các hoạt động
+                    thường gặp trong DoIP communication.
+                    Việc hỗ trợ từng loại message
+                    phụ thuộc vào yêu cầu và cấu hình
+                    của DoIP Entity.
+                </p>
+
+                <h2>21. Payload Length</h2>
+
+                <p>
+                    Payload Length cho biết số byte
+                    của payload nằm sau Generic DoIP Header.
+                </p>
+
+                <p>
+                    Field này có độ dài 4 byte.
+                    Nó không tính 8 byte của
+                    Generic DoIP Header.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Generic Header: 8 bytes
+Payload Length: 12 bytes
+
+Total DoIP Message Length:
+8 + 12 = 20 bytes</code></pre>
+
+                <p>
+                    DoIP Entity sử dụng Payload Length
+                    để xác định số byte cần tiếp nhận
+                    và xử lý cho message tương ứng.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Khi sử dụng TCP, dữ liệu được truyền
+                    dưới dạng byte stream.
+                    Vì vậy, một lần TCP receive
+                    không nhất thiết trả về đúng
+                    một DoIP message hoàn chỉnh.
+                    DoIP implementation cần sử dụng
+                    header và Payload Length
+                    để xác định ranh giới message.
+                </div>
+
+                <h2>22. Generic DoIP Negative Acknowledgement</h2>
+
+                <p>
+                    Generic DoIP Header Negative Acknowledgement
+                    có Payload Type:
+                </p>
+
+                <pre><code>0x0000</code></pre>
+
+                <p>
+                    Message này được sử dụng khi
+                    Generic DoIP Header hoặc thông tin
+                    liên quan đến message không hợp lệ
+                    theo các quy tắc protocol.
+                </p>
+
+                <p>
+                    Một số nhóm tình huống có thể liên quan:
+                </p>
+
+                <ul>
+                    <li>Protocol Version không hợp lệ.</li>
+                    <li>Inverse Protocol Version không hợp lệ.</li>
+                    <li>Payload Type không được hỗ trợ.</li>
+                    <li>Payload Length không phù hợp.</li>
+                    <li>Header không đáp ứng yêu cầu protocol.</li>
+                </ul>
+
+                <p>
+                    Đây là lỗi ở phạm vi
+                    DoIP message header,
+                    không phải lỗi xử lý UDS service.
+                </p>
+
+                <h2>23. Diagnostic Message</h2>
+
+                <p>
+                    Diagnostic Message là loại message
+                    quan trọng nhất trong quá trình
+                    DoIP diagnostic communication.
+                </p>
+
+                <p>
+                    Payload Type của Diagnostic Message:
+                </p>
+
+                <pre><code>0x8001</code></pre>
+
+                <p>
+                    Diagnostic Message chứa thông tin
+                    địa chỉ nguồn, địa chỉ đích
+                    và diagnostic payload.
+                </p>
+
+                <p>
+                    Diagnostic payload có thể là
+                    một UDS request hoặc UDS response.
+                </p>
+
+                <pre><code>+--------------------------------+
+| Generic DoIP Header             |
++--------------------------------+
+| Source Logical Address          |
++--------------------------------+
+| Target Logical Address          |
++--------------------------------+
+| UDS Diagnostic Payload          |
+|                                |
++--------------------------------+</code></pre>
+
+                <h3>23.1. Source Logical Address</h3>
+
+                <p>
+                    Source Logical Address xác định
+                    địa chỉ của bên gửi diagnostic message.
+                </p>
+
+                <h3>23.2. Target Logical Address</h3>
+
+                <p>
+                    Target Logical Address xác định
+                    ECU hoặc DoIP destination
+                    cần nhận diagnostic message.
+                </p>
+
+                <h3>23.3. UDS Payload</h3>
+
+                <p>
+                    UDS payload chứa nội dung
+                    Diagnostic Service được định nghĩa
+                    trong ISO 14229-1.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    Đây là UDS request
+                    ReadDataByIdentifier với DID F190
+                    trong ví dụ đọc VIN.
+                </p>
+
+                <h2>24. Diagnostic Message Acknowledgement</h2>
+
+                <p>
+                    Khi DoIP Entity tiếp nhận
+                    một Diagnostic Message,
+                    nó có thể gửi acknowledgement
+                    để thông báo kết quả tiếp nhận
+                    ở cấp DoIP.
+                </p>
+
+                <p>
+                    Hai loại acknowledgement:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payload Type</th>
+                            <th>Message</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x8002</td>
+                            <td>Diagnostic Message Positive Acknowledgement.</td>
+                            <td>Thông báo diagnostic message được chấp nhận ở phạm vi DoIP tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>0x8003</td>
+                            <td>Diagnostic Message Negative Acknowledgement.</td>
+                            <td>Thông báo diagnostic message không được chấp nhận theo điều kiện tương ứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>24.1. Positive Acknowledgement</h3>
+
+                <p>
+                    Positive Acknowledgement được sử dụng
+                    để thông báo kết quả tiếp nhận
+                    Diagnostic Message ở cấp DoIP.
+                </p>
+
+                <p>
+                    Payload Type:
+                </p>
+
+                <pre><code>0x8002</code></pre>
+
+                <p>
+                    Điều này không có nghĩa
+                    UDS service đã được ECU xử lý thành công.
+                </p>
+
+                <h3>24.2. Negative Acknowledgement</h3>
+
+                <p>
+                    Negative Acknowledgement được sử dụng
+                    khi Diagnostic Message không được
+                    chấp nhận theo các điều kiện
+                    của DoIP communication.
+                </p>
+
+                <p>
+                    Payload Type:
+                </p>
+
+                <pre><code>0x8003</code></pre>
+
+                <p>
+                    Khi nhận NACK, cần xem xét
+                    mã lỗi và trạng thái communication
+                    để tìm nguyên nhân.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    DoIP ACK/NACK và UDS Positive/Negative Response
+                    là hai cơ chế khác nhau.
+                    ACK/NACK thuộc DoIP Protocol.
+                    Positive Response và Negative Response
+                    thuộc UDS Application Layer.
+                </div>
+
+                <h2>25. Phân biệt DoIP ACK và UDS Response</h2>
+
+                <p>
+                    Đây là một trong những điểm
+                    rất quan trọng khi phân tích
+                    DoIP Trace.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>DoIP ACK/NACK</th>
+                            <th>UDS Response</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Protocol</td>
+                            <td>ISO 13400.</td>
+                            <td>ISO 14229.</td>
+                        </tr>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Thông báo kết quả tiếp nhận Diagnostic Message ở cấp DoIP.</td>
+                            <td>Thông báo kết quả xử lý UDS request.</td>
+                        </tr>
+                        <tr>
+                            <td>Positive</td>
+                            <td>0x8002.</td>
+                            <td>Request SID + 0x40 trong các service thông thường.</td>
+                        </tr>
+                        <tr>
+                            <td>Negative</td>
+                            <td>0x8003.</td>
+                            <td>0x7F + Request SID + NRC.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>25.1. Ví dụ</h3>
+
+                <p>
+                    Giả sử Tester gửi UDS request:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    DoIP Entity tiếp nhận Diagnostic Message
+                    và gửi Positive Acknowledgement
+                    nếu việc tiếp nhận hợp lệ.
+                </p>
+
+                <p>
+                    Sau đó, ECU xử lý UDS request.
+                    Nếu thành công, ECU có thể tạo UDS Response:
+                </p>
+
+                <pre><code>62 F1 90 ...</code></pre>
+
+                <p>
+                    Như vậy, DoIP ACK và UDS Response
+                    có thể xuất hiện trong cùng một
+                    diagnostic transaction nhưng
+                    thể hiện hai kết quả khác nhau.
+                </p>
+
+                <h2>26. Routing Activation</h2>
+
+                <p>
+                    Trước khi gửi Diagnostic Message
+                    qua một TCP connection,
+                    DoIP Client cần thực hiện
+                    Routing Activation theo quy định.
+                </p>
+
+                <p>
+                    Routing Activation là quá trình
+                    yêu cầu DoIP Entity kích hoạt
+                    khả năng routing diagnostic message
+                    trên connection tương ứng.
+                </p>
+
+                <p>
+                    Hai message quan trọng:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payload Type</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x0005</td>
+                            <td>Routing Activation Request.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0006</td>
+                            <td>Routing Activation Response.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>26.1. Routing Activation Request</h3>
+
+                <p>
+                    Client gửi Routing Activation Request
+                    để yêu cầu DoIP Entity kích hoạt
+                    diagnostic routing cho connection.
+                </p>
+
+                <p>
+                    Request có thể chứa:
+                </p>
+
+                <ul>
+                    <li>Source Logical Address của Client.</li>
+                    <li>Routing Activation Type.</li>
+                    <li>Thông tin bổ sung theo format tương ứng.</li>
+                </ul>
+
+                <h3>26.2. Routing Activation Response</h3>
+
+                <p>
+                    DoIP Entity phản hồi
+                    Routing Activation Response
+                    để thông báo kết quả xử lý request.
+                </p>
+
+                <p>
+                    Response có thể thể hiện:
+                </p>
+
+                <ul>
+                    <li>Routing Activation được chấp nhận.</li>
+                    <li>Routing Activation bị từ chối.</li>
+                    <li>Connection cần được xử lý theo trạng thái khác.</li>
+                    <li>Những điều kiện liên quan đến activation được đáp ứng hay không.</li>
+                </ul>
+
+                <h3>26.3. Luồng Routing Activation</h3>
+
+                <pre><code>DoIP Client                      DoIP Entity
+     |                                |
+     |      TCP Connection            |
+     |------------------------------->|
+     |                                |
+     |      Routing Activation Req    |
+     |------------------------------->|
+     |                                |
+     |      Routing Activation Resp   |
+     |<-------------------------------|
+     |                                |
+     |      Routing Status            |
+     |                                |
+     +--------------------------------+</code></pre>
+
+                <p>
+                    Khi Routing Activation được
+                    chấp nhận theo điều kiện tương ứng,
+                    Client có thể tiếp tục
+                    diagnostic communication.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Routing Activation không phải
+                    UDS Diagnostic Service.
+                    Đây là cơ chế quản lý connection
+                    thuộc DoIP Protocol.
+                </div>
+
+                <h2>27. Diagnostic Message Routing</h2>
+
+                <p>
+                    Một chức năng quan trọng của DoIP
+                    là khả năng định tuyến
+                    diagnostic message đến ECU đích.
+                </p>
+
+                <p>
+                    Khi nhận Diagnostic Message,
+                    DoIP Gateway sử dụng Target Logical Address
+                    để xác định đích cần chuyển dữ liệu.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | DoIP Diagnostic Message
+       | Target Address: ECU B
+       v
++-------------------------+
+|     DoIP Gateway        |
+|                         |
+| Check Target Address    |
+|                         |
+| Route to ECU B          |
++-------------------------+
+       |
+       +----------+----------+
+       |          |          |
+       v          v          v
+     ECU A      ECU B      ECU C
+                  |
+                  v
+           Diagnostic Request</code></pre>
+
+                <p>
+                    Nếu Target Logical Address
+                    không phù hợp với các điều kiện
+                    routing của gateway,
+                    message có thể bị từ chối
+                    hoặc không được chuyển đến ECU đích.
+                </p>
+
+                <h2>28. Alive Check</h2>
+
+                <p>
+                    Trong quá trình DoIP communication,
+                    Client và Server cần theo dõi
+                    trạng thái của connection.
+                </p>
+
+                <p>
+                    DoIP sử dụng cơ chế
+                    <strong>Alive Check</strong>
+                    để kiểm tra xem phía đối diện
+                    còn hoạt động hay không.
+                </p>
+
+                <p>
+                    Hai message quan trọng:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payload Type</th>
+                            <th>Message</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x0007</td>
+                            <td>Alive Check Request.</td>
+                            <td>Yêu cầu xác nhận trạng thái connection.</td>
+                        </tr>
+                        <tr>
+                            <td>0x0008</td>
+                            <td>Alive Check Response.</td>
+                            <td>Phản hồi yêu cầu Alive Check.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>28.1. Alive Check Request</h3>
+
+                <p>
+                    DoIP Entity có thể gửi
+                    Alive Check Request trong những
+                    trường hợp phù hợp để kiểm tra
+                    connection đang hoạt động.
+                </p>
+
+                <h3>28.2. Alive Check Response</h3>
+
+                <p>
+                    Phía nhận phản hồi bằng
+                    Alive Check Response.
+                    Message này cung cấp thông tin
+                    cần thiết theo cấu trúc được định nghĩa.
+                </p>
+
+                <pre><code>DoIP Entity A                  DoIP Entity B
+      |                              |
+      |       Alive Check Request    |
+      |----------------------------->|
+      |                              |
+      |       Alive Check Response   |
+      |<-----------------------------|
+      |                              |
+      |       Connection Active      |
+      |                              |</code></pre>
+
+                <h2>29. Diagnostic Power Mode Information</h2>
+
+                <p>
+                    DoIP có những message
+                    hỗ trợ truy vấn thông tin
+                    Diagnostic Power Mode của xe.
+                </p>
+
+                <p>
+                    Hai loại message thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payload Type</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x4003</td>
+                            <td>Diagnostic Power Mode Information Request.</td>
+                        </tr>
+                        <tr>
+                            <td>0x4004</td>
+                            <td>Diagnostic Power Mode Information Response.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Thông tin này giúp Diagnostic Tester
+                    hiểu trạng thái nguồn hoặc
+                    Diagnostic Power Mode của xe
+                    theo quy định DoIP.
+                </p>
+
+                <p>
+                    Nó không đồng nghĩa với việc
+                    thực hiện UDS ECUReset hoặc
+                    điều khiển trạng thái hoạt động
+                    của ECU thông qua UDS.
+                </p>
+
+                <h2>30. DoIP Entity Status</h2>
+
+                <p>
+                    DoIP cũng định nghĩa các message
+                    liên quan đến việc truy vấn
+                    thông tin trạng thái của DoIP Entity.
+                </p>
+
+                <p>
+                    Hai Payload Type thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payload Type</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x4001</td>
+                            <td>DoIP Entity Status Request.</td>
+                        </tr>
+                        <tr>
+                            <td>0x4002</td>
+                            <td>DoIP Entity Status Response.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Status Response có thể cung cấp
+                    các thông tin được tiêu chuẩn định nghĩa,
+                    ví dụ loại DoIP Entity hoặc
+                    tình trạng connection capacity
+                    theo khả năng implementation.
+                </p>
+
+                <h2>31. DoIP Connection Lifecycle</h2>
+
+                <p>
+                    Một DoIP diagnostic connection
+                    thường trải qua nhiều giai đoạn.
+                </p>
+
+                <p>
+                    Có thể mô tả quá trình tổng quát:
+                </p>
+
+                <pre><code>       1. Network Availability
+                  |
+                  v
+       2. IP Address Assignment
+                  |
+                  v
+       3. Vehicle Discovery
+                  |
+                  v
+       4. TCP Connection
+                  |
+                  v
+       5. Routing Activation
+                  |
+                  v
+       6. Diagnostic Communication
+                  |
+                  v
+       7. Connection Maintenance
+                  |
+                  v
+       8. Connection Termination</code></pre>
+
+                <p>
+                    Không phải mọi implementation
+                    đều có cùng một cách triển khai
+                    chi tiết cho từng bước.
+                    Tuy nhiên, sequence này giúp
+                    hình dung quá trình thiết lập
+                    và sử dụng DoIP connection.
+                </p>
+
+                <h2>32. Luồng DoIP Diagnostic Communication hoàn chỉnh</h2>
+
+                <p>
+                    Sau khi hiểu các message riêng lẻ,
+                    chúng ta có thể ghép chúng thành
+                    một diagnostic transaction hoàn chỉnh.
+                </p>
+
+                <h3>32.1. Giai đoạn 1 - Vehicle Discovery</h3>
+
+                <p>
+                    Diagnostic Tester gửi
+                    Vehicle Identification Request
+                    thông qua UDP.
+                </p>
+
+                <h3>32.2. Giai đoạn 2 - Vehicle Identification</h3>
+
+                <p>
+                    DoIP Entity gửi Vehicle Announcement
+                    hoặc Vehicle Identification Response
+                    để cung cấp thông tin nhận dạng.
+                </p>
+
+                <h3>32.3. Giai đoạn 3 - TCP Connection</h3>
+
+                <p>
+                    Tester sử dụng IP Address
+                    của DoIP Entity để thiết lập
+                    TCP connection.
+                </p>
+
+                <h3>32.4. Giai đoạn 4 - Routing Activation</h3>
+
+                <p>
+                    Tester gửi Routing Activation Request.
+                    DoIP Entity xử lý và phản hồi
+                    Routing Activation Response.
+                </p>
+
+                <h3>32.5. Giai đoạn 5 - Diagnostic Message</h3>
+
+                <p>
+                    Tester gửi Diagnostic Message
+                    chứa UDS request.
+                    DoIP Entity tiếp nhận message
+                    và xử lý việc định tuyến.
+                </p>
+
+                <h3>32.6. Giai đoạn 6 - Diagnostic Response</h3>
+
+                <p>
+                    ECU xử lý UDS request
+                    và tạo Diagnostic Response.
+                    Response được gửi lại thông qua
+                    DoIP connection.
+                </p>
+
+                <h3>32.7. Giai đoạn 7 - Connection Maintenance</h3>
+
+                <p>
+                    Trong quá trình giao tiếp,
+                    DoIP Entity có thể sử dụng
+                    Alive Check để theo dõi connection.
+                </p>
+
+                <pre><code>Diagnostic Tester             DoIP Gateway
+       |                             |
+       |--- Vehicle Identification ->| UDP
+       |<-- Vehicle Announcement ----| UDP
+       |                             |
+       |======== TCP Connect =======>|
+       |                             |
+       |--- Routing Activation ----->|
+       |<-- Activation Response -----|
+       |                             |
+       |--- Diagnostic Message ----->|
+       |<-- Diagnostic ACK/NACK -----|
+       |                             |
+       |<-- UDS Response ------------|
+       |                             |
+       |<-- Alive Check Request -----|
+       |--- Alive Check Response --->|
+       |                             |</code></pre>
+
+                <p>
+                    Đây là sơ đồ tổng quát.
+                    Trong một transaction thực tế,
+                    ACK/NACK, UDS Response và Alive Check
+                    xuất hiện theo điều kiện và sequence
+                    được quy định trong DoIP.
+                </p>
+
+                <h2>33. DoIP và UDS over CAN khác nhau như thế nào?</h2>
+
+                <p>
+                    Trong Bài 40, chúng ta đã tìm hiểu
+                    UDS on CAN.
+                    Bây giờ chúng ta có thể so sánh
+                    hai cách triển khai UDS:
+                    DoCAN và DoIP.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>UDS over CAN</th>
+                            <th>UDS over DoIP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Network</td>
+                            <td>CAN.</td>
+                            <td>Ethernet / IP.</td>
+                        </tr>
+                        <tr>
+                            <td>Transport</td>
+                            <td>ISO-TP theo ISO 15765-2.</td>
+                            <td>TCP/IP theo ISO 13400.</td>
+                        </tr>
+                        <tr>
+                            <td>Discovery</td>
+                            <td>Không sử dụng cơ chế Vehicle Discovery của DoIP.</td>
+                            <td>Vehicle Discovery thông qua UDP.</td>
+                        </tr>
+                        <tr>
+                            <td>Addressing</td>
+                            <td>CAN ID và addressing theo DoCAN.</td>
+                            <td>IP Address và Logical Address.</td>
+                        </tr>
+                        <tr>
+                            <td>Segmentation</td>
+                            <td>ISO-TP SF, FF, CF, FC.</td>
+                            <td>DoIP framing trên TCP stream; TCP/IP stack xử lý phân đoạn mạng tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Connection</td>
+                            <td>CAN communication channel.</td>
+                            <td>TCP connection.</td>
+                        </tr>
+                        <tr>
+                            <td>Gateway Routing</td>
+                            <td>Phụ thuộc kiến trúc CAN và gateway.</td>
+                            <td>DoIP Entity có thể định tuyến theo Logical Address.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm quan trọng:</strong>
+                    DoIP không sử dụng ISO-TP SF, FF, CF và FC
+                    như UDS over CAN.
+                    DoIP sử dụng Generic Header và Payload Length
+                    để xác định ranh giới message trên TCP stream.
+                    Việc phân đoạn TCP/IP ở các tầng thấp hơn
+                    là trách nhiệm của TCP/IP stack.
+                </div>
+
+                <h2>34. UDS Message khi truyền qua DoIP</h2>
+
+                <p>
+                    Mặc dù sử dụng transport khác nhau,
+                    nội dung UDS Diagnostic Service
+                    vẫn được giữ theo ISO 14229-1.
+                </p>
+
+                <p>
+                    Ví dụ Tester gửi:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    Khi dùng DoIP, UDS payload
+                    được đặt trong Diagnostic Message
+                    cùng với Source Logical Address
+                    và Target Logical Address.
+                </p>
+
+                <pre><code>+-----------------------------------+
+| Generic DoIP Header               |
++-----------------------------------+
+| Source Logical Address            |
++-----------------------------------+
+| Target Logical Address            |
++-----------------------------------+
+| 22                                |
+| F1                                |
+| 90                                |
++-----------------------------------+</code></pre>
+
+                <p>
+                    ECU nhận Diagnostic Message,
+                    tách UDS payload và chuyển
+                    nội dung đến thành phần
+                    xử lý Diagnostic Service tương ứng.
+                </p>
+
+                <h2>35. DoIP và TLS Security</h2>
+
+                <p>
+                    Khi diagnostic communication
+                    sử dụng mạng IP,
+                    vấn đề bảo mật kết nối cần
+                    được xem xét phù hợp với
+                    kiến trúc và yêu cầu dự án.
+                </p>
+
+                <p>
+                    ISO 13400-2 đề cập đến
+                    secured và unsecured diagnostic communication.
+                    Transport Layer Security (TLS)
+                    là một trong những tính năng
+                    bảo mật được tiêu chuẩn hỗ trợ
+                    theo điều kiện tương ứng.
+                </p>
+
+                <h3>35.1. TLS là gì?</h3>
+
+                <p>
+                    TLS (Transport Layer Security)
+                    là giao thức bảo mật được sử dụng
+                    để bảo vệ communication giữa
+                    các endpoint trên mạng.
+                </p>
+
+                <p>
+                    TLS có thể cung cấp:
+                </p>
+
+                <ul>
+                    <li>Confidentiality: Bảo vệ tính bí mật của dữ liệu.</li>
+                    <li>Integrity: Hỗ trợ phát hiện dữ liệu bị thay đổi.</li>
+                    <li>Authentication: Xác thực endpoint theo profile được sử dụng.</li>
+                </ul>
+
+                <h3>35.2. TLS trong DoIP</h3>
+
+                <p>
+                    Khi sử dụng secure DoIP communication,
+                    TLS được tích hợp vào kiến trúc
+                    transport phù hợp để bảo vệ dữ liệu.
+                </p>
+
+                <pre><code>       DoIP Application
+              |
+              v
+             TLS
+              |
+              v
+             TCP
+              |
+              v
+              IP
+              |
+              v
+          Ethernet</code></pre>
+
+                <p>
+                    Việc sử dụng TLS cần được hỗ trợ
+                    và cấu hình phù hợp ở cả
+                    DoIP Client lẫn DoIP Entity.
+                </p>
+
+                <h3>35.3. TLS và UDS Security có giống nhau không?</h3>
+
+                <p>
+                    Không.
+                    TLS và UDS Security là hai cơ chế
+                    bảo mật ở những phạm vi khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>TLS</th>
+                            <th>UDS Security</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phạm vi</td>
+                            <td>Transport communication.</td>
+                            <td>UDS Application Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Bảo vệ communication channel.</td>
+                            <td>Quản lý quyền truy cập Diagnostic Service.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>Secure TCP connection.</td>
+                            <td>SecurityAccess hoặc Authentication.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Một kết nối TLS thành công
+                    không tự động có nghĩa
+                    mọi UDS service đều được phép.
+                    ECU vẫn có thể kiểm tra
+                    session, security level,
+                    authentication và các điều kiện khác.
+                </div>
+
+                <h2>36. Những nội dung bảo mật cần quan tâm</h2>
+
+                <p>
+                    Khi thiết kế hoặc kiểm thử
+                    DoIP communication,
+                    cần quan tâm đến các yêu cầu
+                    bảo mật của hệ thống.
+                </p>
+
+                <p>
+                    Một số hạng mục:
+                </p>
+
+                <ul>
+                    <li>Chỉ cho phép connection phù hợp với Diagnostic Network Design.</li>
+                    <li>Kiểm tra Routing Activation và trạng thái connection.</li>
+                    <li>Quản lý Logical Address và quyền truy cập phù hợp.</li>
+                    <li>Xem xét TLS khi được yêu cầu và hỗ trợ.</li>
+                    <li>Kiểm tra các chức năng firewall và network isolation nếu hệ thống sử dụng.</li>
+                    <li>Quản lý certificate và key material theo quy trình bảo mật của dự án.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    DoIP network cần được sử dụng
+                    trong môi trường kiểm thử được quản lý.
+                    Không nên tự ý kết nối thiết bị kiểm thử
+                    vào mạng của một phương tiện đang hoạt động
+                    hoặc thay đổi cấu hình mạng của xe
+                    khi chưa có quy trình và sự cho phép phù hợp.
+                </div>
+
+                <h2>37. DoIP và AUTOSAR Classic</h2>
+
+                <p>
+                    Trong AUTOSAR Classic Platform,
+                    DoIP được triển khai thông qua
+                    module Basic Software có tên
+                    <strong>Diagnostic over IP (DoIP)</strong>.
+                </p>
+
+                <p>
+                    DoIP module cung cấp chức năng,
+                    API và configuration cần thiết
+                    để triển khai ISO DoIP trong
+                    kiến trúc Ethernet của AUTOSAR.
+                </p>
+
+                <p>
+                    Module này phối hợp với
+                    những thành phần communication khác
+                    như:
+                </p>
+
+                <ul>
+                    <li>SoAd - Socket Adaptor.</li>
+                    <li>TcpIp - TCP/IP Stack.</li>
+                    <li>PduR - PDU Router.</li>
+                    <li>Dcm - Diagnostic Communication Manager.</li>
+                    <li>EthIf - Ethernet Interface.</li>
+                    <li>Eth Driver - Ethernet Driver.</li>
+                    <li>EthTrcv - Ethernet Transceiver Driver.</li>
+                </ul>
+
+                <h3>37.1. Kiến trúc tổng quát</h3>
+
+                <pre><code>             Diagnostic Tester
+                     |
+                     v
+                 Ethernet
+                     |
+                     v
+                Eth Controller
+                     |
+                     v
+                  Eth Driver
+                     |
+                     v
+                   EthIf
+                     |
+                     v
+                   TcpIp
+                     |
+                     v
+                   SoAd
+                     |
+                     v
+                   DoIP
+                     |
+                     v
+                   PduR
+                     |
+                     v
+                    DCM
+                     |
+                     v
+             UDS Diagnostic Services</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái quát
+                    để hình dung các module liên quan.
+                    Cấu hình và đường truyền thực tế
+                    cần được đối chiếu với
+                    AUTOSAR release và architecture
+                    của dự án.
+                </p>
+
+                <h2>38. Vai trò của DoIP Module</h2>
+
+                <p>
+                    DoIP module là thành phần
+                    triển khai chức năng Diagnostic over IP
+                    trong AUTOSAR Classic.
+                </p>
+
+                <p>
+                    Một số chức năng chính:
+                </p>
+
+                <ul>
+                    <li>Tiếp nhận và xử lý DoIP message.</li>
+                    <li>Quản lý Generic DoIP Header và Payload Type.</li>
+                    <li>Hỗ trợ Vehicle Discovery và Vehicle Announcement.</li>
+                    <li>Quản lý Routing Activation.</li>
+                    <li>Tiếp nhận Diagnostic Message.</li>
+                    <li>Gửi Diagnostic Message đến ECU hoặc DoIP destination phù hợp.</li>
+                    <li>Phối hợp với PduR để chuyển diagnostic data.</li>
+                    <li>Quản lý một số chức năng connection và communication theo cấu hình.</li>
+                </ul>
+
+                <p>
+                    DoIP module không thay thế DCM.
+                    DoIP xử lý phần protocol communication,
+                    còn DCM xử lý UDS Diagnostic Services.
+                </p>
+
+                <h2>39. Vai trò của SoAd</h2>
+
+                <p>
+                    SoAd (Socket Adaptor) là module
+                    cung cấp giao diện socket
+                    cho các module phía trên.
+                </p>
+
+                <p>
+                    Trong DoIP architecture,
+                    SoAd đóng vai trò kết nối
+                    DoIP module với TCP/IP Stack.
+                </p>
+
+                <p>
+                    Một số chức năng:
+                </p>
+
+                <ul>
+                    <li>Quản lý socket connection.</li>
+                    <li>Hỗ trợ truyền và nhận dữ liệu qua socket.</li>
+                    <li>Thông báo trạng thái socket.</li>
+                    <li>Phối hợp với TCP/IP Stack.</li>
+                    <li>Cung cấp interface cho module DoIP.</li>
+                </ul>
+
+                <h2>40. Vai trò của TcpIp</h2>
+
+                <p>
+                    TcpIp là module triển khai
+                    các chức năng chính của
+                    TCP/IP Stack trong AUTOSAR Classic.
+                </p>
+
+                <p>
+                    Một số protocol được hỗ trợ:
+                </p>
+
+                <ul>
+                    <li>Internet Protocol (IPv4 / IPv6).</li>
+                    <li>Transmission Control Protocol (TCP).</li>
+                    <li>User Datagram Protocol (UDP).</li>
+                    <li>Address Resolution Protocol (ARP).</li>
+                    <li>Internet Control Message Protocol (ICMP).</li>
+                    <li>Neighbor Discovery Protocol (NDP).</li>
+                    <li>DHCP theo implementation và configuration.</li>
+                </ul>
+
+                <p>
+                    TcpIp cung cấp nền tảng network
+                    để SoAd và DoIP có thể thực hiện
+                    communication qua Ethernet/IP.
+                </p>
+
+                <h2>41. Vai trò của PduR</h2>
+
+                <p>
+                    PduR (PDU Router) là module
+                    định tuyến PDU giữa những module
+                    trong AUTOSAR communication stack.
+                </p>
+
+                <p>
+                    Đối với DoIP,
+                    PduR giúp kết nối DoIP module
+                    với DCM hoặc những module
+                    communication phù hợp.
+                </p>
+
+                <p>
+                    Một số chức năng:
+                </p>
+
+                <ul>
+                    <li>Chuyển Diagnostic Message từ DoIP đến DCM.</li>
+                    <li>Chuyển dữ liệu response từ DCM đến DoIP.</li>
+                    <li>Thực hiện routing theo cấu hình PDU.</li>
+                    <li>Phối hợp với các module communication khác khi cần.</li>
+                </ul>
+
+                <h2>42. Vai trò của DCM</h2>
+
+                <p>
+                    DCM (Diagnostic Communication Manager)
+                    xử lý UDS Diagnostic Communication
+                    ở cấp Application Layer.
+                </p>
+
+                <p>
+                    Một số chức năng:
+                </p>
+
+                <ul>
+                    <li>Tiếp nhận UDS request.</li>
+                    <li>Kiểm tra SID và request format.</li>
+                    <li>Kiểm tra Diagnostic Session.</li>
+                    <li>Kiểm tra Security và Authentication.</li>
+                    <li>Phân phối request đến service handler.</li>
+                    <li>Xử lý Diagnostic Service.</li>
+                    <li>Tạo UDS Positive Response hoặc Negative Response.</li>
+                </ul>
+
+                <p>
+                    DCM không cần tự xử lý
+                    toàn bộ Generic DoIP Header,
+                    Vehicle Discovery hoặc
+                    Routing Activation.
+                    Những chức năng này thuộc
+                    DoIP module và các module communication liên quan.
+                </p>
+
+                <h2>43. Vai trò của EthIf, Eth Driver và EthTrcv</h2>
+
+                <h3>43.1. EthIf - Ethernet Interface</h3>
+
+                <p>
+                    EthIf cung cấp giao diện
+                    chuẩn giữa các module phía trên
+                    và Ethernet Driver.
+                </p>
+
+                <p>
+                    Một số chức năng:
+                </p>
+
+                <ul>
+                    <li>Quản lý giao diện Ethernet.</li>
+                    <li>Tiếp nhận yêu cầu truyền dữ liệu.</li>
+                    <li>Thông báo dữ liệu nhận được.</li>
+                    <li>Phối hợp với Ethernet Driver.</li>
+                </ul>
+
+                <h3>43.2. Eth Driver</h3>
+
+                <p>
+                    Eth Driver là driver điều khiển
+                    Ethernet Controller của Microcontroller
+                    hoặc nền tảng phần cứng tương ứng.
+                </p>
+
+                <p>
+                    Driver thực hiện những hoạt động
+                    truyền và nhận Ethernet frame
+                    theo cấu hình phần cứng.
+                </p>
+
+                <h3>43.3. EthTrcv</h3>
+
+                <p>
+                    EthTrcv là module điều khiển
+                    Ethernet Transceiver.
+                </p>
+
+                <p>
+                    Ethernet Transceiver đảm nhiệm
+                    việc kết nối tín hiệu ở phía
+                    Ethernet Controller với
+                    môi trường truyền dẫn vật lý.
+                </p>
+
+                <div class="note">
+                    <strong>Phân biệt:</strong>
+                    DoIP xử lý protocol DoIP.
+                    SoAd cung cấp socket interface.
+                    TcpIp xử lý protocol IP, TCP và UDP.
+                    EthIf cung cấp Ethernet interface.
+                    Eth Driver điều khiển Ethernet Controller.
+                    EthTrcv quản lý Ethernet Transceiver
+                    theo khả năng phần cứng.
+                </div>
+
+                <h2>44. Luồng nhận Diagnostic Request trong AUTOSAR</h2>
+
+                <p>
+                    Khi Diagnostic Tester gửi
+                    một UDS request qua DoIP,
+                    ECU cần tiếp nhận dữ liệu
+                    thông qua các module trong
+                    Ethernet Communication Stack.
+                </p>
+
+                <pre><code>        Diagnostic Tester
+                |
+                v
+             Ethernet
+                |
+                v
+             EthTrcv
+                |
+                v
+             Eth Driver
+                |
+                v
+              EthIf
+                |
+                v
+              TcpIp
+                |
+                v
+               SoAd
+                |
+                v
+               DoIP
+                |
+                v
+               PduR
+                |
+                v
+                DCM
+                |
+                v
+       UDS Diagnostic Processing</code></pre>
+
+                <p>
+                    Sau khi DCM tiếp nhận
+                    UDS payload, DCM xử lý
+                    Diagnostic Service theo
+                    cấu hình ECU.
+                </p>
+
+                <h2>45. Luồng gửi Diagnostic Response trong AUTOSAR</h2>
+
+                <p>
+                    Khi DCM xử lý xong
+                    một Diagnostic Request,
+                    response được chuyển qua
+                    các module communication
+                    để gửi về Diagnostic Tester.
+                </p>
+
+                <pre><code>                 DCM
+                  |
+                  v
+                 PduR
+                  |
+                  v
+                 DoIP
+                  |
+                  v
+                 SoAd
+                  |
+                  v
+                TcpIp
+                  |
+                  v
+                 EthIf
+                  |
+                  v
+               Eth Driver
+                  |
+                  v
+                EthTrcv
+                  |
+                  v
+                Ethernet
+                  |
+                  v
+          Diagnostic Tester</code></pre>
+
+                <p>
+                    Đây là luồng tổng quát.
+                    Các callback, interface
+                    và cách routing chi tiết
+                    phụ thuộc vào AUTOSAR configuration.
+                </p>
+
+                <h2>46. Cấu hình DoIP trong AUTOSAR</h2>
+
+                <p>
+                    Khi triển khai DoIP trong
+                    một dự án AUTOSAR Classic,
+                    cần cấu hình nhiều module
+                    để đảm bảo communication
+                    hoạt động thống nhất.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Thông tin cấu hình cần quan tâm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DoIP</td>
+                            <td>Logical Address, DoIP Protocol, Vehicle Identification, Routing Activation và DoIP connection.</td>
+                        </tr>
+                        <tr>
+                            <td>SoAd</td>
+                            <td>Socket connection, TCP/UDP socket và routing configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>TcpIp</td>
+                            <td>IP Address, TCP, UDP và network configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>PduR</td>
+                            <td>Routing path giữa DoIP và DCM.</td>
+                        </tr>
+                        <tr>
+                            <td>DCM</td>
+                            <td>Diagnostic Protocol, Rx/Tx PDU và UDS service configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>EthIf</td>
+                            <td>Ethernet controller mapping và interface configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Eth Driver</td>
+                            <td>Ethernet Controller và hardware configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>EthTrcv</td>
+                            <td>Ethernet Transceiver configuration.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>47. DoIP Network Configuration trong dự án</h2>
+
+                <p>
+                    Ngoài cấu hình AUTOSAR,
+                    dự án còn cần xác định
+                    Network Design cho DoIP communication.
+                </p>
+
+                <p>
+                    Một số thông tin quan trọng:
+                </p>
+
+                <ul>
+                    <li>IP Address của Diagnostic Tester.</li>
+                    <li>IP Address của DoIP Entity.</li>
+                    <li>Subnet và Network Segment.</li>
+                    <li>TCP/UDP Port.</li>
+                    <li>Logical Address của các DoIP Entity.</li>
+                    <li>Target Address của các ECU phía sau Gateway.</li>
+                    <li>Routing Activation configuration.</li>
+                    <li>Concurrent connection support.</li>
+                    <li>TLS requirement nếu có.</li>
+                </ul>
+
+                <p>
+                    Ví dụ minh họa một bảng
+                    DoIP Network Configuration:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Device</th>
+                            <th>IP Address</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Diagnostic Tester</td>
+                            <td>192.168.10.10</td>
+                            <td>DoIP Client.</td>
+                        </tr>
+                        <tr>
+                            <td>DoIP Gateway</td>
+                            <td>192.168.10.20</td>
+                            <td>DoIP Server / Gateway.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU A</td>
+                            <td>Logical destination behind gateway</td>
+                            <td>Target ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU B</td>
+                            <td>Logical destination behind gateway</td>
+                            <td>Target ECU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những giá trị trong bảng
+                    chỉ là ví dụ minh họa.
+                    IP Address và Logical Address
+                    thực tế phải được lấy từ
+                    Network Design và Diagnostic Specification
+                    của dự án.
+                </p>
+
+                <h2>48. Phân tích DoIP Trace</h2>
+
+                <p>
+                    Khi debug DoIP communication,
+                    kỹ sư có thể sử dụng Ethernet Trace
+                    hoặc DoIP Trace từ công cụ kiểm thử.
+                </p>
+
+                <p>
+                    Một trace phù hợp có thể cung cấp:
+                </p>
+
+                <ul>
+                    <li>Timestamp.</li>
+                    <li>Source và Destination IP Address.</li>
+                    <li>Source và Destination Port.</li>
+                    <li>TCP hoặc UDP.</li>
+                    <li>DoIP Protocol Version.</li>
+                    <li>Payload Type.</li>
+                    <li>Payload Length.</li>
+                    <li>Source và Target Logical Address.</li>
+                    <li>UDS Payload.</li>
+                    <li>ACK/NACK và các response liên quan.</li>
+                </ul>
+
+                <h2>49. Ví dụ phân tích Vehicle Discovery</h2>
+
+                <p>
+                    Giả sử Diagnostic Tester
+                    cần tìm một DoIP Entity trong mạng.
+                </p>
+
+                <p>
+                    Tester gửi Vehicle Identification Request
+                    qua UDP.
+                </p>
+
+                <pre><code>Transport: UDP
+Destination Port: 13400
+Payload Type: 0x0001
+
+Message:
+Vehicle Identification Request</code></pre>
+
+                <p>
+                    DoIP Entity tiếp nhận request
+                    và có thể trả về Vehicle Identification Response
+                    theo điều kiện của protocol.
+                </p>
+
+                <pre><code>Transport: UDP
+Payload Type: 0x0004
+
+Message:
+Vehicle Identification Response /
+Vehicle Announcement</code></pre>
+
+                <p>
+                    Tester sử dụng thông tin nhận dạng
+                    trong response để nhận biết
+                    DoIP Entity phù hợp.
+                </p>
+
+                <h2>50. Ví dụ phân tích Routing Activation</h2>
+
+                <p>
+                    Sau khi phát hiện được
+                    DoIP Entity, Tester cần thiết lập
+                    TCP connection và thực hiện
+                    Routing Activation.
+                </p>
+
+                <pre><code>TCP Connection:
+Tester -> DoIP Entity
+
+Routing Activation Request:
+Payload Type = 0x0005
+
+Routing Activation Response:
+Payload Type = 0x0006</code></pre>
+
+                <p>
+                    Khi activation thành công,
+                    Tester có thể tiếp tục gửi
+                    Diagnostic Message theo
+                    các điều kiện được quy định.
+                </p>
+
+                <h2>51. Ví dụ phân tích Diagnostic Message</h2>
+
+                <p>
+                    Giả sử Tester gửi request
+                    ReadDataByIdentifier:
+                </p>
+
+                <pre><code>UDS Payload:
+
+22 F1 90</code></pre>
+
+                <p>
+                    Diagnostic Message của DoIP
+                    sẽ chứa:
+                </p>
+
+                <pre><code>Payload Type:
+0x8001
+
+Diagnostic Message:
++--------------------------+
+| Source Logical Address   |
++--------------------------+
+| Target Logical Address   |
++--------------------------+
+| 22 F1 90                 |
++--------------------------+</code></pre>
+
+                <p>
+                    DoIP Entity tiếp nhận message,
+                    kiểm tra điều kiện protocol
+                    và xử lý routing đến ECU đích.
+                </p>
+
+                <p>
+                    Phía DoIP có thể gửi ACK/NACK
+                    theo kết quả tiếp nhận message.
+                    ECU sau đó xử lý nội dung UDS
+                    và tạo UDS response tương ứng.
+                </p>
+
+                <h2>52. TCP Stream và DoIP Message Framing</h2>
+
+                <p>
+                    Một điểm rất quan trọng
+                    khi triển khai DoIP là
+                    TCP truyền dữ liệu dưới dạng
+                    byte stream.
+                </p>
+
+                <p>
+                    TCP không bảo toàn ranh giới
+                    của từng lần gửi message từ
+                    Application Layer.
+                </p>
+
+                <p>
+                    Vì vậy, một DoIP message
+                    có thể được nhận qua nhiều lần
+                    TCP receive hoặc nhiều DoIP message
+                    có thể xuất hiện trong cùng
+                    một lần nhận dữ liệu.
+                </p>
+
+                <p>
+                    DoIP sử dụng Generic Header
+                    và Payload Length để xác định
+                    ranh giới message.
+                </p>
+
+                <pre><code>TCP Byte Stream
+      |
+      v
++----------------------+
+| DoIP Header          |
++----------------------+
+| Payload Length       |
++----------------------+
+| DoIP Payload         |
++----------------------+
+      |
+      v
+Check next message boundary
+      |
+      v
+Next DoIP Header</code></pre>
+
+                <p>
+                    Trong implementation,
+                    parser cần đảm bảo chỉ xử lý
+                    một message khi đã có đủ
+                    header và payload tương ứng.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Không nên giả định mỗi TCP receive
+                    tương ứng với một DoIP message.
+                    Cần sử dụng Payload Length
+                    trong Generic Header để xác định
+                    message boundary.
+                </div>
+
+                <h2>53. DoIP và ISO-TP khác nhau ở cách xác định message boundary</h2>
+
+                <p>
+                    Với UDS over CAN,
+                    ISO-TP sử dụng PCI trong CAN frame
+                    để xác định loại frame và
+                    cách ghép message.
+                </p>
+
+                <p>
+                    Với DoIP, Generic Header
+                    và Payload Length được sử dụng
+                    để xác định loại message
+                    và độ dài payload.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>ISO-TP</th>
+                            <th>DoIP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Network</td>
+                            <td>CAN.</td>
+                            <td>Ethernet / IP.</td>
+                        </tr>
+                        <tr>
+                            <td>Message Control</td>
+                            <td>PCI.</td>
+                            <td>Generic DoIP Header.</td>
+                        </tr>
+                        <tr>
+                            <td>Length Information</td>
+                            <td>PCI và các thông tin liên quan.</td>
+                            <td>Payload Length.</td>
+                        </tr>
+                        <tr>
+                            <td>Segmentation</td>
+                            <td>SF, FF, CF và FC.</td>
+                            <td>TCP/IP stack xử lý phân đoạn truyền tải ở các tầng tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Flow Handling</td>
+                            <td>ISO-TP Flow Control.</td>
+                            <td>TCP flow control và các cơ chế DoIP liên quan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>54. Những lỗi thường gặp trong DoIP Communication</h2>
+
+                <h3>54.1. Không phát hiện được DoIP Entity</h3>
+
+                <p>
+                    Một số nguyên nhân cần xem xét:
+                </p>
+
+                <ul>
+                    <li>IP Address chưa được cấu hình phù hợp.</li>
+                    <li>Tester và DoIP Entity không nằm trong network segment có thể giao tiếp.</li>
+                    <li>Vehicle Identification Request không được gửi đúng cách.</li>
+                    <li>UDP communication bị gián đoạn hoặc bị chặn theo cấu hình mạng.</li>
+                    <li>DoIP Entity chưa ở trạng thái sẵn sàng.</li>
+                </ul>
+
+                <h3>54.2. Không thiết lập được TCP Connection</h3>
+
+                <p>
+                    Một số nguyên nhân:
+                </p>
+
+                <ul>
+                    <li>IP Address của DoIP Entity không chính xác.</li>
+                    <li>TCP service chưa sẵn sàng.</li>
+                    <li>Port configuration không khớp.</li>
+                    <li>Connection capacity đã đạt giới hạn.</li>
+                    <li>Network routing hoặc firewall configuration không phù hợp.</li>
+                </ul>
+
+                <h3>54.3. Routing Activation bị từ chối</h3>
+
+                <p>
+                    Một số nguyên nhân cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>Source Logical Address không phù hợp.</li>
+                    <li>Routing Activation Type không được hỗ trợ.</li>
+                    <li>Connection chưa đáp ứng điều kiện activation.</li>
+                    <li>DoIP Entity đã đạt giới hạn connection.</li>
+                    <li>Thông tin activation không hợp lệ.</li>
+                </ul>
+
+                <h3>54.4. Diagnostic Message bị NACK</h3>
+
+                <p>
+                    Khi DoIP Entity gửi
+                    Diagnostic Message NACK,
+                    cần kiểm tra mã lỗi
+                    và nội dung message tương ứng.
+                </p>
+
+                <p>
+                    Một số hướng phân tích:
+                </p>
+
+                <ul>
+                    <li>Source hoặc Target Logical Address.</li>
+                    <li>Diagnostic Message Length.</li>
+                    <li>Connection và Routing Activation State.</li>
+                    <li>DoIP Entity có hỗ trợ destination hay không.</li>
+                    <li>Khả năng tiếp nhận message của gateway.</li>
+                </ul>
+
+                <h3>54.5. Không nhận được UDS Response</h3>
+
+                <p>
+                    Nếu DoIP communication đã nhận
+                    Diagnostic Message ACK nhưng Tester
+                    không nhận được UDS response,
+                    cần kiểm tra cả DoIP routing
+                    và UDS processing.
+                </p>
+
+                <p>
+                    ACK ở cấp DoIP không đảm bảo
+                    UDS request đã được xử lý thành công.
+                </p>
+
+                <h2>55. Debug DoIP theo từng tầng</h2>
+
+                <p>
+                    Khi phân tích lỗi DoIP,
+                    nên xác định vị trí lỗi
+                    từ Network Layer lên
+                    Diagnostic Application Layer.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Tầng cần kiểm tra</th>
+                            <th>Hướng phân tích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Không có IP connectivity</td>
+                            <td>IP / Ethernet</td>
+                            <td>Kiểm tra IP configuration và Ethernet communication.</td>
+                        </tr>
+                        <tr>
+                            <td>Không nhận Vehicle Announcement</td>
+                            <td>DoIP / UDP</td>
+                            <td>Kiểm tra Vehicle Discovery và UDP communication.</td>
+                        </tr>
+                        <tr>
+                            <td>TCP connection thất bại</td>
+                            <td>TCP / SoAd</td>
+                            <td>Kiểm tra socket, port và connection state.</td>
+                        </tr>
+                        <tr>
+                            <td>Routing Activation thất bại</td>
+                            <td>DoIP</td>
+                            <td>Kiểm tra activation request, response và Logical Address.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Message bị từ chối</td>
+                            <td>DoIP / PduR</td>
+                            <td>Kiểm tra Payload Type, địa chỉ và routing configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>DoIP ACK nhưng không có UDS Response</td>
+                            <td>DCM / UDS Application</td>
+                            <td>Kiểm tra DCM reception, service processing và response path.</td>
+                        </tr>
+                        <tr>
+                            <td>Connection bị đóng</td>
+                            <td>TCP / DoIP</td>
+                            <td>Kiểm tra connection state, timeout và Alive Check.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>56. Ví dụ Test Case cho DoIP</h2>
+
+                <p>
+                    Dưới đây là một số test case
+                    minh họa để kiểm tra chức năng
+                    DoIP trong một dự án Automotive.
+                    Các giá trị IP, thời gian và
+                    expected behavior cần được lấy
+                    từ Diagnostic Specification
+                    và Network Configuration của dự án.
+                </p>
+
+                <h3>Test Case 1: Kiểm tra Vehicle Discovery</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_DOIP_001</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra khả năng phát hiện DoIP Entity trong mạng.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>Diagnostic Tester và DoIP Entity được kết nối vào môi trường kiểm thử phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Thực hiện Vehicle Identification Request theo cấu hình được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>Tester nhận được thông tin nhận dạng từ DoIP Entity phù hợp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 2: Kiểm tra Routing Activation</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_DOIP_002</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra khả năng kích hoạt diagnostic routing trên TCP connection.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>DoIP Entity đã được phát hiện và TCP connection được thiết lập.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Gửi Routing Activation Request theo configuration.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>DoIP Entity phản hồi Routing Activation Response theo điều kiện của hệ thống.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 3: Kiểm tra Diagnostic Message</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_DOIP_003</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra khả năng truyền UDS payload thông qua DoIP.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>TCP connection và Routing Activation đã hoàn tất theo yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Gửi một UDS request được hỗ trợ đến Target Logical Address.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>DoIP Entity tiếp nhận và định tuyến message phù hợp; ECU xử lý UDS request theo Diagnostic Specification.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 4: Kiểm tra Diagnostic ACK/NACK</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_DOIP_004</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra hành vi acknowledgement của DoIP Entity.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>DoIP connection đã được kích hoạt.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Thực hiện các trường hợp message hợp lệ và trường hợp kiểm thử không hợp lệ theo test specification.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>DoIP Entity trả về ACK hoặc NACK phù hợp với kết quả tiếp nhận message.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 5: Kiểm tra Alive Check</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_DOIP_005</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra cơ chế theo dõi trạng thái DoIP TCP connection.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>DoIP TCP connection đang hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Quan sát và kiểm tra quá trình Alive Check theo yêu cầu cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>DoIP Entity và Client xử lý Alive Check phù hợp với trạng thái connection.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 6: Kiểm tra DoIP Message Length</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_DOIP_006</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra khả năng xử lý Generic Header và Payload Length.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>DoIP stack đã được khởi tạo trong môi trường kiểm thử.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Kiểm tra các trường hợp message có độ dài hợp lệ và các trường hợp boundary được quy định.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>DoIP stack xác định đúng message boundary và xử lý message theo protocol.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 7: Kiểm tra IP Configuration</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_DOIP_007</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra khả năng thiết lập IP Address của DoIP Entity.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>Network Configuration và phương thức cấp phát IP đã được xác định.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Kiểm tra thông tin IP Address và trạng thái mạng theo cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>DoIP Entity có IP configuration phù hợp và sẵn sàng thực hiện communication.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>57. Những nội dung cần kiểm tra trong một Automotive Project</h2>
+
+                <p>
+                    Khi tham gia một dự án
+                    Automotive Embedded sử dụng DoIP,
+                    kỹ sư cần kiểm tra cả
+                    Diagnostic Specification,
+                    Network Configuration và
+                    AUTOSAR BSW Configuration.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hạng mục</th>
+                            <th>Nội dung cần kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO Standard</td>
+                            <td>Phiên bản ISO 13400 được dự án áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>IP Address</td>
+                            <td>IP Address, Subnet và phương thức cấp phát địa chỉ.</td>
+                        </tr>
+                        <tr>
+                            <td>TCP/UDP</td>
+                            <td>Protocol và socket configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Port</td>
+                            <td>DoIP TCP/UDP Port Configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Vehicle Discovery</td>
+                            <td>Vehicle Identification Request và Announcement.</td>
+                        </tr>
+                        <tr>
+                            <td>DoIP Header</td>
+                            <td>Protocol Version, Inverse Version, Payload Type và Payload Length.</td>
+                        </tr>
+                        <tr>
+                            <td>Logical Address</td>
+                            <td>Source Address và Target Address.</td>
+                        </tr>
+                        <tr>
+                            <td>Routing Activation</td>
+                            <td>Request, Response và routing state.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Message</td>
+                            <td>UDS payload, ACK/NACK và response handling.</td>
+                        </tr>
+                        <tr>
+                            <td>Connection</td>
+                            <td>TCP connection, connection capacity và Alive Check.</td>
+                        </tr>
+                        <tr>
+                            <td>Security</td>
+                            <td>TLS và các yêu cầu bảo mật nếu được áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>AUTOSAR DoIP</td>
+                            <td>DoIP, SoAd, TcpIp, PduR và DCM configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Ethernet</td>
+                            <td>EthIf, Eth Driver và EthTrcv configuration.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>58. Những lỗi thường gặp khi học DoIP</h2>
+
+                <h3>58.1. Nhầm DoIP với UDS</h3>
+
+                <p>
+                    UDS định nghĩa Diagnostic Services.
+                    DoIP là giao thức hỗ trợ
+                    truyền diagnostic message qua IP.
+                    Chúng có liên quan nhưng
+                    không phải cùng một protocol.
+                </p>
+
+                <h3>58.2. Nhầm IP Address với Logical Address</h3>
+
+                <p>
+                    IP Address xác định thiết bị
+                    trong mạng IP.
+                    Logical Address xác định nguồn
+                    hoặc đích trong DoIP message.
+                </p>
+
+                <h3>58.3. Nhầm TCP với UDP</h3>
+
+                <p>
+                    TCP thường được sử dụng
+                    cho diagnostic connection và
+                    diagnostic message.
+                    UDP thường được sử dụng
+                    cho Vehicle Discovery và Announcement.
+                </p>
+
+                <h3>58.4. Nhầm DoIP ACK với UDS Positive Response</h3>
+
+                <p>
+                    DoIP ACK xác nhận việc tiếp nhận
+                    Diagnostic Message ở cấp DoIP.
+                    UDS Positive Response thông báo
+                    kết quả xử lý Diagnostic Service.
+                </p>
+
+                <h3>58.5. Cho rằng DoIP sử dụng ISO-TP</h3>
+
+                <p>
+                    DoIP không sử dụng ISO-TP
+                    SF, FF, CF và FC như UDS over CAN.
+                    DoIP có Generic Header,
+                    Payload Length và truyền
+                    diagnostic payload thông qua TCP.
+                </p>
+
+                <h3>58.6. Cho rằng Vehicle Discovery và Routing Activation là cùng một bước</h3>
+
+                <p>
+                    Vehicle Discovery giúp Tester
+                    phát hiện DoIP Entity.
+                    Routing Activation giúp kích hoạt
+                    diagnostic routing trên connection.
+                    Hai bước có mục đích khác nhau.
+                </p>
+
+                <h3>58.7. Cho rằng DoIP module thay thế DCM</h3>
+
+                <p>
+                    DoIP và DCM đảm nhiệm
+                    những chức năng khác nhau.
+                    DoIP xử lý protocol communication,
+                    còn DCM xử lý UDS Diagnostic Services.
+                </p>
+
+                <h3>58.8. Cho rằng TCP receive tương ứng với một DoIP message</h3>
+
+                <p>
+                    TCP là byte stream.
+                    Vì vậy, cần sử dụng Generic Header
+                    và Payload Length để xác định
+                    ranh giới từng DoIP message.
+                </p>
+
+                <h2>59. Tổng kết bài học</h2>
+
+                <p>
+                    Qua bài học này, chúng ta đã tìm hiểu
+                    DoIP (Diagnostics over Internet Protocol)
+                    và vai trò của bộ tiêu chuẩn ISO 13400
+                    trong Automotive Diagnostic Communication.
+                </p>
+
+                <p>
+                    Những nội dung quan trọng cần ghi nhớ:
+                </p>
+
+                <ul>
+                    <li>DoIP là công nghệ Diagnostic Communication sử dụng IP, thường được triển khai trên Ethernet.</li>
+                    <li>ISO 13400-2 quy định Transport Protocol và Network Layer Services cho DoIP.</li>
+                    <li>ISO 13400-2:2025 là Edition 3.</li>
+                    <li>DoIP sử dụng TCP và UDP với những mục đích khác nhau.</li>
+                    <li>Port 13400 được đăng ký cho DoIP Data qua TCP và DoIP Discovery qua UDP.</li>
+                    <li>Vehicle Discovery giúp Diagnostic Tester phát hiện DoIP Entity.</li>
+                    <li>Vehicle Announcement cung cấp thông tin nhận dạng và trạng thái tương ứng.</li>
+                    <li>Generic DoIP Header có độ dài 8 byte.</li>
+                    <li>Payload Type xác định loại DoIP message.</li>
+                    <li>Payload Length xác định độ dài payload phía sau header.</li>
+                    <li>Diagnostic Message sử dụng Payload Type 0x8001.</li>
+                    <li>DoIP ACK/NACK khác với UDS Positive/Negative Response.</li>
+                    <li>Routing Activation quản lý khả năng diagnostic routing trên TCP connection.</li>
+                    <li>Logical Address xác định nguồn và đích trong DoIP communication.</li>
+                    <li>Alive Check hỗ trợ theo dõi trạng thái connection.</li>
+                    <li>DoIP không sử dụng ISO-TP SF, FF, CF và FC như UDS over CAN.</li>
+                    <li>Trong AUTOSAR Classic, DoIP phối hợp với SoAd, TcpIp, PduR, DCM và Ethernet Stack.</li>
+                </ul>
+
+                <div class="note">
+                    <p>
+                        ISO 14229 định nghĩa UDS Diagnostic Services,
+                        còn ISO 13400 định nghĩa những yêu cầu
+                        để triển khai Diagnostic Communication
+                        qua Internet Protocol.
+                    </p>
+
+                    <p>
+                        DoIP sử dụng IP, TCP và UDP
+                        để hỗ trợ Vehicle Discovery,
+                        Connection Establishment,
+                        Routing Activation và
+                        Diagnostic Message Transmission.
+                    </p>
+
+                    <p>
+                        Một DoIP message có Generic Header
+                        8 byte gồm Protocol Version,
+                        Inverse Protocol Version,
+                        Payload Type và Payload Length.
+                        Payload có thể chứa các thông tin
+                        nhận dạng, điều khiển DoIP
+                        hoặc UDS Diagnostic Message.
+                    </p>
+
+                    <p>
+                        Trong DoIP, IP Address và
+                        Logical Address có vai trò khác nhau.
+                        IP Address xác định thiết bị
+                        trong mạng IP, còn Logical Address
+                        xác định nguồn và đích của
+                        diagnostic communication.
+                    </p>
+
+                    <p>
+                        Cần phân biệt DoIP ACK/NACK
+                        với UDS Positive/Negative Response.
+                        ACK/NACK thể hiện kết quả
+                        tiếp nhận message ở cấp DoIP,
+                        còn UDS Response thể hiện
+                        kết quả xử lý Diagnostic Service.
+                    </p>
+
+                    <p>
+                        Trong AUTOSAR Classic,
+                        DoIP module xử lý protocol communication,
+                        SoAd quản lý socket interface,
+                        TcpIp triển khai TCP/IP,
+                        PduR định tuyến diagnostic PDU,
+                        còn DCM xử lý UDS Diagnostic Services.
+                        Các module Ethernet bên dưới
+                        hỗ trợ truyền và nhận dữ liệu
+                        qua Ethernet network.
+                    </p>
+
+                    <p>
+                        Khi áp dụng DoIP trong dự án,
+                        cần kiểm tra IP Configuration,
+                        TCP/UDP, Vehicle Discovery,
+                        Logical Address, Routing Activation,
+                        DoIP Header, Diagnostic Message,
+                        ACK/NACK, Connection Management
+                        và các yêu cầu bảo mật.
+                        Sau đó liên kết với AUTOSAR Configuration,
+                        Test Case, Ethernet Trace và
+                        Test Evidence.
+                    </p>
+
+                    <p>
+                        Qua Bài 37 đến Bài 41,
+                        chúng ta đã tìm hiểu
+                        những thành phần quan trọng
+                        của Diagnostic Communication:
+                        ISO 15765-2 định nghĩa
+                        Transport Protocol cho CAN,
+                        ISO 14229-1 định nghĩa
+                        UDS Application Layer,
+                        ISO 14229-2 định nghĩa
+                        Session Layer Services,
+                        ISO 14229-3 mô tả UDS on CAN,
+                        còn ISO 13400 mô tả
+                        Diagnostic Communication over IP.
+                    </p>
+                </div>
+
+                <h2>60. Tài liệu tham khảo</h2>
+
+                <p>
+                    Các tài liệu dưới đây có thể được sử dụng
+                    để tìm hiểu sâu hơn về DoIP,
+                    Ethernet Diagnostic Communication
+                    và cách triển khai DoIP trong AUTOSAR Classic.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Nội dung tham khảo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/13400-2" target="_blank" rel="noopener noreferrer">
+                                    ISO 13400-2:2025
+                                </a>
+                            </td>
+                            <td>DoIP Transport Protocol and Network Layer Services - Edition 3.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://committee.iso.org/standard/95489.html?browse=tc" target="_blank" rel="noopener noreferrer">
+                                    ISO/CD 13400-2
+                                </a>
+                            </td>
+                            <td>Thông tin về Committee Draft Edition 4 đang được phát triển.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/68424.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 13400-3:2016
+                                </a>
+                            </td>
+                            <td>Wired Vehicle Interface based on IEEE 802.3.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/57317.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 13400-4:2016
+                                </a>
+                            </td>
+                            <td>Ethernet-based High-speed Data Link Connector.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/87962.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 14229-1
+                                </a>
+                            </td>
+                            <td>UDS Application Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/84211.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 15765-2:2024
+                                </a>
+                            </td>
+                            <td>DoCAN Transport Protocol and Network Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.autosar.org/fileadmin/standards/R24-11/CP/AUTOSAR_CP_SWS_DiagnosticOverIP.pdf"
+                                   target="_blank" rel="noopener noreferrer">
+                                    AUTOSAR CP R24-11 - Specification of Diagnostic over IP
+                                </a>
+                            </td>
+                            <td>Đặc tả DoIP Module trong AUTOSAR Classic.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.autosar.org/fileadmin/standards/R24-11/CP/AUTOSAR_CP_SWS_SocketAdaptor.pdf"
+                                   target="_blank" rel="noopener noreferrer">
+                                    AUTOSAR CP R24-11 - Specification of Socket Adaptor
+                                </a>
+                            </td>
+                            <td>Đặc tả SoAd và socket communication.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.autosar.org/fileadmin/standards/R24-11/CP/AUTOSAR_CP_SWS_TcpIp.pdf"
+                                   target="_blank" rel="noopener noreferrer">
+                                    AUTOSAR CP R24-11 - Specification of TCP/IP Stack
+                                </a>
+                            </td>
+                            <td>Đặc tả TcpIp trong AUTOSAR Classic.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.autosar.org/fileadmin/standards/R24-11/CP/AUTOSAR_CP_SWS_DiagnosticCommunicationManager.pdf"
+                                   target="_blank" rel="noopener noreferrer">
+                                    AUTOSAR CP R24-11 - Specification of Diagnostic Communication Manager
+                                </a>
+                            </td>
+                            <td>Đặc tả DCM và UDS Diagnostic Communication.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml"
+                                   target="_blank" rel="noopener noreferrer">
+                                    IANA - Service Name and Port Number Registry
+                                </a>
+                            </td>
+                            <td>Thông tin đăng ký doip-data TCP 13400 và doip-disc UDP 13400.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-40.html">← Bài trước</a>
+                    <a class="btn" href="lesson-42.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

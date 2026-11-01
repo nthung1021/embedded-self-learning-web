@@ -1,0 +1,2973 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html" class="active" aria-current="page">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</h1>
+
+                <p>
+                    Trong các hệ thống Automotive, CAN Communication thường
+                    được sử dụng để trao đổi dữ liệu giữa nhiều ECU.
+                    Tuy nhiên, một trong những vấn đề quan trọng khi thiết kế
+                    mạng truyền thông là khả năng duy trì hoạt động khi
+                    đường truyền vật lý gặp sự cố.
+                </p>
+
+                <p>
+                    Với một mạng CAN thông thường, nếu một dây tín hiệu
+                    bị đứt hoặc gặp một số dạng lỗi điện, khả năng giao tiếp
+                    của các node có thể bị ảnh hưởng nghiêm trọng.
+                    Để giải quyết một số tình huống như vậy, Low-speed,
+                    Fault-tolerant CAN được phát triển với cơ chế
+                    cho phép mạng tiếp tục trao đổi dữ liệu trong
+                    những điều kiện lỗi vật lý được xác định.
+                </p>
+
+                <p>
+                    ISO 11898-3 là tiêu chuẩn mô tả đặc tính của
+                    Low-speed, Fault-tolerant CAN. Tiêu chuẩn này
+                    tập trung vào giao tiếp vật lý giữa các ECU,
+                    đặc tính của CAN Transceiver, cách kết nối bus,
+                    termination và khả năng chịu lỗi của mạng.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào ISO 11898-3:2006, bao gồm
+                    Low-speed Fault-tolerant CAN, kiến trúc mạng,
+                    CAN Transceiver, CAN_H/CAN_L, Differential Signaling,
+                    Bus Termination, fault conditions, fault-tolerant behavior
+                    và các operating mode.
+                    Bài học cũng hướng dẫn cách đọc tiêu chuẩn,
+                    phân tích yêu cầu, lựa chọn Transceiver,
+                    kiểm tra Hardware Design và xây dựng Test Case
+                    trong dự án Automotive.
+                    Các ví dụ là minh họa cho việc học và phân tích kỹ thuật,
+                    không thay thế yêu cầu cụ thể của dự án hoặc toàn văn tiêu chuẩn.
+                </div>
+
+                <h2>1. ISO 11898-3 là gì?</h2>
+
+                <p>
+                    ISO 11898-3 là một phần của bộ tiêu chuẩn ISO 11898,
+                    tập trung vào Low-speed, Fault-tolerant,
+                    Medium-dependent Interface của CAN.
+                </p>
+
+                <p>
+                    Khác với ISO 11898-2, vốn mô tả High-speed
+                    Physical Medium Attachment, ISO 11898-3
+                    tập trung vào một loại CAN Physical Layer
+                    có khả năng duy trì giao tiếp trong một số
+                    điều kiện lỗi đường truyền.
+                </p>
+
+                <p>
+                    Tên đầy đủ của tài liệu:
+                </p>
+
+                <pre><code>ISO 11898-3:2006
+
+Road vehicles - Controller area network (CAN) -
+Part 3: Low-speed, fault-tolerant,
+medium-dependent interface</code></pre>
+
+                <p>
+                    ISO 11898-3:2006 là Edition 1, được xuất bản
+                    vào tháng 6/2006. Theo trang ISO, tài liệu
+                    đã được rà soát và xác nhận lại trong năm 2026,
+                    do đó phiên bản này vẫn được công bố là hiện hành.
+                </p>
+
+                <p>
+                    Tiêu chuẩn quy định đặc tính trao đổi thông tin
+                    giữa các ECU sử dụng CAN ở tốc độ truyền
+                    trên 40 kbit/s đến 125 kbit/s.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý về phạm vi sử dụng:</strong>
+                    ISO 11898-3 vẫn là tài liệu quan trọng để nghiên cứu
+                    Low-speed Fault-tolerant CAN và bảo trì các hệ thống
+                    hiện có. Tuy nhiên, CAN in Automation (CiA)
+                    không khuyến nghị công nghệ này cho những thiết kế mới.
+                    Khi tham gia dự án thực tế, cần kiểm tra yêu cầu
+                    của khách hàng và kiến trúc mạng trước khi lựa chọn.
+                </div>
+
+                <h2>2. Low-speed Fault-tolerant CAN là gì?</h2>
+
+                <p>
+                    Low-speed Fault-tolerant CAN là một dạng CAN
+                    sử dụng hai đường truyền tín hiệu CAN_H và CAN_L,
+                    được thiết kế để có khả năng duy trì giao tiếp
+                    trong một số điều kiện lỗi vật lý trên bus.
+                </p>
+
+                <p>
+                    Điểm quan trọng của công nghệ này là khả năng
+                    tiếp tục hoạt động với hiệu năng giảm khi
+                    một trong hai đường tín hiệu gặp một số dạng
+                    sự cố được hỗ trợ.
+                </p>
+
+                <p>
+                    Ví dụ, nếu một đường tín hiệu bị hở,
+                    kiến trúc Transceiver và termination của
+                    Low-speed Fault-tolerant CAN có thể cho phép
+                    hệ thống tiếp tục giao tiếp thông qua đường
+                    tín hiệu còn hoạt động, tùy theo loại lỗi
+                    và implementation.
+                </p>
+
+                <p>
+                    Một số đặc điểm chính:
+                </p>
+
+                <ul>
+                    <li>Sử dụng hai đường tín hiệu CAN_H và CAN_L.</li>
+                    <li>Hỗ trợ tốc độ truyền trên 40 kbit/s đến 125 kbit/s.</li>
+                    <li>Sử dụng Transceiver có đặc tính Low-speed Fault-tolerant.</li>
+                    <li>Có termination network được thiết kế riêng cho từng node hoặc nhóm node theo cấu hình mạng.</li>
+                    <li>Có khả năng duy trì giao tiếp trong những điều kiện lỗi vật lý được quy định.</li>
+                    <li>Hiệu năng giao tiếp có thể giảm khi mạng hoạt động trong chế độ lỗi.</li>
+                </ul>
+
+                <h2>3. Vì sao cần Fault-tolerant CAN?</h2>
+
+                <p>
+                    Trong một chiếc xe, các ECU được kết nối bằng
+                    dây dẫn, đầu nối và nhiều thành phần phần cứng.
+                    Những thành phần này có thể gặp các vấn đề
+                    như đứt dây, kết nối không tốt hoặc lỗi điện.
+                </p>
+
+                <p>
+                    Nếu một đường truyền quan trọng bị ảnh hưởng,
+                    hệ thống có thể mất khả năng trao đổi dữ liệu.
+                    Điều này đặc biệt đáng chú ý với những mạng
+                    có nhiều ECU và chức năng phân tán.
+                </p>
+
+                <p>
+                    Low-speed Fault-tolerant CAN được thiết kế
+                    để giảm ảnh hưởng của một số lỗi đường truyền.
+                    Thay vì ngay lập tức mất hoàn toàn giao tiếp,
+                    hệ thống có thể duy trì khả năng trao đổi dữ liệu
+                    trong một chế độ có hiệu năng giảm.
+                </p>
+
+                <p>
+                    Những mục tiêu chính gồm:
+                </p>
+
+                <ul>
+                    <li>Tăng khả năng duy trì giao tiếp khi một đường bus gặp lỗi.</li>
+                    <li>Giảm nguy cơ một lỗi đường truyền làm mất toàn bộ communication.</li>
+                    <li>Hỗ trợ phát hiện và xử lý những tình trạng lỗi vật lý.</li>
+                    <li>Cung cấp cơ sở để thiết kế mạng CAN có khả năng chịu lỗi.</li>
+                    <li>Hỗ trợ những ECU và hệ thống cần duy trì một mức giao tiếp nhất định khi gặp sự cố.</li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, Fault-tolerant không có nghĩa là
+                    mạng CAN có thể tiếp tục hoạt động trong mọi
+                    trường hợp lỗi. Khả năng chịu lỗi phải được
+                    xác định theo những điều kiện cụ thể của
+                    tiêu chuẩn và Transceiver được sử dụng.
+                </p>
+
+                <h2>4. Phạm vi của ISO 11898-3</h2>
+
+                <p>
+                    ISO 11898-3 mô tả những yêu cầu cần thiết
+                    để đạt được Fault-tolerant behavior
+                    trong Low-speed CAN.
+                </p>
+
+                <p>
+                    Tiêu chuẩn tập trung chủ yếu vào:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phạm vi</th>
+                            <th>Nội dung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Medium Dependent Interface (MDI)</td>
+                            <td>Đặc tính liên quan đến môi trường truyền vật lý và kết nối bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Physical Medium Attachment (PMA)</td>
+                            <td>Đặc tính của Transceiver và giao tiếp giữa node với môi trường truyền.</td>
+                        </tr>
+                        <tr>
+                            <td>Physical Layer Signalling (PLS)</td>
+                            <td>Một số quy tắc tín hiệu vật lý chịu ảnh hưởng bởi Low-speed CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>Medium Access Control (MAC)</td>
+                            <td>Một số hành vi thuộc MAC có liên quan đến Fault-tolerant operation.</td>
+                        </tr>
+                        <tr>
+                            <td>Fault Management</td>
+                            <td>Định nghĩa lỗi đường truyền và cách quản lý trạng thái lỗi.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    ISO 11898-3 không mô tả toàn bộ các tầng
+                    trong kiến trúc phần mềm ECU. Những nội dung
+                    như Application Software, UDS, Signal Mapping
+                    hoặc AUTOSAR COM cần được tham khảo
+                    từ những tài liệu tương ứng.
+                </p>
+
+                <h2>5. So sánh ISO 11898-1, ISO 11898-2 và ISO 11898-3</h2>
+
+                <p>
+                    Ba phần này đều thuộc bộ tiêu chuẩn ISO 11898,
+                    nhưng tập trung vào những phạm vi khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>ISO 11898-1</th>
+                            <th>ISO 11898-2</th>
+                            <th>ISO 11898-3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Trọng tâm</td>
+                            <td>CAN Data Link Layer và PCS.</td>
+                            <td>High-speed CAN PMA.</td>
+                            <td>Low-speed Fault-tolerant CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>Đặc điểm</td>
+                            <td>Frame, Arbitration, Error Handling và Bit Coding.</td>
+                            <td>High-speed Physical Layer.</td>
+                            <td>Low-speed Physical Layer có khả năng chịu lỗi đường truyền.</td>
+                        </tr>
+                        <tr>
+                            <td>Tốc độ</td>
+                            <td>Phụ thuộc CAN implementation và protocol variant.</td>
+                            <td>High-speed CAN; có những implementation hỗ trợ CAN FD.</td>
+                            <td>Trên 40 kbit/s đến 125 kbit/s.</td>
+                        </tr>
+                        <tr>
+                            <td>Termination</td>
+                            <td>Không phải nội dung chính của Data Link Layer.</td>
+                            <td>Thông thường đặt tại hai đầu bus.</td>
+                            <td>Termination network gắn với các node theo yêu cầu mạng.</td>
+                        </tr>
+                        <tr>
+                            <td>Fault Tolerance</td>
+                            <td>Có cơ chế xử lý lỗi protocol.</td>
+                            <td>Đặc tính High-speed PMA.</td>
+                            <td>Hỗ trợ duy trì giao tiếp trong một số lỗi vật lý trên một đường bus.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Điểm cần nhớ là ISO 11898-3 không phải
+                    một phiên bản nhanh hơn hoặc một bản mở rộng
+                    của ISO 11898-2. Đây là một lựa chọn
+                    Physical Layer khác với mục tiêu kỹ thuật riêng.
+                </p>
+
+                <h2>6. Kiến trúc Low-speed Fault-tolerant CAN</h2>
+
+                <p>
+                    Một node Low-speed Fault-tolerant CAN
+                    vẫn có những thành phần cơ bản như
+                    MCU, CAN Controller và CAN Transceiver.
+                </p>
+
+                <p>
+                    Điểm khác biệt nằm ở đặc tính Transceiver
+                    và cách các node kết nối termination
+                    với hai đường tín hiệu của bus.
+                </p>
+
+                <pre><code>             ECU A
+       +------------------+
+       |        MCU       |
+       |                  |
+       |  CAN Controller  |
+       |        |         |
+       |   TXD / RXD      |
+       |        |         |
+       |  CAN Transceiver |
+       |        |         |
+       |  Termination     |
+       +--------+---------+
+                |
+           CAN_H / CAN_L
+                |
+                |
+       +--------+---------+
+       |                  |
+       |    CAN Network   |
+       |                  |
+       +--------+---------+
+                |
+                |
+             ECU B
+       +------------------+
+       |  CAN Transceiver |
+       |        |         |
+       |  CAN Controller  |
+       |        |         |
+       |        MCU       |
+       +------------------+</code></pre>
+
+                <p>
+                    Mỗi ECU tham gia mạng cần có Transceiver
+                    phù hợp với Low-speed Fault-tolerant CAN.
+                    Các node cũng cần có termination network
+                    được tính toán theo kiến trúc mạng.
+                </p>
+
+                <h2>7. CAN Transceiver trong ISO 11898-3</h2>
+
+                <p>
+                    CAN Transceiver là thành phần thực hiện
+                    việc chuyển đổi giữa tín hiệu logic ở phía
+                    CAN Controller và tín hiệu điện trên CAN bus.
+                </p>
+
+                <p>
+                    Đối với Low-speed Fault-tolerant CAN,
+                    Transceiver không chỉ thực hiện chức năng
+                    phát và nhận thông thường mà còn phải đáp ứng
+                    những yêu cầu liên quan đến Fault-tolerant behavior.
+                </p>
+
+                <p>
+                    Những chức năng cần quan tâm:
+                </p>
+
+                <ul>
+                    <li>Transmit CAN data.</li>
+                    <li>Receive CAN data.</li>
+                    <li>Detect physical bus conditions.</li>
+                    <li>Support fault-tolerant operation.</li>
+                    <li>Provide normal and low-power operation according to its implementation.</li>
+                    <li>Interface with CAN Controller through logic signals.</li>
+                </ul>
+
+                <p>
+                    Khi lựa chọn Transceiver, cần kiểm tra
+                    linh kiện có hỗ trợ chính xác ISO 11898-3
+                    hay không. Không nên mặc định một Transceiver
+                    High-speed CAN theo ISO 11898-2 có thể
+                    thay thế trực tiếp một Transceiver
+                    Low-speed Fault-tolerant CAN.
+                </p>
+
+                <h2>8. CAN_H và CAN_L</h2>
+
+                <p>
+                    Low-speed Fault-tolerant CAN sử dụng
+                    hai đường tín hiệu là CAN_H và CAN_L.
+                    Hai đường này có thể được triển khai
+                    bằng cặp dây song song hoặc xoắn,
+                    có hoặc không có lớp shield tùy theo
+                    yêu cầu EMC của hệ thống.
+                </p>
+
+                <p>
+                    Mỗi node kết nối với cả hai đường tín hiệu.
+                    Transceiver sử dụng trạng thái điện áp
+                    của hai đường để phân biệt Dominant
+                    và Recessive.
+                </p>
+
+                <pre><code>       ECU A                         ECU B
+  +---------------+           +---------------+
+  | CAN Transceiver|           | CAN Transceiver|
+  +-------+-------+           +-------+-------+
+          |                           |
+          |                           |
+CAN_H ----+---------------------------+----
+          |                           |
+CAN_L ----+---------------------------+----
+          |                           |
+          |                           |
+      ECU A Node                   ECU B Node</code></pre>
+
+                <p>
+                    Vì sử dụng hai dây tín hiệu,
+                    hệ thống vẫn có khả năng đánh giá
+                    trạng thái của bus khi một trong hai
+                    đường gặp một số dạng lỗi vật lý.
+                </p>
+
+                <h2>9. Differential Signaling trong ISO 11898-3</h2>
+
+                <p>
+                    Low-speed Fault-tolerant CAN sử dụng
+                    điện áp vi sai để phân biệt hai trạng thái
+                    logic của bus.
+                </p>
+
+                <p>
+                    Điện áp vi sai được biểu diễn bằng:
+                </p>
+
+                <pre><code>Vdiff = VCAN_H - VCAN_L</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li>VCAN_H là điện áp trên đường CAN_H.</li>
+                    <li>VCAN_L là điện áp trên đường CAN_L.</li>
+                    <li>Vdiff là hiệu điện thế giữa hai đường tín hiệu.</li>
+                </ul>
+
+                <p>
+                    Theo cách biểu diễn của ISO 11898-3:
+                </p>
+
+                <ul>
+                    <li>Dominant có Vdiff dương.</li>
+                    <li>Recessive có Vdiff âm.</li>
+                </ul>
+
+                <p>
+                    Đây là một điểm cần chú ý khi so sánh
+                    với những hệ thống High-speed CAN
+                    mà bạn đã học ở Bài 35.
+                </p>
+
+                <h2>10. Dominant và Recessive trong Low-speed CAN</h2>
+
+                <p>
+                    Trong Low-speed Fault-tolerant CAN,
+                    hai trạng thái Dominant và Recessive
+                    vẫn được biểu diễn bằng sự khác biệt
+                    điện áp giữa CAN_H và CAN_L.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th>CAN_H</th>
+                            <th>CAN_L</th>
+                            <th>Vdiff</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Recessive</td>
+                            <td>Thấp hơn CAN_L.</td>
+                            <td>Cao hơn CAN_H.</td>
+                            <td>Âm.</td>
+                        </tr>
+                        <tr>
+                            <td>Dominant</td>
+                            <td>Cao hơn CAN_L.</td>
+                            <td>Thấp hơn CAN_H.</td>
+                            <td>Dương.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong trạng thái Recessive, CAN_L được
+                    bias về phía VCC và CAN_H được bias
+                    về phía GND thông qua termination network.
+                </p>
+
+                <p>
+                    Khi Transceiver phát Dominant,
+                    CAN_H được điều khiển lên mức điện áp cao hơn
+                    và CAN_L được điều khiển xuống mức điện áp thấp hơn.
+                </p>
+
+                <pre><code>RECESSIVE:
+
+CAN_H  ---- Low
+CAN_L  ---- High
+
+Vdiff = CAN_H - CAN_L < 0
+
+
+DOMINANT:
+
+CAN_H  ---- High
+CAN_L  ---- Low
+
+Vdiff = CAN_H - CAN_L > 0</code></pre>
+
+                <p>
+                    Cách biểu diễn này giúp phân biệt
+                    Low-speed Fault-tolerant CAN với
+                    High-speed CAN thông dụng, trong đó
+                    trạng thái Recessive thường có
+                    hai đường CAN_H và CAN_L gần nhau.
+                </p>
+
+                <h2>11. Điện áp Recessive và Dominant</h2>
+
+                <p>
+                    ISO 11898-3 mô tả các giới hạn điện áp
+                    cho những trạng thái Recessive và Dominant
+                    trong điều kiện đo được quy định.
+                </p>
+
+                <p>
+                    Với ví dụ termination sử dụng VCC danh định 5 V,
+                    có thể hiểu các giới hạn trong bảng
+                    đặc tính DC theo cách tổng quát như sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th>CAN_L</th>
+                            <th>CAN_H</th>
+                            <th>Vdiff</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Recessive</td>
+                            <td>Gần VCC, thấp hơn VCC một lượng giới hạn nhỏ.</td>
+                            <td>Gần GND, không vượt quá giới hạn tương ứng.</td>
+                            <td>Âm.</td>
+                        </tr>
+                        <tr>
+                            <td>Dominant</td>
+                            <td>Được điều khiển xuống mức thấp.</td>
+                            <td>Được điều khiển lên mức cao.</td>
+                            <td>Dương.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Với VCC danh định 5 V, bảng thông số của tiêu chuẩn
+                    có các giới hạn minh họa như:
+                </p>
+
+                <ul>
+                    <li>Recessive CAN_L có mức tối thiểu liên quan đến VCC - 0,3 V.</li>
+                    <li>Recessive CAN_H có mức tối đa 0,3 V.</li>
+                    <li>Dominant CAN_L có mức tối đa 1,4 V.</li>
+                    <li>Dominant CAN_H có mức tối thiểu liên quan đến VCC - 1,4 V.</li>
+                </ul>
+
+                <p>
+                    Các thông số trên được trình bày theo
+                    những điều kiện đo trong ISO 11898-3.
+                    Không nên sử dụng chúng làm giới hạn chung
+                    cho mọi phép đo nếu chưa đối chiếu
+                    chính xác điều kiện thử nghiệm và datasheet.
+                </p>
+
+                <h2>12. Common-mode Voltage</h2>
+
+                <p>
+                    Common-mode Voltage là thành phần điện áp chung
+                    của hai đường CAN_H và CAN_L.
+                </p>
+
+                <p>
+                    Có thể biểu diễn bằng:
+                </p>
+
+                <pre><code>VCOM = (VCAN_H + VCAN_L) / 2</code></pre>
+
+                <p>
+                    Common-mode Voltage khác với Differential Voltage:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đại lượng</th>
+                            <th>Công thức</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Differential Voltage</td>
+                            <td>Vdiff = VCAN_H - VCAN_L</td>
+                            <td>Độ chênh lệch điện áp giữa hai đường bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Common-mode Voltage</td>
+                            <td>VCOM = (VCAN_H + VCAN_L) / 2</td>
+                            <td>Mức điện áp trung bình của hai đường bus.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi debug Physical Layer, cần quan tâm
+                    cả hai đại lượng. Một hệ thống có thể
+                    có Differential Voltage phù hợp nhưng
+                    Common-mode Voltage lại nằm ngoài
+                    phạm vi hoạt động được hỗ trợ của Transceiver.
+                </p>
+
+                <h2>13. Termination trong Low-speed Fault-tolerant CAN</h2>
+
+                <p>
+                    Termination là một điểm khác biệt quan trọng
+                    giữa Low-speed Fault-tolerant CAN và
+                    High-speed CAN thông dụng.
+                </p>
+
+                <p>
+                    Với High-speed CAN theo ISO 11898-2,
+                    mạng tuyến tính thường sử dụng hai điện trở
+                    termination ở hai đầu bus.
+                </p>
+
+                <p>
+                    Với Low-speed Fault-tolerant CAN,
+                    termination network được thực hiện
+                    tại các node theo cách được mô tả
+                    trong ISO 11898-3.
+                </p>
+
+                <p>
+                    Mạng termination giúp thiết lập
+                    trạng thái Recessive và hỗ trợ
+                    khả năng duy trì giao tiếp khi
+                    một đường bus gặp lỗi.
+                </p>
+
+                <pre><code>          Node A
+      +----------------+
+      | CAN Transceiver|
+      | Termination    |
+      +-------+--------+
+              |
+              |
+       CAN_H / CAN_L
+              |
+      +-------+--------+
+      | CAN Network    |
+      +-------+--------+
+              |
+              |
+          Node B
+      +----------------+
+      | CAN Transceiver|
+      | Termination    |
+      +----------------+</code></pre>
+
+                <p>
+                    Trong cấu trúc thông dụng,
+                    mỗi node có thể tham gia vào
+                    termination network của từng đường bus.
+                    Tuy nhiên, không phải mọi node đều bắt buộc
+                    phải có một termination riêng nếu
+                    điều kiện tổng thể của mạng vẫn
+                    đáp ứng yêu cầu của tiêu chuẩn.
+                </p>
+
+                <h2>14. Giá trị điện trở termination</h2>
+
+                <p>
+                    ISO 11898-3 quy định những điều kiện
+                    liên quan đến tổng trở kháng termination
+                    của mạng.
+                </p>
+
+                <p>
+                    Những điểm cần chú ý:
+                </p>
+
+                <ul>
+                    <li>Tổng trở termination của mỗi đường bus cần đáp ứng giới hạn được quy định.</li>
+                    <li>Giá trị termination tại một node được chỉ định không nên thấp hơn 500 ohm theo điều kiện trong tiêu chuẩn.</li>
+                    <li>CAN_L được bias về phía VCC để thể hiện Recessive.</li>
+                    <li>CAN_H được bias về phía GND để thể hiện Recessive.</li>
+                </ul>
+
+                <p>
+                    Theo cấu trúc được mô tả trong tiêu chuẩn,
+                    tổng điện trở termination của mỗi đường
+                    bus nên lớn hơn hoặc bằng 100 ohm.
+                </p>
+
+                <p>
+                    Ví dụ minh họa về một mạng có năm node,
+                    mỗi node đóng góp termination 500 ohm
+                    cho một đường bus:
+                </p>
+
+                <pre><code>R1 = 500 ohm
+R2 = 500 ohm
+R3 = 500 ohm
+R4 = 500 ohm
+R5 = 500 ohm
+
+Rtotal = 500 / 5
+
+Rtotal = 100 ohm</code></pre>
+
+                <p>
+                    Đây là phép tính minh họa cho các
+                    termination mắc song song có giá trị bằng nhau.
+                    Thiết kế thực tế cần kiểm tra sơ đồ mạch,
+                    dung sai điện trở và điều kiện được quy định
+                    trong tiêu chuẩn.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Không áp dụng máy móc quy tắc hai điện trở
+                    120 ohm ở hai đầu bus của High-speed CAN
+                    sang Low-speed Fault-tolerant CAN.
+                    Hai loại Physical Layer có cách termination
+                    khác nhau.
+                </div>
+
+                <h2>15. So sánh Termination của High-speed và Low-speed CAN</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>High-speed CAN</th>
+                            <th>Low-speed Fault-tolerant CAN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tiêu chuẩn</td>
+                            <td>ISO 11898-2.</td>
+                            <td>ISO 11898-3.</td>
+                        </tr>
+                        <tr>
+                            <td>Termination</td>
+                            <td>Thường đặt tại hai đầu vật lý của bus.</td>
+                            <td>Termination network được thực hiện tại các node theo kiến trúc mạng.</td>
+                        </tr>
+                        <tr>
+                            <td>Giá trị tham khảo phổ biến</td>
+                            <td>Hai điện trở 120 ohm.</td>
+                            <td>Termination network với yêu cầu tổng trở riêng.</td>
+                        </tr>
+                        <tr>
+                            <td>Recessive Bias</td>
+                            <td>Hai đường bus gần cùng mức điện áp.</td>
+                            <td>CAN_L được bias về VCC và CAN_H được bias về GND.</td>
+                        </tr>
+                        <tr>
+                            <td>Fault Tolerance</td>
+                            <td>Không có cùng cơ chế fault-tolerant một đường bus như ISO 11898-3.</td>
+                            <td>Được thiết kế để tiếp tục giao tiếp trong một số lỗi đường bus.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Sự khác biệt này rất quan trọng khi kiểm tra
+                    Hardware Design. Nếu nhầm termination
+                    giữa hai loại CAN, mạng có thể không
+                    đáp ứng đặc tính điện yêu cầu.
+                </p>
+
+                <h2>16. Network Topology</h2>
+
+                <p>
+                    Network Topology mô tả cách các ECU
+                    được kết nối với nhau trong mạng.
+                </p>
+
+                <p>
+                    ISO 11898-3 mô tả các mô hình mạng
+                    và các đặc tính ảnh hưởng đến khả năng
+                    truyền tín hiệu, chẳng hạn:
+                </p>
+
+                <ul>
+                    <li>Tổng chiều dài dây dẫn.</li>
+                    <li>Số lượng node.</li>
+                    <li>Số lượng connector.</li>
+                    <li>Điện dung của dây và node.</li>
+                    <li>Tổng trở termination.</li>
+                    <li>Communication Speed.</li>
+                    <li>Ground Shift.</li>
+                </ul>
+
+                <p>
+                    Những yếu tố này ảnh hưởng đến Operating Capacitance
+                    và thời gian tín hiệu đạt đến ngưỡng
+                    cần thiết để receiver lấy mẫu.
+                </p>
+
+                <pre><code>          Node A
+             |
+             |
+CAN Bus -----+---------+---------+---------
+                       |         |
+                       |         |
+                     Node B    Node C
+</code></pre>
+
+                <p>
+                    Mạng thực tế có thể có nhiều nhánh và nhiều node.
+                    Tuy nhiên, việc tăng số node, connector hoặc chiều dài
+                    đường dây làm thay đổi tải điện tổng thể.
+                </p>
+
+                <p>
+                    Vì vậy, không nên chọn chiều dài bus
+                    chỉ dựa trên một con số chung.
+                    Cần đánh giá cả bitrate, topology,
+                    capacitance, transceiver delay
+                    và sample point.
+                </p>
+
+                <h2>17. Operating Capacitance</h2>
+
+                <p>
+                    Operating Capacitance là điện dung tổng thể
+                    mà các node nhìn thấy từ bus,
+                    phụ thuộc vào dây dẫn, connector,
+                    node và topology mạng.
+                </p>
+
+                <p>
+                    Những thành phần góp phần tạo nên
+                    Operating Capacitance gồm:
+                </p>
+
+                <ul>
+                    <li>Điện dung giữa hai dây tín hiệu.</li>
+                    <li>Điện dung từ các dây tín hiệu đến ground.</li>
+                    <li>Điện dung đầu vào của các CAN node.</li>
+                    <li>Điện dung của connector.</li>
+                </ul>
+
+                <p>
+                    Khi số lượng node và connector tăng,
+                    điện dung tổng thể mà mạng phải điều khiển
+                    cũng có thể tăng.
+                </p>
+
+                <p>
+                    Điều này có thể làm thay đổi thời gian
+                    chuyển trạng thái điện áp và ảnh hưởng
+                    đến khả năng lấy mẫu dữ liệu.
+                </p>
+
+                <p>
+                    ISO 11898-3 đưa ra mô hình tính toán
+                    Operating Capacitance dựa trên
+                    chiều dài mạng, số node và số connector.
+                </p>
+
+                <pre><code>Operating Capacitance depends on:
+
+- Cable Length
+- Cable Capacitance
+- Number of Nodes
+- Node Input Capacitance
+- Number of Connectors
+- Connector Capacitance</code></pre>
+
+                <p>
+                    Khi thiết kế mạng có nhiều node,
+                    không nên chỉ đếm số lượng ECU.
+                    Cần xem xét cả phần dây dẫn và connector
+                    để đánh giá tổng tải điện của bus.
+                </p>
+
+                <h2>18. Bitrate và Medium Timing</h2>
+
+                <p>
+                    ISO 11898-3 áp dụng cho Low-speed CAN
+                    với tốc độ truyền trên 40 kbit/s
+                    đến tối đa 125 kbit/s.
+                </p>
+
+                <p>
+                    Bitrate không thể được xem xét độc lập
+                    với topology và đặc tính điện của mạng.
+                    Khi tốc độ truyền tăng, thời gian dành cho
+                    tín hiệu ổn định và lấy mẫu dữ liệu giảm.
+                </p>
+
+                <p>
+                    Một số thông số ảnh hưởng đến Medium Timing:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông số</th>
+                            <th>Ảnh hưởng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Operating Capacitance</td>
+                            <td>Ảnh hưởng đến thời gian thay đổi điện áp của bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Termination Resistance</td>
+                            <td>Ảnh hưởng đến hằng số thời gian và điện áp bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Transceiver Loop Delay</td>
+                            <td>Ảnh hưởng đến độ trễ phát và nhận của node.</td>
+                        </tr>
+                        <tr>
+                            <td>Sample Point</td>
+                            <td>Quyết định thời điểm receiver lấy mẫu bit.</td>
+                        </tr>
+                        <tr>
+                            <td>Ground Shift</td>
+                            <td>Ảnh hưởng đến điện áp tham chiếu giữa các node.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Vì vậy, khi thay đổi bitrate hoặc thêm ECU,
+                    cần đánh giá lại khả năng hoạt động
+                    của toàn bộ mạng thay vì chỉ kiểm tra
+                    cấu hình CAN Controller.
+                </p>
+
+                <h2>19. Fault-tolerant Behavior</h2>
+
+                <p>
+                    Fault-tolerant behavior là khả năng
+                    duy trì hoạt động của hệ thống trong
+                    những điều kiện lỗi được xác định,
+                    ít nhất với hiệu năng giảm.
+                </p>
+
+                <p>
+                    Trong Low-speed Fault-tolerant CAN,
+                    mục tiêu là cho phép giao tiếp tiếp tục
+                    khi một trong hai đường bus gặp
+                    một số dạng lỗi vật lý được hỗ trợ.
+                </p>
+
+                <p>
+                    Ví dụ, khi một đường tín hiệu bị đứt,
+                    Transceiver phù hợp có thể tiếp tục
+                    xử lý communication thông qua
+                    đường tín hiệu còn lại theo
+                    cơ chế fault-tolerant.
+                </p>
+
+                <p>
+                    Tuy nhiên, cần phân biệt:
+                </p>
+
+                <ul>
+                    <li><strong>Fault-free Communication:</strong> giao tiếp hoạt động mà không mất thông tin.</li>
+                    <li><strong>Fault-tolerant Operation:</strong> giao tiếp vẫn có thể tiếp tục trong một số tình trạng lỗi, nhưng hiệu năng có thể giảm.</li>
+                </ul>
+
+                <p>
+                    Fault-tolerant operation không đồng nghĩa
+                    với việc hệ thống vẫn hoạt động hoàn toàn
+                    giống trạng thái bình thường.
+                </p>
+
+                <h2>20. Những dạng lỗi vật lý cần quan tâm</h2>
+
+                <p>
+                    Physical Bus Failure là các lỗi phát sinh
+                    từ sự cố của môi trường truyền vật lý.
+                    ISO 11898-3 đề cập đến những lỗi như
+                    interruption và short circuit.
+                </p>
+
+                <p>
+                    Trong quá trình phân tích mạng CAN,
+                    kỹ sư thường cần xem xét những trường hợp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dạng lỗi</th>
+                            <th>Ví dụ hiện tượng</th>
+                            <th>Ảnh hưởng cần đánh giá</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Open Circuit</td>
+                            <td>Một đường CAN_H hoặc CAN_L bị hở.</td>
+                            <td>Khả năng duy trì giao tiếp qua đường tín hiệu còn lại.</td>
+                        </tr>
+                        <tr>
+                            <td>Short to Ground</td>
+                            <td>Một đường tín hiệu bị kéo về ground.</td>
+                            <td>Ảnh hưởng đến mức điện áp và receiver behavior.</td>
+                        </tr>
+                        <tr>
+                            <td>Short to Supply</td>
+                            <td>Một đường tín hiệu bị kéo về nguồn điện.</td>
+                            <td>Ảnh hưởng đến bus voltage và khả năng nhận tín hiệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Incorrect Load</td>
+                            <td>Tải điện không phù hợp với thiết kế.</td>
+                            <td>Thay đổi đặc tính điện và chất lượng tín hiệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Ground Shift</td>
+                            <td>Điện áp ground giữa các node khác nhau.</td>
+                            <td>Ảnh hưởng đến Common-mode Voltage và khả năng nhận tín hiệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Connector Failure</td>
+                            <td>Đầu nối bị lỏng hoặc tiếp xúc không ổn định.</td>
+                            <td>Gây gián đoạn hoặc thay đổi đặc tính đường truyền.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là danh sách tình huống thường được
+                    xem xét trong phân tích lỗi vật lý.
+                    Không nên hiểu rằng mọi Transceiver
+                    đều có thể chịu được mọi tổ hợp lỗi.
+                    Cần xác định chính xác fault condition,
+                    yêu cầu của tiêu chuẩn và khả năng
+                    của implementation đang sử dụng.
+                </p>
+
+                <h2>21. Khả năng giao tiếp khi một đường bus bị lỗi</h2>
+
+                <p>
+                    Đây là điểm khác biệt quan trọng
+                    của Low-speed Fault-tolerant CAN.
+                </p>
+
+                <p>
+                    Trong mạng có Transceiver hỗ trợ
+                    Fault-tolerant operation, hệ thống
+                    có thể tiếp tục trao đổi dữ liệu
+                    trong một số tình huống một đường
+                    truyền bị ảnh hưởng.
+                </p>
+
+                <pre><code>Normal Operation:
+
+CAN_H  -------------------------
+CAN_L  -------------------------
+
+Both signal lines are available.
+
+
+Fault-tolerant Operation:
+
+CAN_H  ---------X---------------
+CAN_L  -------------------------
+
+One line is affected.
+The network may continue
+communication with reduced performance,
+depending on the supported fault condition.</code></pre>
+
+                <p>
+                    Hình trên chỉ mô tả khái niệm
+                    một đường tín hiệu gặp lỗi.
+                    Nó không phải sơ đồ mạch hoặc
+                    quy trình tạo lỗi thực tế.
+                </p>
+
+                <p>
+                    Điểm cần lưu ý là Fault-tolerant CAN
+                    được thiết kế để giảm khả năng mất
+                    hoàn toàn giao tiếp do một số
+                    lỗi đơn lẻ trên bus.
+                </p>
+
+                <h2>22. Vì sao Low-speed Fault-tolerant CAN có tốc độ thấp hơn?</h2>
+
+                <p>
+                    ISO 11898-3 tập trung vào khả năng
+                    duy trì giao tiếp trong những điều kiện
+                    lỗi vật lý nhất định.
+                </p>
+
+                <p>
+                    Để đạt được đặc tính này, kiến trúc
+                    Transceiver và termination cần
+                    đáp ứng những yêu cầu khác với
+                    High-speed CAN.
+                </p>
+
+                <p>
+                    Mạng còn chịu ảnh hưởng bởi:
+                </p>
+
+                <ul>
+                    <li>Termination network.</li>
+                    <li>Operating Capacitance.</li>
+                    <li>Transceiver Loop Delay.</li>
+                    <li>Sample Point.</li>
+                    <li>Ground Shift.</li>
+                    <li>Physical Bus Topology.</li>
+                </ul>
+
+                <p>
+                    Những yếu tố này giới hạn tốc độ
+                    giao tiếp trong phạm vi trên 40 kbit/s
+                    đến 125 kbit/s được xác định
+                    trong ISO 11898-3.
+                </p>
+
+                <p>
+                    Đây là một sự đánh đổi giữa khả năng
+                    chịu lỗi đường truyền và tốc độ
+                    giao tiếp vật lý.
+                </p>
+
+                <h2>23. Normal Mode và Low-power Mode</h2>
+
+                <p>
+                    ISO 11898-3 đề cập đến Normal Mode
+                    và Low-power Mode của node.
+                </p>
+
+                <p>
+                    Normal Mode là trạng thái mà
+                    Transceiver tham gia tích cực
+                    vào hoạt động truyền và nhận dữ liệu.
+                </p>
+
+                <p>
+                    Low-power Mode là trạng thái
+                    hoạt động với mức tiêu thụ điện
+                    năng thấp hơn.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>Đặc điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Normal Mode</td>
+                            <td>Node có thể tham gia truyền và nhận dữ liệu trên CAN network.</td>
+                        </tr>
+                        <tr>
+                            <td>Low-power Mode</td>
+                            <td>Node giảm tiêu thụ năng lượng và không được làm gián đoạn giao tiếp của các node khác.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một node ở Low-power Mode không nên
+                    gây ảnh hưởng đến communication
+                    của những node còn lại.
+                </p>
+
+                <p>
+                    Khi thiết kế ECU, cần kiểm tra
+                    Transceiver hỗ trợ mode nào,
+                    điều kiện chuyển mode và
+                    những trạng thái mà phần mềm
+                    cần quản lý.
+                </p>
+
+                <h2>24. Fault Management trong ISO 11898-3</h2>
+
+                <p>
+                    Ngoài việc mô tả đặc tính vật lý,
+                    ISO 11898-3 còn đề cập đến
+                    việc quản lý những lỗi xuất hiện
+                    trên môi trường truyền.
+                </p>
+
+                <p>
+                    Fault Management giúp Transceiver
+                    nhận biết những trạng thái bất thường
+                    và chuyển sang cách hoạt động
+                    phù hợp với fault condition.
+                </p>
+
+                <p>
+                    Khi phân tích Fault Management,
+                    cần tìm hiểu:
+                </p>
+
+                <ul>
+                    <li>Physical Bus Failure được định nghĩa như thế nào?</li>
+                    <li>Những loại lỗi nào thuộc phạm vi hỗ trợ?</li>
+                    <li>Điều kiện nhận biết lỗi là gì?</li>
+                    <li>Transceiver thay đổi behavior như thế nào?</li>
+                    <li>Khi nào communication có thể trở lại normal operation?</li>
+                    <li>Những trạng thái nào có thể được cung cấp cho phần mềm?</li>
+                </ul>
+
+                <p>
+                    Không nên nhầm Fault Management
+                    của Transceiver với Error Handling
+                    của CAN Controller.
+                </p>
+
+                <p>
+                    CAN Controller có những cơ chế
+                    xử lý lỗi thuộc Data Link Layer,
+                    trong khi Fault Management ở
+                    Low-speed Transceiver tập trung
+                    vào những điều kiện lỗi vật lý
+                    của bus.
+                </p>
+
+                <h2>25. Fault-tolerant CAN và CAN Error Handling</h2>
+
+                <p>
+                    Đây là hai khái niệm liên quan đến lỗi
+                    nhưng hoạt động ở những phạm vi khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>CAN Error Handling</th>
+                            <th>Fault-tolerant Physical Layer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phạm vi</td>
+                            <td>CAN Data Link Layer.</td>
+                            <td>Physical Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>Mục tiêu</td>
+                            <td>Phát hiện và xử lý lỗi frame hoặc lỗi protocol.</td>
+                            <td>Duy trì giao tiếp khi bus gặp một số lỗi vật lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>Bit Error, Stuff Error, CRC Error, ACK Error.</td>
+                            <td>Open Circuit hoặc một số dạng Short Circuit trên một đường tín hiệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Thành phần liên quan</td>
+                            <td>CAN Controller.</td>
+                            <td>CAN Transceiver và termination network.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một hệ thống có Fault-tolerant CAN
+                    vẫn cần các cơ chế Error Detection
+                    của CAN Protocol.
+                    Fault-tolerant Physical Layer
+                    không thay thế Error Handling
+                    của Data Link Layer.
+                </p>
+
+                <h2>26. Những ứng dụng của Low-speed Fault-tolerant CAN</h2>
+
+                <p>
+                    Low-speed Fault-tolerant CAN được thiết kế
+                    cho những hệ thống cần duy trì một mức
+                    giao tiếp nhất định trong một số
+                    điều kiện bus failure.
+                </p>
+
+                <p>
+                    Về mặt lịch sử, công nghệ này thường
+                    được nhắc đến trong những mạng
+                    Automotive có yêu cầu tiết kiệm điện
+                    và khả năng chịu lỗi đường truyền.
+                </p>
+
+                <p>
+                    Khi nghiên cứu một hệ thống cũ,
+                    kỹ sư có thể gặp Low-speed Fault-tolerant CAN
+                    trong những ECU sử dụng kiến trúc
+                    mạng được thiết kế từ trước.
+                </p>
+
+                <p>
+                    Những chủ đề có thể gặp trong quá trình
+                    bảo trì gồm:
+                </p>
+
+                <ul>
+                    <li>Kiểm tra Transceiver cũ.</li>
+                    <li>Phân tích Hardware Schematic.</li>
+                    <li>Đánh giá termination network.</li>
+                    <li>Kiểm tra lỗi bus vật lý.</li>
+                    <li>Thay thế linh kiện tương thích.</li>
+                    <li>Kiểm thử khả năng giao tiếp sau khi sửa chữa.</li>
+                </ul>
+
+                <p>
+                    Với các thiết kế mới, cần kiểm tra
+                    định hướng của dự án và các lựa chọn
+                    Physical Layer hiện hành trước khi
+                    quyết định sử dụng công nghệ này.
+                </p>
+
+                <h2>27. ISO 11898-3 có nên dùng cho thiết kế mới không?</h2>
+
+                <p>
+                    Theo thông tin định hướng kỹ thuật
+                    từ CAN in Automation (CiA),
+                    Low-speed Fault-tolerant CAN
+                    theo ISO 11898-3 không còn được
+                    khuyến nghị cho các thiết kế mới.
+                </p>
+
+                <p>
+                    Điều này không có nghĩa tiêu chuẩn
+                    đã bị thu hồi. ISO vẫn công bố
+                    ISO 11898-3:2006 là phiên bản hiện hành
+                    sau lần rà soát năm 2026.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tình huống</th>
+                            <th>Hướng tiếp cận</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bảo trì hệ thống Low-speed CAN đang hoạt động</td>
+                            <td>Tiếp tục tham khảo ISO 11898-3 và datasheet của linh kiện hiện hữu.</td>
+                        </tr>
+                        <tr>
+                            <td>Thay thế một ECU cũ</td>
+                            <td>Kiểm tra tính tương thích với mạng và Transceiver hiện có.</td>
+                        </tr>
+                        <tr>
+                            <td>Tích hợp vào hệ thống đang sử dụng ISO 11898-3</td>
+                            <td>Phải đáp ứng các đặc tính điện và giao tiếp của mạng hiện tại.</td>
+                        </tr>
+                        <tr>
+                            <td>Thiết kế một mạng CAN mới</td>
+                            <td>Đánh giá các lựa chọn Physical Layer hiện hành, không mặc định lựa chọn ISO 11898-3.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là lý do Bài 36 vẫn có giá trị
+                    trong lộ trình học Automotive Embedded:
+                    kỹ sư cần hiểu cả những công nghệ
+                    có thể gặp trong hệ thống hiện hữu,
+                    không chỉ những công nghệ được
+                    sử dụng trong thiết kế mới.
+                </p>
+
+                <h2>28. ISO 11898-3 và High-speed CAN khác nhau như thế nào về tín hiệu?</h2>
+
+                <p>
+                    Một trong những điểm quan trọng nhất
+                    khi học ISO 11898-3 là không áp dụng
+                    trực tiếp hình dung về điện áp
+                    của High-speed CAN sang Low-speed CAN.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>High-speed CAN</th>
+                            <th>Low-speed Fault-tolerant CAN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Recessive</td>
+                            <td>CAN_H và CAN_L thường gần nhau.</td>
+                            <td>CAN_L cao hơn CAN_H.</td>
+                        </tr>
+                        <tr>
+                            <td>Dominant</td>
+                            <td>CAN_H cao hơn CAN_L.</td>
+                            <td>CAN_H cao hơn CAN_L.</td>
+                        </tr>
+                        <tr>
+                            <td>Vdiff Recessive</td>
+                            <td>Gần 0 V.</td>
+                            <td>Âm.</td>
+                        </tr>
+                        <tr>
+                            <td>Vdiff Dominant</td>
+                            <td>Dương.</td>
+                            <td>Dương.</td>
+                        </tr>
+                        <tr>
+                            <td>Termination</td>
+                            <td>Thường dùng hai điện trở tại hai đầu bus.</td>
+                            <td>Termination network được thực hiện tại node.</td>
+                        </tr>
+                        <tr>
+                            <td>Fault Tolerance</td>
+                            <td>Không sử dụng cùng cơ chế chịu lỗi một đường truyền của ISO 11898-3.</td>
+                            <td>Hỗ trợ duy trì giao tiếp trong một số bus failure.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi sử dụng oscilloscope hoặc CAN analyzer,
+                    cần xác định đúng loại Transceiver
+                    và Physical Layer trước khi đánh giá
+                    waveform.
+                </p>
+
+                <h2>29. ISO 11898-3 không quy định những gì?</h2>
+
+                <p>
+                    Tương tự những tiêu chuẩn CAN khác,
+                    ISO 11898-3 có phạm vi cụ thể.
+                    Không nên sử dụng tiêu chuẩn này
+                    để trả lời tất cả vấn đề liên quan
+                    đến phần mềm và giao thức CAN.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nội dung</th>
+                            <th>ISO 11898-3 có quy định trực tiếp không?</th>
+                            <th>Tài liệu cần tham khảo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Low-speed Fault-tolerant Physical Layer</td>
+                            <td>Có.</td>
+                            <td>ISO 11898-3.</td>
+                        </tr>
+                        <tr>
+                            <td>MDI và PMA</td>
+                            <td>Có.</td>
+                            <td>ISO 11898-3.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Frame Format tổng quát</td>
+                            <td>Không phải phạm vi chính.</td>
+                            <td>ISO 11898-1.</td>
+                        </tr>
+                        <tr>
+                            <td>High-speed CAN PMA</td>
+                            <td>Không.</td>
+                            <td>ISO 11898-2.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Controller Register</td>
+                            <td>Không.</td>
+                            <td>MCU Reference Manual.</td>
+                        </tr>
+                        <tr>
+                            <td>Transceiver Pinout</td>
+                            <td>Không mô tả từng linh kiện cụ thể.</td>
+                            <td>Transceiver Datasheet.</td>
+                        </tr>
+                        <tr>
+                            <td>Message và Signal Definition</td>
+                            <td>Không.</td>
+                            <td>Communication Matrix hoặc DBC.</td>
+                        </tr>
+                        <tr>
+                            <td>UDS Services</td>
+                            <td>Không.</td>
+                            <td>ISO 14229.</td>
+                        </tr>
+                        <tr>
+                            <td>AUTOSAR CanTrcv API</td>
+                            <td>Không.</td>
+                            <td>AUTOSAR Specification of CAN Transceiver Driver.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>30. Hướng dẫn đọc tài liệu ISO 11898-3</h2>
+
+                <p>
+                    Khi đọc một tiêu chuẩn kỹ thuật,
+                    không nên cố gắng ghi nhớ tất cả
+                    các thông số ngay từ đầu.
+                </p>
+
+                <p>
+                    Đối với ISO 11898-3, mục tiêu đầu tiên
+                    nên là hiểu kiến trúc Low-speed CAN,
+                    đặc tính điện và cách hệ thống
+                    xử lý lỗi đường truyền.
+                </p>
+
+                <p>
+                    Quy trình đọc được đề xuất:
+                </p>
+
+                <ol>
+                    <li>Đọc Scope để xác định tốc độ và phạm vi áp dụng.</li>
+                    <li>Đọc Terms and Definitions để hiểu các khái niệm.</li>
+                    <li>Đọc Abbreviated Terms để nhận biết từ viết tắt.</li>
+                    <li>Đọc OSI Reference Model để xác định phạm vi tầng.</li>
+                    <li>Đọc MDI Specification để hiểu dây dẫn, termination và signal.</li>
+                    <li>Đọc Physical Bus Failure để hiểu những tình huống lỗi.</li>
+                    <li>Đọc PMA Specification để hiểu Transceiver.</li>
+                    <li>Đọc Fault Management để tìm hiểu cách xử lý lỗi.</li>
+                    <li>Đọc Operating Modes để hiểu trạng thái hoạt động.</li>
+                </ol>
+
+                <h2>31. Cấu trúc ISO 11898-3 nên đọc theo thứ tự nào?</h2>
+
+                <p>
+                    Dựa trên cấu trúc tài liệu ISO 11898-3:2006,
+                    có thể tập trung vào những phần sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phần</th>
+                            <th>Chủ đề</th>
+                            <th>Mục tiêu đọc</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Scope</td>
+                            <td>Xác định phạm vi Low-speed Fault-tolerant CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Terms and Definitions</td>
+                            <td>Hiểu các khái niệm như Bus Failure, Fault Tolerance và Operating Mode.</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Abbreviations</td>
+                            <td>Tra cứu các chữ viết tắt.</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>OSI Reference Model</td>
+                            <td>Hiểu phạm vi Physical Layer và những ảnh hưởng đến DLL.</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>MDI Specification</td>
+                            <td>Đọc Physical Media, Node Connection, Capacitance, Medium Timing và Electrical Specification.</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Physical Medium Failures</td>
+                            <td>Hiểu định nghĩa và phân loại lỗi vật lý.</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>PMA Specification</td>
+                            <td>Đọc các yêu cầu Transceiver, Timing và Fault Management.</td>
+                        </tr>
+                        <tr>
+                            <td>7.4</td>
+                            <td>Operating Modes</td>
+                            <td>Hiểu các trạng thái Normal và Low-power Mode.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Với người mới học, nên ưu tiên
+                    phần 1 đến phần 5 để hiểu cấu trúc
+                    mạng và đặc tính tín hiệu trước.
+                    Sau đó chuyển sang phần 6 và phần 7
+                    để tìm hiểu sâu về Fault Management.
+                </p>
+
+                <h2>32. Cách đọc Scope và Terms and Definitions</h2>
+
+                <p>
+                    Scope là phần đầu tiên nên đọc
+                    khi tiếp cận một tiêu chuẩn mới.
+                    Nó giúp xác định tài liệu đang
+                    quy định phạm vi kỹ thuật nào.
+                </p>
+
+                <p>
+                    Với ISO 11898-3, những thông tin
+                    quan trọng trong Scope gồm:
+                </p>
+
+                <ul>
+                    <li>Low-speed CAN.</li>
+                    <li>Fault-tolerant behavior.</li>
+                    <li>Transmission rate trên 40 kbit/s đến 125 kbit/s.</li>
+                    <li>Medium Dependent Interface.</li>
+                    <li>Physical Medium Attachment.</li>
+                </ul>
+
+                <p>
+                    Sau đó, Terms and Definitions giúp
+                    hiểu chính xác những thuật ngữ
+                    được sử dụng trong các phần tiếp theo.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa cần hiểu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bus Failure</td>
+                            <td>Lỗi phát sinh do sự cố của bus vật lý, ví dụ interruption hoặc short circuit.</td>
+                        </tr>
+                        <tr>
+                            <td>Fault Tolerance</td>
+                            <td>Khả năng tiếp tục hoạt động trong những điều kiện bus failure được xác định, có thể với hiệu năng giảm.</td>
+                        </tr>
+                        <tr>
+                            <td>Fault-free Communication</td>
+                            <td>Chế độ hoạt động không mất thông tin.</td>
+                        </tr>
+                        <tr>
+                            <td>Operating Capacitance</td>
+                            <td>Điện dung tổng thể của dây dẫn và connector mà các node nhìn thấy.</td>
+                        </tr>
+                        <tr>
+                            <td>Normal Mode</td>
+                            <td>Transceiver tham gia truyền và nhận thông tin trên mạng.</td>
+                        </tr>
+                        <tr>
+                            <td>Low-power Mode</td>
+                            <td>Chế độ hoạt động với mức tiêu thụ điện năng thấp hơn.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>33. Cách đọc MDI Specification</h2>
+
+                <p>
+                    MDI Specification là một trong những phần
+                    quan trọng nhất khi tìm hiểu ISO 11898-3.
+                </p>
+
+                <p>
+                    Phần này tập trung vào môi trường truyền vật lý,
+                    các đường tín hiệu, cách kết nối node,
+                    termination và đặc tính điện của bus.
+                </p>
+
+                <p>
+                    Khi đọc phần này, nên tìm câu trả lời
+                    cho các câu hỏi:
+                </p>
+
+                <ul>
+                    <li>Physical Medium sử dụng bao nhiêu dây?</li>
+                    <li>Hai đường CAN_H và CAN_L có vai trò gì?</li>
+                    <li>Recessive và Dominant được biểu diễn như thế nào?</li>
+                    <li>Termination network được kết nối ở đâu?</li>
+                    <li>Tổng trở termination cần đáp ứng điều kiện nào?</li>
+                    <li>Những yếu tố nào ảnh hưởng đến Operating Capacitance?</li>
+                    <li>Ground Shift ảnh hưởng đến hệ thống ra sao?</li>
+                </ul>
+
+                <p>
+                    Một cách đọc hiệu quả là ghi lại
+                    từng thông số cùng với điều kiện đo,
+                    thay vì chỉ sao chép giá trị số.
+                </p>
+
+                <h2>34. Cách đọc Electrical Specification</h2>
+
+                <p>
+                    Electrical Specification chứa những
+                    giới hạn điện và đặc tính tín hiệu
+                    của Low-speed Fault-tolerant CAN.
+                </p>
+
+                <p>
+                    Khi đọc một bảng thông số,
+                    cần chú ý:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông tin</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Parameter</td>
+                            <td>Thông số điện được đánh giá.</td>
+                        </tr>
+                        <tr>
+                            <td>Notation</td>
+                            <td>Ký hiệu dùng trong tiêu chuẩn.</td>
+                        </tr>
+                        <tr>
+                            <td>Condition</td>
+                            <td>Điều kiện đo hoặc điều kiện hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <td>Minimum</td>
+                            <td>Giới hạn nhỏ nhất.</td>
+                        </tr>
+                        <tr>
+                            <td>Nominal</td>
+                            <td>Giá trị danh định nếu được cung cấp.</td>
+                        </tr>
+                        <tr>
+                            <td>Maximum</td>
+                            <td>Giới hạn lớn nhất.</td>
+                        </tr>
+                        <tr>
+                            <td>Unit</td>
+                            <td>Đơn vị của thông số.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, khi đánh giá điện áp Dominant,
+                    cần xác định đó là điện áp CAN_H,
+                    CAN_L hay Differential Voltage.
+                    Không nên so sánh một giá trị
+                    điện áp đường dây với giới hạn
+                    của điện áp vi sai.
+                </p>
+
+                <h2>35. Cách đọc phần Physical Medium Failures</h2>
+
+                <p>
+                    Phần Physical Medium Failures
+                    giúp xác định các tình trạng lỗi
+                    liên quan đến môi trường truyền.
+                </p>
+
+                <p>
+                    Khi đọc phần này, cần tập trung vào:
+                </p>
+
+                <ul>
+                    <li>Định nghĩa của Physical Bus Failure.</li>
+                    <li>Những dạng lỗi thuộc phạm vi tiêu chuẩn.</li>
+                    <li>Điều kiện xảy ra một fault event.</li>
+                    <li>Ảnh hưởng đến CAN_H và CAN_L.</li>
+                    <li>Những hành vi mà Transceiver cần hỗ trợ.</li>
+                </ul>
+
+                <p>
+                    Không nên tự suy luận rằng mọi dạng
+                    chập dây hoặc mọi lỗi nguồn điện
+                    đều được tiêu chuẩn bảo đảm hệ thống
+                    tiếp tục hoạt động.
+                </p>
+
+                <p>
+                    Cần đọc từng fault condition
+                    và kiểm tra khả năng hỗ trợ
+                    của Transceiver thực tế.
+                </p>
+
+                <h2>36. Cách đọc PMA Specification</h2>
+
+                <p>
+                    PMA Specification tập trung vào
+                    Physical Medium Attachment,
+                    đặc biệt là những đặc tính của
+                    Transceiver.
+                </p>
+
+                <p>
+                    Khi đọc phần này, nên chú ý:
+                </p>
+
+                <ul>
+                    <li>General PMA Requirements.</li>
+                    <li>Timing Requirements.</li>
+                    <li>Transceiver Loop Time Delay.</li>
+                    <li>Fault Management.</li>
+                    <li>Operating Modes.</li>
+                </ul>
+
+                <p>
+                    Đây là phần quan trọng khi lựa chọn
+                    CAN Transceiver và kiểm tra khả năng
+                    tương thích với những node còn lại
+                    trong mạng.
+                </p>
+
+                <h2>37. Áp dụng ISO 11898-3 trong dự án ECU</h2>
+
+                <p>
+                    Khi làm dự án Automotive,
+                    việc đọc tiêu chuẩn cần gắn với
+                    những yêu cầu kỹ thuật cụ thể.
+                </p>
+
+                <p>
+                    Không nên chỉ ghi lại nội dung
+                    như "Low-speed CAN có Fault Tolerance".
+                    Cần xác định:
+                </p>
+
+                <ul>
+                    <li>ECU có thực sự sử dụng ISO 11898-3 không?</li>
+                    <li>Transceiver được lựa chọn là loại nào?</li>
+                    <li>Yêu cầu bit rate của mạng là gì?</li>
+                    <li>Termination network được thiết kế ra sao?</li>
+                    <li>Những fault condition nào cần được hỗ trợ?</li>
+                    <li>Phần mềm cần nhận notification nào?</li>
+                    <li>Những test case nào được sử dụng để xác minh?</li>
+                </ul>
+
+                <p>
+                    Quy trình áp dụng tổng quát:
+                </p>
+
+                <pre><code>        ISO 11898-3
+              |
+              v
+       Identify Scope
+              |
+              v
+    Identify Physical Requirements
+              |
+              v
+     Select CAN Transceiver
+              |
+              v
+       Review Hardware Design
+              |
+              v
+       Define Fault Conditions
+              |
+              v
+          Build Test Cases
+              |
+              v
+       Execute Bench Validation
+              |
+              v
+      Collect Test Evidence
+              |
+              v
+     Update Traceability Matrix</code></pre>
+
+                <h2>38. Những tài liệu cần có khi áp dụng ISO 11898-3</h2>
+
+                <p>
+                    ISO 11898-3 không phải tài liệu duy nhất
+                    cần sử dụng khi thiết kế hoặc bảo trì
+                    một Low-speed CAN network.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 11898-3</td>
+                            <td>Đặc tính Low-speed Fault-tolerant CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>System Requirements</td>
+                            <td>Xác định yêu cầu communication của hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Communication Matrix</td>
+                            <td>Định nghĩa message, CAN ID, sender, receiver và cycle time.</td>
+                        </tr>
+                        <tr>
+                            <td>Hardware Schematic</td>
+                            <td>Kiểm tra kết nối Transceiver, termination và CAN bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Transceiver Datasheet</td>
+                            <td>Đặc tính điện, mode và fault handling của linh kiện thực tế.</td>
+                        </tr>
+                        <tr>
+                            <td>MCU Reference Manual</td>
+                            <td>Khả năng CAN Controller và giao diện với Transceiver.</td>
+                        </tr>
+                        <tr>
+                            <td>PCB Layout</td>
+                            <td>Kiểm tra routing và bố trí đường tín hiệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Specification</td>
+                            <td>Xác định phương pháp và tiêu chí kiểm thử.</td>
+                        </tr>
+                        <tr>
+                            <td>Failure Analysis Report</td>
+                            <td>Ghi nhận lỗi, nguyên nhân và kết quả phân tích.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>39. Ví dụ dự án: Body ECU sử dụng Low-speed CAN</h2>
+
+                <p>
+                    Giả sử một hệ thống Body ECU hiện hữu
+                    đang sử dụng Low-speed Fault-tolerant CAN
+                    để trao đổi dữ liệu với những ECU khác.
+                </p>
+
+                <p>
+                    Yêu cầu giả định:
+                </p>
+
+                <ul>
+                    <li>ECU A và ECU B sử dụng Low-speed Fault-tolerant CAN.</li>
+                    <li>Communication Speed được cấu hình là 125 kbit/s.</li>
+                    <li>Mỗi ECU sử dụng một Low-speed CAN Transceiver phù hợp.</li>
+                    <li>Termination được thực hiện theo cấu hình mạng.</li>
+                    <li>Hệ thống cần duy trì communication trong những fault condition được dự án xác định.</li>
+                </ul>
+
+                <p>
+                    Ví dụ Communication Matrix:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Message</th>
+                            <th>CAN ID</th>
+                            <th>Sender</th>
+                            <th>Receiver</th>
+                            <th>Cycle Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DoorStatus</td>
+                            <td>0x180</td>
+                            <td>ECU A</td>
+                            <td>ECU B</td>
+                            <td>20 ms</td>
+                        </tr>
+                        <tr>
+                            <td>WindowStatus</td>
+                            <td>0x280</td>
+                            <td>ECU B</td>
+                            <td>ECU A</td>
+                            <td>50 ms</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các CAN ID và cycle time trong ví dụ
+                    chỉ được đặt để minh họa cách phân tích.
+                    Khi triển khai thực tế, cần sử dụng
+                    Communication Matrix đã được dự án phê duyệt.
+                </p>
+
+                <p>
+                    Trước khi tích hợp, kỹ sư cần xác minh:
+                </p>
+
+                <ol>
+                    <li>Hai ECU sử dụng Transceiver cùng loại Physical Layer phù hợp.</li>
+                    <li>Bitrate được cấu hình thống nhất.</li>
+                    <li>Termination network được thiết kế đúng.</li>
+                    <li>Điện áp Recessive và Dominant nằm trong giới hạn áp dụng.</li>
+                    <li>CAN Controller và Transceiver hoạt động tương thích.</li>
+                    <li>ECU gửi và nhận được message theo yêu cầu.</li>
+                    <li>Fault condition được kiểm tra theo kế hoạch validation.</li>
+                </ol>
+
+                <h2>40. Ví dụ dự án: Kiểm tra Termination Network</h2>
+
+                <p>
+                    Giả sử một mạng có năm node,
+                    mỗi node có một termination network
+                    với điện trở 500 ohm cho một đường tín hiệu.
+                </p>
+
+                <p>
+                    Với giả định các điện trở có giá trị bằng nhau
+                    và mắc song song, điện trở tương đương:
+                </p>
+
+                <pre><code>Rtotal = 500 / 5
+
+       = 100 ohm</code></pre>
+
+                <p>
+                    Giá trị này minh họa cách kiểm tra
+                    điều kiện tổng trở termination của mạng.
+                </p>
+
+                <p>
+                    Khi review Hardware Design,
+                    kỹ sư cần kiểm tra thêm:
+                </p>
+
+                <ul>
+                    <li>Giá trị điện trở thực tế.</li>
+                    <li>Dung sai của linh kiện.</li>
+                    <li>Các node có termination hay không.</li>
+                    <li>Cách termination được kết nối với VCC và GND.</li>
+                    <li>Ảnh hưởng của node ở Low-power Mode.</li>
+                    <li>Điện dung tổng thể của mạng.</li>
+                </ul>
+
+                <p>
+                    Không được dùng ví dụ này để kết luận
+                    rằng mọi mạng có năm ECU đều phải
+                    sử dụng đúng 500 ohm tại từng node.
+                    Cấu hình thực tế cần dựa trên tiêu chuẩn,
+                    sơ đồ mạch và đặc tính Transceiver.
+                </p>
+
+                <h2>41. Ví dụ dự án: Phân tích lỗi Open Circuit</h2>
+
+                <p>
+                    Giả sử một ECU trong mạng gặp vấn đề
+                    gián đoạn trên một trong hai đường bus.
+                    Hệ thống có thể xuất hiện lỗi communication
+                    hoặc chuyển sang trạng thái giao tiếp
+                    có hiệu năng giảm, tùy theo điều kiện lỗi
+                    và khả năng Transceiver.
+                </p>
+
+                <p>
+                    Kỹ sư cần xác định:
+                </p>
+
+                <ul>
+                    <li>Đường tín hiệu nào bị ảnh hưởng?</li>
+                    <li>Đây là lỗi liên tục hay gián đoạn?</li>
+                    <li>Transceiver có hỗ trợ fault condition tương ứng không?</li>
+                    <li>Communication có tiếp tục trong chế độ lỗi không?</li>
+                    <li>Chất lượng tín hiệu có thay đổi không?</li>
+                    <li>CAN Controller có ghi nhận lỗi protocol không?</li>
+                </ul>
+
+                <pre><code>Communication Problem
+          |
+          v
+    Check CAN Trace
+          |
+          v
+ Check Transceiver Status
+          |
+          v
+  Review Hardware Schematic
+          |
+          v
+ Inspect Physical Connection
+          |
+          v
+ Compare CAN_H / CAN_L Signals
+          |
+          v
+ Evaluate Fault-tolerant Behavior
+          |
+          v
+    Record Test Evidence</code></pre>
+
+                <p>
+                    Việc đánh giá lỗi vật lý cần thực hiện
+                    trong môi trường bench hoặc mô phỏng
+                    được kiểm soát. Không nên tự tạo
+                    short circuit trên mạng đang hoạt động
+                    hoặc trên phương tiện thực tế.
+                </p>
+
+                <h2>42. Ví dụ Test Case: Fault-tolerant Communication</h2>
+
+                <p>
+                    Mục tiêu của test case là xác minh
+                    khả năng duy trì giao tiếp trong
+                    một fault condition đã được xác định
+                    và hỗ trợ bởi thiết kế.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>LSCAN-TEST-001</td>
+                        </tr>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Xác minh Low-speed CAN duy trì communication trong fault condition được phê duyệt.</td>
+                        </tr>
+                        <tr>
+                            <td>Requirement Reference</td>
+                            <td>ISO 11898-3 và Project Fault-tolerance Requirement.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>Các ECU và Transceiver hoạt động bình thường.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Setup</td>
+                            <td>CAN bench có thiết bị fault-insertion được phê duyệt và công cụ giám sát.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Chọn fault condition đã được xác định trong test specification.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>Communication tiếp tục theo behavior được quy định cho fault condition tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>CAN Trace, waveform, Transceiver status và test log.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Không nên viết Expected Result chung chung
+                    là "Fault tolerance works".
+                    Cần ghi rõ message nào phải tiếp tục được nhận,
+                    thời gian quan sát, trạng thái mạng
+                    và điều kiện đánh giá Pass/Fail.
+                </p>
+
+                <h2>43. Debug: ECU không giao tiếp được trên Low-speed CAN</h2>
+
+                <p>
+                    Giả sử hai ECU không thể trao đổi dữ liệu,
+                    mặc dù phần mềm đã được build thành công
+                    và CAN Controller đã được khởi tạo.
+                </p>
+
+                <p>
+                    Khi đó, cần xem xét cả phần mềm,
+                    Transceiver và Physical Layer.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Nguyên nhân có thể</th>
+                            <th>Hướng kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Không có dữ liệu trên bus</td>
+                            <td>Transceiver chưa hoạt động hoặc sai mode.</td>
+                            <td>Kiểm tra nguồn và trạng thái Transceiver.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN_H/CAN_L không có mức tín hiệu phù hợp</td>
+                            <td>Lỗi Transceiver, nguồn hoặc termination.</td>
+                            <td>Đối chiếu schematic và datasheet.</td>
+                        </tr>
+                        <tr>
+                            <td>Chỉ một node không giao tiếp</td>
+                            <td>Lỗi phần cứng hoặc kết nối của node đó.</td>
+                            <td>Kiểm tra CAN Controller, Transceiver và connector.</td>
+                        </tr>
+                        <tr>
+                            <td>Communication chập chờn</td>
+                            <td>Tiếp xúc không ổn định hoặc Operating Capacitance vượt giới hạn thiết kế.</td>
+                            <td>Kiểm tra wiring, connector và topology.</td>
+                        </tr>
+                        <tr>
+                            <td>Recessive state không đúng</td>
+                            <td>Termination hoặc biasing không phù hợp.</td>
+                            <td>Kiểm tra termination network và CAN_H/CAN_L.</td>
+                        </tr>
+                        <tr>
+                            <td>Không duy trì được giao tiếp khi bus gặp lỗi</td>
+                            <td>Transceiver không hỗ trợ fault condition hoặc thiết kế không đúng.</td>
+                            <td>Đối chiếu fault specification và datasheet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>44. Debug: Recessive Voltage bất thường</h2>
+
+                <p>
+                    Giả sử CAN_H và CAN_L không đạt
+                    trạng thái Recessive như mong đợi.
+                </p>
+
+                <p>
+                    Một số nguyên nhân có thể gồm:
+                </p>
+
+                <ul>
+                    <li>Termination network được kết nối không đúng.</li>
+                    <li>Điện trở termination không đúng giá trị.</li>
+                    <li>Nguồn biasing không ổn định.</li>
+                    <li>Một node không hoạt động đúng.</li>
+                    <li>Bus có lỗi về dây dẫn hoặc connector.</li>
+                    <li>Transceiver đang ở mode không phù hợp.</li>
+                </ul>
+
+                <p>
+                    Quy trình kiểm tra:
+                </p>
+
+                <pre><code>Measure CAN_H / CAN_L
+          |
+          v
+Calculate Vdiff
+          |
+          v
+Compare Recessive State
+          |
+          v
+Review Termination Network
+          |
+          v
+Check Transceiver Operating Mode
+          |
+          v
+Compare with Datasheet
+          |
+          v
+Record Measurement Result</code></pre>
+
+                <p>
+                    Khi kết luận, cần lưu cả điện áp CAN_H,
+                    CAN_L, Vdiff và điều kiện đo.
+                    Chỉ ghi một giá trị trung bình
+                    có thể chưa đủ để xác định nguyên nhân.
+                </p>
+
+                <h2>45. Debug: Communication chập chờn khi tăng số node</h2>
+
+                <p>
+                    Giả sử mạng ban đầu chỉ có hai ECU
+                    và hoạt động ổn định. Sau khi thêm
+                    một số node mới, giao tiếp bắt đầu
+                    xuất hiện lỗi.
+                </p>
+
+                <p>
+                    Một hướng điều tra là kiểm tra
+                    Operating Capacitance và tổng trở
+                    termination của mạng.
+                </p>
+
+                <p>
+                    Cần xem xét:
+                </p>
+
+                <ul>
+                    <li>Số lượng node tăng có làm thay đổi tải điện bus không?</li>
+                    <li>Điện dung đầu vào của Transceiver mới là bao nhiêu?</li>
+                    <li>Có thêm connector hoặc đoạn dây mới không?</li>
+                    <li>Tổng trở termination có còn đáp ứng yêu cầu không?</li>
+                    <li>Ground Shift giữa các node có tăng không?</li>
+                    <li>Bitrate hiện tại có phù hợp với cấu trúc mạng không?</li>
+                </ul>
+
+                <p>
+                    Khi thêm node, không chỉ có CAN ID
+                    và phần mềm cần được cập nhật.
+                    Đặc tính điện của mạng cũng cần
+                    được đánh giá lại.
+                </p>
+
+                <h2>46. Mối quan hệ giữa ISO 11898-3 và AUTOSAR Classic</h2>
+
+                <p>
+                    Trong AUTOSAR Classic, CAN communication
+                    có thể được tổ chức qua các module
+                    thuộc Basic Software.
+                </p>
+
+                <p>
+                    Nếu ECU sử dụng Low-speed Fault-tolerant CAN,
+                    những module phần mềm phía trên vẫn có thể
+                    cung cấp các chức năng CAN tương ứng,
+                    trong khi phần cứng Transceiver phải
+                    hỗ trợ đúng Physical Layer.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Can</td>
+                            <td>Điều khiển CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>CanIf</td>
+                            <td>Cung cấp interface chung giữa CAN Driver và các module phía trên.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTrcv</td>
+                            <td>Quản lý CAN Transceiver theo khả năng của phần cứng và implementation.</td>
+                        </tr>
+                        <tr>
+                            <td>CanSM</td>
+                            <td>Quản lý trạng thái CAN Communication.</td>
+                        </tr>
+                        <tr>
+                            <td>COM</td>
+                            <td>Đóng gói và giải mã các signal trong I-PDU.</td>
+                        </tr>
+                        <tr>
+                            <td>PduR</td>
+                            <td>Định tuyến PDU giữa các module.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể hình dung kiến trúc:
+                </p>
+
+                <pre><code>        Application Software
+                 |
+                 v
+                RTE
+                 |
+                 v
+                COM
+                 |
+                 v
+               PduR
+                 |
+                 v
+               CanIf
+                 |
+          +------+------+
+          |             |
+          v             v
+         Can          CanTrcv
+          |             |
+          v             v
+    CAN Controller  CAN Transceiver
+          |             |
+          +------+------+
+                 |
+                 v
+              CAN Bus</code></pre>
+
+                <p>
+                    Sơ đồ mang tính khái quát.
+                    Các interface và cách điều khiển cụ thể
+                    cần đối chiếu với AUTOSAR release
+                    và implementation của vendor.
+                </p>
+
+                <h2>47. Ví dụ: CanTrcv trong hệ thống Low-speed CAN</h2>
+
+                <p>
+                    Giả sử ECU sử dụng AUTOSAR Classic
+                    và một Low-speed CAN Transceiver
+                    hỗ trợ Normal Mode cùng Low-power Mode.
+                </p>
+
+                <p>
+                    Phần mềm có thể sử dụng CanTrcv
+                    để yêu cầu chuyển đổi mode
+                    theo trạng thái communication
+                    của ECU.
+                </p>
+
+                <pre><code>ECU Initialization
+       |
+       v
+Initialize CAN Controller
+       |
+       v
+Initialize CAN Transceiver
+       |
+       v
+Request Normal Mode
+       |
+       v
+Enable Communication
+       |
+       v
+Transmit / Receive CAN
+       |
+       v
+Request Low-power Mode
+       |
+       v
+Transceiver enters Low-power Mode</code></pre>
+
+                <p>
+                    Khi triển khai, cần xác định:
+                </p>
+
+                <ul>
+                    <li>Transceiver có hỗ trợ mode được yêu cầu không?</li>
+                    <li>CanTrcv configuration có tương ứng với phần cứng không?</li>
+                    <li>CanSM có quản lý đúng trạng thái communication không?</li>
+                    <li>ECU có nhận biết được trạng thái Transceiver không?</li>
+                    <li>Chuyển mode có ảnh hưởng đến các node còn lại không?</li>
+                </ul>
+
+                <h2>48. Chuyển nội dung tiêu chuẩn thành Requirement Traceability</h2>
+
+                <p>
+                    Trong dự án Automotive,
+                    cần liên kết những yêu cầu liên quan
+                    đến Physical Layer với thiết kế
+                    và phương pháp kiểm thử.
+                </p>
+
+                <p>
+                    Một bảng Requirement Traceability
+                    có thể gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Requirement ID</td>
+                            <td>Mã định danh yêu cầu dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Source Document</td>
+                            <td>Tài liệu nguồn, ví dụ ISO 11898-3:2006.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause Reference</td>
+                            <td>Điều khoản được tham khảo.</td>
+                        </tr>
+                        <tr>
+                            <td>Requirement Description</td>
+                            <td>Yêu cầu được diễn giải trong phạm vi dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Hardware Design</td>
+                            <td>Thành phần phần cứng đáp ứng yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Configuration</td>
+                            <td>Cấu hình phần mềm liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>Test case dùng để xác minh.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>Waveform, CAN Trace, report hoặc test log.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Requirement ID</th>
+                            <th>Source</th>
+                            <th>Project Requirement</th>
+                            <th>Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>LSCAN-REQ-001</td>
+                            <td>ISO 11898-3, MDI</td>
+                            <td>Physical connection phải đáp ứng yêu cầu của Low-speed CAN.</td>
+                            <td>LSCAN-TEST-001: Physical Interface Test.</td>
+                        </tr>
+                        <tr>
+                            <td>LSCAN-REQ-002</td>
+                            <td>ISO 11898-3, Termination</td>
+                            <td>Termination network phải phù hợp với kiến trúc mạng.</td>
+                            <td>LSCAN-TEST-002: Termination Verification.</td>
+                        </tr>
+                        <tr>
+                            <td>LSCAN-REQ-003</td>
+                            <td>ISO 11898-3, Fault Management</td>
+                            <td>ECU phải duy trì communication trong fault condition được xác định.</td>
+                            <td>LSCAN-TEST-003: Fault-tolerant Communication Test.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Mã requirement và nội dung trong bảng
+                    là ví dụ do dự án tự xây dựng.
+                    Khi sử dụng thật, cần dẫn đúng
+                    clause và điều kiện từ phiên bản
+                    tiêu chuẩn được phê duyệt.
+                </p>
+
+                <h2>49. Cách xây dựng Test Case từ ISO 11898-3</h2>
+
+                <p>
+                    Khi chuyển nội dung tiêu chuẩn
+                    thành Test Case, cần đảm bảo
+                    mỗi bài kiểm tra có mục tiêu rõ ràng,
+                    điều kiện thực hiện và Expected Result
+                    có thể đánh giá được.
+                </p>
+
+                <p>
+                    Một Test Case thông thường nên có:
+                </p>
+
+                <ul>
+                    <li>Test Case ID.</li>
+                    <li>Test Objective.</li>
+                    <li>Requirement Reference.</li>
+                    <li>Precondition.</li>
+                    <li>Test Setup.</li>
+                    <li>Test Action.</li>
+                    <li>Expected Result.</li>
+                    <li>Actual Result.</li>
+                    <li>Pass / Fail Status.</li>
+                    <li>Evidence.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, khi kiểm tra termination,
+                    Expected Result không nên chỉ ghi
+                    "Termination is correct".
+                    Cần chỉ rõ những điểm đo,
+                    giá trị tham chiếu và điều kiện đo.
+                </p>
+
+                <h2>50. Checklist khi đọc và áp dụng ISO 11898-3</h2>
+
+                <p>
+                    Checklist dưới đây có thể sử dụng
+                    khi nghiên cứu tiêu chuẩn, review
+                    phần cứng hoặc thực hiện validation.
+                </p>
+
+                <ul>
+                    <li>Đã xác định đúng phiên bản ISO 11898-3 chưa?</li>
+                    <li>Đã xác định phạm vi tốc độ và ứng dụng chưa?</li>
+                    <li>Đã phân biệt Low-speed Fault-tolerant CAN với High-speed CAN chưa?</li>
+                    <li>Đã xác định đúng CAN Transceiver chưa?</li>
+                    <li>Đã hiểu TXD, RXD, CAN_H và CAN_L chưa?</li>
+                    <li>Đã hiểu Differential Voltage và Common-mode Voltage chưa?</li>
+                    <li>Đã hiểu Dominant và Recessive theo ISO 11898-3 chưa?</li>
+                    <li>Đã review Termination Network chưa?</li>
+                    <li>Đã xác định tổng trở termination của từng đường bus chưa?</li>
+                    <li>Đã đánh giá Operating Capacitance chưa?</li>
+                    <li>Đã xem xét số lượng node và connector chưa?</li>
+                    <li>Đã xác định các fault condition cần hỗ trợ chưa?</li>
+                    <li>Đã kiểm tra Fault Management của Transceiver chưa?</li>
+                    <li>Đã kiểm tra Normal Mode và Low-power Mode chưa?</li>
+                    <li>Đã đối chiếu datasheet với tiêu chuẩn chưa?</li>
+                    <li>Đã review Hardware Schematic chưa?</li>
+                    <li>Đã xây dựng Test Case cho Physical Layer chưa?</li>
+                    <li>Đã thu thập waveform và CAN Trace chưa?</li>
+                    <li>Đã cập nhật Requirement Traceability chưa?</li>
+                </ul>
+
+                <h2>51. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 11898-3</td>
+                            <td>Low-speed, Fault-tolerant, Medium-dependent Interface.</td>
+                        </tr>
+                        <tr>
+                            <td>Low-speed CAN</td>
+                            <td>CAN có tốc độ truyền thuộc phạm vi Low-speed được quy định.</td>
+                        </tr>
+                        <tr>
+                            <td>Fault-tolerant CAN</td>
+                            <td>CAN có khả năng duy trì giao tiếp trong một số điều kiện bus failure.</td>
+                        </tr>
+                        <tr>
+                            <td>MDI</td>
+                            <td>Medium Dependent Interface.</td>
+                        </tr>
+                        <tr>
+                            <td>PMA</td>
+                            <td>Physical Medium Attachment.</td>
+                        </tr>
+                        <tr>
+                            <td>PLS</td>
+                            <td>Physical Layer Signalling.</td>
+                        </tr>
+                        <tr>
+                            <td>MAC</td>
+                            <td>Medium Access Control.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN_H</td>
+                            <td>Đường tín hiệu CAN High.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN_L</td>
+                            <td>Đường tín hiệu CAN Low.</td>
+                        </tr>
+                        <tr>
+                            <td>Vdiff</td>
+                            <td>Differential Voltage giữa CAN_H và CAN_L.</td>
+                        </tr>
+                        <tr>
+                            <td>VCOM</td>
+                            <td>Common-mode Voltage.</td>
+                        </tr>
+                        <tr>
+                            <td>Operating Capacitance</td>
+                            <td>Điện dung tổng thể của mạng nhìn từ các node.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus Failure</td>
+                            <td>Lỗi phát sinh do sự cố của bus vật lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Fault Tolerance</td>
+                            <td>Khả năng tiếp tục hoạt động trong một số điều kiện lỗi, có thể với hiệu năng giảm.</td>
+                        </tr>
+                        <tr>
+                            <td>Normal Mode</td>
+                            <td>Mode mà Transceiver tham gia truyền và nhận dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Low-power Mode</td>
+                            <td>Mode hoạt động với mức tiêu thụ năng lượng thấp.</td>
+                        </tr>
+                        <tr>
+                            <td>Transceiver Loop Delay</td>
+                            <td>Độ trễ vòng qua Transceiver từ tín hiệu logic đầu vào đến đầu ra logic.</td>
+                        </tr>
+                        <tr>
+                            <td>Termination Network</td>
+                            <td>Mạng điện trở dùng để thiết lập đặc tính termination của CAN bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Ground Shift</td>
+                            <td>Sự khác biệt điện áp tham chiếu ground giữa các node.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTrcv</td>
+                            <td>AUTOSAR CAN Transceiver Driver.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>52. Tài liệu tham khảo</h2>
+
+                <p>
+                    Những tài liệu dưới đây giúp tìm hiểu
+                    sâu hơn về Low-speed Fault-tolerant CAN,
+                    cách thiết kế Physical Layer và
+                    cách lựa chọn Transceiver.
+                </p>
+
+                <ul>
+                    <li>
+                        <a href="https://www.iso.org/standard/36055.html"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 11898-3:2006 - Low-speed, fault-tolerant, medium-dependent interface
+                        </a>
+                        — tài liệu chính về Low-speed Fault-tolerant CAN,
+                        MDI, PMA, Fault Management và Operating Modes.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/standard/86384.html"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 11898-1:2024 - Data Link Layer and Physical Coding Sublayer
+                        </a>
+                        — tài liệu về CAN Data Link Layer và Physical Coding Sublayer.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/standard/90697.html"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 11898-2:2026 - High-speed Physical Medium Attachment
+                        </a>
+                        — tài liệu để so sánh High-speed CAN và Low-speed Fault-tolerant CAN.
+                    </li>
+
+                    <li>
+                        <a href="https://www.can-cia.org/can-knowledge/physical-layer-options"
+                            target="_blank" rel="noopener noreferrer">
+                            CAN in Automation - Physical Layer Options
+                        </a>
+                        — thông tin tổng quan về các lựa chọn Physical Layer của CAN,
+                        bao gồm Low-speed Fault-tolerant CAN.
+                    </li>
+
+                    <li>
+                        <a href="https://www.can-cia.org/cia-groups/international-standardization"
+                            target="_blank" rel="noopener noreferrer">
+                            CAN in Automation - International Standardization
+                        </a>
+                        — thông tin về những tiêu chuẩn CAN và định hướng
+                        sử dụng các Physical Layer.
+                    </li>
+
+                    <li>
+                        <a href="https://www.ni.com/en/support/documentation/supplemental/09/can-physical-layer-and-termination-guide.html"
+                            target="_blank" rel="noopener noreferrer">
+                            NI - CAN Physical Layer and Termination Guide
+                        </a>
+                        — tài liệu tham khảo về High-speed CAN, Low-speed Fault-tolerant CAN
+                        và sự khác biệt về termination.
+                    </li>
+
+                    <li>
+                        <a href="https://www.autosar.org/standards/classic-platform"
+                            target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Classic Platform
+                        </a>
+                        — nguồn chính thức để tra cứu các tài liệu
+                        liên quan đến Can, CanIf, CanTrcv và CanSM.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý về tài liệu:</strong>
+                    ISO 11898-3:2006 là tài liệu có bản quyền.
+                    Trang ISO cung cấp thông tin xuất bản và phần xem trước,
+                    nhưng việc truy cập toàn văn cần tuân theo điều kiện
+                    sử dụng của ISO hoặc quyền truy cập mà tổ chức của bạn cung cấp.
+                    Khi làm dự án, cần sử dụng đúng phiên bản tiêu chuẩn
+                    được khách hàng hoặc tổ chức phê duyệt.
+                </div>
+
+                <h2>53. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        ISO 11898-3:2006 là tiêu chuẩn mô tả
+                        Low-speed, Fault-tolerant CAN,
+                        với phạm vi tốc độ trên 40 kbit/s
+                        đến 125 kbit/s. Tiêu chuẩn tập trung
+                        vào Medium Dependent Interface,
+                        Physical Medium Attachment và
+                        những yêu cầu liên quan đến
+                        Fault-tolerant behavior.
+                    </p>
+
+                    <p>
+                        Low-speed Fault-tolerant CAN sử dụng
+                        hai đường CAN_H và CAN_L để truyền dữ liệu.
+                        Recessive được biểu diễn với CAN_L
+                        có điện áp cao hơn CAN_H, còn Dominant
+                        được biểu diễn với CAN_H có điện áp
+                        cao hơn CAN_L.
+                    </p>
+
+                    <p>
+                        Một điểm khác biệt quan trọng so với
+                        High-speed CAN là Termination Network.
+                        Low-speed Fault-tolerant CAN sử dụng
+                        termination network tại các node
+                        theo cấu hình mạng, thay vì mặc định
+                        chỉ sử dụng hai điện trở 120 ohm
+                        tại hai đầu bus.
+                    </p>
+
+                    <p>
+                        Khả năng Fault-tolerant cho phép
+                        mạng tiếp tục giao tiếp trong
+                        một số điều kiện lỗi vật lý được xác định,
+                        nhưng hiệu năng có thể giảm.
+                        Điều này không có nghĩa hệ thống
+                        có thể chịu được mọi loại lỗi
+                        hoặc mọi tổ hợp lỗi trên bus.
+                    </p>
+
+                    <p>
+                        Khi áp dụng vào dự án ECU,
+                        cần sử dụng ISO 11898-3 kết hợp
+                        với Transceiver Datasheet,
+                        Hardware Schematic, Communication Matrix
+                        và Test Specification.
+                        Các yêu cầu cần được liên kết
+                        với Hardware Design, Software Configuration,
+                        Test Case và Test Evidence.
+                    </p>
+
+                    <p>
+                        Trong AUTOSAR Classic,
+                        CanTrcv và CanSM là những module
+                        có liên quan đến việc quản lý
+                        CAN Transceiver và CAN Communication.
+                        Tuy nhiên, khả năng hỗ trợ
+                        Low-speed Fault-tolerant CAN
+                        cần được xác nhận theo phần cứng,
+                        AUTOSAR release và vendor implementation.
+                    </p>
+
+                    <p>
+                        Cuối cùng, dù ISO 11898-3 vẫn là
+                        tiêu chuẩn hiện hành sau lần rà soát
+                        năm 2026, công nghệ Low-speed
+                        Fault-tolerant CAN hiện không còn
+                        được khuyến nghị cho các thiết kế mới
+                        theo định hướng của CiA.
+                        Kiến thức này vẫn có giá trị
+                        khi nghiên cứu, tích hợp và bảo trì
+                        những hệ thống Automotive hiện hữu.
+                    </p>
+
+                    <p>
+                        Qua Bài 34, Bài 35 và Bài 36,
+                        chúng ta đã tìm hiểu ba phần quan trọng
+                        trong bộ tiêu chuẩn ISO 11898:
+                        CAN Data Link Layer, High-speed CAN
+                        Physical Layer và Low-speed
+                        Fault-tolerant CAN.
+                        Đây là nền tảng để tiếp tục tìm hiểu
+                        các giao thức truyền dữ liệu chẩn đoán
+                        trên CAN trong những bài học tiếp theo.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-35.html">← Bài trước</a>
+                    <a class="btn" href="lesson-37.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

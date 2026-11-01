@@ -1,0 +1,2674 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 45: Tổng quan ISO 24089 - Software Update Engineering | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="lesson-25.html">Bài 25: Diagnostic Communication Manager (DCM)</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+                <a href="lesson-38.html">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
+                <a href="lesson-39.html">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer</a>
+                <a href="lesson-40.html">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN</a>
+                <a href="lesson-41.html">Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP)</a>
+                <a href="lesson-42.html">Bài 42: Tổng quan bộ tiêu chuẩn ISO 15031</a>
+                <a href="lesson-43.html">Bài 43: Tổng quan ISO 26262 - Functional Safety</a>
+                <a href="lesson-44.html">Bài 44: Tổng quan ISO/SAE 21434 - Cybersecurity Engineering</a>
+                <a href="lesson-45.html" class="active" aria-current="page">Bài 45: Tổng quan ISO 24089 - Software Update Engineering</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 45: Tổng quan ISO 24089 - Software Update Engineering</h1>
+
+                <p>
+                    Trong các phương tiện hiện đại, phần mềm được sử dụng trong nhiều hệ thống
+                    điện và điện tử như động cơ, hệ thống phanh, hệ thống giải trí, quản lý pin,
+                    điều khiển thân xe và các chức năng hỗ trợ người lái.
+                </p>
+
+                <p>
+                    Sau khi phương tiện được sản xuất và đưa vào sử dụng, phần mềm vẫn có thể
+                    cần được cập nhật để sửa lỗi, cải thiện chức năng, duy trì khả năng tương
+                    thích hoặc đáp ứng những yêu cầu mới về an toàn và an ninh mạng.
+                </p>
+
+                <p>
+                    Quá trình cập nhật phần mềm trên phương tiện không đơn giản chỉ là thay thế
+                    một phiên bản phần mềm cũ bằng một phiên bản mới. Nhóm phát triển cần xem
+                    xét phần mềm có tương thích với cấu hình phương tiện hay không, gói cập nhật
+                    có hợp lệ không, điều kiện thực hiện đã đáp ứng chưa và kết quả cập nhật
+                    có được theo dõi đầy đủ hay không.
+                </p>
+
+                <p>
+                    Để chuẩn hóa những hoạt động này, ngành Automotive sử dụng tiêu chuẩn
+                    <strong>ISO 24089 - Road vehicles - Software update engineering</strong>.
+                </p>
+
+                <p>
+                    ISO 24089 đưa ra các yêu cầu và khuyến nghị cho Software Update Engineering
+                    ở cấp độ tổ chức và dự án. Tiêu chuẩn cũng đề cập đến Infrastructure,
+                    Vehicle Systems, Software Update Package và Software Update Campaign.
+                </p>
+
+                <div class="note">
+                    <strong>Mục tiêu bài học:</strong>
+                    <ul>
+                        <li>Hiểu Software Update Engineering là gì và vì sao ISO 24089 quan trọng.</li>
+                        <li>Nắm được phạm vi áp dụng của ISO 24089.</li>
+                        <li>Phân biệt Software Update Project, Software Update Package và Software Update Campaign.</li>
+                        <li>Hiểu các khái niệm Target, Recipient, Vehicle Configuration Information và Safe Vehicle State.</li>
+                        <li>Nắm được các cấp độ quản lý trong ISO 24089.</li>
+                        <li>Hiểu tổng quan các giai đoạn Receipt, Installation và Activation.</li>
+                        <li>Biết cấu trúc 9 Clause của ISO 24089:2023.</li>
+                        <li>Phân biệt ISO 24089 với ISO/SAE 21434, ISO 26262 và UN R156.</li>
+                    </ul>
+                </div>
+
+
+                <h2>1. ISO 24089 là gì?</h2>
+
+                <h3>1.1. Khái niệm</h3>
+
+                <p>
+                    <strong>ISO 24089</strong> là tiêu chuẩn quốc tế về
+                    <strong>Software Update Engineering (Kỹ thuật cập nhật phần mềm)</strong>
+                    dành cho các phương tiện giao thông đường bộ có phần mềm có thể cập nhật.
+                </p>
+
+                <p>
+                    Tiêu chuẩn quy định các yêu cầu và khuyến nghị nhằm xây dựng một quy trình
+                    có hệ thống để lập kế hoạch, chuẩn bị, quản lý và triển khai các gói cập
+                    nhật phần mềm cho phương tiện.
+                </p>
+
+                <p>
+                    ISO 24089 không chỉ xem xét ECU nhận phần mềm mà còn quan tâm đến toàn bộ
+                    các thành phần và tổ chức tham gia vào quá trình cập nhật, bao gồm:
+                </p>
+
+                <ul>
+                    <li>Vehicle: Phương tiện nhận bản cập nhật.</li>
+                    <li>Vehicle Systems: Các hệ thống chức năng trên phương tiện.</li>
+                    <li>ECUs: Các bộ điều khiển điện tử có phần mềm được cập nhật.</li>
+                    <li>Infrastructure: Hạ tầng, hệ thống thông tin, máy chủ và công cụ quản lý cập nhật.</li>
+                    <li>Software Update Package: Gói phần mềm và metadata được chuẩn bị để triển khai.</li>
+                    <li>Organizations: OEM, Supplier và các tổ chức liên quan.</li>
+                </ul>
+
+                <p>
+                    Mục tiêu là bảo đảm các hoạt động cập nhật được quản lý nhất quán, đồng thời
+                    xem xét những vấn đề về Functional Safety, Cybersecurity và chất lượng phần
+                    mềm trong suốt quá trình.
+                </p>
+
+                <div class="note">
+                    <strong>Software Update Engineering:</strong> Có thể hiểu đơn giản là cách
+                    tổ chức và quản lý toàn bộ quá trình chuẩn bị, phát triển, đóng gói và triển
+                    khai bản cập nhật phần mềm cho phương tiện một cách có hệ thống.
+                </div>
+
+
+                <h3>1.2. Vì sao cần Software Update Engineering?</h3>
+
+                <p>
+                    Một chiếc xe hiện đại có thể chứa nhiều ECU với các phiên bản phần mềm
+                    và cấu hình phần cứng khác nhau. Ngay cả những phương tiện cùng model
+                    cũng có thể có sự khác biệt về phiên bản ECU, phần mềm hoặc trang bị.
+                </p>
+
+                <p>
+                    Điều này tạo ra một số vấn đề cần được xem xét khi triển khai cập nhật:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Software Compatibility:</strong> Bản cập nhật có tương thích
+                        với phiên bản phần cứng và phần mềm đang có trên phương tiện hay không?
+                    </li>
+                    <li>
+                        <strong>Vehicle Configuration:</strong> Có xác định đúng cấu hình
+                        của phương tiện nhận bản cập nhật hay không?
+                    </li>
+                    <li>
+                        <strong>Safety:</strong> Quá trình cập nhật có ảnh hưởng đến trạng
+                        thái an toàn của phương tiện hay không?
+                    </li>
+                    <li>
+                        <strong>Cybersecurity:</strong> Gói cập nhật và quá trình phân phối
+                        có được bảo vệ phù hợp hay không?
+                    </li>
+                    <li>
+                        <strong>Update Result:</strong> Làm thế nào để xác định bản cập nhật
+                        đã thành công hoặc gặp lỗi?
+                    </li>
+                    <li>
+                        <strong>Traceability:</strong> Có thể xác định phương tiện nào đã
+                        nhận phiên bản phần mềm nào hay không?
+                    </li>
+                </ul>
+
+                <p>
+                    Nếu không có quy trình quản lý phù hợp, việc triển khai một bản cập nhật
+                    không tương thích hoặc không đáp ứng điều kiện cần thiết có thể gây ảnh
+                    hưởng đến hoạt động của hệ thống trên xe.
+                </p>
+
+                <p>
+                    ISO 24089 giúp các tổ chức xây dựng quy trình để kiểm soát những vấn đề
+                    này trước, trong và sau khi cập nhật.
+                </p>
+
+
+                <h3>1.3. Mục tiêu của ISO 24089</h3>
+
+                <p>
+                    ISO 24089 hướng đến việc thiết lập một cách tiếp cận thống nhất cho
+                    Software Update Engineering trong ngành Automotive.
+                </p>
+
+                <p><strong>Một số mục tiêu quan trọng:</strong></p>
+
+                <ul>
+                    <li>
+                        <strong>Organizational Management:</strong> Thiết lập quy trình và
+                        trách nhiệm ở cấp độ tổ chức.
+                    </li>
+                    <li>
+                        <strong>Project Management:</strong> Lập kế hoạch và quản lý các
+                        dự án cập nhật phần mềm.
+                    </li>
+                    <li>
+                        <strong>Software Update Infrastructure:</strong> Xây dựng hạ tầng
+                        phục vụ việc quản lý và phân phối cập nhật.
+                    </li>
+                    <li>
+                        <strong>Vehicle Capabilities:</strong> Xác định những chức năng
+                        cần có trên phương tiện để hỗ trợ cập nhật.
+                    </li>
+                    <li>
+                        <strong>Package Management:</strong> Quản lý việc chuẩn bị và
+                        kiểm tra Software Update Package.
+                    </li>
+                    <li>
+                        <strong>Campaign Management:</strong> Quản lý việc lựa chọn
+                        phương tiện nhận bản cập nhật và theo dõi kết quả.
+                    </li>
+                    <li>
+                        <strong>Safety and Cybersecurity:</strong> Xem xét các yêu cầu
+                        an toàn và an ninh mạng trong quá trình cập nhật.
+                    </li>
+                </ul>
+
+
+                <h3>1.4. ISO 24089 không quy định một công nghệ cập nhật duy nhất</h3>
+
+                <p>
+                    ISO 24089 đưa ra yêu cầu và khuyến nghị về quy trình Software Update
+                    Engineering, nhưng không bắt buộc mọi nhà sản xuất phải sử dụng một
+                    công nghệ hoặc phương pháp phân phối bản cập nhật cụ thể.
+                </p>
+
+                <p>
+                    Tùy theo kiến trúc phương tiện và cách tổ chức dự án, bản cập nhật có
+                    thể được phân phối thông qua:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Wired Update:</strong> Cập nhật có dây thông qua công cụ
+                        hoặc thiết bị chuyên dụng.
+                    </li>
+                    <li>
+                        <strong>Wireless Update:</strong> Cập nhật không dây thông qua
+                        các kết nối như mạng di động hoặc Wi-Fi.
+                    </li>
+                    <li>
+                        <strong>Hardware Replacement:</strong> Thay thế ECU hoặc thành
+                        phần phần cứng có tác động đến phiên bản phần mềm của hệ thống.
+                    </li>
+                </ul>
+
+                <p>
+                    Trong thực tế, Over-the-Air (OTA) là một phương thức được sử dụng
+                    phổ biến để phân phối bản cập nhật từ hạ tầng bên ngoài đến phương tiện.
+                    Tuy nhiên, OTA chỉ là một phương thức phân phối, không đồng nghĩa với
+                    toàn bộ Software Update Engineering.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> ISO 24089 không bắt buộc sử dụng OTA.
+                    Tiêu chuẩn tập trung vào việc quản lý quá trình cập nhật, bất kể phương
+                    thức phân phối được lựa chọn là có dây, không dây hay thay thế phần cứng.
+                </div>
+
+
+                <h2>2. Phạm vi áp dụng của ISO 24089</h2>
+
+                <h3>2.1. Các hệ thống thuộc phạm vi tiêu chuẩn</h3>
+
+                <p>
+                    ISO 24089 áp dụng cho các phương tiện giao thông đường bộ có phần mềm
+                    có thể được cập nhật.
+                </p>
+
+                <p>
+                    Các yêu cầu và khuyến nghị của tiêu chuẩn được áp dụng cho:
+                </p>
+
+                <ul>
+                    <li>Vehicles.</li>
+                    <li>Vehicle Systems.</li>
+                    <li>Electronic Control Units (ECUs).</li>
+                    <li>Software Update Infrastructure.</li>
+                    <li>Software Update Packages.</li>
+                    <li>Hoạt động lắp ráp và triển khai các gói cập nhật sau giai đoạn phát triển ban đầu.</li>
+                </ul>
+
+                <p>
+                    Các tổ chức thuộc phạm vi có thể bao gồm Vehicle Manufacturer,
+                    Supplier, các công ty con hoặc đối tác tham gia vào hoạt động cập nhật.
+                </p>
+
+
+                <h3>2.2. Những hoạt động thuộc phạm vi ISO 24089</h3>
+
+                <p>
+                    Có thể chia các hoạt động chính của tiêu chuẩn thành những nhóm sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm hoạt động</th>
+                            <th>Nội dung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Organizational Level</td>
+                            <td>Thiết lập quy trình, chính sách, trách nhiệm và hoạt động
+                                cải tiến ở cấp độ tổ chức.</td>
+                        </tr>
+                        <tr>
+                            <td>Project Level</td>
+                            <td>Lập kế hoạch, quản lý thông tin và phân công trách nhiệm
+                                cho từng dự án cập nhật.</td>
+                        </tr>
+                        <tr>
+                            <td>Infrastructure Level</td>
+                            <td>Phát triển và quản lý hạ tầng phục vụ việc chuẩn bị,
+                                phân phối và theo dõi cập nhật.</td>
+                        </tr>
+                        <tr>
+                            <td>Vehicle and Vehicle Systems Level</td>
+                            <td>Xác định các chức năng và điều kiện cần thiết trên phương tiện
+                                để hỗ trợ quá trình cập nhật.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Update Package</td>
+                            <td>Nhận diện đối tượng cập nhật, đóng gói, xác minh và phê duyệt
+                                gói phần mềm.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Update Campaign</td>
+                            <td>Chuẩn bị, thực hiện, theo dõi và hoàn thành chiến dịch
+                                cập nhật phần mềm.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>2.3. Nội dung nằm ngoài phạm vi trực tiếp của ISO 24089</h3>
+
+                <p>
+                    ISO 24089 tập trung vào Software Update Engineering. Việc phát triển
+                    phần mềm thực hiện các chức năng thông thường của phương tiện nằm ngoài
+                    phạm vi trực tiếp của tài liệu này, ngoại trừ các hoạt động liên quan
+                    đến kỹ thuật cập nhật phần mềm.
+                </p>
+
+                <p>
+                    Ví dụ, việc phát triển thuật toán điều khiển của một ECU là một hoạt động
+                    phát triển chức năng phần mềm. Trong khi đó, việc chuẩn bị và triển khai
+                    một gói phần mềm mới cho ECU đó thuộc phạm vi Software Update Engineering.
+                </p>
+
+                <p>
+                    Hai hoạt động có liên quan nhưng không phải là cùng một quy trình.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> ISO 24089 không thay thế các tiêu chuẩn về phát
+                    triển phần mềm, Functional Safety hoặc Cybersecurity. Tiêu chuẩn tập trung
+                    vào cách quản lý hoạt động cập nhật và phối hợp với các quy trình liên quan.
+                </div>
+
+
+                <h2>3. Các khái niệm nền tảng trong ISO 24089</h2>
+
+                <h3>3.1. ECU (Electronic Control Unit)</h3>
+
+                <p>
+                    <strong>ECU</strong> là bộ điều khiển điện tử được lắp đặt trên phương
+                    tiện và có phần mềm có thể được cập nhật.
+                </p>
+
+                <p>
+                    Một phương tiện có thể có nhiều ECU khác nhau, mỗi ECU đảm nhiệm một
+                    nhóm chức năng riêng.
+                </p>
+
+                <p><strong>Ví dụ:</strong></p>
+
+                <ul>
+                    <li>Engine Control Unit.</li>
+                    <li>Body Control Module (BCM).</li>
+                    <li>Transmission Control Unit (TCU).</li>
+                    <li>Battery Management System (BMS).</li>
+                    <li>Infotainment Control Unit.</li>
+                    <li>Gateway ECU.</li>
+                </ul>
+
+                <p>
+                    Không phải mọi ECU đều sử dụng cùng một phiên bản phần mềm hoặc cùng
+                    một phương thức cập nhật. Vì vậy, cần quản lý thông tin cấu hình của
+                    từng thành phần.
+                </p>
+
+
+                <h3>3.2. Vehicle System</h3>
+
+                <p>
+                    <strong>Vehicle System</strong> là một nhóm chức năng gồm một hoặc
+                    nhiều ECU cùng những phần cứng liên quan.
+                </p>
+
+                <p>
+                    Ví dụ, một hệ thống phanh điện tử có thể bao gồm nhiều ECU, cảm biến,
+                    bộ chấp hành và các thành phần phần cứng khác.
+                </p>
+
+                <p>
+                    Khi cập nhật một ECU trong hệ thống, nhóm phát triển cần xem xét
+                    những thành phần khác có liên quan và các phụ thuộc giữa chúng.
+                </p>
+
+
+                <h3>3.3. Vehicle Configuration Information</h3>
+
+                <p>
+                    <strong>Vehicle Configuration Information</strong> là tập hợp thông
+                    tin mô tả cấu hình của phương tiện, bao gồm các phiên bản phần cứng,
+                    phiên bản phần mềm và những tham số cấu hình liên quan.
+                </p>
+
+                <p>
+                    Thông tin này đặc biệt quan trọng vì các phương tiện cùng một dòng
+                    sản phẩm có thể không hoàn toàn giống nhau về cấu hình.
+                </p>
+
+                <p><strong>Ví dụ về thông tin cấu hình:</strong></p>
+
+                <ul>
+                    <li>Hardware Version của ECU.</li>
+                    <li>Software Version đang được cài đặt.</li>
+                    <li>Configuration Parameters.</li>
+                    <li>Phiên bản hoặc biến thể của Vehicle System.</li>
+                    <li>Thông tin về các thành phần có phụ thuộc lẫn nhau.</li>
+                </ul>
+
+                <p>
+                    Khi lựa chọn phương tiện nhận bản cập nhật, thông tin cấu hình được
+                    sử dụng để hỗ trợ xác định tính tương thích.
+                </p>
+
+
+                <h3>3.4. Target</h3>
+
+                <p>
+                    <strong>Target</strong> là một hoặc nhiều nhóm phương tiện, Vehicle
+                    Systems hoặc ECUs được xác định dựa trên Vehicle Configuration Information.
+                </p>
+
+                <p>
+                    Target mô tả nhóm đối tượng mà một bản cập nhật được thiết kế để hướng
+                    đến, thay vì chỉ một phương tiện cụ thể.
+                </p>
+
+                <p>
+                    Ví dụ, một bản cập nhật có thể được thiết kế cho:
+                </p>
+
+                <ul>
+                    <li>Một nhóm phương tiện thuộc cùng một model.</li>
+                    <li>Một loại ECU có cùng Hardware Version.</li>
+                    <li>Một nhóm ECU đang sử dụng phiên bản phần mềm nhất định.</li>
+                    <li>Một nhóm Vehicle Systems có cùng cấu hình hỗ trợ.</li>
+                </ul>
+
+
+                <h3>3.5. Recipient</h3>
+
+                <p>
+                    <strong>Recipient</strong> là một phương tiện, Vehicle System hoặc
+                    ECU cụ thể nhận Software Update Package trong một Software Update Campaign.
+                </p>
+
+                <p>
+                    Cần phân biệt Target và Recipient:
+                </p>
+
+                <ul>
+                    <li><strong>Target:</strong> Nhóm đối tượng đủ điều kiện nhận cập nhật.</li>
+                    <li><strong>Recipient:</strong> Đối tượng cụ thể được xác định là người nhận bản cập nhật.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, Target có thể là một nhóm xe có cùng phiên bản ECU và cấu hình
+                    tương thích. Sau khi xác định các phương tiện cụ thể trong nhóm đó,
+                    mỗi phương tiện đủ điều kiện có thể trở thành một Recipient của chiến dịch.
+                </p>
+
+
+                <h3>3.6. Compatibility</h3>
+
+                <p>
+                    <strong>Compatibility</strong> là khả năng phần mềm có thể chạy trên
+                    Vehicle System mà không xảy ra xung đột.
+                </p>
+
+                <p>
+                    Tính tương thích có thể được đánh giá dựa trên Vehicle Configuration
+                    Information.
+                </p>
+
+                <p><strong>Một số yếu tố cần xem xét:</strong></p>
+
+                <ul>
+                    <li>Hardware Version của ECU.</li>
+                    <li>Software Version hiện tại.</li>
+                    <li>Dependencies với những Vehicle Systems khác.</li>
+                    <li>Configuration Parameters.</li>
+                    <li>Những điều kiện kỹ thuật được xác định cho gói cập nhật.</li>
+                </ul>
+
+                <p>
+                    Một Software Update Package có thể không phù hợp với tất cả các phiên
+                    bản ECU. Vì vậy, cần xác định đúng đối tượng trước khi triển khai.
+                </p>
+
+
+                <h3>3.7. Dependency</h3>
+
+                <p>
+                    <strong>Dependency</strong> mô tả ảnh hưởng hoặc sự phụ thuộc của phần
+                    mềm thuộc một Vehicle System đối với chính hệ thống đó hoặc những
+                    Vehicle Systems khác.
+                </p>
+
+                <p>
+                    Ví dụ, hai ECU có thể trao đổi dữ liệu thông qua một Communication
+                    Interface. Nếu phần mềm của một ECU được thay đổi, nhóm phát triển
+                    cần xem xét khả năng tương thích với ECU còn lại.
+                </p>
+
+                <p>
+                    Những phụ thuộc này có thể tạo ra các điều kiện cần được ghi nhận trong
+                    metadata của Software Update Package.
+                </p>
+
+
+                <h3>3.8. Infrastructure</h3>
+
+                <p>
+                    <strong>Infrastructure</strong> là tập hợp các quy trình và hệ thống
+                    thông tin được sử dụng để quản lý Software Update Operations,
+                    Software Update Campaigns, tài liệu và Vehicle Configuration Information.
+                </p>
+
+                <p>
+                    Infrastructure có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Servers.</li>
+                    <li>Software Update Management Tools.</li>
+                    <li>Package Management Systems.</li>
+                    <li>Vehicle Configuration Databases.</li>
+                    <li>Communication Services.</li>
+                    <li>Các hoạt động quản lý thủ công.</li>
+                </ul>
+
+                <p>
+                    Infrastructure có thể được triển khai bên ngoài phương tiện, trên
+                    phương tiện hoặc kết hợp nhiều thành phần tùy theo kiến trúc của tổ chức.
+                </p>
+
+
+                <h3>3.9. In-vehicle Resource</h3>
+
+                <p>
+                    <strong>In-vehicle Resource</strong> là những tài nguyên sẵn có trên
+                    phương tiện hoặc ECU có liên quan đến Software Update Engineering.
+                </p>
+
+                <p><strong>Ví dụ:</strong></p>
+
+                <ul>
+                    <li>Computational Power.</li>
+                    <li>Network Capacity.</li>
+                    <li>RAM Capacity.</li>
+                    <li>Storage Capacity.</li>
+                    <li>Battery Capacity.</li>
+                </ul>
+
+                <p>
+                    Những tài nguyên này cần được xem xét để xác định liệu hệ thống có
+                    đáp ứng các điều kiện cần thiết cho hoạt động cập nhật hay không.
+                </p>
+
+
+                <h3>3.10. Safe Vehicle State</h3>
+
+                <p>
+                    <strong>Safe Vehicle State</strong> là trạng thái vận hành của phương
+                    tiện đáp ứng những điều kiện cần thiết để thực hiện Software Update
+                    Operations mà không tạo ra mức rủi ro không hợp lý.
+                </p>
+
+                <p>
+                    Trạng thái an toàn có thể khác nhau tùy theo:
+                </p>
+
+                <ul>
+                    <li>Loại Software Update Package.</li>
+                    <li>Những hệ thống bị ảnh hưởng bởi bản cập nhật.</li>
+                    <li>Từng bước trong Software Update Operation.</li>
+                    <li>Các điều kiện được xác định trong dự án.</li>
+                </ul>
+
+                <p>
+                    Ví dụ về một trạng thái có thể được yêu cầu là động cơ đã tắt và phanh
+                    đỗ đã được kích hoạt. Tuy nhiên, điều kiện cụ thể phải được xác định
+                    theo loại phương tiện, chức năng và yêu cầu của bản cập nhật.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> Không có một Safe Vehicle State duy nhất
+                    áp dụng cho mọi bản cập nhật. Điều kiện an toàn phải được xác định
+                    dựa trên phạm vi và đặc điểm của hoạt động cập nhật.
+                </div>
+
+
+                <h3>3.11. Software Update Package</h3>
+
+                <p>
+                    <strong>Software Update Package</strong> là tập hợp phần mềm cùng
+                    metadata liên quan, được chuẩn bị để triển khai đến một hoặc nhiều
+                    phương tiện, Vehicle Systems hoặc ECUs.
+                </p>
+
+                <p>
+                    Package không chỉ bao gồm phần mềm mới mà còn có thể chứa thông tin
+                    mô tả cách xác định đối tượng phù hợp và những điều kiện liên quan
+                    đến quá trình cập nhật.
+                </p>
+
+
+                <h3>3.12. Software Update Campaign</h3>
+
+                <p>
+                    <strong>Software Update Campaign</strong> là một chuỗi hoạt động
+                    nhằm xác định Target và Recipient, phân phối Software Update Package,
+                    theo dõi và ghi nhận kết quả của các Software Update Operations.
+                </p>
+
+                <p>
+                    Campaign giúp tổ chức quản lý việc cập nhật trên nhiều phương tiện
+                    hoặc nhiều ECU thay vì xem mỗi hoạt động cập nhật là một công việc
+                    độc lập không có liên kết.
+                </p>
+
+
+                <h3>3.13. Bảng tổng hợp các khái niệm</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ECU</td>
+                            <td>Bộ điều khiển điện tử có phần mềm có thể cập nhật.</td>
+                        </tr>
+                        <tr>
+                            <td>Vehicle System</td>
+                            <td>Nhóm chức năng gồm một hoặc nhiều ECU và phần cứng liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Vehicle Configuration Information</td>
+                            <td>Thông tin phiên bản phần cứng, phần mềm và cấu hình của phương tiện.</td>
+                        </tr>
+                        <tr>
+                            <td>Target</td>
+                            <td>Nhóm phương tiện, hệ thống hoặc ECU được xác định để nhận bản cập nhật.</td>
+                        </tr>
+                        <tr>
+                            <td>Recipient</td>
+                            <td>Đối tượng cụ thể nhận bản cập nhật trong một Campaign.</td>
+                        </tr>
+                        <tr>
+                            <td>Compatibility</td>
+                            <td>Khả năng phần mềm hoạt động trên hệ thống mà không xung đột.</td>
+                        </tr>
+                        <tr>
+                            <td>Dependency</td>
+                            <td>Sự phụ thuộc giữa phần mềm và các Vehicle Systems.</td>
+                        </tr>
+                        <tr>
+                            <td>Infrastructure</td>
+                            <td>Quy trình và hệ thống hỗ trợ quản lý cập nhật.</td>
+                        </tr>
+                        <tr>
+                            <td>In-vehicle Resource</td>
+                            <td>Tài nguyên sẵn có trên phương tiện hoặc ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Safe Vehicle State</td>
+                            <td>Trạng thái phương tiện đáp ứng điều kiện cập nhật an toàn.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Update Package</td>
+                            <td>Phần mềm và metadata được chuẩn bị để triển khai.</td>
+                        </tr>
+                        <tr>
+                            <td>Software Update Campaign</td>
+                            <td>Chuỗi hoạt động lựa chọn đối tượng, phân phối và theo dõi cập nhật.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h2>4. Tổng quan kiến trúc Software Update Engineering</h2>
+
+                <h3>4.1. Các thành phần chính</h3>
+
+                <p>
+                    ISO 24089 xem xét quá trình cập nhật ở nhiều cấp độ khác nhau.
+                    Các thành phần chính có thể được khái quát thành:
+                </p>
+
+                <ul>
+                    <li><strong>Organization:</strong> Tổ chức chịu trách nhiệm quản lý hoạt động cập nhật.</li>
+                    <li><strong>Project:</strong> Dự án cập nhật phần mềm cụ thể.</li>
+                    <li><strong>Infrastructure:</strong> Hạ tầng quản lý và phân phối cập nhật.</li>
+                    <li><strong>Vehicle:</strong> Phương tiện và các chức năng hỗ trợ cập nhật.</li>
+                    <li><strong>Software Update Package:</strong> Gói phần mềm được chuẩn bị.</li>
+                    <li><strong>Software Update Campaign:</strong> Chiến dịch triển khai bản cập nhật.</li>
+                </ul>
+
+
+                <h3>4.2. Sơ đồ kiến trúc tổng quan</h3>
+
+                <p>
+                    Có thể mô hình hóa mối quan hệ giữa Infrastructure, Software Update
+                    Package và Vehicle như sau:
+                </p>
+
+                <pre><code>+----------------------------------+
+|          Organization            |
+|                                  |
+| - Policies                       |
+| - Processes                      |
+| - Roles and Responsibilities     |
++----------------+-----------------+
+                 |
+                 v
++----------------------------------+
+|        Software Update Project   |
+|                                  |
+| - Project Planning               |
+| - Requirements                   |
+| - Interoperability               |
+| - Integrity                      |
++----------------+-----------------+
+                 |
+                 v
++----------------------------------+
+|          Infrastructure          |
+|                                  |
+| - Configuration Information      |
+| - Package Management              |
+| - Campaign Management             |
+| - Distribution                    |
++----------------+-----------------+
+                 |
+                 v
++----------------------------------+
+|       Software Update Package    |
+|                                  |
+| - Software                       |
+| - Metadata                       |
++----------------+-----------------+
+                 |
+                 v
++----------------------------------+
+|             Vehicle              |
+|                                  |
+| - Vehicle System                 |
+| - ECU                            |
+| - Update Functions               |
+| - Update Conditions              |
++----------------------------------+</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái quát để minh họa những cấp độ và thành phần liên quan.
+                    Trong thực tế, Infrastructure và các chức năng hỗ trợ cập nhật có thể
+                    được phân bố giữa hệ thống bên ngoài và các thành phần trên phương tiện.
+                </p>
+
+
+                <h3>4.3. Luồng dữ liệu tổng quan</h3>
+
+                <p>
+                    Một bản cập nhật thường bắt đầu từ hoạt động chuẩn bị phần mềm và
+                    metadata, sau đó được kiểm tra, phê duyệt và đưa vào một chiến dịch
+                    cập nhật.
+                </p>
+
+                <pre><code>Software Development
+        |
+        v
+Software Update Package Preparation
+        |
+        v
+Package Verification and Validation
+        |
+        v
+Release Approval
+        |
+        v
+Software Update Campaign Preparation
+        |
+        v
+Target and Recipient Identification
+        |
+        v
+Package Distribution
+        |
+        v
+Vehicle Receives Package
+        |
+        v
+Installation
+        |
+        v
+Activation
+        |
+        v
+Result Monitoring and Documentation</code></pre>
+
+                <p>
+                    Quá trình này cho thấy cập nhật phần mềm không chỉ là thao tác
+                    cài đặt trên ECU mà còn có các hoạt động quản lý, kiểm tra và
+                    theo dõi ở cấp độ tổ chức, dự án và phương tiện.
+                </p>
+
+
+                <h2>5. Các giai đoạn của Software Update Operation</h2>
+
+                <h3>5.1. Software Update Operation là gì?</h3>
+
+                <p>
+                    <strong>Software Update Operation</strong> là quá trình thực hiện
+                    các bước nhận, cài đặt và kích hoạt Software Update Package trên
+                    phương tiện, Vehicle System hoặc ECU.
+                </p>
+
+                <p>
+                    Theo cách phân chia trong ISO 24089, hoạt động này có ba bước chính:
+                </p>
+
+                <ul>
+                    <li>Receipt.</li>
+                    <li>Installation.</li>
+                    <li>Activation.</li>
+                </ul>
+
+
+                <h3>5.2. Receipt</h3>
+
+                <p>
+                    <strong>Receipt</strong> là bước mà công cụ, phương tiện, Vehicle
+                    System hoặc ECU nhận được Software Update Package.
+                </p>
+
+                <p>
+                    Việc nhận package có thể diễn ra thông qua nhiều phương thức khác nhau,
+                    chẳng hạn như tải gói cập nhật từ Infrastructure hoặc nhận dữ liệu
+                    thông qua công cụ được sử dụng trong môi trường dịch vụ.
+                </p>
+
+                <p>
+                    Ở bước này, nhóm phát triển cần quan tâm đến việc package được gửi
+                    đến đúng đối tượng và đáp ứng những điều kiện tiếp nhận phù hợp.
+                </p>
+
+
+                <h3>5.3. Installation</h3>
+
+                <p>
+                    <strong>Installation</strong> là bước các phần liên quan của
+                    Software Update Package được ghi vào phương tiện, Vehicle System
+                    hoặc ECU.
+                </p>
+
+                <p>
+                    Một điểm quan trọng là tại thời điểm Installation hoàn tất,
+                    phần mềm mới chưa nhất thiết đã được kích hoạt để thực thi.
+                </p>
+
+                <p>
+                    Việc phân biệt Installation với Activation giúp quá trình cập nhật
+                    có thể quản lý riêng trạng thái phần mềm đã được ghi nhận và trạng
+                    thái phần mềm đang được sử dụng.
+                </p>
+
+
+                <h3>5.4. Activation</h3>
+
+                <p>
+                    <strong>Activation</strong> là bước phần mềm đã được cài đặt trở
+                    thành phiên bản có thể thực thi trên phương tiện, Vehicle System
+                    hoặc ECU.
+                </p>
+
+                <p>
+                    Tùy theo kiến trúc, việc kích hoạt có thể diễn ra ngay sau khi
+                    Installation hoàn tất hoặc chỉ xảy ra sau một điều kiện hay
+                    hành động phù hợp.
+                </p>
+
+                <p>
+                    Ví dụ, một chức năng mới có thể đã được cài đặt nhưng chỉ thực sự
+                    được sử dụng khi người dùng kích hoạt chức năng đó theo thiết kế.
+                </p>
+
+
+                <h3>5.5. Phân biệt ba giai đoạn</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Giai đoạn</th>
+                            <th>Ý nghĩa</th>
+                            <th>Trạng thái sau bước</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Receipt</td>
+                            <td>Nhận Software Update Package.</td>
+                            <td>Package đã được tiếp nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>Installation</td>
+                            <td>Ghi những phần liên quan của package vào hệ thống.</td>
+                            <td>Phần mềm đã được cài đặt nhưng chưa nhất thiết được kích hoạt.</td>
+                        </tr>
+                        <tr>
+                            <td>Activation</td>
+                            <td>Kích hoạt phần mềm đã cài đặt.</td>
+                            <td>Phần mềm mới trở thành phiên bản có thể thực thi.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> Receipt, Installation và Activation
+                    là ba khái niệm khác nhau. Nhận được package không có nghĩa là đã
+                    cài đặt thành công; cài đặt thành công cũng không đồng nghĩa phần
+                    mềm đã được kích hoạt.
+                </div>
+
+
+                <h2>6. Cấu trúc bộ tiêu chuẩn ISO 24089</h2>
+
+                <h3>6.1. Tổng quan 9 Clause</h3>
+
+                <p>
+                    ISO 24089:2023 được chia thành <strong>9 Clause</strong>, trong đó
+                    các Clause từ 4 đến 7 tập trung vào các cấp độ quản lý và chức năng
+                    hỗ trợ, còn Clause 8 và Clause 9 tập trung vào Package và Campaign.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Clause</th>
+                            <th>Tên nội dung</th>
+                            <th>Vai trò chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Clause 1</td>
+                            <td>Scope</td>
+                            <td>Xác định phạm vi áp dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 2</td>
+                            <td>Normative References</td>
+                            <td>Các tài liệu tham chiếu quy phạm.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 3</td>
+                            <td>Terms and Definitions</td>
+                            <td>Thuật ngữ và định nghĩa.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 4</td>
+                            <td>Organizational Level</td>
+                            <td>Quản lý hoạt động cập nhật ở cấp độ tổ chức.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 5</td>
+                            <td>Project Level</td>
+                            <td>Quản lý dự án cập nhật phần mềm.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 6</td>
+                            <td>Infrastructure Level</td>
+                            <td>Quản lý và phát triển hạ tầng cập nhật.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 7</td>
+                            <td>Vehicle and Vehicle Systems Level</td>
+                            <td>Chức năng và yêu cầu ở cấp độ phương tiện, Vehicle System.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 8</td>
+                            <td>Software Update Package</td>
+                            <td>Chuẩn bị, xác minh, phê duyệt và phát hành package.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause 9</td>
+                            <td>Software Update Campaign</td>
+                            <td>Chuẩn bị, thực hiện và hoàn thành chiến dịch cập nhật.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>6.2. Clause 1 - Scope</h3>
+
+                <p>
+                    Clause 1 xác định phạm vi áp dụng của ISO 24089.
+                </p>
+
+                <p>
+                    Tiêu chuẩn áp dụng cho Software Update Engineering của phương tiện
+                    giao thông đường bộ có phần mềm có thể cập nhật, ở cả cấp độ tổ chức
+                    và dự án.
+                </p>
+
+                <p>
+                    Phạm vi bao gồm phương tiện, Vehicle Systems, ECU, Infrastructure
+                    và việc chuẩn bị, triển khai Software Update Package sau giai đoạn
+                    phát triển ban đầu.
+                </p>
+
+
+                <h3>6.3. Clause 2 - Normative References</h3>
+
+                <p>
+                    Clause 2 liệt kê các tài liệu tham chiếu quy phạm được sử dụng trong
+                    ISO 24089.
+                </p>
+
+                <p>
+                    Một số tài liệu quan trọng được tham chiếu gồm:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>ISO 26262-6:</strong> Product Development at the Software Level.
+                    </li>
+                    <li>
+                        <strong>ISO 26262-8:</strong> Supporting Processes.
+                    </li>
+                    <li>
+                        <strong>ISO/SAE 21434:</strong> Road Vehicles - Cybersecurity Engineering.
+                    </li>
+                </ul>
+
+                <p>
+                    Những tài liệu này cho thấy Software Update Engineering có mối
+                    liên hệ với Functional Safety và Cybersecurity.
+                </p>
+
+
+                <h3>6.4. Clause 3 - Terms and Definitions</h3>
+
+                <p>
+                    Clause 3 cung cấp những thuật ngữ và định nghĩa được sử dụng
+                    xuyên suốt tiêu chuẩn.
+                </p>
+
+                <p><strong>Một số thuật ngữ quan trọng:</strong></p>
+
+                <ul>
+                    <li>Compatibility.</li>
+                    <li>Condition.</li>
+                    <li>Cybersecurity Risk.</li>
+                    <li>Dependency.</li>
+                    <li>Infrastructure.</li>
+                    <li>In-vehicle Resource.</li>
+                    <li>Safe Vehicle State.</li>
+                    <li>Software Update Campaign.</li>
+                    <li>Software Update Operation.</li>
+                    <li>Software Update Package.</li>
+                    <li>Target và Recipient.</li>
+                    <li>Vehicle Configuration Information.</li>
+                </ul>
+
+
+                <h3>6.5. Clause 4 - Organizational Level</h3>
+
+                <p>
+                    Clause 4 tập trung vào quản lý Software Update Engineering ở cấp độ
+                    tổ chức.
+                </p>
+
+                <p>
+                    Một tổ chức tham gia phát triển hoặc triển khai phần mềm trên phương
+                    tiện cần thiết lập quy trình, phân công trách nhiệm và duy trì hoạt
+                    động quản lý phù hợp.
+                </p>
+
+                <p><strong>Các nhóm nội dung chính:</strong></p>
+
+                <ul>
+                    <li><strong>Governance:</strong> Thiết lập cách quản lý và giám sát hoạt động cập nhật.</li>
+                    <li><strong>Continuous Improvement:</strong> Duy trì việc cải tiến quy trình.</li>
+                    <li><strong>Information Sharing:</strong> Quản lý việc chia sẻ thông tin giữa các bên.</li>
+                    <li><strong>Supporting Processes:</strong> Các quy trình hỗ trợ cần thiết.</li>
+                    <li><strong>Auditing:</strong> Kiểm tra, đánh giá việc thực hiện quy trình.</li>
+                </ul>
+
+                <p>
+                    Mục tiêu của Clause 4 là bảo đảm hoạt động cập nhật được quản lý
+                    thống nhất trong tổ chức, thay vì mỗi dự án tự xây dựng một cách
+                    làm hoàn toàn khác nhau mà không có sự kiểm soát.
+                </p>
+
+
+                <h3>6.6. Clause 5 - Project Level</h3>
+
+                <p>
+                    Clause 5 tập trung vào việc quản lý Software Update Project cụ thể.
+                </p>
+
+                <p>
+                    Mỗi dự án cập nhật cần có kế hoạch, thông tin quản lý, phân công
+                    trách nhiệm và các hoạt động xác nhận phù hợp.
+                </p>
+
+                <p><strong>Các nhóm nội dung chính:</strong></p>
+
+                <ul>
+                    <li>
+                        <strong>Project Management:</strong> Lập kế hoạch và phân công vai trò,
+                        trách nhiệm.
+                    </li>
+                    <li>
+                        <strong>Tailoring and Rationale:</strong> Quản lý các hoạt động được
+                        điều chỉnh hoặc không áp dụng, kèm lý do phù hợp.
+                    </li>
+                    <li>
+                        <strong>Interoperability:</strong> Xác nhận khả năng phối hợp giữa
+                        Infrastructure và các chức năng trên phương tiện.
+                    </li>
+                    <li>
+                        <strong>Integrity:</strong> Duy trì tính toàn vẹn của phần mềm,
+                        metadata hoặc Software Update Package.
+                    </li>
+                </ul>
+
+                <p>
+                    Clause 5 giúp bảo đảm từng dự án có thể chứng minh cách tổ chức,
+                    quản lý và kiểm soát các hoạt động cập nhật của mình.
+                </p>
+
+
+                <h3>6.7. Clause 6 - Infrastructure Level</h3>
+
+                <p>
+                    Clause 6 đề cập đến Infrastructure được sử dụng để hỗ trợ các
+                    Software Update Campaigns.
+                </p>
+
+                <p>
+                    Infrastructure có thể đảm nhiệm việc tiếp nhận và quản lý thông
+                    tin cấu hình phương tiện, xử lý Software Update Package, quản lý
+                    thông tin chiến dịch và phân phối kết quả.
+                </p>
+
+                <p><strong>Các nhóm nội dung chính:</strong></p>
+
+                <ul>
+                    <li>
+                        <strong>Managing Risk:</strong> Quản lý Cybersecurity Risk liên quan
+                        đến Infrastructure.
+                    </li>
+                    <li>
+                        <strong>Managing Vehicle Configuration Information:</strong> Thu thập,
+                        lưu trữ, xử lý và duy trì tính toàn vẹn của thông tin cấu hình.
+                    </li>
+                    <li>
+                        <strong>Communicating Campaign Information:</strong> Trao đổi và
+                        phân phối thông tin về Software Update Campaign.
+                    </li>
+                    <li>
+                        <strong>Processing Software Update Packages:</strong> Tạo, tiếp nhận,
+                        lưu trữ, quản lý và phân phối các package.
+                    </li>
+                </ul>
+
+                <p>
+                    Clause 6 giúp xác định những chức năng cần có ở Infrastructure để
+                    hỗ trợ quy trình cập nhật.
+                </p>
+
+
+                <h3>6.8. Clause 7 - Vehicle and Vehicle Systems Level</h3>
+
+                <p>
+                    Clause 7 tập trung vào các chức năng và yêu cầu cần có trên phương
+                    tiện hoặc Vehicle Systems để hỗ trợ Software Update Operations.
+                </p>
+
+                <p>
+                    Không chỉ Infrastructure cần có chức năng quản lý cập nhật, phương
+                    tiện cũng cần có khả năng tiếp nhận và xử lý các gói cập nhật theo
+                    những điều kiện phù hợp.
+                </p>
+
+                <p><strong>Các nhóm nội dung chính:</strong></p>
+
+                <ul>
+                    <li>Managing Risks.</li>
+                    <li>Managing Vehicle Configuration Information.</li>
+                    <li>Communicating Software Update Campaign Information.</li>
+                    <li>Processing Software Update Packages.</li>
+                    <li>Hỗ trợ các bước Receipt, Installation và Activation.</li>
+                    <li>Xác định các điều kiện cần thiết cho Software Update Operation.</li>
+                </ul>
+
+                <p>
+                    Những chức năng này có thể được phân bố giữa phương tiện và
+                    Infrastructure tùy theo kiến trúc được lựa chọn.
+                </p>
+
+
+                <h3>6.9. Clause 8 - Software Update Package</h3>
+
+                <p>
+                    Clause 8 tập trung vào quá trình chuẩn bị và quản lý
+                    <strong>Software Update Package</strong>.
+                </p>
+
+                <p>
+                    Một package cần được xác định rõ đối tượng sử dụng, nội dung cập
+                    nhật, các điều kiện liên quan và những thông tin cần thiết để
+                    kiểm tra trước khi phát hành.
+                </p>
+
+                <p><strong>Các nhóm nội dung chính:</strong></p>
+
+                <ul>
+                    <li>
+                        <strong>Identification of Targets and Contents:</strong> Xác định
+                        Target và nội dung của package.
+                    </li>
+                    <li>
+                        <strong>Package Assembly:</strong> Tổ chức việc tạo và đóng gói
+                        Software Update Package.
+                    </li>
+                    <li>
+                        <strong>Verification and Validation:</strong> Kiểm tra và xác nhận
+                        package trước khi phát hành.
+                    </li>
+                    <li>
+                        <strong>Approval for Release:</strong> Phê duyệt package trước khi
+                        được đưa vào quá trình phân phối.
+                    </li>
+                </ul>
+
+                <p>
+                    Clause 8 giúp bảo đảm package được chuẩn bị và kiểm tra trước khi
+                    được sử dụng trong một chiến dịch cập nhật.
+                </p>
+
+
+                <h3>6.10. Clause 9 - Software Update Campaign</h3>
+
+                <p>
+                    Clause 9 tập trung vào việc chuẩn bị, thực hiện và hoàn thành
+                    Software Update Campaign.
+                </p>
+
+                <p>
+                    Campaign là hoạt động triển khai package đến các phương tiện hoặc
+                    ECU thuộc nhóm đối tượng đã được xác định.
+                </p>
+
+                <p><strong>Các nhóm nội dung chính:</strong></p>
+
+                <ul>
+                    <li>
+                        <strong>Campaign Preparation:</strong> Chuẩn bị chiến dịch,
+                        xác định Target và Recipient.
+                    </li>
+                    <li>
+                        <strong>Campaign Execution:</strong> Thực hiện phân phối và
+                        theo dõi các hoạt động cập nhật.
+                    </li>
+                    <li>
+                        <strong>Campaign Completion:</strong> Tổng hợp kết quả và
+                        hoàn thành chiến dịch.
+                    </li>
+                </ul>
+
+                <p>
+                    Clause 9 giúp tổ chức quản lý quá trình triển khai ở quy mô nhiều
+                    phương tiện, đồng thời ghi nhận kết quả để phục vụ việc theo dõi
+                    và truy vết.
+                </p>
+
+
+                <h2>7. Software Update Package</h2>
+
+                <h3>7.1. Cấu trúc tổng quan của Package</h3>
+
+                <p>
+                    Software Update Package là thành phần trung tâm của hoạt động
+                    cập nhật. Package bao gồm phần mềm cần triển khai và metadata
+                    liên quan.
+                </p>
+
+                <p>
+                    Metadata cung cấp thông tin mô tả và điều kiện liên quan đến
+                    package, hỗ trợ các hoạt động nhận diện đối tượng, kiểm tra
+                    tương thích và tổ chức cập nhật.
+                </p>
+
+                <pre><code>+----------------------------------+
+|       Software Update Package    |
+|                                  |
+|  +----------------------------+  |
+|  |          Software          |  |
+|  |                            |  |
+|  | - Updated Program          |  |
+|  | - Associated Data           |  |
+|  +----------------------------+  |
+|                                  |
+|  +----------------------------+  |
+|  |          Metadata          |  |
+|  |                            |  |
+|  | - Version Information      |  |
+|  | - Target Information        |  |
+|  | - Compatibility Information|
+|  | - Update Conditions         |
+|  | - Dependency Information   |
+|  +----------------------------+  |
++----------------------------------+</code></pre>
+
+                <p>
+                    Sơ đồ trên minh họa một số nhóm thông tin có thể liên quan đến
+                    package. Cấu trúc và nội dung metadata cụ thể cần tuân theo
+                    đặc tả của dự án và yêu cầu áp dụng.
+                </p>
+
+
+                <h3>7.2. Identification of Targets</h3>
+
+                <p>
+                    Trước khi package được phát hành, cần xác định những nhóm
+                    phương tiện, Vehicle Systems hoặc ECU mà package được thiết kế
+                    để cập nhật.
+                </p>
+
+                <p>
+                    Việc xác định Target cần xem xét Vehicle Configuration Information,
+                    bao gồm phần cứng, phần mềm và các tham số cấu hình có liên quan.
+                </p>
+
+                <p>
+                    Ví dụ, một package có thể chỉ dành cho một nhóm ECU có Hardware
+                    Version và Software Version nhất định. Những ECU có cấu hình
+                    khác cần được đánh giá riêng thay vì mặc định rằng chúng đều
+                    tương thích.
+                </p>
+
+
+                <h3>7.3. Metadata và Compatibility</h3>
+
+                <p>
+                    Metadata hỗ trợ Infrastructure và các thành phần liên quan
+                    hiểu package cần được sử dụng trong điều kiện nào.
+                </p>
+
+                <p>
+                    Một số nhóm thông tin có thể được xem xét:
+                </p>
+
+                <ul>
+                    <li>Phiên bản phần mềm liên quan.</li>
+                    <li>Nhóm Target của package.</li>
+                    <li>Thông tin tương thích với cấu hình phương tiện.</li>
+                    <li>Dependencies với những Vehicle Systems khác.</li>
+                    <li>Điều kiện cần thiết cho hoạt động cập nhật.</li>
+                    <li>Những tài nguyên cần thiết theo yêu cầu của package.</li>
+                </ul>
+
+                <p>
+                    Những thông tin này giúp giảm nguy cơ lựa chọn sai package hoặc
+                    triển khai cho đối tượng không đáp ứng điều kiện.
+                </p>
+
+
+                <h3>7.4. Package Assembly</h3>
+
+                <p>
+                    <strong>Package Assembly</strong> là hoạt động tổ chức phần mềm
+                    và metadata thành một Software Update Package có thể được quản lý
+                    và phân phối.
+                </p>
+
+                <p>
+                    Hoạt động này cần bảo đảm nội dung package phù hợp với Target,
+                    các thông tin liên quan được gắn đúng và package có thể được
+                    quản lý xuyên suốt quy trình.
+                </p>
+
+                <p>
+                    Infrastructure có thể cung cấp các chức năng hỗ trợ việc tạo,
+                    tiếp nhận, lưu trữ và xử lý package.
+                </p>
+
+
+                <h3>7.5. Verification and Validation of Package</h3>
+
+                <p>
+                    Trước khi phát hành, package cần trải qua các hoạt động
+                    Verification và Validation phù hợp.
+                </p>
+
+                <p><strong>Những nội dung có thể được xem xét:</strong></p>
+
+                <ul>
+                    <li>Package có đúng nội dung đã được xác định hay không.</li>
+                    <li>Thông tin Target có chính xác hay không.</li>
+                    <li>Metadata có đầy đủ và nhất quán hay không.</li>
+                    <li>Package có đáp ứng yêu cầu tương thích hay không.</li>
+                    <li>Những yêu cầu Safety và Cybersecurity liên quan đã được xem xét hay chưa.</li>
+                    <li>Kết quả kiểm tra có được ghi nhận hay không.</li>
+                </ul>
+
+                <p>
+                    Verification và Validation cần được thực hiện với phương pháp
+                    phù hợp với loại cập nhật và yêu cầu của dự án.
+                </p>
+
+
+                <h3>7.6. Approval for Release</h3>
+
+                <p>
+                    Sau khi hoàn thành các hoạt động cần thiết, package cần được
+                    phê duyệt trước khi phát hành.
+                </p>
+
+                <p>
+                    Việc phê duyệt giúp xác định package đã trải qua những hoạt động
+                    kiểm tra cần thiết và được phép sử dụng trong phạm vi đã xác định.
+                </p>
+
+                <p>
+                    Thông tin về trạng thái phê duyệt và kết quả liên quan cần được
+                    quản lý để hỗ trợ truy vết trong quá trình triển khai.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> Software Update Package không chỉ
+                    là một tập tin phần mềm. Nó là phần mềm kèm metadata và những
+                    thông tin cần thiết để hỗ trợ việc xác định Target, kiểm tra
+                    điều kiện, xác minh và quản lý quá trình phát hành.
+                </div>
+
+
+                <h2>8. Software Update Campaign</h2>
+
+                <h3>8.1. Campaign là gì?</h3>
+
+                <p>
+                    <strong>Software Update Campaign</strong> là một chuỗi hoạt động
+                    nhằm đưa một hoặc nhiều Software Update Packages đến những đối
+                    tượng phù hợp và theo dõi kết quả cập nhật.
+                </p>
+
+                <p>
+                    Một Campaign có thể bao gồm nhiều phương tiện hoặc nhiều ECU.
+                    Infrastructure hỗ trợ việc xác định đối tượng, quản lý thông tin
+                    phân phối và ghi nhận kết quả.
+                </p>
+
+
+                <h3>8.2. Campaign Preparation</h3>
+
+                <p>
+                    <strong>Campaign Preparation</strong> là giai đoạn chuẩn bị trước
+                    khi triển khai cập nhật.
+                </p>
+
+                <p>
+                    Một số hoạt động tổng quan:
+                </p>
+
+                <ul>
+                    <li>Xác định mục tiêu của Campaign.</li>
+                    <li>Xác định Software Update Package được sử dụng.</li>
+                    <li>Liên kết package với Target phù hợp.</li>
+                    <li>Xác định Recipient dựa trên thông tin cấu hình.</li>
+                    <li>Xác định phương thức phân phối.</li>
+                    <li>Xác định các điều kiện cần thiết.</li>
+                    <li>Chuẩn bị cơ chế theo dõi và ghi nhận kết quả.</li>
+                </ul>
+
+
+                <h3>8.3. Target và Recipient Resolution</h3>
+
+                <p>
+                    Trong quá trình chuẩn bị Campaign, Infrastructure cần hỗ trợ
+                    việc xác định những Recipient cụ thể từ Target đã được lựa chọn.
+                </p>
+
+                <p>
+                    Có thể minh họa như sau:
+                </p>
+
+                <pre><code>Software Update Package
+        |
+        v
+Target Definition
+        |
+        | Example:
+        | ECU Type A
+        | Hardware Version X
+        | Software Version Y
+        |
+        v
+Vehicle Configuration Information
+        |
+        v
+Recipient Identification
+        |
+        +----------------------+
+        |                      |
+        v                      v
+   Vehicle A              Vehicle B
+   Compatible             Compatible
+        |                      |
+        v                      v
+   Recipient A             Recipient B</code></pre>
+
+                <p>
+                    Sơ đồ chỉ mang tính minh họa. Trong thực tế, việc xác định
+                    Recipient phải dựa trên dữ liệu cấu hình được quản lý và
+                    những điều kiện tương thích của package.
+                </p>
+
+
+                <h3>8.4. Campaign Execution</h3>
+
+                <p>
+                    <strong>Campaign Execution</strong> là giai đoạn triển khai
+                    Software Update Package đến những Recipient đã được xác định.
+                </p>
+
+                <p>
+                    Quá trình này có thể sử dụng những phương thức phân phối
+                    khác nhau tùy theo thiết kế của phương tiện và dự án.
+                </p>
+
+                <p>
+                    Trong giai đoạn Execution, Infrastructure và Vehicle cần
+                    phối hợp để:
+                </p>
+
+                <ul>
+                    <li>Quản lý thông tin phân phối package.</li>
+                    <li>Theo dõi những Recipient đã nhận package.</li>
+                    <li>Ghi nhận trạng thái của Software Update Operations.</li>
+                    <li>Nhận thông tin thành công hoặc thất bại.</li>
+                    <li>Quản lý những trường hợp cần xử lý bổ sung.</li>
+                </ul>
+
+
+                <h3>8.5. Campaign Completion</h3>
+
+                <p>
+                    <strong>Campaign Completion</strong> là giai đoạn tổng hợp
+                    và hoàn thành chiến dịch cập nhật.
+                </p>
+
+                <p>
+                    Nhóm quản lý cần xem xét kết quả của các hoạt động cập nhật
+                    và bảo đảm thông tin được ghi nhận phù hợp.
+                </p>
+
+                <p><strong>Những thông tin có thể được tổng hợp:</strong></p>
+
+                <ul>
+                    <li>Số lượng Recipient đã được xác định.</li>
+                    <li>Số lượng Recipient đã nhận package.</li>
+                    <li>Kết quả cập nhật thành công.</li>
+                    <li>Những trường hợp cập nhật chưa hoàn tất.</li>
+                    <li>Các vấn đề cần xử lý hoặc theo dõi.</li>
+                    <li>Thông tin phiên bản phần mềm sau cập nhật.</li>
+                </ul>
+
+                <p>
+                    Việc lưu trữ thông tin kết quả giúp tổ chức duy trì khả năng
+                    theo dõi lịch sử cập nhật và hỗ trợ các hoạt động bảo dưỡng,
+                    chẩn đoán hoặc quản lý chất lượng.
+                </p>
+
+
+                <h3>8.6. Phân biệt Software Update Project và Campaign</h3>
+
+                <p>
+                    Hai khái niệm này thường dễ bị nhầm lẫn vì đều liên quan đến
+                    quá trình cập nhật phần mềm.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Software Update Project</th>
+                            <th>Software Update Campaign</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phạm vi</td>
+                            <td>Tập hợp hoạt động Software Update Engineering cho một hoặc
+                                nhiều Target.</td>
+                            <td>Chuỗi hoạt động triển khai package đến các Recipient.</td>
+                        </tr>
+                        <tr>
+                            <td>Mục tiêu</td>
+                            <td>Quản lý tổng thể công việc chuẩn bị và hỗ trợ cập nhật.</td>
+                            <td>Thực hiện và theo dõi một chiến dịch cập nhật cụ thể.</td>
+                        </tr>
+                        <tr>
+                            <td>Hoạt động</td>
+                            <td>Planning, Infrastructure, Vehicle Capabilities, Processes.</td>
+                            <td>Target Identification, Distribution, Monitoring, Documentation.</td>
+                        </tr>
+                        <tr>
+                            <td>Mối quan hệ</td>
+                            <td>Một Project có thể bao gồm nhiều Campaign.</td>
+                            <td>Campaign là một phần của hoạt động cập nhật trong Project.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> Project mô tả nhóm hoạt động quản lý
+                    và kỹ thuật cho một hoặc nhiều Target. Campaign mô tả chuỗi hoạt động
+                    lựa chọn đối tượng, phân phối package và theo dõi kết quả cập nhật.
+                </div>
+
+
+                <h2>9. Những yêu cầu quan trọng về Safety và Cybersecurity</h2>
+
+                <h3>9.1. Functional Safety trong quá trình cập nhật</h3>
+
+                <p>
+                    Một Software Update có thể ảnh hưởng đến hoạt động của một hoặc
+                    nhiều Vehicle Systems.
+                </p>
+
+                <p>
+                    Vì vậy, quá trình cập nhật cần xem xét các vấn đề liên quan đến
+                    Functional Safety, đặc biệt khi bản cập nhật có tác động đến
+                    những chức năng quan trọng của phương tiện.
+                </p>
+
+                <p><strong>Một số vấn đề cần xem xét:</strong></p>
+
+                <ul>
+                    <li>Ảnh hưởng của bản cập nhật đến các chức năng hiện có.</li>
+                    <li>Điều kiện cần thiết để thực hiện cập nhật.</li>
+                    <li>Trạng thái an toàn của phương tiện trong từng giai đoạn.</li>
+                    <li>Ảnh hưởng của việc cập nhật đến các hệ thống có phụ thuộc.</li>
+                    <li>Kết quả kiểm tra và xác minh sau cập nhật.</li>
+                </ul>
+
+                <p>
+                    Những hoạt động này cần được phối hợp với các yêu cầu Functional
+                    Safety của dự án.
+                </p>
+
+
+                <h3>9.2. Cybersecurity trong quá trình cập nhật</h3>
+
+                <p>
+                    Software Update là một hoạt động có liên quan trực tiếp đến
+                    phần mềm và dữ liệu được triển khai lên phương tiện.
+                </p>
+
+                <p>
+                    Vì vậy, quá trình cập nhật cần xem xét các rủi ro Cybersecurity
+                    liên quan đến package, Infrastructure và những giao diện tham gia.
+                </p>
+
+                <p><strong>Một số nội dung quan trọng:</strong></p>
+
+                <ul>
+                    <li>Bảo vệ tính toàn vẹn của phần mềm và metadata.</li>
+                    <li>Quản lý quyền truy cập vào Infrastructure.</li>
+                    <li>Kiểm soát việc tạo, lưu trữ và phân phối package.</li>
+                    <li>Quản lý thông tin cấu hình phương tiện.</li>
+                    <li>Kiểm soát các hoạt động phát hành bản cập nhật.</li>
+                    <li>Quản lý các rủi ro liên quan đến các bên tham gia.</li>
+                </ul>
+
+                <p>
+                    Những nội dung này có quan hệ trực tiếp với các hoạt động
+                    Cybersecurity Engineering theo ISO/SAE 21434.
+                </p>
+
+
+                <h3>9.3. Update Conditions</h3>
+
+                <p>
+                    <strong>Condition</strong> là những tiêu chí cần đáp ứng để
+                    Software Update Operation có thể hoàn thành thành công.
+                </p>
+
+                <p>
+                    Điều kiện có thể liên quan đến:
+                </p>
+
+                <ul>
+                    <li>Compatibility của phần mềm với Vehicle System.</li>
+                    <li>Safe Vehicle State.</li>
+                    <li>In-vehicle Resources.</li>
+                    <li>External Resources.</li>
+                    <li>Sự tham gia của Skilled Person nếu cần thiết.</li>
+                </ul>
+
+                <p>
+                    Điều kiện có thể khác nhau giữa các package và giữa các bước
+                    trong cùng một Software Update Operation.
+                </p>
+
+
+                <h3>9.4. In-vehicle Resources</h3>
+
+                <p>
+                    Khi xem xét điều kiện cập nhật, cần đánh giá những tài nguyên
+                    cần thiết trên phương tiện và ECU.
+                </p>
+
+                <p>
+                    Ví dụ, một hoạt động cập nhật có thể cần đủ dung lượng lưu trữ,
+                    tài nguyên xử lý hoặc nguồn năng lượng phù hợp để hoàn tất
+                    những bước được thiết kế.
+                </p>
+
+                <p>
+                    Việc đánh giá resource giúp hạn chế những trường hợp quá trình
+                    cập nhật không thể hoàn tất do thiếu tài nguyên cần thiết.
+                </p>
+
+
+                <h3>9.5. Skilled Person</h3>
+
+                <p>
+                    <strong>Skilled Person</strong> là người có trình độ, đào tạo
+                    hoặc kinh nghiệm kỹ thuật phù hợp để thực hiện Software Update
+                    Operations.
+                </p>
+
+                <p>
+                    Trong một số trường hợp, hoạt động cập nhật có thể cần một
+                    người có chuyên môn thực hiện hoặc giám sát.
+                </p>
+
+                <p>
+                    Ví dụ, một số cập nhật được thực hiện trong môi trường workshop
+                    bởi kỹ thuật viên có chuyên môn phù hợp.
+                </p>
+
+
+                <h3>9.6. Theo dõi và xử lý kết quả cập nhật</h3>
+
+                <p>
+                    Việc theo dõi kết quả là một phần quan trọng của Software Update
+                    Engineering.
+                </p>
+
+                <p>
+                    Infrastructure cần hỗ trợ tiếp nhận, lưu trữ, xử lý và phân phối
+                    thông tin về kết quả của Software Update Campaign.
+                </p>
+
+                <p>
+                    Những trạng thái có thể được theo dõi gồm:
+                </p>
+
+                <ul>
+                    <li>Package đã được phân phối.</li>
+                    <li>Package đã được tiếp nhận.</li>
+                    <li>Installation đã hoàn thành.</li>
+                    <li>Activation đã hoàn thành.</li>
+                    <li>Quá trình cập nhật gặp lỗi hoặc chưa hoàn tất.</li>
+                </ul>
+
+                <p>
+                    Khi có vấn đề, tổ chức cần thực hiện các hoạt động xử lý phù hợp
+                    theo quy trình đã thiết lập và ghi nhận kết quả để phục vụ truy vết.
+                </p>
+
+
+                <h2>10. Mối quan hệ giữa ISO 24089, ISO/SAE 21434 và ISO 26262</h2>
+
+                <h3>10.1. ISO 24089 và ISO/SAE 21434</h3>
+
+                <p>
+                    ISO/SAE 21434 tập trung vào Cybersecurity Engineering, trong khi
+                    ISO 24089 tập trung vào Software Update Engineering.
+                </p>
+
+                <p>
+                    Tuy nhiên, cập nhật phần mềm là một hoạt động có liên quan trực
+                    tiếp đến Cybersecurity. Một package cần được bảo vệ trong quá
+                    trình chuẩn bị, quản lý và phân phối.
+                </p>
+
+                <p>
+                    Vì vậy, ISO 24089 tham chiếu ISO/SAE 21434 để hỗ trợ việc quản lý
+                    các rủi ro Cybersecurity liên quan đến hoạt động cập nhật.
+                </p>
+
+
+                <h3>10.2. ISO 24089 và ISO 26262</h3>
+
+                <p>
+                    ISO 26262 tập trung vào Functional Safety, còn ISO 24089 quan
+                    tâm đến việc quản lý quá trình cập nhật phần mềm.
+                </p>
+
+                <p>
+                    Một bản cập nhật có thể thay đổi phần mềm điều khiển một chức
+                    năng liên quan đến an toàn. Vì vậy, cần xem xét ảnh hưởng của
+                    bản cập nhật đến những yêu cầu Functional Safety hiện có.
+                </p>
+
+                <p>
+                    ISO 24089 tham chiếu ISO 26262-6 và ISO 26262-8, thể hiện mối
+                    liên hệ giữa Software Update Engineering với phát triển phần
+                    mềm an toàn và các quy trình hỗ trợ.
+                </p>
+
+
+                <h3>10.3. Bảng so sánh</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Lĩnh vực</th>
+                            <th>Trọng tâm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 26262</td>
+                            <td>Functional Safety</td>
+                            <td>Quản lý nguy cơ do hành vi bất thường hoặc sự cố của hệ thống E/E.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO/SAE 21434</td>
+                            <td>Cybersecurity Engineering</td>
+                            <td>Quản lý rủi ro an ninh mạng trong vòng đời sản phẩm.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 24089</td>
+                            <td>Software Update Engineering</td>
+                            <td>Quản lý việc chuẩn bị, đóng gói, phân phối và triển khai cập nhật.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h2>11. Phân biệt ISO 24089 và UNECE Regulation No. 156</h2>
+
+                <h3>11.1. UNECE R156 là gì?</h3>
+
+                <p>
+                    <strong>UNECE Regulation No. 156 (UN R156)</strong> là quy định
+                    liên quan đến Software Updates và Software Update Management
+                    System (SUMS) trong lĩnh vực phê duyệt kiểu loại phương tiện.
+                </p>
+
+                <p>
+                    UN R156 tập trung vào những yêu cầu quản lý và quy định đối với
+                    nhà sản xuất phương tiện trong việc kiểm soát quá trình cập nhật
+                    phần mềm.
+                </p>
+
+
+                <h3>11.2. Software Update Management System (SUMS)</h3>
+
+                <p>
+                    <strong>SUMS</strong> là hệ thống quản lý Software Updates
+                    được nhà sản xuất phương tiện thiết lập nhằm quản lý các hoạt
+                    động cập nhật theo những yêu cầu áp dụng.
+                </p>
+
+                <p>
+                    SUMS tập trung vào những quy trình và trách nhiệm quản lý,
+                    giúp nhà sản xuất có thể chứng minh cách thức kiểm soát các
+                    hoạt động cập nhật phần mềm.
+                </p>
+
+                <p>
+                    Những nội dung liên quan có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Quản lý các quy trình cập nhật phần mềm.</li>
+                    <li>Kiểm soát các hoạt động liên quan đến Software Updates.</li>
+                    <li>Quản lý thông tin phiên bản phần mềm.</li>
+                    <li>Đánh giá ảnh hưởng của bản cập nhật.</li>
+                    <li>Quản lý thông tin và kết quả cập nhật.</li>
+                    <li>Bảo đảm cập nhật được thực hiện theo điều kiện an toàn và bảo mật phù hợp.</li>
+                </ul>
+
+
+                <h3>11.3. ISO 24089 và UN R156 khác nhau như thế nào?</h3>
+
+                <p>
+                    Hai tài liệu này có mối quan hệ chặt chẽ nhưng không phải là
+                    cùng một tiêu chuẩn.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>ISO 24089:</strong> Tiêu chuẩn kỹ thuật mô tả các
+                        yêu cầu và khuyến nghị về Software Update Engineering.
+                    </li>
+                    <li>
+                        <strong>UN R156:</strong> Quy định về Software Updates và
+                        SUMS trong bối cảnh phê duyệt kiểu loại phương tiện.
+                    </li>
+                </ul>
+
+                <p>
+                    ISO 24089 cung cấp nền tảng kỹ thuật để các tổ chức xây dựng
+                    quy trình cập nhật. Những hoạt động theo tiêu chuẩn này có
+                    thể hỗ trợ nhà sản xuất trong việc xây dựng và chứng minh
+                    các quy trình liên quan đến UN R156.
+                </p>
+
+
+                <h3>11.4. Bảng tổng hợp</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>ISO 24089</th>
+                            <th>UN R156</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Loại tài liệu</td>
+                            <td>International Standard.</td>
+                            <td>UNECE Regulation.</td>
+                        </tr>
+                        <tr>
+                            <td>Lĩnh vực</td>
+                            <td>Software Update Engineering.</td>
+                            <td>Software Updates và SUMS.</td>
+                        </tr>
+                        <tr>
+                            <td>Trọng tâm</td>
+                            <td>Quy trình kỹ thuật và hoạt động cập nhật.</td>
+                            <td>Yêu cầu quản lý và quy định đối với nhà sản xuất.</td>
+                        </tr>
+                        <tr>
+                            <td>Đối tượng</td>
+                            <td>OEM, Supplier và các tổ chức tham gia hoạt động cập nhật.</td>
+                            <td>Nhà sản xuất phương tiện thuộc phạm vi áp dụng của quy định.</td>
+                        </tr>
+                        <tr>
+                            <td>Mối quan hệ</td>
+                            <td>Hỗ trợ xây dựng quy trình cập nhật phần mềm.</td>
+                            <td>Yêu cầu hệ thống quản lý và các quy trình cập nhật theo quy định.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    ISO 24089 và UN R156 bổ trợ cho nhau nhưng không thể thay thế
+                    trực tiếp. ISO 24089 tập trung vào kỹ thuật Software Update
+                    Engineering, trong khi UN R156 là quy định liên quan đến
+                    Software Update Management System.
+                </div>
+
+
+                <h2>12. Software Update Engineering trong dự án Automotive</h2>
+
+                <h3>12.1. Vai trò của OEM</h3>
+
+                <p>
+                    OEM (Original Equipment Manufacturer) là nhà sản xuất phương
+                    tiện và thường chịu trách nhiệm quản lý tổng thể quá trình
+                    Software Update Engineering đối với sản phẩm của mình.
+                </p>
+
+                <p>
+                    Một số hoạt động có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Xác định chính sách và quy trình cập nhật.</li>
+                    <li>Quản lý thông tin cấu hình phương tiện.</li>
+                    <li>Phối hợp với các Supplier.</li>
+                    <li>Quản lý Software Update Infrastructure.</li>
+                    <li>Tổ chức Software Update Campaigns.</li>
+                    <li>Theo dõi kết quả cập nhật trong vòng đời sản phẩm.</li>
+                </ul>
+
+
+                <h3>12.2. Vai trò của Supplier</h3>
+
+                <p>
+                    Supplier có thể chịu trách nhiệm phát triển ECU, phần mềm hoặc
+                    các thành phần cần thiết cho quá trình cập nhật.
+                </p>
+
+                <p>
+                    Tùy theo phạm vi hợp đồng và trách nhiệm được phân công,
+                    Supplier có thể tham gia:
+                </p>
+
+                <ul>
+                    <li>Chuẩn bị phần mềm và thông tin package.</li>
+                    <li>Cung cấp thông tin tương thích.</li>
+                    <li>Phân tích Dependencies.</li>
+                    <li>Verification và Validation cho package.</li>
+                    <li>Cung cấp tài liệu và kết quả kiểm tra.</li>
+                    <li>Hỗ trợ xử lý các vấn đề liên quan đến cập nhật.</li>
+                </ul>
+
+
+                <h3>12.3. Vai trò của Embedded Software Engineer</h3>
+
+                <p>
+                    Đối với kỹ sư Embedded Software, ISO 24089 có liên hệ với
+                    nhiều hoạt động phát triển phần mềm và tích hợp ECU.
+                </p>
+
+                <p>
+                    Kỹ sư có thể tham gia các công việc như:
+                </p>
+
+                <ul>
+                    <li>Phân tích yêu cầu liên quan đến Software Update.</li>
+                    <li>Cung cấp thông tin Software Version.</li>
+                    <li>Hỗ trợ xác định Software Compatibility.</li>
+                    <li>Phối hợp với nhóm Bootloader hoặc FBL.</li>
+                    <li>Hỗ trợ Integration Testing.</li>
+                    <li>Kiểm tra trạng thái và kết quả cập nhật theo yêu cầu dự án.</li>
+                    <li>Quản lý Defect và tài liệu liên quan.</li>
+                </ul>
+
+                <p>
+                    Không phải mọi kỹ sư Embedded Software đều trực tiếp thực hiện
+                    toàn bộ quá trình cập nhật. Trách nhiệm thực tế phụ thuộc vào
+                    kiến trúc ECU và cách phân chia công việc trong dự án.
+                </p>
+
+
+                <h2>13. Mối liên hệ giữa ISO 24089, Bootloader và UDS</h2>
+
+                <h3>13.1. ISO 24089 và Bootloader</h3>
+
+                <p>
+                    Trong một ECU, Bootloader có thể đảm nhiệm những chức năng liên
+                    quan đến quá trình tiếp nhận và cập nhật phần mềm.
+                </p>
+
+                <p>
+                    Tùy theo kiến trúc, Bootloader có thể phối hợp với các thành
+                    phần khác để hỗ trợ hoạt động cập nhật.
+                </p>
+
+                <p>
+                    Tuy nhiên, ISO 24089 không phải là tiêu chuẩn mô tả chi tiết
+                    kiến trúc hoặc thuật toán triển khai Bootloader. Tiêu chuẩn
+                    tập trung vào quy trình Software Update Engineering ở cấp độ
+                    tổ chức, dự án, Infrastructure, Vehicle, Package và Campaign.
+                </p>
+
+
+                <h3>13.2. ISO 24089 và UDS</h3>
+
+                <p>
+                    UDS (Unified Diagnostic Services) theo ISO 14229 có thể được
+                    sử dụng trong một số kiến trúc để hỗ trợ các hoạt động chẩn
+                    đoán và lập trình ECU.
+                </p>
+
+                <p>
+                    Trong một quy trình cập nhật, UDS có thể đóng vai trò giao
+                    tiếp giữa thiết bị hoặc thành phần quản lý cập nhật với ECU.
+                </p>
+
+                <p>
+                    Một số dịch vụ UDS có thể xuất hiện trong những giải pháp
+                    lập trình hoặc cập nhật ECU, tùy thuộc vào kiến trúc và
+                    phương thức triển khai.
+                </p>
+
+                <p>
+                    Cần phân biệt:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>ISO 24089:</strong> Quản lý quy trình Software Update Engineering.
+                    </li>
+                    <li>
+                        <strong>ISO 14229:</strong> Định nghĩa các dịch vụ chẩn đoán UDS.
+                    </li>
+                    <li>
+                        <strong>Bootloader:</strong> Thành phần phần mềm có thể hỗ trợ
+                        quá trình cập nhật trong ECU.
+                    </li>
+                </ul>
+
+
+                <h3>13.3. Sơ đồ quan hệ tổng quan</h3>
+
+                <pre><code>+-----------------------------+
+|          ISO 24089           |
+|                             |
+| Software Update Engineering|
+|                             |
+| - Project                   |
+| - Package                   |
+| - Campaign                  |
+| - Infrastructure            |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|      Update Management      |
+|                             |
+| - Package Preparation       |
+| - Distribution              |
+| - Monitoring                |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|       ECU Update Flow       |
+|                             |
+| - Update Interface          |
+| - Bootloader                |
+| - ECU Software              |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+|       Diagnostic Layer      |
+|                             |
+| UDS / Other Supported Method|
++-----------------------------+</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái niệm về mối quan hệ giữa Software Update
+                    Engineering và các thành phần thường gặp trong hệ thống
+                    Automotive. ISO 24089 không bắt buộc mọi dự án phải triển
+                    khai theo một kiến trúc cố định như sơ đồ trên.
+                </p>
+
+
+                <h2>14. Verification, Validation và Work Products</h2>
+
+                <h3>14.1. Verification trong Software Update Engineering</h3>
+
+                <p>
+                    Verification là hoạt động kiểm tra nhằm xác định các kết quả
+                    công việc có đáp ứng yêu cầu hoặc đặc tả tương ứng hay không.
+                </p>
+
+                <p>
+                    Trong ISO 24089, Verification có thể được xem xét ở nhiều cấp độ:
+                </p>
+
+                <ul>
+                    <li>Software Update Package.</li>
+                    <li>Infrastructure.</li>
+                    <li>Vehicle Functions.</li>
+                    <li>Software Update Processes.</li>
+                    <li>Thông tin cấu hình và metadata.</li>
+                </ul>
+
+
+                <h3>14.2. Validation trong Software Update Engineering</h3>
+
+                <p>
+                    Validation tập trung vào việc xác nhận kết quả cập nhật
+                    đáp ứng mục đích và yêu cầu dự kiến.
+                </p>
+
+                <p>
+                    Đối với Software Update Package, hoạt động Validation giúp
+                    đánh giá xem package có phù hợp với mục tiêu cập nhật
+                    và phạm vi triển khai đã xác định hay không.
+                </p>
+
+                <p>
+                    Phương pháp Verification và Validation cần được lựa chọn
+                    phù hợp với loại cập nhật, mức độ ảnh hưởng và yêu cầu
+                    của dự án.
+                </p>
+
+
+                <h3>14.3. Work Products là gì?</h3>
+
+                <p>
+                    <strong>Work Products</strong> là các kết quả công việc
+                    hoặc tài liệu được tạo ra trong quá trình thực hiện
+                    những hoạt động theo tiêu chuẩn.
+                </p>
+
+                <p>
+                    ISO 24089 xác định Work Products tương ứng với các nhóm
+                    hoạt động trong từng Clause.
+                </p>
+
+                <p><strong>Ví dụ về các nhóm Work Products:</strong></p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cấp độ</th>
+                            <th>Work Products tiêu biểu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Organizational Level</td>
+                            <td>Organizational Rules, Processes, Management Records,
+                                Information Sharing Policy và Audit Report.</td>
+                        </tr>
+                        <tr>
+                            <td>Project Level</td>
+                            <td>Project Documentation, Tailoring Rationale,
+                                Interoperability Confirmation và Integrity Process Documentation.</td>
+                        </tr>
+                        <tr>
+                            <td>Infrastructure Level</td>
+                            <td>Tài liệu và kết quả liên quan đến Infrastructure
+                                Functions, Configuration Information và Package Management.</td>
+                        </tr>
+                        <tr>
+                            <td>Vehicle Level</td>
+                            <td>Tài liệu và kết quả xác minh các chức năng cập nhật
+                                trên phương tiện.</td>
+                        </tr>
+                        <tr>
+                            <td>Package Level</td>
+                            <td>Package Information, Verification/Validation Results
+                                và Release Approval.</td>
+                        </tr>
+                        <tr>
+                            <td>Campaign Level</td>
+                            <td>Campaign Preparation Records, Execution Results
+                                và Completion Information.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những Work Products này giúp tổ chức theo dõi quá trình cập nhật,
+                    kiểm soát kết quả và cung cấp bằng chứng cho các hoạt động
+                    quản lý liên quan.
+                </p>
+
+
+                <h2>15. Ví dụ tổng quan về một Software Update Project</h2>
+
+                <h3>15.1. Bối cảnh dự án</h3>
+
+                <p>
+                    Giả sử một nhà sản xuất phương tiện cần triển khai phiên bản
+                    phần mềm mới cho một nhóm ECU thuộc cùng một hệ thống.
+                </p>
+
+                <p>
+                    Phiên bản mới được chuẩn bị để cải thiện chức năng và xử lý
+                    một số vấn đề đã được xác định trong phiên bản trước.
+                </p>
+
+                <p>
+                    Nhà sản xuất cần bảo đảm package được chuẩn bị đúng đối tượng,
+                    kiểm tra trước khi phát hành và triển khai theo quy trình
+                    được quản lý.
+                </p>
+
+
+                <h3>15.2. Các bước thực hiện tổng quan</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Giai đoạn</th>
+                            <th>Hoạt động</th>
+                            <th>Kết quả mong đợi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Project Planning</td>
+                            <td>Xác định phạm vi, vai trò và trách nhiệm.</td>
+                            <td>Có kế hoạch Software Update Project.</td>
+                        </tr>
+                        <tr>
+                            <td>Configuration Analysis</td>
+                            <td>Thu thập thông tin Hardware Version và Software Version.</td>
+                            <td>Xác định các Target phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Package Preparation</td>
+                            <td>Chuẩn bị phần mềm và metadata.</td>
+                            <td>Có Software Update Package.</td>
+                        </tr>
+                        <tr>
+                            <td>Package Verification</td>
+                            <td>Kiểm tra package theo yêu cầu.</td>
+                            <td>Có kết quả Verification.</td>
+                        </tr>
+                        <tr>
+                            <td>Package Validation</td>
+                            <td>Xác nhận package đáp ứng mục tiêu cập nhật.</td>
+                            <td>Có kết quả Validation.</td>
+                        </tr>
+                        <tr>
+                            <td>Release Approval</td>
+                            <td>Phê duyệt package.</td>
+                            <td>Package được phép phát hành trong phạm vi xác định.</td>
+                        </tr>
+                        <tr>
+                            <td>Campaign Preparation</td>
+                            <td>Xác định Recipient và phương thức phân phối.</td>
+                            <td>Có kế hoạch Campaign.</td>
+                        </tr>
+                        <tr>
+                            <td>Campaign Execution</td>
+                            <td>Triển khai và theo dõi cập nhật.</td>
+                            <td>Có trạng thái cập nhật của các Recipient.</td>
+                        </tr>
+                        <tr>
+                            <td>Campaign Completion</td>
+                            <td>Tổng hợp kết quả và tài liệu.</td>
+                            <td>Có thông tin hoàn thành Campaign.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>15.3. Vai trò của các nhóm trong dự án</h3>
+
+                <p>
+                    Trong dự án này, nhiều nhóm có thể phối hợp:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Project Management:</strong> Quản lý kế hoạch, trách nhiệm
+                        và tiến độ.
+                    </li>
+                    <li>
+                        <strong>Software Development:</strong> Chuẩn bị phiên bản phần mềm
+                        và thông tin liên quan.
+                    </li>
+                    <li>
+                        <strong>System Engineering:</strong> Xem xét tương thích, dependencies
+                        và ảnh hưởng của bản cập nhật.
+                    </li>
+                    <li>
+                        <strong>Cybersecurity Team:</strong> Xem xét những rủi ro bảo mật
+                        liên quan đến package và quá trình cập nhật.
+                    </li>
+                    <li>
+                        <strong>Verification and Validation Team:</strong> Thực hiện
+                        các hoạt động kiểm tra và xác nhận.
+                    </li>
+                    <li>
+                        <strong>Infrastructure Team:</strong> Quản lý hạ tầng và các chức
+                        năng hỗ trợ chiến dịch cập nhật.
+                    </li>
+                </ul>
+
+
+                <h3>15.4. Kết quả mong đợi</h3>
+
+                <p>
+                    Sau khi hoàn thành dự án và Campaign, tổ chức cần có thông tin
+                    để chứng minh:
+                </p>
+
+                <ul>
+                    <li>Đã xác định đúng phạm vi và đối tượng cập nhật.</li>
+                    <li>Software Update Package đã được chuẩn bị và kiểm tra.</li>
+                    <li>Package được phê duyệt trước khi phát hành.</li>
+                    <li>Campaign đã được chuẩn bị và triển khai theo quy trình.</li>
+                    <li>Kết quả cập nhật của các Recipient đã được ghi nhận.</li>
+                    <li>Những trường hợp chưa hoàn tất được quản lý và theo dõi.</li>
+                </ul>
+
+                <p>
+                    Qua ví dụ này, có thể thấy Software Update Engineering là
+                    sự kết hợp giữa hoạt động phát triển phần mềm, quản lý cấu hình,
+                    quản lý package, triển khai và theo dõi kết quả.
+                </p>
+
+
+                <h2>16. Những điểm cần ghi nhớ</h2>
+
+                <h3>16.1. ISO 24089 là tiêu chuẩn về Software Update Engineering</h3>
+
+                <p>
+                    ISO 24089 cung cấp các yêu cầu và khuyến nghị cho việc lập kế hoạch,
+                    chuẩn bị và triển khai bản cập nhật phần mềm trên phương tiện.
+                </p>
+
+
+                <h3>16.2. Software Update Engineering không chỉ là OTA</h3>
+
+                <p>
+                    OTA là một phương thức phân phối bản cập nhật. ISO 24089 quản lý
+                    rộng hơn, bao gồm cả các hoạt động có dây và những phương thức
+                    cập nhật khác.
+                </p>
+
+
+                <h3>16.3. Vehicle Configuration Information rất quan trọng</h3>
+
+                <p>
+                    Thông tin cấu hình phần cứng, phần mềm và các tham số liên quan
+                    hỗ trợ việc xác định đúng Target và đánh giá Compatibility.
+                </p>
+
+
+                <h3>16.4. Phân biệt Target và Recipient</h3>
+
+                <p>
+                    Target là nhóm đối tượng được xác định để nhận package, còn
+                    Recipient là phương tiện, Vehicle System hoặc ECU cụ thể
+                    nhận package trong Campaign.
+                </p>
+
+
+                <h3>16.5. Phân biệt Software Update Package và Campaign</h3>
+
+                <p>
+                    Package là phần mềm kèm metadata được chuẩn bị để triển khai.
+                    Campaign là chuỗi hoạt động lựa chọn đối tượng, phân phối
+                    package và theo dõi kết quả.
+                </p>
+
+
+                <h3>16.6. Receipt, Installation và Activation là ba bước khác nhau</h3>
+
+                <p>
+                    Receipt là tiếp nhận package; Installation là ghi phần mềm
+                    vào hệ thống; Activation là làm cho phần mềm đã cài đặt
+                    trở thành phiên bản có thể thực thi.
+                </p>
+
+
+                <h3>16.7. Safety và Cybersecurity cần được xem xét trong quá trình cập nhật</h3>
+
+                <p>
+                    Một bản cập nhật cần được đánh giá về điều kiện an toàn,
+                    tính tương thích, tài nguyên cần thiết và các rủi ro
+                    Cybersecurity liên quan.
+                </p>
+
+
+                <h3>16.8. ISO 24089 có mối quan hệ với ISO 26262 và ISO/SAE 21434</h3>
+
+                <p>
+                    ISO 24089 tham chiếu những tiêu chuẩn liên quan đến Functional
+                    Safety và Cybersecurity để hỗ trợ việc quản lý rủi ro trong
+                    quá trình cập nhật phần mềm.
+                </p>
+
+
+                <h2>17. Phiên bản và tài liệu tham khảo</h2>
+
+                <h3>17.1. Phiên bản ISO 24089</h3>
+
+                <p>
+                    Phiên bản tiêu chuẩn được công bố là
+                    <strong>ISO 24089:2023 - Edition 1</strong>, phát hành vào tháng
+                    02/2023.
+                </p>
+
+                <p>
+                    Tiêu chuẩn có một sửa đổi được công bố là
+                    <strong>ISO 24089:2023/Amd 1:2024</strong>, phát hành vào tháng
+                    07/2024.
+                </p>
+
+                <p>
+                    Khi tham khảo tài liệu hoặc xây dựng quy trình dự án, cần
+                    kiểm tra phiên bản ISO 24089:2023 cùng Amendment 1:2024
+                    nếu nội dung áp dụng có liên quan.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý về tài liệu bổ trợ:</strong>
+                    ISO/PAS 25090:2026 được công bố vào tháng 10/2026 với nội dung
+                    hướng dẫn về Vehicle Configuration Information cho Software
+                    Update Engineering theo ISO 24089. Tài liệu này bổ sung hướng
+                    dẫn về thông tin cấu hình, không thay thế ISO 24089.
+                </div>
+
+
+                <h3>17.2. Tài liệu tham khảo chính</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Nội dung</th>
+                            <th>Tham khảo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 24089:2023</td>
+                            <td>Road Vehicles - Software Update Engineering.</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/77796.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 24089:2023/Amd 1:2024</td>
+                            <td>Amendment 1 của ISO 24089:2023.</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/87522.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO/PAS 25090:2026</td>
+                            <td>Road Vehicles - Software Update Engineering - Vehicle Configuration Information.</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/88953.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO/SAE 21434:2021</td>
+                            <td>Road Vehicles - Cybersecurity Engineering.</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/70918.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-6:2018</td>
+                            <td>Product Development at the Software Level.</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68388.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-8:2018</td>
+                            <td>Supporting Processes.</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/68390.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>UNECE Regulation No. 156</td>
+                            <td>Software Update and Software Update Management System.</td>
+                            <td>
+                                <a href="https://unece.org/transport/documents/2021/03/standards/un-regulation-no-156-software-update-and-software-update" target="_blank">
+                                    UNECE Official
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <div class="note">
+                    <strong>Tổng kết:</strong>
+                    ISO 24089 là tiêu chuẩn quan trọng trong lĩnh vực Software Update
+                    Engineering của Automotive. Tiêu chuẩn cung cấp framework để quản
+                    lý hoạt động cập nhật ở cấp độ tổ chức, dự án, Infrastructure,
+                    Vehicle, Package và Campaign. Việc nắm được các khái niệm như
+                    Target, Recipient, Vehicle Configuration Information, Compatibility,
+                    Safe Vehicle State, Receipt, Installation và Activation giúp kỹ sư
+                    Embedded hiểu rõ hơn cách một bản cập nhật phần mềm được chuẩn bị,
+                    quản lý và triển khai trong vòng đời của phương tiện.
+                </div>
+
+
+                <div class="pager">
+                    <a class="btn" href="lesson-44.html">← Bài trước</a>
+                    <a class="btn" href="lesson-46.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+</html>

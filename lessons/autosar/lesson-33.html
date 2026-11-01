@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                
+                <a href="lesson-33.html" class="active" aria-current="page">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</h1>
+
+                <p>
+                    Trong quá trình phát triển một chiếc xe hiện đại, các hệ thống
+                    điện và điện tử cần phối hợp với nhau để thực hiện nhiều chức năng
+                    như điều khiển động cơ, quản lý thân xe, truyền thông giữa các ECU,
+                    chẩn đoán lỗi và cập nhật phần mềm.
+                </p>
+
+                <p>
+                    Để những hệ thống này có thể được thiết kế, phát triển, kiểm thử
+                    và tích hợp theo những nguyên tắc thống nhất, ngành Automotive
+                    sử dụng nhiều tiêu chuẩn kỹ thuật khác nhau. Các tiêu chuẩn này
+                    quy định những yêu cầu hoặc phương pháp liên quan đến giao tiếp,
+                    chẩn đoán, an toàn chức năng, bảo mật và vòng đời phần mềm.
+                </p>
+
+                <p>
+                    ISO (International Organization for Standardization) là tổ chức
+                    tiêu chuẩn hóa quốc tế, phát triển và công bố các tiêu chuẩn
+                    được sử dụng trong nhiều lĩnh vực, bao gồm cả ngành công nghiệp
+                    ô tô.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này giới thiệu tổng quan những tiêu chuẩn ISO thường gặp
+                    trong Automotive, tập trung vào CAN, UDS, DoCAN, OBD,
+                    Functional Safety, Cybersecurity và Software Update.
+                    Đồng thời, bài học phân biệt ISO Standard với AUTOSAR
+                    Specification và giới thiệu mối quan hệ giữa các tài liệu
+                    này trong quá trình phát triển ECU.
+                    Nội dung chi tiết của từng tiêu chuẩn sẽ được trình bày
+                    trong những bài học tiếp theo.
+                </div>
+
+                <h2>1. ISO Standard là gì?</h2>
+
+                <p>
+                    ISO Standard là tiêu chuẩn được xây dựng và công bố bởi
+                    International Organization for Standardization. Những tiêu chuẩn
+                    này đưa ra các yêu cầu, định nghĩa, nguyên tắc hoặc phương pháp
+                    nhằm giúp các tổ chức và nhà sản xuất có cơ sở chung khi phát triển
+                    sản phẩm và hệ thống.
+                </p>
+
+                <p>
+                    Trong Automotive, một tiêu chuẩn ISO có thể quy định cách một
+                    ECU giao tiếp với thiết bị bên ngoài, cách truyền dữ liệu chẩn đoán,
+                    những yêu cầu về an toàn chức năng hoặc quy trình quản lý cập nhật
+                    phần mềm.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>ISO 11898 quy định những nội dung liên quan đến CAN.</li>
+                    <li>ISO 14229 quy định các dịch vụ chẩn đoán UDS.</li>
+                    <li>ISO 15765 quy định giao tiếp chẩn đoán thông qua CAN.</li>
+                    <li>ISO 26262 đề cập đến Functional Safety trong phương tiện giao thông đường bộ.</li>
+                    <li>ISO/SAE 21434 đề cập đến Cybersecurity Engineering trong Automotive.</li>
+                </ul>
+
+                <p>
+                    Những tiêu chuẩn này không nhất thiết mô tả toàn bộ cách một
+                    sản phẩm phải được triển khai. Chúng thường xác định một phạm vi
+                    kỹ thuật cụ thể, còn nhà sản xuất và đội ngũ phát triển cần lựa chọn
+                    kiến trúc, công nghệ và phương pháp triển khai phù hợp.
+                </p>
+
+                <h2>2. Vì sao Automotive cần các tiêu chuẩn ISO?</h2>
+
+                <p>
+                    Một chiếc xe có thể chứa hàng chục hoặc hàng trăm ECU từ nhiều
+                    nhà cung cấp khác nhau. Những ECU này cần trao đổi dữ liệu,
+                    phối hợp hoạt động và đáp ứng các yêu cầu kỹ thuật chung.
+                </p>
+
+                <p>
+                    Nếu mỗi nhà sản xuất tự định nghĩa hoàn toàn cách truyền thông,
+                    chẩn đoán và kiểm thử mà không có quy tắc chung, việc tích hợp
+                    các hệ thống sẽ trở nên phức tạp hơn.
+                </p>
+
+                <p>
+                    Các tiêu chuẩn ISO giúp tạo ra cơ sở thống nhất cho những hoạt động
+                    như:
+                </p>
+
+                <ul>
+                    <li>Định nghĩa giao thức và cách trao đổi dữ liệu giữa các hệ thống.</li>
+                    <li>Thống nhất những dịch vụ chẩn đoán và cách biểu diễn thông tin.</li>
+                    <li>Hỗ trợ khả năng tương thích giữa thiết bị chẩn đoán và ECU.</li>
+                    <li>Đưa ra các yêu cầu liên quan đến an toàn chức năng.</li>
+                    <li>Hỗ trợ quản lý rủi ro bảo mật trong quá trình phát triển xe.</li>
+                    <li>Định hướng quy trình cập nhật phần mềm cho phương tiện.</li>
+                    <li>Tạo cơ sở để xây dựng kế hoạch kiểm thử và đánh giá sản phẩm.</li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, việc một tiêu chuẩn tồn tại không có nghĩa mọi xe
+                    đều phải áp dụng tiêu chuẩn đó. Phạm vi áp dụng phụ thuộc vào
+                    loại phương tiện, thị trường, quy định pháp lý, yêu cầu của khách hàng
+                    và kiến trúc kỹ thuật của dự án.
+                </p>
+
+                <h2>3. Các nhóm tiêu chuẩn ISO thường gặp trong Automotive</h2>
+
+                <p>
+                    Có thể phân chia các tiêu chuẩn ISO liên quan đến Automotive
+                    thành một số nhóm lớn dựa trên chức năng và mục đích sử dụng.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm</th>
+                            <th>Mục đích</th>
+                            <th>Tiêu chuẩn tiêu biểu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Vehicle Communication</td>
+                            <td>Quy định giao tiếp và trao đổi dữ liệu giữa các ECU.</td>
+                            <td>ISO 11898</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Communication</td>
+                            <td>Quy định dịch vụ chẩn đoán và cách truyền dữ liệu chẩn đoán.</td>
+                            <td>ISO 14229, ISO 15765</td>
+                        </tr>
+                        <tr>
+                            <td>OBD</td>
+                            <td>Quy định những chức năng chẩn đoán liên quan đến khí thải và thông tin OBD.</td>
+                            <td>ISO 15031, ISO 27145</td>
+                        </tr>
+                        <tr>
+                            <td>Functional Safety</td>
+                            <td>Đưa ra yêu cầu và phương pháp quản lý an toàn chức năng.</td>
+                            <td>ISO 26262</td>
+                        </tr>
+                        <tr>
+                            <td>Cybersecurity</td>
+                            <td>Quản lý rủi ro và yêu cầu an ninh mạng trong vòng đời xe.</td>
+                            <td>ISO/SAE 21434</td>
+                        </tr>
+                        <tr>
+                            <td>Software Update</td>
+                            <td>Định hướng kỹ thuật và quy trình cập nhật phần mềm phương tiện.</td>
+                            <td>ISO 24089</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Mỗi nhóm có phạm vi riêng. Trong thực tế, một dự án Automotive
+                    có thể phải tham khảo nhiều tiêu chuẩn cùng lúc vì một chức năng
+                    trên xe thường liên quan đến nhiều lớp kỹ thuật khác nhau.
+                </p>
+
+                <h2>4. Nhóm tiêu chuẩn CAN - ISO 11898</h2>
+
+                <p>
+                    CAN (Controller Area Network) là một giao thức truyền thông
+                    được sử dụng rộng rãi trong các hệ thống điện tử ô tô.
+                    CAN cho phép nhiều ECU trao đổi dữ liệu trên cùng một bus
+                    truyền thông theo các quy tắc được định nghĩa.
+                </p>
+
+                <p>
+                    ISO 11898 là nhóm tiêu chuẩn quan trọng liên quan đến CAN.
+                    Nhóm tiêu chuẩn này được chia thành nhiều phần, mỗi phần
+                    tập trung vào một phạm vi kỹ thuật khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Phạm vi tổng quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 11898-1</td>
+                            <td>Data Link Layer và Physical Coding Sublayer của CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 11898-2</td>
+                            <td>High-speed CAN Physical Medium Attachment (PMA) sublayer.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 11898-3</td>
+                            <td>Low-speed, fault-tolerant CAN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ở mức tổng quan, ISO 11898-1 liên quan đến cách hình thành
+                    và truyền CAN Frame, xử lý Arbitration và các quy tắc thuộc
+                    Data Link Layer. Trong khi đó, ISO 11898-2 tập trung vào
+                    các đặc tính vật lý của High-speed CAN.
+                </p>
+
+                <p>
+                    Khi học CAN, cần phân biệt hai phạm vi:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Data Link Layer:</strong>
+                        liên quan đến CAN Frame, Identifier, Arbitration,
+                        Error Detection và các quy tắc truyền dữ liệu.
+                    </li>
+                    <li>
+                        <strong>Physical Layer:</strong>
+                        liên quan đến tín hiệu điện, đường truyền, Transceiver
+                        và đặc tính vật lý của bus.
+                    </li>
+                </ul>
+
+                <p>
+                    ISO 11898 là nền tảng để hiểu cách CAN hoạt động ở mức giao thức
+                    và phần cứng. Đây cũng là cơ sở để tiếp tục tìm hiểu CAN Driver,
+                    CAN Interface và những module liên quan trong AUTOSAR.
+                </p>
+
+                <h2>5. Nhóm tiêu chuẩn UDS - ISO 14229</h2>
+
+                <p>
+                    UDS (Unified Diagnostic Services) là một bộ dịch vụ chẩn đoán
+                    được sử dụng để trao đổi thông tin giữa thiết bị chẩn đoán
+                    và các ECU trên xe.
+                </p>
+
+                <p>
+                    ISO 14229 là nhóm tiêu chuẩn định nghĩa các dịch vụ UDS
+                    và những nội dung liên quan đến các lớp giao tiếp chẩn đoán.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Phạm vi tổng quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 14229-1</td>
+                            <td>UDS Application Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-2</td>
+                            <td>UDS Session Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-3</td>
+                            <td>Unified Diagnostic Services on CAN implementation (UDSonCAN).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    ISO 14229-1 định nghĩa các dịch vụ chẩn đoán như:
+                </p>
+
+                <ul>
+                    <li>DiagnosticSessionControl (0x10).</li>
+                    <li>ECUReset (0x11).</li>
+                    <li>ReadDataByIdentifier (0x22).</li>
+                    <li>SecurityAccess (0x27).</li>
+                    <li>CommunicationControl (0x28).</li>
+                    <li>RoutineControl (0x31).</li>
+                    <li>RequestDownload (0x34).</li>
+                    <li>TransferData (0x36).</li>
+                    <li>RequestTransferExit (0x37).</li>
+                </ul>
+
+                <p>
+                    Những dịch vụ này được sử dụng trong nhiều hoạt động như
+                    đọc dữ liệu ECU, kiểm tra trạng thái, thực hiện một số routine
+                    và hỗ trợ quá trình cập nhật phần mềm.
+                </p>
+
+                <p>
+                    Trong AUTOSAR Classic, DCM là một trong những module quan trọng
+                    hỗ trợ xử lý các yêu cầu diagnostic service. DCM không phải
+                    chính là ISO 14229, mà là một module phần mềm có thể được
+                    cấu hình và triển khai để hỗ trợ các dịch vụ chẩn đoán tương ứng.
+                </p>
+
+                <h2>6. Nhóm tiêu chuẩn DoCAN - ISO 15765</h2>
+
+                <p>
+                    Khi sử dụng CAN, một CAN Frame thông thường chỉ có thể mang
+                    một lượng dữ liệu giới hạn. Trong khi đó, một thông điệp chẩn đoán
+                    UDS có thể dài hơn khả năng chứa của một CAN Frame.
+                </p>
+
+                <p>
+                    DoCAN (Diagnostic communication over Controller Area Network)
+                    là nhóm tiêu chuẩn mô tả việc truyền thông chẩn đoán thông qua CAN.
+                </p>
+
+                <p>
+                    ISO 15765-2 quy định Transport Protocol và Network Layer Services
+                    cho giao tiếp chẩn đoán qua CAN.
+                </p>
+
+                <p>
+                    Ở mức khái quát, cơ chế này hỗ trợ:
+                </p>
+
+                <ul>
+                    <li>Truyền một thông điệp ngắn trong một CAN Frame khi phù hợp.</li>
+                    <li>Chia thông điệp dài thành nhiều frame nhỏ.</li>
+                    <li>Ghép các frame nhận được thành thông điệp ban đầu.</li>
+                    <li>Điều khiển luồng truyền dữ liệu giữa hai phía.</li>
+                    <li>Quản lý quá trình truyền và nhận thông điệp chẩn đoán.</li>
+                </ul>
+
+                <p>
+                    Những khái niệm như Single Frame, First Frame,
+                    Consecutive Frame và Flow Control thuộc phạm vi cần tìm hiểu
+                    khi học sâu về ISO-TP.
+                </p>
+
+                <p>
+                    Trong AUTOSAR Classic, CanTp là module có vai trò xử lý
+                    CAN Transport Protocol. Module này phối hợp với các thành phần
+                    như PduR và CanIf để đưa dữ liệu chẩn đoán qua CAN.
+                </p>
+
+                <h2>7. Nhóm tiêu chuẩn OBD - ISO 15031 và ISO 27145</h2>
+
+                <p>
+                    OBD (On-Board Diagnostics) là hệ thống chẩn đoán tích hợp trên xe.
+                    Trong phạm vi OBD liên quan đến khí thải, hệ thống có thể giám sát
+                    những thành phần được yêu cầu, phát hiện lỗi và cung cấp thông tin
+                    chẩn đoán cho thiết bị bên ngoài.
+                </p>
+
+                <p>
+                    ISO 15031 là nhóm tiêu chuẩn liên quan đến giao tiếp giữa phương tiện
+                    và thiết bị bên ngoài đối với chẩn đoán liên quan đến khí thải.
+                    Nhóm này bao gồm những phần đề cập đến thông tin chung,
+                    dịch vụ chẩn đoán và định nghĩa DTC.
+                </p>
+
+                <p>
+                    ISO 27145 liên quan đến việc triển khai các yêu cầu giao tiếp
+                    WWH-OBD (World-Wide Harmonized On-Board Diagnostics).
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm tiêu chuẩn</th>
+                            <th>Phạm vi tổng quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 15031</td>
+                            <td>Giao tiếp giữa xe và thiết bị chẩn đoán bên ngoài đối với các chức năng liên quan đến phát thải.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 27145</td>
+                            <td>Yêu cầu giao tiếp cho WWH-OBD.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những nội dung như DTC, MIL, Freeze Frame, Readiness Monitor,
+                    Diagnostic Mode và PID có liên quan đến việc tìm hiểu các
+                    hệ thống OBD.
+                </p>
+
+                <p>
+                    Cần lưu ý rằng OBD, UDS và DoCAN không phải ba tên gọi
+                    của cùng một tiêu chuẩn. Chúng có phạm vi khác nhau và có thể
+                    được sử dụng kết hợp trong một kiến trúc chẩn đoán.
+                </p>
+
+                <h2>8. ISO 26262 - Functional Safety</h2>
+
+                <p>
+                    Functional Safety (An toàn chức năng) là một lĩnh vực quan trọng
+                    trong phát triển hệ thống điện và điện tử của phương tiện giao thông.
+                    Mục tiêu là giảm thiểu rủi ro có thể phát sinh khi hệ thống gặp
+                    lỗi hoặc hoạt động không đúng như dự kiến.
+                </p>
+
+                <p>
+                    ISO 26262 là bộ tiêu chuẩn về Functional Safety dành cho
+                    hệ thống điện và điện tử trong phương tiện giao thông đường bộ.
+                    Bộ tiêu chuẩn đề cập đến nhiều giai đoạn trong vòng đời sản phẩm,
+                    từ khái niệm, thiết kế hệ thống đến phát triển phần cứng,
+                    phần mềm, tích hợp và kiểm thử.
+                </p>
+
+                <p>
+                    Trong phạm vi phát triển phần mềm, ISO 26262-6 tập trung vào
+                    Product Development at the Software Level.
+                </p>
+
+                <p>Một số khái niệm thường gặp khi tìm hiểu ISO 26262 gồm:</p>
+
+                <ul>
+                    <li>Functional Safety.</li>
+                    <li>Hazard Analysis and Risk Assessment (HARA).</li>
+                    <li>Automotive Safety Integrity Level (ASIL).</li>
+                    <li>Safety Goal.</li>
+                    <li>Functional Safety Requirement.</li>
+                    <li>Technical Safety Requirement.</li>
+                    <li>Software Safety Requirement.</li>
+                    <li>Verification và Validation.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, một chức năng điều khiển trên xe có thể cần đáp ứng
+                    những yêu cầu an toàn nhất định. Nếu xảy ra lỗi ở phần mềm,
+                    hệ thống cần có biện pháp phù hợp để hạn chế hậu quả.
+                </p>
+
+                <p>
+                    ISO 26262 không phải tiêu chuẩn định nghĩa CAN hoặc AUTOSAR.
+                    Đây là tiêu chuẩn về an toàn chức năng, có thể ảnh hưởng đến
+                    cách thiết kế, triển khai và kiểm thử phần mềm ECU.
+                </p>
+
+                <h2>9. ISO/SAE 21434 - Cybersecurity Engineering</h2>
+
+                <p>
+                    Các phương tiện hiện đại có nhiều giao diện giao tiếp với
+                    các ECU khác, thiết bị chẩn đoán, mạng bên ngoài và những
+                    hệ thống kết nối khác. Điều này tạo ra nhu cầu quản lý
+                    rủi ro liên quan đến Cybersecurity.
+                </p>
+
+                <p>
+                    ISO/SAE 21434 là tiêu chuẩn về Cybersecurity Engineering
+                    dành cho phương tiện giao thông đường bộ. Tiêu chuẩn tập trung
+                    vào việc nhận diện, đánh giá và quản lý rủi ro an ninh mạng
+                    trong vòng đời phát triển sản phẩm.
+                </p>
+
+                <p>
+                    Một số nội dung thường gặp gồm:
+                </p>
+
+                <ul>
+                    <li>Cybersecurity Management.</li>
+                    <li>Threat Analysis and Risk Assessment (TARA).</li>
+                    <li>Cybersecurity Goals.</li>
+                    <li>Cybersecurity Requirements.</li>
+                    <li>Cybersecurity Verification và Validation.</li>
+                    <li>Quản lý rủi ro bảo mật trong vòng đời sản phẩm.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, một ECU có chức năng chẩn đoán hoặc cập nhật phần mềm
+                    cần được xem xét về các rủi ro truy cập trái phép, dữ liệu
+                    không đáng tin cậy và các vấn đề bảo mật có thể ảnh hưởng
+                    đến hoạt động của xe.
+                </p>
+
+                <p>
+                    ISO/SAE 21434 không định nghĩa toàn bộ các UDS service
+                    hoặc cách truyền CAN Frame. Tiêu chuẩn tập trung vào
+                    quá trình kỹ thuật và quản lý rủi ro Cybersecurity.
+                </p>
+
+                <h2>10. ISO 24089 - Software Update Engineering</h2>
+
+                <p>
+                    Phần mềm trong phương tiện có thể cần được cập nhật trong
+                    quá trình phát triển, bảo trì hoặc sau khi xe đã được đưa vào
+                    sử dụng.
+                </p>
+
+                <p>
+                    ISO 24089 là tiêu chuẩn về Software Update Engineering
+                    cho phương tiện giao thông đường bộ. Tiêu chuẩn đề cập đến
+                    những yêu cầu kỹ thuật và hoạt động liên quan đến quá trình
+                    cập nhật phần mềm của phương tiện và các thành phần liên quan.
+                </p>
+
+                <p>
+                    Những chủ đề liên quan đến Software Update có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Software Update Management.</li>
+                    <li>Chuẩn bị và quản lý gói cập nhật.</li>
+                    <li>Quá trình cài đặt phần mềm.</li>
+                    <li>Kiểm tra tính hợp lệ của phần mềm cập nhật.</li>
+                    <li>Quản lý trạng thái cập nhật.</li>
+                    <li>Xử lý các tình huống cập nhật không thành công.</li>
+                </ul>
+
+                <p>
+                    ISO 24089 có liên quan đến các chủ đề như ECU Reprogramming,
+                    Flash Bootloader (FBL) và Over-the-Air (OTA) Update.
+                    Tuy nhiên, không nên xem ISO 24089 là tài liệu mô tả chi tiết
+                    một implementation Flash Bootloader cụ thể.
+                </p>
+
+                <h2>11. ISO Standard và AUTOSAR Specification khác nhau như thế nào?</h2>
+
+                <p>
+                    Khi học Automotive Embedded Software, một điểm dễ nhầm lẫn
+                    là ISO Standard và AUTOSAR Specification thường được nhắc đến
+                    cùng nhau. Tuy nhiên, hai loại tài liệu này được xây dựng
+                    bởi những tổ chức khác nhau và có mục đích khác nhau.
+                </p>
+
+                <p>
+                    ISO Standard thường đưa ra những yêu cầu hoặc quy tắc kỹ thuật
+                    ở phạm vi tiêu chuẩn hóa. Trong khi đó, AUTOSAR Specification
+                    mô tả kiến trúc, module, interface, API và yêu cầu triển khai
+                    trong nền tảng AUTOSAR.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>ISO Standard</th>
+                            <th>AUTOSAR Specification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tổ chức</td>
+                            <td>International Organization for Standardization và các tổ chức đồng phát triển tiêu chuẩn tương ứng.</td>
+                            <td>AUTOSAR Partnership.</td>
+                        </tr>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Đưa ra tiêu chuẩn và yêu cầu kỹ thuật chung.</td>
+                            <td>Định nghĩa kiến trúc và đặc tả kỹ thuật cho nền tảng AUTOSAR.</td>
+                        </tr>
+                        <tr>
+                            <td>Phạm vi</td>
+                            <td>Có thể bao gồm giao thức, an toàn, bảo mật và quy trình kỹ thuật.</td>
+                            <td>Software Layer, module, interface, API và configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>ISO 11898, ISO 14229, ISO 15765, ISO 26262.</td>
+                            <td>Specification of CAN Driver, CAN Interface, CAN Transport Layer, DCM.</td>
+                        </tr>
+                        <tr>
+                            <td>Cách sử dụng</td>
+                            <td>Làm cơ sở xác định yêu cầu và quy tắc cần tuân thủ khi áp dụng.</td>
+                            <td>Làm cơ sở thiết kế, cấu hình và triển khai phần mềm AUTOSAR.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, ISO 11898 mô tả những quy tắc liên quan đến CAN,
+                    còn AUTOSAR Specification of CAN Driver mô tả module
+                    Can Driver trong kiến trúc AUTOSAR.
+                </p>
+
+                <p>
+                    Tương tự, ISO 14229 định nghĩa các dịch vụ UDS, trong khi
+                    AUTOSAR Specification of Diagnostic Communication Manager
+                    mô tả cách module DCM hỗ trợ xử lý những yêu cầu chẩn đoán.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    AUTOSAR không thay thế ISO Standard. Một dự án có thể sử dụng
+                    tiêu chuẩn ISO để xác định yêu cầu giao tiếp hoặc chẩn đoán,
+                    đồng thời sử dụng AUTOSAR Specification để thiết kế và triển khai
+                    các module phần mềm trên ECU.
+                </div>
+
+                <h2>12. Mối quan hệ giữa ISO 11898, ISO 15765 và ISO 14229</h2>
+
+                <p>
+                    Ba nhóm tiêu chuẩn này có mối quan hệ gần gũi khi triển khai
+                    UDS trên CAN. Mỗi nhóm tập trung vào một phạm vi khác nhau
+                    trong quá trình truyền thông.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>ISO 14229:</strong>
+                        định nghĩa các dịch vụ chẩn đoán UDS.
+                    </li>
+                    <li>
+                        <strong>ISO 15765:</strong>
+                        quy định cách truyền thông chẩn đoán thông qua CAN,
+                        bao gồm Transport Protocol và Network Layer Services.
+                    </li>
+                    <li>
+                        <strong>ISO 11898:</strong>
+                        quy định những nội dung thuộc CAN Data Link Layer
+                        và Physical Layer.
+                    </li>
+                </ul>
+
+                <p>
+                    Có thể hình dung mối quan hệ này theo mô hình phân tầng:
+                </p>
+
+                <pre><code>        Diagnostic Tester
+                |
+                v
+       +--------------------+
+       |   ISO 14229        |
+       |   UDS Services     |
+       +--------------------+
+                |
+                v
+       +--------------------+
+       |   ISO 15765-2      |
+       |   DoCAN / ISO-TP   |
+       +--------------------+
+                |
+                v
+       +--------------------+
+       |   ISO 11898-1      |
+       |   CAN Data Link    |
+       +--------------------+
+                |
+                v
+       +--------------------+
+       |   ISO 11898-2      |
+       |   CAN Physical     |
+       +--------------------+
+                |
+                v
+             CAN Bus
+                |
+                v
+                ECU</code></pre>
+
+                <p>
+                    Đây là mô hình khái quát để hiểu phạm vi của từng tiêu chuẩn.
+                    Trong kiến trúc thực tế, còn có những giao diện và lớp khác
+                    tùy theo hệ thống giao tiếp được triển khai.
+                </p>
+
+                <h2>13. Mối quan hệ giữa ISO và AUTOSAR Classic</h2>
+
+                <p>
+                    Trong một ECU sử dụng AUTOSAR Classic, các tiêu chuẩn ISO
+                    có thể được tham khảo để xác định yêu cầu đối với những chức năng
+                    mà phần mềm cần hỗ trợ.
+                </p>
+
+                <p>
+                    AUTOSAR cung cấp các module phần mềm để xây dựng kiến trúc ECU.
+                    Những module này có thể đảm nhiệm các phần việc liên quan
+                    đến giao tiếp CAN, truyền dữ liệu chẩn đoán và quản lý DTC.
+                </p>
+
+                <p>
+                    Ví dụ về mối quan hệ giữa một số tiêu chuẩn và module AUTOSAR:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn / Tài liệu</th>
+                            <th>Module AUTOSAR liên quan</th>
+                            <th>Vai trò khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 11898</td>
+                            <td>Can, CanIf</td>
+                            <td>Hỗ trợ giao tiếp CAN và truy cập CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15765-2</td>
+                            <td>CanTp</td>
+                            <td>Hỗ trợ truyền thông điệp chẩn đoán qua CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229</td>
+                            <td>DCM</td>
+                            <td>Hỗ trợ xử lý các dịch vụ chẩn đoán UDS.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031</td>
+                            <td>DCM, DEM và các thành phần liên quan</td>
+                            <td>Hỗ trợ những chức năng chẩn đoán OBD theo cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262</td>
+                            <td>Nhiều module và quy trình phát triển</td>
+                            <td>Liên quan đến yêu cầu và hoạt động Functional Safety.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO/SAE 21434</td>
+                            <td>Nhiều thành phần và quy trình phát triển</td>
+                            <td>Liên quan đến yêu cầu và hoạt động Cybersecurity.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 24089</td>
+                            <td>Bootloader và các thành phần cập nhật phần mềm</td>
+                            <td>Liên quan đến quy trình và kỹ thuật Software Update.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Bảng trên thể hiện mối liên hệ ở mức định hướng học tập,
+                    không phải bảng ánh xạ bắt buộc giữa từng tiêu chuẩn và module.
+                    Một tiêu chuẩn có thể ảnh hưởng đến nhiều thành phần trong ECU,
+                    và một module AUTOSAR cũng có thể phải đáp ứng nhiều yêu cầu khác nhau.
+                </p>
+
+                <h2>14. Ví dụ tổng quan: Một yêu cầu chẩn đoán trên ECU</h2>
+
+                <p>
+                    Giả sử một Diagnostic Tester muốn đọc dữ liệu từ một ECU
+                    thông qua CAN. Đây là một ví dụ đơn giản để thấy cách nhiều
+                    tiêu chuẩn và module phần mềm có thể phối hợp với nhau.
+                </p>
+
+                <p>
+                    Trước tiên, tester gửi một yêu cầu UDS. Dịch vụ chẩn đoán
+                    được xác định theo ISO 14229. Nếu sử dụng CAN, thông điệp
+                    được truyền thông qua cơ chế DoCAN theo ISO 15765.
+                </p>
+
+                <p>
+                    Dữ liệu sau đó được truyền qua các thành phần CAN theo
+                    ISO 11898. Ở phía ECU, những module AUTOSAR tương ứng
+                    có thể tiếp nhận và xử lý request.
+                </p>
+
+                <pre><code>       Diagnostic Tester
+                |
+                | UDS Request
+                v
+       ISO 14229 - UDS
+                |
+                v
+       ISO 15765 - DoCAN
+                |
+                v
+       ISO 11898 - CAN
+                |
+                v
+             CAN Bus
+                |
+                v
+          CAN Controller
+                |
+                v
+          AUTOSAR Can
+                |
+                v
+             CanIf
+                |
+                v
+             CanTp
+                |
+                v
+              PduR
+                |
+                v
+              DCM
+                |
+                v
+       Process Diagnostic Request
+                |
+                v
+       Generate Diagnostic Response
+                |
+                v
+       Response sent to Tester</code></pre>
+
+                <p>
+                    Sơ đồ trên là luồng minh họa ở mức khái quát. Thứ tự và cách
+                    kết nối module cụ thể phụ thuộc cấu hình AUTOSAR, loại request,
+                    PDU routing và implementation của dự án.
+                </p>
+
+                <p>
+                    Ví dụ này cho thấy tiêu chuẩn ISO và AUTOSAR Specification
+                    không hoạt động độc lập. Tiêu chuẩn có thể xác định yêu cầu
+                    giao tiếp, còn các module phần mềm đảm nhiệm việc triển khai
+                    chức năng tương ứng trong ECU.
+                </p>
+
+                <h2>15. Cách đọc tên và mã số tiêu chuẩn ISO</h2>
+
+                <p>
+                    Khi tìm hiểu tài liệu kỹ thuật, bạn thường gặp những tên như
+                    ISO 11898-1, ISO 14229-2 hoặc ISO 15765-2.
+                    Các mã số này giúp xác định bộ tiêu chuẩn và phần cụ thể
+                    mà tài liệu đề cập.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ví dụ</th>
+                            <th>Cách hiểu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 11898</td>
+                            <td>Bộ tiêu chuẩn liên quan đến CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 11898-1</td>
+                            <td>Phần 1 của bộ tiêu chuẩn ISO 11898.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-1</td>
+                            <td>Phần 1 của bộ tiêu chuẩn UDS.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO/SAE 21434</td>
+                            <td>Tiêu chuẩn được phát triển chung bởi ISO và SAE.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262-6</td>
+                            <td>Phần 6 của bộ tiêu chuẩn Functional Safety ISO 26262.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ngoài mã số, cần chú ý năm phát hành và trạng thái phiên bản.
+                    Một tiêu chuẩn có thể được sửa đổi hoặc thay thế bằng phiên bản mới.
+                    Vì vậy, khi làm việc với dự án, cần xác định chính xác phiên bản
+                    mà khách hàng hoặc dự án yêu cầu.
+                </p>
+
+                <p>
+                    Ví dụ, hai tài liệu cùng mang mã ISO 14229-1 nhưng khác năm
+                    phát hành có thể chứa những nội dung được cập nhật khác nhau.
+                    Không nên mặc định mọi phiên bản đều giống hệt nhau.
+                </p>
+
+                <h2>16. Cách tìm và lựa chọn tài liệu tiêu chuẩn</h2>
+
+                <p>
+                    Khi tìm một tiêu chuẩn ISO, nên ưu tiên nguồn chính thức
+                    để xác định tên tài liệu, phạm vi, phiên bản và trạng thái
+                    xuất bản.
+                </p>
+
+                <p>
+                    Một số bước cơ bản khi tìm tài liệu:
+                </p>
+
+                <ol>
+                    <li>Xác định chủ đề cần tìm hiểu, ví dụ CAN, UDS hoặc Functional Safety.</li>
+                    <li>Tìm mã tiêu chuẩn liên quan.</li>
+                    <li>Kiểm tra tên đầy đủ và phạm vi của tài liệu.</li>
+                    <li>Kiểm tra năm xuất bản và phiên bản hiện hành.</li>
+                    <li>Xem tài liệu thuộc phần nào trong bộ tiêu chuẩn.</li>
+                    <li>Đối chiếu với yêu cầu của dự án hoặc release đang sử dụng.</li>
+                </ol>
+
+                <p>
+                    Không nên chỉ tìm tài liệu dựa trên tên gọi ngắn.
+                    Ví dụ, khi tìm ISO 14229, cần xác định mình đang cần
+                    ISO 14229-1, ISO 14229-2 hay một phần khác của bộ tiêu chuẩn.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý về tài liệu:</strong>
+                    Các tiêu chuẩn ISO thường được bảo vệ bản quyền và có thể
+                    yêu cầu mua quyền truy cập toàn văn. Trang giới thiệu tiêu chuẩn
+                    thường cung cấp tên, phạm vi, trạng thái và thông tin xuất bản,
+                    nhưng không nhất thiết cung cấp toàn bộ nội dung kỹ thuật.
+                    Khi học hoặc làm dự án, cần sử dụng tài liệu hợp pháp và đúng phiên bản.
+                </div>
+
+                <h2>17. Các lỗi thường gặp khi tìm hiểu tiêu chuẩn Automotive</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhầm lẫn</th>
+                            <th>Giải thích</th>
+                            <th>Cách phân biệt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 11898 và ISO 15765 là một</td>
+                            <td>Cả hai đều liên quan đến CAN nhưng có phạm vi khác nhau.</td>
+                            <td>ISO 11898 tập trung vào CAN; ISO 15765 tập trung vào chẩn đoán qua CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229 chính là DCM</td>
+                            <td>ISO 14229 định nghĩa UDS; DCM là module phần mềm AUTOSAR.</td>
+                            <td>Phân biệt tiêu chuẩn dịch vụ với module triển khai.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO-TP chính là UDS</td>
+                            <td>ISO-TP đảm nhiệm Transport Protocol, còn UDS định nghĩa dịch vụ chẩn đoán.</td>
+                            <td>Phân biệt tầng truyền tải và tầng dịch vụ.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO và AUTOSAR là cùng một tổ chức</td>
+                            <td>ISO và AUTOSAR có tổ chức và phạm vi xây dựng tài liệu khác nhau.</td>
+                            <td>ISO công bố International Standards; AUTOSAR công bố AUTOSAR Specifications.</td>
+                        </tr>
+                        <tr>
+                            <td>Mọi ECU đều phải sử dụng tất cả tiêu chuẩn</td>
+                            <td>Phạm vi áp dụng phụ thuộc loại xe, thị trường và yêu cầu dự án.</td>
+                            <td>Kiểm tra System Requirements và Project Requirements.</td>
+                        </tr>
+                        <tr>
+                            <td>Chỉ cần biết mã ISO là đủ</td>
+                            <td>Một bộ tiêu chuẩn có thể được chia thành nhiều phần và nhiều phiên bản.</td>
+                            <td>Kiểm tra đầy đủ Part Number, Edition và Publication Year.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262 là tiêu chuẩn kiểm thử phần mềm đơn thuần</td>
+                            <td>ISO 26262 đề cập đến Functional Safety trong vòng đời phát triển hệ thống.</td>
+                            <td>Hiểu phạm vi an toàn chức năng thay vì chỉ tập trung vào testing.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 24089 mô tả toàn bộ code của FBL</td>
+                            <td>ISO 24089 tập trung vào Software Update Engineering, không phải implementation của một bootloader cụ thể.</td>
+                            <td>Phân biệt yêu cầu cập nhật phần mềm với thiết kế module FBL.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>18. Checklist khi đọc một tiêu chuẩn ISO</h2>
+
+                <p>
+                    Khi bắt đầu đọc một tài liệu ISO mới, bạn có thể sử dụng
+                    checklist dưới đây để xác định những thông tin quan trọng.
+                </p>
+
+                <ul>
+                    <li>Đã xác định chính xác mã số tiêu chuẩn chưa?</li>
+                    <li>Đã biết tên đầy đủ của tiêu chuẩn chưa?</li>
+                    <li>Đã xác định Part Number chưa?</li>
+                    <li>Đã kiểm tra phiên bản và năm phát hành chưa?</li>
+                    <li>Đã đọc phần Scope để biết phạm vi áp dụng chưa?</li>
+                    <li>Đã hiểu tiêu chuẩn thuộc nhóm giao tiếp, chẩn đoán, an toàn hay bảo mật chưa?</li>
+                    <li>Đã xác định những thuật ngữ và khái niệm chính chưa?</li>
+                    <li>Đã tìm hiểu mối quan hệ với những tiêu chuẩn liên quan chưa?</li>
+                    <li>Đã xác định module hoặc thành phần phần mềm có liên quan chưa?</li>
+                    <li>Đã đối chiếu với yêu cầu thực tế của dự án chưa?</li>
+                </ul>
+
+                <h2>19. Các tiêu chuẩn cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Tên / Chủ đề</th>
+                            <th>Phạm vi cần nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 11898</td>
+                            <td>Controller Area Network</td>
+                            <td>CAN Communication.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229</td>
+                            <td>Unified Diagnostic Services</td>
+                            <td>UDS Diagnostic Services.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15765</td>
+                            <td>Diagnostic Communication over CAN</td>
+                            <td>DoCAN và Transport Protocol.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031</td>
+                            <td>Emissions-related Diagnostics</td>
+                            <td>OBD Communication và Diagnostic Services.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 27145</td>
+                            <td>WWH-OBD</td>
+                            <td>World-Wide Harmonized OBD.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 26262</td>
+                            <td>Functional Safety</td>
+                            <td>An toàn chức năng trong Automotive.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO/SAE 21434</td>
+                            <td>Cybersecurity Engineering</td>
+                            <td>An ninh mạng trong vòng đời phương tiện.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 24089</td>
+                            <td>Software Update Engineering</td>
+                            <td>Kỹ thuật cập nhật phần mềm phương tiện.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>20. Tài liệu tham khảo</h2>
+
+                <p>
+                    Các liên kết dưới đây dẫn đến trang tra cứu hoặc giới thiệu
+                    những tiêu chuẩn thường gặp trong Automotive. Bạn có thể
+                    sử dụng chúng để kiểm tra tên đầy đủ, phạm vi và phiên bản
+                    của từng tài liệu.
+                </p>
+
+                <ul>
+                    <li>
+                        <a href="https://www.iso.org/search.html?q=ISO%2011898"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 11898 - Controller Area Network (CAN)
+                        </a>
+                        — nhóm tiêu chuẩn liên quan đến CAN Data Link Layer
+                        và Physical Layer.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/search.html?q=ISO%2014229"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 14229 - Unified Diagnostic Services (UDS)
+                        </a>
+                        — nhóm tiêu chuẩn định nghĩa các dịch vụ chẩn đoán UDS.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/search.html?q=ISO%2015765"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 15765 - Diagnostic Communication over CAN (DoCAN)
+                        </a>
+                        — nhóm tiêu chuẩn về giao tiếp chẩn đoán thông qua CAN.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/search.html?q=ISO%2015031"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 15031 - Emissions-related Diagnostics
+                        </a>
+                        — nhóm tiêu chuẩn liên quan đến giao tiếp và dịch vụ chẩn đoán OBD.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/search.html?q=ISO%2027145"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 27145 - WWH-OBD
+                        </a>
+                        — nhóm tiêu chuẩn về World-Wide Harmonized On-Board Diagnostics.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/search.html?q=ISO%2026262"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 26262 - Functional Safety
+                        </a>
+                        — bộ tiêu chuẩn về an toàn chức năng cho phương tiện giao thông đường bộ.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/search.html?q=ISO%20SAE%2021434"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO/SAE 21434 - Cybersecurity Engineering
+                        </a>
+                        — tiêu chuẩn về kỹ thuật an ninh mạng trong Automotive.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/search.html?q=ISO%2024089"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 24089 - Software Update Engineering
+                        </a>
+                        — tiêu chuẩn về kỹ thuật cập nhật phần mềm cho phương tiện.
+                    </li>
+
+                    <li>
+                        <a href="https://www.autosar.org/"
+                            target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Official Website
+                        </a>
+                        — nguồn tra cứu các AUTOSAR Specifications và tài liệu kỹ thuật
+                        liên quan đến Classic Platform.
+                    </li>
+                </ul>
+
+                <h2>21. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        ISO Standard là các tiêu chuẩn được xây dựng và công bố
+                        nhằm tạo ra những quy tắc, yêu cầu và phương pháp chung
+                        cho nhiều lĩnh vực. Trong Automotive, các tiêu chuẩn ISO
+                        được sử dụng trong nhiều phạm vi như CAN Communication,
+                        Diagnostic Communication, OBD, Functional Safety,
+                        Cybersecurity và Software Update.
+                    </p>
+
+                    <p>
+                        ISO 11898 liên quan đến CAN; ISO 14229 định nghĩa các
+                        dịch vụ UDS; ISO 15765 mô tả giao tiếp chẩn đoán qua CAN;
+                        ISO 15031 và ISO 27145 liên quan đến OBD và WWH-OBD.
+                        Ngoài ra, ISO 26262 tập trung vào Functional Safety,
+                        ISO/SAE 21434 tập trung vào Cybersecurity Engineering
+                        và ISO 24089 liên quan đến Software Update Engineering.
+                    </p>
+
+                    <p>
+                        ISO Standard và AUTOSAR Specification có vai trò khác nhau.
+                        ISO có thể định nghĩa các yêu cầu và quy tắc kỹ thuật,
+                        trong khi AUTOSAR mô tả kiến trúc, module, interface
+                        và cách tổ chức phần mềm trong ECU.
+                    </p>
+
+                    <p>
+                        Khi phát triển một ECU sử dụng AUTOSAR Classic,
+                        các tiêu chuẩn ISO có thể được tham khảo để xác định
+                        yêu cầu cho những module như Can, CanIf, CanTp, PduR,
+                        DCM và DEM. Việc áp dụng cụ thể phụ thuộc vào cấu hình
+                        hệ thống và yêu cầu của dự án.
+                    </p>
+
+                    <p>
+                        Đây là nền tảng để tiếp tục tìm hiểu sâu hơn về các tiêu chuẩn
+                        CAN và Diagnostic Communication. Trong những bài tiếp theo,
+                        chúng ta sẽ đi từ tổng quan sang chi tiết từng tiêu chuẩn,
+                        bắt đầu với ISO 11898 và CAN Protocol.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-32.html">← Bài trước</a>
+                    <a class="btn" href="lesson-34.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

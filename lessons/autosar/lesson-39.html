@@ -1,0 +1,2791 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer Services | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+                <a href="lesson-38.html">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
+                <a href="lesson-39.html" class="active" aria-current="page">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer Services</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer Services</h1>
+
+                <p>
+                    Trong bài 38, chúng ta đã tìm hiểu ISO 14229-1,
+                    tiêu chuẩn định nghĩa các Diagnostic Services
+                    ở UDS Application Layer.
+                    Những service như DiagnosticSessionControl,
+                    ReadDataByIdentifier, ReadDTCInformation,
+                    SecurityAccess và RoutineControl cho phép
+                    Diagnostic Tester giao tiếp với ECU.
+                </p>
+
+                <p>
+                    Tuy nhiên, để một UDS message có thể được
+                    trao đổi giữa các tầng giao tiếp khác nhau,
+                    hệ thống cần có những quy tắc chung về
+                    cách yêu cầu truyền dữ liệu, cách thông báo
+                    dữ liệu được nhận và cách xác nhận kết quả
+                    của một hoạt động truyền nhận.
+                </p>
+
+                <p>
+                    Đây là vai trò của ISO 14229-2.
+                    Tiêu chuẩn định nghĩa các dịch vụ thuộc
+                    Session Layer, cung cấp một giao diện chung
+                    giữa Session Layer và Transport Layer.
+                    Nhờ đó, UDS Application Layer có thể
+                    độc lập hơn với từng giao thức truyền thông
+                    được sử dụng bên dưới.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào ISO 14229-2:2021,
+                    UDS Session Layer Services, vị trí của
+                    Session Layer trong mô hình OSI,
+                    Service Primitive, Request, Indication,
+                    Confirm, S_Data, T_Data, Addressing Information,
+                    Message Type và luồng trao đổi dữ liệu.
+                    Bài học cũng giới thiệu các khái niệm timing
+                    liên quan đến UDS, mối quan hệ với
+                    ISO 15765-2, DoIP và cách AUTOSAR DCM DSL
+                    triển khai các chức năng Session Layer.
+                </div>
+
+                <h2>1. ISO 14229-2 là gì?</h2>
+
+                <p>
+                    ISO 14229-2 là phần tiêu chuẩn của bộ
+                    Unified Diagnostic Services (UDS),
+                    quy định các dịch vụ và yêu cầu chung
+                    thuộc Session Layer.
+                </p>
+
+                <p>
+                    Tên đầy đủ của tài liệu:
+                </p>
+
+                <pre><code>ISO 14229-2:2021
+
+Road vehicles - Unified diagnostic services (UDS) -
+Part 2: Session layer services</code></pre>
+
+                <p>
+                    Tiêu chuẩn này định nghĩa các Session Layer Services
+                    nhằm tạo sự độc lập giữa UDS Application Layer
+                    (ISO 14229-1) với các Transport Protocol
+                    và Network Layer Services khác nhau.
+                </p>
+
+                <p>
+                    Phiên bản ISO 14229-2:2021 là Edition 2,
+                    được xuất bản tháng 10/2021.
+                    Phiên bản này thay thế ISO 14229-2:2013
+                    trước đó.
+                </p>
+
+                <p>
+                    Theo phạm vi được ISO công bố,
+                    tài liệu định nghĩa một giao diện
+                    Service Primitive chung giữa
+                    OSI Layer 5 (Session Layer) và
+                    OSI Layer 4 (Transport Layer).
+                </p>
+
+                <p>
+                    Giao diện này sử dụng các primitive
+                    theo dạng Request, Indication và Confirm.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    ISO 14229-2 không định nghĩa lại
+                    toàn bộ các UDS Diagnostic Services.
+                    Những service như ReadDataByIdentifier,
+                    ECUReset và DiagnosticSessionControl
+                    thuộc ISO 14229-1.
+                    ISO 14229-2 tập trung vào giao diện
+                    Session Layer và cách các tầng giao tiếp
+                    trao đổi dữ liệu với nhau.
+                </div>
+
+                <h2>2. Mục đích của ISO 14229-2</h2>
+
+                <p>
+                    Một hệ thống UDS có thể sử dụng nhiều
+                    loại giao thức truyền thông khác nhau.
+                    Ví dụ, UDS có thể được triển khai
+                    trên CAN, Ethernet hoặc những nền tảng
+                    truyền thông khác được hỗ trợ.
+                </p>
+
+                <p>
+                    Nếu Application Layer phải tự xử lý
+                    những đặc điểm riêng của từng
+                    Transport Protocol thì việc phát triển
+                    và tích hợp hệ thống sẽ phức tạp hơn.
+                </p>
+
+                <p>
+                    ISO 14229-2 giải quyết vấn đề này bằng cách
+                    định nghĩa các dịch vụ Session Layer chung.
+                    Application Layer sử dụng giao diện
+                    Session Layer, trong khi Session Layer
+                    làm việc với Transport Layer bên dưới.
+                </p>
+
+                <p>
+                    Một số mục đích chính:
+                </p>
+
+                <ul>
+                    <li>Tạo giao diện chung giữa Session Layer và Transport Layer.</li>
+                    <li>Giảm sự phụ thuộc của UDS Application Layer vào từng Transport Protocol.</li>
+                    <li>Chuẩn hóa cách yêu cầu truyền và thông báo dữ liệu được nhận.</li>
+                    <li>Chuẩn hóa cách xác nhận kết quả của các yêu cầu truyền dữ liệu.</li>
+                    <li>Hỗ trợ việc triển khai UDS trên nhiều công nghệ mạng khác nhau.</li>
+                </ul>
+
+                <h2>3. Phạm vi của ISO 14229-2</h2>
+
+                <p>
+                    ISO 14229-2 định nghĩa các dịch vụ
+                    Session Layer chung để hỗ trợ
+                    sự độc lập giữa UDS Application Layer
+                    và các Transport Protocol khác nhau.
+                </p>
+
+                <p>
+                    Một số tiêu chuẩn truyền thông
+                    được ISO 14229-2 đề cập:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Giao thức</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 15765-2</td>
+                            <td>DoCAN - Diagnostic communication over CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 13400-2</td>
+                            <td>DoIP - Diagnostic communication over Internet Protocol.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 10681-2</td>
+                            <td>Communication on FlexRay.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14230-2</td>
+                            <td>DoK-Line - Diagnostic communication over K-Line.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 20794-3</td>
+                            <td>Communication using CXPI.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các giao thức này có những đặc điểm
+                    truyền thông khác nhau, nhưng có thể
+                    sử dụng giao diện Session Layer chung
+                    theo phạm vi tiêu chuẩn.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    ISO 14229-2 không thay thế ISO 15765-2
+                    hoặc ISO 13400-2.
+                    Các tiêu chuẩn Transport/Network vẫn
+                    đảm nhiệm những chức năng truyền dữ liệu
+                    theo công nghệ mạng tương ứng.
+                </div>
+
+                <h2>4. Vị trí của Session Layer trong mô hình OSI</h2>
+
+                <p>
+                    Để hiểu ISO 14229-2, chúng ta cần
+                    xác định vị trí của Session Layer
+                    trong mô hình OSI.
+                </p>
+
+                <p>
+                    Session Layer là Layer 5,
+                    nằm giữa Presentation Layer
+                    và Transport Layer.
+                </p>
+
+                <pre><code>+-----------------------------+
+|  Layer 7 - Application      |
+|  UDS Application Services   |
+|  ISO 14229-1                |
++-----------------------------+
+|  Layer 6 - Presentation     |
++-----------------------------+
+|  Layer 5 - Session          |
+|  ISO 14229-2                |
++-----------------------------+
+|  Layer 4 - Transport        |
+|  ISO 15765-2 / Other        |
++-----------------------------+
+|  Layer 3 - Network          |
++-----------------------------+
+|  Layer 2 - Data Link        |
+|  ISO 11898-1 for CAN        |
++-----------------------------+
+|  Layer 1 - Physical         |
+|  ISO 11898 series for CAN   |
++-----------------------------+</code></pre>
+
+                <p>
+                    Trong hệ thống UDS:
+                </p>
+
+                <ul>
+                    <li>Application Layer xử lý nội dung Diagnostic Service.</li>
+                    <li>Session Layer cung cấp giao diện dịch vụ để trao đổi message.</li>
+                    <li>Transport Layer chịu trách nhiệm vận chuyển dữ liệu.</li>
+                    <li>Network, Data Link và Physical Layer thực hiện những chức năng truyền thông tương ứng.</li>
+                </ul>
+
+                <h2>5. Phân biệt Application Layer, Session Layer và Transport Layer</h2>
+
+                <p>
+                    Ba tầng này có mối liên hệ chặt chẽ
+                    trong quá trình UDS communication,
+                    nhưng mỗi tầng đảm nhiệm một nhiệm vụ riêng.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>Application Layer</th>
+                            <th>Session Layer</th>
+                            <th>Transport Layer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tiêu chuẩn</td>
+                            <td>ISO 14229-1.</td>
+                            <td>ISO 14229-2.</td>
+                            <td>Ví dụ ISO 15765-2.</td>
+                        </tr>
+                        <tr>
+                            <td>Trách nhiệm</td>
+                            <td>Định nghĩa Diagnostic Services.</td>
+                            <td>Cung cấp giao diện dịch vụ giữa các tầng.</td>
+                            <td>Vận chuyển message.</td>
+                        </tr>
+                        <tr>
+                            <td>Thông tin chính</td>
+                            <td>SID, Sub-function, DID, NRC.</td>
+                            <td>Service Primitive và các thông tin Session Layer.</td>
+                            <td>Transport Protocol và Network Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>ReadDataByIdentifier.</td>
+                            <td>S_Data.req.</td>
+                            <td>ISO-TP Segmentation.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>5.1. Application Layer</h3>
+
+                <p>
+                    Application Layer xác định Client muốn
+                    thực hiện Diagnostic Service nào
+                    và các tham số đi kèm.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>22 F1 90
+
+22    : ReadDataByIdentifier
+F1 90 : DID</code></pre>
+
+                <p>
+                    Đây là request ở UDS Application Layer.
+                </p>
+
+                <h3>5.2. Session Layer</h3>
+
+                <p>
+                    Session Layer cung cấp giao diện
+                    để yêu cầu truyền dữ liệu xuống
+                    Transport Layer và tiếp nhận dữ liệu
+                    được chuyển lên từ tầng bên dưới.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>S_Data.req
+S_Data.ind
+S_Data.conf</code></pre>
+
+                <h3>5.3. Transport Layer</h3>
+
+                <p>
+                    Transport Layer thực hiện việc
+                    vận chuyển dữ liệu theo giao thức
+                    được sử dụng.
+                </p>
+
+                <p>
+                    Với DoCAN, ISO 15765-2 cung cấp
+                    những chức năng như:
+                </p>
+
+                <ul>
+                    <li>Single Frame.</li>
+                    <li>First Frame.</li>
+                    <li>Consecutive Frame.</li>
+                    <li>Flow Control.</li>
+                    <li>Message Segmentation và Reassembly.</li>
+                </ul>
+
+                <h2>6. Session Layer và Diagnostic Session có giống nhau không?</h2>
+
+                <p>
+                    Đây là điểm rất dễ gây nhầm lẫn
+                    khi học UDS vì cả hai khái niệm
+                    đều sử dụng từ "Session".
+                </p>
+
+                <p>
+                    Tuy nhiên, <strong>Session Layer</strong>
+                    và <strong>Diagnostic Session</strong>
+                    là hai khái niệm khác nhau.
+                </p>
+
+                <h3>6.1. Session Layer</h3>
+
+                <p>
+                    Session Layer là tầng giao tiếp
+                    thuộc mô hình OSI.
+                    Nó định nghĩa các dịch vụ và giao diện
+                    giữa tầng Session với tầng Transport
+                    theo ISO 14229-2.
+                </p>
+
+                <h3>6.2. Diagnostic Session</h3>
+
+                <p>
+                    Diagnostic Session là trạng thái
+                    chẩn đoán của ECU, được quản lý
+                    thông qua UDS DiagnosticSessionControl
+                    (SID 0x10).
+                </p>
+
+                <p>
+                    Một số Diagnostic Session thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sub-function</th>
+                            <th>Diagnostic Session</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0x01</td>
+                            <td>Default Session.</td>
+                        </tr>
+                        <tr>
+                            <td>0x02</td>
+                            <td>Programming Session.</td>
+                        </tr>
+                        <tr>
+                            <td>0x03</td>
+                            <td>Extended Diagnostic Session.</td>
+                        </tr>
+                        <tr>
+                            <td>0x04</td>
+                            <td>Safety System Diagnostic Session.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>6.3. Mối quan hệ giữa hai khái niệm</h3>
+
+                <pre><code>       ISO 14229-2
+       Session Layer
+             |
+             | Service Interface
+             |
+             v
+       ISO 14229-1
+       Application Layer
+             |
+             | DiagnosticSessionControl
+             | SID 0x10
+             |
+             v
+       Diagnostic Session State
+             |
+             +---- Default Session
+             |
+             +---- Extended Session
+             |
+             +---- Programming Session</code></pre>
+
+                <p>
+                    Vì vậy, không nên sử dụng
+                    hai khái niệm này thay thế cho nhau.
+                    Diagnostic Session là trạng thái
+                    được quản lý ở cấp Diagnostic Application,
+                    còn Session Layer là một tầng
+                    trong kiến trúc giao tiếp UDS.
+                </p>
+
+                <h2>7. Service Primitive là gì?</h2>
+
+                <p>
+                    Một trong những khái niệm quan trọng
+                    nhất của ISO 14229-2 là
+                    <strong>Service Primitive</strong>.
+                </p>
+
+                <p>
+                    Service Primitive là cách một tầng
+                    yêu cầu hoặc cung cấp một dịch vụ
+                    thông qua giao diện đã được định nghĩa.
+                </p>
+
+                <p>
+                    Thay vì mô tả cách triển khai bằng
+                    những function cụ thể trong source code,
+                    tiêu chuẩn sử dụng các primitive
+                    để biểu diễn việc trao đổi thông tin
+                    giữa Service User và Service Provider.
+                </p>
+
+                <p>
+                    Các primitive cơ bản gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Primitive</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Request</td>
+                            <td>Yêu cầu tầng cung cấp dịch vụ thực hiện một hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <td>Indication</td>
+                            <td>Thông báo dữ liệu hoặc sự kiện nhận được cho tầng sử dụng dịch vụ.</td>
+                        </tr>
+                        <tr>
+                            <td>Confirm</td>
+                            <td>Thông báo kết quả của một request trước đó.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Request, Indication và Confirm là những
+                    loại Service Primitive.
+                    Chúng không phải UDS SID và không phải
+                    CAN Identifier.
+                </div>
+
+                <h2>8. Request Primitive</h2>
+
+                <p>
+                    Request được sử dụng khi một tầng
+                    muốn yêu cầu tầng cung cấp dịch vụ
+                    thực hiện một hoạt động.
+                </p>
+
+                <p>
+                    Ví dụ, Application Layer muốn gửi
+                    một Diagnostic Message đến ECU khác.
+                    Nó sẽ yêu cầu Session Layer
+                    thực hiện hoạt động truyền dữ liệu.
+                </p>
+
+                <pre><code>Application Layer
+       |
+       | S_Data.req
+       v
+Session Layer</code></pre>
+
+                <p>
+                    Trong ví dụ này, Application Layer
+                    là bên yêu cầu dịch vụ,
+                    còn Session Layer là bên tiếp nhận
+                    yêu cầu và cung cấp dịch vụ tương ứng.
+                </p>
+
+                <h2>9. Indication Primitive</h2>
+
+                <p>
+                    Indication được sử dụng khi một tầng
+                    thông báo cho tầng phía trên rằng
+                    dữ liệu hoặc một sự kiện đã được tiếp nhận.
+                </p>
+
+                <p>
+                    Ví dụ, Session Layer nhận được
+                    một message hoàn chỉnh từ
+                    Transport Layer.
+                    Sau đó, Session Layer thông báo
+                    dữ liệu cho Application Layer.
+                </p>
+
+                <pre><code>Transport Layer
+       |
+       v
+Session Layer
+       |
+       | S_Data.ind
+       v
+Application Layer</code></pre>
+
+                <p>
+                    Application Layer tiếp nhận dữ liệu
+                    và xử lý Diagnostic Service
+                    tương ứng.
+                </p>
+
+                <h2>10. Confirm Primitive</h2>
+
+                <p>
+                    Confirm được sử dụng để thông báo
+                    kết quả thực hiện một Request trước đó.
+                </p>
+
+                <p>
+                    Ví dụ, Application Layer yêu cầu
+                    Session Layer truyền dữ liệu.
+                    Sau khi hoạt động truyền nhận tương ứng
+                    kết thúc, Session Layer có thể
+                    thông báo kết quả cho Application Layer
+                    thông qua Confirm Primitive.
+                </p>
+
+                <pre><code>Application Layer
+       |
+       | S_Data.req
+       v
+Session Layer
+       |
+       | Process request
+       |
+       | S_Data.conf
+       v
+Application Layer</code></pre>
+
+                <p>
+                    Confirm giúp Service User biết
+                    kết quả của thao tác được yêu cầu.
+                </p>
+
+                <div class="note">
+                    <strong>Phân biệt:</strong>
+                    Confirm không đồng nghĩa với
+                    Positive Response của UDS.
+                    Confirm là primitive xác nhận
+                    kết quả ở giao diện Service Layer.
+                    Positive Response là Diagnostic Response
+                    thuộc UDS Application Layer.
+                </div>
+
+                <h2>11. S_Data - Session Layer Data Service</h2>
+
+                <p>
+                    <strong>S_Data</strong> là một trong
+                    những dịch vụ quan trọng của
+                    ISO 14229-2.
+                </p>
+
+                <p>
+                    Dịch vụ này được sử dụng để trao đổi
+                    dữ liệu giữa phía sử dụng dịch vụ
+                    và Session Layer.
+                </p>
+
+                <p>
+                    Các primitive tương ứng gồm:
+                </p>
+
+                <pre><code>S_Data.req
+S_Data.ind
+S_Data.conf</code></pre>
+
+                <p>
+                    Có thể hiểu khái quát:
+                </p>
+
+                <ul>
+                    <li><code>S_Data.req</code>: Yêu cầu truyền dữ liệu thông qua Session Layer.</li>
+                    <li><code>S_Data.ind</code>: Thông báo dữ liệu được nhận lên phía sử dụng dịch vụ.</li>
+                    <li><code>S_Data.conf</code>: Xác nhận kết quả của một yêu cầu S_Data trước đó.</li>
+                </ul>
+
+                <h2>12. S_Data.req</h2>
+
+                <p>
+                    S_Data.req được sử dụng khi
+                    phía Application Layer yêu cầu
+                    Session Layer truyền một message.
+                </p>
+
+                <p>
+                    Request này mang theo những thông tin
+                    cần thiết cho hoạt động truyền dữ liệu,
+                    chẳng hạn như:
+                </p>
+
+                <ul>
+                    <li>Thông tin về loại message.</li>
+                    <li>Thông tin addressing.</li>
+                    <li>Dữ liệu cần truyền.</li>
+                    <li>Độ dài dữ liệu.</li>
+                </ul>
+
+                <pre><code>Application Layer
+       |
+       | S_Data.req
+       v
+Session Layer
+       |
+       | Prepare message
+       v
+Transport Layer</code></pre>
+
+                <p>
+                    Session Layer tiếp nhận request
+                    và sử dụng giao diện tương ứng
+                    để chuyển dữ liệu xuống tầng Transport.
+                </p>
+
+                <h2>13. S_Data.ind</h2>
+
+                <p>
+                    S_Data.ind được sử dụng khi
+                    Session Layer thông báo dữ liệu
+                    nhận được cho tầng sử dụng dịch vụ.
+                </p>
+
+                <p>
+                    Ví dụ, một message được nhận
+                    từ Transport Layer và chuyển lên
+                    Session Layer.
+                    Sau khi dữ liệu được xử lý tại
+                    Session Layer, dữ liệu được cung cấp
+                    cho Application Layer thông qua S_Data.ind.
+                </p>
+
+                <pre><code>Transport Layer
+       |
+       | T_Data.ind
+       v
+Session Layer
+       |
+       | S_Data.ind
+       v
+Application Layer</code></pre>
+
+                <p>
+                    Application Layer có thể sử dụng
+                    dữ liệu nhận được để phân tích
+                    UDS Request hoặc thực hiện
+                    Diagnostic Service tương ứng.
+                </p>
+
+                <h2>14. S_Data.conf</h2>
+
+                <p>
+                    S_Data.conf được sử dụng để xác nhận
+                    kết quả của một S_Data.req trước đó.
+                </p>
+
+                <p>
+                    Ví dụ, Application Layer yêu cầu
+                    Session Layer truyền một message.
+                    Khi kết quả của thao tác được xác định,
+                    Session Layer thông báo lại thông qua
+                    S_Data.conf.
+                </p>
+
+                <pre><code>Application Layer
+       |
+       | S_Data.req
+       v
+Session Layer
+       |
+       | Request transmission
+       v
+Transport Layer
+       |
+       | Confirmation
+       v
+Session Layer
+       |
+       | S_Data.conf
+       v
+Application Layer</code></pre>
+
+                <p>
+                    Trong quá trình phân tích,
+                    cần phân biệt kết quả xác nhận
+                    của service primitive với
+                    kết quả xử lý nội dung UDS request.
+                </p>
+
+                <h2>15. T_Data - Transport Layer Data Service</h2>
+
+                <p>
+                    Bên cạnh S_Data, ISO 14229-2
+                    còn mô tả giao diện với
+                    Transport Layer thông qua
+                    <strong>T_Data</strong>.
+                </p>
+
+                <p>
+                    T_Data là nhóm primitive liên quan
+                    đến việc trao đổi dữ liệu giữa
+                    Session Layer và Transport Layer.
+                </p>
+
+                <p>
+                    Các primitive quan trọng gồm:
+                </p>
+
+                <pre><code>T_Data.req
+T_Data.ind
+T_Data.conf</code></pre>
+
+                <p>
+                    Trong quá trình truyền request,
+                    Session Layer sử dụng T_Data.req
+                    để yêu cầu Transport Layer
+                    thực hiện hoạt động truyền dữ liệu.
+                </p>
+
+                <p>
+                    Ở phía nhận, Transport Layer sử dụng
+                    T_Data.ind để cung cấp dữ liệu
+                    cho Session Layer.
+                </p>
+
+                <h2>16. T_Data.req</h2>
+
+                <p>
+                    T_Data.req được sử dụng khi
+                    Session Layer yêu cầu Transport Layer
+                    truyền một message đến phía nhận.
+                </p>
+
+                <pre><code>Session Layer
+       |
+       | T_Data.req
+       v
+Transport Layer
+       |
+       | Transport processing
+       v
+Network</code></pre>
+
+                <p>
+                    Transport Layer tiếp nhận dữ liệu
+                    và thực hiện những công việc
+                    cần thiết theo giao thức truyền thông.
+                </p>
+
+                <p>
+                    Với DoCAN, Transport Layer có thể
+                    cần chia message thành nhiều frame
+                    nếu dữ liệu vượt quá khả năng
+                    truyền trong một CAN frame.
+                </p>
+
+                <h2>17. T_Data.ind</h2>
+
+                <p>
+                    T_Data.ind được sử dụng khi
+                    Transport Layer thông báo
+                    dữ liệu nhận được cho Session Layer.
+                </p>
+
+                <pre><code>Network
+   |
+   v
+Transport Layer
+   |
+   | T_Data.ind
+   v
+Session Layer</code></pre>
+
+                <p>
+                    Ví dụ, với ISO-TP,
+                    Transport Layer có thể tiếp nhận
+                    các frame thuộc một message,
+                    thực hiện reassembly và sau đó
+                    cung cấp message hoàn chỉnh
+                    cho Session Layer.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    T_Data.ind là primitive ở giao diện
+                    giữa Transport Layer và Session Layer.
+                    Nó không phải ISO-TP First Frame,
+                    Consecutive Frame hoặc Flow Control Frame.
+                </div>
+
+                <h2>18. T_Data.conf</h2>
+
+                <p>
+                    T_Data.conf được sử dụng để thông báo
+                    kết quả thực hiện một T_Data.req.
+                </p>
+
+                <p>
+                    Sau khi Session Layer yêu cầu
+                    Transport Layer truyền message,
+                    Transport Layer có thể cung cấp
+                    kết quả thông qua primitive này.
+                </p>
+
+                <pre><code>Session Layer
+       |
+       | T_Data.req
+       v
+Transport Layer
+       |
+       | Process transmission
+       |
+       | T_Data.conf
+       v
+Session Layer</code></pre>
+
+                <p>
+                    Session Layer có thể sử dụng kết quả
+                    này để tiếp tục xử lý request
+                    và cung cấp thông tin tương ứng
+                    cho tầng phía trên.
+                </p>
+
+                <h2>19. T_DataSOM.ind</h2>
+
+                <p>
+                    Một primitive khác được nhắc đến
+                    trong ISO 14229-2 là
+                    <strong>T_DataSOM.ind</strong>.
+                </p>
+
+                <p>
+                    SOM là viết tắt của
+                    <strong>Start Of Message</strong>.
+                </p>
+
+                <p>
+                    T_DataSOM.ind được sử dụng để thông báo
+                    sự kiện bắt đầu một message
+                    từ Transport Layer đến Session Layer,
+                    trong trường hợp giao diện bên dưới
+                    hỗ trợ primitive này.
+                </p>
+
+                <pre><code>Transport Layer
+       |
+       | T_DataSOM.ind
+       v
+Session Layer
+       |
+       | Message reception continues
+       |
+       | T_Data.ind
+       v
+Session Layer</code></pre>
+
+                <p>
+                    Primitive này giúp Session Layer
+                    nhận biết thời điểm bắt đầu
+                    của một message trước khi
+                    nhận được dữ liệu hoàn chỉnh.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    T_DataSOM.ind không phải First Frame
+                    của ISO-TP.
+                    First Frame là một loại frame
+                    thuộc Transport Protocol ISO 15765-2,
+                    còn T_DataSOM.ind là Service Primitive
+                    ở giao diện Session/Transport Layer.
+                </div>
+
+                <h2>20. Phân biệt S_Data và T_Data</h2>
+
+                <p>
+                    S_Data và T_Data có tên tương tự
+                    nhưng được sử dụng ở hai giao diện khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>S_Data</th>
+                            <th>T_Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Giao diện</td>
+                            <td>Application/Session interface.</td>
+                            <td>Session/Transport interface.</td>
+                        </tr>
+                        <tr>
+                            <td>Request</td>
+                            <td>S_Data.req</td>
+                            <td>T_Data.req</td>
+                        </tr>
+                        <tr>
+                            <td>Indication</td>
+                            <td>S_Data.ind</td>
+                            <td>T_Data.ind</td>
+                        </tr>
+                        <tr>
+                            <td>Confirm</td>
+                            <td>S_Data.conf</td>
+                            <td>T_Data.conf</td>
+                        </tr>
+                        <tr>
+                            <td>Vai trò</td>
+                            <td>Yêu cầu hoặc thông báo dữ liệu ở giao diện Session Layer.</td>
+                            <td>Yêu cầu hoặc thông báo dữ liệu ở giao diện Transport Layer.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>21. Luồng trao đổi Service Primitive</h2>
+
+                <p>
+                    Sau khi tìm hiểu S_Data và T_Data,
+                    chúng ta có thể kết hợp các primitive
+                    để mô tả quá trình truyền một message.
+                </p>
+
+                <h3>21.1. Luồng truyền từ Sender đến Receiver</h3>
+
+                <pre><code>Sender Application
+       |
+       | S_Data.req
+       v
+Sender Session
+       |
+       | T_Data.req
+       v
+Sender Transport
+       |
+       | Message Transmission
+       v
+   Network / Data Link
+       |
+       v
+Receiver Transport
+       |
+       | T_Data.ind
+       v
+Receiver Session
+       |
+       | S_Data.ind
+       v
+Receiver Application</code></pre>
+
+                <p>
+                    Đây là luồng tổng quát.
+                    Sender Application sử dụng S_Data.req
+                    để yêu cầu truyền dữ liệu.
+                    Sender Session sử dụng T_Data.req
+                    để chuyển yêu cầu xuống Transport Layer.
+                </p>
+
+                <p>
+                    Ở phía nhận, Transport Layer cung cấp
+                    dữ liệu lên Session Layer bằng T_Data.ind.
+                    Sau đó, Session Layer cung cấp dữ liệu
+                    cho Application Layer bằng S_Data.ind.
+                </p>
+
+                <h3>21.2. Luồng xác nhận</h3>
+
+                <p>
+                    Bên cạnh luồng dữ liệu,
+                    các primitive Confirm được sử dụng
+                    để thông báo kết quả của request.
+                </p>
+
+                <pre><code>Sender Application
+       |
+       | S_Data.req
+       v
+Sender Session
+       |
+       | T_Data.req
+       v
+Sender Transport
+       |
+       | Message transmission
+       |
+       | T_Data.conf
+       v
+Sender Session
+       |
+       | S_Data.conf
+       v
+Sender Application</code></pre>
+
+                <p>
+                    Trong mô hình tổng quát,
+                    Confirm giúp tầng yêu cầu dịch vụ
+                    biết kết quả của thao tác đã yêu cầu.
+                </p>
+
+                <h2>22. Session Layer Service Primitive Parameters</h2>
+
+                <p>
+                    Các Service Primitive có thể mang
+                    những parameter cần thiết để thực hiện
+                    hoạt động truyền nhận dữ liệu.
+                </p>
+
+                <p>
+                    Theo cách mô tả của ISO 14229-2,
+                    một service primitive có dạng tổng quát:
+                </p>
+
+                <pre><code>service_name.type(
+    parameter A,
+    parameter B,
+    parameter C,
+    [optional parameter X]
+)</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><code>service_name</code>: Tên dịch vụ, ví dụ S_Data.</li>
+                    <li><code>type</code>: Loại primitive như request, indication hoặc confirm.</li>
+                    <li><code>parameter</code>: Các thông tin được truyền qua service primitive.</li>
+                    <li><code>optional parameter</code>: Thông tin tùy chọn trong những điều kiện cụ thể.</li>
+                </ul>
+
+                <p>
+                    Những parameter này có thể chứa
+                    thông tin địa chỉ, dữ liệu,
+                    độ dài dữ liệu và kết quả xử lý
+                    tùy theo service primitive.
+                </p>
+
+                <h2>23. S_AI - Addressing Information</h2>
+
+                <p>
+                    Trong quá trình trao đổi diagnostic message,
+                    hệ thống cần xác định thông tin địa chỉ
+                    của bên gửi và bên nhận.
+                </p>
+
+                <p>
+                    ISO 14229-2 sử dụng khái niệm
+                    <strong>Session Layer Addressing Information (S_AI)</strong>
+                    trong giao diện Session Layer.
+                </p>
+
+                <p>
+                    Thông tin addressing giúp xác định
+                    message được gửi từ đâu và
+                    cần chuyển đến đối tượng nào.
+                </p>
+
+                <p>
+                    Một số thông tin địa chỉ có thể
+                    được sử dụng trong quá trình trao đổi:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông tin</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SA</td>
+                            <td>Source Address - địa chỉ nguồn.</td>
+                        </tr>
+                        <tr>
+                            <td>TA</td>
+                            <td>Target Address - địa chỉ đích.</td>
+                        </tr>
+                        <tr>
+                            <td>TAtype</td>
+                            <td>Target Address Type - loại địa chỉ đích.</td>
+                        </tr>
+                        <tr>
+                            <td>AE</td>
+                            <td>Address Extension - thông tin mở rộng địa chỉ khi được sử dụng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cách sử dụng và sự hiện diện của
+                    từng parameter phụ thuộc vào
+                    addressing format và giao thức
+                    được triển khai.
+                </p>
+
+                <h2>24. Source Address và Target Address</h2>
+
+                <p>
+                    Source Address là thông tin xác định
+                    nguồn gửi message.
+                    Target Address là thông tin xác định
+                    đích nhận message.
+                </p>
+
+                <p>
+                    Ví dụ khi Diagnostic Tester gửi
+                    một request đến ECU:
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | Request
+       |
+       | SA: Tester
+       | TA: ECU
+       v
+      ECU</code></pre>
+
+                <p>
+                    Khi ECU gửi response về Tester,
+                    vai trò nguồn và đích được đảo lại
+                    theo hướng truyền của message.
+                </p>
+
+                <pre><code>      ECU
+       |
+       | Response
+       |
+       | SA: ECU
+       | TA: Tester
+       v
+Diagnostic Tester</code></pre>
+
+                <p>
+                    Những thông tin địa chỉ này được
+                    sử dụng theo cách phù hợp với
+                    Transport Protocol và Network Layer.
+                </p>
+
+                <h2>25. Physical và Functional Addressing</h2>
+
+                <p>
+                    Trong UDS communication,
+                    hai kiểu addressing thường gặp là
+                    Physical Addressing và Functional Addressing.
+                </p>
+
+                <h3>25.1. Physical Addressing</h3>
+
+                <p>
+                    Physical Addressing được sử dụng
+                    khi Diagnostic Tester muốn giao tiếp
+                    với một ECU cụ thể.
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       | Physical Request
+       v
+      ECU A</code></pre>
+
+                <p>
+                    Ví dụ, Tester gửi request để đọc
+                    dữ liệu DID của ECU A.
+                </p>
+
+                <h3>25.2. Functional Addressing</h3>
+
+                <p>
+                    Functional Addressing được sử dụng
+                    khi request được gửi theo một chức năng
+                    hoặc nhóm đối tượng có thể tiếp nhận
+                    yêu cầu đó.
+                </p>
+
+                <pre><code>                 Tester
+                   |
+                   |
+            Functional Request
+                   |
+         +---------+---------+
+         |         |         |
+         v         v         v
+       ECU A     ECU B     ECU C</code></pre>
+
+                <p>
+                    Không phải mọi ECU đều phải phản hồi
+                    mọi functional request.
+                    Khả năng tiếp nhận và phản hồi
+                    phụ thuộc vào service, cấu hình ECU
+                    và quy tắc diagnostic tương ứng.
+                </p>
+
+                <h2>26. S_Mtype - Session Layer Message Type</h2>
+
+                <p>
+                    Trong Session Layer,
+                    thông tin về loại message được sử dụng
+                    để hỗ trợ việc xử lý message
+                    theo các quy tắc tương ứng.
+                </p>
+
+                <p>
+                    ISO 14229-2 sử dụng parameter
+                    liên quan đến Message Type
+                    trong các Service Primitive.
+                </p>
+
+                <p>
+                    Khi đọc tiêu chuẩn,
+                    cần phân biệt thông tin Message Type
+                    của Session Layer với SID của
+                    UDS Application Layer.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông tin</th>
+                            <th>Phạm vi</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>S_Mtype</td>
+                            <td>Session Layer</td>
+                            <td>Thông tin về loại message trong giao diện Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>SID</td>
+                            <td>Application Layer</td>
+                            <td>Xác định UDS Diagnostic Service.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN ID</td>
+                            <td>Data Link Layer</td>
+                            <td>CAN Identifier của CAN frame.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    S_Mtype, SID và CAN ID là những thông tin
+                    thuộc các phạm vi khác nhau.
+                    Không nên nhầm lẫn hoặc sử dụng chúng
+                    thay thế cho nhau.
+                </div>
+
+                <h2>27. Message và PDU trong UDS Communication</h2>
+
+                <p>
+                    Khi tìm hiểu kiến trúc UDS,
+                    chúng ta thường gặp những thuật ngữ
+                    như PDU, message và data.
+                </p>
+
+                <p>
+                    Mỗi tầng có thể sử dụng cách biểu diễn
+                    đơn vị dữ liệu riêng phù hợp với
+                    chức năng của tầng đó.
+                </p>
+
+                <p>
+                    Một số khái niệm cần biết:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa tổng quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>UDS Message</td>
+                            <td>Thông điệp chẩn đoán ở phạm vi UDS Application.</td>
+                        </tr>
+                        <tr>
+                            <td>S_PDU</td>
+                            <td>Protocol Data Unit ở Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>T_PDU</td>
+                            <td>Protocol Data Unit ở Transport Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>N_PDU</td>
+                            <td>Protocol Data Unit ở Network Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Frame</td>
+                            <td>Đơn vị truyền dữ liệu ở CAN Data Link Layer.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các PDU được sử dụng theo phạm vi
+                    của từng tầng trong kiến trúc giao tiếp.
+                    Không nên xem toàn bộ chúng là một
+                    loại UDS message duy nhất.
+                </p>
+
+                <h2>28. Mối quan hệ giữa ISO 14229-2 và ISO 15765-2</h2>
+
+                <p>
+                    ISO 14229-2 và ISO 15765-2
+                    có mối quan hệ trực tiếp khi
+                    triển khai UDS trên CAN.
+                </p>
+
+                <p>
+                    ISO 14229-2 định nghĩa Session Layer Services,
+                    còn ISO 15765-2 cung cấp các chức năng
+                    Transport Protocol và Network Layer
+                    cho diagnostic communication qua CAN.
+                </p>
+
+                <pre><code>       UDS Application Layer
+              |
+              v
+       ISO 14229-1
+              |
+              v
+        Session Layer
+              |
+              v
+       ISO 14229-2
+              |
+              v
+       Transport Layer
+              |
+              v
+       ISO 15765-2
+              |
+              v
+          CAN Network</code></pre>
+
+                <h3>28.1. Vai trò của ISO 15765-2</h3>
+
+                <p>
+                    ISO 15765-2 cung cấp cơ chế
+                    truyền diagnostic message qua CAN.
+                </p>
+
+                <p>
+                    Một số chức năng quan trọng:
+                </p>
+
+                <ul>
+                    <li>Single Frame.</li>
+                    <li>First Frame.</li>
+                    <li>Consecutive Frame.</li>
+                    <li>Flow Control.</li>
+                    <li>Message Segmentation.</li>
+                    <li>Message Reassembly.</li>
+                    <li>Transport Protocol Timing.</li>
+                </ul>
+
+                <h3>28.2. Vai trò của ISO 14229-2</h3>
+
+                <p>
+                    ISO 14229-2 không trực tiếp xử lý
+                    từng CAN frame.
+                    Nó cung cấp giao diện chung
+                    để Session Layer trao đổi dữ liệu
+                    với Transport Layer.
+                </p>
+
+                <div class="note">
+                    <strong>Cách ghi nhớ:</strong>
+                    ISO 14229-2 quy định giao diện
+                    giữa Session Layer và Transport Layer.
+                    ISO 15765-2 quy định cơ chế truyền
+                    diagnostic message qua CAN.
+                </div>
+
+                <h2>29. Mối quan hệ giữa ISO 14229-2 và DoIP</h2>
+
+                <p>
+                    Một trong những mục đích quan trọng
+                    của ISO 14229-2 là tạo sự độc lập
+                    giữa UDS Application Layer
+                    và các Transport/Network Protocol.
+                </p>
+
+                <p>
+                    Vì vậy, Session Layer Services
+                    không chỉ liên quan đến DoCAN.
+                    Chúng cũng có thể được sử dụng
+                    trong những kiến trúc khác như DoIP.
+                </p>
+
+                <pre><code>              UDS
+               |
+               v
+         ISO 14229-1
+               |
+               v
+         ISO 14229-2
+               |
+       +-------+-------+
+       |               |
+       v               v
+   ISO 15765-2     ISO 13400-2
+     DoCAN             DoIP
+       |               |
+       v               v
+      CAN           Ethernet
+       |               |
+       v               v
+      ECU             ECU</code></pre>
+
+                <p>
+                    Nhờ giao diện Session Layer chung,
+                    Application Layer có thể hạn chế
+                    sự phụ thuộc trực tiếp vào từng
+                    công nghệ mạng.
+                </p>
+
+                <h2>30. Timing trong UDS Communication</h2>
+
+                <p>
+                    Timing là một nội dung quan trọng
+                    trong quá trình diagnostic communication.
+                    Tester và ECU cần quản lý thời gian
+                    phản hồi để tránh việc một request
+                    bị chờ vô thời hạn hoặc bị đánh giá
+                    là timeout quá sớm.
+                </p>
+
+                <p>
+                    Trong UDS, timing liên quan đến
+                    quá trình request/response thường
+                    được nhắc đến với những parameter như:
+                </p>
+
+                <ul>
+                    <li>P2Server.</li>
+                    <li>P2*Server.</li>
+                    <li>P2Client.</li>
+                    <li>S3Server.</li>
+                    <li>S3Client.</li>
+                </ul>
+
+                <p>
+                    Những parameter này có vai trò
+                    trong việc quản lý thời gian xử lý
+                    và duy trì diagnostic communication.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Cần phân biệt timing của UDS
+                    với timing của ISO-TP.
+                    Các parameter như N_As, N_Bs
+                    và N_Cr thuộc Transport Protocol,
+                    không thể thay thế trực tiếp
+                    cho P2 hoặc S3.
+                </div>
+
+                <h2>31. P2Server và P2*Server</h2>
+
+                <p>
+                    P2Server và P2*Server là những
+                    timing parameter thường gặp
+                    trong quá trình quản lý UDS response.
+                </p>
+
+                <h3>31.1. P2Server</h3>
+
+                <p>
+                    P2Server liên quan đến thời gian
+                    ECU xử lý request và bắt đầu
+                    gửi response trong điều kiện
+                    giao tiếp thông thường.
+                </p>
+
+                <pre><code>Diagnostic Tester                  ECU
+       |                            |
+       |       Request              |
+       |--------------------------->|
+       |                            |
+       |                      Process Request
+       |                            |
+       |       Response             |
+       |<---------------------------|
+       |                            |
+
+          P2Server timing</code></pre>
+
+                <p>
+                    Trong quá trình thiết kế và kiểm thử,
+                    cần kiểm tra deadline phản hồi
+                    phù hợp với Diagnostic Specification.
+                </p>
+
+                <h3>31.2. P2*Server</h3>
+
+                <p>
+                    Một số Diagnostic Service cần
+                    thời gian xử lý dài hơn so với
+                    các service thông thường.
+                </p>
+
+                <p>
+                    Trong những trường hợp phù hợp,
+                    ECU có thể sử dụng NRC 0x78
+                    để thông báo rằng request đã được
+                    tiếp nhận nhưng việc xử lý
+                    vẫn đang diễn ra.
+                </p>
+
+                <pre><code>7F 31 78
+
+7F : Negative Response SID
+31 : Request SID - RoutineControl
+78 : ResponsePending</code></pre>
+
+                <p>
+                    Khi sử dụng ResponsePending,
+                    Tester cần tiếp tục chờ final response
+                    theo timing mở rộng tương ứng.
+                </p>
+
+                <h3>31.3. So sánh P2 và P2*</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>P2Server</th>
+                            <th>P2*Server</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Quản lý thời gian phản hồi ban đầu.</td>
+                            <td>Quản lý thời gian phản hồi mở rộng.</td>
+                        </tr>
+                        <tr>
+                            <td>Trường hợp</td>
+                            <td>Request được xử lý trong thời gian thông thường.</td>
+                            <td>Request cần thêm thời gian xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Liên quan NRC 0x78</td>
+                            <td>Deadline ban đầu trước khi áp dụng cơ chế ResponsePending phù hợp.</td>
+                            <td>Thời gian chờ tiếp theo trong quá trình xử lý kéo dài.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>32. S3Server và Diagnostic Session Timeout</h2>
+
+                <p>
+                    S3Server là một timing parameter
+                    liên quan đến việc duy trì
+                    non-default Diagnostic Session.
+                </p>
+
+                <p>
+                    Khi ECU đang ở một session khác
+                    Default Session, ECU cần theo dõi
+                    hoạt động diagnostic communication
+                    theo các quy tắc tương ứng.
+                </p>
+
+                <p>
+                    Nếu không có hoạt động phù hợp
+                    trong khoảng thời gian quy định,
+                    ECU có thể chuyển về Default Session.
+                </p>
+
+                <pre><code>          Default Session
+                 |
+                 | DiagnosticSessionControl
+                 v
+          Extended Session
+                 |
+                 v
+          S3Server Timer
+                 |
+          +------+------+
+          |             |
+    Activity received  Timeout
+          |             |
+          v             v
+     Maintain       Return to
+     Session        Default Session</code></pre>
+
+                <p>
+                    S3Server giúp ECU tránh duy trì
+                    non-default diagnostic state
+                    quá lâu khi không còn hoạt động
+                    chẩn đoán phù hợp.
+                </p>
+
+                <h2>33. TesterPresent và S3Server</h2>
+
+                <p>
+                    TesterPresent (SID 0x3E) là một UDS service
+                    được sử dụng để thông báo rằng
+                    Diagnostic Tester vẫn đang hoạt động.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>3E 00
+
+3E : TesterPresent
+00 : Sub-function</code></pre>
+
+                <p>
+                    Trong những trường hợp phù hợp,
+                    Tester có thể gửi TesterPresent
+                    theo chu kỳ để duy trì hoạt động
+                    của non-default diagnostic session.
+                </p>
+
+                <pre><code>Tester
+  |
+  | TesterPresent
+  v
+ECU
+  |
+  | Session activity
+  v
+S3Server management</code></pre>
+
+                <p>
+                    TesterPresent thuộc UDS Application Layer,
+                    còn S3Server là timing parameter
+                    liên quan đến việc quản lý session.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    TesterPresent và S3Server có mối quan hệ
+                    nhưng không phải cùng một khái niệm.
+                    TesterPresent là Diagnostic Service,
+                    còn S3Server là một timer liên quan
+                    đến Diagnostic Session.
+                </div>
+
+                <h2>34. ResponsePending và Timing</h2>
+
+                <p>
+                    ResponsePending (NRC 0x78) được sử dụng
+                    khi ECU đã tiếp nhận request nhưng
+                    chưa hoàn tất xử lý để tạo final response.
+                </p>
+
+                <p>
+                    Ví dụ với một RoutineControl request:
+                </p>
+
+                <pre><code>Tester                         ECU
+  |                             |
+  |       Routine Request       |
+  |---------------------------->|
+  |                             |
+  |       ResponsePending       |
+  |<----------------------------|
+  |                             |
+  |                       Continue Processing
+  |                             |
+  |       Final Response        |
+  |<----------------------------|
+  |                             |</code></pre>
+
+                <p>
+                    Trong quá trình này,
+                    Tester phải xử lý ResponsePending
+                    theo timing được quy định.
+                </p>
+
+                <p>
+                    Không nên xem NRC 0x78 là một response
+                    cho phép ECU trì hoãn vô thời hạn.
+                    Việc tiếp tục chờ vẫn phải tuân theo
+                    các yêu cầu timing của diagnostic protocol.
+                </p>
+
+                <h2>35. Timing của Session Layer và Transport Layer</h2>
+
+                <p>
+                    Khi debug UDS communication,
+                    cần xác định timeout phát sinh
+                    ở tầng nào.
+                </p>
+
+                <p>
+                    Trong ISO-TP, một số timing parameter
+                    thường gặp gồm:
+                </p>
+
+                <ul>
+                    <li>N_As.</li>
+                    <li>N_Ar.</li>
+                    <li>N_Bs.</li>
+                    <li>N_Br.</li>
+                    <li>N_Cs.</li>
+                    <li>N_Cr.</li>
+                </ul>
+
+                <p>
+                    Những parameter trên thuộc
+                    Transport Protocol.
+                </p>
+
+                <p>
+                    Trong khi đó, P2Server, P2*Server
+                    và S3Server liên quan đến
+                    diagnostic/session timing.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm timing</th>
+                            <th>Parameter ví dụ</th>
+                            <th>Phạm vi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>UDS Diagnostic Timing</td>
+                            <td>P2Server, P2*Server</td>
+                            <td>Quản lý thời gian phản hồi diagnostic.</td>
+                        </tr>
+                        <tr>
+                            <td>Session Timing</td>
+                            <td>S3Server</td>
+                            <td>Quản lý thời gian duy trì non-default session.</td>
+                        </tr>
+                        <tr>
+                            <td>Transport Timing</td>
+                            <td>N_As, N_Bs, N_Cr</td>
+                            <td>Quản lý thời gian truyền nhận ở ISO-TP.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi ECU không phản hồi đúng thời hạn,
+                    không nên thay đổi timing ngay lập tức.
+                    Trước tiên cần xác định request đã
+                    được nhận đầy đủ hay chưa,
+                    Transport Layer có hoàn thành
+                    quá trình truyền nhận hay không
+                    và Application Layer xử lý mất bao lâu.
+                </p>
+
+                <h2>36. Mối liên hệ giữa ISO 14229-2 và AUTOSAR DCM</h2>
+
+                <p>
+                    Trong AUTOSAR Classic Platform,
+                    Diagnostic Communication Manager (DCM)
+                    là module chính xử lý
+                    Diagnostic Communication.
+                </p>
+
+                <p>
+                    DCM đảm nhiệm việc tiếp nhận request,
+                    kiểm tra điều kiện, phân phối service,
+                    xử lý dữ liệu và tạo response.
+                </p>
+
+                <p>
+                    DCM được tổ chức thành ba submodule chính:
+                </p>
+
+                <pre><code>    Diagnostic Communication Manager
+                   |
+        +----------+----------+
+        |          |          |
+        v          v          v
+       DSL        DSD        DSP
+        |          |          |
+        |          |          |
+   Session &   Request    Diagnostic
+    Timing    Dispatch    Processing</code></pre>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Submodule</th>
+                            <th>Chức năng chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSL</td>
+                            <td>Quản lý session, timing và các hoạt động diagnostic communication.</td>
+                        </tr>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Kiểm tra và phân phối Diagnostic Request đến service handler.</td>
+                        </tr>
+                        <tr>
+                            <td>DSP</td>
+                            <td>Xử lý nội dung của Diagnostic Service.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>37. DCM DSL - Diagnostic Session Layer</h2>
+
+                <p>
+                    DSL là viết tắt của
+                    <strong>Diagnostic Session Layer</strong>.
+                    Đây là một submodule bên trong DCM
+                    của AUTOSAR Classic.
+                </p>
+
+                <p>
+                    DSL thực hiện những chức năng
+                    liên quan đến việc quản lý
+                    diagnostic communication và session.
+                </p>
+
+                <p>
+                    Một số chức năng quan trọng:
+                </p>
+
+                <ul>
+                    <li>Quản lý Diagnostic Session.</li>
+                    <li>Quản lý timing của diagnostic communication.</li>
+                    <li>Quản lý trạng thái của diagnostic connection.</li>
+                    <li>Phối hợp việc tiếp nhận request.</li>
+                    <li>Phối hợp việc truyền response.</li>
+                    <li>Trao đổi dữ liệu với các thành phần communication liên quan.</li>
+                </ul>
+
+                <p>
+                    DSL giúp DCM quản lý những yêu cầu
+                    liên quan đến Session Layer
+                    trong implementation AUTOSAR.
+                </p>
+
+                <h2>38. DCM DSL và Session Handling</h2>
+
+                <p>
+                    Session Handling là một chức năng
+                    quan trọng của DCM DSL.
+                </p>
+
+                <p>
+                    DSL theo dõi diagnostic session hiện tại
+                    và phối hợp với những thành phần khác
+                    khi ECU chuyển đổi giữa các session.
+                </p>
+
+                <p>
+                    Ví dụ, Tester gửi request:
+                </p>
+
+                <pre><code>10 03
+
+10 : DiagnosticSessionControl
+03 : Extended Diagnostic Session</code></pre>
+
+                <p>
+                    Trong AUTOSAR DCM,
+                    request được xử lý thông qua
+                    các thành phần liên quan:
+                </p>
+
+                <pre><code>Diagnostic Tester
+       |
+       v
+      DCM
+       |
+       +---- DSL
+       |      |
+       |      +---- Session handling
+       |      |
+       |      +---- Timing management
+       |
+       +---- DSD
+       |
+       +---- DSP
+              |
+              v
+       Diagnostic Service</code></pre>
+
+                <p>
+                    Việc chuyển đổi session phải
+                    tuân theo Diagnostic Specification
+                    và các điều kiện được ECU hỗ trợ.
+                </p>
+
+                <h2>39. DCM DSL và Timing Management</h2>
+
+                <p>
+                    DCM DSL còn quản lý những timing
+                    liên quan đến diagnostic communication
+                    theo AUTOSAR Specification.
+                </p>
+
+                <p>
+                    Một số thông số cần quan tâm:
+                </p>
+
+                <ul>
+                    <li>P2ServerMin.</li>
+                    <li>P2ServerMax.</li>
+                    <li>P2*ServerMin.</li>
+                    <li>P2*ServerMax.</li>
+                    <li>S3Server.</li>
+                </ul>
+
+                <p>
+                    Những parameter này có thể được
+                    cấu hình theo yêu cầu của ECU
+                    và Diagnostic Session.
+                </p>
+
+                <p>
+                    Trong AUTOSAR, cấu hình DCM cần
+                    đảm bảo phù hợp với Diagnostic Specification
+                    và các yêu cầu timing áp dụng.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    DSL là một submodule của DCM,
+                    không phải một AUTOSAR BSW module
+                    độc lập nằm ngang hàng với DCM.
+                </div>
+
+                <h2>40. DCM DSL tương tác với những module nào?</h2>
+
+                <p>
+                    DSL cần phối hợp với những module khác
+                    trong AUTOSAR Classic để hoàn thành
+                    diagnostic communication.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Quan hệ với DCM DSL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PduR</td>
+                            <td>Định tuyến PDU giữa DCM và các module communication.</td>
+                        </tr>
+                        <tr>
+                            <td>DSD</td>
+                            <td>Trao đổi thông tin request và response trong DCM.</td>
+                        </tr>
+                        <tr>
+                            <td>DSP</td>
+                            <td>Xử lý Diagnostic Service và sử dụng thông tin session khi cần.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTp</td>
+                            <td>Thực hiện Transport Protocol khi sử dụng DoCAN.</td>
+                        </tr>
+                        <tr>
+                            <td>DoIP-related modules</td>
+                            <td>Hỗ trợ diagnostic communication khi sử dụng DoIP.</td>
+                        </tr>
+                        <tr>
+                            <td>ComM</td>
+                            <td>Phối hợp một số hoạt động liên quan đến communication mode.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>41. Luồng dữ liệu Diagnostic trong AUTOSAR</h2>
+
+                <p>
+                    Khi sử dụng UDS over CAN trong AUTOSAR Classic,
+                    các module communication sẽ phối hợp
+                    để đưa diagnostic request đến DCM.
+                </p>
+
+                <pre><code>        Diagnostic Tester
+                |
+                v
+             CAN Bus
+                |
+                v
+             CanDrv
+                |
+                v
+              CanIf
+                |
+                v
+              PduR
+                |
+                v
+              CanTp
+                |
+                v
+              PduR
+                |
+                v
+               DCM
+                |
+        +-------+-------+
+        |       |       |
+        v       v       v
+       DSL     DSD     DSP
+                        |
+                        v
+                Diagnostic Service
+                        |
+                        v
+                  Response Data</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái quát để hình dung
+                    các module tham gia.
+                    Luồng routing cụ thể phụ thuộc
+                    vào cấu hình AUTOSAR của ECU.
+                </p>
+
+                <p>
+                    Khi DCM tạo response,
+                    dữ liệu được chuyển qua
+                    các module routing và transport
+                    để gửi trở lại Diagnostic Tester.
+                </p>
+
+                <h2>42. Ví dụ tổng hợp: ReadDataByIdentifier</h2>
+
+                <p>
+                    Chúng ta sẽ sử dụng service
+                    ReadDataByIdentifier để liên kết
+                    kiến thức của ba tầng UDS.
+                </p>
+
+                <h3>42.1. Tester tạo Request</h3>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><code>0x22</code>: ReadDataByIdentifier.</li>
+                    <li><code>0xF190</code>: DID được sử dụng trong ví dụ đọc VIN.</li>
+                </ul>
+
+                <h3>42.2. Application Layer</h3>
+
+                <p>
+                    Application Layer tạo Diagnostic Request
+                    và yêu cầu tầng Session thực hiện
+                    hoạt động truyền dữ liệu.
+                </p>
+
+                <h3>42.3. Session Layer</h3>
+
+                <p>
+                    Session Layer tiếp nhận request
+                    thông qua S_Data.req và sử dụng
+                    giao diện T_Data.req để chuyển
+                    dữ liệu xuống Transport Layer.
+                </p>
+
+                <h3>42.4. Transport Layer</h3>
+
+                <p>
+                    Với DoCAN, ISO-TP thực hiện
+                    quá trình truyền message qua CAN.
+                    Message có thể được truyền dưới dạng
+                    Single Frame hoặc nhiều frame
+                    tùy theo kích thước dữ liệu.
+                </p>
+
+                <h3>42.5. ECU nhận và xử lý request</h3>
+
+                <p>
+                    Transport Layer ở phía ECU tiếp nhận
+                    dữ liệu và cung cấp message
+                    cho Session Layer.
+                    Sau đó, Session Layer chuyển dữ liệu
+                    lên Application Layer để xử lý.
+                </p>
+
+                <h3>42.6. ECU tạo Response</h3>
+
+                <p>
+                    Nếu ECU hỗ trợ DID được yêu cầu
+                    và xử lý thành công, Positive Response
+                    có thể có dạng:
+                </p>
+
+                <pre><code>62 F1 90 [VIN DATA]</code></pre>
+
+                <h3>42.7. Tester tiếp nhận Response</h3>
+
+                <p>
+                    Response được truyền từ ECU về Tester
+                    thông qua các tầng tương ứng.
+                    Ở phía Tester, Transport Layer tiếp nhận
+                    message, sau đó chuyển dữ liệu lên
+                    Session Layer và Application Layer.
+                </p>
+
+                <pre><code>        Tester
+          |
+          v
+   Application Layer
+          |
+          v
+    Session Layer
+          |
+          v
+   Transport Layer
+          |
+          v
+       CAN Bus
+          |
+          v
+   ECU Transport Layer
+          |
+          v
+    ECU Session Layer
+          |
+          v
+   ECU Application Layer</code></pre>
+
+                <h2>43. Phân tích Diagnostic Log khi có lỗi</h2>
+
+                <p>
+                    Khi ECU không phản hồi theo mong đợi,
+                    kỹ sư cần xác định lỗi nằm ở tầng nào
+                    trước khi thực hiện thay đổi cấu hình.
+                </p>
+
+                <p>
+                    Một số nguồn thông tin có thể sử dụng:
+                </p>
+
+                <ul>
+                    <li>UDS Request và Response.</li>
+                    <li>Transport Protocol Log.</li>
+                    <li>CAN Trace hoặc Ethernet Trace.</li>
+                    <li>DCM Log.</li>
+                    <li>ECU Application Log.</li>
+                    <li>Timestamp của các hoạt động.</li>
+                </ul>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Hướng kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Không nhận được request hoàn chỉnh</td>
+                            <td>Kiểm tra Transport Layer và quá trình tiếp nhận message.</td>
+                        </tr>
+                        <tr>
+                            <td>Transport Layer đã nhận dữ liệu nhưng Application không xử lý</td>
+                            <td>Kiểm tra Session Layer, DCM và routing.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU phản hồi muộn</td>
+                            <td>Kiểm tra Application Processing và diagnostic timing.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU gửi NRC 0x78</td>
+                            <td>Kiểm tra ResponsePending và thời gian xử lý tiếp theo.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU chuyển về Default Session</td>
+                            <td>Kiểm tra S3Server và hoạt động diagnostic của Tester.</td>
+                        </tr>
+                        <tr>
+                            <td>Tester timeout nhưng ECU có response</td>
+                            <td>Đối chiếu timestamp, network delay và timing ở phía Tester.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>44. Những lỗi thường gặp khi học ISO 14229-2</h2>
+
+                <h3>44.1. Nhầm Session Layer với Diagnostic Session</h3>
+
+                <p>
+                    Session Layer là tầng giao tiếp
+                    trong mô hình OSI.
+                    Diagnostic Session là trạng thái
+                    chẩn đoán của ECU.
+                    Hai khái niệm này có liên quan
+                    nhưng không đồng nghĩa.
+                </p>
+
+                <h3>44.2. Nhầm S_Data với UDS Service</h3>
+
+                <p>
+                    S_Data là Session Layer Service Primitive,
+                    không phải UDS Diagnostic Service
+                    và không có SID như 0x10 hoặc 0x22.
+                </p>
+
+                <h3>44.3. Nhầm Confirm với Positive Response</h3>
+
+                <p>
+                    Confirm thông báo kết quả tại
+                    giao diện Service Primitive.
+                    Positive Response là message
+                    được tạo ở UDS Application Layer.
+                </p>
+
+                <h3>44.4. Nhầm T_Data với ISO-TP Frame</h3>
+
+                <p>
+                    T_Data là giao diện dịch vụ
+                    giữa Session Layer và Transport Layer.
+                    SF, FF, CF và FC là các loại frame
+                    thuộc ISO-TP.
+                </p>
+
+                <h3>44.5. Nhầm P2 với N_As hoặc N_Cr</h3>
+
+                <p>
+                    P2 liên quan đến diagnostic response timing.
+                    N_As và N_Cr là timing parameter
+                    thuộc Transport Protocol.
+                </p>
+
+                <h3>44.6. Cho rằng ISO 14229-2 chỉ dành cho CAN</h3>
+
+                <p>
+                    ISO 14229-2 cung cấp các Session Layer Services
+                    chung để hỗ trợ UDS trên nhiều
+                    Transport Protocol và Network Layer Services.
+                </p>
+
+                <h3>44.7. Cho rằng DSL là một AUTOSAR module độc lập</h3>
+
+                <p>
+                    DSL là một submodule của DCM
+                    trong AUTOSAR Classic Platform.
+                    Cần xem xét DSL trong tổng thể
+                    DCM và Diagnostic Communication Stack.
+                </p>
+
+                <h2>45. Những nội dung cần kiểm tra trong một Automotive Project</h2>
+
+                <p>
+                    Khi tham gia một dự án Automotive Embedded,
+                    kiến thức về ISO 14229-2 hữu ích
+                    trong quá trình đọc Diagnostic Specification,
+                    kiểm tra DCM Configuration và debug
+                    diagnostic communication.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hạng mục</th>
+                            <th>Nội dung cần kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>UDS Architecture</td>
+                            <td>Phân biệt Application Layer, Session Layer và Transport Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>Service Primitive</td>
+                            <td>Kiểm tra Request, Indication và Confirm.</td>
+                        </tr>
+                        <tr>
+                            <td>S_Data</td>
+                            <td>Kiểm tra giao diện dữ liệu ở Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>T_Data</td>
+                            <td>Kiểm tra giao diện với Transport Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>Addressing</td>
+                            <td>Kiểm tra Source Address, Target Address và addressing mode.</td>
+                        </tr>
+                        <tr>
+                            <td>Timing</td>
+                            <td>Đối chiếu diagnostic timing với Diagnostic Specification.</td>
+                        </tr>
+                        <tr>
+                            <td>Transport Protocol</td>
+                            <td>Kiểm tra DoCAN, DoIP hoặc giao thức đang được sử dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>DCM DSL</td>
+                            <td>Kiểm tra session handling và timing configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Log</td>
+                            <td>Đối chiếu request, response, timestamp và kết quả xử lý.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>46. Ví dụ Test Case cho ISO 14229-2</h2>
+
+                <p>
+                    Dưới đây là một số test case minh họa
+                    để kiểm tra hoạt động của Session Layer
+                    trong hệ thống diagnostic.
+                    Giá trị timing cụ thể cần được lấy
+                    từ Diagnostic Specification và
+                    cấu hình thực tế của ECU.
+                </p>
+
+                <h3>Test Case 1: Kiểm tra S_Data Request</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_SESSION_001</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra khả năng tiếp nhận yêu cầu truyền dữ liệu tại Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>Diagnostic communication đã được cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Thực hiện một yêu cầu truyền diagnostic message từ tầng phía trên.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>Session Layer tiếp nhận request và xử lý theo giao diện đã định nghĩa.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 2: Kiểm tra T_Data Indication</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_SESSION_002</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra việc chuyển dữ liệu nhận được từ Transport Layer lên Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>Transport Protocol và Session Layer interface hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Tiếp nhận một diagnostic message thông qua Transport Layer.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>Session Layer nhận được dữ liệu thông qua primitive tương ứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 3: Kiểm tra Session Layer Confirmation</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_SESSION_003</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra việc xác nhận kết quả của một request.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>Có một request truyền dữ liệu được thực hiện.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Theo dõi kết quả được thông báo qua Confirm Primitive.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>Tầng yêu cầu dịch vụ nhận được kết quả tương ứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 4: Kiểm tra Diagnostic Session Timeout</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_SESSION_004</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra hành vi quản lý non-default diagnostic session.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>ECU đang ở một non-default session.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Quan sát trạng thái session khi không có hoạt động diagnostic phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>ECU thực hiện session timeout theo timing và cấu hình áp dụng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Test Case 5: Kiểm tra ResponsePending</h3>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <td>TC_SESSION_005</td>
+                        </tr>
+                        <tr>
+                            <th>Objective</th>
+                            <td>Kiểm tra quá trình xử lý một request cần thêm thời gian.</td>
+                        </tr>
+                        <tr>
+                            <th>Precondition</th>
+                            <td>ECU hỗ trợ một service có thể cần thêm thời gian xử lý.</td>
+                        </tr>
+                        <tr>
+                            <th>Test Action</th>
+                            <td>Gửi request và quan sát response trong quá trình ECU xử lý.</td>
+                        </tr>
+                        <tr>
+                            <th>Expected Result</th>
+                            <td>ECU xử lý ResponsePending và final response theo timing được cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>47. Tổng kết bài học</h2>
+
+                <p>
+                    Qua bài học này, chúng ta đã tìm hiểu
+                    vai trò của ISO 14229-2 trong kiến trúc
+                    Unified Diagnostic Services.
+                </p>
+
+                <p>
+                    ISO 14229-2 định nghĩa các Session Layer Services
+                    chung nhằm hỗ trợ sự độc lập giữa
+                    UDS Application Layer và các
+                    Transport Protocol khác nhau.
+                </p>
+
+                <p>
+                    Những nội dung quan trọng cần ghi nhớ:
+                </p>
+
+                <ul>
+                    <li>ISO 14229-2:2021 là Edition 2 của UDS Session Layer Services.</li>
+                    <li>Session Layer là OSI Layer 5.</li>
+                    <li>ISO 14229-2 định nghĩa giao diện Service Primitive giữa Session Layer và Transport Layer.</li>
+                    <li>Request được sử dụng để yêu cầu một dịch vụ.</li>
+                    <li>Indication được sử dụng để thông báo dữ liệu hoặc sự kiện nhận được.</li>
+                    <li>Confirm được sử dụng để thông báo kết quả của request trước đó.</li>
+                    <li>S_Data là giao diện trao đổi dữ liệu ở Session Layer.</li>
+                    <li>T_Data là giao diện trao đổi dữ liệu với Transport Layer.</li>
+                    <li>T_DataSOM.ind liên quan đến việc thông báo bắt đầu message.</li>
+                    <li>Addressing Information giúp xác định nguồn và đích của message.</li>
+                    <li>ISO 14229-2 hỗ trợ UDS trên nhiều Transport Protocol khác nhau, không chỉ CAN.</li>
+                    <li>Trong AUTOSAR Classic, DCM DSL đảm nhiệm các chức năng quản lý session và timing tương ứng.</li>
+                </ul>
+
+                <div class="note">
+                    <p>
+                        ISO 14229-1 định nghĩa UDS Application Layer
+                        và các Diagnostic Services.
+                        ISO 14229-2 định nghĩa các dịch vụ
+                        thuộc Session Layer và giao diện
+                        Service Primitive giữa các tầng.
+                    </p>
+
+                    <p>
+                        S_Data được sử dụng ở giao diện
+                        Application/Session, trong khi
+                        T_Data được sử dụng ở giao diện
+                        Session/Transport.
+                        Các primitive Request, Indication
+                        và Confirm giúp mô tả cách dữ liệu
+                        được yêu cầu, tiếp nhận và xác nhận.
+                    </p>
+
+                    <p>
+                        ISO 14229-2 giúp Application Layer
+                        không phải phụ thuộc trực tiếp
+                        vào từng Transport Protocol.
+                        Các giao thức như DoCAN và DoIP
+                        vẫn thực hiện chức năng vận chuyển
+                        dữ liệu theo tiêu chuẩn riêng.
+                    </p>
+
+                    <p>
+                        Cần phân biệt Session Layer
+                        với Diagnostic Session.
+                        Session Layer là một tầng giao tiếp,
+                        còn Diagnostic Session là trạng thái
+                        chẩn đoán của ECU được quản lý
+                        thông qua các UDS Diagnostic Services.
+                    </p>
+
+                    <p>
+                        Trong AUTOSAR Classic,
+                        DCM DSL hỗ trợ việc quản lý
+                        diagnostic session, timing
+                        và diagnostic communication.
+                        DSL phối hợp với các thành phần
+                        khác như DSD, DSP, PduR và
+                        Transport Layer tương ứng.
+                    </p>
+
+                    <p>
+                        Khi áp dụng ISO 14229-2 trong dự án,
+                        nên xác định rõ giao diện giữa các tầng,
+                        loại primitive được sử dụng,
+                        addressing information,
+                        timing requirement và
+                        cách các module AUTOSAR triển khai.
+                    </p>
+
+                    <p>
+                        Qua Bài 38 và Bài 39,
+                        chúng ta đã tìm hiểu hai phần
+                        quan trọng của UDS:
+                        ISO 14229-1 định nghĩa
+                        các Diagnostic Services,
+                        còn ISO 14229-2 định nghĩa
+                        giao diện và các dịch vụ
+                        thuộc Session Layer.
+                    </p>
+                </div>
+
+                <h2>48. Tài liệu tham khảo</h2>
+
+                <p>
+                    Các tài liệu dưới đây có thể được sử dụng
+                    để tìm hiểu sâu hơn về UDS Session Layer
+                    và cách AUTOSAR triển khai
+                    Diagnostic Communication.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Nội dung tham khảo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/77322.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 14229-2:2021
+                                </a>
+                            </td>
+                            <td>UDS Session Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/87962.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 14229-1
+                                </a>
+                            </td>
+                            <td>UDS Application Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/standard/84211.html" target="_blank" rel="noopener noreferrer">
+                                    ISO 15765-2
+                                </a>
+                            </td>
+                            <td>DoCAN Transport Protocol and Network Layer Services.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.iso.org/search.html?q=ISO%2013400-2" target="_blank" rel="noopener noreferrer">
+                                    ISO 13400-2
+                                </a>
+                            </td>
+                            <td>Diagnostic communication over Internet Protocol (DoIP).</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.autosar.org/fileadmin/standards/R24-11/CP/AUTOSAR_CP_SWS_DiagnosticCommunicationManager.pdf"
+                                   target="_blank" rel="noopener noreferrer">
+                                    AUTOSAR CP R24-11 - SWS Diagnostic Communication Manager
+                                </a>
+                            </td>
+                            <td>Đặc tả DCM, bao gồm DSL, session handling và timing.</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="https://www.autosar.org/standards/classic-platform"
+                                   target="_blank" rel="noopener noreferrer">
+                                    AUTOSAR Classic Platform
+                                </a>
+                            </td>
+                            <td>Thông tin về AUTOSAR Classic Platform và các phiên bản tiêu chuẩn.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-38.html">← Bài trước</a>
+                    <a class="btn" href="lesson-40.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

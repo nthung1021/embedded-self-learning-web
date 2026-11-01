@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 42: Tổng quan bộ tiêu chuẩn ISO 15031 | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="lesson-25.html">Bài 25: Diagnostic Communication Manager (DCM)</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+                <a href="lesson-38.html">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
+                <a href="lesson-39.html">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer</a>
+                <a href="lesson-40.html">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN</a>
+                <a href="lesson-41.html">Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP)</a>
+                <a href="lesson-42.html" class="active" aria-current="page">Bài 42: Tổng quan bộ tiêu chuẩn ISO 15031</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 42: Tổng quan bộ tiêu chuẩn ISO 15031</h1>
+
+                <p>
+                    Trong các bài học trước, chúng ta đã tìm hiểu về CAN, UDS, DoIP và những tiêu chuẩn
+                    liên quan đến giao tiếp chẩn đoán trong Automotive. Bài học này sẽ chuyển sang một
+                    bộ tiêu chuẩn khác cũng rất quan trọng trong lĩnh vực chẩn đoán phương tiện:
+                    <strong>ISO 15031 - Communication between vehicle and external equipment for
+                    emissions-related diagnostics</strong>.
+                </p>
+
+                <p>
+                    ISO 15031 tập trung vào việc giao tiếp giữa hệ thống On-Board Diagnostics (OBD)
+                    trên xe và thiết bị kiểm tra bên ngoài, đặc biệt đối với các thông tin chẩn đoán
+                    liên quan đến khí thải. Bộ tiêu chuẩn này quy định nhiều khía cạnh khác nhau như
+                    đầu nối chẩn đoán, thiết bị kiểm tra, dịch vụ OBD, định nghĩa mã lỗi DTC và bảo mật
+                    đường truyền chẩn đoán.
+                </p>
+
+                <div class="note">
+                    <strong>Mục tiêu bài học:</strong>
+                    <ul>
+                        <li>Hiểu ISO 15031 là gì và phạm vi áp dụng của bộ tiêu chuẩn này.</li>
+                        <li>Nắm được cấu trúc gồm 7 phần của ISO 15031.</li>
+                        <li>Hiểu vai trò của từng phần trong hệ thống OBD.</li>
+                        <li>Phân biệt ISO 15031 với ISO 14229 (UDS) và ISO 13400 (DoIP).</li>
+                        <li>Hiểu mối quan hệ giữa ISO 15031 với các tiêu chuẩn SAE như J1962, J1978,
+                            J1979 và J2012.</li>
+                    </ul>
+                </div>
+
+
+                <h2>1. ISO 15031 là gì?</h2>
+
+                <h3>1.1. Khái niệm</h3>
+
+                <p>
+                    <strong>ISO 15031</strong> là một bộ tiêu chuẩn quốc tế mô tả việc giao tiếp giữa
+                    hệ thống chẩn đoán trên xe và các thiết bị bên ngoài nhằm phục vụ cho hoạt động
+                    chẩn đoán liên quan đến khí thải.
+                </p>
+
+                <p>
+                    Trong quá trình vận hành, hệ thống OBD có thể theo dõi nhiều thông số và trạng thái
+                    liên quan đến hoạt động của động cơ cũng như các hệ thống ảnh hưởng đến khí thải.
+                    Khi phát hiện một điều kiện bất thường, hệ thống có thể lưu trữ thông tin chẩn đoán
+                    và cung cấp dữ liệu đó cho thiết bị kiểm tra bên ngoài.
+                </p>
+
+                <p>
+                    ISO 15031 tạo ra một cách thức thống nhất để thiết bị kiểm tra và phương tiện
+                    trao đổi những thông tin OBD thuộc phạm vi tiêu chuẩn. Nhờ đó, các thiết bị kiểm
+                    tra có thể tiếp cận những dịch vụ và dữ liệu OBD được chuẩn hóa trên các phương
+                    tiện tương thích.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> ISO 15031 không phải là một giao thức truyền thông duy
+                    nhất và cũng không phải tiêu chuẩn mô tả toàn bộ chức năng chẩn đoán của mọi ECU
+                    trên xe. Phạm vi chính của nó là giao tiếp OBD liên quan đến khí thải theo các
+                    yêu cầu và ứng dụng tương ứng.
+                </div>
+
+
+                <h3>1.2. OBD và Emissions-related Diagnostics</h3>
+
+                <p>
+                    OBD (On-Board Diagnostics) là hệ thống chẩn đoán được tích hợp trên phương tiện.
+                    Hệ thống này có khả năng theo dõi trạng thái hoạt động của các hệ thống và phát
+                    hiện những điều kiện bất thường thuộc phạm vi giám sát được thiết kế.
+                </p>
+
+                <p>
+                    Trong ISO 15031, trọng tâm là <strong>Emissions-related Diagnostics</strong>,
+                    tức các hoạt động chẩn đoán liên quan đến khí thải. Các thông tin có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Dữ liệu vận hành hiện tại của hệ thống động lực.</li>
+                    <li>Các thông số được hệ thống OBD hỗ trợ và công bố.</li>
+                    <li>Thông tin được ghi lại tại thời điểm xảy ra điều kiện bất thường
+                        (Freeze Frame).</li>
+                    <li>Các mã lỗi DTC liên quan đến hệ thống kiểm soát khí thải.</li>
+                    <li>Kết quả của những bài kiểm tra và giám sát OBD.</li>
+                    <li>Một số thông tin nhận dạng phương tiện hoặc hệ thống theo khả năng được hỗ trợ.</li>
+                </ul>
+
+                <p>
+                    Những dữ liệu này giúp thiết bị kiểm tra bên ngoài đọc thông tin từ phương tiện,
+                    hỗ trợ quá trình kiểm tra, bảo dưỡng và đánh giá tình trạng của hệ thống OBD.
+                </p>
+
+
+                <h3>1.3. Vì sao cần ISO 15031?</h3>
+
+                <p>
+                    Nếu mỗi nhà sản xuất tự định nghĩa hoàn toàn cách thiết bị bên ngoài truy cập
+                    thông tin OBD, các công cụ kiểm tra sẽ khó có thể hoạt động thống nhất trên nhiều
+                    loại phương tiện.
+                </p>
+
+                <p>
+                    ISO 15031 giúp chuẩn hóa những thành phần quan trọng trong quá trình giao tiếp:
+                </p>
+
+                <ul>
+                    <li><strong>Diagnostic Connector:</strong> Chuẩn hóa yêu cầu về đầu nối và các
+                        mạch điện liên quan để thiết bị bên ngoài có thể kết nối với phương tiện.</li>
+                    <li><strong>External Test Equipment:</strong> Xác định các chức năng và khả năng
+                        cần có của thiết bị kiểm tra bên ngoài.</li>
+                    <li><strong>Diagnostic Services:</strong> Chuẩn hóa các dịch vụ chẩn đoán OBD
+                        liên quan đến khí thải.</li>
+                    <li><strong>Diagnostic Trouble Codes:</strong> Tạo sự thống nhất trong cách định
+                        nghĩa và biểu diễn các mã lỗi DTC.</li>
+                    <li><strong>Data Link Security:</strong> Đưa ra hướng dẫn bảo vệ các module khỏi
+                        việc truy cập trái phép thông qua đường truyền chẩn đoán.</li>
+                </ul>
+
+                <p>
+                    Nhờ sự phân chia này, các nhà sản xuất phương tiện và nhà phát triển thiết bị
+                    kiểm tra có thể dựa trên cùng một hệ thống quy định để triển khai những thành phần
+                    tương ứng.
+                </p>
+
+
+                <h2>2. Tổng quan cấu trúc bộ tiêu chuẩn ISO 15031</h2>
+
+                <p>
+                    ISO 15031 được chia thành <strong>7 phần (Part 1 đến Part 7)</strong>. Mỗi phần
+                    đảm nhiệm một nhóm nội dung cụ thể, tạo thành một hệ thống tiêu chuẩn phục vụ cho
+                    giao tiếp OBD liên quan đến khí thải.
+                </p>
+
+                <h3>2.1. Danh sách các phần trong ISO 15031</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Tên phần</th>
+                            <th>Nội dung chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 15031-1</td>
+                            <td>General information and use case definition</td>
+                            <td>Giới thiệu tổng quan bộ tiêu chuẩn và các trường hợp sử dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-2</td>
+                            <td>Guidance on terms, definitions, abbreviations and acronyms</td>
+                            <td>Thuật ngữ, định nghĩa, từ viết tắt và cách sử dụng thống nhất.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-3</td>
+                            <td>Diagnostic connector and related electrical circuits:
+                                Specification and use</td>
+                            <td>Đầu nối chẩn đoán và các mạch điện liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-4</td>
+                            <td>External test equipment</td>
+                            <td>Yêu cầu và khả năng của thiết bị kiểm tra bên ngoài.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-5</td>
+                            <td>Emissions-related diagnostic services</td>
+                            <td>Các dịch vụ chẩn đoán và thông điệp OBD liên quan đến khí thải.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-6</td>
+                            <td>Diagnostic trouble code definitions</td>
+                            <td>Định nghĩa và cấu trúc mã lỗi DTC.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-7</td>
+                            <td>Data link security</td>
+                            <td>Hướng dẫn bảo vệ các module khỏi truy cập trái phép qua đường truyền
+                                chẩn đoán.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>2.2. Phiên bản các phần tiêu chuẩn</h3>
+
+                <p>
+                    Các phần của ISO 15031 không được cập nhật cùng một thời điểm. Vì vậy, khi đọc
+                    tài liệu kỹ thuật hoặc làm việc trong dự án Automotive, cần kiểm tra đúng phiên
+                    bản của từng phần thay vì giả định toàn bộ bộ tiêu chuẩn có cùng năm phát hành.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phần</th>
+                            <th>Phiên bản được công bố</th>
+                            <th>Ghi chú trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 15031-1</td>
+                            <td>ISO 15031-1:2010</td>
+                            <td>Edition 2; được xác nhận năm 2022.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-2</td>
+                            <td>ISO 15031-2:2010</td>
+                            <td>Edition 1; được xác nhận năm 2021.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-3</td>
+                            <td>ISO 15031-3:2023</td>
+                            <td>Edition 3; phiên bản năm 2023 thay thế phiên bản 2016.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-4</td>
+                            <td>ISO 15031-4:2014</td>
+                            <td>Edition 2; được xác nhận năm 2025.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-5</td>
+                            <td>ISO 15031-5:2015</td>
+                            <td>Edition 3; được xác nhận tiếp tục có hiệu lực vào tháng 10/2026.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-6</td>
+                            <td>ISO 15031-6:2015</td>
+                            <td>Edition 3; được xác nhận tiếp tục có hiệu lực vào tháng 10/2026.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-7</td>
+                            <td>ISO 15031-7:2013</td>
+                            <td>Edition 2; được xác nhận năm 2025.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Lưu ý về phiên bản:</strong> Bảng trên phản ánh trạng thái công bố và rà
+                    soát của các tài liệu tại thời điểm xây dựng bài học. Khi triển khai dự án thực
+                    tế, cần kiểm tra lại danh mục ISO và yêu cầu pháp lý áp dụng cho thị trường,
+                    loại phương tiện và model year tương ứng.
+                </div>
+
+
+                <h2>3. Vai trò của từng phần trong ISO 15031</h2>
+
+                <h3>3.1. ISO 15031-1 - General Information and Use Case Definition</h3>
+
+                <p>
+                    ISO 15031-1 cung cấp thông tin tổng quan về cấu trúc bộ tiêu chuẩn ISO 15031,
+                    cách phân chia nội dung giữa các phần và mối quan hệ giữa chúng.
+                </p>
+
+                <p>
+                    Ngoài ra, phần này còn mô tả những <strong>Use Case</strong> liên quan đến việc
+                    giao tiếp giữa hệ thống OBD trên phương tiện và thiết bị kiểm tra bên ngoài.
+                </p>
+
+                <p>
+                    Có thể xem ISO 15031-1 như tài liệu định hướng giúp người đọc hiểu toàn bộ hệ
+                    thống trước khi đi vào các yêu cầu kỹ thuật cụ thể trong những phần còn lại.
+                </p>
+
+                <p><strong>Nội dung chính:</strong></p>
+
+                <ul>
+                    <li>Giới thiệu phạm vi và mục đích của ISO 15031.</li>
+                    <li>Giải thích cấu trúc và mối quan hệ giữa các phần.</li>
+                    <li>Định nghĩa các trường hợp sử dụng trong giao tiếp OBD.</li>
+                    <li>Tham chiếu các tài liệu SAE có liên quan.</li>
+                </ul>
+
+
+                <h3>3.2. ISO 15031-2 - Terms, Definitions, Abbreviations and Acronyms</h3>
+
+                <p>
+                    ISO 15031-2 tập trung vào việc thống nhất thuật ngữ và cách gọi được sử dụng
+                    trong lĩnh vực chẩn đoán liên quan đến khí thải.
+                </p>
+
+                <p>
+                    Trong Automotive, một thuật ngữ có thể xuất hiện trong nhiều loại tài liệu khác
+                    nhau như Diagnostic Specification, Service Manual, Repair Manual, Training
+                    Document hoặc Diagnostic Tool. Nếu mỗi tài liệu sử dụng cách định nghĩa khác
+                    nhau, việc trao đổi thông tin giữa các nhóm phát triển và kiểm thử sẽ trở nên
+                    khó khăn.
+                </p>
+
+                <p>
+                    Vì vậy, ISO 15031-2 cung cấp hướng dẫn về:
+                </p>
+
+                <ul>
+                    <li>Terms: Các thuật ngữ kỹ thuật.</li>
+                    <li>Definitions: Định nghĩa chính thức của thuật ngữ.</li>
+                    <li>Abbreviations: Các dạng viết tắt.</li>
+                    <li>Acronyms: Các từ được tạo thành từ chữ cái đầu của nhiều từ.</li>
+                    <li>Guidance for constructing new terms: Hướng dẫn xây dựng thuật ngữ mới.</li>
+                </ul>
+
+                <p>
+                    Phần này cũng có mối liên hệ với SAE J1930 và SAE J1930-DA, là những tài liệu
+                    liên quan đến thuật ngữ và danh mục tên gọi trong lĩnh vực chẩn đoán phương tiện.
+                </p>
+
+
+                <h3>3.3. ISO 15031-3 - Diagnostic Connector and Related Electrical Circuits</h3>
+
+                <p>
+                    ISO 15031-3 quy định các yêu cầu liên quan đến đầu nối chẩn đoán và những mạch
+                    điện có liên quan, nhằm cho phép thiết bị kiểm tra bên ngoài truy cập thông tin
+                    OBD trên phương tiện.
+                </p>
+
+                <p>
+                    Trong thực tế, đầu nối này thường được gọi là <strong>OBD Diagnostic Connector
+                    hoặc Data Link Connector (DLC)</strong>. Người dùng có thể quen thuộc với dạng
+                    đầu nối OBD 16 chân được sử dụng trên nhiều phương tiện.
+                </p>
+
+                <p>
+                    Khi một thiết bị kiểm tra kết nối với DLC, thiết bị có thể sử dụng giao diện
+                    chẩn đoán được phương tiện hỗ trợ để trao đổi dữ liệu với hệ thống OBD.
+                </p>
+
+                <p><strong>Nội dung chính:</strong></p>
+
+                <ul>
+                    <li>Yêu cầu đối với đầu nối chẩn đoán.</li>
+                    <li>Các yêu cầu về kết nối vật lý.</li>
+                    <li>Cách sử dụng các chân kết nối liên quan đến truy cập dữ liệu OBD.</li>
+                    <li>Các yêu cầu đối với mạch điện có liên quan.</li>
+                </ul>
+
+                <div class="note">
+                    ISO 15031-3:2023 tham chiếu phiên bản mới nhất của SAE J1962 tại thời điểm
+                    xây dựng tài liệu. Tiêu chuẩn này cũng có những yêu cầu bổ sung liên quan đến
+                    phương tiện có vô lăng bên phải (RHD).
+                </div>
+
+
+                <h3>3.4. ISO 15031-4 - External Test Equipment</h3>
+
+                <p>
+                    ISO 15031-4 tập trung vào thiết bị kiểm tra bên ngoài, thường được gọi là
+                    <strong>External Test Equipment</strong> hoặc <strong>Scan Tool</strong>.
+                </p>
+
+                <p>
+                    Đây là thiết bị được sử dụng để kết nối với phương tiện, gửi các yêu cầu chẩn
+                    đoán và tiếp nhận dữ liệu OBD do phương tiện cung cấp.
+                </p>
+
+                <p>
+                    ISO 15031-4 xác định những khả năng cần có của thiết bị kiểm tra để có thể truy
+                    cập các dịch vụ OBD công khai trên phương tiện tương thích. Phần này cũng mô tả
+                    cách thiết lập giao tiếp giữa phương tiện và thiết bị kiểm tra.
+                </p>
+
+                <p><strong>Ví dụ về những chức năng của thiết bị kiểm tra:</strong></p>
+
+                <ul>
+                    <li>Thiết lập giao tiếp với phương tiện.</li>
+                    <li>Gửi yêu cầu đọc dữ liệu OBD.</li>
+                    <li>Nhận và xử lý phản hồi từ phương tiện.</li>
+                    <li>Hiển thị những thông số được phương tiện hỗ trợ.</li>
+                    <li>Đọc thông tin DTC thuộc phạm vi dịch vụ OBD.</li>
+                    <li>Gửi những yêu cầu chẩn đoán được tiêu chuẩn cho phép và phương tiện hỗ trợ.</li>
+                </ul>
+
+                <p>
+                    Một điểm đáng chú ý là thiết bị kiểm tra có thể có thêm những chức năng ngoài
+                    phạm vi cơ bản của ISO 15031-4. Tuy nhiên, nhà thiết kế thiết bị phải đảm bảo
+                    những chức năng bổ sung đó không gây ảnh hưởng bất lợi đến phương tiện hoặc
+                    chính thiết bị kiểm tra.
+                </p>
+
+
+                <h3>3.5. ISO 15031-5 - Emissions-related Diagnostic Services</h3>
+
+                <p>
+                    ISO 15031-5 là một trong những phần quan trọng nhất của bộ tiêu chuẩn vì nó
+                    quy định các dịch vụ chẩn đoán liên quan đến khí thải được hỗ trợ bởi phương tiện
+                    và thiết bị kiểm tra bên ngoài.
+                </p>
+
+                <p>
+                    Phần này mô tả định dạng thông điệp Request/Response, yêu cầu về thời gian giao
+                    tiếp, cách xử lý trường hợp dữ liệu không khả dụng và nội dung của các dịch vụ
+                    chẩn đoán OBD.
+                </p>
+
+                <p>
+                    Những dịch vụ này được sử dụng để truy xuất thông tin từ hệ thống OBD trên
+                    phương tiện. Chúng bao gồm các nhóm dữ liệu như:
+                </p>
+
+                <ul>
+                    <li>Current diagnostic data: Dữ liệu chẩn đoán hiện tại.</li>
+                    <li>Freeze Frame Data: Dữ liệu được lưu tại một thời điểm xảy ra điều kiện bất thường.</li>
+                    <li>Emission-related DTCs: Mã lỗi liên quan đến khí thải.</li>
+                    <li>Monitoring Test Results: Kết quả của các bài kiểm tra giám sát OBD.</li>
+                    <li>Vehicle Information: Một số thông tin nhận dạng phương tiện.</li>
+                </ul>
+
+                <p>
+                    ISO 15031-5 có mối quan hệ chặt chẽ với SAE J1979 và SAE J1979-DA. Trong đó,
+                    SAE J1979-DA chứa các định nghĩa dữ liệu được sử dụng bởi những dịch vụ OBD,
+                    chẳng hạn như PID, OBDMID, TID và INFOTYPE.
+                </p>
+
+                <p><strong>Một số ví dụ về Diagnostic Test Mode:</strong></p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>Tên gọi</th>
+                            <th>Mục đích tổng quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mode $01</td>
+                            <td>Request Current Powertrain Diagnostic Data</td>
+                            <td>Đọc dữ liệu chẩn đoán hiện tại.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode $02</td>
+                            <td>Request Powertrain Freeze Frame Data</td>
+                            <td>Đọc dữ liệu Freeze Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode $03</td>
+                            <td>Request Emission-Related Powertrain DTCs</td>
+                            <td>Yêu cầu các mã lỗi DTC liên quan đến khí thải.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode $04</td>
+                            <td>Clear/Reset Emission-Related Diagnostic Information</td>
+                            <td>Yêu cầu xóa hoặc đặt lại thông tin chẩn đoán liên quan đến khí thải
+                                theo phạm vi được quy định.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode $06</td>
+                            <td>Request On-Board Monitoring Test Results</td>
+                            <td>Truy xuất kết quả của các bài kiểm tra giám sát OBD.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode $07</td>
+                            <td>Request On-Board Monitoring Test Results for Continuously Monitored Systems</td>
+                            <td>Truy xuất kết quả giám sát thuộc nhóm hệ thống được theo dõi liên tục.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode $09</td>
+                            <td>Request Vehicle Information</td>
+                            <td>Truy xuất một số thông tin nhận dạng phương tiện.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Bảng trên chỉ giới thiệu một số Mode tiêu biểu để giúp
+                    hình dung các nhóm dịch vụ OBD. Những dịch vụ và dữ liệu thực tế được hỗ trợ
+                    còn phụ thuộc vào quy định của từng khu vực, model year, loại động cơ và cấu hình
+                    của phương tiện. Không phải mọi phương tiện đều hỗ trợ mọi Mode hoặc mọi dữ liệu.
+                </div>
+
+
+                <h3>3.6. ISO 15031-6 - Diagnostic Trouble Code Definitions</h3>
+
+                <p>
+                    ISO 15031-6 quy định cách định nghĩa và biểu diễn các mã lỗi chẩn đoán
+                    <strong>Diagnostic Trouble Code (DTC)</strong> được báo cáo bởi hệ thống OBD.
+                </p>
+
+                <p>
+                    Khi hệ thống phát hiện một điều kiện bất thường thuộc phạm vi giám sát, hệ thống
+                    có thể ghi nhận mã lỗi tương ứng. Thiết bị kiểm tra bên ngoài có thể truy xuất
+                    những mã lỗi đó thông qua các dịch vụ chẩn đoán phù hợp.
+                </p>
+
+                <p>
+                    Nếu mỗi nhà sản xuất sử dụng một cách định nghĩa mã lỗi hoàn toàn khác nhau,
+                    việc diễn giải dữ liệu và xây dựng công cụ chẩn đoán chung sẽ gặp nhiều khó khăn.
+                    ISO 15031-6 giúp tạo ra sự thống nhất về quy tắc định nghĩa DTC.
+                </p>
+
+                <p><strong>Nội dung chính:</strong></p>
+
+                <ul>
+                    <li>Định dạng và cấu trúc của DTC.</li>
+                    <li>Quy tắc định nghĩa các mã lỗi chuẩn hóa.</li>
+                    <li>Thông tin mô tả (Text Descriptor) tương ứng với DTC.</li>
+                    <li>Các quy tắc liên quan đến những dạng DTC khác nhau.</li>
+                    <li>Failure Type Byte trong trường hợp sử dụng DTC có độ dài 3 byte.</li>
+                </ul>
+
+                <p>
+                    ISO 15031-6 tham chiếu SAE J2012-DA, là tài liệu chứa danh mục các DTC chuẩn hóa
+                    cùng mô tả tương ứng và những thông tin liên quan đến Failure Type.
+                </p>
+
+                <div class="note">
+                    <strong>Phân biệt:</strong> DTC là mã nhận diện một điều kiện lỗi hoặc một dạng
+                    bất thường đã được định nghĩa. Chỉ đọc được một mã DTC không có nghĩa là đã xác
+                    định chính xác nguyên nhân gốc rễ. Quá trình phân tích vẫn cần kết hợp dữ liệu
+                    liên quan, điều kiện vận hành và tài liệu kỹ thuật của phương tiện.
+                </div>
+
+
+                <h3>3.7. ISO 15031-7 - Data Link Security</h3>
+
+                <p>
+                    ISO 15031-7 đề cập đến vấn đề bảo mật khi truy cập các module của phương tiện
+                    thông qua đường truyền dữ liệu chẩn đoán.
+                </p>
+
+                <p>
+                    Một số module có bộ nhớ chứa nội dung có thể được thay đổi thông qua giao tiếp
+                    chẩn đoán từ bên ngoài. Nếu không có biện pháp bảo vệ phù hợp, việc truy cập
+                    trái phép có thể ảnh hưởng đến hoạt động của module, các thành phần điện tử
+                    khác hoặc khả năng đáp ứng những yêu cầu pháp lý của phương tiện.
+                </p>
+
+                <p>
+                    Vì vậy, ISO 15031-7 đưa ra các hướng dẫn nhằm giúp nhà sản xuất bảo vệ module
+                    trước những truy cập không được phép thông qua diagnostic data link.
+                </p>
+
+                <p><strong>Vai trò tổng quan:</strong></p>
+
+                <ul>
+                    <li>Hỗ trợ bảo vệ module khỏi việc truy cập trái phép.</li>
+                    <li>Đưa ra hướng dẫn về biện pháp bảo mật cho đường truyền chẩn đoán.</li>
+                    <li>Cho phép nhà sản xuất lựa chọn biện pháp phù hợp với yêu cầu bảo mật của mình.</li>
+                    <li>Không loại trừ việc áp dụng những biện pháp bảo vệ bổ sung.</li>
+                </ul>
+
+                <div class="note">
+                    ISO 15031-7 tập trung vào hướng dẫn bảo vệ thông qua diagnostic data link.
+                    Đây là nội dung về bảo mật ở cấp độ hệ thống, không nên hiểu rằng chỉ cần áp
+                    dụng một cơ chế bảo mật duy nhất là có thể bảo vệ toàn bộ phương tiện.
+                </div>
+
+
+                <h2>4. Kiến trúc giao tiếp OBD theo ISO 15031</h2>
+
+                <h3>4.1. Các thành phần chính</h3>
+
+                <p>
+                    Để hiểu cách ISO 15031 được sử dụng trong thực tế, trước tiên cần xác định
+                    những thành phần tham gia vào quá trình giao tiếp.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>External Test Equipment:</strong> Thiết bị kiểm tra bên ngoài,
+                        chẳng hạn như một OBD Scan Tool. Thiết bị này gửi yêu cầu và nhận dữ liệu
+                        từ phương tiện.
+                    </li>
+                    <li>
+                        <strong>Diagnostic Connector (DLC):</strong> Đầu nối vật lý cho phép thiết
+                        bị kiểm tra kết nối với hệ thống chẩn đoán của phương tiện.
+                    </li>
+                    <li>
+                        <strong>Vehicle Communication Network:</strong> Mạng truyền thông được
+                        phương tiện sử dụng để trao đổi dữ liệu chẩn đoán.
+                    </li>
+                    <li>
+                        <strong>OBD System:</strong> Hệ thống chẩn đoán trên phương tiện, chịu
+                        trách nhiệm theo dõi và cung cấp những dữ liệu OBD thuộc phạm vi hỗ trợ.
+                    </li>
+                    <li>
+                        <strong>ECU:</strong> Bộ điều khiển điện tử có thể cung cấp hoặc quản lý
+                        những thông tin cần thiết cho hệ thống OBD.
+                    </li>
+                </ul>
+
+
+                <h3>4.2. Sơ đồ giao tiếp tổng quan</h3>
+
+                <p>
+                    Có thể mô hình hóa luồng giao tiếp giữa thiết bị kiểm tra bên ngoài và hệ thống
+                    OBD trên phương tiện như sau:
+                </p>
+
+                <pre><code>+---------------------------+
+|   External Test Equipment |
+|        (Scan Tool)        |
++-------------+-------------+
+              |
+              | Diagnostic Request / Response
+              |
++-------------v-------------+
+|  Diagnostic Connector     |
+|          (DLC)            |
++-------------+-------------+
+              |
+              |
++-------------v-------------+
+| Vehicle Communication     |
+| Network / Interface       |
++-------------+-------------+
+              |
+              |
++-------------v-------------+
+|         OBD System        |
+|                           |
+| - Diagnostic Services     |
+| - OBD Data                |
+| - DTC Information         |
+| - Monitoring Results      |
++-------------+-------------+
+              |
+              |
++-------------v-------------+
+|  Vehicle ECUs / Monitors  |
+|                           |
+| - Monitor operating data  |
+| - Detect conditions       |
+| - Maintain diagnostic data|
++---------------------------+</code></pre>
+
+                <p>
+                    Đây là sơ đồ khái niệm để minh họa các thành phần tham gia. Cấu trúc triển khai
+                    thực tế có thể khác nhau tùy theo kiến trúc điện tử, loại phương tiện và giao
+                    thức truyền thông được hỗ trợ.
+                </p>
+
+
+                <h3>4.3. Luồng Request và Response</h3>
+
+                <p>
+                    Khi thiết bị kiểm tra cần truy xuất một thông tin OBD, nó sẽ gửi một yêu cầu
+                    tương ứng. Hệ thống OBD tiếp nhận yêu cầu, kiểm tra dịch vụ và dữ liệu được hỗ
+                    trợ, sau đó tạo phản hồi nếu có thể cung cấp thông tin.
+                </p>
+
+                <p>
+                    Có thể mô tả luồng xử lý tổng quan như sau:
+                </p>
+
+                <pre><code>External Test Equipment
+        |
+        | 1. Send Diagnostic Request
+        |
+        v
+Vehicle Communication Interface
+        |
+        | 2. Forward Request
+        |
+        v
+OBD System
+        |
+        | 3. Process Request
+        | 4. Retrieve OBD Information
+        |
+        v
+Vehicle Communication Interface
+        |
+        | 5. Return Diagnostic Response
+        |
+        v
+External Test Equipment
+        |
+        | 6. Decode and Display Data
+        |
+        v
+Diagnostic Information</code></pre>
+
+                <p>
+                    Thiết bị kiểm tra cần diễn giải phản hồi theo đúng định nghĩa dịch vụ và dữ liệu
+                    tương ứng. Việc nhận được một chuỗi byte không đồng nghĩa với việc thiết bị đã
+                    hiểu đúng ý nghĩa của thông tin.
+                </p>
+
+
+                <h2>5. Mối quan hệ giữa ISO 15031 và SAE Standards</h2>
+
+                <p>
+                    ISO 15031 có mối liên hệ với nhiều tài liệu SAE. Trong một số phần, ISO 15031
+                    định nghĩa phạm vi, quy tắc hoặc cách sử dụng, trong khi các tài liệu SAE
+                    Digital Annex cung cấp danh mục dữ liệu và định nghĩa chi tiết được tham chiếu.
+                </p>
+
+                <h3>5.1. Các tài liệu SAE quan trọng</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu ISO</th>
+                            <th>Tài liệu SAE liên quan</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 15031-2</td>
+                            <td>SAE J1930 / J1930-DA</td>
+                            <td>Thuật ngữ, tên gọi, định nghĩa và từ viết tắt.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-3</td>
+                            <td>SAE J1962</td>
+                            <td>Đầu nối chẩn đoán và các yêu cầu liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-4</td>
+                            <td>SAE J1978</td>
+                            <td>Thiết bị kiểm tra OBD và các chức năng liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-5</td>
+                            <td>SAE J1979 / J1979-DA</td>
+                            <td>Dịch vụ chẩn đoán OBD và các định nghĩa dữ liệu như PID, TID,
+                                OBDMID, INFOTYPE.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-6</td>
+                            <td>SAE J2012 / J2012-DA</td>
+                            <td>Định nghĩa DTC chuẩn hóa, mô tả lỗi và Failure Type.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>5.2. ISO Standard và SAE Digital Annex</h3>
+
+                <p>
+                    Một điểm quan trọng cần hiểu là ISO Standard và SAE Digital Annex có thể đảm
+                    nhiệm những vai trò bổ trợ cho nhau.
+                </p>
+
+                <p>
+                    Ví dụ với ISO 15031-5:
+                </p>
+
+                <ul>
+                    <li>
+                        ISO 15031-5 mô tả các dịch vụ chẩn đoán, cấu trúc thông điệp Request/Response
+                        và các yêu cầu liên quan.
+                    </li>
+                    <li>
+                        SAE J1979-DA chứa những định nghĩa dữ liệu được sử dụng bởi các dịch vụ đó,
+                        chẳng hạn như PID, OBDMID, TID và INFOTYPE.
+                    </li>
+                </ul>
+
+                <p>
+                    Tương tự, ISO 15031-6 quy định các quy tắc định nghĩa DTC và tham chiếu
+                    SAE J2012-DA để cung cấp danh mục DTC chuẩn hóa cùng mô tả tương ứng.
+                </p>
+
+                <div class="note">
+                    Có thể hiểu đơn giản: ISO 15031 cung cấp cấu trúc và các quy tắc của hệ thống,
+                    còn những tài liệu SAE được tham chiếu cung cấp các danh mục và định nghĩa dữ
+                    liệu cần thiết cho việc sử dụng những quy tắc đó.
+                </div>
+
+
+                <h2>6. ISO 15031 và các giao thức truyền thông</h2>
+
+                <h3>6.1. ISO 15031 không phải một giao thức truyền thông vật lý duy nhất</h3>
+
+                <p>
+                    Một hiểu nhầm thường gặp là cho rằng ISO 15031 chỉ hoạt động trên CAN Bus.
+                    Trên thực tế, bộ tiêu chuẩn này có phạm vi rộng hơn ở góc độ giao tiếp OBD:
+                    nó định nghĩa những dịch vụ chẩn đoán liên quan đến khí thải và có thể được sử
+                    dụng với các nền tảng truyền thông được hỗ trợ trong phạm vi tương ứng.
+                </p>
+
+                <p>
+                    Những công nghệ truyền thông được đề cập trong cấu trúc OBD liên quan gồm:
+                </p>
+
+                <ul>
+                    <li><strong>DoCAN:</strong> Diagnostics over CAN, sử dụng các tiêu chuẩn
+                        ISO 15765 có liên quan.</li>
+                    <li><strong>DoK-Line:</strong> Diagnostics over K-Line, liên quan đến ISO 14230.</li>
+                    <li><strong>ISO 9141-2:</strong> Giao tiếp chẩn đoán sử dụng K-Line theo tiêu chuẩn
+                        tương ứng.</li>
+                    <li><strong>SAE J1850:</strong> Một nền tảng truyền thông từng được sử dụng trong
+                        các hệ thống OBD.</li>
+                </ul>
+
+                <p>
+                    Việc sử dụng giao thức nào phụ thuộc vào yêu cầu áp dụng và thiết kế của phương
+                    tiện. Không phải mọi phương tiện đều hỗ trợ tất cả các giao thức trên.
+                </p>
+
+
+                <h3>6.2. Quan hệ giữa ISO 15031-5 và ISO 15765-2</h3>
+
+                <p>
+                    Trong trường hợp sử dụng DoCAN, cần phân biệt vai trò của dịch vụ OBD với vai
+                    trò của tầng truyền tải thông điệp.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>ISO 15031-5:</strong> Định nghĩa các dịch vụ OBD liên quan đến khí thải,
+                        nội dung yêu cầu và phản hồi ở cấp độ chẩn đoán.
+                    </li>
+                    <li>
+                        <strong>ISO 15765-2:</strong> Cung cấp các dịch vụ Transport Protocol và
+                        Network Layer cho việc truyền thông điệp chẩn đoán trên CAN.
+                    </li>
+                    <li>
+                        <strong>ISO 15765-4:</strong> Đề cập đến các yêu cầu đối với hệ thống
+                        chẩn đoán liên quan đến khí thải sử dụng CAN.
+                    </li>
+                </ul>
+
+                <p>
+                    Như vậy, khi thiết bị kiểm tra gửi một yêu cầu OBD qua CAN, nội dung dịch vụ
+                    được xác định bởi tiêu chuẩn OBD tương ứng, còn việc truyền tải thông điệp qua
+                    CAN được xử lý theo kiến trúc giao thức phù hợp.
+                </p>
+
+
+                <h3>6.3. Sơ đồ phân chia vai trò theo tầng OSI</h3>
+
+                <p>
+                    ISO 15031 có thể được nhìn nhận thông qua mô hình OSI để hiểu cách các tiêu
+                    chuẩn khác nhau đảm nhiệm những phần việc trong quá trình giao tiếp.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>OSI Layer</th>
+                            <th>Vai trò tổng quan</th>
+                            <th>Tiêu chuẩn liên quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Application (Layer 7)</td>
+                            <td>Các dịch vụ chẩn đoán OBD liên quan đến khí thải.</td>
+                            <td>ISO 15031-5</td>
+                        </tr>
+                        <tr>
+                            <td>Presentation (Layer 6)</td>
+                            <td>Thuật ngữ, định nghĩa và cách biểu diễn dữ liệu.</td>
+                            <td>ISO 15031-2, ISO 15031-5, ISO 15031-6 và các SAE Digital Annex liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Session (Layer 5)</td>
+                            <td>Các dịch vụ session trong một số cấu hình truyền thông.</td>
+                            <td>ISO 14229-2 trong các trường hợp áp dụng tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Transport (Layer 4)</td>
+                            <td>Truyền tải thông điệp chẩn đoán.</td>
+                            <td>ISO 15765-2, ISO 14230-4 hoặc các quy định giao thức tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Network (Layer 3)</td>
+                            <td>Chức năng mạng và định tuyến thông điệp theo giao thức.</td>
+                            <td>ISO 15765-2 hoặc các giao thức tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Data Link (Layer 2)</td>
+                            <td>Trao đổi dữ liệu ở tầng liên kết dữ liệu.</td>
+                            <td>ISO 11898-1, SAE J1850, ISO 14230-2 và các tiêu chuẩn tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Physical (Layer 1)</td>
+                            <td>Kết nối và truyền tín hiệu vật lý.</td>
+                            <td>ISO 11898, ISO 14230-1, ISO 9141-2 và các tiêu chuẩn tương ứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    Bảng trên là cách nhìn tổng quan về mối quan hệ giữa các tiêu chuẩn trong kiến
+                    trúc giao tiếp OBD. Không nên hiểu rằng mọi phương tiện đều sử dụng tất cả các
+                    tiêu chuẩn trong bảng. Việc phân chia chính xác phụ thuộc vào giao thức được
+                    lựa chọn và cấu hình của từng phương tiện.
+                </div>
+
+
+                <h2>7. Ví dụ về quá trình đọc dữ liệu OBD</h2>
+
+                <h3>7.1. Đọc dữ liệu hiện tại</h3>
+
+                <p>
+                    Giả sử một thiết bị kiểm tra cần truy xuất một thông số vận hành hiện tại được
+                    hệ thống OBD hỗ trợ, ví dụ thông tin về tốc độ động cơ.
+                </p>
+
+                <p>
+                    Thiết bị kiểm tra sẽ gửi yêu cầu tương ứng với dịch vụ OBD. Nếu phương tiện hỗ
+                    trợ dịch vụ và thông số đó, hệ thống OBD sẽ trả về dữ liệu theo định dạng được
+                    quy định.
+                </p>
+
+                <p>
+                    Ví dụ minh họa ở cấp độ nội dung OBD:
+                </p>
+
+                <pre><code>Request:
+01 0C
+
+Response:
+41 0C A B</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><strong>01:</strong> Yêu cầu dữ liệu hiện tại (Mode 01).</li>
+                    <li><strong>0C:</strong> PID dùng để yêu cầu thông tin tốc độ động cơ.</li>
+                    <li><strong>41:</strong> Service identifier phản hồi tương ứng với Mode 01.</li>
+                    <li><strong>0C:</strong> PID được phản hồi.</li>
+                    <li><strong>A, B:</strong> Các byte dữ liệu cần được giải mã theo định nghĩa
+                        của PID tương ứng.</li>
+                </ul>
+
+                <p>
+                    Thiết bị kiểm tra cần sử dụng định nghĩa PID phù hợp trong tài liệu tham chiếu
+                    để chuyển dữ liệu thô thành giá trị có ý nghĩa.
+                </p>
+
+                <div class="note">
+                    Đây là ví dụ ở cấp độ dịch vụ OBD, không phải toàn bộ frame truyền trên CAN.
+                    Nếu phương tiện sử dụng DoCAN, thông điệp còn được truyền qua các tầng giao thức
+                    liên quan như ISO 15765-2.
+                </div>
+
+
+                <h3>7.2. Đọc mã lỗi DTC</h3>
+
+                <p>
+                    Một trường hợp sử dụng khác là yêu cầu hệ thống OBD cung cấp những mã lỗi liên
+                    quan đến khí thải đã được ghi nhận.
+                </p>
+
+                <p>
+                    Khi nhận được yêu cầu phù hợp, hệ thống OBD sẽ phản hồi danh sách mã lỗi mà
+                    phương tiện hỗ trợ cung cấp. Thiết bị kiểm tra sau đó diễn giải các mã lỗi theo
+                    những định nghĩa DTC tương ứng.
+                </p>
+
+                <pre><code>External Test Equipment
+        |
+        | Request emission-related DTCs
+        |
+        v
+OBD System
+        |
+        | Retrieve available DTC information
+        |
+        v
+Diagnostic Response
+        |
+        v
+External Test Equipment
+        |
+        | Decode DTC using the appropriate definitions
+        |
+        v
+Display diagnostic information</code></pre>
+
+                <p>
+                    Ở đây có hai nhóm tiêu chuẩn đóng vai trò khác nhau:
+                </p>
+
+                <ul>
+                    <li>
+                        ISO 15031-5 định nghĩa dịch vụ được sử dụng để yêu cầu và phản hồi dữ liệu
+                        chẩn đoán.
+                    </li>
+                    <li>
+                        ISO 15031-6 cung cấp các quy tắc định nghĩa DTC và tham chiếu SAE J2012-DA
+                        cho danh mục mã lỗi chuẩn hóa.
+                    </li>
+                </ul>
+
+
+                <h2>8. Phân biệt ISO 15031, ISO 14229 và ISO 13400</h2>
+
+                <p>
+                    Trong lĩnh vực Automotive Diagnostics, ISO 15031, ISO 14229 và ISO 13400 đều
+                    liên quan đến việc trao đổi dữ liệu chẩn đoán giữa thiết bị bên ngoài và phương
+                    tiện. Tuy nhiên, mục đích và phạm vi của chúng không giống nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Tên gọi</th>
+                            <th>Trọng tâm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 15031</td>
+                            <td>Emissions-related Diagnostics</td>
+                            <td>Giao tiếp OBD liên quan đến khí thải, dịch vụ OBD, dữ liệu và DTC
+                                thuộc phạm vi tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229</td>
+                            <td>Unified Diagnostic Services (UDS)</td>
+                            <td>Hệ thống dịch vụ chẩn đoán thống nhất, phục vụ nhiều hoạt động
+                                chẩn đoán và quản lý ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 13400</td>
+                            <td>Diagnostics over Internet Protocol (DoIP)</td>
+                            <td>Giao tiếp chẩn đoán trên nền tảng Internet Protocol, thường sử dụng
+                                Ethernet trong kiến trúc phương tiện.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>8.1. ISO 15031 và ISO 14229</h3>
+
+                <p>
+                    ISO 15031 tập trung vào các dịch vụ OBD liên quan đến khí thải, trong khi
+                    ISO 14229 định nghĩa hệ thống dịch vụ UDS có phạm vi chẩn đoán rộng hơn.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>
+                        ISO 15031 có các Diagnostic Test Mode phục vụ việc truy xuất dữ liệu OBD
+                        và thông tin liên quan đến khí thải.
+                    </li>
+                    <li>
+                        ISO 14229 có những dịch vụ UDS như DiagnosticSessionControl,
+                        ReadDataByIdentifier, ReadDTCInformation và TesterPresent.
+                    </li>
+                </ul>
+
+                <p>
+                    Hai hệ thống này có thể cùng tồn tại trong một phương tiện, nhưng không nên
+                    xem các dịch vụ OBD của ISO 15031 và các dịch vụ UDS của ISO 14229 là một hệ
+                    thống dịch vụ giống nhau.
+                </p>
+
+
+                <h3>8.2. ISO 15031 và ISO 13400</h3>
+
+                <p>
+                    ISO 13400 tập trung vào việc truyền thông điệp chẩn đoán thông qua Internet
+                    Protocol, thường sử dụng Ethernet. Trong khi đó, ISO 15031 tập trung vào nội
+                    dung và hoạt động của giao tiếp OBD liên quan đến khí thải.
+                </p>
+
+                <p>
+                    Vì vậy, hai tiêu chuẩn này giải quyết những vấn đề khác nhau. Không nên mặc
+                    định rằng một hệ thống hỗ trợ DoIP sẽ tự động hỗ trợ toàn bộ dịch vụ OBD theo
+                    ISO 15031 hoặc ngược lại.
+                </p>
+
+
+                <h2>9. Kiểm thử và xác minh trong dự án Automotive</h2>
+
+                <p>
+                    Khi phát triển phần mềm hoặc thiết bị liên quan đến OBD, việc kiểm thử cần
+                    kiểm tra cả nội dung dịch vụ, định dạng thông điệp và cách xử lý những trường
+                    hợp dữ liệu không khả dụng.
+                </p>
+
+                <h3>9.1. Một số nhóm kiểm thử tổng quan</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm kiểm thử</th>
+                            <th>Nội dung cần xác minh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Communication Setup</td>
+                            <td>Thiết bị kiểm tra và hệ thống OBD có thể thiết lập giao tiếp theo
+                                giao thức được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Request/Response</td>
+                            <td>Yêu cầu và phản hồi có đúng định dạng quy định hay không.</td>
+                        </tr>
+                        <tr>
+                            <td>Supported Data</td>
+                            <td>Các PID hoặc nhóm dữ liệu được hỗ trợ có được báo cáo chính xác
+                                hay không.</td>
+                        </tr>
+                        <tr>
+                            <td>Unsupported Data</td>
+                            <td>Hệ thống có xử lý đúng khi thiết bị yêu cầu dữ liệu không được
+                                phương tiện hỗ trợ hay không.</td>
+                        </tr>
+                        <tr>
+                            <td>Timing</td>
+                            <td>Thời gian phản hồi và khoảng thời gian giữa các yêu cầu có đáp
+                                ứng quy định tương ứng hay không.</td>
+                        </tr>
+                        <tr>
+                            <td>DTC Handling</td>
+                            <td>Thông tin DTC có được báo cáo và diễn giải đúng theo định nghĩa
+                                tương ứng hay không.</td>
+                        </tr>
+                        <tr>
+                            <td>Data Interpretation</td>
+                            <td>Thiết bị kiểm tra có giải mã dữ liệu theo đúng định nghĩa PID,
+                                TID hoặc loại dữ liệu tương ứng hay không.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <h3>9.2. Ví dụ về Test Case</h3>
+
+                <p>
+                    Giả sử cần kiểm tra chức năng đọc một thông số OBD mà hệ thống hỗ trợ.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Item</th>
+                            <th>Mô tả</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Kiểm tra chức năng đọc dữ liệu OBD.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>Thiết bị kiểm tra và môi trường kiểm thử đã được cấu hình theo
+                                giao thức tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Input</td>
+                            <td>Yêu cầu đọc PID đã được xác nhận là hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>Hệ thống phản hồi đúng định dạng và dữ liệu có thể được giải mã
+                                theo định nghĩa PID.</td>
+                        </tr>
+                        <tr>
+                            <td>Verification</td>
+                            <td>So sánh phản hồi thực tế với đặc tả dịch vụ và dữ liệu tương ứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các hoạt động kiểm thử nên được thực hiện trong môi trường mô phỏng hoặc
+                    bench kiểm thử được phê duyệt, với cấu hình và quy trình an toàn phù hợp.
+                </p>
+
+
+                <h2>10. Những điểm cần ghi nhớ</h2>
+
+                <h3>10.1. ISO 15031 là một bộ tiêu chuẩn gồm nhiều phần</h3>
+
+                <p>
+                    ISO 15031 không chỉ mô tả dịch vụ OBD mà còn bao gồm thuật ngữ, đầu nối,
+                    thiết bị kiểm tra, định nghĩa DTC và bảo mật đường truyền chẩn đoán.
+                </p>
+
+
+                <h3>10.2. ISO 15031 tập trung vào OBD liên quan đến khí thải</h3>
+
+                <p>
+                    Không nên hiểu ISO 15031 là tiêu chuẩn mô tả toàn bộ hoạt động chẩn đoán của
+                    mọi ECU. Phạm vi chính của nó là giao tiếp và thông tin OBD liên quan đến
+                    khí thải theo ứng dụng tương ứng.
+                </p>
+
+
+                <h3>10.3. Cần phân biệt vai trò của từng Part</h3>
+
+                <ul>
+                    <li>Part 1: Tổng quan và Use Case.</li>
+                    <li>Part 2: Thuật ngữ và định nghĩa.</li>
+                    <li>Part 3: Đầu nối chẩn đoán.</li>
+                    <li>Part 4: Thiết bị kiểm tra bên ngoài.</li>
+                    <li>Part 5: Dịch vụ chẩn đoán OBD.</li>
+                    <li>Part 6: Định nghĩa DTC.</li>
+                    <li>Part 7: Bảo mật đường truyền dữ liệu.</li>
+                </ul>
+
+
+                <h3>10.4. Phân biệt ISO và SAE</h3>
+
+                <p>
+                    ISO 15031 tham chiếu nhiều tài liệu SAE. Cần hiểu rõ phần nào quy định dịch
+                    vụ, phần nào quy định cách kết nối và phần nào cung cấp danh mục dữ liệu
+                    hoặc định nghĩa được sử dụng trong quá trình chẩn đoán.
+                </p>
+
+
+                <h3>10.5. Không nhầm lẫn OBD với UDS</h3>
+
+                <p>
+                    OBD liên quan đến khí thải theo ISO 15031 và hệ thống dịch vụ UDS theo
+                    ISO 14229 có mục đích và phạm vi khác nhau. Chúng có thể cùng xuất hiện trong
+                    một phương tiện nhưng không thể thay thế trực tiếp cho nhau.
+                </p>
+
+
+                <h2>11. Tài liệu tham khảo</h2>
+
+                <p>
+                    Các tài liệu dưới đây là nguồn tham khảo chính để tìm hiểu thêm về bộ tiêu
+                    chuẩn ISO 15031 và các tài liệu SAE có liên quan.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Nội dung</th>
+                            <th>Tham khảo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 15031-1:2010</td>
+                            <td>General information and use case definition</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/51828.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-2:2010</td>
+                            <td>Terms, definitions, abbreviations and acronyms</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/50815.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-3:2023</td>
+                            <td>Diagnostic connector and related electrical circuits</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/84210.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-4:2014</td>
+                            <td>External test equipment</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/55047.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-5:2015</td>
+                            <td>Emissions-related diagnostic services</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/66368.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-6:2015</td>
+                            <td>Diagnostic trouble code definitions</td>
+                            <td>
+                                <a href="https://committee.iso.org/cms/live/live/en/sites/isoorg/contents/data/standard/06/63/66369.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15031-7:2013</td>
+                            <td>Data link security</td>
+                            <td>
+                                <a href="https://www.iso.org/standard/62489.html" target="_blank">
+                                    ISO Official
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SAE J1979</td>
+                            <td>E/E Diagnostic Test Modes</td>
+                            <td>
+                                <a href="https://saemobilus.sae.org/standards/j1979_202505-e-e-diagnostic-test-modes" target="_blank">
+                                    SAE International
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SAE J2012</td>
+                            <td>Diagnostic Trouble Code Definitions</td>
+                            <td>
+                                <a href="https://saemobilus.sae.org/standards/j2012_202511-diagnostic-trouble-code-definitions" target="_blank">
+                                    SAE International
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <div class="note">
+                    <strong>Tổng kết:</strong>
+                    ISO 15031 cung cấp một hệ thống tiêu chuẩn phục vụ giao tiếp OBD liên quan đến
+                    khí thải giữa phương tiện và thiết bị kiểm tra bên ngoài. Việc nắm được cấu trúc
+                    7 phần và mối quan hệ giữa ISO 15031 với các tiêu chuẩn SAE, ISO 15765 và
+                    ISO 14229 sẽ giúp chúng ta hiểu rõ hơn cách một hệ thống OBD được tổ chức,
+                    giao tiếp và cung cấp dữ liệu chẩn đoán.
+                </div>
+
+
+                <div class="pager">
+                    <a class="btn" href="lesson-41.html">← Bài trước</a>
+                    <a class="btn" href="lesson-43.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+</html>

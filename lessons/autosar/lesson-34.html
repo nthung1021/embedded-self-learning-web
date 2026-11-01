@@ -1,0 +1,2583 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 34: Chi tiết ISO 11898-1 - CAN Protocol | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html" class="active" aria-current="page">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</h1>
+
+                <p>
+                    Trong các hệ thống Automotive, CAN (Controller Area Network)
+                    là một trong những giao thức truyền thông quan trọng, cho phép
+                    nhiều Electronic Control Unit (ECU) trao đổi dữ liệu trên cùng
+                    một mạng truyền thông.
+                </p>
+
+                <p>
+                    Để các ECU có thể truyền và nhận dữ liệu theo những quy tắc
+                    thống nhất, CAN cần có các cơ chế như Frame Format, Arbitration,
+                    Error Detection, Acknowledgement và Fault Confinement.
+                    Những cơ chế này được mô tả trong nhóm tiêu chuẩn ISO 11898.
+                </p>
+
+                <p>
+                    Trong đó, ISO 11898-1 tập trung vào CAN Data Link Layer (DLL)
+                    và Physical Coding Sublayer (PCS). Đây là phần tiêu chuẩn
+                    quan trọng để hiểu cách một CAN node hình thành frame,
+                    truy cập bus, mã hóa bit và xử lý những tình huống lỗi
+                    trong quá trình truyền thông.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào ISO 11898-1:2024, bao gồm phạm vi tiêu chuẩn,
+                    kiến trúc Data Link Layer, LLC, MAC, CAN Frame, Arbitration,
+                    ACK, Error Detection, Fault Confinement và các nội dung chính
+                    của Physical Coding Sublayer.
+                    Bên cạnh kiến thức kỹ thuật, bài học hướng dẫn cách đọc tiêu chuẩn,
+                    chuyển yêu cầu thành checklist, áp dụng vào thiết kế ECU
+                    và xây dựng test case trong dự án Automotive.
+                    Các ví dụ cấu hình và kiểm thử trong bài là ví dụ minh họa,
+                    không phải giá trị bắt buộc áp dụng cho mọi dự án.
+                </div>
+
+                <h2>1. ISO 11898-1 là gì?</h2>
+
+                <p>
+                    ISO 11898-1 là một phần của bộ tiêu chuẩn ISO 11898,
+                    quy định những nội dung thuộc Data Link Layer và
+                    Physical Coding Sublayer của Controller Area Network.
+                </p>
+
+                <p>
+                    Có thể hiểu đơn giản, tiêu chuẩn này mô tả các quy tắc
+                    giúp những CAN node có thể trao đổi frame trên mạng CAN,
+                    bao gồm cách truy cập bus, cách tổ chức dữ liệu,
+                    cách phát hiện lỗi và cách xử lý trạng thái lỗi.
+                </p>
+
+                <p>
+                    Tên đầy đủ của tài liệu là:
+                </p>
+
+                <pre><code>ISO 11898-1:2024
+
+Road vehicles - Controller area network (CAN) -
+Part 1: Data link layer and physical coding sublayer</code></pre>
+
+                <p>
+                    ISO 11898-1:2024 là Edition 3, được xuất bản vào tháng 5/2024.
+                    Phiên bản này thay thế ISO 11898-1:2015 và mở rộng phạm vi
+                    để bao gồm các định dạng CAN Classic, CAN FD và CAN XL.
+                </p>
+
+                <p>
+                    Khi đọc tài liệu, cần chú ý không chỉ nhìn thấy tên
+                    "ISO 11898-1" mà bỏ qua năm phát hành. Các phiên bản khác nhau
+                    có thể có cấu trúc, định nghĩa và nội dung kỹ thuật khác nhau.
+                </p>
+
+                <h2>2. ISO 11898-1 quy định những gì?</h2>
+
+                <p>
+                    Phạm vi chính của ISO 11898-1 là Data Link Layer (DLL)
+                    và Physical Coding Sublayer (PCS).
+                </p>
+
+                <p>
+                    Có thể chia những nội dung quan trọng của tiêu chuẩn
+                    thành ba nhóm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm</th>
+                            <th>Nội dung</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Data Link Layer</td>
+                            <td>Quy tắc trao đổi frame giữa các CAN node.</td>
+                            <td>Frame Format, Arbitration, ACK, Error Handling.</td>
+                        </tr>
+                        <tr>
+                            <td>Logical Link Control và MAC</td>
+                            <td>Các chức năng điều khiển liên kết và truy cập môi trường truyền.</td>
+                            <td>Acceptance Filtering, Bus Access, Frame Validation.</td>
+                        </tr>
+                        <tr>
+                            <td>Physical Coding Sublayer</td>
+                            <td>Quy tắc mã hóa, giải mã, đồng bộ và định thời bit ở mức logic.</td>
+                            <td>Bit Encoding, Bit Time, Synchronization.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    ISO 11898-1 không mô tả toàn bộ cách một ứng dụng sử dụng
+                    dữ liệu CAN. Ví dụ, tiêu chuẩn không quyết định rằng byte 0
+                    của một message phải là nhiệt độ động cơ hay byte 1 phải
+                    là trạng thái cửa xe.
+                </p>
+
+                <p>
+                    Những thông tin thuộc tầng ứng dụng như ý nghĩa signal,
+                    đơn vị, scaling, cycle time theo yêu cầu hệ thống và
+                    cách các ECU sử dụng dữ liệu cần được xác định bởi
+                    các tài liệu kỹ thuật khác của dự án.
+                </p>
+
+                <h2>3. Các phiên bản CAN nằm trong phạm vi ISO 11898-1</h2>
+
+                <p>
+                    ISO 11898-1:2024 đề cập đến nhiều định dạng CAN khác nhau.
+                    Vì vậy, khi học hoặc áp dụng tiêu chuẩn, cần xác định
+                    hệ thống đang sử dụng loại CAN nào.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Định dạng</th>
+                            <th>Đặc điểm tổng quan</th>
+                            <th>Phạm vi dữ liệu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Classic / CAN CC</td>
+                            <td>Định dạng CAN truyền thống, sử dụng một tốc độ bit trong toàn bộ frame.</td>
+                            <td>Tối đa 8 byte data field.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN FD</td>
+                            <td>Hỗ trợ Data Phase có thể sử dụng tốc độ bit cao hơn Arbitration Phase.</td>
+                            <td>Tối đa 64 byte data field.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN XL</td>
+                            <td>Thế hệ CAN mở rộng, hỗ trợ data field lớn hơn và có cấu trúc frame riêng.</td>
+                            <td>Tối đa 2048 byte data field theo phạm vi tiêu chuẩn.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những định dạng này có chung nền tảng CAN nhưng không thể
+                    xem là hoàn toàn giống nhau. Chúng có sự khác biệt về
+                    Frame Format, trường điều khiển, cách mã hóa và các yêu cầu
+                    tương thích.
+                </p>
+
+                <p>
+                    Đối với một dự án ECU sử dụng CAN Classic, người phát triển
+                    không cần mặc định triển khai CAN FD hoặc CAN XL.
+                    Cần kiểm tra yêu cầu hệ thống và khả năng hỗ trợ của
+                    CAN Controller trước khi lựa chọn.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Việc ISO 11898-1:2024 có quy định về CAN FD và CAN XL
+                    không có nghĩa tất cả ECU đều hỗ trợ những định dạng này.
+                    Một node chỉ triển khai CAN Classic vẫn có thể là thiết kế
+                    hợp lệ nếu phù hợp với yêu cầu và cấu hình mạng của dự án.
+                </div>
+
+                <h2>4. Vị trí của ISO 11898-1 trong kiến trúc truyền thông</h2>
+
+                <p>
+                    Để hiểu rõ phạm vi của ISO 11898-1, cần đặt tiêu chuẩn
+                    này vào một mô hình truyền thông tổng quát.
+                </p>
+
+                <pre><code>       Application / Higher-layer Protocol
+                       |
+                       v
+              CAN Data Link Layer
+                       |
+              +--------+--------+
+              |                 |
+              v                 v
+             LLC               MAC
+              |                 |
+              +--------+--------+
+                       |
+                       v
+            Physical Coding Sublayer
+                       |
+                       v
+             Physical Medium Attachment
+                       |
+                       v
+                CAN Transceiver
+                       |
+                       v
+                    CAN Bus</code></pre>
+
+                <p>
+                    Trong mô hình này:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>LLC (Logical Link Control):</strong>
+                        quản lý những chức năng liên kết logic và một số
+                        hoạt động liên quan đến việc tiếp nhận dữ liệu.
+                    </li>
+                    <li>
+                        <strong>MAC (Medium Access Control):</strong>
+                        quản lý cách frame được truyền trên môi trường CAN,
+                        bao gồm Arbitration và các quy tắc liên quan đến frame.
+                    </li>
+                    <li>
+                        <strong>PCS (Physical Coding Sublayer):</strong>
+                        đảm nhiệm việc mã hóa, giải mã, đồng bộ và định thời bit.
+                    </li>
+                    <li>
+                        <strong>PMA (Physical Medium Attachment):</strong>
+                        liên quan đến giao tiếp với môi trường truyền vật lý
+                        và các đặc tính của phần cứng Transceiver.
+                    </li>
+                </ul>
+
+                <p>
+                    Cần phân biệt PCS với PMA. ISO 11898-1 tập trung vào DLL
+                    và PCS, trong khi ISO 11898-2 là tài liệu quan trọng
+                    khi tìm hiểu High-speed CAN Physical Medium Attachment.
+                </p>
+
+                <h2>5. Data Link Layer (DLL)</h2>
+
+                <p>
+                    Data Link Layer là phần chịu trách nhiệm tổ chức việc
+                    trao đổi frame giữa các node trên mạng CAN.
+                </p>
+
+                <p>
+                    Một CAN application có thể muốn gửi dữ liệu đến các ECU khác.
+                    Tuy nhiên, để dữ liệu được truyền trên bus, hệ thống cần
+                    thực hiện nhiều công việc như tổ chức frame, giải quyết
+                    tranh chấp truy cập bus và kiểm tra tính hợp lệ của dữ liệu.
+                </p>
+
+                <p>
+                    Những chức năng quan trọng thuộc DLL gồm:
+                </p>
+
+                <ul>
+                    <li>Frame transmission.</li>
+                    <li>Bus access method và Arbitration.</li>
+                    <li>Frame acceptance filtering.</li>
+                    <li>Acknowledgement.</li>
+                    <li>Error detection.</li>
+                    <li>Error signalling.</li>
+                    <li>Fault confinement.</li>
+                    <li>Frame retransmission theo cơ chế được triển khai.</li>
+                </ul>
+
+                <p>
+                    Trong ISO 11898-1:2024, Data Link Layer được chia thành
+                    hai sub-layer chính là LLC và MAC.
+                </p>
+
+                <h2>6. Logical Link Control (LLC)</h2>
+
+                <p>
+                    LLC là viết tắt của <strong>Logical Link Control</strong>.
+                    Đây là sub-layer thuộc Data Link Layer, liên quan đến
+                    việc quản lý các chức năng liên kết logic giữa những
+                    thành phần trong CAN communication.
+                </p>
+
+                <p>
+                    Trong kiến trúc được mô tả bởi ISO 11898-1:2024,
+                    LLC có giao diện với MAC thông qua Service Data Unit (SDU).
+                    Đối với cấu trúc mới, LLC Frame còn có các thông tin
+                    như Service Data Unit Type (SDT) và Virtual CAN Channel
+                    Identifier (VCID).
+                </p>
+
+                <p>
+                    Ở mức tổng quan, một số chức năng liên quan đến LLC gồm:
+                </p>
+
+                <ul>
+                    <li>Quản lý thông tin liên kết logic.</li>
+                    <li>Hỗ trợ việc tiếp nhận frame theo cấu hình.</li>
+                    <li>Frame Acceptance Filtering.</li>
+                    <li>Overload Notification.</li>
+                    <li>Recovery Management.</li>
+                    <li>Time Stamping theo chức năng được hỗ trợ.</li>
+                </ul>
+
+                <p>
+                    Khi đọc ISO 11898-1:2024, không nên nhầm LLC của kiến trúc
+                    tiêu chuẩn với các thuật ngữ LLC được sử dụng trong
+                    những giao thức mạng khác. Cần dựa vào định nghĩa
+                    trong chính tài liệu CAN đang đọc.
+                </p>
+
+                <h2>7. Medium Access Control (MAC)</h2>
+
+                <p>
+                    MAC là viết tắt của <strong>Medium Access Control</strong>.
+                    Đây là phần rất quan trọng của CAN Data Link Layer,
+                    vì nó quy định cách những CAN node cùng truy cập bus.
+                </p>
+
+                <p>
+                    Trong một mạng CAN, nhiều node có thể muốn truyền dữ liệu
+                    trong cùng một thời điểm. Nếu mỗi node tự truyền mà không
+                    có cơ chế điều phối, dữ liệu có thể bị xung đột.
+                </p>
+
+                <p>
+                    CAN sử dụng cơ chế Arbitration dựa trên Identifier
+                    để giải quyết tình huống này.
+                </p>
+
+                <p>Các chức năng liên quan đến MAC gồm:</p>
+
+                <ul>
+                    <li>Frame Format.</li>
+                    <li>Arbitration và Medium Access.</li>
+                    <li>Frame Coding.</li>
+                    <li>Data Frame Acknowledgement.</li>
+                    <li>Frame Validation.</li>
+                    <li>Bit Transmission Order.</li>
+                    <li>Error Handling và Overload Handling.</li>
+                </ul>
+
+                <p>
+                    Khi phát triển ECU, các vấn đề như message priority,
+                    bus load và khả năng truyền đúng chu kỳ có liên quan
+                    trực tiếp đến cách CAN network được thiết kế và sử dụng.
+                </p>
+
+                <h2>8. CAN Frame và các loại frame</h2>
+
+                <p>
+                    Frame là đơn vị dữ liệu được truyền trên CAN bus.
+                    Mỗi frame có cấu trúc và các trường thông tin được
+                    quy định để node gửi và node nhận có thể hiểu được
+                    quá trình truyền thông.
+                </p>
+
+                <p>
+                    Trong CAN, những loại frame thường được nhắc đến gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Frame</th>
+                            <th>Tên đầy đủ</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Data Frame</td>
+                            <td>DF</td>
+                            <td>Truyền dữ liệu từ một node đến các node khác trên bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Remote Frame</td>
+                            <td>RF</td>
+                            <td>Yêu cầu truyền dữ liệu tương ứng trong những định dạng CAN hỗ trợ Remote Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Frame</td>
+                            <td>EF</td>
+                            <td>Báo hiệu một điều kiện lỗi trong quá trình truyền frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Overload Frame</td>
+                            <td>OF</td>
+                            <td>Thông báo tình trạng quá tải theo cơ chế được định nghĩa.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Không phải mọi loại frame đều được hỗ trợ trong mọi định dạng CAN.
+                    Ví dụ, CAN FD không sử dụng Remote Frame theo cách của
+                    CAN Classic.
+                </p>
+
+                <p>
+                    Khi đọc tài liệu, cần xác định frame đang được đề cập là
+                    CAN Classic, CAN FD hay CAN XL. Không nên lấy cấu trúc
+                    của một định dạng áp dụng cho tất cả các định dạng còn lại.
+                </p>
+
+                <h2>9. Identifier và vai trò trong Arbitration</h2>
+
+                <p>
+                    Identifier là một trường quan trọng của CAN Frame.
+                    Nó giúp phân biệt message và tham gia vào cơ chế
+                    Arbitration khi nhiều node muốn truyền cùng lúc.
+                </p>
+
+                <p>
+                    Trong CAN Classic, hai dạng Identifier thường gặp là:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Standard Identifier:</strong> Identifier 11-bit.
+                    </li>
+                    <li>
+                        <strong>Extended Identifier:</strong> Identifier 29-bit.
+                    </li>
+                </ul>
+
+                <p>
+                    Identifier trong CAN không nhất thiết là địa chỉ của ECU gửi.
+                    CAN sử dụng mô hình truyền broadcast: các node có thể
+                    nhận frame trên bus và quyết định có tiếp nhận dữ liệu
+                    đó hay không dựa trên cơ chế acceptance filtering.
+                </p>
+
+                <p>
+                    Ngoài việc phân biệt message, Identifier còn ảnh hưởng
+                    đến mức ưu tiên truy cập bus trong quá trình Arbitration.
+                </p>
+
+                <h2>10. Arbitration hoạt động như thế nào?</h2>
+
+                <p>
+                    Arbitration là cơ chế giải quyết tranh chấp khi nhiều node
+                    muốn bắt đầu truyền frame trong cùng một thời điểm.
+                </p>
+
+                <p>
+                    CAN sử dụng cơ chế bitwise arbitration. Các node truyền
+                    Identifier đồng thời theo từng bit và theo dõi trạng thái
+                    trên bus.
+                </p>
+
+                <p>
+                    CAN sử dụng hai trạng thái logic:
+                </p>
+
+                <ul>
+                    <li><strong>Dominant bit:</strong> trạng thái logic 0.</li>
+                    <li><strong>Recessive bit:</strong> trạng thái logic 1.</li>
+                </ul>
+
+                <p>
+                    Dominant bit có khả năng ghi đè Recessive bit trên bus.
+                    Nếu một node truyền Recessive nhưng đọc được Dominant,
+                    node đó nhận biết rằng mình đã thua Arbitration và
+                    dừng truyền frame hiện tại mà không phá hủy frame
+                    của node đang thắng.
+                </p>
+
+                <p>
+                    Đối với những Standard Identifier cùng định dạng,
+                    Identifier có giá trị số nhỏ hơn thường có mức ưu tiên
+                    Arbitration cao hơn.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ECU</th>
+                            <th>CAN ID</th>
+                            <th>Mục đích minh họa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ECU A</td>
+                            <td>0x080</td>
+                            <td>Trạng thái điều khiển quan trọng.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU B</td>
+                            <td>0x180</td>
+                            <td>Thông tin trạng thái thân xe.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Nếu hai ECU cùng bắt đầu truyền trong một thời điểm,
+                    frame có ID 0x080 sẽ thắng Arbitration trong ví dụ
+                    sử dụng cùng định dạng Standard Identifier.
+                </p>
+
+                <pre><code>ECU A: ID = 0x080
+ECU B: ID = 0x180
+
+Cả hai cùng bắt đầu truyền
+          |
+          v
+So sánh từng bit Identifier
+          |
+          v
+ECU B phát Recessive nhưng đọc Dominant
+          |
+          v
+ECU B nhận biết đã thua Arbitration
+          |
+          v
+ECU A tiếp tục truyền frame
+          |
+          v
+ECU B chờ bus rảnh để truyền lại</code></pre>
+
+                <p>
+                    Đây là cơ chế non-destructive arbitration.
+                    Node thua Arbitration không làm hỏng frame của node thắng
+                    và có thể thử truyền lại khi bus phù hợp.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Arbitration không phải cơ chế ưu tiên cố định dựa trên
+                    tên ECU hoặc địa chỉ phần cứng. Nó dựa trên quy tắc
+                    truyền bit và Identifier của frame.
+                    Ví dụ ID 0x080 và 0x180 chỉ minh họa hai Standard Identifier
+                    có cùng định dạng; các trường hợp Extended Identifier
+                    hoặc kết hợp nhiều frame format cần được phân tích
+                    theo đúng quy tắc của tiêu chuẩn.
+                </div>
+
+                <h2>11. Acknowledgement (ACK)</h2>
+
+                <p>
+                    ACK là cơ chế xác nhận ở mức Data Link Layer,
+                    cho phép transmitter biết rằng ít nhất một receiver
+                    đã nhận frame hợp lệ ở mức giao thức.
+                </p>
+
+                <p>
+                    Trong CAN frame, ACK field thường được nhắc đến
+                    với hai thành phần:
+                </p>
+
+                <ul>
+                    <li><strong>ACK Slot:</strong> vị trí bit dành cho xác nhận.</li>
+                    <li><strong>ACK Delimiter:</strong> bit phân cách sau ACK Slot.</li>
+                </ul>
+
+                <p>
+                    Khi một frame hợp lệ được nhận, node nhận có thể
+                    ghi Dominant bit vào ACK Slot. Transmitter theo dõi
+                    ACK Slot để kiểm tra xem có nhận được xác nhận hay không.
+                </p>
+
+                <p>
+                    Tuy nhiên, ACK không có nghĩa dữ liệu đã được ứng dụng
+                    xử lý thành công. ACK chỉ xác nhận việc tiếp nhận frame
+                    ở mức CAN protocol, không xác nhận rằng một SWC đã đọc
+                    signal hoặc thực hiện đúng chức năng.
+                </p>
+
+                <p>
+                    Ví dụ, ECU A gửi một frame chứa trạng thái cửa xe.
+                    Nếu ECU B ACK frame, điều đó không tự động chứng minh
+                    rằng phần mềm ECU B đã cập nhật trạng thái cửa đúng.
+                </p>
+
+                <h2>12. Error Detection trong CAN</h2>
+
+                <p>
+                    Một trong những đặc điểm quan trọng của CAN là khả năng
+                    phát hiện nhiều dạng lỗi có thể xảy ra trong quá trình
+                    truyền dữ liệu.
+                </p>
+
+                <p>
+                    Những cơ chế Error Detection được sử dụng trong CAN
+                    có thể bao gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cơ chế</th>
+                            <th>Mục đích tổng quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bit Monitoring</td>
+                            <td>Transmitter so sánh trạng thái bit đang truyền với trạng thái quan sát được trên bus, trong những trường hợp quy tắc cho phép.</td>
+                        </tr>
+                        <tr>
+                            <td>CRC Check</td>
+                            <td>Phát hiện lỗi dữ liệu thông qua trường kiểm tra CRC.</td>
+                        </tr>
+                        <tr>
+                            <td>Stuff Check</td>
+                            <td>Kiểm tra quy tắc Bit Stuffing tương ứng với định dạng frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Form Check</td>
+                            <td>Kiểm tra những trường có định dạng bit cố định theo quy tắc.</td>
+                        </tr>
+                        <tr>
+                            <td>ACK Check</td>
+                            <td>Kiểm tra trạng thái xác nhận của frame được truyền.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Nếu phát hiện điều kiện lỗi, node có thể tham gia
+                    vào cơ chế Error Signalling theo trạng thái và quy tắc
+                    của CAN.
+                </p>
+
+                <p>
+                    Sau khi tìm hiểu từng cơ chế, cần tiếp tục đọc cách
+                    tiêu chuẩn quy định frame bị lỗi được xử lý như thế nào,
+                    liệu nó có bị hủy bỏ hay được truyền lại, và cách hệ thống
+                    quản lý trạng thái lỗi của node.
+                </p>
+
+                <h2>13. Error Frame và Error Signalling</h2>
+
+                <p>
+                    Error Frame là frame được sử dụng để báo hiệu một
+                    điều kiện lỗi trong quá trình truyền thông CAN.
+                </p>
+
+                <p>
+                    Khi một node phát hiện lỗi theo những quy tắc được định nghĩa,
+                    nó có thể gửi Error Flag để thông báo tình trạng không hợp lệ
+                    của frame đang được truyền.
+                </p>
+
+                <p>
+                    Các node khác trên bus cũng có thể nhận biết sự kiện lỗi
+                    và thực hiện xử lý theo cơ chế CAN tương ứng.
+                </p>
+
+                <p>
+                    Điều cần nhớ là Error Frame không phải một message
+                    ứng dụng thông thường. Nó thuộc cơ chế xử lý lỗi
+                    của CAN Data Link Layer.
+                </p>
+
+                <h2>14. Fault Confinement</h2>
+
+                <p>
+                    Fault Confinement là cơ chế giúp CAN quản lý những node
+                    đang có hành vi truyền hoặc nhận lỗi, nhằm hạn chế
+                    ảnh hưởng của một node bị lỗi đến toàn mạng.
+                </p>
+
+                <p>
+                    CAN sử dụng những bộ đếm lỗi như:
+                </p>
+
+                <ul>
+                    <li>Transmit Error Counter (TEC).</li>
+                    <li>Receive Error Counter (REC).</li>
+                </ul>
+
+                <p>
+                    Hai bộ đếm này được cập nhật theo các sự kiện lỗi
+                    và quy tắc tương ứng. Dựa trên trạng thái lỗi,
+                    một CAN node có thể hoạt động trong những trạng thái
+                    khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th>Ý nghĩa tổng quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Error Active</td>
+                            <td>Node đang ở trạng thái hoạt động bình thường theo cơ chế fault confinement.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Passive</td>
+                            <td>Node đã đạt điều kiện chuyển sang trạng thái thụ động do bộ đếm lỗi.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus-Off</td>
+                            <td>Node bị ngắt khỏi hoạt động truyền thông trên bus theo cơ chế fault confinement.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi một node liên tục gặp lỗi truyền thông,
+                    việc chuyển sang Error Passive hoặc Bus-Off giúp
+                    hạn chế khả năng node tiếp tục gây ảnh hưởng đến mạng.
+                </p>
+
+                <p>
+                    Trong dự án ECU, cần xác định rõ phần cứng CAN Controller
+                    xử lý các trạng thái này như thế nào, phần mềm nhận được
+                    notification gì và hệ thống cần thực hiện hành động
+                    phục hồi nào.
+                </p>
+
+                <h2>15. Bus-Off và Recovery</h2>
+
+                <p>
+                    Bus-Off là một trạng thái quan trọng cần chú ý khi phát triển
+                    và kiểm thử phần mềm CAN.
+                </p>
+
+                <p>
+                    Khi CAN Controller đi vào Bus-Off, node không tiếp tục
+                    tham gia truyền frame như một node đang hoạt động bình thường.
+                    Điều này có thể khiến những message do ECU đó gửi không còn
+                    xuất hiện trên bus.
+                </p>
+
+                <p>
+                    Trong dự án thực tế, cần xác định:
+                </p>
+
+                <ul>
+                    <li>Điều kiện nhận biết CAN Controller đã Bus-Off.</li>
+                    <li>Notification được phần cứng và CAN Driver cung cấp.</li>
+                    <li>ECU có cần chuyển sang trạng thái degraded hay không.</li>
+                    <li>Quy trình phục hồi CAN Controller.</li>
+                    <li>Điều kiện cho phép truyền lại sau khi phục hồi.</li>
+                    <li>Cách ghi nhận lỗi để hỗ trợ chẩn đoán.</li>
+                </ul>
+
+                <p>
+                    Không nên mặc định mọi dự án đều sử dụng cùng một
+                    chiến lược tự động phục hồi Bus-Off. Cách xử lý cần
+                    phù hợp với yêu cầu hệ thống, CAN Controller,
+                    AUTOSAR configuration và các yêu cầu an toàn liên quan.
+                </p>
+
+                <h2>16. Physical Coding Sublayer (PCS)</h2>
+
+                <p>
+                    Physical Coding Sublayer là phần liên quan đến cách
+                    dữ liệu CAN được mã hóa và giải mã ở mức bit,
+                    đồng thời quản lý một số quy tắc định thời và đồng bộ.
+                </p>
+
+                <p>
+                    Khi một CAN node truyền dữ liệu, những bit logic
+                    không thể được đưa trực tiếp lên bus mà không có
+                    quy tắc về thời gian và cách biểu diễn.
+                </p>
+
+                <p>
+                    PCS cung cấp những quy tắc cần thiết để transmitter
+                    và receiver có thể hiểu được luồng bit đang được truyền.
+                </p>
+
+                <p>
+                    Những chủ đề quan trọng liên quan đến PCS gồm:
+                </p>
+
+                <ul>
+                    <li>Bit Encoding và Decoding.</li>
+                    <li>Bit Time.</li>
+                    <li>Bit Timing Parameters.</li>
+                    <li>Synchronization.</li>
+                    <li>Oscillator Tolerance.</li>
+                    <li>Transmitter Delay Compensation trong những định dạng và cấu hình phù hợp.</li>
+                </ul>
+
+                <h2>17. Bit Time và Bit Timing</h2>
+
+                <p>
+                    Bit Time là khoảng thời gian được sử dụng để truyền
+                    một bit trong quá trình giao tiếp CAN.
+                </p>
+
+                <p>
+                    Bit Timing là nội dung rất quan trọng khi cấu hình
+                    CAN Controller. Các thông số định thời cần phù hợp
+                    với tốc độ bus, phần cứng, khả năng đồng bộ và cấu hình
+                    của các node tham gia mạng.
+                </p>
+
+                <p>
+                    Trong CAN Classic, một Bit Time có thể được hiểu
+                    thông qua các thành phần thời gian như:
+                </p>
+
+                <ul>
+                    <li>Synchronization Segment (Sync_Seg).</li>
+                    <li>Propagation Segment (Prop_Seg).</li>
+                    <li>Phase Segment 1 (Phase_Seg1).</li>
+                    <li>Phase Segment 2 (Phase_Seg2).</li>
+                </ul>
+
+                <pre><code>                  One Bit Time
+        +------------------------------------+
+        |                                    |
+        v                                    v
+
++-----------+-------------+-------------+-------------+
+| Sync_Seg  | Prop_Seg    | Phase_Seg1  | Phase_Seg2  |
++-----------+-------------+-------------+-------------+
+                         ^
+                         |
+                    Sample Point</code></pre>
+
+                <p>
+                    Hình trên minh họa cách chia Bit Time theo mô hình
+                    bit timing truyền thống của CAN. Các thông số cụ thể
+                    phải được lựa chọn theo yêu cầu bus và tài liệu
+                    của CAN Controller đang sử dụng.
+                </p>
+
+                <p>
+                    Khi cấu hình sai Bit Timing, những node có thể không
+                    đồng bộ đúng với nhau. Hậu quả có thể là Communication Error,
+                    Error Frame xuất hiện thường xuyên hoặc CAN Controller
+                    không thể nhận dữ liệu ổn định.
+                </p>
+
+                <h2>18. Synchronization</h2>
+
+                <p>
+                    Synchronization là quá trình giúp những CAN node
+                    duy trì sự đồng bộ về thời gian lấy mẫu và xử lý
+                    các bit được truyền trên bus.
+                </p>
+
+                <p>
+                    Các node có thể sử dụng thông tin chuyển trạng thái
+                    của bus để điều chỉnh thời điểm đồng bộ theo quy tắc
+                    được định nghĩa.
+                </p>
+
+                <p>
+                    Những khái niệm cần tìm hiểu gồm:
+                </p>
+
+                <ul>
+                    <li>Hard Synchronization.</li>
+                    <li>Resynchronization.</li>
+                    <li>Synchronization Jump Width (SJW).</li>
+                    <li>Sample Point.</li>
+                    <li>Oscillator Tolerance.</li>
+                </ul>
+
+                <p>
+                    Trong dự án, không nên chỉ chọn một giá trị Bitrate
+                    rồi cho rằng tất cả node sẽ giao tiếp được.
+                    Cần kiểm tra cả các tham số timing và khả năng tương thích
+                    giữa những CAN Controller được sử dụng.
+                </p>
+
+                <h2>19. ISO 11898-1 và ISO 11898-2 khác nhau thế nào?</h2>
+
+                <p>
+                    Đây là một điểm rất dễ nhầm lẫn khi bắt đầu đọc
+                    bộ tiêu chuẩn ISO 11898.
+                </p>
+
+                <p>
+                    ISO 11898-1 và ISO 11898-2 đều liên quan đến CAN,
+                    nhưng chúng tập trung vào những phạm vi kỹ thuật khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>ISO 11898-1</th>
+                            <th>ISO 11898-2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tên phạm vi</td>
+                            <td>Data Link Layer và Physical Coding Sublayer.</td>
+                            <td>High-speed Physical Medium Attachment (PMA).</td>
+                        </tr>
+                        <tr>
+                            <td>Trọng tâm</td>
+                            <td>Frame, Arbitration, Error Handling, Coding và Timing.</td>
+                            <td>Đặc tính giao tiếp vật lý High-speed CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>Chủ đề tiêu biểu</td>
+                            <td>CAN Frame, CRC, ACK, Bit Timing, Synchronization.</td>
+                            <td>Electrical Characteristics và CAN Physical Interface.</td>
+                        </tr>
+                        <tr>
+                            <td>Thành phần liên quan</td>
+                            <td>CAN Controller và logic xử lý giao thức.</td>
+                            <td>CAN Transceiver và môi trường truyền vật lý tương ứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, nếu CAN Controller gửi frame đúng theo quy tắc
+                    nhưng bus vẫn giao tiếp không ổn định do vấn đề điện,
+                    dây dẫn hoặc Transceiver, cần xem xét cả tài liệu
+                    Physical Layer tương ứng chứ không chỉ ISO 11898-1.
+                </p>
+
+                <p>
+                    Vì vậy, trong lộ trình học, ISO 11898-1 nên được học
+                    trước để hiểu giao thức, sau đó tìm hiểu ISO 11898-2
+                    để hiểu sâu hơn về High-speed CAN Physical Layer.
+                </p>
+
+                <h2>20. ISO 11898-1 không quy định những gì?</h2>
+
+                <p>
+                    Khi đọc một tiêu chuẩn, việc hiểu phạm vi không chỉ
+                    là biết tài liệu quy định những gì mà còn phải biết
+                    những nội dung nào nằm ngoài phạm vi của nó.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nội dung</th>
+                            <th>ISO 11898-1 có quy định trực tiếp không?</th>
+                            <th>Tài liệu / nơi cần tìm thêm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Frame và Data Link Layer</td>
+                            <td>Có.</td>
+                            <td>ISO 11898-1.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Arbitration và Error Handling</td>
+                            <td>Có.</td>
+                            <td>ISO 11898-1.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Physical Coding và Bit Timing</td>
+                            <td>Có.</td>
+                            <td>ISO 11898-1.</td>
+                        </tr>
+                        <tr>
+                            <td>High-speed CAN PMA</td>
+                            <td>Không phải phạm vi chính của Part 1.</td>
+                            <td>ISO 11898-2.</td>
+                        </tr>
+                        <tr>
+                            <td>Ý nghĩa của từng CAN Signal</td>
+                            <td>Không.</td>
+                            <td>Communication Matrix, DBC hoặc tài liệu hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>UDS Service</td>
+                            <td>Không.</td>
+                            <td>ISO 14229.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO-TP / DoCAN</td>
+                            <td>Không.</td>
+                            <td>ISO 15765-2.</td>
+                        </tr>
+                        <tr>
+                            <td>AUTOSAR CAN Driver API</td>
+                            <td>Không.</td>
+                            <td>AUTOSAR Specification of CAN Driver.</td>
+                        </tr>
+                        <tr>
+                            <td>Signal Packing trong AUTOSAR COM</td>
+                            <td>Không.</td>
+                            <td>AUTOSAR Specification of COM.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là một nguyên tắc quan trọng khi đọc tiêu chuẩn:
+                    không nên cố gắng sử dụng một tài liệu để giải quyết
+                    tất cả vấn đề của dự án. Cần xác định đúng tài liệu
+                    chịu trách nhiệm cho từng yêu cầu.
+                </p>
+
+                <h2>21. Mối quan hệ giữa ISO 11898-1 và AUTOSAR Classic</h2>
+
+                <p>
+                    Trong AUTOSAR Classic, CAN communication được triển khai
+                    thông qua nhiều module phần mềm thuộc Basic Software.
+                    Những module này phối hợp với nhau để chuyển dữ liệu
+                    từ Application Software xuống CAN Controller.
+                </p>
+
+                <p>
+                    Có thể hình dung luồng truyền dữ liệu tổng quát như sau:
+                </p>
+
+                <pre><code>          Application Software
+                    |
+                    v
+                   RTE
+                    |
+                    v
+                   COM
+                    |
+                    v
+                  PduR
+                    |
+                    v
+                  CanIf
+                    |
+                    v
+                CAN Driver
+                    |
+                    v
+               CAN Controller
+                    |
+                    v
+                CAN Transceiver
+                    |
+                    v
+                  CAN Bus</code></pre>
+
+                <p>
+                    Vai trò khái quát của các module:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>COM</td>
+                            <td>Đóng gói và giải mã signal trong I-PDU theo cấu hình.</td>
+                        </tr>
+                        <tr>
+                            <td>PduR</td>
+                            <td>Định tuyến PDU giữa các module tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>CanIf</td>
+                            <td>Cung cấp interface chung giữa CAN Driver và các module phía trên.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Driver</td>
+                            <td>Truy cập và điều khiển CAN Controller theo phần cứng.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Controller</td>
+                            <td>Thực hiện các chức năng CAN ở mức phần cứng.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Transceiver</td>
+                            <td>Kết nối giao tiếp logic của CAN Controller với môi trường truyền vật lý.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    ISO 11898-1 mô tả các quy tắc CAN ở mức giao thức,
+                    trong khi AUTOSAR Specification mô tả cách các module
+                    phần mềm được tổ chức và cung cấp interface trong ECU.
+                </p>
+
+                <p>
+                    Không nên hiểu rằng ISO 11898-1 quy định trực tiếp
+                    các API như CanIf_Transmit hoặc cách cấu hình
+                    Can Controller trong AUTOSAR.
+                </p>
+
+                <h2>22. Hướng dẫn bắt đầu đọc tài liệu ISO 11898-1</h2>
+
+                <p>
+                    Một sai lầm thường gặp khi tiếp cận tiêu chuẩn kỹ thuật
+                    là đọc từ trang đầu đến trang cuối mà chưa xác định
+                    mục tiêu cần tìm hiểu.
+                </p>
+
+                <p>
+                    ISO 11898-1 là tài liệu kỹ thuật có nhiều định nghĩa,
+                    hình minh họa, bảng thông số và yêu cầu chi tiết.
+                    Nếu chưa có câu hỏi cụ thể, người đọc dễ bị mất nhiều thời gian
+                    vào các chi tiết chưa cần thiết.
+                </p>
+
+                <p>
+                    Thay vì đọc theo kiểu tuần tự hoàn toàn, có thể sử dụng
+                    quy trình dưới đây:
+                </p>
+
+                <ol>
+                    <li>Xác định mục tiêu đang cần tìm hiểu.</li>
+                    <li>Đọc Scope để hiểu phạm vi của tiêu chuẩn.</li>
+                    <li>Đọc Terms and Definitions để thống nhất thuật ngữ.</li>
+                    <li>Xem Table of Contents để xác định chương liên quan.</li>
+                    <li>Đọc phần giải thích tổng quan trước khi đọc yêu cầu chi tiết.</li>
+                    <li>Đối chiếu yêu cầu với cấu hình hoặc vấn đề trong dự án.</li>
+                    <li>Ghi lại nguồn tham chiếu và xây dựng test case nếu cần.</li>
+                </ol>
+
+                <p>
+                    Ví dụ, nếu đang điều tra hiện tượng một CAN node
+                    liên tục mất quyền truyền do Arbitration, không cần
+                    bắt đầu bằng cách đọc toàn bộ tài liệu về PCS.
+                    Nên tìm phần Basic Concepts và nội dung liên quan
+                    đến Bus Access Method trong phần MAC trước.
+                </p>
+
+                <h2>23. Cấu trúc tài liệu ISO 11898-1 nên đọc theo thứ tự nào?</h2>
+
+                <p>
+                    Có thể sử dụng Table of Contents của ISO 11898-1:2024
+                    để xác định khu vực cần đọc. Bảng dưới đây tóm tắt
+                    những phần quan trọng và mục tiêu học tập tương ứng.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phần</th>
+                            <th>Chủ đề</th>
+                            <th>Nên tìm hiểu điều gì?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Scope</td>
+                            <td>Xác định phạm vi và những nội dung được tiêu chuẩn quy định.</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Normative References</td>
+                            <td>Xác định những tài liệu khác được viện dẫn trong tiêu chuẩn.</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Terms and Definitions</td>
+                            <td>Hiểu các thuật ngữ kỹ thuật được sử dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Symbols and Abbreviated Terms</td>
+                            <td>Tra cứu ký hiệu và chữ viết tắt.</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Basic Concepts of CAN</td>
+                            <td>Hiểu các đặc tính, frame transmission, Arbitration, ACK và Error Handling.</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>CAN DLL Specification</td>
+                            <td>Tìm hiểu chi tiết LLC, MAC, Frame Coding, Validation và Error Handling.</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>PL Specifications</td>
+                            <td>Tìm hiểu PCS, Bit Time, Synchronization và các thông số định thời.</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Supervisor FCE</td>
+                            <td>Tìm hiểu Fault Confinement và Bus Failure Management.</td>
+                        </tr>
+                        <tr>
+                            <td>Annex A</td>
+                            <td>CAN FD Light</td>
+                            <td>Tìm hiểu những yêu cầu dành cho CAN FD Light Responder nếu dự án có sử dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Annex B</td>
+                            <td>Configuration Interface</td>
+                            <td>Tham khảo thông tin về configuration interface.</td>
+                        </tr>
+                        <tr>
+                            <td>Annex C</td>
+                            <td>Additional Information</td>
+                            <td>Tham khảo thông tin bổ sung để hiểu các lựa chọn triển khai.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Không nhất thiết phải đọc mọi Annex ngay từ đầu.
+                    Hãy ưu tiên những phần có liên quan đến loại CAN
+                    và mục tiêu của dự án.
+                </p>
+
+                <h2>24. Cách đọc một yêu cầu kỹ thuật trong tiêu chuẩn</h2>
+
+                <p>
+                    Khi đọc tiêu chuẩn, cần phân biệt nội dung mô tả,
+                    giải thích, ví dụ và yêu cầu mang tính quy định.
+                    Không phải mọi đoạn văn trong tài liệu đều có cùng mức độ
+                    bắt buộc.
+                </p>
+
+                <p>
+                    Một số từ khóa tiếng Anh thường gặp trong tài liệu tiêu chuẩn:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Từ khóa</th>
+                            <th>Ý nghĩa khi đọc yêu cầu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Shall</td>
+                            <td>Diễn đạt một yêu cầu bắt buộc.</td>
+                        </tr>
+                        <tr>
+                            <td>Should</td>
+                            <td>Diễn đạt khuyến nghị.</td>
+                        </tr>
+                        <tr>
+                            <td>May</td>
+                            <td>Diễn đạt sự cho phép hoặc một lựa chọn được chấp nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>Can</td>
+                            <td>Diễn đạt khả năng hoặc điều kiện có thể xảy ra.</td>
+                        </tr>
+                        <tr>
+                            <td>Note</td>
+                            <td>Cung cấp thông tin giải thích hoặc làm rõ.</td>
+                        </tr>
+                        <tr>
+                            <td>Example</td>
+                            <td>Đưa ra ví dụ minh họa, không tự động trở thành yêu cầu bắt buộc.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi trích xuất requirement cho dự án, cần đọc cả câu,
+                    điều kiện áp dụng, ngoại lệ và các tham chiếu liên quan.
+                    Không nên chỉ tìm từ "shall" rồi sao chép một câu
+                    mà bỏ qua ngữ cảnh của nó.
+                </p>
+
+                <p>
+                    Ngoài ra, cần chú ý các Annex được đánh dấu normative
+                    hoặc informative. Normative Annex có nội dung mang tính
+                    quy định trong phạm vi của nó, còn Informative Annex
+                    chủ yếu cung cấp thông tin bổ sung.
+                </p>
+
+                <h2>25. Kỹ thuật đọc tiêu chuẩn theo mục tiêu dự án</h2>
+
+                <p>
+                    Để sử dụng tiêu chuẩn hiệu quả, hãy bắt đầu từ một vấn đề
+                    hoặc yêu cầu cụ thể thay vì cố gắng đọc toàn bộ nội dung
+                    một cách máy móc.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mục tiêu</th>
+                            <th>Khu vực nên tìm trước</th>
+                            <th>Kết quả mong muốn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hiểu CAN Arbitration</td>
+                            <td>Basic Concepts và MAC Medium Access Method.</td>
+                            <td>Hiểu cơ chế giải quyết tranh chấp bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Kiểm tra CAN Frame</td>
+                            <td>Frame Transmission và MAC Frame Format.</td>
+                            <td>Biết những trường cần kiểm tra trong frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Phân tích CAN Error</td>
+                            <td>Error Detection, Error Signalling và Fault Confinement.</td>
+                            <td>Hiểu nguyên nhân và trạng thái lỗi.</td>
+                        </tr>
+                        <tr>
+                            <td>Điều tra Bus-Off</td>
+                            <td>Fault Confinement và Bus-Off.</td>
+                            <td>Hiểu trạng thái và hướng kiểm tra recovery.</td>
+                        </tr>
+                        <tr>
+                            <td>Kiểm tra Bit Timing</td>
+                            <td>PCS, Bit Time và Synchronization.</td>
+                            <td>Xác định thông số định thời cần đối chiếu.</td>
+                        </tr>
+                        <tr>
+                            <td>Kiểm tra tương thích CAN FD</td>
+                            <td>Frame Format và Implementation Options.</td>
+                            <td>Xác định khả năng tương thích giữa các node.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cách tiếp cận này giúp giảm thời gian tìm kiếm và tạo
+                    mối liên hệ rõ ràng giữa kiến thức trong tiêu chuẩn
+                    với vấn đề kỹ thuật đang được giải quyết.
+                </p>
+
+                <h2>26. Từ ISO 11898-1 đến yêu cầu của dự án</h2>
+
+                <p>
+                    Trong dự án Automotive, không nên dừng lại ở việc đọc
+                    và ghi chú nội dung của tiêu chuẩn. Cần chuyển những
+                    yêu cầu có liên quan thành yêu cầu hệ thống,
+                    yêu cầu phần mềm hoặc yêu cầu kiểm thử.
+                </p>
+
+                <p>
+                    Một quy trình tổng quát có thể gồm:
+                </p>
+
+                <pre><code>       ISO 11898-1 Requirement
+                 |
+                 v
+         Identify Applicability
+                 |
+                 v
+        Project/System Requirement
+                 |
+                 v
+          ECU Design / Configuration
+                 |
+                 v
+            Implementation
+                 |
+                 v
+             Verification
+                 |
+                 v
+          Test Result / Evidence
+                 |
+                 v
+          Requirement Traceability</code></pre>
+
+                <p>
+                    Ví dụ, tiêu chuẩn mô tả cơ chế Arbitration.
+                    Dự án có thể đưa ra yêu cầu rằng một message có mức
+                    ưu tiên cao phải được truyền theo đúng quy tắc
+                    CAN khi nhiều node cùng yêu cầu bus.
+                </p>
+
+                <p>
+                    Sau đó, đội ngũ phát triển xác định cách cấu hình
+                    CAN Controller, xây dựng test case và kiểm tra
+                    kết quả bằng CAN analyzer hoặc công cụ mô phỏng.
+                </p>
+
+                <h2>27. Các tài liệu cần có khi áp dụng ISO 11898-1</h2>
+
+                <p>
+                    ISO 11898-1 thường không phải tài liệu duy nhất
+                    được sử dụng khi phát triển một CAN network.
+                    Để áp dụng hiệu quả, kỹ sư cần kết hợp nó với
+                    những tài liệu kỹ thuật khác của dự án.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tài liệu</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>System Requirements</td>
+                            <td>Xác định chức năng và yêu cầu truyền thông của hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Communication Matrix</td>
+                            <td>Xác định các message, sender, receiver, ID, cycle time và thông tin liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>DBC File</td>
+                            <td>Mô tả message, signal, bit position, scaling và cách giải mã dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>MCU Datasheet</td>
+                            <td>Kiểm tra khả năng và thông số của CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>Transceiver Datasheet</td>
+                            <td>Kiểm tra đặc tính phần cứng của CAN Transceiver.</td>
+                        </tr>
+                        <tr>
+                            <td>Hardware Schematic</td>
+                            <td>Kiểm tra kết nối CAN Controller, Transceiver và bus.</td>
+                        </tr>
+                        <tr>
+                            <td>AUTOSAR Specification</td>
+                            <td>Đối chiếu cấu trúc module, interface và API nếu ECU sử dụng AUTOSAR.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Specification</td>
+                            <td>Xác định phương pháp và điều kiện kiểm thử.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, ISO 11898-1 có thể giúp xác định cách CAN
+                    xử lý Arbitration, nhưng Communication Matrix mới
+                    cho biết message nào trong dự án có ID nào và
+                    chu kỳ truyền dự kiến bao lâu.
+                </p>
+
+                <h2>28. Quy trình áp dụng ISO 11898-1 trong một dự án ECU</h2>
+
+                <p>
+                    Có thể tổ chức công việc thành những bước sau:
+                </p>
+
+                <h3>Bước 1: Xác định loại CAN được sử dụng</h3>
+
+                <p>
+                    Trước tiên, cần kiểm tra dự án đang sử dụng CAN Classic,
+                    CAN FD hay CAN XL. Đồng thời xác định những node nào
+                    trên mạng hỗ trợ các định dạng tương ứng.
+                </p>
+
+                <p>
+                    Không được mặc định rằng chỉ cần một node hỗ trợ CAN FD
+                    thì toàn bộ mạng có thể sử dụng CAN FD.
+                </p>
+
+                <h3>Bước 2: Xác định yêu cầu mạng</h3>
+
+                <p>
+                    Thu thập Communication Matrix hoặc tài liệu tương ứng
+                    để biết những message cần truyền và các điều kiện
+                    giao tiếp của hệ thống.
+                </p>
+
+                <p>
+                    Những thông tin cần quan tâm gồm:
+                </p>
+
+                <ul>
+                    <li>CAN Identifier.</li>
+                    <li>Standard hoặc Extended Identifier.</li>
+                    <li>CAN Classic hoặc CAN FD.</li>
+                    <li>Data Length.</li>
+                    <li>Sender và Receiver.</li>
+                    <li>Transmission Period.</li>
+                    <li>Bitrate và CAN FD Data Bitrate nếu có.</li>
+                    <li>Timeout và yêu cầu xử lý Communication Error.</li>
+                </ul>
+
+                <h3>Bước 3: Đối chiếu với phần cứng</h3>
+
+                <p>
+                    Kiểm tra CAN Controller, CAN Transceiver,
+                    clock source và khả năng cấu hình Bit Timing
+                    của phần cứng được sử dụng.
+                </p>
+
+                <p>
+                    Những thông số yêu cầu từ mạng phải tương thích
+                    với khả năng thực tế của MCU và Transceiver.
+                </p>
+
+                <h3>Bước 4: Xây dựng cấu hình</h3>
+
+                <p>
+                    Dựa trên yêu cầu hệ thống và tài liệu phần cứng,
+                    đội ngũ phát triển cấu hình các thành phần
+                    CAN Controller, CAN Driver và những module
+                    liên quan.
+                </p>
+
+                <p>
+                    Trong AUTOSAR, công việc có thể bao gồm cấu hình
+                    Can, CanIf, PduR, COM và những module liên quan
+                    theo kiến trúc dự án.
+                </p>
+
+                <h3>Bước 5: Xây dựng test case</h3>
+
+                <p>
+                    Mỗi yêu cầu có liên quan cần được chuyển thành
+                    phương pháp kiểm thử phù hợp.
+                    Ví dụ, Arbitration có thể được kiểm tra bằng
+                    cách tạo hai yêu cầu truyền đồng thời từ hai node.
+                </p>
+
+                <h3>Bước 6: Thu thập test evidence</h3>
+
+                <p>
+                    Sử dụng CAN analyzer, trace log, oscilloscope
+                    hoặc công cụ kiểm thử phù hợp để thu thập kết quả.
+                    Evidence cần đủ để chứng minh test case đã được
+                    thực hiện và đạt hay không đạt kết quả mong đợi.
+                </p>
+
+                <h2>29. Ví dụ dự án: Thiết kế CAN Communication cho Body ECU</h2>
+
+                <p>
+                    Giả sử một dự án đang phát triển hệ thống Body ECU.
+                    ECU này cần trao đổi trạng thái với một ECU khác thông qua
+                    CAN Classic.
+                </p>
+
+                <p>
+                    Ví dụ yêu cầu hệ thống:
+                </p>
+
+                <ul>
+                    <li>ECU A gửi trạng thái điều khiển thân xe.</li>
+                    <li>ECU B gửi trạng thái phản hồi.</li>
+                    <li>Hai ECU sử dụng CAN Classic.</li>
+                    <li>Standard Identifier 11-bit được sử dụng trong ví dụ.</li>
+                    <li>Mỗi message có tối đa 8 byte dữ liệu.</li>
+                    <li>Hai message có chu kỳ truyền được xác định trong Communication Matrix.</li>
+                </ul>
+
+                <p>
+                    Communication Matrix minh họa:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Message</th>
+                            <th>CAN ID</th>
+                            <th>Sender</th>
+                            <th>Receiver</th>
+                            <th>DLC</th>
+                            <th>Cycle Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>BodyControlStatus</td>
+                            <td>0x180</td>
+                            <td>ECU A</td>
+                            <td>ECU B</td>
+                            <td>8</td>
+                            <td>10 ms</td>
+                        </tr>
+                        <tr>
+                            <td>BodyFeedbackStatus</td>
+                            <td>0x280</td>
+                            <td>ECU B</td>
+                            <td>ECU A</td>
+                            <td>8</td>
+                            <td>20 ms</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những ID và cycle time trong bảng chỉ là dữ liệu
+                    giả định cho ví dụ. Khi làm dự án thực tế,
+                    các giá trị phải lấy từ Communication Matrix
+                    và yêu cầu được phê duyệt.
+                </p>
+
+                <p>
+                    Sau khi có yêu cầu, kỹ sư cần kiểm tra:
+                </p>
+
+                <ol>
+                    <li>Hai node đều hỗ trợ CAN Classic.</li>
+                    <li>CAN Controller được cấu hình đúng bitrate.</li>
+                    <li>Identifier và DLC được cấu hình đúng.</li>
+                    <li>ECU gửi message theo chu kỳ yêu cầu.</li>
+                    <li>ECU nhận có thể nhận được các frame cần thiết.</li>
+                    <li>Ứng dụng giải mã signal theo đúng định nghĩa dự án.</li>
+                    <li>CAN Controller và driver xử lý lỗi theo yêu cầu.</li>
+                </ol>
+
+                <h2>30. Ví dụ áp dụng: Kiểm tra Arbitration</h2>
+
+                <p>
+                    Giả sử hai node cùng muốn gửi một frame trong một thời điểm:
+                </p>
+
+                <pre><code>ECU A:
+CAN ID = 0x080
+
+ECU B:
+CAN ID = 0x180</code></pre>
+
+                <p>
+                    Mục tiêu của test case là xác minh cơ chế Arbitration
+                    hoạt động đúng theo CAN protocol.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Nội dung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Xác minh node có Identifier ưu tiên cao hơn sẽ tiếp tục truyền khi xảy ra Arbitration.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>Hai node hoạt động trên cùng một CAN bus và sử dụng cùng định dạng Standard Identifier.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Input</td>
+                            <td>Hai node được yêu cầu truyền đồng thời frame với ID 0x080 và 0x180.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>Frame có ID 0x080 thắng Arbitration; node gửi ID 0x180 dừng tranh chấp mà không phá hủy frame của node thắng.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Evidence</td>
+                            <td>CAN trace thể hiện thứ tự truyền và trạng thái frame của hai node.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể quan sát kết quả bằng CAN analyzer hoặc công cụ
+                    mô phỏng phù hợp. Cần kiểm tra timestamp và trace
+                    để xác nhận hai node thực sự có yêu cầu truyền
+                    trong cùng một khoảng thời gian.
+                </p>
+
+                <p>
+                    Khi thực hiện test, không nên chỉ nhìn thấy frame 0x080
+                    xuất hiện trước rồi kết luận Arbitration đã được kiểm tra.
+                    Cần đảm bảo điều kiện test và bằng chứng đủ để chứng minh
+                    hai node đã cùng yêu cầu bus.
+                </p>
+
+                <h2>31. Ví dụ áp dụng: Kiểm tra Frame Transmission</h2>
+
+                <p>
+                    Giả sử ECU A cần truyền message BodyControlStatus
+                    với ID 0x180, DLC 8 và dữ liệu được lấy từ cấu hình
+                    Communication Matrix.
+                </p>
+
+                <p>
+                    Một CAN trace minh họa có thể hiển thị:
+                </p>
+
+                <pre><code>Timestamp   CAN ID   Format    DLC   Data
+------------------------------------------------
+1.000 ms    0x180    Standard   8    01 02 03 04 05 06 07 08
+1.010 ms    0x180    Standard   8    01 02 03 04 05 06 07 09
+1.020 ms    0x180    Standard   8    01 02 03 04 05 06 07 0A</code></pre>
+
+                <p>
+                    Ví dụ này chỉ minh họa cách một công cụ phân tích
+                    có thể trình bày frame và timestamp.
+                    Những giá trị payload không đại diện cho một signal
+                    cụ thể nào nếu chưa có định nghĩa dữ liệu.
+                </p>
+
+                <p>
+                    Khi kiểm tra frame, cần đối chiếu:
+                </p>
+
+                <ul>
+                    <li>CAN ID có đúng yêu cầu không?</li>
+                    <li>Frame Format có đúng không?</li>
+                    <li>DLC có đúng không?</li>
+                    <li>Payload có đúng với dữ liệu đầu vào không?</li>
+                    <li>Timestamp và chu kỳ truyền có đạt yêu cầu không?</li>
+                    <li>Các node nhận có nhận được frame dự kiến không?</li>
+                </ul>
+
+                <p>
+                    Nếu CAN trace đúng ID và DLC nhưng giá trị signal
+                    hiển thị trên ứng dụng sai, cần kiểm tra thêm
+                    Signal Mapping, Start Bit, Length, Endianness,
+                    Scaling và Offset trong tài liệu dự án.
+                </p>
+
+                <h2>32. Ví dụ áp dụng: Kiểm tra ACK và Communication Error</h2>
+
+                <p>
+                    ACK là cơ chế xác nhận frame ở mức CAN protocol.
+                    Trong quá trình kiểm thử, cần phân biệt ACK với
+                    việc ứng dụng nhận và xử lý dữ liệu.
+                </p>
+
+                <p>
+                    Giả sử một ECU gửi frame nhưng không có node khác
+                    xác nhận hợp lệ trên bus. Tình trạng này có thể
+                    dẫn đến ACK Error và những lần thử truyền lại
+                    theo cơ chế được triển khai.
+                </p>
+
+                <p>
+                    Các bước kiểm tra có thể gồm:
+                </p>
+
+                <ol>
+                    <li>Xác định ECU gửi đang kết nối với CAN bus hay không.</li>
+                    <li>Kiểm tra có node nhận nào đang hoạt động hay không.</li>
+                    <li>Kiểm tra bitrate và Bit Timing của các node.</li>
+                    <li>Quan sát ACK Error và các thông tin lỗi trong CAN trace.</li>
+                    <li>Kiểm tra trạng thái CAN Controller và các error counter.</li>
+                    <li>Đối chiếu kết quả với cấu hình mạng và tài liệu phần cứng.</li>
+                </ol>
+
+                <p>
+                    Một CAN analyzer ở chế độ chỉ nghe (listen-only)
+                    có thể quan sát frame nhưng không nhất thiết gửi ACK.
+                    Do đó, khi kiểm thử ACK, cần kiểm tra chế độ hoạt động
+                    của thiết bị phân tích và sự hiện diện của receiver phù hợp.
+                </p>
+
+                <h2>33. Ví dụ áp dụng: Kiểm tra Bus-Off</h2>
+
+                <p>
+                    Giả sử dự án yêu cầu ECU phải nhận biết khi CAN Controller
+                    đi vào Bus-Off và thực hiện một quy trình phục hồi
+                    theo yêu cầu hệ thống.
+                </p>
+
+                <p>
+                    Test case có thể được xây dựng như sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Nội dung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Xác minh ECU nhận biết trạng thái Bus-Off và xử lý theo yêu cầu dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>ECU và CAN communication stack đã được khởi tạo.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Setup</td>
+                            <td>Môi trường bench hoặc mô phỏng có kiểm soát, hỗ trợ quan sát trạng thái CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Sử dụng phương pháp kiểm thử được phê duyệt để tạo điều kiện lỗi phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>ECU nhận được notification hoặc trạng thái Bus-Off và thực hiện xử lý theo yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Evidence</td>
+                            <td>CAN trace, driver log, controller status và kết quả phục hồi.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cần thực hiện loại kiểm thử này trong môi trường
+                    bench hoặc mô phỏng được kiểm soát, theo quy trình
+                    dự án và tài liệu phần cứng.
+                </p>
+
+                <p>
+                    Không nên tạo lỗi trực tiếp trên xe đang vận hành
+                    chỉ để quan sát Bus-Off. Việc kiểm thử phải đảm bảo
+                    không ảnh hưởng đến hoạt động an toàn của phương tiện.
+                </p>
+
+                <h2>34. Ví dụ áp dụng: Kiểm tra Bit Timing</h2>
+
+                <p>
+                    Giả sử một dự án yêu cầu các ECU giao tiếp bằng
+                    CAN Classic ở một bitrate nhất định.
+                    Tuy nhiên, một node liên tục xuất hiện Error Frame
+                    dù CAN ID và payload đã được cấu hình đúng.
+                </p>
+
+                <p>
+                    Một trong những hướng điều tra là kiểm tra Bit Timing.
+                </p>
+
+                <p>
+                    Các thông tin cần đối chiếu gồm:
+                </p>
+
+                <ul>
+                    <li>CAN Controller Clock.</li>
+                    <li>Prescaler.</li>
+                    <li>Time Quantum.</li>
+                    <li>Sync Segment.</li>
+                    <li>Propagation Segment.</li>
+                    <li>Phase Segment 1 và Phase Segment 2.</li>
+                    <li>Synchronization Jump Width.</li>
+                    <li>Sample Point.</li>
+                </ul>
+
+                <p>
+                    Quy trình kiểm tra tổng quát:
+                </p>
+
+                <pre><code>Đọc yêu cầu Bitrate từ dự án
+             |
+             v
+Kiểm tra CAN Controller Clock
+             |
+             v
+Kiểm tra Bit Timing Configuration
+             |
+             v
+Đối chiếu với tài liệu MCU
+             |
+             v
+Đối chiếu cấu hình các node khác
+             |
+             v
+Kiểm tra trace và trạng thái lỗi
+             |
+             v
+Xác nhận communication stability</code></pre>
+
+                <p>
+                    Không nên lấy một bộ thông số Bit Timing trên Internet
+                    rồi áp dụng trực tiếp cho mọi MCU. Cách cấu hình phải
+                    dựa trên clock thực tế, khả năng CAN Controller,
+                    yêu cầu bus và các giới hạn được quy định.
+                </p>
+
+                <h2>35. Áp dụng ISO 11898-1 vào AUTOSAR Configuration</h2>
+
+                <p>
+                    Nếu dự án sử dụng AUTOSAR Classic, một số yêu cầu
+                    liên quan đến CAN có thể được chuyển thành
+                    các cấu hình và kiểm tra tương ứng trong BSW.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Yêu cầu dự án</th>
+                            <th>Thành phần AUTOSAR liên quan</th>
+                            <th>Điểm cần kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN Controller hoạt động đúng</td>
+                            <td>Can</td>
+                            <td>Controller Configuration, bitrate và Hardware Object.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN hardware được quản lý qua interface chung</td>
+                            <td>CanIf</td>
+                            <td>Controller mapping, PDU routing và notification.</td>
+                        </tr>
+                        <tr>
+                            <td>Message được định tuyến đến module phù hợp</td>
+                            <td>PduR</td>
+                            <td>Routing Path và PDU Configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Signal được đóng gói vào I-PDU</td>
+                            <td>COM</td>
+                            <td>Signal Definition, I-PDU, Update Bit và Transmission Mode.</td>
+                        </tr>
+                        <tr>
+                            <td>Thông điệp chẩn đoán dài được truyền trên CAN</td>
+                            <td>CanTp</td>
+                            <td>Transport Protocol Configuration.</td>
+                        </tr>
+                        <tr>
+                            <td>Quản lý trạng thái giao tiếp CAN</td>
+                            <td>CanSM</td>
+                            <td>Bus-Off Notification và Communication Mode.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là cách liên hệ giữa yêu cầu CAN và các module
+                    AUTOSAR ở mức tổng quan. Cấu hình cụ thể phải dựa
+                    trên AUTOSAR release, vendor implementation
+                    và kiến trúc dự án.
+                </p>
+
+                <h2>36. Cách lập Requirement Traceability cho ISO 11898-1</h2>
+
+                <p>
+                    Khi sử dụng tiêu chuẩn trong dự án, nên xây dựng
+                    Requirement Traceability để liên kết nội dung tiêu chuẩn
+                    với yêu cầu hệ thống, thiết kế, implementation
+                    và kết quả kiểm thử.
+                </p>
+
+                <p>
+                    Một bảng traceability đơn giản có thể gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Requirement ID</td>
+                            <td>Mã định danh requirement trong dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Source Document</td>
+                            <td>Tài liệu nguồn, ví dụ ISO 11898-1:2024.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause Reference</td>
+                            <td>Điều khoản hoặc phần cụ thể được tham khảo.</td>
+                        </tr>
+                        <tr>
+                            <td>Requirement Description</td>
+                            <td>Yêu cầu được diễn giải trong phạm vi dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Design / Configuration</td>
+                            <td>Thành phần thiết kế hoặc cấu hình đáp ứng yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>Test case dùng để xác minh yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Result</td>
+                            <td>Kết quả kiểm thử.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>Trace log, report, screenshot hoặc test record.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Requirement ID</th>
+                            <th>Source</th>
+                            <th>Project Requirement</th>
+                            <th>Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CAN-REQ-001</td>
+                            <td>ISO 11898-1, Arbitration</td>
+                            <td>ECU phải tham gia Arbitration theo quy tắc CAN.</td>
+                            <td>CAN-TEST-001: Arbitration Test.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN-REQ-002</td>
+                            <td>ISO 11898-1, Frame Validation</td>
+                            <td>ECU chỉ tiếp nhận frame hợp lệ theo cấu hình.</td>
+                            <td>CAN-TEST-002: Frame Validation Test.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN-REQ-003</td>
+                            <td>ISO 11898-1, Fault Confinement</td>
+                            <td>ECU phải xử lý trạng thái lỗi CAN theo yêu cầu dự án.</td>
+                            <td>CAN-TEST-003: Error State Test.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các mã requirement và mô tả trong bảng là ví dụ do dự án
+                    tự đặt. Khi lập bảng thật, cần dẫn đúng điều khoản
+                    của phiên bản tiêu chuẩn được dự án phê duyệt.
+                </p>
+
+                <h2>37. Cách viết Test Case từ nội dung tiêu chuẩn</h2>
+
+                <p>
+                    Một nội dung trong tiêu chuẩn chỉ trở nên hữu ích
+                    cho quá trình Verification khi người phát triển
+                    chuyển nó thành một phương pháp kiểm tra có thể
+                    thực hiện và đánh giá.
+                </p>
+
+                <p>
+                    Một Test Case nên có tối thiểu những thông tin sau:
+                </p>
+
+                <ul>
+                    <li>Test Case ID.</li>
+                    <li>Test Objective.</li>
+                    <li>Requirement Reference.</li>
+                    <li>Precondition.</li>
+                    <li>Test Setup.</li>
+                    <li>Test Input / Test Action.</li>
+                    <li>Expected Result.</li>
+                    <li>Actual Result.</li>
+                    <li>Pass / Fail Status.</li>
+                    <li>Evidence.</li>
+                </ul>
+
+                <p>
+                    Ví dụ về một test case kiểm tra CAN message:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>CAN-TEST-010</td>
+                        </tr>
+                        <tr>
+                            <td>Objective</td>
+                            <td>Kiểm tra ECU truyền đúng message theo Communication Matrix.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>ECU đã khởi tạo CAN Controller và Communication Stack.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Input</td>
+                            <td>Thiết lập dữ liệu đầu vào cho BodyControlStatus.</td>
+                        </tr>
+                        <tr>
+                            <td>Action</td>
+                            <td>Quan sát CAN bus bằng CAN analyzer.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>CAN ID, DLC, payload và thời điểm truyền khớp yêu cầu dự án.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>CAN trace và Test Report.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi viết test case, cần tránh Expected Result quá chung chung
+                    như "CAN hoạt động đúng". Hãy xác định rõ phải kiểm tra
+                    thông số nào, trong điều kiện nào và bằng chứng nào
+                    được sử dụng để kết luận.
+                </p>
+
+                <h2>38. Cách ghi chép khi đọc ISO 11898-1</h2>
+
+                <p>
+                    Một cách hữu ích để tránh phải đọc lại toàn bộ tài liệu
+                    nhiều lần là tạo một Standard Reading Note.
+                </p>
+
+                <p>
+                    Mỗi chủ đề nên được ghi thành một mục riêng:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông tin</th>
+                            <th>Nội dung cần ghi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Document</td>
+                            <td>ISO 11898-1:2024.</td>
+                        </tr>
+                        <tr>
+                            <td>Clause</td>
+                            <td>Phần hoặc điều khoản đang đọc.</td>
+                        </tr>
+                        <tr>
+                            <td>Topic</td>
+                            <td>Ví dụ: Arbitration hoặc Fault Confinement.</td>
+                        </tr>
+                        <tr>
+                            <td>Purpose</td>
+                            <td>Mục đích của cơ chế.</td>
+                        </tr>
+                        <tr>
+                            <td>Key Terms</td>
+                            <td>Những thuật ngữ quan trọng.</td>
+                        </tr>
+                        <tr>
+                            <td>Requirement</td>
+                            <td>Yêu cầu hoặc quy tắc có liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Project Impact</td>
+                            <td>Ảnh hưởng đến thiết kế, configuration hoặc testing.</td>
+                        </tr>
+                        <tr>
+                            <td>Open Question</td>
+                            <td>Những điểm chưa rõ cần hỏi senior hoặc kiểm tra thêm.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Reference</td>
+                            <td>Test Case ID hoặc phương pháp xác minh.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Không cần sao chép nguyên văn toàn bộ tiêu chuẩn.
+                    Nên ghi lại ý nghĩa bằng ngôn ngữ của mình,
+                    giữ chính xác thuật ngữ và luôn lưu tham chiếu
+                    đến phần gốc để có thể kiểm tra lại.
+                </p>
+
+                <h2>39. Những lỗi thường gặp khi áp dụng ISO 11898-1</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhầm lẫn / Lỗi</th>
+                            <th>Vì sao cần chú ý?</th>
+                            <th>Hướng xử lý</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Chỉ đọc phần CAN Classic trong khi dự án dùng CAN FD</td>
+                            <td>Có thể bỏ sót khác biệt về frame format và timing.</td>
+                            <td>Xác định chính xác CAN variant trước khi đọc.</td>
+                        </tr>
+                        <tr>
+                            <td>Cho rằng ISO 11898-1 quy định toàn bộ Physical Layer</td>
+                            <td>Part 1 tập trung DLL và PCS, không thay thế tài liệu PMA.</td>
+                            <td>Tham khảo ISO 11898-2 khi cần tìm hiểu High-speed CAN PMA.</td>
+                        </tr>
+                        <tr>
+                            <td>Nhầm CAN ID với địa chỉ ECU</td>
+                            <td>CAN Identifier không nhất thiết đại diện cho địa chỉ sender.</td>
+                            <td>Phân biệt message identification và node addressing.</td>
+                        </tr>
+                        <tr>
+                            <td>Cho rằng ACK chứng minh ứng dụng đã xử lý dữ liệu</td>
+                            <td>ACK chỉ là xác nhận ở mức CAN protocol.</td>
+                            <td>Kiểm tra thêm dữ liệu và trạng thái tại Application Software.</td>
+                        </tr>
+                        <tr>
+                            <td>Cho rằng Arbitration là lỗi truyền thông</td>
+                            <td>Node thua Arbitration vẫn có thể hoạt động bình thường.</td>
+                            <td>Phân biệt Arbitration Lost với Error Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>Cho rằng Bus-Off chỉ là lỗi phần mềm</td>
+                            <td>Bus-Off có thể liên quan đến phần cứng, mạng và điều kiện truyền.</td>
+                            <td>Kiểm tra CAN Controller, Transceiver, bus và driver log.</td>
+                        </tr>
+                        <tr>
+                            <td>Dùng Bit Timing của MCU khác</td>
+                            <td>Clock và khả năng cấu hình phần cứng có thể khác nhau.</td>
+                            <td>Tính toán và kiểm tra theo MCU đang sử dụng.</td>
+                        </tr>
+                        <tr>
+                            <td>Dùng ISO 11898-1 để giải mã toàn bộ signal</td>
+                            <td>Ý nghĩa signal thuộc định nghĩa của hệ thống và application protocol.</td>
+                            <td>Sử dụng Communication Matrix hoặc DBC phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Không lưu lại phiên bản tài liệu</td>
+                            <td>Yêu cầu và nội dung có thể khác giữa các edition.</td>
+                            <td>Ghi rõ Document ID, Edition và Publication Year.</td>
+                        </tr>
+                        <tr>
+                            <td>Sao chép yêu cầu mà không kiểm tra điều kiện áp dụng</td>
+                            <td>Có thể áp dụng nhầm tùy chọn hoặc frame format.</td>
+                            <td>Đọc Scope, điều kiện và các tham chiếu liên quan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>40. Checklist khi đọc và áp dụng ISO 11898-1</h2>
+
+                <p>
+                    Có thể sử dụng checklist này khi bắt đầu nghiên cứu
+                    hoặc tham gia một dự án có sử dụng CAN.
+                </p>
+
+                <ul>
+                    <li>Đã xác định đúng phiên bản ISO 11898-1 chưa?</li>
+                    <li>Đã kiểm tra Scope và Implementation Options chưa?</li>
+                    <li>Đã xác định dự án dùng CAN Classic, CAN FD hay CAN XL chưa?</li>
+                    <li>Đã phân biệt DLL, LLC, MAC và PCS chưa?</li>
+                    <li>Đã hiểu Frame Format và Identifier liên quan chưa?</li>
+                    <li>Đã hiểu Arbitration và ACK chưa?</li>
+                    <li>Đã hiểu Error Detection và Error Signalling chưa?</li>
+                    <li>Đã xác định cách ECU xử lý Error Active, Error Passive và Bus-Off chưa?</li>
+                    <li>Đã kiểm tra Bit Timing và Synchronization chưa?</li>
+                    <li>Đã xác định những phần cần tham khảo từ ISO 11898-2 chưa?</li>
+                    <li>Đã có Communication Matrix hoặc tài liệu mạng chưa?</li>
+                    <li>Đã đối chiếu CAN Controller với MCU Datasheet chưa?</li>
+                    <li>Đã đối chiếu CAN Transceiver với Hardware Design chưa?</li>
+                    <li>Đã liên kết yêu cầu với AUTOSAR Configuration nếu dự án sử dụng AUTOSAR chưa?</li>
+                    <li>Đã tạo Test Case cho các yêu cầu quan trọng chưa?</li>
+                    <li>Đã lưu CAN Trace và Test Evidence chưa?</li>
+                    <li>Đã cập nhật Requirement Traceability chưa?</li>
+                </ul>
+
+                <h2>41. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 11898-1</td>
+                            <td>Tiêu chuẩn CAN Data Link Layer và Physical Coding Sublayer.</td>
+                        </tr>
+                        <tr>
+                            <td>DLL</td>
+                            <td>Data Link Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>PCS</td>
+                            <td>Physical Coding Sublayer.</td>
+                        </tr>
+                        <tr>
+                            <td>PMA</td>
+                            <td>Physical Medium Attachment.</td>
+                        </tr>
+                        <tr>
+                            <td>LLC</td>
+                            <td>Logical Link Control.</td>
+                        </tr>
+                        <tr>
+                            <td>MAC</td>
+                            <td>Medium Access Control.</td>
+                        </tr>
+                        <tr>
+                            <td>SDU</td>
+                            <td>Service Data Unit.</td>
+                        </tr>
+                        <tr>
+                            <td>SDT</td>
+                            <td>Service Data Unit Type.</td>
+                        </tr>
+                        <tr>
+                            <td>VCID</td>
+                            <td>Virtual CAN Channel Identifier.</td>
+                        </tr>
+                        <tr>
+                            <td>Arbitration</td>
+                            <td>Cơ chế giải quyết tranh chấp quyền truy cập CAN bus.</td>
+                        </tr>
+                        <tr>
+                            <td>ACK</td>
+                            <td>Acknowledgement.</td>
+                        </tr>
+                        <tr>
+                            <td>CRC</td>
+                            <td>Cyclic Redundancy Check.</td>
+                        </tr>
+                        <tr>
+                            <td>TEC</td>
+                            <td>Transmit Error Counter.</td>
+                        </tr>
+                        <tr>
+                            <td>REC</td>
+                            <td>Receive Error Counter.</td>
+                        </tr>
+                        <tr>
+                            <td>Fault Confinement</td>
+                            <td>Cơ chế quản lý trạng thái lỗi của CAN node.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Active</td>
+                            <td>Trạng thái hoạt động bình thường trong cơ chế fault confinement.</td>
+                        </tr>
+                        <tr>
+                            <td>Error Passive</td>
+                            <td>Trạng thái thụ động do điều kiện lỗi.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus-Off</td>
+                            <td>Trạng thái node bị ngắt khỏi hoạt động truyền thông trên bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Bit Time</td>
+                            <td>Khoảng thời gian truyền một bit.</td>
+                        </tr>
+                        <tr>
+                            <td>SJW</td>
+                            <td>Synchronization Jump Width.</td>
+                        </tr>
+                        <tr>
+                            <td>Sample Point</td>
+                            <td>Thời điểm lấy mẫu trạng thái bit trong một Bit Time.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 11898-2</td>
+                            <td>Tiêu chuẩn liên quan đến High-speed CAN Physical Medium Attachment.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>42. Tài liệu tham khảo</h2>
+
+                <p>
+                    Những tài liệu dưới đây có thể sử dụng để tìm hiểu
+                    sâu hơn về CAN Protocol, CAN Hardware và cách triển khai
+                    CAN trong AUTOSAR Classic.
+                </p>
+
+                <ul>
+                    <li>
+                        <a href="https://www.iso.org/standard/86384.html"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 11898-1:2024 - Road vehicles - Controller area network (CAN) - Part 1
+                        </a>
+                        — tài liệu chính về Data Link Layer và Physical Coding Sublayer.
+                        Có thể tra cứu phạm vi, phiên bản và phần xem trước tại ISO.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/standard/86384.html"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO Online Browsing Platform - ISO 11898-1:2024
+                        </a>
+                        — nguồn chính thức để xem thông tin xuất bản và
+                        phần xem trước của tiêu chuẩn.
+                    </li>
+
+                    <li>
+                        <a href="https://www.can-cia.org/"
+                            target="_blank" rel="noopener noreferrer">
+                            CAN in Automation (CiA)
+                        </a>
+                        — tổ chức cung cấp nhiều tài liệu và thông tin kỹ thuật
+                        về CAN, CAN FD, CAN XL và các giao thức dựa trên CAN.
+                    </li>
+
+                    <li>
+                        <a href="https://www.can-cia.org/fileadmin/cia/documents/brochures/can_dictionary_v13_2026.pdf"
+                            target="_blank" rel="noopener noreferrer">
+                            CAN Dictionary - 13th Edition, 2026
+                        </a>
+                        — tài liệu tham khảo thuật ngữ, chữ viết tắt và
+                        những khái niệm phổ biến trong công nghệ CAN.
+                        Tài liệu này hỗ trợ việc hiểu thuật ngữ nhưng không thay thế ISO Standard.
+                    </li>
+
+                    <li>
+                        <a href="https://www.autosar.org/fileadmin/standards/R25-11/CP/AUTOSAR_CP_SWS_CANDriver.pdf"
+                            target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Classic Platform R25-11 - Specification of CAN Driver
+                        </a>
+                        — tài liệu mô tả chức năng, interface và cấu hình
+                        của AUTOSAR CAN Driver.
+                    </li>
+
+                    <li>
+                        <a href="https://www.autosar.org/fileadmin/standards/R25-11/CP/AUTOSAR_CP_SWS_CANInterface.pdf"
+                            target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Classic Platform R25-11 - Specification of CAN Interface
+                        </a>
+                        — tài liệu về CanIf và mối quan hệ giữa CAN Driver
+                        với các module communication phía trên.
+                    </li>
+
+                    <li>
+                        <a href="https://www.autosar.org/standards/classic-platform"
+                            target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Classic Platform
+                        </a>
+                        — nguồn chính thức để tra cứu các release
+                        và tài liệu kỹ thuật AUTOSAR Classic.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý khi sử dụng tiêu chuẩn:</strong>
+                    ISO 11898-1 là tài liệu có bản quyền. Trang ISO có thể
+                    cung cấp thông tin và phần xem trước, trong khi việc
+                    truy cập toàn văn cần tuân theo điều kiện sử dụng
+                    của ISO hoặc quyền truy cập mà tổ chức của bạn cung cấp.
+                    Khi làm dự án, hãy sử dụng bản tài liệu được phê duyệt
+                    và ghi rõ edition đang áp dụng.
+                </div>
+
+                <h2>43. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        ISO 11898-1 là tiêu chuẩn quan trọng đối với CAN,
+                        quy định Data Link Layer và Physical Coding Sublayer.
+                        Phiên bản ISO 11898-1:2024 bao gồm các nội dung liên quan
+                        đến CAN Classic, CAN FD và CAN XL, với nhiều lựa chọn
+                        triển khai khác nhau.
+                    </p>
+
+                    <p>
+                        Data Link Layer được chia thành LLC và MAC.
+                        Trong đó, các nội dung quan trọng gồm Frame Transmission,
+                        Arbitration, ACK, Error Detection, Error Signalling
+                        và Fault Confinement. Physical Coding Sublayer tập trung
+                        vào Bit Encoding, Bit Time, Synchronization và các vấn đề
+                        liên quan đến định thời bit.
+                    </p>
+
+                    <p>
+                        Khi đọc ISO 11898-1, cần bắt đầu bằng Scope,
+                        Terms and Definitions và Table of Contents.
+                        Sau đó lựa chọn những phần phù hợp với mục tiêu,
+                        chẳng hạn Arbitration, Error Handling hoặc Bit Timing.
+                        Cần phân biệt yêu cầu bắt buộc, khuyến nghị,
+                        ghi chú và ví dụ minh họa.
+                    </p>
+
+                    <p>
+                        Trong dự án ECU, tiêu chuẩn nên được kết hợp
+                        với System Requirements, Communication Matrix,
+                        DBC, MCU Datasheet, Transceiver Datasheet
+                        và AUTOSAR Specification nếu hệ thống sử dụng AUTOSAR.
+                        Những yêu cầu liên quan cần được liên kết với
+                        thiết kế, configuration, test case và test evidence.
+                    </p>
+
+                    <p>
+                        Đặc biệt, ISO 11898-1 không quy định ý nghĩa
+                        của từng signal trong dự án, không định nghĩa
+                        UDS service và cũng không mô tả trực tiếp
+                        AUTOSAR API. Cần tham khảo đúng tài liệu
+                        cho từng phạm vi kỹ thuật.
+                    </p>
+
+                    <p>
+                        Với bài học này, chúng ta đã đi từ việc hiểu
+                        ISO 11898-1 đến cách đọc, phân tích và áp dụng
+                        tiêu chuẩn vào một dự án CAN thực tế.
+                        Đây là nền tảng để tiếp tục tìm hiểu sâu hơn
+                        về CAN Physical Layer trong bài tiếp theo.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-33.html">← Bài trước</a>
+                    <a class="btn" href="lesson-35.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>

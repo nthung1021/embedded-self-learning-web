@@ -1,0 +1,2623 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+
+                <a href="lesson-25.html">Bài 25: DCM</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html" class="active" aria-current="page">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</h1>
+
+                <p>
+                    Trong các hệ thống Automotive, CAN Communication không chỉ
+                    phụ thuộc vào cách CAN Controller xử lý frame mà còn phụ thuộc
+                    vào khả năng truyền tín hiệu điện giữa các ECU.
+                </p>
+
+                <p>
+                    Một CAN Controller có thể tạo ra dữ liệu và xử lý CAN Frame
+                    đúng theo giao thức, nhưng nếu CAN Transceiver không hoạt động
+                    đúng, dây dẫn không phù hợp, termination không chính xác hoặc
+                    tín hiệu điện bị ảnh hưởng bởi nhiễu, các ECU vẫn có thể
+                    gặp lỗi giao tiếp.
+                </p>
+
+                <p>
+                    ISO 11898-2 là tiêu chuẩn quan trọng khi tìm hiểu High-speed CAN
+                    ở mức Physical Medium Attachment (PMA). Tiêu chuẩn mô tả
+                    các đặc tính của CAN Transceiver, bao gồm khả năng phát và
+                    nhận tín hiệu, đặc tính điện, timing, low-power mode
+                    và những chức năng wake-up.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào ISO 11898-2:2026, High-speed CAN PMA,
+                    CAN Transceiver, CAN_H/CAN_L, Differential Signaling,
+                    Dominant/Recessive Voltage, Bus Termination, Network Topology,
+                    Low-power Mode, Wake-up, Selective Wake-up và Signal Improvement
+                    Capability (SIC).
+                    Ngoài kiến thức tiêu chuẩn, bài học hướng dẫn cách đọc tài liệu,
+                    lựa chọn Transceiver, kiểm tra Hardware Design, xây dựng Test Case
+                    và debug những lỗi thường gặp trong dự án ECU.
+                </div>
+
+                <h2>1. ISO 11898-2 là gì?</h2>
+
+                <p>
+                    ISO 11898-2 là một phần của bộ tiêu chuẩn ISO 11898,
+                    tập trung vào High-speed Physical Medium Attachment (HS-PMA)
+                    của CAN.
+                </p>
+
+                <p>
+                    Có thể hiểu đơn giản, ISO 11898-1 chủ yếu mô tả cách CAN
+                    xử lý dữ liệu ở Data Link Layer và Physical Coding Sublayer,
+                    còn ISO 11898-2 tập trung vào giao tiếp vật lý giữa
+                    CAN Controller và môi trường truyền thông thông qua
+                    CAN Transceiver.
+                </p>
+
+                <p>
+                    Tên đầy đủ của tài liệu:
+                </p>
+
+                <pre><code>ISO 11898-2:2026
+
+Road vehicles - Controller area network (CAN) -
+Part 2: High-speed physical medium attachment (PMA) sublayer</code></pre>
+
+                <p>
+                    ISO 11898-2:2026 là Edition 4, được xuất bản vào tháng 5/2026.
+                    Phiên bản này thay thế ISO 11898-2:2024 và đã có những
+                    cập nhật, làm rõ về đặc tính kỹ thuật của HS-PMA.
+                </p>
+
+                <p>
+                    Khi tham khảo tiêu chuẩn trong dự án, cần ghi rõ phiên bản
+                    đang sử dụng. Không nên chỉ ghi chung chung là ISO 11898-2
+                    vì nội dung kỹ thuật có thể thay đổi giữa các edition.
+                </p>
+
+                <h2>2. Phạm vi của ISO 11898-2</h2>
+
+                <p>
+                    ISO 11898-2:2026 quy định các HS-PMA khác nhau của CAN,
+                    bao gồm những implementation có hoặc không có
+                    các chức năng low-power và selective wake-up.
+                </p>
+
+                <p>
+                    Tiêu chuẩn cũng đề cập đến các implementation hỗ trợ
+                    Signal Improvement Capability (SIC) mode và FAST mode
+                    trong Annex A.
+                </p>
+
+                <p>
+                    Những nhóm chức năng chính gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm</th>
+                            <th>Phạm vi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>HS-PMA Base Requirements</td>
+                            <td>Các yêu cầu cơ bản đối với High-speed CAN Transceiver.</td>
+                        </tr>
+                        <tr>
+                            <td>Static Parameters</td>
+                            <td>Đặc tính điện của transmitter và receiver.</td>
+                        </tr>
+                        <tr>
+                            <td>Dynamic Parameters</td>
+                            <td>Timing, driver symmetry và những đặc tính động.</td>
+                        </tr>
+                        <tr>
+                            <td>Low-power Mode</td>
+                            <td>Khả năng hoạt động ở trạng thái tiêu thụ năng lượng thấp.</td>
+                        </tr>
+                        <tr>
+                            <td>Wake-up</td>
+                            <td>Các phương thức đánh thức Transceiver hoặc hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td>Selective Wake-up</td>
+                            <td>Khả năng nhận biết những thông tin đánh thức được lựa chọn.</td>
+                        </tr>
+                        <tr>
+                            <td>SIC Mode</td>
+                            <td>Signal Improvement Capability.</td>
+                        </tr>
+                        <tr>
+                            <td>FAST Mode</td>
+                            <td>Chế độ HS-PMA được mô tả trong Annex A.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một điểm cần chú ý là ISO 11898-2 không quy định toàn bộ
+                    Physical Layer theo nghĩa bao gồm tất cả các đặc tính của
+                    dây dẫn và môi trường truyền. Physical Medium Dependent (PMD)
+                    sublayer nằm ngoài phạm vi của Part 2.
+                </p>
+
+                <h2>3. ISO 11898-1 và ISO 11898-2 khác nhau như thế nào?</h2>
+
+                <p>
+                    Hai tiêu chuẩn này thường được sử dụng cùng nhau
+                    khi tìm hiểu CAN, nhưng chúng tập trung vào hai phạm vi
+                    kỹ thuật khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>ISO 11898-1</th>
+                            <th>ISO 11898-2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phạm vi chính</td>
+                            <td>Data Link Layer và Physical Coding Sublayer.</td>
+                            <td>High-speed Physical Medium Attachment.</td>
+                        </tr>
+                        <tr>
+                            <td>Trọng tâm</td>
+                            <td>CAN Frame, Arbitration, Error Handling, Coding và Synchronization.</td>
+                            <td>Đặc tính điện và timing của CAN Transceiver.</td>
+                        </tr>
+                        <tr>
+                            <td>Thành phần liên quan</td>
+                            <td>CAN Protocol Controller.</td>
+                            <td>CAN Transceiver.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ nội dung</td>
+                            <td>ACK, CRC, Error Frame, Fault Confinement.</td>
+                            <td>CAN_H/CAN_L, Driver Output, Receiver Input, Wake-up.</td>
+                        </tr>
+                        <tr>
+                            <td>Ứng dụng</td>
+                            <td>Thiết kế và kiểm tra CAN protocol.</td>
+                            <td>Thiết kế và kiểm tra giao tiếp vật lý CAN.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể hình dung:
+                </p>
+
+                <pre><code>          CAN Protocol Controller
+                    |
+                    | TXD / RXD
+                    |
+                    v
+              CAN Transceiver
+                    |
+                    | CAN_H / CAN_L
+                    |
+                    v
+                 CAN Bus</code></pre>
+
+                <p>
+                    CAN Controller xử lý logic giao thức, còn CAN Transceiver
+                    chuyển đổi tín hiệu logic thành tín hiệu điện phù hợp
+                    với mạng CAN và thực hiện quá trình ngược lại khi nhận dữ liệu.
+                </p>
+
+                <h2>4. CAN Node gồm những thành phần nào?</h2>
+
+                <p>
+                    Một CAN node điển hình có thể bao gồm MCU, CAN Controller,
+                    CAN Transceiver và các thành phần kết nối đến CAN bus.
+                </p>
+
+                <pre><code>             Microcontroller
+                    |
+                    |
+             +------+------+
+             |             |
+             v             v
+       Application    CAN Controller
+                          |
+                    TXD / RXD
+                          |
+                          v
+                   CAN Transceiver
+                          |
+                    CAN_H / CAN_L
+                          |
+                          v
+                       CAN Bus</code></pre>
+
+                <p>
+                    Trong một số MCU, CAN Controller có thể được tích hợp
+                    trực tiếp bên trong MCU. Trong trường hợp khác, CAN Controller
+                    có thể là một thành phần phần cứng riêng.
+                </p>
+
+                <p>
+                    CAN Transceiver cũng có thể được tích hợp với những
+                    chức năng bổ sung như low-power mode, wake-up,
+                    selective wake-up hoặc các chế độ cải thiện tín hiệu.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MCU</td>
+                            <td>Chạy phần mềm ứng dụng và các module điều khiển.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Controller</td>
+                            <td>Xử lý CAN protocol, tạo và nhận CAN Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Transceiver</td>
+                            <td>Chuyển đổi tín hiệu logic TXD/RXD sang tín hiệu điện CAN_H/CAN_L và ngược lại.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Bus</td>
+                            <td>Môi trường truyền tín hiệu giữa các node.</td>
+                        </tr>
+                        <tr>
+                            <td>Termination</td>
+                            <td>Giúp giảm phản xạ tín hiệu trên đường truyền khi được thiết kế phù hợp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>5. CAN Transceiver là gì?</h2>
+
+                <p>
+                    CAN Transceiver là thành phần phần cứng nằm giữa
+                    CAN Controller và CAN bus.
+                </p>
+
+                <p>
+                    Vai trò chính của Transceiver là thực hiện giao tiếp
+                    điện giữa hai phía:
+                </p>
+
+                <ul>
+                    <li>Phía logic: giao tiếp với CAN Controller.</li>
+                    <li>Phía bus: giao tiếp với đường CAN_H và CAN_L.</li>
+                </ul>
+
+                <p>
+                    Khi truyền dữ liệu, Transceiver nhận tín hiệu logic
+                    từ CAN Controller và điều khiển tín hiệu điện
+                    trên CAN bus.
+                </p>
+
+                <p>
+                    Khi nhận dữ liệu, Transceiver quan sát trạng thái
+                    điện của CAN_H và CAN_L, sau đó chuyển đổi thành
+                    tín hiệu logic để CAN Controller xử lý.
+                </p>
+
+                <h2>6. TXD và RXD</h2>
+
+                <p>
+                    TXD và RXD là hai tín hiệu logic quan trọng
+                    trong giao tiếp giữa CAN Controller và CAN Transceiver.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tín hiệu</th>
+                            <th>Hướng</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TXD</td>
+                            <td>CAN Controller → Transceiver</td>
+                            <td>Truyền trạng thái logic mà Controller muốn đưa lên CAN bus.</td>
+                        </tr>
+                        <tr>
+                            <td>RXD</td>
+                            <td>Transceiver → CAN Controller</td>
+                            <td>Trả về trạng thái logic được nhận từ CAN bus.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, khi CAN Controller muốn truyền một bit Dominant,
+                    nó điều khiển TXD theo mức logic tương ứng.
+                    Transceiver nhận tín hiệu này và tạo trạng thái điện
+                    Dominant trên bus.
+                </p>
+
+                <p>
+                    Ở chiều nhận, Transceiver chuyển trạng thái điện
+                    quan sát được trên bus thành tín hiệu RXD.
+                    CAN Controller sử dụng RXD để lấy lại luồng bit
+                    và tiếp tục xử lý CAN Frame.
+                </p>
+
+                <pre><code>          CAN Controller
+                |
+          +-----+-----+
+          |           |
+         TXD         RXD
+          |           ^
+          v           |
+       CAN Transceiver
+          |           ^
+          |           |
+       CAN_H / CAN_L
+          |
+          v
+         CAN Bus</code></pre>
+
+                <p>
+                    Cần lưu ý TXD và RXD là tín hiệu logic nội bộ
+                    giữa Controller và Transceiver. Chúng không phải
+                    hai dây truyền thông CAN trên bus.
+                </p>
+
+                <h2>7. CAN_H và CAN_L là gì?</h2>
+
+                <p>
+                    High-speed CAN sử dụng hai đường tín hiệu chính:
+                    CAN_H và CAN_L.
+                </p>
+
+                <p>
+                    Hai dây này thường được triển khai dưới dạng
+                    một cặp dây xoắn (twisted pair). Thông tin được
+                    biểu diễn thông qua sự khác biệt điện áp giữa
+                    hai dây, thay vì chỉ dựa vào điện áp của một dây
+                    so với GND.
+                </p>
+
+                <p>
+                    Cách truyền này được gọi là Differential Signaling.
+                </p>
+
+                <pre><code>         CAN Transceiver
+                |
+          +-----+-----+
+          |           |
+        CAN_H       CAN_L
+          |           |
+          |  Twisted  |
+          |   Pair    |
+          |           |
+          +-----------+
+                |
+           Other Nodes</code></pre>
+
+                <p>
+                    Sử dụng hai dây giúp receiver đánh giá tín hiệu
+                    dựa trên chênh lệch điện áp giữa chúng.
+                    Điều này giúp CAN có khả năng chống ảnh hưởng
+                    của một số dạng nhiễu đồng pha tốt hơn
+                    so với cách truyền single-ended đơn giản.
+                </p>
+
+                <h2>8. Differential Signaling</h2>
+
+                <p>
+                    Differential Signaling là phương pháp truyền dữ liệu
+                    sử dụng hiệu điện thế giữa hai dây tín hiệu.
+                </p>
+
+                <p>
+                    Điện áp vi sai có thể được biểu diễn bằng:
+                </p>
+
+                <pre><code>Vdiff = VCAN_H - VCAN_L</code></pre>
+
+                <p>
+                    Receiver sử dụng giá trị Vdiff để phân biệt
+                    trạng thái Dominant và Recessive theo
+                    ngưỡng được quy định.
+                </p>
+
+                <p>
+                    Một lợi ích quan trọng của Differential Signaling
+                    là khả năng giảm ảnh hưởng của nhiễu xuất hiện
+                    gần như đồng thời trên cả hai dây.
+                </p>
+
+                <p>
+                    Ví dụ, nếu một nguồn nhiễu làm điện áp CAN_H
+                    và CAN_L cùng tăng một lượng gần tương đương,
+                    chênh lệch điện áp giữa hai dây có thể
+                    thay đổi ít hơn so với điện áp của từng dây
+                    khi đo riêng lẻ.
+                </p>
+
+                <p>
+                    Tuy nhiên, Differential Signaling không có nghĩa
+                    CAN miễn nhiễm hoàn toàn với mọi loại nhiễu.
+                    Common-mode voltage, dây dẫn, termination,
+                    Transceiver và thiết kế PCB vẫn ảnh hưởng
+                    đến chất lượng giao tiếp.
+                </p>
+
+                <h2>9. Dominant và Recessive trên CAN bus</h2>
+
+                <p>
+                    CAN sử dụng hai trạng thái logic chính:
+                    Dominant và Recessive.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th>Logic</th>
+                            <th>Đặc điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dominant</td>
+                            <td>0</td>
+                            <td>Có sự chênh lệch điện áp đủ lớn giữa CAN_H và CAN_L.</td>
+                        </tr>
+                        <tr>
+                            <td>Recessive</td>
+                            <td>1</td>
+                            <td>Điện áp CAN_H và CAN_L gần nhau hơn, chênh lệch điện áp nhỏ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong trạng thái Dominant, CAN_H thường tăng lên
+                    và CAN_L thường giảm xuống so với trạng thái Recessive.
+                    Receiver nhận biết Dominant thông qua điện áp vi sai.
+                </p>
+
+                <p>
+                    Trong trạng thái Recessive, hai đường CAN_H và CAN_L
+                    có điện áp gần nhau và trạng thái bus được nhận biết
+                    theo ngưỡng Recessive tương ứng.
+                </p>
+
+                <h2>10. Điện áp CAN_H và CAN_L</h2>
+
+                <p>
+                    Với một hệ thống High-speed CAN thông dụng,
+                    có thể quan sát các mức điện áp minh họa như sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th>CAN_H</th>
+                            <th>CAN_L</th>
+                            <th>Vdiff</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Recessive</td>
+                            <td>Khoảng 2,5 V</td>
+                            <td>Khoảng 2,5 V</td>
+                            <td>Gần 0 V</td>
+                        </tr>
+                        <tr>
+                            <td>Dominant</td>
+                            <td>Khoảng 3,5 V</td>
+                            <td>Khoảng 1,5 V</td>
+                            <td>Khoảng 2 V</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây là những giá trị điển hình để hình dung hoạt động
+                    của một High-speed CAN Transceiver thông dụng.
+                    Chúng không phải bảng giới hạn điện áp đầy đủ
+                    của ISO 11898-2:2026 và không thể dùng thay
+                    cho các giá trị Min/Nominal/Max của tiêu chuẩn.
+                </p>
+
+                <p>
+                    Khi kiểm tra một Transceiver cụ thể, cần đối chiếu
+                    giá trị điện áp Dominant, Recessive, Receiver Threshold
+                    và Common-mode Range trong datasheet của linh kiện.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <pre><code>RECESSIVE:
+
+CAN_H ~ 2.5 V
+CAN_L ~ 2.5 V
+
+Vdiff ~ 0 V
+
+
+DOMINANT:
+
+CAN_H ~ 3.5 V
+CAN_L ~ 1.5 V
+
+Vdiff ~ 2.0 V</code></pre>
+
+                <p>
+                    Khi sử dụng oscilloscope, cần phân biệt điện áp
+                    của từng đường tín hiệu với điện áp vi sai
+                    giữa CAN_H và CAN_L.
+                </p>
+
+                <h2>11. Common-mode Voltage</h2>
+
+                <p>
+                    Common-mode Voltage là thành phần điện áp chung
+                    của hai đường tín hiệu CAN_H và CAN_L.
+                </p>
+
+                <p>
+                    Một cách biểu diễn thường dùng là:
+                </p>
+
+                <pre><code>Vcm = (VCAN_H + VCAN_L) / 2</code></pre>
+
+                <p>
+                    Trong khi Vdiff thể hiện sự chênh lệch điện áp
+                    giữa hai dây, Vcm giúp mô tả mức điện áp chung
+                    của hai dây so với một điểm tham chiếu.
+                </p>
+
+                <p>
+                    Receiver của CAN Transceiver phải hoạt động
+                    trong phạm vi Common-mode Voltage được hỗ trợ.
+                    Nếu điện áp chung vượt quá giới hạn mà Transceiver
+                    cho phép, khả năng nhận tín hiệu có thể bị ảnh hưởng.
+                </p>
+
+                <p>
+                    Đây là một lý do cần quan tâm đến:
+                </p>
+
+                <ul>
+                    <li>Ground Offset giữa các ECU.</li>
+                    <li>Nhiễu đồng pha trên CAN bus.</li>
+                    <li>Khả năng chịu Common-mode Voltage của Transceiver.</li>
+                    <li>Thiết kế nguồn và GND trên PCB.</li>
+                    <li>Yêu cầu cách ly điện nếu kiến trúc hệ thống cần.</li>
+                </ul>
+
+                <h2>12. CAN Bus và Twisted Pair Cable</h2>
+
+                <p>
+                    High-speed CAN thường sử dụng cặp dây xoắn
+                    để truyền CAN_H và CAN_L.
+                </p>
+
+                <p>
+                    Việc xoắn hai dây giúp giảm diện tích vòng lặp
+                    và hỗ trợ giảm ảnh hưởng của nhiễu điện từ
+                    trong môi trường phù hợp.
+                </p>
+
+                <p>
+                    Khi thiết kế mạng CAN, những yếu tố cần quan tâm gồm:
+                </p>
+
+                <ul>
+                    <li>Characteristic Impedance của cable.</li>
+                    <li>Chiều dài tổng thể của bus.</li>
+                    <li>Chiều dài các stub.</li>
+                    <li>Termination ở hai đầu mạng.</li>
+                    <li>Chất lượng đầu nối và dây dẫn.</li>
+                    <li>Bitrate và đặc tính truyền tín hiệu.</li>
+                    <li>Môi trường điện từ và cách bố trí dây.</li>
+                </ul>
+
+                <p>
+                    Một hệ thống có bitrate càng cao thường càng nhạy
+                    với những vấn đề liên quan đến thời gian truyền,
+                    phản xạ tín hiệu và chiều dài đường dây.
+                </p>
+
+                <p>
+                    Không nên sử dụng một giới hạn chiều dài cáp
+                    hoặc stub cố định cho mọi mạng CAN.
+                    Cần xác định điều kiện cụ thể từ yêu cầu hệ thống,
+                    đặc tính cable, Transceiver và tài liệu thiết kế.
+                </p>
+
+                <h2>13. Characteristic Impedance</h2>
+
+                <p>
+                    Characteristic Impedance là trở kháng đặc tính
+                    của đường truyền. Đây là một thông số quan trọng
+                    khi thiết kế CAN bus.
+                </p>
+
+                <p>
+                    Với High-speed CAN thông dụng, đường truyền
+                    thường được thiết kế với characteristic impedance
+                    danh định khoảng 120 ohm.
+                </p>
+
+                <p>
+                    Nếu trở kháng của đường truyền và termination
+                    không phù hợp, tín hiệu có thể bị phản xạ
+                    tại những điểm thay đổi trở kháng.
+                </p>
+
+                <p>
+                    Reflection có thể làm xuất hiện các dao động
+                    hoặc bước biến đổi điện áp trên waveform,
+                    khiến receiver khó phân biệt trạng thái bit
+                    trong những điều kiện nhất định.
+                </p>
+
+                <pre><code>CAN Transceiver
+      |
+      |
+      +---------------------------+
+                                  |
+                           CAN Bus Cable
+                                  |
+      +---------------------------+
+      |
+Other CAN Nodes</code></pre>
+
+                <p>
+                    Vì vậy, termination được sử dụng để giảm
+                    sự không liên tục về trở kháng ở hai đầu
+                    đường truyền.
+                </p>
+
+                <h2>14. CAN Bus Termination</h2>
+
+                <p>
+                    Termination là một trong những nội dung quan trọng
+                    nhất khi thiết kế High-speed CAN Physical Layer.
+                </p>
+
+                <p>
+                    Một mạng High-speed CAN tuyến tính thông dụng
+                    thường có hai điện trở termination đặt tại
+                    hai đầu vật lý của bus.
+                </p>
+
+                <p>
+                    Với mạng có characteristic impedance danh định
+                    khoảng 120 ohm, mỗi đầu bus thường sử dụng
+                    điện trở termination 120 ohm theo thiết kế phù hợp.
+                </p>
+
+                <pre><code>       120 ohm                         120 ohm
+          |                                |
+CAN_H ----+--------------------------------+----
+          |                                |
+          |           CAN Nodes             |
+          |                                |
+CAN_L ----+--------------------------------+----</code></pre>
+
+                <p>
+                    Hai điện trở termination được mắc song song
+                    khi nhìn từ hai đường CAN_H và CAN_L.
+                    Vì vậy, nếu mỗi điện trở là 120 ohm,
+                    điện trở tương đương lý tưởng sẽ là:
+                </p>
+
+                <pre><code>Rtotal = 120 || 120
+
+       = (120 * 120) / (120 + 120)
+
+       = 60 ohm</code></pre>
+
+                <p>
+                    Đây là cơ sở để kỹ sư có thể thực hiện
+                    một phép kiểm tra sơ bộ termination
+                    bằng cách đo điện trở giữa CAN_H và CAN_L
+                    khi hệ thống đã được tắt nguồn và
+                    thỏa điều kiện đo phù hợp.
+                </p>
+
+                <p>
+                    Kết quả thực tế có thể khác do thiết kế mạng,
+                    các mạch điện khác kết nối vào bus hoặc
+                    sự hiện diện của những phần tử bổ sung.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Không đặt điện trở termination 120 ohm tại tất cả ECU.
+                    Với topology bus thông dụng, termination được đặt
+                    tại hai đầu vật lý của đường truyền.
+                    Các node nằm giữa bus thường không tự bổ sung
+                    một termination riêng, trừ khi kiến trúc mạng
+                    yêu cầu một giải pháp đặc biệt.
+                </div>
+
+                <h2>15. Split Termination</h2>
+
+                <p>
+                    Ngoài termination đơn 120 ohm, một số thiết kế
+                    High-speed CAN sử dụng Split Termination.
+                </p>
+
+                <p>
+                    Trong cấu trúc này, điện trở termination
+                    được chia thành hai phần có giá trị phù hợp,
+                    với một điểm giữa được sử dụng cho mạch lọc
+                    theo thiết kế.
+                </p>
+
+                <pre><code>              CAN_H
+                |
+              60 ohm
+                |
+                +-------- C -------- GND
+                |
+              60 ohm
+                |
+              CAN_L</code></pre>
+
+                <p>
+                    Mạch Split Termination có thể hỗ trợ cải thiện
+                    một số đặc tính EMC bằng cách xử lý thành phần
+                    nhiễu common-mode.
+                </p>
+
+                <p>
+                    Tuy nhiên, Split Termination không phải lúc nào
+                    cũng là lựa chọn tốt nhất cho mọi mạng.
+                    Giá trị điện trở, tụ điện và cách nối điểm giữa
+                    cần được xác định theo thiết kế phần cứng,
+                    yêu cầu EMC và khuyến nghị của Transceiver.
+                </p>
+
+                <h2>16. Network Topology</h2>
+
+                <p>
+                    Network Topology mô tả cách các node được kết nối
+                    với nhau trên CAN bus.
+                </p>
+
+                <p>
+                    Với High-speed CAN thông dụng, cấu trúc bus tuyến tính
+                    với một đường backbone chính thường được sử dụng.
+                    Các ECU kết nối vào backbone thông qua những nhánh
+                    ngắn gọi là stub.
+                </p>
+
+                <pre><code>120 ohm                            120 ohm
+   |                                  |
+   +----------------------------------+
+   |              |             |     |
+   |              |             |     |
+  ECU A          ECU B         ECU C ECU D
+</code></pre>
+
+                <p>
+                    Trong thực tế, chiều dài của stub và cách bố trí
+                    các node ảnh hưởng đến chất lượng tín hiệu.
+                    Những nhánh quá dài có thể làm tăng phản xạ
+                    và ảnh hưởng đến khả năng nhận dữ liệu.
+                </p>
+
+                <p>
+                    Một topology dạng star với nhiều nhánh dài
+                    không nên được xem là tương đương với bus tuyến tính
+                    thông dụng. Nếu dự án cần sử dụng topology khác,
+                    cần đánh giá đặc tính điện và giải pháp phù hợp.
+                </p>
+
+                <h2>17. CAN Transceiver Static Parameters</h2>
+
+                <p>
+                    ISO 11898-2 mô tả các đặc tính tĩnh của HS-PMA.
+                    Đây là những thông số quan trọng để xác định
+                    Transceiver có đáp ứng yêu cầu điện của CAN bus
+                    hay không.
+                </p>
+
+                <p>
+                    Một số nhóm thông số cần tìm hiểu gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông số</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Maximum Ratings</td>
+                            <td>Giới hạn điện áp và điều kiện mà Transceiver có thể chịu đựng theo đặc tính được công bố.</td>
+                        </tr>
+                        <tr>
+                            <td>Recessive Output Characteristics</td>
+                            <td>Đặc tính điện của Transceiver khi phát Recessive.</td>
+                        </tr>
+                        <tr>
+                            <td>Dominant Output Characteristics</td>
+                            <td>Đặc tính điện khi Transceiver phát Dominant.</td>
+                        </tr>
+                        <tr>
+                            <td>Receiver Input Characteristics</td>
+                            <td>Điều kiện điện áp đầu vào mà Receiver có thể nhận biết.</td>
+                        </tr>
+                        <tr>
+                            <td>Receiver Input Resistance</td>
+                            <td>Đặc tính trở kháng đầu vào của Receiver.</td>
+                        </tr>
+                        <tr>
+                            <td>Leakage Current</td>
+                            <td>Dòng rò liên quan đến các chân CAN_H và CAN_L trong điều kiện quy định.</td>
+                        </tr>
+                        <tr>
+                            <td>Maximum Driver Output Current</td>
+                            <td>Giới hạn dòng đầu ra của Driver.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những thông số này đặc biệt quan trọng khi
+                    lựa chọn Transceiver và đánh giá khả năng
+                    hoạt động của mạng có nhiều node.
+                </p>
+
+                <h2>18. Active và Inactive Bus Biasing</h2>
+
+                <p>
+                    Bus Biasing liên quan đến cách Transceiver
+                    duy trì hoặc nhận biết trạng thái điện áp
+                    trên CAN bus trong những điều kiện hoạt động khác nhau.
+                </p>
+
+                <p>
+                    Khi mạng ở trạng thái Recessive, CAN_H và CAN_L
+                    cần có điều kiện điện phù hợp để Receiver
+                    nhận biết trạng thái bus một cách ổn định.
+                </p>
+
+                <p>
+                    Transceiver có thể có các cơ chế biasing
+                    liên quan đến trạng thái hoạt động hoặc
+                    trạng thái low-power.
+                </p>
+
+                <p>
+                    Khi đọc datasheet và ISO 11898-2, cần chú ý
+                    các thông số được phân biệt theo:
+                </p>
+
+                <ul>
+                    <li>Bus Biasing Active.</li>
+                    <li>Bus Biasing Inactive.</li>
+                    <li>Recessive State.</li>
+                    <li>Dominant State.</li>
+                    <li>Low-power Operation.</li>
+                </ul>
+
+                <p>
+                    Không nên giả định điện áp bus khi Transceiver
+                    hoạt động bình thường sẽ giống hoàn toàn điện áp
+                    bus khi tất cả Transceiver đang ở low-power mode.
+                </p>
+
+                <h2>19. Dynamic Parameters</h2>
+
+                <p>
+                    Ngoài các đặc tính điện tĩnh, Transceiver còn cần
+                    đáp ứng các đặc tính động trong quá trình chuyển
+                    đổi giữa Dominant và Recessive.
+                </p>
+
+                <p>
+                    Những thông số này ảnh hưởng đến khả năng
+                    truyền và nhận dữ liệu khi bus hoạt động
+                    ở tốc độ cao.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông số</th>
+                            <th>Ý nghĩa tổng quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Driver Symmetry</td>
+                            <td>Đặc tính cân bằng tín hiệu phát theo các điều kiện đo được quy định.</td>
+                        </tr>
+                        <tr>
+                            <td>Transmit Dominant Timeout</td>
+                            <td>Cơ chế giới hạn thời gian Transceiver duy trì trạng thái phát Dominant trong những implementation hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Transmitter Delay</td>
+                            <td>Độ trễ từ khi tín hiệu logic thay đổi đến khi tín hiệu tương ứng xuất hiện trên bus.</td>
+                        </tr>
+                        <tr>
+                            <td>Receiver Delay</td>
+                            <td>Độ trễ từ khi trạng thái bus thay đổi đến khi tín hiệu logic RXD phản ánh thay đổi đó.</td>
+                        </tr>
+                        <tr>
+                            <td>Timing Symmetry</td>
+                            <td>Đặc tính timing liên quan đến hai chiều chuyển trạng thái của tín hiệu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi lựa chọn Transceiver, không nên chỉ quan tâm
+                    đến bit rate tối đa được quảng cáo.
+                    Cần kiểm tra cả transmitter delay, receiver delay,
+                    symmetry và các điều kiện đo tương ứng.
+                </p>
+
+                <h2>20. Low-power Mode của CAN Transceiver</h2>
+
+                <p>
+                    Trong Automotive, không phải lúc nào ECU cũng cần
+                    duy trì trạng thái giao tiếp CAN bình thường.
+                    Khi xe ở trạng thái nghỉ hoặc một số chức năng
+                    không được sử dụng, hệ thống có thể đưa các thành phần
+                    vào trạng thái tiêu thụ năng lượng thấp.
+                </p>
+
+                <p>
+                    CAN Transceiver có thể hỗ trợ những chế độ
+                    low-power nhằm giảm dòng tiêu thụ trong thời gian ECU
+                    không cần hoạt động giao tiếp bình thường.
+                </p>
+
+                <p>
+                    Tùy từng linh kiện, các chế độ có thể được gọi
+                    bằng những tên như:
+                </p>
+
+                <ul>
+                    <li>Normal Mode.</li>
+                    <li>Standby Mode.</li>
+                    <li>Sleep Mode.</li>
+                    <li>Silent Mode.</li>
+                </ul>
+
+                <p>
+                    Tên gọi và hành vi cụ thể phụ thuộc vào
+                    datasheet của Transceiver. Không nên mặc định
+                    tất cả nhà sản xuất sử dụng cùng tên hoặc
+                    cùng định nghĩa cho từng mode.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>Đặc điểm khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Normal Mode</td>
+                            <td>Transceiver hoạt động truyền và nhận dữ liệu bình thường.</td>
+                        </tr>
+                        <tr>
+                            <td>Standby Mode</td>
+                            <td>Transceiver giảm hoạt động nhưng vẫn có thể duy trì một số chức năng giám sát hoặc wake-up.</td>
+                        </tr>
+                        <tr>
+                            <td>Sleep Mode</td>
+                            <td>Transceiver ở trạng thái tiêu thụ năng lượng thấp theo implementation.</td>
+                        </tr>
+                        <tr>
+                            <td>Silent Mode</td>
+                            <td>Transceiver có thể nhận nhưng không tham gia truyền theo đặc tính của linh kiện.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cần đọc datasheet để biết chính xác mode nào được hỗ trợ,
+                    cách chuyển mode, trạng thái chân điều khiển
+                    và khả năng wake-up trong từng mode.
+                </p>
+
+                <h2>21. Wake-up trong CAN Transceiver</h2>
+
+                <p>
+                    Wake-up là chức năng giúp Transceiver hoặc hệ thống
+                    nhận biết một sự kiện cần đánh thức ECU khỏi
+                    trạng thái low-power.
+                </p>
+
+                <p>
+                    Ví dụ, khi xe đang ở trạng thái nghỉ,
+                    một ECU có thể không cần duy trì toàn bộ
+                    CAN communication stack hoạt động.
+                    Tuy nhiên, nếu nhận được tín hiệu đánh thức phù hợp,
+                    Transceiver có thể tạo một thông báo wake-up
+                    để hệ thống bắt đầu quá trình khởi động lại.
+                </p>
+
+                <p>
+                    Cần phân biệt:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Transceiver Wake-up:</strong>
+                        Transceiver phát hiện điều kiện đánh thức và
+                        cung cấp tín hiệu hoặc notification.
+                    </li>
+                    <li>
+                        <strong>ECU Wake-up:</strong>
+                        hệ thống ECU thực hiện quá trình chuyển sang
+                        trạng thái hoạt động.
+                    </li>
+                    <li>
+                        <strong>Network Wake-up:</strong>
+                        quá trình đánh thức có thể liên quan đến
+                        nhiều node trên mạng.
+                    </li>
+                </ul>
+
+                <p>
+                    Transceiver chỉ là một thành phần trong
+                    quá trình wake-up tổng thể. Quản lý trạng thái ECU
+                    và khởi tạo phần mềm còn phụ thuộc vào kiến trúc
+                    hệ thống và các module quản lý nguồn.
+                </p>
+
+                <h2>22. Các phương thức Wake-up</h2>
+
+                <p>
+                    ISO 11898-2:2026 mô tả những phương thức
+                    wake-up khác nhau cho HS-PMA có hỗ trợ low-power mode.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phương thức</th>
+                            <th>Ý nghĩa tổng quan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Basic Wake-up</td>
+                            <td>Nhận biết một trạng thái Dominant đáp ứng điều kiện thời gian được quy định.</td>
+                        </tr>
+                        <tr>
+                            <td>Wake-up Pattern (WUP)</td>
+                            <td>Nhận biết một chuỗi trạng thái bus đáp ứng các điều kiện của wake-up pattern.</td>
+                        </tr>
+                        <tr>
+                            <td>Selective Wake-up</td>
+                            <td>Nhận biết một wake-up frame phù hợp với điều kiện lựa chọn được cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những phương thức này không nhất thiết có mặt
+                    trong mọi Transceiver. Cần kiểm tra implementation
+                    được hỗ trợ và những yêu cầu cụ thể của dự án.
+                </p>
+
+                <h2>23. Selective Wake-up là gì?</h2>
+
+                <p>
+                    Selective Wake-up là chức năng cho phép Transceiver
+                    nhận biết một số thông tin đánh thức được lựa chọn,
+                    thay vì đánh thức ECU chỉ vì mọi hoạt động trên bus.
+                </p>
+
+                <p>
+                    Chức năng này có ý nghĩa trong những hệ thống
+                    có nhiều ECU nhưng không phải ECU nào cũng cần
+                    thức dậy khi một message bất kỳ xuất hiện.
+                </p>
+
+                <p>
+                    Ví dụ, một mạng CAN có nhiều ECU:
+                </p>
+
+                <pre><code>             CAN Network
+                  |
+       +----------+----------+
+       |          |          |
+       v          v          v
+     ECU A      ECU B      ECU C
+       |          |          |
+    Normal      Sleep      Sleep
+    Mode        Mode       Mode
+
+                 |
+                 v
+        Selective Wake-up
+                 |
+                 v
+          ECU B receives
+          matching wake-up
+                 |
+                 v
+          ECU B starts
+          wake-up process</code></pre>
+
+                <p>
+                    Trong ví dụ này, ECU B chỉ được đánh thức
+                    khi điều kiện selective wake-up phù hợp
+                    với cấu hình của nó.
+                </p>
+
+                <p>
+                    Cần phân biệt Selective Wake-up với việc
+                    một ứng dụng thức dậy sau khi nhận một CAN message.
+                    Selective Wake-up được thực hiện ở phía Transceiver
+                    hoặc phần cứng hỗ trợ, trong khi xử lý message
+                    thông thường diễn ra sau khi các thành phần ECU
+                    đã hoạt động.
+                </p>
+
+                <h2>24. Signal Improvement Capability (SIC)</h2>
+
+                <p>
+                    Signal Improvement Capability (SIC) là một chức năng
+                    được đề cập trong Annex A của ISO 11898-2:2026.
+                </p>
+
+                <p>
+                    Khi một mạng CAN có nhiều node và topology phức tạp,
+                    sự thay đổi tín hiệu trên bus có thể tạo ra ringing
+                    hoặc những dao động điện áp trong quá trình chuyển trạng thái.
+                </p>
+
+                <p>
+                    Một số HS-PMA có hỗ trợ SIC được thiết kế để
+                    cải thiện đặc tính tín hiệu trong những điều kiện
+                    mạng phù hợp.
+                </p>
+
+                <p>
+                    Về mặt khái niệm, SIC có thể giúp xử lý một số vấn đề
+                    liên quan đến thời gian settling của tín hiệu,
+                    đặc biệt trong các mạng có yêu cầu truyền thông
+                    với tốc độ cao.
+                </p>
+
+                <p>
+                    Khi sử dụng Transceiver có SIC, cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>SIC mode có được hỗ trợ hay không.</li>
+                    <li>Điều kiện kích hoạt và điều khiển SIC mode.</li>
+                    <li>Khả năng tương thích với các node còn lại.</li>
+                    <li>Bitrate và topology được nhà sản xuất hỗ trợ.</li>
+                    <li>Timing và impedance requirement.</li>
+                    <li>Kết quả kiểm tra signal integrity.</li>
+                </ul>
+
+                <p>
+                    Không nên cho rằng chỉ cần thay một Transceiver
+                    thông thường bằng Transceiver có SIC thì
+                    mọi vấn đề signal integrity của mạng sẽ biến mất.
+                </p>
+
+                <h2>25. FAST Mode</h2>
+
+                <p>
+                    ISO 11898-2:2026 đề cập đến FAST mode trong
+                    Annex A, cùng với các đặc tính dành cho
+                    những HS-PMA implementation tương ứng.
+                </p>
+
+                <p>
+                    FAST mode có các yêu cầu kỹ thuật riêng,
+                    bao gồm những đặc tính liên quan đến timing
+                    và signal improvement theo phạm vi của Annex A.
+                </p>
+
+                <p>
+                    Khi nghiên cứu FAST mode, cần đọc trực tiếp
+                    phần định nghĩa, thông số và điều kiện kiểm tra
+                    trong tiêu chuẩn. Không nên tự động đồng nhất
+                    FAST mode với CAN FD hoặc cho rằng mọi
+                    CAN FD Transceiver đều hỗ trợ FAST mode.
+                </p>
+
+                <p>
+                    Trong một dự án, chỉ nên lựa chọn implementation
+                    hỗ trợ FAST mode khi kiến trúc mạng, các node
+                    và yêu cầu hệ thống đã được xác nhận tương thích.
+                </p>
+
+                <h2>26. Physical Layer và CAN FD</h2>
+
+                <p>
+                    CAN FD cho phép sử dụng Data Phase có tốc độ bit
+                    cao hơn Arbitration Phase trong những cấu hình
+                    được hỗ trợ.
+                </p>
+
+                <p>
+                    Vì vậy, CAN FD đặt ra yêu cầu cao hơn đối với
+                    khả năng truyền tín hiệu và timing của mạng.
+                </p>
+
+                <p>
+                    Khi sử dụng CAN FD, cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>CAN Controller có hỗ trợ CAN FD không?</li>
+                    <li>CAN Transceiver có đáp ứng tốc độ yêu cầu không?</li>
+                    <li>Clock và Bit Timing được cấu hình đúng không?</li>
+                    <li>Các node trên mạng có tương thích không?</li>
+                    <li>Topology và chiều dài stub có phù hợp không?</li>
+                    <li>Waveform có đáp ứng yêu cầu signal integrity không?</li>
+                </ul>
+
+                <p>
+                    Một mạng CAN FD không thể chỉ được đánh giá
+                    bằng việc CAN Controller hỗ trợ CAN FD.
+                    Transceiver và môi trường truyền cũng phải
+                    đáp ứng những yêu cầu của cấu hình hệ thống.
+                </p>
+
+                <h2>27. ISO 11898-2 quy định những gì và không quy định những gì?</h2>
+
+                <p>
+                    Khi đọc một tiêu chuẩn kỹ thuật, cần hiểu rõ
+                    phạm vi của tài liệu để tránh sử dụng sai nguồn
+                    khi giải quyết một vấn đề của dự án.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nội dung</th>
+                            <th>ISO 11898-2 có liên quan trực tiếp không?</th>
+                            <th>Tài liệu cần tham khảo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>HS-PMA Transmitter Characteristics</td>
+                            <td>Có.</td>
+                            <td>ISO 11898-2.</td>
+                        </tr>
+                        <tr>
+                            <td>HS-PMA Receiver Characteristics</td>
+                            <td>Có.</td>
+                            <td>ISO 11898-2.</td>
+                        </tr>
+                        <tr>
+                            <td>Low-power và Wake-up</td>
+                            <td>Có, trong phạm vi HS-PMA được hỗ trợ.</td>
+                            <td>ISO 11898-2.</td>
+                        </tr>
+                        <tr>
+                            <td>SIC và FAST Mode</td>
+                            <td>Có, trong Annex A.</td>
+                            <td>ISO 11898-2.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Frame Format</td>
+                            <td>Không phải phạm vi chính.</td>
+                            <td>ISO 11898-1.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Arbitration</td>
+                            <td>Không phải phạm vi chính.</td>
+                            <td>ISO 11898-1.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Controller Register</td>
+                            <td>Không.</td>
+                            <td>MCU Reference Manual.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Transceiver Pin Configuration</td>
+                            <td>Không quy định implementation cụ thể của từng linh kiện.</td>
+                            <td>Transceiver Datasheet.</td>
+                        </tr>
+                        <tr>
+                            <td>Signal Meaning và Message Definition</td>
+                            <td>Không.</td>
+                            <td>Communication Matrix hoặc DBC.</td>
+                        </tr>
+                        <tr>
+                            <td>AUTOSAR CanTrcv API</td>
+                            <td>Không.</td>
+                            <td>AUTOSAR Specification of CAN Transceiver Driver.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    ISO 11898-2 cung cấp cơ sở để đánh giá
+                    đặc tính vật lý của HS-PMA, nhưng không thay thế
+                    datasheet của linh kiện hoặc tài liệu thiết kế
+                    phần cứng của dự án.
+                </p>
+
+                <h2>28. Hướng dẫn đọc tài liệu ISO 11898-2</h2>
+
+                <p>
+                    ISO 11898-2 có nhiều bảng thông số điện,
+                    điều kiện đo, hình minh họa và yêu cầu
+                    về hành vi của Transceiver.
+                </p>
+
+                <p>
+                    Nếu chỉ đọc tiêu đề mà không hiểu cách sử dụng
+                    các thông số, người học sẽ khó áp dụng tài liệu
+                    vào việc lựa chọn linh kiện hoặc debug phần cứng.
+                </p>
+
+                <p>
+                    Có thể tiếp cận tài liệu theo quy trình:
+                </p>
+
+                <ol>
+                    <li>Đọc Scope để xác định phạm vi HS-PMA.</li>
+                    <li>Đọc Terms and Definitions để hiểu thuật ngữ.</li>
+                    <li>Đọc Abbreviated Terms để nhận biết các chữ viết tắt.</li>
+                    <li>Đọc HS-PMA Function để hiểu chức năng tổng thể.</li>
+                    <li>Đọc Static Parameters để hiểu giới hạn điện.</li>
+                    <li>Đọc Dynamic Parameters để hiểu timing.</li>
+                    <li>Đọc Wake-up Procedures nếu dự án dùng low-power mode.</li>
+                    <li>Đọc Conformance để hiểu cách đánh giá sự phù hợp.</li>
+                    <li>Tham khảo Annex theo mục tiêu của dự án.</li>
+                </ol>
+
+                <h2>29. Cấu trúc ISO 11898-2 nên đọc theo thứ tự nào?</h2>
+
+                <p>
+                    Với ISO 11898-2:2026, có thể sử dụng cấu trúc
+                    tài liệu để xác định những phần quan trọng.
+                    Bảng dưới đây tóm tắt các phần nên chú ý.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phần</th>
+                            <th>Chủ đề</th>
+                            <th>Mục tiêu đọc</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Scope</td>
+                            <td>Xác định phạm vi và những loại HS-PMA được đề cập.</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Normative References</td>
+                            <td>Kiểm tra những tài liệu được viện dẫn.</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Terms and Definitions</td>
+                            <td>Hiểu thuật ngữ kỹ thuật.</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Abbreviated Terms</td>
+                            <td>Tra cứu các chữ viết tắt.</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>HS-PMA Function</td>
+                            <td>Hiểu yêu cầu chung, đặc tính điện, timing và wake-up.</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Conformance</td>
+                            <td>Hiểu cách đánh giá sự phù hợp của HS-PMA.</td>
+                        </tr>
+                        <tr>
+                            <td>Annex A</td>
+                            <td>HS-PMA with SIC Mode and FAST Mode</td>
+                            <td>Tìm hiểu yêu cầu cho những implementation hỗ trợ SIC và FAST.</td>
+                        </tr>
+                        <tr>
+                            <td>Annex B</td>
+                            <td>ECU and Network Design</td>
+                            <td>Tham khảo hướng dẫn thiết kế ECU và mạng.</td>
+                        </tr>
+                        <tr>
+                            <td>Annex C</td>
+                            <td>PN Physical Layer Modes</td>
+                            <td>Tìm hiểu các mode Physical Layer liên quan đến Partial Networking.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Phần 5 là khu vực quan trọng nhất khi tìm hiểu
+                    đặc tính Transceiver. Trong đó, các bảng Static
+                    và Dynamic Parameters giúp người đọc đối chiếu
+                    yêu cầu của tiêu chuẩn với datasheet linh kiện.
+                </p>
+
+                <h2>30. Cách đọc bảng thông số trong ISO 11898-2</h2>
+
+                <p>
+                    Khi đọc một bảng thông số điện, không nên chỉ nhìn
+                    vào giá trị Nominal. Cần quan tâm cả điều kiện đo,
+                    giới hạn Min/Max và trạng thái hoạt động tương ứng.
+                </p>
+
+                <p>
+                    Một bảng thông số thường có thể bao gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cột</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Parameter</td>
+                            <td>Tên thông số cần đánh giá.</td>
+                        </tr>
+                        <tr>
+                            <td>Notation</td>
+                            <td>Ký hiệu được sử dụng trong tài liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Condition</td>
+                            <td>Điều kiện đo hoặc điều kiện hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <td>Minimum</td>
+                            <td>Giá trị giới hạn nhỏ nhất.</td>
+                        </tr>
+                        <tr>
+                            <td>Nominal</td>
+                            <td>Giá trị danh định nếu được quy định.</td>
+                        </tr>
+                        <tr>
+                            <td>Maximum</td>
+                            <td>Giá trị giới hạn lớn nhất.</td>
+                        </tr>
+                        <tr>
+                            <td>Unit</td>
+                            <td>Đơn vị đo.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Ví dụ, khi kiểm tra Dominant Output Characteristics,
+                    cần xác định:
+                </p>
+
+                <ul>
+                    <li>Đang đo CAN_H, CAN_L hay Vdiff?</li>
+                    <li>Transceiver đang ở trạng thái Dominant hay Recessive?</li>
+                    <li>Điện trở tải được sử dụng là bao nhiêu?</li>
+                    <li>Điều kiện nguồn cấp có đúng không?</li>
+                    <li>Giá trị đang so sánh là Min, Nominal hay Max?</li>
+                </ul>
+
+                <p>
+                    Nếu bỏ qua điều kiện đo, kỹ sư có thể so sánh
+                    hai giá trị không cùng điều kiện và đưa ra
+                    kết luận sai.
+                </p>
+
+                <h2>31. Cách sử dụng ISO 11898-2 để lựa chọn CAN Transceiver</h2>
+
+                <p>
+                    Một ứng dụng quan trọng của tiêu chuẩn là hỗ trợ
+                    kỹ sư đánh giá CAN Transceiver trước khi đưa
+                    linh kiện vào thiết kế ECU.
+                </p>
+
+                <p>
+                    Tuy nhiên, không nên lựa chọn Transceiver
+                    chỉ bằng cách tìm một linh kiện có tên
+                    "High-speed CAN Transceiver".
+                </p>
+
+                <p>
+                    Cần xác định các yêu cầu chính:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Thông tin cần kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Supply Voltage</td>
+                            <td>Điện áp nguồn hoạt động và giới hạn nguồn.</td>
+                        </tr>
+                        <tr>
+                            <td>Logic Interface</td>
+                            <td>Mức logic tương thích với MCU hoặc CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>Data Rate</td>
+                            <td>Tốc độ truyền được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Bus Pin Characteristics</td>
+                            <td>Đặc tính điện của CAN_H và CAN_L.</td>
+                        </tr>
+                        <tr>
+                            <td>Receiver Characteristics</td>
+                            <td>Ngưỡng nhận và phạm vi Common-mode.</td>
+                        </tr>
+                        <tr>
+                            <td>Dynamic Timing</td>
+                            <td>Transmitter Delay và Receiver Delay.</td>
+                        </tr>
+                        <tr>
+                            <td>Low-power Mode</td>
+                            <td>Khả năng Standby hoặc Sleep.</td>
+                        </tr>
+                        <tr>
+                            <td>Wake-up</td>
+                            <td>Basic Wake-up, WUP hoặc Selective Wake-up.</td>
+                        </tr>
+                        <tr>
+                            <td>Protection</td>
+                            <td>Những chức năng bảo vệ được linh kiện hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Temperature Range</td>
+                            <td>Dải nhiệt độ hoạt động phù hợp với yêu cầu ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Package</td>
+                            <td>Kích thước và yêu cầu lắp đặt trên PCB.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Sau khi xác định yêu cầu, cần đối chiếu datasheet
+                    với tiêu chuẩn và những yêu cầu phần cứng
+                    của dự án.
+                </p>
+
+                <h2>32. Phân biệt ISO 11898-2 và Transceiver Datasheet</h2>
+
+                <p>
+                    ISO 11898-2 và datasheet của nhà sản xuất
+                    có mối quan hệ gần gũi nhưng không thể
+                    thay thế cho nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>ISO 11898-2</th>
+                            <th>Transceiver Datasheet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Định nghĩa yêu cầu cho HS-PMA.</td>
+                            <td>Mô tả một linh kiện cụ thể.</td>
+                        </tr>
+                        <tr>
+                            <td>Electrical Characteristics</td>
+                            <td>Đưa ra các đặc tính và điều kiện cần đáp ứng.</td>
+                            <td>Cung cấp thông số thực tế của sản phẩm.</td>
+                        </tr>
+                        <tr>
+                            <td>Pin Configuration</td>
+                            <td>Không quy định pinout riêng cho từng sản phẩm.</td>
+                            <td>Mô tả từng chân và chức năng của chúng.</td>
+                        </tr>
+                        <tr>
+                            <td>Mode Control</td>
+                            <td>Đưa ra yêu cầu ở mức tiêu chuẩn.</td>
+                            <td>Mô tả chân điều khiển, register hoặc quy trình cụ thể.</td>
+                        </tr>
+                        <tr>
+                            <td>Application Circuit</td>
+                            <td>Không thay thế hướng dẫn mạch của nhà sản xuất.</td>
+                            <td>Có thể cung cấp mạch tham khảo và khuyến nghị layout.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một cách sử dụng hiệu quả là dùng ISO 11898-2
+                    để xác định tiêu chí cần đáp ứng, sau đó dùng
+                    datasheet để kiểm tra linh kiện cụ thể có đáp ứng
+                    những tiêu chí đó hay không.
+                </p>
+
+                <h2>33. Ví dụ dự án: Lựa chọn Transceiver cho Body ECU</h2>
+
+                <p>
+                    Giả sử một dự án phát triển Body ECU sử dụng
+                    CAN Classic để trao đổi trạng thái với những ECU khác.
+                </p>
+
+                <p>
+                    Yêu cầu giả định của dự án:
+                </p>
+
+                <ul>
+                    <li>ECU sử dụng CAN Classic.</li>
+                    <li>CAN Controller được tích hợp bên trong MCU.</li>
+                    <li>CAN Transceiver là linh kiện ngoài MCU.</li>
+                    <li>Mạng sử dụng High-speed CAN.</li>
+                    <li>ECU cần hỗ trợ chế độ tiêu thụ điện thấp.</li>
+                    <li>ECU cần có khả năng nhận biết sự kiện wake-up trên CAN bus.</li>
+                </ul>
+
+                <p>
+                    Kỹ sư có thể tạo một bảng đánh giá Transceiver:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Project Requirement</th>
+                            <th>Điểm cần kiểm tra trong Datasheet</th>
+                            <th>Evidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hỗ trợ High-speed CAN</td>
+                            <td>HS-PMA characteristics và supported bitrate.</td>
+                            <td>Electrical Characteristics.</td>
+                        </tr>
+                        <tr>
+                            <td>Tương thích MCU</td>
+                            <td>TXD/RXD logic level và nguồn cấp.</td>
+                            <td>Pin Description và Operating Conditions.</td>
+                        </tr>
+                        <tr>
+                            <td>Hỗ trợ Low-power</td>
+                            <td>Standby/Sleep mode và current consumption.</td>
+                            <td>Low-power Characteristics.</td>
+                        </tr>
+                        <tr>
+                            <td>Hỗ trợ Wake-up</td>
+                            <td>Wake-up source và wake-up behavior.</td>
+                            <td>Wake-up Function.</td>
+                        </tr>
+                        <tr>
+                            <td>Đáp ứng môi trường ECU</td>
+                            <td>Temperature Range và protection features.</td>
+                            <td>Recommended Operating Conditions.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Sau khi đánh giá, nhóm Hardware và Software
+                    có thể thống nhất linh kiện phù hợp,
+                    sơ đồ kết nối, mode điều khiển và
+                    yêu cầu kiểm thử tương ứng.
+                </p>
+
+                <p>
+                    Những thông số cụ thể như điện áp nguồn,
+                    bitrate và nhiệt độ cần lấy từ yêu cầu dự án
+                    và datasheet thực tế, không được tự đặt
+                    chỉ dựa trên ví dụ này.
+                </p>
+
+                <h2>34. Ví dụ dự án: Kiểm tra Termination</h2>
+
+                <p>
+                    Giả sử một CAN network có hai đầu termination
+                    với giá trị danh định 120 ohm.
+                </p>
+
+                <p>
+                    Khi hệ thống đã được tắt nguồn và điều kiện đo
+                    phù hợp, kỹ sư có thể kiểm tra điện trở
+                    giữa CAN_H và CAN_L.
+                </p>
+
+                <pre><code>Termination at End A: 120 ohm
+Termination at End B: 120 ohm
+
+Equivalent Resistance:
+
+120 ohm || 120 ohm
+
+Expected ideal result: 60 ohm</code></pre>
+
+                <p>
+                    Kết quả đo cần được diễn giải theo sơ đồ
+                    mạch thực tế và những phần tử khác có thể
+                    đang kết nối với bus.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kết quả đo minh họa</th>
+                            <th>Khả năng cần kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Gần 60 ohm</td>
+                            <td>Có thể phù hợp với hai termination 120 ohm song song trong mạng đơn giản.</td>
+                        </tr>
+                        <tr>
+                            <td>Gần 120 ohm</td>
+                            <td>Có thể chỉ có một termination đang được kết nối hoặc một nhánh không được kết nối.</td>
+                        </tr>
+                        <tr>
+                            <td>Điện trở rất lớn</td>
+                            <td>Có thể thiếu termination hoặc đường dây bị hở.</td>
+                        </tr>
+                        <tr>
+                            <td>Điện trở thấp bất thường</td>
+                            <td>Có thể có termination thừa, short circuit hoặc một mạch tải khác.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Đây chỉ là cách diễn giải sơ bộ cho một mạng
+                    đơn giản. Không nên kết luận lỗi chỉ từ một
+                    giá trị đo mà chưa kiểm tra schematic
+                    và cấu trúc kết nối thực tế.
+                </p>
+
+                <h2>35. Ví dụ dự án: Kiểm tra CAN Waveform</h2>
+
+                <p>
+                    Khi CAN communication không ổn định,
+                    CAN trace có thể cho biết message nào bị lỗi,
+                    nhưng đôi khi chưa đủ để xác định nguyên nhân
+                    thuộc Physical Layer.
+                </p>
+
+                <p>
+                    Trong trường hợp này, kỹ sư có thể cần
+                    quan sát waveform của CAN_H và CAN_L
+                    bằng oscilloscope hoặc công cụ đo phù hợp.
+                </p>
+
+                <p>
+                    Những đặc điểm cần quan sát gồm:
+                </p>
+
+                <ul>
+                    <li>CAN_H và CAN_L có chuyển trạng thái phù hợp không?</li>
+                    <li>Dominant và Recessive có phân biệt rõ không?</li>
+                    <li>Biên độ tín hiệu có phù hợp với Transceiver không?</li>
+                    <li>Có hiện tượng ringing hoặc reflection đáng chú ý không?</li>
+                    <li>Có sự khác biệt bất thường giữa hai đường tín hiệu không?</li>
+                    <li>Thời gian chuyển trạng thái có phù hợp yêu cầu không?</li>
+                </ul>
+
+                <p>
+                    Có thể quan sát từng đường tín hiệu so với
+                    reference phù hợp và tín hiệu vi sai giữa
+                    CAN_H với CAN_L.
+                </p>
+
+                <p>
+                    Khi thực hiện phép đo, cần sử dụng probe,
+                    phương pháp kết nối và điểm tham chiếu phù hợp
+                    với hệ thống đang kiểm tra. Không nên nối
+                    ground clip của thiết bị đo một cách tùy tiện
+                    vì có thể làm thay đổi mạch hoặc gây ra short circuit.
+                </p>
+
+                <h2>36. Debug: ECU không giao tiếp được trên CAN bus</h2>
+
+                <p>
+                    Giả sử ECU A và ECU B không thể trao đổi CAN Frame,
+                    mặc dù phần mềm đã được build thành công
+                    và CAN Driver đã được cấu hình.
+                </p>
+
+                <p>
+                    Không nên lập tức kết luận nguyên nhân
+                    nằm ở CAN Driver hoặc Application Software.
+                    Cần kiểm tra từ lớp vật lý đến lớp giao thức.
+                </p>
+
+                <pre><code>       ECU A cannot communicate
+                  |
+                  v
+        Check CAN Controller Status
+                  |
+                  v
+        Check Transceiver Mode
+                  |
+                  v
+        Check CAN_H / CAN_L Wiring
+                  |
+                  v
+        Check Bus Termination
+                  |
+                  v
+        Check Bitrate and Bit Timing
+                  |
+                  v
+        Observe CAN Waveform
+                  |
+                  v
+        Check CAN Trace and Error Status
+                  |
+                  v
+        Identify Fault Location</code></pre>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hiện tượng</th>
+                            <th>Nguyên nhân có thể</th>
+                            <th>Hướng kiểm tra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Không có tín hiệu CAN trên bus</td>
+                            <td>Transceiver chưa hoạt động, sai mode hoặc nguồn cấp.</td>
+                            <td>Kiểm tra nguồn, TXD/RXD và mode control.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Controller truyền nhưng không có ACK</td>
+                            <td>Không có receiver phù hợp, lỗi kết nối hoặc cấu hình mạng.</td>
+                            <td>Kiểm tra node nhận, CAN_H/CAN_L và bitrate.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN_H hoặc CAN_L không có tín hiệu phù hợp</td>
+                            <td>Lỗi Transceiver, wiring hoặc short circuit.</td>
+                            <td>Kiểm tra waveform, pin và schematic.</td>
+                        </tr>
+                        <tr>
+                            <td>Có nhiều Error Frame</td>
+                            <td>Bit Timing, signal integrity hoặc kết nối vật lý không phù hợp.</td>
+                            <td>Kiểm tra timing và waveform.</td>
+                        </tr>
+                        <tr>
+                            <td>Giao tiếp không ổn định khi tăng node</td>
+                            <td>Tải bus, topology, stub hoặc termination chưa phù hợp.</td>
+                            <td>Kiểm tra toàn bộ network topology.</td>
+                        </tr>
+                        <tr>
+                            <td>ECU không thức dậy khi có CAN traffic</td>
+                            <td>Transceiver không hỗ trợ wake-up mong muốn hoặc mode/configuration không đúng.</td>
+                            <td>Kiểm tra wake-up mode và cấu hình phần cứng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>37. Debug: CAN communication không ổn định khi thêm ECU</h2>
+
+                <p>
+                    Giả sử mạng ban đầu có hai ECU và hoạt động bình thường.
+                    Sau khi thêm ECU thứ ba, hệ thống bắt đầu xuất hiện
+                    Error Frame hoặc mất message không ổn định.
+                </p>
+
+                <p>
+                    Đây có thể là dấu hiệu cho thấy cấu trúc vật lý
+                    của mạng đã thay đổi.
+                </p>
+
+                <p>
+                    Những điểm cần kiểm tra:
+                </p>
+
+                <ol>
+                    <li>ECU mới có được đặt đúng vị trí trên bus không?</li>
+                    <li>Stub nối đến ECU mới có quá dài không?</li>
+                    <li>ECU mới có thêm termination không cần thiết không?</li>
+                    <li>Characteristic Impedance của cable có phù hợp không?</li>
+                    <li>Transceiver mới có tương thích với mạng hiện tại không?</li>
+                    <li>Bitrate và Bit Timing có đúng không?</li>
+                    <li>Waveform có xuất hiện reflection hoặc ringing không?</li>
+                </ol>
+
+                <p>
+                    Ví dụ, nếu ECU mới tự bổ sung một điện trở
+                    termination 120 ohm trong khi mạng đã có
+                    hai termination ở hai đầu, điện trở tương đương
+                    của bus có thể thấp hơn thiết kế ban đầu.
+                    Điều này làm thay đổi tải điện mà các Transceiver
+                    phải điều khiển.
+                </p>
+
+                <h2>38. Debug: CAN Transceiver không chuyển sang Normal Mode</h2>
+
+                <p>
+                    Một tình huống khác là phần mềm đã yêu cầu
+                    CAN communication hoạt động nhưng Transceiver
+                    vẫn ở trạng thái Standby hoặc Sleep.
+                </p>
+
+                <p>
+                    Khi đó, cần kiểm tra cả phần mềm điều khiển
+                    và phần cứng Transceiver:
+                </p>
+
+                <ul>
+                    <li>Mode control pin có được điều khiển đúng không?</li>
+                    <li>Transceiver có nguồn cấp phù hợp không?</li>
+                    <li>Mode transition có đáp ứng timing yêu cầu không?</li>
+                    <li>CAN Controller đã được khởi tạo chưa?</li>
+                    <li>Phần mềm có nhận được notification hoặc lỗi không?</li>
+                    <li>Transceiver có đang bị giữ trong một trạng thái bảo vệ không?</li>
+                </ul>
+
+                <p>
+                    Nếu dự án sử dụng AUTOSAR, cần kiểm tra
+                    cấu hình CanTrcv và CanSM, cùng với
+                    các trạng thái giao tiếp mà hệ thống đang quản lý.
+                </p>
+
+                <h2>39. Áp dụng ISO 11898-2 trong AUTOSAR Classic</h2>
+
+                <p>
+                    Trong AUTOSAR Classic, CAN Transceiver có thể được
+                    quản lý thông qua module CanTrcv (CAN Transceiver Driver).
+                </p>
+
+                <p>
+                    CanTrcv cung cấp interface phần mềm để những
+                    module phía trên có thể điều khiển hoặc truy vấn
+                    trạng thái hoạt động của Transceiver theo
+                    cấu hình và implementation được sử dụng.
+                </p>
+
+                <p>
+                    Một số module liên quan gồm:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Vai trò khái quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Can</td>
+                            <td>Điều khiển CAN Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>CanIf</td>
+                            <td>Cung cấp interface giữa CAN Driver và các module phía trên.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTrcv</td>
+                            <td>Quản lý CAN Transceiver như mode hoạt động và wake-up theo khả năng hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>CanSM</td>
+                            <td>Quản lý trạng thái CAN Communication và phối hợp với các module liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>EcuM</td>
+                            <td>Tham gia quản lý trạng thái và quá trình wake-up của ECU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể hình dung mối quan hệ đơn giản:
+                </p>
+
+                <pre><code>             EcuM
+               |
+               v
+             CanSM
+             /   \
+            v     v
+          CanIf  CanTrcv
+            |
+            v
+            Can
+            |
+            v
+       CAN Controller
+            |
+            v
+       CAN Transceiver
+            |
+            v
+          CAN Bus</code></pre>
+
+                <p>
+                    Sơ đồ này mang tính minh họa. Quan hệ và luồng điều khiển
+                    cụ thể cần đối chiếu với AUTOSAR release,
+                    cấu hình dự án và implementation của nhà cung cấp.
+                </p>
+
+                <p>
+                    Điểm quan trọng là ISO 11898-2 mô tả đặc tính
+                    của HS-PMA, trong khi CanTrcv mô tả cách phần mềm
+                    AUTOSAR tương tác với Transceiver.
+                </p>
+
+                <h2>40. Ví dụ dự án: Quản lý Transceiver bằng AUTOSAR</h2>
+
+                <p>
+                    Giả sử một ECU cần chuyển CAN Transceiver
+                    giữa Normal Mode và Standby Mode theo
+                    trạng thái hoạt động của hệ thống.
+                </p>
+
+                <p>
+                    Một luồng khái niệm có thể như sau:
+                </p>
+
+                <pre><code>ECU needs normal communication
+              |
+              v
+          CanSM Request
+              |
+              v
+        CanTrcv Mode Control
+              |
+              v
+       Transceiver Normal Mode
+              |
+              v
+        CAN Communication
+              |
+              v
+       ECU enters low-power
+              |
+              v
+        CanSM / EcuM State Flow
+              |
+              v
+       Transceiver Low-power Mode
+              |
+              v
+        Monitor Wake-up Event
+              |
+              v
+       ECU Wake-up Procedure</code></pre>
+
+                <p>
+                    Khi triển khai thực tế, cần xác định:
+                </p>
+
+                <ul>
+                    <li>Mode nào được Transceiver hỗ trợ?</li>
+                    <li>Mode nào được cấu hình trong AUTOSAR?</li>
+                    <li>Module nào yêu cầu thay đổi mode?</li>
+                    <li>Notification được gửi về phần mềm như thế nào?</li>
+                    <li>Wake-up source được nhận diện ở đâu?</li>
+                    <li>ECU cần thực hiện bước nào trước khi truyền CAN trở lại?</li>
+                </ul>
+
+                <h2>41. Từ yêu cầu ISO 11898-2 đến Test Case</h2>
+
+                <p>
+                    Khi làm dự án, một trong những việc quan trọng
+                    là chuyển yêu cầu liên quan đến Transceiver
+                    thành những test case có thể xác minh.
+                </p>
+
+                <p>
+                    Các bước tổng quát:
+                </p>
+
+                <pre><code>       ISO 11898-2 Requirement
+                  |
+                  v
+        Identify Applicable Parameter
+                  |
+                  v
+         Check Transceiver Datasheet
+                  |
+                  v
+       Define ECU Hardware Requirement
+                  |
+                  v
+             Build Test Case
+                  |
+                  v
+          Execute Bench Test
+                  |
+                  v
+          Capture Test Evidence
+                  |
+                  v
+        Update Requirement Traceability</code></pre>
+
+                <p>
+                    Ví dụ, nếu dự án yêu cầu Transceiver hỗ trợ
+                    low-power mode và wake-up, cần kiểm tra
+                    cả khả năng của linh kiện, cách điều khiển
+                    mode và kết quả thực tế trên bench.
+                </p>
+
+                <h2>42. Ví dụ Test Case: Transceiver Mode Transition</h2>
+
+                <p>
+                    Mục tiêu là xác minh Transceiver chuyển đổi
+                    giữa các mode theo yêu cầu dự án.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>TRCV-TEST-001</td>
+                        </tr>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Kiểm tra khả năng chuyển đổi Normal Mode và Low-power Mode.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>ECU đã được cấp nguồn và Transceiver được khởi tạo.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Yêu cầu chuyển mode thông qua interface phần mềm phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>Transceiver chuyển sang mode yêu cầu và trạng thái được báo đúng theo implementation.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>Driver Log, trạng thái mode và kết quả quan sát trên CAN bus.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>43. Ví dụ Test Case: Wake-up Function</h2>
+
+                <p>
+                    Mục tiêu là xác minh Transceiver có thể phát hiện
+                    điều kiện wake-up theo cấu hình của dự án.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường</th>
+                            <th>Nội dung ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test Case ID</td>
+                            <td>TRCV-TEST-002</td>
+                        </tr>
+                        <tr>
+                            <td>Test Objective</td>
+                            <td>Kiểm tra wake-up event khi Transceiver đang ở low-power mode.</td>
+                        </tr>
+                        <tr>
+                            <td>Precondition</td>
+                            <td>Transceiver hỗ trợ wake-up và đã được cấu hình đúng.</td>
+                        </tr>
+                        <tr>
+                            <td>Test Action</td>
+                            <td>Sử dụng môi trường bench để tạo điều kiện wake-up được hỗ trợ.</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Result</td>
+                            <td>Transceiver nhận biết sự kiện và cung cấp notification phù hợp.</td>
+                        </tr>
+                        <tr>
+                            <td>Evidence</td>
+                            <td>Wake-up Status, driver notification và ECU state log.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Với Selective Wake-up, cần bổ sung những test case
+                    kiểm tra frame phù hợp và frame không phù hợp
+                    với cấu hình lựa chọn của Transceiver.
+                </p>
+
+                <h2>44. Checklist khi đọc và áp dụng ISO 11898-2</h2>
+
+                <p>
+                    Checklist dưới đây có thể dùng khi nghiên cứu tiêu chuẩn,
+                    review Hardware Design hoặc tham gia kiểm thử CAN Physical Layer.
+                </p>
+
+                <ul>
+                    <li>Đã xác định đúng phiên bản ISO 11898-2 chưa?</li>
+                    <li>Đã kiểm tra Scope và phạm vi HS-PMA chưa?</li>
+                    <li>Đã phân biệt ISO 11898-1 và ISO 11898-2 chưa?</li>
+                    <li>Đã hiểu vai trò của CAN Transceiver chưa?</li>
+                    <li>Đã hiểu TXD, RXD, CAN_H và CAN_L chưa?</li>
+                    <li>Đã hiểu Differential Voltage và Common-mode Voltage chưa?</li>
+                    <li>Đã kiểm tra Dominant và Recessive Characteristics chưa?</li>
+                    <li>Đã kiểm tra Static Parameters và Dynamic Parameters chưa?</li>
+                    <li>Đã kiểm tra Transceiver Supply và Logic Interface chưa?</li>
+                    <li>Đã review CAN Bus Termination chưa?</li>
+                    <li>Đã kiểm tra Network Topology và Stub Length chưa?</li>
+                    <li>Đã xác định Low-power Mode và Wake-up Requirements chưa?</li>
+                    <li>Đã kiểm tra Selective Wake-up nếu dự án sử dụng chưa?</li>
+                    <li>Đã kiểm tra SIC hoặc FAST Mode nếu có yêu cầu chưa?</li>
+                    <li>Đã đối chiếu Transceiver Datasheet với yêu cầu dự án chưa?</li>
+                    <li>Đã kiểm tra phần cứng trên bench chưa?</li>
+                    <li>Đã có CAN Trace hoặc Waveform Evidence chưa?</li>
+                    <li>Đã liên kết requirement với Test Case chưa?</li>
+                    <li>Đã lưu kết quả kiểm thử và cập nhật Traceability chưa?</li>
+                </ul>
+
+                <h2>45. Các thuật ngữ cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thuật ngữ</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 11898-2</td>
+                            <td>Tiêu chuẩn High-speed CAN Physical Medium Attachment.</td>
+                        </tr>
+                        <tr>
+                            <td>PMA</td>
+                            <td>Physical Medium Attachment.</td>
+                        </tr>
+                        <tr>
+                            <td>PMD</td>
+                            <td>Physical Medium Dependent.</td>
+                        </tr>
+                        <tr>
+                            <td>HS-PMA</td>
+                            <td>High-speed Physical Medium Attachment.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN Transceiver</td>
+                            <td>Thành phần giao tiếp điện giữa CAN Controller và CAN bus.</td>
+                        </tr>
+                        <tr>
+                            <td>TXD</td>
+                            <td>Tín hiệu logic truyền từ Controller đến Transceiver.</td>
+                        </tr>
+                        <tr>
+                            <td>RXD</td>
+                            <td>Tín hiệu logic nhận từ Transceiver về Controller.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN_H</td>
+                            <td>Đường tín hiệu CAN High.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN_L</td>
+                            <td>Đường tín hiệu CAN Low.</td>
+                        </tr>
+                        <tr>
+                            <td>Differential Voltage</td>
+                            <td>Hiệu điện thế giữa CAN_H và CAN_L.</td>
+                        </tr>
+                        <tr>
+                            <td>Common-mode Voltage</td>
+                            <td>Thành phần điện áp chung của hai đường CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>Characteristic Impedance</td>
+                            <td>Trở kháng đặc tính của đường truyền.</td>
+                        </tr>
+                        <tr>
+                            <td>Termination</td>
+                            <td>Điện trở kết thúc đường truyền.</td>
+                        </tr>
+                        <tr>
+                            <td>Split Termination</td>
+                            <td>Cấu trúc termination chia thành hai điện trở với điểm giữa.</td>
+                        </tr>
+                        <tr>
+                            <td>Twisted Pair</td>
+                            <td>Cặp dây xoắn dùng để truyền tín hiệu vi sai.</td>
+                        </tr>
+                        <tr>
+                            <td>Low-power Mode</td>
+                            <td>Chế độ hoạt động tiêu thụ năng lượng thấp.</td>
+                        </tr>
+                        <tr>
+                            <td>Wake-up</td>
+                            <td>Chức năng nhận biết sự kiện đánh thức.</td>
+                        </tr>
+                        <tr>
+                            <td>Selective Wake-up</td>
+                            <td>Chức năng nhận biết thông tin đánh thức được lựa chọn.</td>
+                        </tr>
+                        <tr>
+                            <td>WUP</td>
+                            <td>Wake-up Pattern.</td>
+                        </tr>
+                        <tr>
+                            <td>WUF</td>
+                            <td>Wake-up Frame.</td>
+                        </tr>
+                        <tr>
+                            <td>SIC</td>
+                            <td>Signal Improvement Capability.</td>
+                        </tr>
+                        <tr>
+                            <td>CanTrcv</td>
+                            <td>AUTOSAR CAN Transceiver Driver.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>46. Tài liệu tham khảo</h2>
+
+                <p>
+                    Các tài liệu dưới đây hỗ trợ tìm hiểu sâu hơn
+                    về High-speed CAN Physical Layer, Transceiver
+                    và cách thiết kế mạng CAN.
+                </p>
+
+                <ul>
+                    <li>
+                        <a href="https://www.iso.org/standard/90697.html"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 11898-2:2026 - High-speed physical medium attachment (PMA) sublayer
+                        </a>
+                        — tài liệu chính về HS-PMA, đặc tính điện,
+                        timing, low-power, wake-up, SIC và FAST mode.
+                    </li>
+
+                    <li>
+                        <a href="https://www.iso.org/standard/86384.html"
+                            target="_blank" rel="noopener noreferrer">
+                            ISO 11898-1:2024 - Data Link Layer and Physical Coding Sublayer
+                        </a>
+                        — tài liệu liên quan đến CAN Protocol Controller,
+                        Data Link Layer và Physical Coding Sublayer.
+                    </li>
+
+                    <li>
+                        <a href="https://www.ti.com/lit/an/slla270/slla270.pdf"
+                            target="_blank" rel="noopener noreferrer">
+                            Texas Instruments - Controller Area Network Physical Layer Requirements
+                        </a>
+                        — tài liệu kỹ thuật tham khảo về CAN Physical Layer,
+                        termination và signal behavior.
+                    </li>
+
+                    <li>
+                        <a href="https://www.ti.com/lit/pdf/SLLA486"
+                            target="_blank" rel="noopener noreferrer">
+                            Texas Instruments - Top Design Questions About Isolated CAN Bus Design
+                        </a>
+                        — tài liệu tham khảo về thiết kế mạng CAN,
+                        termination và những vấn đề liên quan đến bus.
+                    </li>
+
+                    <li>
+                        <a href="https://www.can-cia.org/"
+                            target="_blank" rel="noopener noreferrer">
+                            CAN in Automation (CiA)
+                        </a>
+                        — nguồn tham khảo về CAN, CAN FD, CAN XL
+                        và các công nghệ liên quan.
+                    </li>
+
+                    <li>
+                        <a href="https://www.autosar.org/standards/classic-platform"
+                            target="_blank" rel="noopener noreferrer">
+                            AUTOSAR Classic Platform
+                        </a>
+                        — nguồn tra cứu AUTOSAR Specifications,
+                        bao gồm các tài liệu về CAN Driver,
+                        CAN Interface và CAN Transceiver Driver.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý khi sử dụng tài liệu:</strong>
+                    ISO 11898-2 là tài liệu có bản quyền. Trang ISO có thể
+                    cung cấp thông tin xuất bản và phần xem trước,
+                    nhưng việc truy cập toàn văn phải tuân theo
+                    điều kiện sử dụng của ISO hoặc quyền truy cập
+                    mà tổ chức của bạn cung cấp.
+                    Khi thực hiện dự án, hãy sử dụng bản tiêu chuẩn
+                    đã được phê duyệt và đối chiếu với datasheet
+                    của Transceiver thực tế.
+                </div>
+
+                <h2>47. Tóm tắt</h2>
+
+                <div class="note">
+                    <p>
+                        ISO 11898-2 là tiêu chuẩn quan trọng đối với
+                        High-speed CAN Physical Medium Attachment (HS-PMA).
+                        Phiên bản ISO 11898-2:2026 đề cập đến những
+                        implementation có hoặc không có low-power mode,
+                        selective wake-up và các chế độ SIC/FAST
+                        trong phạm vi được quy định.
+                    </p>
+
+                    <p>
+                        CAN Transceiver đóng vai trò kết nối
+                        CAN Controller với môi trường truyền thông.
+                        Hai tín hiệu TXD/RXD được sử dụng ở phía logic,
+                        còn CAN_H/CAN_L là hai đường tín hiệu
+                        ở phía bus.
+                    </p>
+
+                    <p>
+                        High-speed CAN sử dụng Differential Signaling
+                        với hai trạng thái Dominant và Recessive.
+                        Những yếu tố như Common-mode Voltage,
+                        Characteristic Impedance, Termination,
+                        Twisted Pair, Network Topology và Stub Length
+                        đều có thể ảnh hưởng đến chất lượng giao tiếp.
+                    </p>
+
+                    <p>
+                        ISO 11898-2 cũng đề cập đến các đặc tính tĩnh,
+                        đặc tính động, low-power mode và wake-up.
+                        Khi lựa chọn Transceiver, cần kiểm tra
+                        những thông số này cùng với yêu cầu
+                        của dự án và datasheet của linh kiện.
+                    </p>
+
+                    <p>
+                        Khi áp dụng vào dự án ECU, nên bắt đầu từ
+                        yêu cầu hệ thống, lựa chọn Transceiver,
+                        review Hardware Design, kiểm tra waveform,
+                        xây dựng Test Case và lưu Test Evidence.
+                        Nếu sử dụng AUTOSAR Classic, CanTrcv,
+                        CanSM và các module liên quan có thể
+                        tham gia quản lý Transceiver và CAN Communication.
+                    </p>
+
+                    <p>
+                        Điểm quan trọng nhất là cần phân biệt
+                        CAN Protocol với CAN Physical Layer.
+                        Một hệ thống CAN chỉ hoạt động ổn định
+                        khi cả CAN Controller, CAN Transceiver
+                        và môi trường truyền đều đáp ứng
+                        những yêu cầu phù hợp.
+                    </p>
+
+                    <p>
+                        Sau Bài 34 về ISO 11898-1 và Bài 35 về
+                        ISO 11898-2, chúng ta đã tìm hiểu hai phạm vi
+                        quan trọng của CAN: giao thức truyền thông
+                        và giao tiếp vật lý. Đây là nền tảng để
+                        tiếp tục nghiên cứu cách truyền những
+                        thông điệp chẩn đoán dài hơn trên CAN
+                        thông qua ISO-TP.
+                    </p>
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-35.html">← Bài trước</a>
+                    <a class="btn" href="lesson-37.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        EmLearn - 2026
+    </footer>
+
+</body>
+
+</html>
