@@ -167,3 +167,66 @@ footer{border-top:1px solid var(--line);text-align:center;color:var(--muted);pad
 .qz-card.done .qz-opt.correct:hover,
 .qz-card.done .qz-opt.missed:hover{border-color:var(--ok)}
 .qz-card.done .qz-opt.wrong:hover{border-color:var(--bad)}
+
+/* ===== Quiz sơ đồ: Drop-down List và Drag-and-Drop ===== */
+.dg-hint{margin:0 0 10px;font-size:.88rem;color:var(--muted)}
+.dg{overflow-x:auto;padding:14px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.dg-t{font-weight:600}
+.dg-ph{color:var(--muted);font-size:.85rem;font-weight:400}
+.dg-box{padding:10px 14px;border:2px solid var(--line);border-radius:8px;background:var(--panel);text-align:center}
+.dg-sub{display:block;margin-top:4px;color:var(--muted);font-size:.8rem}
+.dg-arrow{font-size:1.4rem;line-height:1;color:var(--muted)}
+.dg-ans{display:block;flex-basis:100%;margin-top:4px;font-size:.8rem;font-weight:700;color:var(--ok);text-align:center}
+
+/* Danh sách thả xuống */
+.dg-sel{max-width:100%;min-width:130px;padding:7px 10px;border:2px dashed var(--brand);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+
+/* Ô kéo thả và các mục kéo */
+.dg-slot{display:inline-flex;align-items:center;justify-content:center;min-width:150px;min-height:42px;padding:4px 8px;border:2px dashed var(--brand);border-radius:8px;background:var(--panel);cursor:pointer}
+.dg-slot.over{background:var(--code);border-style:solid}
+.dg-slot:focus-visible{outline:3px solid var(--canh);outline-offset:2px}
+.dg-chip{padding:6px 12px;border:2px solid var(--brand);border-radius:999px;background:var(--panel);color:var(--ink);font:inherit;font-weight:600;cursor:grab}
+.dg-chip.picked{background:var(--brand);color:#fff}
+.dg-chip.drag{opacity:.5}
+.dg-pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;padding:12px;min-height:56px;border:2px dashed var(--line);border-radius:8px;background:var(--panel)}
+@media(prefers-color-scheme:dark){.dg-chip.picked{color:#10181c}}
+
+/* Trạng thái sau khi nộp bài */
+.dg-sel.ok,.dg-slot.ok{border-style:solid;border-color:var(--ok);background:rgba(29,122,70,.14)}
+.dg-sel.bad,.dg-slot.bad{border-style:solid;border-color:var(--bad);background:rgba(179,38,30,.14)}
+.dg-card.done .dg-slot,.dg-card.done .dg-chip{cursor:default}
+
+/* Sơ đồ phân tầng */
+.dg-layers{display:grid;gap:8px;max-width:640px;margin:0 auto}
+.dg-layer{display:grid;grid-template-columns:170px 1fr;gap:10px;align-items:center}
+.dg-tag{color:var(--muted);font-size:.85rem;text-align:right}
+@media(max-width:560px){.dg-layer{grid-template-columns:1fr}.dg-tag{text-align:left}}
+
+/* Sơ đồ luồng dọc */
+.dg-chain{display:flex;flex-direction:column;align-items:center}
+.dg-chain .dg-box{width:100%;max-width:440px}
+.dg-link{display:flex;align-items:center;justify-content:center;gap:12px;padding:6px 0;color:var(--muted)}
+.dg-via{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;color:var(--ink)}
+
+/* Bảng chuyển trạng thái và bảng arbitration */
+.dg-table{margin:0;min-width:520px}
+.dg-table th,.dg-table td{text-align:center;vertical-align:middle}
+.dg-rowh{font-weight:700;background:var(--code)}
+.dg-table .dg-sel{min-width:0}
+
+/* Thanh cấu trúc frame */
+.dg-bar{display:flex;flex-wrap:wrap;gap:8px}
+.dg-field{flex:1 1 150px;display:flex;flex-direction:column}
+.dg-field .dg-box{padding:8px 6px}
+.dg-field .dg-slot{min-width:0;width:100%}
+.dg-field .dg-sub{text-align:center}
+
+/* Lưu đồ trao đổi giữa hai bên */
+.dg-seq{max-width:640px;margin:0 auto}
+.dg-seq-row{display:grid;grid-template-columns:84px 1fr 84px;align-items:stretch}
+.dg-seq-head div{padding:8px;text-align:center;font-weight:700;border:2px solid var(--line);border-radius:8px;background:var(--panel)}
+.dg-seq-head div:nth-child(2){border:0;background:none}
+.dg-life{position:relative;min-height:64px}
+.dg-life::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px dashed var(--line)}
+.dg-msg{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;padding:8px 4px}
+.dg-msg .dg-sub{margin:0}
