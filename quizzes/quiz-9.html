@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Quiz 9: Kiểm tra ISO 14229-1 | Tự học Embedded</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../index.html">Trang chủ</a>
+                <a href="../lessons/index.html">Bài học</a>
+                <a href="../quizzes/index.html" class="active" aria-current="page">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="qz-wrap qz-has-side">
+            <h1>Quiz 9: Kiểm tra ISO 14229-1</h1>
+            <p><span id="qz-total"></span> câu hỏi đọc hiểu về ISO 14229-1 (UDS, tầng ứng dụng), gồm nhiều dạng câu hỏi khác nhau. 
+                Mỗi câu chỉ được tính điểm khi tất cả vị trí đều đúng. Thứ tự câu hỏi và các lựa chọn được xáo trộn 
+                mỗi lần tải trang. Bấm "Nộp bài" để xem điểm, đáp án đúng và giải thích. Có thể sử dụng tài liệu ISO 14229-1 để làm đề này</p>
+
+            <div class="qz-body">
+
+                <aside class="qz-side" aria-label="Danh sách câu hỏi">
+                    <h2 class="qz-side-title">Danh sách câu</h2>
+                    <div class="qz-nav" id="qz-nav"></div>
+
+                    <ul class="qz-legend" id="qz-legend" aria-label="Chú thích trạng thái">
+                        <li><i class="qz-sw"></i>Chưa làm</li>
+                        <li><i class="qz-sw answered"></i>Đã làm</li>
+                        <li><i class="qz-sw correct"></i>Đúng</li>
+                        <li><i class="qz-sw wrong"></i>Sai</li>
+                        <li class="lg-skip"><i class="qz-sw skip"></i>Bỏ trống</li>
+                    </ul>
+
+                    <div class="qz-side-foot">
+                        <span class="qz-count" id="qz-count">Đã làm 0/0</span>
+                        <div class="qz-prog" aria-hidden="true"><i id="qz-fill"></i></div>
+                        <div class="qz-actions">
+                            <button class="btn" type="button" id="qz-submit">Nộp bài</button>
+                            <button class="btn ghost" type="button" id="qz-reset">Làm lại</button>
+                        </div>
+                    </div>
+                </aside>
+
+                <section class="qz-content" aria-label="Câu hỏi">
+                    <div class="qz-result" id="qz-result" role="status" tabindex="-1"></div>
+                    <div id="qz-list"></div>
+                    <p><a href="index.html">← Danh sách bài kiểm tra</a></p>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+    <script src="../js/quiz-bank-ISO-14229-1.js"></script>
+    <script>
+        (function () {
+            var KEYS = 'ABCDE';
+            var STATE_TEXT = { todo: 'chưa làm', answered: 'đã làm', correct: 'đúng', wrong: 'sai', skip: 'bỏ trống' };
+            var HINT_DND = 'Kéo các mục ở khung bên dưới thả vào ô trống. Một số mục có thể không được dùng. Trên màn hình cảm ứng, nhấn một mục rồi nhấn vào ô trống.';
+            var HINT_ME = 'Kéo mỗi vế sau ở khung bên dưới thả vào ô bên phải của câu tương ứng. Một số vế có thể không được dùng. Trên màn hình cảm ứng, nhấn một vế rồi nhấn vào ô trống.';
+            var HINT_TFNG = 'Dựa vào đoạn tóm lược, chọn phát biểu là Đúng, Sai hay Không được đề cập.';
+            var list = document.getElementById('qz-list');
+            var nav = document.getElementById('qz-nav');
+            var legend = document.getElementById('qz-legend');
+            var cnt = document.getElementById('qz-count');
+            var fill = document.getElementById('qz-fill');
+            var res = document.getElementById('qz-result');
+            var btnS = document.getElementById('qz-submit');
+            var btnR = document.getElementById('qz-reset');
+            var cards = [], graded = false;
+
+            document.getElementById('qz-total').textContent = QUIZ_BANK.length;
+
+            function shuffle(a) {
+                for (var i = a.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1)), t = a[i];
+                    a[i] = a[j]; a[j] = t;
+                }
+                return a;
+            }
+
+            function el(tag, cls, text) {
+                var e = document.createElement(tag);
+                if (cls) e.className = cls;
+                if (text != null) e.textContent = text;
+                return e;
+            }
+
+            function mark(c, s) {
+                c.nb.className = 'qz-cell' + (s === 'todo' ? '' : ' ' + s);
+                c.nb.setAttribute('aria-label', 'Câu ' + (c.n + 1) + ', ' + STATE_TEXT[s]);
+            }
+
+            function goTo(node) {
+                var smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                node.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+                node.focus({ preventScroll: true });
+            }
+
+            function update() {
+                var n = 0;
+                cards.forEach(function (c) {
+                    var done = c.q.answered();
+                    if (done) n++;
+                    if (!graded) mark(c, done ? 'answered' : 'todo');
+                });
+                cnt.textContent = 'Đã làm ' + n + '/' + cards.length;
+                fill.style.width = (cards.length ? n / cards.length * 100 : 0) + '%';
+                return n;
+            }
+
+            function qtext(text, i) {
+                var p = el('p', 'qz-text', text);
+                p.id = 'qt' + i;
+                return p;
+            }
+
+            /* ---------- Câu chọn đáp án: một đáp án, nhiều đáp án, Đúng/Sai/Không được đề cập ---------- */
+            function optBox(i, kind, opts) {
+                var box = el('div', 'qz-opts');
+                box.setAttribute('role', kind === 'radio' ? 'radiogroup' : 'group');
+                box.setAttribute('aria-labelledby', 'qt' + i);
+                opts.forEach(function (o, k) {
+                    var lb = el('label', 'qz-opt');
+                    lb.innerHTML = '<input type="' + kind + '" name="q' + i + '" value="' + k + '">' +
+                        '<span class="qz-key">' + KEYS[k] + '</span><span class="qz-label"></span>';
+                    lb.querySelector('.qz-label').textContent = o.t;
+                    box.appendChild(lb);
+                    o.el = lb;
+                    o.inp = lb.querySelector('input');
+                });
+                box.addEventListener('change', function () {
+                    opts.forEach(function (o) { o.el.classList.toggle('sel', o.inp.checked); });
+                    update();
+                });
+                return box;
+            }
+
+            function gradeChoice(opts, multi) {
+                var picked = [], correct = [], allOk = true, any = false;
+                opts.forEach(function (o, k) {
+                    var chk = o.inp.checked;
+                    if (chk) { any = true; picked.push(KEYS[k]); }
+                    if (o.ok) correct.push(KEYS[k]);
+                    if (o.ok !== chk) allOk = false;
+                    if (o.ok && chk) o.el.classList.add('correct');
+                    else if (o.ok && !chk) o.el.classList.add(multi ? 'missed' : 'correct');
+                    else if (!o.ok && chk) o.el.classList.add('wrong');
+                    o.inp.disabled = true;
+                });
+                return {
+                    n: 1, ok: allOk ? 1 : 0, filled: any ? 1 : 0,
+                    extra: 'Đáp án đúng: ' + correct.join(', ') +
+                        (any && !allOk ? '. Bạn chọn: ' + picked.join(', ') : '') + '. '
+                };
+            }
+
+            function choiceMaker(d, i, sec, kind, opts, multi) {
+                sec.appendChild(qtext(d.q, i));
+                if (d.type === 'tfng') {
+                    sec.insertBefore(el('p', 'dg-hint', HINT_TFNG), sec.lastChild);
+                }
+                sec.appendChild(optBox(i, kind, opts));
+                return {
+                    answered: function () { return opts.some(function (o) { return o.inp.checked; }); },
+                    grade: function () { return gradeChoice(opts, multi); }
+                };
+            }
+
+            var makers = {};
+
+            makers.mcq = function (d, i, sec) {
+                var opts = shuffle(d.opts.map(function (t, k) { return { t: t, ok: k === 0 }; }));
+                return choiceMaker(d, i, sec, 'radio', opts, false);
+            };
+
+            makers.multi = function (d, i, sec) {
+                var opts = shuffle(
+                    d.ok.map(function (t) { return { t: t, ok: true }; })
+                        .concat(d.bad.map(function (t) { return { t: t, ok: false }; }))
+                );
+                return choiceMaker(d, i, sec, 'checkbox', opts, true);
+            };
+
+            makers.tfng = function (d, i, sec) {
+                var pass = el('div', 'rd-pass');
+                pass.appendChild(el('strong', null, 'Đoạn tóm lược theo ISO 14229-1'));
+                pass.appendChild(document.createTextNode(d.passage));
+                sec.appendChild(pass);
+                var opts = [
+                    { t: 'Đúng', ok: d.ans === 'T' },
+                    { t: 'Sai', ok: d.ans === 'F' },
+                    { t: 'Không được đề cập', ok: d.ans === 'NG' }
+                ];
+                var st = el('p', 'rd-stmt', d.q);
+                st.id = 'qt' + i;
+                sec.appendChild(st);
+                sec.appendChild(el('p', 'dg-hint', HINT_TFNG));
+                sec.appendChild(optBox(i, 'radio', opts));
+                return {
+                    answered: function () { return opts.some(function (o) { return o.inp.checked; }); },
+                    grade: function () { return gradeChoice(opts, false); }
+                };
+            };
+
+            /* ---------- Kéo thả ---------- */
+            function newDnd() { return { sel: null, drag: null, locked: false, chips: [], poolEl: null }; }
+
+            function fillPlaceholder(b) {
+                b.ctl.textContent = '';
+                b.ctl.appendChild(el('span', 'dg-ph', 'Thả vào đây'));
+            }
+
+            function place(chip, b) {
+                b.ctl.textContent = '';
+                b.ctl.appendChild(chip.node);
+                b.chip = chip;
+                chip.at = b;
+            }
+
+            function pick(ctx, chip) {
+                if (ctx.sel) ctx.sel.node.classList.remove('picked');
+                ctx.sel = chip;
+                if (chip) chip.node.classList.add('picked');
+            }
+
+            function putChip(ctx, chip, b) {
+                if (chip.at === b) { pick(ctx, null); return; }
+                var from = chip.at;
+                if (from) { from.chip = null; fillPlaceholder(from); }
+                chip.at = null;
+                if (b) {
+                    var old = b.chip;
+                    if (old) {
+                        old.at = null;
+                        b.chip = null;
+                        if (from) place(old, from); else ctx.poolEl.appendChild(old.node);
+                    }
+                    place(chip, b);
+                } else {
+                    ctx.poolEl.appendChild(chip.node);
+                }
+                pick(ctx, null);
+                update();
+            }
+
+            function makePool(ctx, items, extraCls) {
+                var box = el('div', 'dg-pool' + (extraCls ? ' ' + extraCls : ''));
+                box.setAttribute('aria-label', 'Các mục có thể thả vào ô trống');
+                ctx.poolEl = box;
+                shuffle(items.slice()).forEach(function (t) {
+                    var chip = { t: t, at: null, node: el('button', 'dg-chip', t) };
+                    chip.node.type = 'button';
+                    chip.node.draggable = true;
+                    chip.node.addEventListener('dragstart', function (e) {
+                        if (ctx.locked) { e.preventDefault(); return; }
+                        ctx.drag = chip;
+                        e.dataTransfer.effectAllowed = 'move';
+                        try { e.dataTransfer.setData('text/plain', t); } catch (x) { }
+                        chip.node.classList.add('drag');
+                    });
+                    chip.node.addEventListener('dragend', function () {
+                        ctx.drag = null;
+                        chip.node.classList.remove('drag');
+                    });
+                    chip.node.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        if (ctx.locked) return;
+                        if (ctx.sel && ctx.sel !== chip && chip.at) putChip(ctx, ctx.sel, chip.at);
+                        else pick(ctx, ctx.sel === chip ? null : chip);
+                    });
+                    ctx.chips.push(chip);
+                    box.appendChild(chip.node);
+                });
+                box.addEventListener('dragover', function (e) {
+                    if (ctx.drag && !ctx.locked) e.preventDefault();
+                });
+                box.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    if (ctx.drag && !ctx.locked) putChip(ctx, ctx.drag, null);
+                });
+                box.addEventListener('click', function () {
+                    if (ctx.locked) return;
+                    if (ctx.sel && ctx.sel.at) putChip(ctx, ctx.sel, null); else pick(ctx, null);
+                });
+                return box;
+            }
+
+            /* ---------- Ô trống: danh sách thả xuống hoặc ô kéo thả ---------- */
+            function mkSelect(q, ans, opts, inline, row) {
+                var s = el('select', 'dg-sel');
+                s.setAttribute('aria-label', 'Vị trí trống ' + (q.blanks.length + 1));
+                s.appendChild(new Option('Chọn...', ''));
+                shuffle(opts.slice()).forEach(function (t) { s.appendChild(new Option(t, t)); });
+                s.addEventListener('change', update);
+                var b = { ans: ans, ctl: s, isSel: true, inline: inline, row: row,
+                          get: function () { return s.value; } };
+                q.blanks.push(b);
+                return b;
+            }
+
+            function mkSlot(q, ans, inline, row) {
+                var ctx = q.dnd;
+                var sl = el('div', 'dg-slot');
+                sl.tabIndex = 0;
+                sl.setAttribute('aria-label', 'Ô trống ' + (q.blanks.length + 1));
+                var b = { ans: ans, ctl: sl, chip: null, isSel: false, inline: inline, row: row,
+                          get: function () { return b.chip ? b.chip.t : ''; } };
+                fillPlaceholder(b);
+                sl.addEventListener('click', function () {
+                    if (!ctx.locked && ctx.sel) putChip(ctx, ctx.sel, b);
+                });
+                sl.addEventListener('keydown', function (e) {
+                    if ((e.key === 'Enter' || e.key === ' ') && e.target === sl) {
+                        e.preventDefault();
+                        sl.click();
+                    }
+                });
+                sl.addEventListener('dragover', function (e) {
+                    if (ctx.drag && !ctx.locked) { e.preventDefault(); sl.classList.add('over'); }
+                });
+                sl.addEventListener('dragleave', function () { sl.classList.remove('over'); });
+                sl.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    sl.classList.remove('over');
+                    if (ctx.drag && !ctx.locked) putChip(ctx, ctx.drag, b);
+                });
+                q.blanks.push(b);
+                return b;
+            }
+
+            function gradeBlanks(q) {
+                var ok = 0, filled = 0;
+                q.blanks.forEach(function (b) {
+                    var val = b.get();
+                    if (val) filled++;
+                    var good = val === b.ans;
+                    if (good) ok++;
+                    b.ctl.classList.add(good ? 'ok' : 'bad');
+                    if (b.row) b.row.classList.add(good ? 'ok' : 'bad');
+                    if (b.isSel) b.ctl.disabled = true; else b.ctl.tabIndex = -1;
+                    if (!good) {
+                        var a = el('span', b.inline ? 'dg-ans-i' : 'dg-ans', 'Đáp án: ' + b.ans);
+                        b.ctl.parentNode.insertBefore(a, b.ctl.nextSibling);
+                    }
+                });
+                if (q.dnd) {
+                    q.dnd.locked = true;
+                    pick(q.dnd, null);
+                    q.dnd.chips.forEach(function (ch) { ch.node.draggable = false; ch.node.tabIndex = -1; });
+                }
+                return { n: q.blanks.length, ok: ok, filled: filled, extra: '' };
+            }
+
+            function blankApi(q) {
+                return {
+                    answered: function () { return q.blanks.some(function (b) { return b.get() !== ''; }); },
+                    grade: function () { return gradeBlanks(q); }
+                };
+            }
+
+            /* Đoạn văn có ô trống: {1}, {2}, ... */
+            function cloze(text, make) {
+                var p = el('p', 'rd-cloze');
+                text.split(/\{(\d+)\}/).forEach(function (part, idx) {
+                    if (idx % 2 === 0) {
+                        if (part) p.appendChild(document.createTextNode(part));
+                    } else {
+                        p.appendChild(make(parseInt(part, 10)).ctl);
+                    }
+                });
+                return p;
+            }
+
+            makers.dd = function (d, i, sec) {
+                var q = { blanks: [] };
+                sec.appendChild(qtext(d.q, i));
+                sec.appendChild(cloze(d.text, function (n) {
+                    var bl = d.blanks[n];
+                    return mkSelect(q, bl.b, bl.o, true);
+                }));
+                return blankApi(q);
+            };
+
+            makers.sc = function (d, i, sec) {
+                var q = { blanks: [], dnd: newDnd() };
+                sec.appendChild(qtext(d.q, i));
+                sec.appendChild(el('p', 'dg-hint', HINT_DND));
+                sec.appendChild(cloze(d.text, function (n) {
+                    return mkSlot(q, d.ans[n - 1], true);
+                }));
+                sec.appendChild(makePool(q.dnd, d.pool));
+                return blankApi(q);
+            };
+
+            makers.me = function (d, i, sec) {
+                var q = { blanks: [], dnd: newDnd() };
+                sec.appendChild(qtext(d.q, i));
+                sec.appendChild(el('p', 'dg-hint', HINT_ME));
+                var box = el('div', 'me');
+                d.items.forEach(function (it) {
+                    var row = el('div', 'me-row');
+                    row.appendChild(el('div', 'me-beg', it[0]));
+                    var wrap = el('div', 'me-ctl');
+                    var b = mkSlot(q, it[1], false, row);
+                    wrap.appendChild(b.ctl);
+                    row.appendChild(wrap);
+                    box.appendChild(row);
+                });
+                sec.appendChild(box);
+                sec.appendChild(makePool(q.dnd, d.items.map(function (it) { return it[1]; }).concat(d.extra), 'me-pool'));
+                return blankApi(q);
+            };
+
+            makers.tc = function (d, i, sec) {
+                var q = { blanks: [] };
+                sec.appendChild(qtext(d.q, i));
+                var wrap = el('div', 'dg');
+                var tb = el('table', 'dg-table');
+                var thead = el('thead'), htr = el('tr');
+                d.head.forEach(function (h) { htr.appendChild(el('th', null, h)); });
+                thead.appendChild(htr);
+                tb.appendChild(thead);
+                var tbody = el('tbody');
+                d.rows.forEach(function (r) {
+                    var tr = el('tr');
+                    r.forEach(function (c) {
+                        var td = el('td');
+                        if (typeof c === 'string') {
+                            td.textContent = c;
+                        } else {
+                            td.appendChild(mkSelect(q, c.b, d.pool, false).ctl);
+                        }
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+                tb.appendChild(tbody);
+                wrap.appendChild(tb);
+                sec.appendChild(wrap);
+                return blankApi(q);
+            };
+
+            makers.sa = function (d, i, sec) {
+                var q = { blanks: [] };
+                sec.appendChild(qtext(d.q, i));
+                var box = el('div', 'sa');
+                d.items.forEach(function (it) {
+                    var row = el('div', 'sa-row');
+                    row.appendChild(el('div', 'sa-q', it[0]));
+                    var wrap = el('div', 'sa-ctl');
+                    wrap.appendChild(mkSelect(q, it[1], d.pool, false, row).ctl);
+                    row.appendChild(wrap);
+                    box.appendChild(row);
+                });
+                sec.appendChild(box);
+                return blankApi(q);
+            };
+
+            /* ---------- Dựng và chấm bài ---------- */
+            function build() {
+                graded = false;
+                list.innerHTML = '';
+                nav.innerHTML = '';
+                legend.classList.remove('graded');
+                res.className = 'qz-result';
+                res.textContent = '';
+                btnS.disabled = false;
+
+                cards = shuffle(QUIZ_BANK.slice()).map(function (d, i) {
+                    var sec = el('section', 'qz-card dg-card' + (d.type === 'multi' ? ' qz-multi' : ''));
+                    sec.id = 'qc' + i;
+                    sec.tabIndex = -1;
+
+                    var head = el('div', 'qz-head');
+                    head.appendChild(el('span', 'qz-num', 'Câu ' + (i + 1)));
+                    head.appendChild(el('span', 'qz-tag', d.topic));
+                    sec.appendChild(head);
+
+                    var q = makers[d.type](d, i, sec);
+                    sec.appendChild(el('p', 'qz-fb'));
+                    list.appendChild(sec);
+
+                    var nb = document.createElement('button');
+                    nb.type = 'button';
+                    nb.textContent = i + 1;
+                    nb.addEventListener('click', function () { goTo(sec); });
+                    nav.appendChild(nb);
+
+                    var c = { n: i, el: sec, nb: nb, q: q, explain: d.explain };
+                    mark(c, 'todo');
+                    return c;
+                });
+                update();
+            }
+
+            function grade() {
+                if (graded) return;
+                var un = cards.length - update();
+                if (un > 0 && !confirm('Còn ' + un + ' câu chưa trả lời. Bạn vẫn muốn nộp bài?')) return;
+                graded = true;
+                btnS.disabled = true;
+                legend.classList.add('graded');
+
+                var right = 0, wrong = 0, skip = 0;
+                cards.forEach(function (c) {
+                    var r = c.q.grade();
+                    c.el.classList.add('done');
+                    var msg;
+                    if (!r.filled) {
+                        skip++; c.el.classList.add('is-skip'); mark(c, 'skip');
+                        msg = 'Chưa trả lời. ' + r.extra;
+                    } else if (r.ok === r.n) {
+                        right++; c.el.classList.add('is-right'); mark(c, 'correct');
+                        msg = 'Đúng. ';
+                    } else {
+                        wrong++; c.el.classList.add('is-wrong'); mark(c, 'wrong');
+                        msg = 'Chưa đúng' + (r.n > 1 ? ': đúng ' + r.ok + '/' + r.n + ' vị trí' : '') + '. ' + r.extra;
+                    }
+                    c.el.querySelector('.qz-fb').textContent = msg + c.explain;
+                });
+
+                var total = cards.length;
+                res.textContent = 'Điểm: ' + right + '/' + total + ' (' + Math.round(right / total * 100) +
+                    '%). Sai: ' + wrong + '. Bỏ trống: ' + skip + '.';
+                res.className = 'qz-result show';
+                res.scrollIntoView({ block: 'center' });
+                res.focus({ preventScroll: true });
+            }
+
+            btnS.addEventListener('click', grade);
+            btnR.addEventListener('click', function () {
+                build();
+                window.scrollTo(0, 0);
+            });
+            build();
+        })();
+    </script>
+
+</body>
+
+</html>
