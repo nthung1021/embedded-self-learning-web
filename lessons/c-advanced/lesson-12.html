@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 12: Pointer to Array vs Array of Pointers | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html" class="active" aria-current="page">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 12: Pointer to Array vs Array of Pointers</h1>
+
+                <p>
+                    Trong ngôn ngữ C, Array và Pointer có mối quan hệ rất chặt chẽ.
+                    Chúng thường được sử dụng cùng nhau khi xử lý dữ liệu, truy cập bộ nhớ
+                    hoặc truyền Buffer giữa các Function.
+                </p>
+
+                <p>
+                    Tuy nhiên, có hai cách khai báo rất dễ gây nhầm lẫn đối với người mới học:
+                    <strong>Pointer to Array</strong> và <strong>Array of Pointers</strong>.
+                    Mặc dù cả hai đều chứa thành phần Pointer và Array, bản chất kiểu dữ liệu
+                    cũng như cách chúng được sử dụng hoàn toàn khác nhau.
+                </p>
+
+                <p>
+                    Việc hiểu rõ sự khác biệt này rất quan trọng trong Advanced C Embedded,
+                    đặc biệt khi làm việc với các vùng dữ liệu nhiều chiều, danh sách Buffer,
+                    bảng cấu hình hoặc các cấu trúc dữ liệu được tổ chức bằng Pointer.
+                </p>
+
+                <div class="note">
+                    Trong bài học này, chúng ta sẽ tập trung vào cách khai báo, đọc cú pháp,
+                    tổ chức bộ nhớ và truy cập dữ liệu của Pointer to Array và Array of Pointers.
+                    Nội dung về Double Pointer và Multiple-level Pointer sẽ được trình bày
+                    riêng trong Bài 13.
+                </div>
+
+                <h2>1. Tổng quan về Pointer to Array và Array of Pointers</h2>
+
+                <h3>1.1. Pointer to Array là gì?</h3>
+
+                <p>
+                    <strong>Pointer to Array</strong> là một Pointer có khả năng lưu địa chỉ
+                    của một Array hoàn chỉnh.
+                </p>
+
+                <p>
+                    Khác với một Pointer thông thường trỏ đến một phần tử đơn lẻ,
+                    Pointer to Array đại diện cho địa chỉ của toàn bộ một Array có kích thước
+                    và kiểu phần tử xác định.
+                </p>
+
+                <p>Cú pháp khai báo:</p>
+
+                <pre><code>data_type (*ptr)[array_size];</code></pre>
+
+                <p>Trong đó:</p>
+
+                <ul>
+                    <li><code>data_type</code>: Kiểu dữ liệu của từng phần tử trong Array.</li>
+                    <li><code>ptr</code>: Tên Pointer.</li>
+                    <li><code>array_size</code>: Số lượng phần tử của Array mà Pointer trỏ đến.</li>
+                    <li><code>(*ptr)</code>: Dấu ngoặc đơn xác định rằng <code>ptr</code> là Pointer trước khi áp dụng khai báo Array.</li>
+                </ul>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>int (*ptr)[5];</code></pre>
+
+                <p>
+                    Khai báo trên có nghĩa là <code>ptr</code> là một Pointer trỏ đến
+                    một Array gồm 5 phần tử kiểu <code>int</code>.
+                </p>
+
+                <h3>1.2. Array of Pointers là gì?</h3>
+
+                <p>
+                    <strong>Array of Pointers</strong> là một Array mà mỗi phần tử
+                    của Array đó là một Pointer.
+                </p>
+
+                <p>
+                    Thay vì lưu trực tiếp các giá trị như một Array thông thường,
+                    Array of Pointers lưu nhiều địa chỉ bộ nhớ khác nhau.
+                </p>
+
+                <p>Cú pháp khai báo:</p>
+
+                <pre><code>data_type *ptr[array_size];</code></pre>
+
+                <p>Trong đó:</p>
+
+                <ul>
+                    <li><code>data_type</code>: Kiểu dữ liệu mà các Pointer sẽ trỏ đến.</li>
+                    <li><code>ptr</code>: Tên Array.</li>
+                    <li><code>array_size</code>: Số lượng Pointer trong Array.</li>
+                    <li><code>*ptr[array_size]</code>: Một Array gồm nhiều phần tử kiểu Pointer.</li>
+                </ul>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>int *ptr[5];</code></pre>
+
+                <p>
+                    Khai báo trên có nghĩa là <code>ptr</code> là một Array gồm 5 phần tử,
+                    trong đó mỗi phần tử là một Pointer kiểu <code>int *</code>.
+                </p>
+
+                <h3>1.3. So sánh nhanh hai cách khai báo</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>Pointer to Array</th>
+                            <th>Array of Pointers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Khai báo</td>
+                            <td><code>int (*ptr)[5];</code></td>
+                            <td><code>int *ptr[5];</code></td>
+                        </tr>
+                        <tr>
+                            <td>Bản chất</td>
+                            <td>Một Pointer.</td>
+                            <td>Một Array.</td>
+                        </tr>
+                        <tr>
+                            <td>Đối tượng lưu trữ</td>
+                            <td>Địa chỉ của một Array.</td>
+                            <td>Nhiều địa chỉ Pointer.</td>
+                        </tr>
+                        <tr>
+                            <td>Số lượng phần tử Pointer</td>
+                            <td>Một Pointer.</td>
+                            <td>Nhiều Pointer.</td>
+                        </tr>
+                        <tr>
+                            <td>Kiểu dữ liệu</td>
+                            <td>Pointer đến Array gồm 5 phần tử int.</td>
+                            <td>Array gồm 5 Pointer đến int.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    <code>int (*ptr)[5]</code> và <code>int *ptr[5]</code> không giống nhau.
+                    Dấu ngoặc đơn trong khai báo đầu tiên làm thay đổi cách Compiler phân tích
+                    toàn bộ biểu thức khai báo.
+                </div>
+
+                <h2>2. Cách đọc và phân tích Pointer Declaration</h2>
+
+                <h3>2.1. Vai trò của dấu ngoặc đơn</h3>
+
+                <p>
+                    Trong C, các toán tử khai báo như <code>*</code> và
+                    <code>[]</code> có mức độ ưu tiên khác nhau.
+                    Toán tử Array Subscript <code>[]</code> có độ ưu tiên cao hơn
+                    toán tử Dereference <code>*</code>.
+                </p>
+
+                <p>
+                    Vì vậy, hai khai báo dưới đây được Compiler hiểu theo hai cách khác nhau:
+                </p>
+
+                <pre><code>int *ptr[5];
+
+int (*ptr)[5];</code></pre>
+
+                <p>
+                    Đối với khai báo thứ nhất:
+                </p>
+
+                <pre><code>int *ptr[5];</code></pre>
+
+                <p>
+                    Compiler xử lý <code>ptr[5]</code> trước, xác định đây là một Array
+                    có 5 phần tử. Sau đó, dấu <code>*</code> cho biết mỗi phần tử
+                    của Array là một Pointer đến <code>int</code>.
+                </p>
+
+                <p>
+                    Đối với khai báo thứ hai:
+                </p>
+
+                <pre><code>int (*ptr)[5];</code></pre>
+
+                <p>
+                    Dấu ngoặc đơn khiến Compiler xác định <code>*ptr</code> trước.
+                    Điều này có nghĩa <code>ptr</code> là một Pointer.
+                    Phần <code>[5]</code> tiếp theo xác định đối tượng mà Pointer trỏ đến
+                    là một Array gồm 5 phần tử kiểu <code>int</code>.
+                </p>
+
+                <h3>2.2. Quy tắc đọc khai báo C</h3>
+
+                <p>
+                    Khi gặp một khai báo Pointer phức tạp, có thể sử dụng cách phân tích
+                    từ tên biến ra ngoài:
+                </p>
+
+                <ul>
+                    <li>Bắt đầu từ tên biến được khai báo.</li>
+                    <li>Kiểm tra dấu ngoặc đơn bao quanh tên biến và toán tử Pointer.</li>
+                    <li>Phân tích các toán tử <code>[]</code> hoặc <code>()</code> theo thứ tự ưu tiên.</li>
+                    <li>Cuối cùng xác định kiểu dữ liệu cơ sở.</li>
+                </ul>
+
+                <p>Ví dụ:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khai báo</th>
+                            <th>Cách đọc</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>int *ptr[5]</code></td>
+                            <td>Array 5 phần tử, mỗi phần tử là Pointer đến int.</td>
+                        </tr>
+                        <tr>
+                            <td><code>int (*ptr)[5]</code></td>
+                            <td>Pointer đến Array gồm 5 phần tử int.</td>
+                        </tr>
+                        <tr>
+                            <td><code>char *names[3]</code></td>
+                            <td>Array 3 Pointer đến char.</td>
+                        </tr>
+                        <tr>
+                            <td><code>char (*name)[20]</code></td>
+                            <td>Pointer đến Array gồm 20 phần tử char.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>3. Pointer to Array</h2>
+
+                <h3>3.1. Khai báo và khởi tạo Pointer to Array</h3>
+
+                <p>
+                    Để hiểu rõ cách hoạt động của Pointer to Array, chúng ta bắt đầu
+                    với một Array thông thường gồm 5 phần tử kiểu <code>int</code>.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int data[5] = {10, 20, 30, 40, 50};
+
+    int (*ptr)[5] = &amp;data;
+
+    printf("First element: %d\n", (*ptr)[0]);
+    printf("Second element: %d\n", (*ptr)[1]);
+    printf("Third element: %d\n", (*ptr)[2]);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>First element: 10
+Second element: 20
+Third element: 30</code></pre>
+
+                <p>Giải thích:</p>
+
+                <ul>
+                    <li><code>data</code> là một Array gồm 5 phần tử kiểu <code>int</code>.</li>
+                    <li><code>&amp;data</code> là địa chỉ của toàn bộ Array.</li>
+                    <li><code>ptr</code> được khai báo để trỏ đến một Array có 5 phần tử kiểu <code>int</code>.</li>
+                    <li><code>*ptr</code> biểu diễn Array mà Pointer đang trỏ đến.</li>
+                    <li><code>(*ptr)[0]</code> truy cập phần tử đầu tiên của Array.</li>
+                </ul>
+
+                <h3>3.2. Phân biệt data, &amp;data và &amp;data[0]</h3>
+
+                <p>
+                    Đây là ba biểu thức thường xuất hiện khi làm việc với Array và Pointer.
+                    Mặc dù chúng có thể biểu diễn địa chỉ bắt đầu của cùng một vùng dữ liệu,
+                    kiểu dữ liệu của chúng không giống nhau.
+                </p>
+
+                <pre><code>int data[5] = {10, 20, 30, 40, 50};
+
+data;
+&amp;data[0];
+&amp;data;</code></pre>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Biểu thức</th>
+                            <th>Kiểu dữ liệu</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>data</code></td>
+                            <td><code>int *</code> trong hầu hết biểu thức</td>
+                            <td>Array được chuyển đổi thành Pointer đến phần tử đầu tiên.</td>
+                        </tr>
+                        <tr>
+                            <td><code>&amp;data[0]</code></td>
+                            <td><code>int *</code></td>
+                            <td>Địa chỉ của phần tử đầu tiên.</td>
+                        </tr>
+                        <tr>
+                            <td><code>&amp;data</code></td>
+                            <td><code>int (*)[5]</code></td>
+                            <td>Địa chỉ của toàn bộ Array.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Mặc dù các biểu thức trên thường có cùng địa chỉ bắt đầu về mặt
+                    biểu diễn địa chỉ, chúng có kiểu Pointer khác nhau.
+                    Điều này ảnh hưởng trực tiếp đến Pointer Arithmetic.
+                </p>
+
+                <h3>3.3. Pointer Arithmetic với Pointer to Array</h3>
+
+                <p>
+                    Khi thực hiện Pointer Arithmetic trên Pointer to Array,
+                    Pointer sẽ di chuyển theo kích thước của toàn bộ Array mà nó trỏ đến.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int data[2][3] = {
+        {10, 20, 30},
+        {40, 50, 60}
+    };
+
+    int (*ptr)[3] = data;
+
+    printf("First row, first element: %d\n", (*ptr)[0]);
+    printf("First row, second element: %d\n", (*ptr)[1]);
+
+    ptr++;
+
+    printf("Second row, first element: %d\n", (*ptr)[0]);
+    printf("Second row, second element: %d\n", (*ptr)[1]);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>First row, first element: 10
+First row, second element: 20
+Second row, first element: 40
+Second row, second element: 50</code></pre>
+
+                <p>
+                    Giải thích:
+                </p>
+
+                <ul>
+                    <li><code>data</code> là một Array hai chiều có 2 hàng và 3 cột.</li>
+                    <li><code>int (*ptr)[3]</code> là Pointer trỏ đến một Array gồm 3 phần tử kiểu int.</li>
+                    <li>Ban đầu, <code>ptr</code> trỏ đến hàng đầu tiên.</li>
+                    <li>Sau <code>ptr++</code>, Pointer chuyển đến hàng tiếp theo.</li>
+                </ul>
+
+                <p>
+                    Nếu <code>sizeof(int) = 4</code>, mỗi hàng có kích thước
+                    <code>3 × 4 = 12</code> byte. Do đó, <code>ptr++</code>
+                    sẽ di chuyển Pointer một khoảng tương ứng với kích thước của một hàng.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong>
+                    Pointer to Array rất hữu ích khi cần duyệt hoặc truyền các vùng dữ liệu
+                    có cấu trúc theo hàng và cột. Kiểu dữ liệu của Pointer cho phép Compiler
+                    xác định kích thước mỗi bước di chuyển.
+                </div>
+
+                <h2>4. Array of Pointers</h2>
+
+                <h3>4.1. Khai báo và khởi tạo Array of Pointers</h3>
+
+                <p>
+                    Array of Pointers là một Array mà mỗi phần tử lưu một địa chỉ.
+                    Chúng ta có thể khai báo một Array gồm 3 Pointer kiểu <code>int *</code>
+                    như sau:
+                </p>
+
+                <pre><code>int *ptr[3];</code></pre>
+
+                <p>
+                    Để hiểu rõ cách sử dụng, hãy xét ví dụ sau:
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a = 10;
+    int b = 20;
+    int c = 30;
+
+    int *ptr[3];
+
+    ptr[0] = &amp;a;
+    ptr[1] = &amp;b;
+    ptr[2] = &amp;c;
+
+    printf("Value 1: %d\n", *ptr[0]);
+    printf("Value 2: %d\n", *ptr[1]);
+    printf("Value 3: %d\n", *ptr[2]);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Value 1: 10
+Value 2: 20
+Value 3: 30</code></pre>
+
+                <p>Giải thích:</p>
+
+                <ul>
+                    <li><code>a</code>, <code>b</code> và <code>c</code> là ba biến int độc lập.</li>
+                    <li><code>ptr</code> là Array gồm 3 Pointer.</li>
+                    <li><code>ptr[0]</code> lưu địa chỉ của <code>a</code>.</li>
+                    <li><code>ptr[1]</code> lưu địa chỉ của <code>b</code>.</li>
+                    <li><code>ptr[2]</code> lưu địa chỉ của <code>c</code>.</li>
+                    <li>Toán tử <code>*</code> được sử dụng để truy cập giá trị thông qua từng Pointer.</li>
+                </ul>
+
+                <h3>4.2. Khởi tạo Array of Pointers trực tiếp</h3>
+
+                <p>
+                    Thay vì khai báo Array rồi gán từng Pointer riêng biệt,
+                    chúng ta có thể khởi tạo các phần tử ngay khi khai báo.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int value1 = 100;
+    int value2 = 200;
+    int value3 = 300;
+
+    int *ptr[3] = {
+        &amp;value1,
+        &amp;value2,
+        &amp;value3
+    };
+
+    for (int i = 0; i &lt; 3; i++) {
+        printf("Value %d: %d\n", i, *ptr[i]);
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Value 0: 100
+Value 1: 200
+Value 2: 300</code></pre>
+
+                <p>
+                    Cách khởi tạo này giúp mã nguồn ngắn gọn hơn và thể hiện rõ
+                    mỗi phần tử trong Array đang trỏ đến đối tượng nào.
+                </p>
+
+                <h3>4.3. Array of Pointers trỏ đến các Array khác nhau</h3>
+
+                <p>
+                    Một ứng dụng phổ biến của Array of Pointers là lưu địa chỉ
+                    của nhiều Array hoặc vùng dữ liệu riêng biệt.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int group1[] = {10, 20, 30};
+    int group2[] = {40, 50, 60};
+    int group3[] = {70, 80, 90};
+
+    int *groups[3] = {
+        group1,
+        group2,
+        group3
+    };
+
+    printf("Group 1: %d %d %d\n",
+           groups[0][0], groups[0][1], groups[0][2]);
+
+    printf("Group 2: %d %d %d\n",
+           groups[1][0], groups[1][1], groups[1][2]);
+
+    printf("Group 3: %d %d %d\n",
+           groups[2][0], groups[2][1], groups[2][2]);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Group 1: 10 20 30
+Group 2: 40 50 60
+Group 3: 70 80 90</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>group1</code>, <code>group2</code> và <code>group3</code> là ba Array độc lập.</li>
+                    <li><code>groups</code> là Array gồm 3 Pointer kiểu <code>int *</code>.</li>
+                    <li>Mỗi Pointer lưu địa chỉ phần tử đầu tiên của một Array tương ứng.</li>
+                    <li><code>groups[1][2]</code> truy cập phần tử thứ ba của <code>group2</code>.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Các Array được sử dụng trong ví dụ có cùng kiểu phần tử.
+                    Array of Pointers không yêu cầu các vùng dữ liệu được trỏ đến
+                    phải nằm liên tiếp trong bộ nhớ.
+                </div>
+
+                <h2>5. So sánh cách tổ chức bộ nhớ</h2>
+
+                <h3>5.1. Memory Layout của Pointer to Array</h3>
+
+                <p>
+                    Xét ví dụ:
+                </p>
+
+                <pre><code>int data[4] = {10, 20, 30, 40};
+
+int (*ptr)[4] = &amp;data;</code></pre>
+
+                <p>
+                    Có thể hình dung cách tổ chức dữ liệu như sau:
+                </p>
+
+                <pre><code>Pointer ptr
+    |
+    | stores address of entire array
+    v
++--------+--------+--------+--------+
+| data[0]| data[1]| data[2]| data[3]|
++--------+--------+--------+--------+
+|   10   |   20   |   30   |   40   |
++--------+--------+--------+--------+</code></pre>
+
+                <p>
+                    Pointer <code>ptr</code> lưu địa chỉ của toàn bộ Array.
+                    Các phần tử của Array nằm liên tiếp trong bộ nhớ theo quy tắc
+                    tổ chức Array của C.
+                </p>
+
+                <h3>5.2. Memory Layout của Array of Pointers</h3>
+
+                <p>
+                    Xét ví dụ:
+                </p>
+
+                <pre><code>int a = 10;
+int b = 20;
+int c = 30;
+
+int *ptr[3] = {&amp;a, &amp;b, &amp;c};</code></pre>
+
+                <p>
+                    Có thể hình dung cách tổ chức dữ liệu như sau:
+                </p>
+
+                <pre><code>Array of Pointers
++----------+----------+----------+
+| ptr[0]   | ptr[1]   | ptr[2]   |
++----------+----------+----------+
+     |          |          |
+     v          v          v
+   +----+     +----+     +----+
+   | 10 |     | 20 |     | 30 |
+   +----+     +----+     +----+
+      a          b          c</code></pre>
+
+                <p>
+                    Trong trường hợp này, Array <code>ptr</code> lưu ba địa chỉ khác nhau.
+                    Các biến <code>a</code>, <code>b</code> và <code>c</code> là những đối tượng
+                    độc lập; chúng không cần nằm liên tiếp trong bộ nhớ.
+                </p>
+
+                <h3>5.3. Khác biệt về kích thước bộ nhớ</h3>
+
+                <p>
+                    Kích thước bộ nhớ của hai khai báo cũng khác nhau.
+                    Hãy xét:
+                </p>
+
+                <pre><code>int (*ptr1)[5];
+
+int *ptr2[5];</code></pre>
+
+                <p>
+                    Với <code>ptr1</code>, đây là một Pointer đến Array.
+                    Kích thước của nó bằng kích thước của một Pointer trên nền tảng đang sử dụng.
+                </p>
+
+                <p>
+                    Với <code>ptr2</code>, đây là một Array gồm 5 Pointer.
+                    Kích thước toàn bộ Array bằng 5 lần kích thước của một Pointer,
+                    không tính padding bổ sung nếu implementation có yêu cầu đặc biệt.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int (*ptr1)[5];
+    int *ptr2[5];
+
+    printf("Size of ptr1: %zu bytes\n", sizeof(ptr1));
+    printf("Size of ptr2: %zu bytes\n", sizeof(ptr2));
+
+    printf("Size of one pointer: %zu bytes\n", sizeof(ptr2[0]));
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Ví dụ, trên một nền tảng mà kích thước Pointer là 4 byte,
+                    kết quả có thể là:
+                </p>
+
+                <pre><code>Size of ptr1: 4 bytes
+Size of ptr2: 20 bytes
+Size of one pointer: 4 bytes</code></pre>
+
+                <p>
+                    Trên nền tảng khác, đặc biệt là hệ thống 64-bit,
+                    kích thước Pointer có thể là 8 byte.
+                    Vì vậy, không nên mặc định kích thước Pointer luôn là 4 byte.
+                </p>
+
+                <div class="note">
+                    <strong>Quan trọng:</strong>
+                    <code>sizeof(ptr1)</code> trả về kích thước của Pointer,
+                    không phải kích thước Array mà Pointer trỏ đến.
+                    Trong khi đó, <code>sizeof(ptr2)</code> trả về kích thước
+                    của toàn bộ Array gồm 5 Pointer.
+                </div>
+
+                <h2>6. Pointer to Array và Array of Pointers với dữ liệu nhiều chiều</h2>
+
+                <h3>6.1. Array hai chiều thông thường</h3>
+
+                <p>
+                    Trong C, một Array hai chiều có thể được khai báo như sau:
+                </p>
+
+                <pre><code>int matrix[2][3] = {
+    {1, 2, 3},
+    {4, 5, 6}
+};</code></pre>
+
+                <p>
+                    Đây là một Array gồm 2 phần tử, trong đó mỗi phần tử lại là
+                    một Array gồm 3 số nguyên.
+                </p>
+
+                <p>
+                    Có thể khai báo Pointer to Array để trỏ đến từng hàng:
+                </p>
+
+                <pre><code>int (*row_ptr)[3] = matrix;</code></pre>
+
+                <p>
+                    Khi thực hiện <code>row_ptr++</code>, Pointer sẽ chuyển đến
+                    hàng tiếp theo của Matrix.
+                </p>
+
+                <h3>6.2. Truy cập dữ liệu bằng Pointer to Array</h3>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int matrix[2][3] = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+
+    int (*ptr)[3] = matrix;
+
+    for (int row = 0; row &lt; 2; row++) {
+        for (int col = 0; col &lt; 3; col++) {
+            printf("%d ", ptr[row][col]);
+        }
+
+        printf("\n");
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>1 2 3
+4 5 6</code></pre>
+
+                <p>
+                    Trong ví dụ này, Pointer được khai báo với kiểu
+                    <code>int (*)[3]</code>, nghĩa là nó trỏ đến một hàng gồm
+                    3 phần tử kiểu <code>int</code>.
+                </p>
+
+                <h3>6.3. Array of Pointers với các vùng dữ liệu khác nhau</h3>
+
+                <p>
+                    Không giống Array hai chiều thông thường, Array of Pointers
+                    có thể lưu địa chỉ của nhiều vùng dữ liệu độc lập.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int row1[] = {1, 2, 3};
+    int row2[] = {4, 5};
+    int row3[] = {6, 7, 8, 9};
+
+    int *rows[3] = {
+        row1,
+        row2,
+        row3
+    };
+
+    int sizes[3] = {3, 2, 4};
+
+    for (int i = 0; i &lt; 3; i++) {
+        for (int j = 0; j &lt; sizes[i]; j++) {
+            printf("%d ", rows[i][j]);
+        }
+
+        printf("\n");
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>1 2 3
+4 5
+6 7 8 9</code></pre>
+
+                <p>
+                    Điểm khác biệt đáng chú ý là mỗi Pointer trong Array
+                    có thể trỏ đến một vùng dữ liệu có số lượng phần tử khác nhau.
+                    Vì vậy, chúng ta cần lưu thêm thông tin kích thước của từng vùng
+                    nếu muốn duyệt dữ liệu một cách an toàn.
+                </p>
+
+                <div class="note">
+                    <strong>Phân biệt:</strong>
+                    Array hai chiều thông thường có các hàng nằm liên tiếp trong cùng
+                    một Array object. Array of Pointers chỉ lưu các địa chỉ và không
+                    đảm bảo các vùng dữ liệu được trỏ đến nằm liên tiếp trong bộ nhớ.
+                </div>
+
+                <h2>7. Ứng dụng trong Embedded C</h2>
+
+                <h3>7.1. Pointer to Array trong xử lý dữ liệu theo hàng</h3>
+
+                <p>
+                    Trong Embedded Systems, dữ liệu đôi khi được tổ chức theo nhiều nhóm
+                    có cấu trúc giống nhau. Ví dụ, một hệ thống có thể lưu các bộ thông số
+                    của nhiều cảm biến trong một Matrix.
+                </p>
+
+                <p>
+                    Pointer to Array có thể được sử dụng để truy cập từng nhóm dữ liệu
+                    theo hàng.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+
+#define SENSOR_COUNT       2U
+#define PARAMETER_COUNT    3U
+
+int main(void)
+{
+    uint16_t sensor_data[SENSOR_COUNT][PARAMETER_COUNT] = {
+        {250U, 300U, 350U},
+        {400U, 450U, 500U}
+    };
+
+    uint16_t (*sensor_ptr)[PARAMETER_COUNT] = sensor_data;
+
+    for (uint32_t i = 0U; i &lt; SENSOR_COUNT; i++) {
+        printf("Sensor %lu: ", (unsigned long)i);
+
+        for (uint32_t j = 0U; j &lt; PARAMETER_COUNT; j++) {
+            printf("%u ", (unsigned int)sensor_ptr[i][j]);
+        }
+
+        printf("\n");
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, mỗi hàng đại diện cho một nhóm thông số của Sensor.
+                    Pointer to Array cho phép truy cập các hàng với cấu trúc dữ liệu
+                    có kích thước cố định.
+                </p>
+
+                <h3>7.2. Array of Pointers trong quản lý các Buffer</h3>
+
+                <p>
+                    Một hệ thống Embedded có thể có nhiều Buffer riêng biệt phục vụ
+                    cho các mục đích khác nhau, chẳng hạn:
+                </p>
+
+                <ul>
+                    <li>UART Receive Buffer.</li>
+                    <li>UART Transmit Buffer.</li>
+                    <li>CAN Receive Buffer.</li>
+                </ul>
+
+                <p>
+                    Array of Pointers có thể được sử dụng để lưu địa chỉ bắt đầu
+                    của các Buffer này.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+
+#define BUFFER_COUNT    3U
+
+int main(void)
+{
+    uint8_t uart_rx_buffer[4] = {
+        0x10U, 0x20U, 0x30U, 0x40U
+    };
+
+    uint8_t uart_tx_buffer[3] = {
+        0xA1U, 0xA2U, 0xA3U
+    };
+
+    uint8_t can_rx_buffer[5] = {
+        0x11U, 0x22U, 0x33U, 0x44U, 0x55U
+    };
+
+    uint8_t *buffers[BUFFER_COUNT] = {
+        uart_rx_buffer,
+        uart_tx_buffer,
+        can_rx_buffer
+    };
+
+    uint8_t buffer_sizes[BUFFER_COUNT] = {
+        4U, 3U, 5U
+    };
+
+    for (uint32_t i = 0U; i &lt; BUFFER_COUNT; i++) {
+        printf("Buffer %lu: ",
+               (unsigned long)i);
+
+        for (uint32_t j = 0U; j &lt; buffer_sizes[i]; j++) {
+            printf("%02X ",
+                   (unsigned int)buffers[i][j]);
+        }
+
+        printf("\n");
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Buffer 0: 10 20 30 40
+Buffer 1: A1 A2 A3
+Buffer 2: 11 22 33 44 55</code></pre>
+
+                <p>
+                    Trong ví dụ trên, Array <code>buffers</code> lưu địa chỉ của
+                    ba Buffer khác nhau. Mỗi Buffer có kích thước riêng và được
+                    quản lý thông qua mảng <code>buffer_sizes</code>.
+                </p>
+
+                <p>
+                    Cách tổ chức này giúp chương trình có thể xử lý nhiều vùng dữ liệu
+                    thông qua một cấu trúc Pointer chung.
+                </p>
+
+                <div class="note">
+                    <strong>Ứng dụng thực tế:</strong>
+                    Array of Pointers có thể hữu ích khi quản lý nhiều Buffer hoặc
+                    nhiều nhóm dữ liệu có cùng kiểu phần tử nhưng kích thước khác nhau.
+                    Trong firmware thực tế, cần đảm bảo các Pointer được khởi tạo hợp lệ
+                    và kích thước Buffer luôn được kiểm soát.
+                </div>
+
+                <h2>8. Những lỗi thường gặp</h2>
+
+                <h3>8.1. Nhầm lẫn giữa Pointer to Array và Array of Pointers</h3>
+
+                <p>
+                    Đây là lỗi phổ biến nhất khi khai báo Pointer phức tạp.
+                </p>
+
+                <pre><code>int (*ptr1)[5];
+
+int *ptr2[5];</code></pre>
+
+                <p>
+                    Hai khai báo trên có bản chất khác nhau:
+                </p>
+
+                <ul>
+                    <li><code>ptr1</code> là một Pointer.</li>
+                    <li><code>ptr2</code> là một Array gồm 5 Pointer.</li>
+                </ul>
+
+                <p>
+                    Việc nhầm lẫn có thể dẫn đến lỗi khi khởi tạo, truyền tham số
+                    hoặc truy cập dữ liệu.
+                </p>
+
+                <h3>8.2. Không khởi tạo Pointer trong Array of Pointers</h3>
+
+                <p>
+                    Khi khai báo một Array of Pointers mà không khởi tạo các phần tử,
+                    các Pointer có thể chứa giá trị không xác định nếu chúng là biến
+                    automatic không được khởi tạo.
+                </p>
+
+                <pre><code>int *ptr[3];
+
+/* Không nên dereference khi chưa khởi tạo */
+printf("%d\n", *ptr[0]);</code></pre>
+
+                <p>
+                    Cần gán địa chỉ hợp lệ cho từng Pointer trước khi sử dụng.
+                    Nếu chưa có đối tượng phù hợp, có thể khởi tạo các phần tử
+                    bằng <code>NULL</code> và kiểm tra trước khi dereference.
+                </p>
+
+                <pre><code>int *ptr[3] = {
+    NULL,
+    NULL,
+    NULL
+};</code></pre>
+
+                <h3>8.3. Trỏ đến Array có kích thước không phù hợp</h3>
+
+                <p>
+                    Pointer to Array có kiểu dữ liệu bao gồm số lượng phần tử
+                    trong Array mà nó trỏ đến.
+                </p>
+
+                <pre><code>int data[5];
+
+int (*ptr)[5] = &amp;data;</code></pre>
+
+                <p>
+                    Trong ví dụ này, <code>ptr</code> có kiểu
+                    <code>int (*)[5]</code>. Không thể tùy ý thay thế bằng
+                    Pointer đến Array có số lượng phần tử khác mà không xem xét
+                    sự tương thích kiểu dữ liệu.
+                </p>
+
+                <h3>8.4. Sử dụng Pointer sau khi đối tượng hết Lifetime</h3>
+
+                <p>
+                    Một Array of Pointers có thể lưu địa chỉ của các biến hoặc Array
+                    khác. Tuy nhiên, các đối tượng được trỏ đến phải còn tồn tại
+                    trong thời gian Pointer được sử dụng.
+                </p>
+
+                <p>
+                    Ví dụ, nếu một Function trả về địa chỉ của một biến local
+                    có Automatic Storage Duration, Pointer nhận được sẽ không còn
+                    trỏ đến một đối tượng hợp lệ sau khi Function kết thúc.
+                </p>
+
+                <p>
+                    Vì vậy, cần chú ý Lifetime của đối tượng khi lưu địa chỉ
+                    vào Array of Pointers.
+                </p>
+
+                <h3>8.5. Truy cập vượt quá giới hạn Array</h3>
+
+                <p>
+                    Cả Pointer to Array và Array of Pointers đều cần được sử dụng
+                    đúng giới hạn.
+                </p>
+
+                <pre><code>int value1 = 10;
+int value2 = 20;
+
+int *ptr[2] = {
+    &amp;value1,
+    &amp;value2
+};
+
+/* Không hợp lệ: Array chỉ có hai phần tử */
+printf("%d\n", *ptr[2]);</code></pre>
+
+                <p>
+                    Các phần tử hợp lệ của Array trên là <code>ptr[0]</code>
+                    và <code>ptr[1]</code>. Truy cập <code>ptr[2]</code>
+                    sẽ vượt quá giới hạn Array.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong>
+                    Khi sử dụng Array of Pointers, cần kiểm tra cả hai cấp:
+                    chỉ số của Array Pointer và tính hợp lệ của vùng nhớ mà mỗi
+                    Pointer đang trỏ đến.
+                </div>
+
+                <h2>9. Bảng tổng hợp và so sánh</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Pointer to Array</th>
+                            <th>Array of Pointers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Khai báo</td>
+                            <td><code>int (*ptr)[5]</code></td>
+                            <td><code>int *ptr[5]</code></td>
+                        </tr>
+                        <tr>
+                            <td>Bản chất</td>
+                            <td>Pointer</td>
+                            <td>Array</td>
+                        </tr>
+                        <tr>
+                            <td>Đối tượng được quản lý</td>
+                            <td>Một Array hoàn chỉnh</td>
+                            <td>Nhiều Pointer riêng biệt</td>
+                        </tr>
+                        <tr>
+                            <td>Kích thước biến</td>
+                            <td>Kích thước một Pointer</td>
+                            <td>Kích thước của 5 Pointer</td>
+                        </tr>
+                        <tr>
+                            <td>Pointer Arithmetic</td>
+                            <td>Di chuyển theo kích thước toàn bộ Array</td>
+                            <td>Di chuyển giữa các phần tử Pointer</td>
+                        </tr>
+                        <tr>
+                            <td>Vùng dữ liệu</td>
+                            <td>Array được trỏ đến có các phần tử liên tiếp</td>
+                            <td>Các vùng được trỏ đến có thể độc lập</td>
+                        </tr>
+                        <tr>
+                            <td>Ứng dụng</td>
+                            <td>Truy cập Array nhiều chiều theo hàng</td>
+                            <td>Quản lý nhiều địa chỉ hoặc Buffer</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>10. Những khái niệm cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Pointer to Array</strong></td>
+                            <td>Pointer trỏ đến một Array hoàn chỉnh có kiểu và số lượng phần tử xác định.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Array of Pointers</strong></td>
+                            <td>Array mà mỗi phần tử là một Pointer.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Array Decay</strong></td>
+                            <td>Trong hầu hết biểu thức, Array được chuyển đổi thành Pointer đến phần tử đầu tiên.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Address of Array</strong></td>
+                            <td>Địa chỉ của toàn bộ Array, có kiểu Pointer to Array.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pointer Arithmetic</strong></td>
+                            <td>Phép toán trên Pointer phụ thuộc vào kiểu dữ liệu mà Pointer trỏ đến.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Array of Buffer Pointers</strong></td>
+                            <td>Cách tổ chức nhiều địa chỉ Buffer thông qua một Array Pointer.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pointer Lifetime</strong></td>
+                            <td>Thời gian tồn tại của đối tượng được Pointer tham chiếu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    Pointer to Array và Array of Pointers là hai khái niệm khác nhau
+                    trong ngôn ngữ C, mặc dù cú pháp khai báo của chúng khá giống nhau.
+
+                    <br><br>
+
+                    <strong>Pointer to Array</strong> là một Pointer trỏ đến một Array
+                    hoàn chỉnh. Ví dụ <code>int (*ptr)[5]</code> có nghĩa là Pointer
+                    trỏ đến một Array gồm 5 phần tử kiểu int.
+
+                    <br><br>
+
+                    <strong>Array of Pointers</strong> là một Array chứa nhiều Pointer.
+                    Ví dụ <code>int *ptr[5]</code> có nghĩa là một Array gồm 5 phần tử,
+                    mỗi phần tử là Pointer đến int.
+
+                    <br><br>
+
+                    Sự khác biệt này ảnh hưởng đến cách tổ chức bộ nhớ, kích thước biến,
+                    Pointer Arithmetic và cách truy cập dữ liệu. Pointer to Array thường
+                    phù hợp khi làm việc với các Array có cấu trúc cố định hoặc dữ liệu
+                    nhiều chiều. Trong khi đó, Array of Pointers hữu ích khi cần quản lý
+                    nhiều vùng dữ liệu hoặc nhiều Buffer độc lập.
+
+                    <br><br>
+
+                    Hiểu rõ hai cách khai báo này là nền tảng quan trọng để tiếp tục
+                    nghiên cứu các kỹ thuật Pointer nâng cao trong C và Embedded Systems.
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-11.html">← Bài trước</a>
+                    <a class="btn" href="lesson-13.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

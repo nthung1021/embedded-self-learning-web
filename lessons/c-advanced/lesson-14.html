@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 14: Function Pointer &amp; Callback Function | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html" class="active" aria-current="page">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 14: Function Pointer &amp; Callback Function</h1>
+
+                <p>
+                    Trong C, Pointer không chỉ được sử dụng để lưu địa chỉ của Variable
+                    hoặc Array mà còn có thể lưu địa chỉ của một Function.
+                    Cơ chế này được gọi là <strong>Function Pointer</strong>.
+                </p>
+
+                <p>
+                    Thông qua Function Pointer, chương trình có thể lựa chọn và gọi
+                    Function trong quá trình Runtime thay vì phải cố định Function
+                    được gọi ngay tại thời điểm viết mã nguồn.
+                </p>
+
+                <p>
+                    Một ứng dụng quan trọng của Function Pointer là
+                    <strong>Callback Function</strong>. Đây là kỹ thuật truyền một Function
+                    vào một Function khác để Function nhận có thể gọi lại Function được truyền vào
+                    khi cần thiết.
+                </p>
+
+                <p>
+                    Trong Embedded Systems, Function Pointer và Callback thường được sử dụng
+                    trong Driver Interface, Event Handler, Timer Callback, Communication Module
+                    và các cơ chế xử lý sự kiện.
+                </p>
+
+                <div class="note">
+                    Trong bài học này, chúng ta sẽ tập trung vào cách khai báo Function Pointer,
+                    cách gọi Function thông qua Pointer và cách xây dựng Callback Function.
+                    Các kỹ thuật thiết kế Event-driven Programming ở mức hệ thống sẽ được
+                    trình bày sâu hơn trong những bài học sau.
+                </div>
+
+                <h2>1. Tổng quan về Function Pointer</h2>
+
+                <h3>1.1. Function trong C và địa chỉ của Function</h3>
+
+                <p>
+                    Trong C, mỗi Function được biên dịch thành một đoạn mã máy
+                    nằm trong vùng nhớ chương trình.
+                    Function có thể được gọi thông qua tên của nó.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+void say_hello(void)
+{
+    printf("Hello Embedded C!\n");
+}
+
+int main(void)
+{
+    say_hello();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>say_hello()</code> là một Function
+                    không nhận tham số và không trả về giá trị.
+                </p>
+
+                <p>
+                    Ngoài cách gọi trực tiếp bằng tên Function, chúng ta cũng có thể
+                    lấy địa chỉ của Function bằng toán tử <code>&amp;</code>.
+                </p>
+
+                <pre><code>&amp;say_hello</code></pre>
+
+                <p>
+                    Biểu thức trên biểu diễn địa chỉ của Function <code>say_hello</code>.
+                    Trong hầu hết biểu thức, tên Function cũng tự động được chuyển đổi
+                    thành Pointer đến Function tương ứng.
+                </p>
+
+                <pre><code>say_hello
+&amp;say_hello</code></pre>
+
+                <p>
+                    Hai biểu thức trên đều có thể được sử dụng để khởi tạo
+                    một Function Pointer phù hợp.
+                </p>
+
+                <h3>1.2. Function Pointer là gì?</h3>
+
+                <p>
+                    <strong>Function Pointer</strong> là một Pointer có khả năng lưu
+                    địa chỉ của một Function có kiểu trả về và danh sách tham số
+                    tương thích với kiểu Pointer đó.
+                </p>
+
+                <p>
+                    Khác với Data Pointer, Function Pointer không trỏ đến dữ liệu
+                    mà trỏ đến một Function có thể được gọi thông qua Pointer.
+                </p>
+
+                <p>
+                    Ví dụ, xét Function:
+                </p>
+
+                <pre><code>int add(int a, int b)
+{
+    return a + b;
+}</code></pre>
+
+                <p>
+                    Function này có các đặc điểm:
+                </p>
+
+                <ul>
+                    <li>Kiểu trả về: <code>int</code>.</li>
+                    <li>Số lượng tham số: 2.</li>
+                    <li>Kiểu tham số: <code>int</code> và <code>int</code>.</li>
+                    <li>Tên Function: <code>add</code>.</li>
+                </ul>
+
+                <p>
+                    Một Function Pointer tương ứng có thể được khai báo như sau:
+                </p>
+
+                <pre><code>int (*operation)(int, int);</code></pre>
+
+                <p>
+                    Điều này có nghĩa <code>operation</code> là một Pointer trỏ đến
+                    Function có hai tham số kiểu <code>int</code> và trả về
+                    giá trị kiểu <code>int</code>.
+                </p>
+
+                <h3>1.3. Cú pháp khai báo Function Pointer</h3>
+
+                <p>Cú pháp tổng quát:</p>
+
+                <pre><code>return_type (*pointer_name)(parameter_types);</code></pre>
+
+                <p>Trong đó:</p>
+
+                <ul>
+                    <li><code>return_type</code>: Kiểu dữ liệu mà Function trả về.</li>
+                    <li><code>pointer_name</code>: Tên Function Pointer.</li>
+                    <li><code>parameter_types</code>: Danh sách kiểu dữ liệu của các tham số Function.</li>
+                    <li><code>(*pointer_name)</code>: Dấu ngoặc đơn xác định Pointer trỏ đến Function.</li>
+                </ul>
+
+                <p>Một số ví dụ:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khai báo</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>void (*ptr)(void);</code></td>
+                            <td>Pointer đến Function không có tham số và không trả về giá trị.</td>
+                        </tr>
+                        <tr>
+                            <td><code>int (*ptr)(int);</code></td>
+                            <td>Pointer đến Function nhận một int và trả về int.</td>
+                        </tr>
+                        <tr>
+                            <td><code>float (*ptr)(float, float);</code></td>
+                            <td>Pointer đến Function nhận hai float và trả về float.</td>
+                        </tr>
+                        <tr>
+                            <td><code>uint8_t (*ptr)(uint8_t);</code></td>
+                            <td>Pointer đến Function nhận một uint8_t và trả về uint8_t.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Dấu ngoặc đơn trong <code>int (*ptr)(int, int)</code> rất quan trọng.
+                    Nếu bỏ dấu ngoặc, khai báo sẽ mang ý nghĩa khác.
+                </div>
+
+                <h2>2. Khai báo và sử dụng Function Pointer</h2>
+
+                <h3>2.1. Khởi tạo Function Pointer</h3>
+
+                <p>
+                    Sau khi khai báo Function Pointer, chúng ta có thể gán địa chỉ
+                    của một Function có kiểu tương thích cho Pointer đó.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    int (*operation)(int, int);
+
+    operation = add;
+
+    printf("Result: %d\n", operation(10, 20));
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Result: 30</code></pre>
+
+                <p>Giải thích:</p>
+
+                <ul>
+                    <li><code>add()</code> là Function nhận hai tham số kiểu int.</li>
+                    <li><code>operation</code> là Function Pointer tương thích với <code>add()</code>.</li>
+                    <li><code>operation = add;</code> gán địa chỉ Function <code>add</code> cho Pointer.</li>
+                    <li><code>operation(10, 20)</code> gọi Function thông qua Pointer.</li>
+                </ul>
+
+                <h3>2.2. Khởi tạo Function Pointer ngay khi khai báo</h3>
+
+                <p>
+                    Thay vì khai báo Function Pointer trước rồi mới gán địa chỉ,
+                    chúng ta có thể khởi tạo trực tiếp:
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int multiply(int a, int b)
+{
+    return a * b;
+}
+
+int main(void)
+{
+    int (*operation)(int, int) = multiply;
+
+    int result = operation(5, 4);
+
+    printf("Result: %d\n", result);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Result: 20</code></pre>
+
+                <p>
+                    Cách khai báo này giúp đảm bảo Function Pointer được khởi tạo
+                    trước khi sử dụng.
+                </p>
+
+                <h3>2.3. Gọi Function thông qua Function Pointer</h3>
+
+                <p>
+                    Có hai cách phổ biến để gọi Function thông qua Function Pointer.
+                </p>
+
+                <pre><code>operation(10, 20);
+
+(*operation)(10, 20);</code></pre>
+
+                <p>
+                    Cả hai cách trên đều thực hiện việc gọi Function mà
+                    <code>operation</code> đang trỏ đến.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int subtract(int a, int b)
+{
+    return a - b;
+}
+
+int main(void)
+{
+    int (*operation)(int, int) = subtract;
+
+    printf("Method 1: %d\n", operation(20, 5));
+
+    printf("Method 2: %d\n", (*operation)(20, 5));
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Method 1: 15
+Method 2: 15</code></pre>
+
+                <p>
+                    Trong thực tế, cách gọi trực tiếp bằng tên Pointer
+                    <code>operation()</code> thường được sử dụng nhiều hơn
+                    vì cú pháp ngắn gọn và dễ đọc.
+                </p>
+
+                <h3>2.4. Thay đổi Function được gọi thông qua Pointer</h3>
+
+                <p>
+                    Một ưu điểm của Function Pointer là chúng ta có thể thay đổi
+                    Function mà Pointer đang tham chiếu trong quá trình thực thi chương trình.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int subtract(int a, int b)
+{
+    return a - b;
+}
+
+int multiply(int a, int b)
+{
+    return a * b;
+}
+
+int main(void)
+{
+    int (*operation)(int, int);
+
+    operation = add;
+    printf("Addition: %d\n", operation(10, 5));
+
+    operation = subtract;
+    printf("Subtraction: %d\n", operation(10, 5));
+
+    operation = multiply;
+    printf("Multiplication: %d\n", operation(10, 5));
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Addition: 15
+Subtraction: 5
+Multiplication: 50</code></pre>
+
+                <p>
+                    Trong ví dụ này, cùng một Function Pointer
+                    <code>operation</code> lần lượt trỏ đến ba Function khác nhau.
+                </p>
+
+                <p>
+                    Điều này cho phép chương trình lựa chọn hành vi cần thực hiện
+                    dựa trên điều kiện hoặc trạng thái hiện tại.
+                </p>
+
+                <h2>3. Function Pointer và Function Declaration</h2>
+
+                <h3>3.1. Phân biệt Function Pointer với Function thông thường</h3>
+
+                <p>
+                    Function thông thường và Function Pointer có mối liên hệ với nhau,
+                    nhưng chúng không phải cùng một đối tượng.
+                </p>
+
+                <pre><code>int add(int a, int b);
+
+int (*operation)(int, int);</code></pre>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th>Function</th>
+                            <th>Function Pointer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bản chất</td>
+                            <td>Định nghĩa một đoạn mã thực thi.</td>
+                            <td>Pointer lưu địa chỉ Function.</td>
+                        </tr>
+                        <tr>
+                            <td>Khai báo</td>
+                            <td><code>int add(int, int);</code></td>
+                            <td><code>int (*ptr)(int, int);</code></td>
+                        </tr>
+                        <tr>
+                            <td>Thực hiện lời gọi</td>
+                            <td><code>add(10, 20);</code></td>
+                            <td><code>ptr(10, 20);</code></td>
+                        </tr>
+                        <tr>
+                            <td>Khả năng thay đổi mục tiêu</td>
+                            <td>Tên Function xác định Function cụ thể.</td>
+                            <td>Có thể được gán một Function tương thích khác.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>3.2. Function Pointer phải có kiểu tương thích</h3>
+
+                <p>
+                    Một Function Pointer chỉ nên được gán địa chỉ của Function
+                    có kiểu trả về và danh sách tham số tương thích.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>int add(int a, int b)
+{
+    return a + b;
+}
+
+float calculate_average(float a, float b)
+{
+    return (a + b) / 2.0f;
+}
+
+int (*operation)(int, int);
+
+operation = add;  /* Compatible */
+
+/* Không tương thích về Function Type */
+operation = calculate_average;</code></pre>
+
+                <p>
+                    Function <code>add()</code> có kiểu trả về int và nhận hai tham số int.
+                    Trong khi đó, <code>calculate_average()</code> trả về float
+                    và nhận hai tham số float.
+                </p>
+
+                <p>
+                    Vì vậy, hai Function này không có cùng Function Type.
+                    Việc gán một Function cho Function Pointer không tương thích
+                    có thể dẫn đến hành vi không xác định khi gọi thông qua Pointer.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong>
+                    Khi sử dụng Function Pointer, cần đảm bảo kiểu trả về,
+                    số lượng tham số và kiểu của từng tham số phù hợp với Function
+                    được gọi.
+                </div>
+
+                <h2>4. Callback Function</h2>
+
+                <h3>4.1. Callback Function là gì?</h3>
+
+                <p>
+                    <strong>Callback Function</strong> là một Function được truyền
+                    vào một Function khác thông qua Function Pointer.
+                    Function nhận Pointer có thể gọi lại Function được truyền vào
+                    khi một điều kiện hoặc sự kiện nhất định xảy ra.
+                </p>
+
+                <p>
+                    Nói cách khác, thay vì một Function tự quyết định toàn bộ hành vi,
+                    nó có thể nhận một Function khác từ bên ngoài để thực hiện
+                    một phần công việc.
+                </p>
+
+                <p>
+                    Callback thường được sử dụng để:
+                </p>
+
+                <ul>
+                    <li>Cho phép một Function thực hiện các hành vi khác nhau tùy theo Callback được truyền vào.</li>
+                    <li>Tách phần xử lý chung khỏi phần xử lý cụ thể.</li>
+                    <li>Thông báo khi một sự kiện hoàn thành.</li>
+                    <li>Xây dựng các cơ chế Event Handler hoặc Driver Interface.</li>
+                </ul>
+
+                <h3>4.2. Cách truyền Function Pointer vào Function khác</h3>
+
+                <p>
+                    Xét ví dụ một Function thực hiện phép tính bằng cách nhận
+                    một Function Pointer làm tham số.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int subtract(int a, int b)
+{
+    return a - b;
+}
+
+int calculate(int a,
+              int b,
+              int (*operation)(int, int))
+{
+    return operation(a, b);
+}
+
+int main(void)
+{
+    int result1 = calculate(20, 10, add);
+    int result2 = calculate(20, 10, subtract);
+
+    printf("Addition: %d\n", result1);
+    printf("Subtraction: %d\n", result2);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Addition: 30
+Subtraction: 10</code></pre>
+
+                <p>Giải thích:</p>
+
+                <ul>
+                    <li><code>add()</code> thực hiện phép cộng.</li>
+                    <li><code>subtract()</code> thực hiện phép trừ.</li>
+                    <li><code>calculate()</code> nhận hai số nguyên và một Function Pointer.</li>
+                    <li><code>operation(a, b)</code> gọi Callback được truyền vào.</li>
+                    <li><code>main()</code> quyết định Function nào sẽ được sử dụng.</li>
+                </ul>
+
+                <p>
+                    Trong trường hợp này, <code>add</code> và <code>subtract</code>
+                    là hai Callback Function được truyền vào <code>calculate()</code>.
+                </p>
+
+                <h3>4.3. Callback với Function không có giá trị trả về</h3>
+
+                <p>
+                    Callback không bắt buộc phải trả về một giá trị.
+                    Chúng ta cũng có thể sử dụng Function Pointer đến Function
+                    có kiểu trả về <code>void</code>.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+void on_success(void)
+{
+    printf("Operation completed successfully!\n");
+}
+
+void on_error(void)
+{
+    printf("Operation failed!\n");
+}
+
+void execute_operation(int status,
+                       void (*callback)(void))
+{
+    printf("Executing operation...\n");
+
+    if (status == 0) {
+        callback();
+    }
+}
+
+int main(void)
+{
+    execute_operation(0, on_success);
+    execute_operation(1, on_error);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Executing operation...
+Operation completed successfully!
+Executing operation...</code></pre>
+
+                <p>
+                    Trong ví dụ trên, Callback chỉ được gọi khi điều kiện
+                    <code>status == 0</code> thỏa mãn.
+                    Khi điều kiện không thỏa mãn, Function <code>execute_operation()</code>
+                    không gọi Callback.
+                </p>
+
+                <p>
+                    Lưu ý rằng ví dụ này truyền <code>on_error</code> vào lần gọi thứ hai
+                    nhưng Function chỉ gọi Callback trong nhánh thành công.
+                    Đây là chủ ý để minh họa rằng Function nhận Callback có quyền
+                    quyết định thời điểm gọi nó.
+                </p>
+
+                <h3>4.4. Callback với tham số dữ liệu</h3>
+
+                <p>
+                    Trong thực tế, Callback thường cần nhận dữ liệu từ Function
+                    thực hiện lời gọi.
+                    Vì vậy, chúng ta có thể khai báo Callback có các tham số cụ thể.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+typedef void (*DataCallback)(uint8_t data);
+
+void receive_data_handler(uint8_t data)
+{
+    printf("Received data: 0x%02X\n",
+           (unsigned int)data);
+}
+
+void process_received_data(uint8_t data,
+                           DataCallback callback)
+{
+    printf("Processing received data...\n");
+
+    callback(data);
+}
+
+int main(void)
+{
+    process_received_data(0xA5U, receive_data_handler);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Processing received data...
+Received data: 0xA5</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>DataCallback</code> là một kiểu Function Pointer.</li>
+                    <li><code>receive_data_handler()</code> là Callback nhận một byte dữ liệu.</li>
+                    <li><code>process_received_data()</code> thực hiện xử lý dữ liệu chung.</li>
+                    <li>Sau khi xử lý, Function gọi Callback và truyền dữ liệu nhận được.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Điểm quan trọng:</strong>
+                    Callback cho phép Function xử lý chung không cần biết chi tiết
+                    về hành vi cụ thể của Function được gọi lại.
+                    Hành vi đó được cung cấp từ bên ngoài thông qua Function Pointer.
+                </div>
+
+                <h2>5. Typedef với Function Pointer</h2>
+
+                <h3>5.1. Vì sao nên sử dụng typedef?</h3>
+
+                <p>
+                    Khi Function Pointer có nhiều tham số hoặc được sử dụng ở nhiều nơi,
+                    khai báo trực tiếp có thể khiến mã nguồn dài và khó đọc.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>void (*callback)(uint8_t, uint16_t, uint32_t);</code></pre>
+
+                <p>
+                    Chúng ta có thể sử dụng <code>typedef</code> để tạo một tên kiểu
+                    dữ liệu mới cho Function Pointer.
+                </p>
+
+                <pre><code>typedef void (*CallbackType)(uint8_t,
+                             uint16_t,
+                             uint32_t);</code></pre>
+
+                <p>
+                    Sau đó, có thể sử dụng <code>CallbackType</code>
+                    để khai báo các biến Function Pointer.
+                </p>
+
+                <pre><code>CallbackType callback1;
+CallbackType callback2;</code></pre>
+
+                <p>
+                    Cách này giúp mã nguồn ngắn gọn và dễ quản lý hơn.
+                </p>
+
+                <h3>5.2. Ví dụ sử dụng typedef với Callback</h3>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+typedef void (*CallbackType)(uint8_t);
+
+void led_on(uint8_t led_id)
+{
+    printf("LED %u is ON\n",
+           (unsigned int)led_id);
+}
+
+void led_off(uint8_t led_id)
+{
+    printf("LED %u is OFF\n",
+           (unsigned int)led_id);
+}
+
+void control_led(uint8_t led_id,
+                 CallbackType callback)
+{
+    callback(led_id);
+}
+
+int main(void)
+{
+    control_led(1U, led_on);
+    control_led(2U, led_off);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>LED 1 is ON
+LED 2 is OFF</code></pre>
+
+                <p>
+                    Trong ví dụ này, <code>CallbackType</code> đại diện cho kiểu
+                    Function Pointer nhận một tham số <code>uint8_t</code>
+                    và không trả về giá trị.
+                </p>
+
+                <p>
+                    Cả <code>led_on()</code> và <code>led_off()</code> đều có kiểu
+                    tương thích với <code>CallbackType</code>, vì vậy chúng có thể
+                    được truyền vào <code>control_led()</code>.
+                </p>
+
+                <h3>5.3. Sử dụng typedef trong Function Declaration</h3>
+
+                <p>
+                    typedef cũng giúp đơn giản hóa khai báo tham số của Function.
+                </p>
+
+                <pre><code>typedef int (*OperationCallback)(int, int);
+
+int calculate(int a,
+              int b,
+              OperationCallback callback);</code></pre>
+
+                <p>
+                    So với việc viết trực tiếp:
+                </p>
+
+                <pre><code>int calculate(int a,
+              int b,
+              int (*callback)(int, int));</code></pre>
+
+                <p>
+                    Cách sử dụng <code>typedef</code> giúp Function Declaration
+                    dễ đọc hơn, đặc biệt khi Callback được sử dụng trong nhiều Module.
+                </p>
+
+                <div class="note">
+                    Trong Embedded C, typedef thường được sử dụng để định nghĩa
+                    các Callback Type trong Header File.
+                    Nhờ đó, các Module có thể thống nhất kiểu Callback
+                    khi giao tiếp với nhau.
+                </div>
+
+                <h2>6. Array of Function Pointers</h2>
+
+                <h3>6.1. Khái niệm Array of Function Pointers</h3>
+
+                <p>
+                    Tương tự như Array of Data Pointers, chúng ta cũng có thể
+                    tạo một Array mà mỗi phần tử là một Function Pointer.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>int (*operations[3])(int, int);</code></pre>
+
+                <p>
+                    Khai báo trên có nghĩa:
+                </p>
+
+                <ul>
+                    <li><code>operations</code> là một Array gồm 3 phần tử.</li>
+                    <li>Mỗi phần tử là một Function Pointer.</li>
+                    <li>Mỗi Function Pointer trỏ đến Function nhận hai tham số int.</li>
+                    <li>Function được gọi phải trả về int.</li>
+                </ul>
+
+                <h3>6.2. Khởi tạo Array of Function Pointers</h3>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int subtract(int a, int b)
+{
+    return a - b;
+}
+
+int multiply(int a, int b)
+{
+    return a * b;
+}
+
+int main(void)
+{
+    int (*operations[3])(int, int) = {
+        add,
+        subtract,
+        multiply
+    };
+
+    printf("Add: %d\n", operations[0](10, 5));
+    printf("Subtract: %d\n", operations[1](10, 5));
+    printf("Multiply: %d\n", operations[2](10, 5));
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Add: 15
+Subtract: 5
+Multiply: 50</code></pre>
+
+                <p>
+                    Trong ví dụ này, mỗi phần tử của Array lưu địa chỉ
+                    của một Function khác nhau.
+                    Chúng ta có thể lựa chọn Function cần gọi bằng chỉ số Array.
+                </p>
+
+                <h3>6.3. Sử dụng Array of Function Pointers với Switch</h3>
+
+                <p>
+                    Array of Function Pointers có thể được sử dụng để thay thế
+                    một số cấu trúc điều kiện dài khi chương trình cần lựa chọn
+                    giữa nhiều Function có cùng kiểu.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+typedef int (*Operation)(int, int);
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int subtract(int a, int b)
+{
+    return a - b;
+}
+
+int multiply(int a, int b)
+{
+    return a * b;
+}
+
+int main(void)
+{
+    Operation operations[3] = {
+        add,
+        subtract,
+        multiply
+    };
+
+    uint8_t operation_id = 2U;
+
+    if (operation_id &lt; 3U) {
+        int result = operations[operation_id](10, 5);
+
+        printf("Result: %d\n", result);
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Result: 50</code></pre>
+
+                <p>
+                    Với <code>operation_id = 2</code>, chương trình gọi Function
+                    ở vị trí thứ ba trong Array, tương ứng với <code>multiply()</code>.
+                </p>
+
+                <p>
+                    Trước khi truy cập Array, chương trình cần kiểm tra chỉ số
+                    để đảm bảo không truy cập vượt quá giới hạn.
+                </p>
+
+                <div class="note">
+                    <strong>Ứng dụng:</strong>
+                    Array of Function Pointers có thể được sử dụng để xây dựng
+                    Function Table, Command Table hoặc một số cơ chế lựa chọn
+                    Handler trong Embedded Software.
+                </div>
+
+                <h2>7. Ứng dụng Function Pointer và Callback trong Embedded C</h2>
+
+                <h3>7.1. Callback trong Driver Interface</h3>
+
+                <p>
+                    Trong Embedded Systems, các Driver thường cung cấp những Function
+                    để các Module khác có thể đăng ký Callback.
+                    Khi một sự kiện xảy ra, Driver có thể gọi Callback đã đăng ký.
+                </p>
+
+                <p>
+                    Ví dụ đơn giản, một Module nhận dữ liệu có thể cho phép
+                    Application đăng ký Function xử lý dữ liệu.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+typedef void (*RxCallback)(uint8_t data);
+
+static RxCallback rx_callback = NULL;
+
+void register_rx_callback(RxCallback callback)
+{
+    rx_callback = callback;
+}
+
+void uart_receive_simulation(uint8_t data)
+{
+    printf("UART received data: 0x%02X\n",
+           (unsigned int)data);
+
+    if (rx_callback != NULL) {
+        rx_callback(data);
+    }
+}
+
+void application_rx_handler(uint8_t data)
+{
+    printf("Application processes: 0x%02X\n",
+           (unsigned int)data);
+}
+
+int main(void)
+{
+    register_rx_callback(application_rx_handler);
+
+    uart_receive_simulation(0x5AU);
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>UART received data: 0x5A
+Application processes: 0x5A</code></pre>
+
+                <p>Giải thích:</p>
+
+                <ul>
+                    <li><code>RxCallback</code> định nghĩa kiểu Function Pointer cho Callback nhận dữ liệu.</li>
+                    <li><code>rx_callback</code> lưu địa chỉ Callback đã đăng ký.</li>
+                    <li><code>register_rx_callback()</code> cho phép Application đăng ký Callback.</li>
+                    <li><code>uart_receive_simulation()</code> mô phỏng quá trình nhận dữ liệu.</li>
+                    <li>Nếu Callback hợp lệ, Driver gọi lại Function đã đăng ký.</li>
+                    <li><code>application_rx_handler()</code> thực hiện xử lý dữ liệu ở Application Layer.</li>
+                </ul>
+
+                <p>
+                    Đây là mô hình minh họa cơ bản cho cơ chế Callback giữa
+                    Driver Layer và Application Layer.
+                </p>
+
+                <h3>7.2. Callback trong Timer Event</h3>
+
+                <p>
+                    Một ứng dụng khác của Callback là xử lý sự kiện Timer.
+                    Khi Timer đạt đến một điều kiện nhất định, chương trình có thể
+                    gọi một Function đã được đăng ký trước đó.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+typedef void (*TimerCallback)(void);
+
+static TimerCallback timer_callback = NULL;
+
+void register_timer_callback(TimerCallback callback)
+{
+    timer_callback = callback;
+}
+
+void timer_event(void)
+{
+    printf("Timer event occurred!\n");
+
+    if (timer_callback != NULL) {
+        timer_callback();
+    }
+}
+
+void led_toggle_handler(void)
+{
+    printf("LED state toggled!\n");
+}
+
+void system_tick_handler(void)
+{
+    printf("System tick processed!\n");
+}
+
+int main(void)
+{
+    register_timer_callback(led_toggle_handler);
+
+    timer_event();
+
+    register_timer_callback(system_tick_handler);
+
+    timer_event();
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Timer event occurred!
+LED state toggled!
+Timer event occurred!
+System tick processed!</code></pre>
+
+                <p>
+                    Cùng một cơ chế Timer Event nhưng chương trình có thể thực hiện
+                    những hành vi khác nhau tùy theo Callback được đăng ký.
+                </p>
+
+                <p>
+                    Trong hệ thống thực tế, Timer Event có thể được tạo ra bởi
+                    Hardware Timer, Software Timer hoặc một Scheduler.
+                    Ví dụ trên chỉ mô phỏng việc gọi Callback, không trực tiếp
+                    cấu hình Hardware Timer.
+                </p>
+
+                <h3>7.3. Callback trong Communication Module</h3>
+
+                <p>
+                    Trong các hệ thống giao tiếp như UART, SPI hoặc CAN,
+                    một Module có thể cần thông báo cho Application khi dữ liệu
+                    đã được nhận hoặc quá trình truyền dữ liệu đã hoàn thành.
+                </p>
+
+                <p>
+                    Callback có thể được sử dụng để thông báo những sự kiện này.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+typedef void (*TxCompleteCallback)(uint8_t status);
+
+void application_tx_complete(uint8_t status)
+{
+    if (status == 0U) {
+        printf("Transmission completed successfully.\n");
+    } else {
+        printf("Transmission failed.\n");
+    }
+}
+
+void communication_transmit(
+    const uint8_t *data,
+    uint8_t length,
+    TxCompleteCallback callback)
+{
+    if ((data == NULL) || (length == 0U)) {
+        if (callback != NULL) {
+            callback(1U);
+        }
+
+        return;
+    }
+
+    printf("Transmitting %u bytes...\n",
+           (unsigned int)length);
+
+    /*
+     * Mô phỏng quá trình truyền dữ liệu.
+     * Không thực hiện truyền Hardware thực tế.
+     */
+
+    if (callback != NULL) {
+        callback(0U);
+    }
+}
+
+int main(void)
+{
+    uint8_t tx_buffer[3] = {
+        0x11U, 0x22U, 0x33U
+    };
+
+    communication_transmit(
+        tx_buffer,
+        3U,
+        application_tx_complete
+    );
+
+    return 0;
+}</code></pre>
+
+                <p>Kết quả:</p>
+
+                <pre><code>Transmitting 3 bytes...
+Transmission completed successfully.</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>communication_transmit()</code> đại diện cho một Function truyền dữ liệu.</li>
+                    <li><code>TxCompleteCallback</code> là kiểu Function Pointer dùng để thông báo kết quả.</li>
+                    <li><code>application_tx_complete()</code> xử lý kết quả ở Application Layer.</li>
+                    <li>Callback được gọi khi quá trình mô phỏng truyền dữ liệu kết thúc.</li>
+                </ul>
+
+                <p>
+                    Trong Driver thực tế, Callback hoàn thành truyền dữ liệu thường
+                    được gọi khi Hardware hoặc Driver xác nhận quá trình truyền đã hoàn tất.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý trong Embedded Systems:</strong>
+                    Không phải mọi Callback đều được gọi trong cùng một ngữ cảnh thực thi.
+                    Một số Callback có thể được gọi từ Interrupt Service Routine (ISR),
+                    trong khi một số khác được gọi từ Main Loop hoặc Task.
+                    Điều này cần được xem xét khi thiết kế chương trình thực tế.
+                </div>
+
+                <h2>8. Những lỗi thường gặp khi sử dụng Function Pointer</h2>
+
+                <h3>8.1. Gọi Function Pointer chưa được khởi tạo</h3>
+
+                <p>
+                    Function Pointer là một Pointer, vì vậy cần được khởi tạo
+                    trước khi sử dụng.
+                </p>
+
+                <pre><code>void (*callback)(void);
+
+callback();</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>callback</code> chưa được gán địa chỉ
+                    của một Function hợp lệ.
+                    Việc gọi Function thông qua Pointer này dẫn đến hành vi không xác định.
+                </p>
+
+                <p>Cách khởi tạo an toàn hơn:</p>
+
+                <pre><code>void (*callback)(void) = NULL;
+
+if (callback != NULL) {
+    callback();
+}</code></pre>
+
+                <h3>8.2. Gán Function không tương thích kiểu</h3>
+
+                <p>
+                    Function Pointer phải có kiểu tương thích với Function được gán.
+                </p>
+
+                <pre><code>void handler_a(int value)
+{
+    /* Processing */
+}
+
+void handler_b(float value)
+{
+    /* Processing */
+}
+
+void (*callback)(int);
+
+callback = handler_a;
+
+/* Không tương thích */
+callback = handler_b;</code></pre>
+
+                <p>
+                    <code>handler_a()</code> nhận một tham số int,
+                    trong khi <code>handler_b()</code> nhận một tham số float.
+                    Vì vậy, chỉ <code>handler_a()</code> có kiểu phù hợp
+                    với Function Pointer đã khai báo.
+                </p>
+
+                <h3>8.3. Nhầm lẫn giữa Function Pointer và Data Pointer</h3>
+
+                <p>
+                    Function Pointer và Data Pointer đều là Pointer,
+                    nhưng chúng tham chiếu đến những loại đối tượng khác nhau.
+                </p>
+
+                <pre><code>int value = 10;
+
+int *data_ptr = &amp;value;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int (*function_ptr)(int, int) = add;</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>data_ptr</code> trỏ đến một biến dữ liệu kiểu int.</li>
+                    <li><code>function_ptr</code> trỏ đến Function <code>add()</code>.</li>
+                </ul>
+
+                <p>
+                    Không nên xem Function Pointer và Data Pointer là hai kiểu
+                    có thể thay thế tùy ý cho nhau.
+                    C cũng không đảm bảo rằng chúng có cùng kích thước
+                    hoặc cùng cách biểu diễn trên mọi nền tảng.
+                </p>
+
+                <h3>8.4. Quên kiểm tra Callback trước khi gọi</h3>
+
+                <p>
+                    Khi thiết kế cơ chế đăng ký Callback, cần kiểm tra Pointer
+                    trước khi gọi để tránh sử dụng một Callback chưa được đăng ký.
+                </p>
+
+                <pre><code>typedef void (*CallbackType)(void);
+
+static CallbackType callback = NULL;
+
+void execute_callback(void)
+{
+    if (callback != NULL) {
+        callback();
+    }
+}</code></pre>
+
+                <p>
+                    Việc kiểm tra này giúp Function có thể xử lý trường hợp
+                    chưa có Callback được đăng ký.
+                </p>
+
+                <h3>8.5. Truyền Callback có tham số không phù hợp</h3>
+
+                <p>
+                    Khi truyền Callback vào một Function, cần đảm bảo
+                    kiểu tham số của Callback tương thích với kiểu mà Function
+                    nhận và sử dụng.
+                </p>
+
+                <pre><code>typedef void (*DataCallback)(uint8_t);
+
+void process_data(DataCallback callback)
+{
+    callback(10U);
+}
+
+void valid_handler(uint8_t data)
+{
+    printf("%u\n", (unsigned int)data);
+}
+
+void invalid_handler(uint16_t data)
+{
+    printf("%u\n", (unsigned int)data);
+}</code></pre>
+
+                <p>
+                    <code>valid_handler()</code> có kiểu phù hợp với
+                    <code>DataCallback</code>.
+                    Không nên truyền một Function có kiểu không tương thích
+                    và dựa vào việc Compiler có thể chấp nhận một phép chuyển đổi
+                    Pointer để xem đó là cách gọi hợp lệ.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong>
+                    Khi làm việc với Callback, cần chú ý ba vấn đề chính:
+                    Function Pointer phải được khởi tạo hợp lệ, kiểu Function
+                    phải tương thích và Callback cần được gọi đúng thời điểm.
+                </div>
+
+                <h2>9. So sánh Function Pointer và Callback Function</h2>
+
+                <p>
+                    Function Pointer và Callback Function có mối liên hệ chặt chẽ,
+                    nhưng hai khái niệm này mô tả những khía cạnh khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Function Pointer</th>
+                            <th>Callback Function</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Khái niệm</td>
+                            <td>Pointer lưu địa chỉ của Function.</td>
+                            <td>Function được truyền vào Function khác để được gọi lại.</td>
+                        </tr>
+                        <tr>
+                            <td>Vai trò</td>
+                            <td>Cơ chế tham chiếu và gọi Function.</td>
+                            <td>Cơ chế cung cấp hành vi cho Function khác.</td>
+                        </tr>
+                        <tr>
+                            <td>Cách sử dụng</td>
+                            <td>Có thể gọi Function thông qua Pointer.</td>
+                            <td>Thường được truyền qua tham số Function Pointer.</td>
+                        </tr>
+                        <tr>
+                            <td>Phạm vi ứng dụng</td>
+                            <td>Function Table, lựa chọn Function, Callback.</td>
+                            <td>Event Handler, Driver Notification, Timer Event.</td>
+                        </tr>
+                        <tr>
+                            <td>Mối quan hệ</td>
+                            <td>Là cơ chế thường được dùng để triển khai Callback.</td>
+                            <td>Là một cách sử dụng Function Pointer.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Function Pointer là cơ chế của ngôn ngữ C.
+                    Callback Function là một kỹ thuật lập trình sử dụng cơ chế đó
+                    để cho phép một Function gọi lại Function khác.
+                </div>
+
+                <h2>10. Những khái niệm cần nhớ</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Function Pointer</strong></td>
+                            <td>Pointer lưu địa chỉ của một Function có kiểu tương thích.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Function Type</strong></td>
+                            <td>Kiểu Function được xác định bởi kiểu trả về và danh sách tham số.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Function Call</strong></td>
+                            <td>Thực hiện lời gọi Function thông qua tên Function hoặc Function Pointer.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Callback Function</strong></td>
+                            <td>Function được truyền vào Function khác để Function đó có thể gọi lại.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>typedef Function Pointer</strong></td>
+                            <td>Tạo tên kiểu dữ liệu mới cho một loại Function Pointer.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Array of Function Pointers</strong></td>
+                            <td>Array chứa nhiều Function Pointer có cùng kiểu tương thích.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Event Handler</strong></td>
+                            <td>Function xử lý một sự kiện cụ thể, thường có thể được đăng ký làm Callback.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Driver Callback</strong></td>
+                            <td>Callback được Driver gọi để thông báo một sự kiện hoặc kết quả xử lý.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    <strong>Function Pointer</strong> là một Pointer có khả năng lưu
+                    địa chỉ của Function. Nó cho phép chương trình gọi Function
+                    thông qua Pointer thay vì chỉ gọi trực tiếp bằng tên Function.
+
+                    <br><br>
+
+                    Cú pháp khai báo cơ bản:
+
+                    <pre><code>return_type (*pointer_name)(parameter_types);</code></pre>
+
+                    Ví dụ:
+
+                    <pre><code>int (*operation)(int, int);</code></pre>
+
+                    Function Pointer có thể được khởi tạo bằng địa chỉ của Function
+                    có kiểu tương thích và được sử dụng để gọi Function thông qua Pointer.
+
+                    <br><br>
+
+                    <strong>Callback Function</strong> là một kỹ thuật sử dụng
+                    Function Pointer để truyền một Function vào Function khác.
+                    Function nhận Callback có thể gọi lại Function được truyền vào
+                    khi một điều kiện hoặc sự kiện xảy ra.
+
+                    <br><br>
+
+                    <strong>typedef</strong> giúp đơn giản hóa việc khai báo Function Pointer,
+                    đặc biệt khi Callback được sử dụng trong nhiều Module.
+                    Ngoài ra, Array of Function Pointers cho phép tổ chức nhiều Function
+                    có cùng kiểu trong một cấu trúc Array để lựa chọn và gọi theo chỉ số.
+
+                    <br><br>
+
+                    Trong Embedded C, Function Pointer và Callback thường xuất hiện
+                    trong Driver Interface, Timer Callback, Communication Module
+                    và Event Handler. Việc sử dụng đúng cách giúp tăng tính linh hoạt
+                    và khả năng mở rộng của chương trình.
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-13.html">← Bài trước</a>
+                    <a class="btn" href="lesson-15.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>
