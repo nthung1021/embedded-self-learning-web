@@ -1,0 +1,1563 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 2: C Compilation Process &amp; Embedded Toolchain | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html" class="active" aria-current="page">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+                <h1>Bài 2: C Compilation Process &amp; Embedded Toolchain</h1>
+
+                <p>
+                    Trước khi một chương trình C có thể được thực thi trên máy tính hoặc vi điều khiển,
+                    mã nguồn cần trải qua một quy trình xử lý để chuyển đổi từ các câu lệnh mà lập trình viên
+                    viết thành mã máy mà CPU có thể thực thi.
+                    Quy trình này được gọi là <strong>C Compilation Process</strong>.
+                </p>
+
+                <p>
+                    Trong quá trình phát triển Embedded Software, việc biên dịch không chỉ đơn giản là
+                    chuyển đổi một file <code>.c</code> thành một chương trình thực thi.
+                    Hệ thống thường cần nhiều công cụ phối hợp với nhau như Preprocessor, Compiler,
+                    Assembler, Linker và các công cụ hỗ trợ tạo, kiểm tra và nạp Firmware.
+                </p>
+
+                <p>
+                    Tập hợp các công cụ này được gọi là <strong>Embedded Toolchain</strong>.
+                    Đây là một thành phần quan trọng trong môi trường phát triển Firmware,
+                    giúp lập trình viên xây dựng chương trình phù hợp với kiến trúc của vi điều khiển mục tiêu.
+                </p>
+
+                <h2>1. C Compilation Process là gì?</h2>
+
+                <p>
+                    <strong>C Compilation Process</strong> là quy trình chuyển đổi mã nguồn C thành
+                    các dạng mã trung gian và cuối cùng là chương trình có thể thực thi.
+                    Quy trình này thường được chia thành bốn giai đoạn chính:
+                </p>
+
+                <ol>
+                    <li><strong>Preprocessing:</strong> xử lý các chỉ thị tiền xử lý như <code>#include</code> và <code>#define</code>.</li>
+                    <li><strong>Compilation:</strong> phân tích và chuyển đổi mã nguồn C thành mã Assembly.</li>
+                    <li><strong>Assembly:</strong> chuyển mã Assembly thành mã máy trong Object File.</li>
+                    <li><strong>Linking:</strong> kết hợp các Object File và thư viện để tạo chương trình hoàn chỉnh.</li>
+                </ol>
+
+                <p>
+                    Mỗi giai đoạn có một nhiệm vụ riêng và tạo ra một loại dữ liệu đầu ra khác nhau.
+                    Các giai đoạn này phối hợp với nhau để tạo nên một chương trình hoàn chỉnh.
+                </p>
+
+                <svg viewBox="0 0 600 390" role="img"
+                    aria-label="Sơ đồ bốn giai đoạn Preprocessing, Compilation, Assembly và Linking"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="150" y="8" width="300" height="48" rx="6"
+                            fill="rgba(20,80,107,.15)" />
+                        <rect x="150" y="86" width="300" height="48" rx="6"
+                            fill="rgba(224,168,0,.2)" />
+                        <rect x="150" y="164" width="300" height="48" rx="6"
+                            fill="rgba(46,139,87,.2)" />
+                        <rect x="150" y="242" width="300" height="48" rx="6"
+                            fill="rgba(128,128,128,.2)" />
+                        <rect x="150" y="330" width="300" height="48" rx="6"
+                            fill="rgba(20,80,107,.22)" />
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M300 56 V86" />
+                        <path d="M300 134 V164" />
+                        <path d="M300 212 V242" />
+                        <path d="M300 290 V330" />
+                    </g>
+
+                    <g fill="currentColor" font-size="13" text-anchor="middle">
+                        <text x="300" y="29" font-weight="bold">Source Code (.c / .h)</text>
+                        <text x="300" y="45" font-size="11">Mã nguồn ban đầu</text>
+
+                        <text x="300" y="107" font-weight="bold">1. Preprocessing</text>
+                        <text x="300" y="125" font-size="11">Tạo Preprocessed Source (.i)</text>
+
+                        <text x="300" y="185" font-weight="bold">2. Compilation</text>
+                        <text x="300" y="203" font-size="11">Tạo Assembly Code (.s)</text>
+
+                        <text x="300" y="263" font-weight="bold">3. Assembly</text>
+                        <text x="300" y="281" font-size="11">Tạo Object File (.o)</text>
+
+                        <text x="300" y="351" font-weight="bold">4. Linking</text>
+                        <text x="300" y="369" font-size="11">Executable / Firmware (.elf)</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Sơ đồ trên mô tả luồng xử lý phổ biến của một chương trình C.
+                    Trong thực tế, các công cụ như GCC thường tự động thực hiện và kết hợp các giai đoạn này
+                    khi lập trình viên chạy một lệnh biên dịch duy nhất.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Preprocessor, Compiler, Assembler và Linker là các thành phần
+                    xử lý khác nhau. Tuy nhiên, khi sử dụng một Compiler Driver như GCC,
+                    lập trình viên thường không cần gọi riêng từng công cụ.
+                    GCC sẽ điều phối các thành phần phù hợp dựa trên tham số được truyền vào.
+                </div>
+
+                <h2>2. Host Compiler và Cross Compiler</h2>
+
+                <p>
+                    Trước khi tìm hiểu chi tiết từng giai đoạn biên dịch, cần phân biệt hai khái niệm
+                    quan trọng trong môi trường phát triển phần mềm: Native Compiler và Cross Compiler.
+                </p>
+
+                <h3>2.1. Native Compiler</h3>
+
+                <p>
+                    <strong>Native Compiler</strong> là Compiler chạy trên một hệ thống và tạo ra chương trình
+                    dành cho cùng kiến trúc hoặc môi trường thực thi của hệ thống đó.
+                </p>
+
+                <p>
+                    Ví dụ, khi lập trình C trên một máy tính Windows hoặc Linux sử dụng GCC,
+                    Compiler có thể tạo ra chương trình thực thi cho chính hệ điều hành và kiến trúc
+                    máy tính đang sử dụng.
+                </p>
+
+                <pre><code>gcc main.c -o application</code></pre>
+
+                <p>
+                    Trong ví dụ trên, GCC sẽ biên dịch file <code>main.c</code> và tạo chương trình
+                    <code>application</code> dành cho môi trường máy tính hiện tại.
+                </p>
+
+                <h3>2.2. Cross Compiler</h3>
+
+                <p>
+                    <strong>Cross Compiler</strong> là Compiler chạy trên một hệ thống nhưng tạo ra
+                    chương trình dành cho một hệ thống mục tiêu khác.
+                </p>
+
+                <p>
+                    Trong Embedded Development, lập trình viên thường viết code trên máy tính cá nhân
+                    nhưng chương trình cần được thực thi trên một vi điều khiển có kiến trúc CPU khác.
+                    Vì vậy, cần sử dụng Cross Compiler để tạo mã máy phù hợp với vi điều khiển đó.
+                </p>
+
+                <svg viewBox="0 0 600 230" role="img"
+                    aria-label="Sự khác nhau giữa Native Compiler và Cross Compiler"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.5">
+                        <rect x="12" y="15" width="270" height="175" rx="7"
+                            fill="rgba(46,139,87,.1)" />
+                        <rect x="318" y="15" width="270" height="175" rx="7"
+                            fill="rgba(224,168,0,.12)" />
+
+                        <rect x="35" y="48" width="224" height="46" rx="5" />
+                        <rect x="35" y="142" width="224" height="32" rx="5" />
+
+                        <rect x="341" y="48" width="224" height="46" rx="5" />
+                        <rect x="341" y="142" width="224" height="32" rx="5" />
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M147 94 V142" />
+                        <path d="M453 94 V142" />
+                    </g>
+
+                    <g fill="currentColor" text-anchor="middle" font-size="12">
+                        <text x="147" y="32" font-weight="bold">Native Compiler</text>
+                        <text x="147" y="68" font-weight="bold">Host Machine</text>
+                        <text x="147" y="84" font-size="10">Compiler + CPU Target</text>
+                        <text x="147" y="162" font-weight="bold">Host Executable</text>
+
+                        <text x="453" y="32" font-weight="bold">Cross Compiler</text>
+                        <text x="453" y="68" font-weight="bold">Host Machine</text>
+                        <text x="453" y="84" font-size="10">Compiler Tool</text>
+                        <text x="453" y="162" font-weight="bold">Target Firmware</text>
+                    </g>
+
+                    <g fill="currentColor" text-anchor="middle" font-size="10">
+                        <text x="147" y="115">Chạy trên Host</text>
+                        <text x="453" y="115">Biên dịch cho MCU khác</text>
+                    </g>
+                </svg>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Native Compiler</th>
+                        <th>Cross Compiler</th>
+                    </tr>
+                    <tr>
+                        <td>Compiler chạy trên</td>
+                        <td>Host Machine</td>
+                        <td>Host Machine</td>
+                    </tr>
+                    <tr>
+                        <td>Kiến trúc đích</td>
+                        <td>Thường cùng kiến trúc với Host</td>
+                        <td>Kiến trúc khác với Host hoặc môi trường thực thi khác</td>
+                    </tr>
+                    <tr>
+                        <td>Mục đích</td>
+                        <td>Tạo ứng dụng chạy trên máy tính hiện tại.</td>
+                        <td>Tạo chương trình cho MCU hoặc Target Platform.</td>
+                    </tr>
+                    <tr>
+                        <td>Ví dụ</td>
+                        <td>GCC trên Linux tạo chương trình Linux x86-64.</td>
+                        <td>ARM GCC tạo Firmware cho vi điều khiển ARM.</td>
+                    </tr>
+                </table>
+
+                <h3>2.3. Host Machine và Target Machine</h3>
+
+                <p>
+                    Trong quá trình Cross Compilation, có hai hệ thống cần phân biệt:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Host Machine:</strong> máy tính được sử dụng để viết mã nguồn,
+                        chạy Compiler và thực hiện các công việc build chương trình.
+                    </li>
+                    <li>
+                        <strong>Target Machine:</strong> hệ thống mà chương trình sau khi biên dịch
+                        sẽ được thực thi, chẳng hạn như một vi điều khiển STM32.
+                    </li>
+                </ul>
+
+                <p>
+                    Ví dụ, một lập trình viên sử dụng máy tính Windows chạy bộ công cụ ARM GCC
+                    để biên dịch chương trình C thành mã máy dành cho vi điều khiển ARM Cortex-M.
+                    Trong trường hợp này, máy tính là Host Machine và vi điều khiển là Target Machine.
+                </p>
+
+                <div class="note">
+                    Cross Compiler không có nghĩa là Compiler được chạy trên vi điều khiển.
+                    Compiler thường chạy trên máy tính phát triển và tạo ra chương trình dành cho
+                    kiến trúc phần cứng mục tiêu.
+                </div>
+
+                <h2>3. Giai đoạn 1: Preprocessing</h2>
+
+                <p>
+                    <strong>Preprocessing</strong> là giai đoạn đầu tiên của quá trình biên dịch C.
+                    Nhiệm vụ của Preprocessor là xử lý các chỉ thị tiền xử lý (Preprocessor Directives)
+                    trước khi mã nguồn được đưa vào Compiler.
+                </p>
+
+                <p>
+                    Những chỉ thị thường gặp bao gồm:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Directive</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td><code>#include</code></td>
+                        <td>Đưa nội dung của Header File vào vị trí chỉ thị.</td>
+                    </tr>
+                    <tr>
+                        <td><code>#define</code></td>
+                        <td>Định nghĩa Macro hoặc Symbol.</td>
+                    </tr>
+                    <tr>
+                        <td><code>#undef</code></td>
+                        <td>Hủy định nghĩa một Macro.</td>
+                    </tr>
+                    <tr>
+                        <td><code>#ifdef</code></td>
+                        <td>Kiểm tra một Macro đã được định nghĩa hay chưa.</td>
+                    </tr>
+                    <tr>
+                        <td><code>#ifndef</code></td>
+                        <td>Kiểm tra một Macro chưa được định nghĩa.</td>
+                    </tr>
+                    <tr>
+                        <td><code>#if / #else / #elif</code></td>
+                        <td>Xử lý biên dịch có điều kiện.</td>
+                    </tr>
+                </table>
+
+                <h3>3.1. Xử lý Header File</h3>
+
+                <p>
+                    Khi sử dụng chỉ thị <code>#include</code>, Preprocessor sẽ tìm và đưa nội dung
+                    của Header File vào chương trình tại vị trí tương ứng.
+                </p>
+
+                <p>Ví dụ, chương trình ban đầu có nội dung:</p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+#define DEVICE_NAME "Embedded Device"
+
+int main(void)
+{
+    printf("Hello %s\n", DEVICE_NAME);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong quá trình Preprocessing, nội dung Header File
+                    <code>stdio.h</code> được đưa vào mã nguồn sau khi Preprocessor tìm thấy file phù hợp.
+                    Macro <code>DEVICE_NAME</code> cũng được thay thế bằng giá trị đã định nghĩa.
+                </p>
+
+                <p>
+                    Vì vậy, mã nguồn sau Preprocessing không còn giữ nguyên toàn bộ các chỉ thị
+                    như <code>#include</code> và định nghĩa Macro ban đầu.
+                </p>
+
+                <h3>3.2. Output của Preprocessing</h3>
+
+                <p>
+                    Kết quả của giai đoạn này thường được lưu dưới dạng file có phần mở rộng
+                    <code>.i</code>, chứa mã nguồn C sau khi đã xử lý các chỉ thị tiền xử lý.
+                </p>
+
+                <p>Sử dụng GCC để thực hiện riêng bước Preprocessing:</p>
+
+                <pre><code>gcc -E main.c -o main.i</code></pre>
+
+                <p>Trong đó:</p>
+
+                <ul>
+                    <li><code>gcc</code>: gọi GNU Compiler Collection.</li>
+                    <li><code>-E</code>: chỉ thực hiện Preprocessing.</li>
+                    <li><code>main.c</code>: file mã nguồn ban đầu.</li>
+                    <li><code>-o main.i</code>: chỉ định tên file đầu ra.</li>
+                </ul>
+
+                <p>
+                    File <code>main.i</code> có thể được mở để kiểm tra kết quả sau khi xử lý
+                    <code>#include</code>, Macro và Conditional Compilation.
+                </p>
+
+                <div class="note">
+                    Khi chương trình có nhiều Header File và Macro, file sau Preprocessing có thể
+                    chứa lượng mã nguồn lớn hơn rất nhiều so với file C ban đầu.
+                    Đây là điều bình thường vì nội dung các Header File đã được đưa vào quá trình xử lý.
+                </div>
+
+                <h2>4. Giai đoạn 2: Compilation</h2>
+
+                <p>
+                    Sau khi Preprocessing hoàn tất, mã nguồn được chuyển đến Compiler để thực hiện
+                    quá trình phân tích và chuyển đổi.
+                </p>
+
+                <p>
+                    <strong>Compilation</strong> là giai đoạn Compiler phân tích mã nguồn C,
+                    kiểm tra các quy tắc của ngôn ngữ và chuyển chương trình thành biểu diễn trung gian,
+                    sau đó tạo mã Assembly phù hợp với kiến trúc CPU mục tiêu.
+                </p>
+
+                <h3>4.1. Các công việc chính của Compiler</h3>
+
+                <p>
+                    Trong quá trình Compilation, Compiler thực hiện nhiều công việc khác nhau:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Lexical Analysis:</strong> phân tích mã nguồn thành các Token
+                        như Keyword, Identifier, Operator và Literal.
+                    </li>
+                    <li>
+                        <strong>Syntax Analysis:</strong> kiểm tra cú pháp và cấu trúc của chương trình
+                        theo quy tắc ngôn ngữ C.
+                    </li>
+                    <li>
+                        <strong>Semantic Analysis:</strong> kiểm tra ý nghĩa của các câu lệnh,
+                        kiểu dữ liệu và cách sử dụng các Identifier.
+                    </li>
+                    <li>
+                        <strong>Intermediate Representation:</strong> chuyển chương trình thành
+                        dạng biểu diễn trung gian để Compiler xử lý.
+                    </li>
+                    <li>
+                        <strong>Code Generation:</strong> tạo mã Assembly tương ứng với kiến trúc
+                        CPU mục tiêu.
+                    </li>
+                </ul>
+
+                <p>
+                    Ngoài ra, Compiler có thể thực hiện những kỹ thuật tối ưu mã nguồn
+                    tùy thuộc vào các tùy chọn biên dịch được thiết lập.
+                </p>
+
+                <h3>4.2. Ví dụ chuyển đổi C sang Assembly</h3>
+
+                <p>
+                    Xét chương trình C đơn giản sau:
+                </p>
+
+                <pre><code>int add_numbers(int a, int b)
+{
+    return a + b;
+}</code></pre>
+
+                <p>
+                    Compiler sẽ phân tích hàm trên và tạo ra các lệnh Assembly tương ứng
+                    với kiến trúc CPU mục tiêu.
+                </p>
+
+                <p>
+                    Ví dụ minh họa dưới đây sử dụng cú pháp Assembly theo kiến trúc ARM.
+                    Mã thực tế có thể khác nhau tùy theo kiến trúc ARM cụ thể,
+                    Compiler, ABI và các tùy chọn Optimization.
+                </p>
+
+                <pre><code>add_numbers:
+    ADD  r0, r0, r1
+    BX   lr</code></pre>
+
+                <p>
+                    Trong ví dụ minh họa này:
+                </p>
+
+                <ul>
+                    <li><code>ADD</code>: thực hiện phép cộng hai giá trị.</li>
+                    <li><code>r0</code>, <code>r1</code>: các thanh ghi CPU dùng để chứa dữ liệu và tham số theo quy ước gọi hàm.</li>
+                    <li><code>BX lr</code>: quay trở về vị trí gọi hàm thông qua địa chỉ lưu trong Link Register.</li>
+                </ul>
+
+                <div class="note">
+                    Assembly ở trên chỉ mang tính minh họa cho một trường hợp đơn giản.
+                    Không nên giả định rằng mọi Compiler hoặc mọi kiến trúc ARM đều sinh ra chính xác
+                    những lệnh này. Mục đích của ví dụ là cho thấy mã C được chuyển thành các lệnh
+                    mà CPU mục tiêu có thể hiểu và thực thi.
+                </div>
+
+                <h3>4.3. Output của Compilation</h3>
+
+                <p>
+                    Một trong những kết quả thường gặp của giai đoạn Compilation là file
+                    Assembly có phần mở rộng <code>.s</code>.
+                </p>
+
+                <p>Sử dụng GCC:</p>
+
+                <pre><code>gcc -S main.c -o main.s</code></pre>
+
+                <p>Trong đó:</p>
+
+                <ul>
+                    <li><code>-S</code>: thực hiện Preprocessing và Compilation, sau đó dừng ở mã Assembly.</li>
+                    <li><code>main.s</code>: file chứa Assembly Code.</li>
+                </ul>
+
+                <p>
+                    File Assembly có thể được mở để quan sát các lệnh CPU do Compiler tạo ra,
+                    từ đó giúp lập trình viên hiểu rõ hơn cách chương trình C được chuyển đổi
+                    thành những thao tác ở mức thấp.
+                </p>
+
+                <h2>5. Giai đoạn 3: Assembly</h2>
+
+                <p>
+                    Sau khi Compiler tạo ra mã Assembly, chương trình tiếp tục được chuyển đến Assembler.
+                </p>
+
+                <p>
+                    <strong>Assembler</strong> là công cụ chuyển đổi Assembly Code thành mã máy.
+                    Kết quả thường được lưu trong một file có định dạng Object File, phổ biến là
+                    file <code>.o</code> trên các hệ thống sử dụng GCC.
+                </p>
+
+                <h3>5.1. Assembly Code và Machine Code</h3>
+
+                <p>
+                    Assembly sử dụng các ký hiệu và câu lệnh dễ đọc hơn so với mã máy.
+                    Trong khi đó, Machine Code là biểu diễn nhị phân của các lệnh mà CPU có thể thực thi.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Assembly Code</th>
+                        <th>Machine Code</th>
+                    </tr>
+                    <tr>
+                        <td>Cách biểu diễn</td>
+                        <td>Các Mnemonic và Operand.</td>
+                        <td>Các bit nhị phân hoặc biểu diễn Hexadecimal.</td>
+                    </tr>
+                    <tr>
+                        <td>Khả năng đọc</td>
+                        <td>Tương đối dễ đọc đối với lập trình viên.</td>
+                        <td>Khó đọc trực tiếp.</td>
+                    </tr>
+                    <tr>
+                        <td>Thực thi trực tiếp</td>
+                        <td>CPU không thực thi trực tiếp mã Assembly dạng văn bản.</td>
+                        <td>CPU thực thi các lệnh máy phù hợp với kiến trúc của nó.</td>
+                    </tr>
+                    <tr>
+                        <td>Công cụ xử lý</td>
+                        <td>Assembler chuyển đổi sang mã máy.</td>
+                        <td>Được lưu trong Object File hoặc chương trình thực thi.</td>
+                    </tr>
+                </table>
+
+                <h3>5.2. Object File là gì?</h3>
+
+                <p>
+                    <strong>Object File</strong> là file chứa mã máy đã được Assembler tạo ra
+                    từ một đơn vị mã nguồn sau khi biên dịch.
+                </p>
+
+                <p>
+                    Một Object File có thể chứa:
+                </p>
+
+                <ul>
+                    <li>Machine Code của các Function.</li>
+                    <li>Các vùng dữ liệu được tạo từ mã nguồn.</li>
+                    <li>Symbol Table chứa thông tin về các Symbol.</li>
+                    <li>Relocation Information phục vụ quá trình Linking.</li>
+                    <li>Thông tin Debug nếu được tạo trong quá trình biên dịch.</li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, Object File chưa nhất thiết là một chương trình hoàn chỉnh có thể thực thi.
+                    Những tham chiếu đến Function hoặc Symbol nằm trong các Object File khác
+                    thường cần được giải quyết trong giai đoạn Linking.
+                </p>
+
+                <h3>5.3. Thực hiện Assembly bằng GCC</h3>
+
+                <pre><code>gcc -c main.s -o main.o</code></pre>
+
+                <p>Trong đó:</p>
+
+                <ul>
+                    <li><code>-c</code>: biên dịch đến Object File và không thực hiện Linking.</li>
+                    <li><code>main.s</code>: file Assembly đầu vào.</li>
+                    <li><code>main.o</code>: Object File đầu ra.</li>
+                </ul>
+
+                <p>
+                    Ngoài ra, có thể sử dụng GCC để thực hiện nhiều giai đoạn liên tiếp
+                    mà không cần tạo thủ công file Assembly:
+                </p>
+
+                <pre><code>gcc -c main.c -o main.o</code></pre>
+
+                <p>
+                    Lệnh trên tự động thực hiện Preprocessing, Compilation và Assembly,
+                    sau đó tạo ra <code>main.o</code>.
+                </p>
+
+                <h2>6. Giai đoạn 4: Linking</h2>
+
+                <p>
+                    Sau khi các file nguồn được biên dịch thành những Object File,
+                    chúng cần được kết hợp lại thành một chương trình hoàn chỉnh.
+                    Quá trình này được gọi là <strong>Linking</strong>.
+                </p>
+
+                <p>
+                    <strong>Linker</strong> là công cụ chịu trách nhiệm kết hợp Object File,
+                    thư viện và các thành phần cần thiết để tạo ra chương trình đầu ra.
+                    Trong Embedded Systems, đây là một giai đoạn rất quan trọng vì chương trình
+                    phải được tổ chức phù hợp với bộ nhớ và kiến trúc của vi điều khiển mục tiêu.
+                </p>
+
+                <h3>6.1. Vì sao cần Linking?</h3>
+
+                <p>
+                    Trong các dự án C, chương trình thường được chia thành nhiều Source File
+                    để tổ chức chức năng thành từng Module riêng biệt.
+                    Mỗi Source File có thể được biên dịch độc lập thành một Object File.
+                </p>
+
+                <p>
+                    Ví dụ, một chương trình có cấu trúc như sau:
+                </p>
+
+                <pre><code>project/
+|
+|-- main.c
+|-- math_utils.c
+|-- math_utils.h
+|
+|-- main.o
+|-- math_utils.o</code></pre>
+
+                <p>
+                    File <code>main.c</code> có thể gọi một Function được định nghĩa
+                    trong <code>math_utils.c</code>.
+                    Sau khi biên dịch riêng từng file, chương trình cần được Linking
+                    để kết hợp các thành phần này.
+                </p>
+
+                <h3>6.2. Symbol Resolution</h3>
+
+                <p>
+                    Một nhiệm vụ quan trọng của Linker là tìm và liên kết các Symbol được tham chiếu
+                    giữa các Object File.
+                </p>
+
+                <p>
+                    Ví dụ, trong <code>main.c</code>, lập trình viên gọi Function <code>add_numbers()</code>,
+                    nhưng phần triển khai Function lại nằm trong <code>math_utils.c</code>.
+                </p>
+
+                <p>File <code>math_utils.h</code>:</p>
+
+                <pre><code>#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int add_numbers(int a, int b);
+
+#endif</code></pre>
+
+                <p>File <code>math_utils.c</code>:</p>
+
+                <pre><code>#include "math_utils.h"
+
+int add_numbers(int a, int b)
+{
+    return a + b;
+}</code></pre>
+
+                <p>File <code>main.c</code>:</p>
+
+                <pre><code>#include "math_utils.h"
+
+int main(void)
+{
+    int result = add_numbers(10, 20);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi biên dịch riêng từng file, <code>main.o</code> sẽ có thông tin tham chiếu
+                    đến Symbol <code>add_numbers</code>.
+                    Trong khi đó, <code>math_utils.o</code> chứa phần triển khai thực tế của Function này.
+                </p>
+
+                <p>
+                    Linker sẽ tìm và liên kết các Symbol tương ứng để tạo thành chương trình hoàn chỉnh.
+                </p>
+
+                <h3>6.3. Address Resolution và Relocation</h3>
+
+                <p>
+                    Bên cạnh việc tìm Symbol, Linker còn phải xử lý địa chỉ của các thành phần
+                    trong chương trình.
+                </p>
+
+                <p>
+                    Một Object File có thể chưa biết chính xác vị trí cuối cùng của Function
+                    hoặc biến trong chương trình hoàn chỉnh.
+                    Linker sử dụng các thông tin Relocation để điều chỉnh những tham chiếu địa chỉ
+                    sau khi xác định vị trí của các thành phần.
+                </p>
+
+                <p>
+                    Trong Embedded Systems, việc bố trí các vùng nhớ còn phụ thuộc vào cấu hình
+                    bộ nhớ của vi điều khiển và các thông tin được cung cấp cho Linker.
+                    Nội dung về Linker Script, Memory Map và cách phân bố các Section sẽ được
+                    trình bày chi tiết tại Bài 9.
+                </p>
+
+                <h3>6.4. Thực hiện Linking bằng GCC</h3>
+
+                <p>
+                    Sau khi có hai Object File, có thể sử dụng GCC để kết hợp chúng:
+                </p>
+
+                <pre><code>gcc main.o math_utils.o -o application</code></pre>
+
+                <p>Trong đó:</p>
+
+                <ul>
+                    <li><code>main.o</code>: Object File chứa chương trình chính.</li>
+                    <li><code>math_utils.o</code>: Object File chứa Function hỗ trợ.</li>
+                    <li><code>-o application</code>: chỉ định tên chương trình đầu ra.</li>
+                </ul>
+
+                <p>
+                    Với chương trình chạy trên máy tính, kết quả thường là một Executable File.
+                    Với chương trình Embedded, Linker sẽ tạo một file phù hợp với kiến trúc
+                    và môi trường thực thi của Target MCU.
+                </p>
+
+                <div class="note">
+                    Trong các dự án Embedded thực tế, quá trình Linking thường còn sử dụng
+                    Startup Code, System Initialization, Library và Linker Script.
+                    Lệnh Linking sẽ phụ thuộc vào MCU và bộ công cụ được sử dụng.
+                </div>
+
+                <h2>7. Các loại file được tạo ra trong quá trình biên dịch</h2>
+
+                <p>
+                    Trong quá trình phát triển chương trình C, lập trình viên sẽ thường xuyên
+                    làm việc với nhiều loại file khác nhau.
+                    Mỗi loại file có mục đích và vai trò riêng.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>File</th>
+                        <th>Mô tả</th>
+                    </tr>
+                    <tr>
+                        <td><strong>.c</strong></td>
+                        <td>Source File chứa mã nguồn C.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.h</strong></td>
+                        <td>Header File chứa khai báo Function, Macro, kiểu dữ liệu và các khai báo dùng chung.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.i</strong></td>
+                        <td>Preprocessed File, chứa mã nguồn sau khi xử lý Preprocessor.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.s</strong></td>
+                        <td>Assembly File chứa mã Assembly do Compiler tạo ra.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.o / .obj</strong></td>
+                        <td>Object File chứa mã máy và thông tin phục vụ Linking.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.a / .lib</strong></td>
+                        <td>Static Library, chứa các Object File được đóng gói để tái sử dụng.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.elf</strong></td>
+                        <td>Executable and Linkable Format, thường chứa chương trình đã liên kết cùng các thông tin Symbol và Debug tùy cấu hình.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.hex</strong></td>
+                        <td>Intel HEX File, biểu diễn dữ liệu dưới dạng bản ghi văn bản Hexadecimal kèm thông tin địa chỉ.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.bin</strong></td>
+                        <td>Binary File, chứa dữ liệu nhị phân thô của Image được tạo ra.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.map</strong></td>
+                        <td>Map File, cung cấp thông tin về vị trí các Section, Symbol và mức sử dụng bộ nhớ sau Linking.</td>
+                    </tr>
+                </table>
+
+                <h3>7.1. Phân biệt ELF, HEX và BIN</h3>
+
+                <p>
+                    Trong Embedded Development, ba định dạng file thường gặp là ELF, HEX và BIN.
+                    Mặc dù chúng có thể chứa dữ liệu liên quan đến cùng một chương trình Firmware,
+                    nhưng mục đích sử dụng không hoàn toàn giống nhau.
+                </p>
+
+                <h3>ELF File</h3>
+
+                <p>
+                    <strong>ELF (Executable and Linkable Format)</strong> là định dạng file được sử dụng
+                    rộng rãi trong các hệ thống Linux và Embedded.
+                </p>
+
+                <p>
+                    Một file ELF sau khi Linking có thể chứa:
+                </p>
+
+                <ul>
+                    <li>Machine Code và các vùng dữ liệu của chương trình.</li>
+                    <li>Thông tin về các Section.</li>
+                    <li>Symbol Table nếu được giữ lại.</li>
+                    <li>Thông tin Debug nếu được tạo trong quá trình Build.</li>
+                    <li>Thông tin cần thiết cho Loader hoặc Debugger.</li>
+                </ul>
+
+                <p>
+                    ELF thường được sử dụng để Debug, phân tích chương trình và làm đầu vào
+                    cho các công cụ chuyển đổi Firmware.
+                </p>
+
+                <h3>HEX File</h3>
+
+                <p>
+                    <strong>Intel HEX</strong> là định dạng file biểu diễn dữ liệu nhị phân
+                    dưới dạng các dòng ký tự Hexadecimal.
+                    Các bản ghi thường chứa thông tin về địa chỉ, dữ liệu và Checksum.
+                </p>
+
+                <p>
+                    Định dạng này thường được sử dụng trong quá trình nạp Firmware
+                    vào bộ nhớ của vi điều khiển.
+                </p>
+
+                <h3>BIN File</h3>
+
+                <p>
+                    <strong>Binary File</strong> chứa dữ liệu nhị phân thô,
+                    không có cấu trúc bản ghi địa chỉ và Checksum như Intel HEX.
+                </p>
+
+                <p>
+                    Vì vậy, khi sử dụng BIN File, công cụ nạp thường cần biết địa chỉ
+                    bộ nhớ đích để ghi dữ liệu vào đúng vị trí.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>ELF</th>
+                        <th>HEX</th>
+                        <th>BIN</th>
+                    </tr>
+                    <tr>
+                        <td>Định dạng</td>
+                        <td>Executable / Linkable Format</td>
+                        <td>Văn bản Hexadecimal</td>
+                        <td>Dữ liệu nhị phân thô</td>
+                    </tr>
+                    <tr>
+                        <td>Thông tin địa chỉ</td>
+                        <td>Có thông tin địa chỉ và các Section.</td>
+                        <td>Có thông tin địa chỉ trong các bản ghi.</td>
+                        <td>Không chứa thông tin địa chỉ tải độc lập.</td>
+                    </tr>
+                    <tr>
+                        <td>Symbol / Debug</td>
+                        <td>Có thể chứa.</td>
+                        <td>Không chứa Symbol / Debug theo cấu trúc thông thường.</td>
+                        <td>Không chứa Symbol / Debug.</td>
+                    </tr>
+                    <tr>
+                        <td>Mục đích phổ biến</td>
+                        <td>Debug và phân tích chương trình.</td>
+                        <td>Nạp Firmware.</td>
+                        <td>Nạp Firmware.</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Không nên xem ELF, HEX và BIN là ba file hoàn toàn giống nhau
+                    chỉ khác phần mở rộng.
+                    Chúng có cấu trúc và mục đích sử dụng khác nhau.
+                    Công cụ nạp Firmware sẽ lựa chọn định dạng phù hợp với quy trình
+                    và yêu cầu của Target Hardware.
+                </div>
+
+                <h2>8. Embedded Toolchain là gì?</h2>
+
+                <p>
+                    Sau khi hiểu quá trình biên dịch, chúng ta có thể tìm hiểu
+                    <strong>Embedded Toolchain</strong>.
+                </p>
+
+                <p>
+                    Embedded Toolchain là tập hợp các công cụ được sử dụng để phát triển,
+                    biên dịch, liên kết, kiểm tra và hỗ trợ nạp chương trình vào hệ thống nhúng.
+                    Những công cụ này phối hợp với nhau để chuyển mã nguồn C thành Firmware
+                    có thể chạy trên vi điều khiển mục tiêu.
+                </p>
+
+                <p>
+                    Một Embedded Toolchain thường bao gồm các thành phần sau:
+                </p>
+
+                <svg viewBox="0 0 600 410" role="img"
+                    aria-label="Các thành phần chính của Embedded Toolchain"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.3">
+                        <rect x="140" y="8" width="320" height="42" rx="5"
+                            fill="rgba(20,80,107,.17)" />
+                        <rect x="140" y="66" width="320" height="42" rx="5"
+                            fill="rgba(224,168,0,.2)" />
+                        <rect x="140" y="124" width="320" height="42" rx="5"
+                            fill="rgba(46,139,87,.2)" />
+                        <rect x="140" y="182" width="320" height="42" rx="5"
+                            fill="rgba(128,128,128,.2)" />
+                        <rect x="140" y="240" width="320" height="42" rx="5"
+                            fill="rgba(20,80,107,.12)" />
+                        <rect x="140" y="298" width="320" height="42" rx="5"
+                            fill="rgba(46,139,87,.12)" />
+                        <rect x="140" y="356" width="320" height="42" rx="5"
+                            fill="rgba(224,168,0,.15)" />
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.3" fill="none">
+                        <path d="M300 50 V66 M300 108 V124 M300 166 V182 M300 224 V240 M300 282 V298 M300 340 V356" />
+                    </g>
+
+                    <g fill="currentColor" text-anchor="middle" font-size="12">
+                        <text x="300" y="34" font-weight="bold">Source Code &amp; Header Files</text>
+                        <text x="300" y="92" font-weight="bold">Preprocessor / Compiler</text>
+                        <text x="300" y="150" font-weight="bold">Assembler / Linker</text>
+                        <text x="300" y="208" font-weight="bold">Libraries &amp; Build System</text>
+                        <text x="300" y="266" font-weight="bold">Debugging Tools</text>
+                        <text x="300" y="324" font-weight="bold">Programmer / Flash Tool</text>
+                        <text x="300" y="382" font-weight="bold">Target Microcontroller</text>
+                    </g>
+                </svg>
+
+                <h3>8.1. Compiler</h3>
+
+                <p>
+                    Compiler chịu trách nhiệm chuyển đổi mã nguồn C thành mã Assembly
+                    hoặc các dạng biểu diễn trung gian phù hợp với kiến trúc mục tiêu.
+                </p>
+
+                <p>
+                    Trong Embedded Development, Compiler phải hỗ trợ kiến trúc CPU của vi điều khiển,
+                    chẳng hạn ARM Cortex-M, AVR hoặc các kiến trúc khác.
+                </p>
+
+                <h3>8.2. Assembler</h3>
+
+                <p>
+                    Assembler chuyển mã Assembly thành mã máy và tạo ra Object File.
+                    Đây là thành phần tiếp nối giai đoạn Compilation.
+                </p>
+
+                <h3>8.3. Linker</h3>
+
+                <p>
+                    Linker kết hợp các Object File và Library, xử lý các Symbol và tham chiếu địa chỉ,
+                    sau đó tạo chương trình đầu ra phù hợp với Target Platform.
+                </p>
+
+                <h3>8.4. Library</h3>
+
+                <p>
+                    Library chứa các thành phần mã nguồn đã được biên dịch và đóng gói
+                    để chương trình có thể tái sử dụng.
+                </p>
+
+                <p>
+                    Trong dự án Embedded, có thể sử dụng các Library cung cấp chức năng toán học,
+                    xử lý tín hiệu, giao tiếp hoặc các dịch vụ hỗ trợ khác.
+                </p>
+
+                <h3>8.5. Build System</h3>
+
+                <p>
+                    Build System giúp quản lý quá trình biên dịch và liên kết nhiều file
+                    trong cùng một dự án.
+                </p>
+
+                <p>
+                    Thay vì phải chạy thủ công từng lệnh Compiler cho tất cả Source File,
+                    Build System sẽ xác định những file cần biên dịch và tự động thực hiện
+                    các bước cần thiết.
+                </p>
+
+                <p>Một số công cụ phổ biến:</p>
+
+                <ul>
+                    <li><strong>Make:</strong> tự động hóa quá trình Build dựa trên các quy tắc trong Makefile.</li>
+                    <li><strong>CMake:</strong> công cụ quản lý và tạo cấu hình Build cho nhiều nền tảng khác nhau.</li>
+                    <li><strong>Ninja:</strong> Build System tập trung vào việc thực thi các tác vụ Build nhanh.</li>
+                </ul>
+
+                <h3>8.6. Debugger</h3>
+
+                <p>
+                    Debugger hỗ trợ lập trình viên kiểm tra hoạt động của chương trình
+                    trong quá trình thực thi.
+                </p>
+
+                <p>
+                    Những chức năng thường gặp gồm đặt Breakpoint, theo dõi giá trị biến,
+                    kiểm tra thanh ghi CPU và thực hiện từng bước lệnh.
+                </p>
+
+                <p>
+                    Đối với Embedded Systems, Debugger có thể kết hợp với các thiết bị Debug Probe
+                    để giao tiếp với vi điều khiển thông qua các giao diện như JTAG hoặc SWD.
+                </p>
+
+                <h3>8.7. Programmer / Flash Tool</h3>
+
+                <p>
+                    Sau khi Firmware được tạo ra, cần có công cụ để ghi chương trình
+                    vào bộ nhớ của vi điều khiển.
+                </p>
+
+                <p>
+                    Programmer hoặc Flash Tool hỗ trợ quá trình này bằng cách giao tiếp
+                    với Target MCU thông qua những giao diện phần cứng phù hợp.
+                </p>
+
+                <p>
+                    Một số công cụ có thể kết hợp cả chức năng Debugging và Flash Programming,
+                    giúp lập trình viên không cần sử dụng nhiều thiết bị riêng biệt.
+                </p>
+
+                <h2>9. Một số Embedded Toolchain phổ biến</h2>
+
+                <p>
+                    Tùy vào kiến trúc vi điều khiển và môi trường phát triển,
+                    lập trình viên có thể lựa chọn các bộ công cụ khác nhau.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Toolchain / IDE</th>
+                        <th>Mục đích sử dụng</th>
+                    </tr>
+                    <tr>
+                        <td><strong>GNU Arm Embedded Toolchain</strong></td>
+                        <td>Biên dịch và liên kết chương trình C/C++ cho các hệ thống sử dụng kiến trúc Arm.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Keil MDK</strong></td>
+                        <td>Môi trường phát triển và công cụ hỗ trợ cho nhiều dòng vi điều khiển Arm.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>STM32CubeIDE</strong></td>
+                        <td>IDE hỗ trợ phát triển, cấu hình, Build và Debug các dự án STM32.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AVR-GCC</strong></td>
+                        <td>Toolchain sử dụng GCC để phát triển phần mềm cho các vi điều khiển AVR.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IAR Embedded Workbench</strong></td>
+                        <td>Môi trường phát triển thương mại với Compiler và Debugger cho nhiều kiến trúc nhúng.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Cần lưu ý rằng IDE và Toolchain không hoàn toàn là một khái niệm.
+                    IDE là môi trường tích hợp hỗ trợ lập trình viên quản lý dự án,
+                    chỉnh sửa mã nguồn, Build và Debug.
+                    Toolchain là tập hợp các công cụ thực hiện những công việc kỹ thuật
+                    bên trong quá trình phát triển.
+                </p>
+
+                <h2>10. Cross Compilation trong Embedded Development</h2>
+
+                <p>
+                    Để hiểu rõ cách Embedded Toolchain được sử dụng trong thực tế,
+                    hãy xét trường hợp phát triển phần mềm cho một vi điều khiển ARM Cortex-M.
+                </p>
+
+                <p>
+                    Lập trình viên viết chương trình trên máy tính cá nhân,
+                    sử dụng ARM GCC để tạo mã máy dành cho vi điều khiển.
+                    Chương trình sau đó được liên kết thành Firmware và nạp vào bộ nhớ Flash của MCU.
+                </p>
+
+                <h3>10.1. Ví dụ về ARM GCC</h3>
+
+                <p>
+                    Một bộ công cụ GNU Arm thường cung cấp những chương trình như:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tool</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td><code>arm-none-eabi-gcc</code></td>
+                        <td>Compiler Driver dùng để biên dịch và liên kết chương trình cho môi trường Arm bare-metal.</td>
+                    </tr>
+                    <tr>
+                        <td><code>arm-none-eabi-as</code></td>
+                        <td>Assembler.</td>
+                    </tr>
+                    <tr>
+                        <td><code>arm-none-eabi-ld</code></td>
+                        <td>Linker.</td>
+                    </tr>
+                    <tr>
+                        <td><code>arm-none-eabi-objcopy</code></td>
+                        <td>Chuyển đổi định dạng file đối tượng hoặc Firmware.</td>
+                    </tr>
+                    <tr>
+                        <td><code>arm-none-eabi-objdump</code></td>
+                        <td>Phân tích và hiển thị nội dung Object File hoặc ELF.</td>
+                    </tr>
+                    <tr>
+                        <td><code>arm-none-eabi-size</code></td>
+                        <td>Hiển thị kích thước các Section của chương trình.</td>
+                    </tr>
+                    <tr>
+                        <td><code>arm-none-eabi-gdb</code></td>
+                        <td>Debugger dành cho các chương trình mục tiêu Arm.</td>
+                    </tr>
+                </table>
+
+                <h3>10.2. Một số tùy chọn Compiler thường gặp</h3>
+
+                <p>
+                    Khi biên dịch cho MCU, lập trình viên thường phải chỉ định kiến trúc CPU
+                    và một số tùy chọn phù hợp với Target Platform.
+                </p>
+
+                <pre><code>arm-none-eabi-gcc \
+    -mcpu=cortex-m4 \
+    -mthumb \
+    -O0 \
+    -g \
+    -c main.c \
+    -o main.o</code></pre>
+
+                <p>Ý nghĩa các tùy chọn:</p>
+
+                <table>
+                    <tr>
+                        <th>Option</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td><code>-mcpu=cortex-m4</code></td>
+                        <td>Chỉ định CPU mục tiêu là ARM Cortex-M4.</td>
+                    </tr>
+                    <tr>
+                        <td><code>-mthumb</code></td>
+                        <td>Yêu cầu tạo mã theo tập lệnh Thumb phù hợp với kiến trúc mục tiêu.</td>
+                    </tr>
+                    <tr>
+                        <td><code>-O0</code></td>
+                        <td>Không thực hiện hoặc hạn chế tối đa các tối ưu hóa Compiler.</td>
+                    </tr>
+                    <tr>
+                        <td><code>-g</code></td>
+                        <td>Tạo thông tin Debug.</td>
+                    </tr>
+                    <tr>
+                        <td><code>-c</code></td>
+                        <td>Biên dịch thành Object File, không thực hiện Linking.</td>
+                    </tr>
+                    <tr>
+                        <td><code>-o main.o</code></td>
+                        <td>Đặt tên file đầu ra là <code>main.o</code>.</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Các tùy chọn trên là ví dụ cho một mục tiêu Cortex-M4.
+                    Khi làm việc với MCU thực tế, cần lựa chọn chính xác CPU, kiến trúc FPU,
+                    ABI và các tham số liên quan theo tài liệu của thiết bị và Compiler.
+                </div>
+
+                <h2>11. Quy trình Build Firmware hoàn chỉnh</h2>
+
+                <p>
+                    Bây giờ chúng ta có thể kết hợp những kiến thức đã tìm hiểu
+                    để hình dung một quy trình Build Firmware cơ bản.
+                </p>
+
+                <p>
+                    Giả sử dự án có nhiều Source File và được xây dựng cho một vi điều khiển ARM.
+                    Quy trình tổng quan có thể được mô tả như sau:
+                </p>
+
+                <ol>
+                    <li>
+                        <strong>Source Code:</strong> lập trình viên viết mã nguồn C,
+                        Header File và các file Assembly cần thiết.
+                    </li>
+                    <li>
+                        <strong>Preprocessing:</strong> xử lý Header File, Macro
+                        và những chỉ thị tiền xử lý.
+                    </li>
+                    <li>
+                        <strong>Compilation:</strong> kiểm tra và chuyển đổi mã nguồn C
+                        thành Assembly.
+                    </li>
+                    <li>
+                        <strong>Assembly:</strong> chuyển Assembly thành các Object File.
+                    </li>
+                    <li>
+                        <strong>Linking:</strong> kết hợp các Object File, Library và
+                        những thành phần cần thiết.
+                    </li>
+                    <li>
+                        <strong>ELF Generation:</strong> tạo chương trình đầu ra dưới dạng ELF.
+                    </li>
+                    <li>
+                        <strong>File Conversion:</strong> chuyển ELF thành HEX hoặc BIN
+                        nếu quy trình nạp Firmware yêu cầu.
+                    </li>
+                    <li>
+                        <strong>Programming:</strong> sử dụng Flash Tool để ghi Firmware
+                        vào bộ nhớ của Target MCU.
+                    </li>
+                    <li>
+                        <strong>Debugging:</strong> kiểm tra chương trình sau khi nạp
+                        và xác định các vấn đề nếu có.
+                    </li>
+                </ol>
+
+                <svg viewBox="0 0 600 450" role="img"
+                    aria-label="Quy trình Build và nạp Firmware cho hệ thống Embedded"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.3">
+                        <rect x="150" y="8" width="300" height="38" rx="5"
+                            fill="rgba(20,80,107,.15)" />
+                        <rect x="150" y="62" width="300" height="38" rx="5"
+                            fill="rgba(224,168,0,.15)" />
+                        <rect x="150" y="116" width="300" height="38" rx="5"
+                            fill="rgba(224,168,0,.15)" />
+                        <rect x="150" y="170" width="300" height="38" rx="5"
+                            fill="rgba(46,139,87,.15)" />
+                        <rect x="150" y="224" width="300" height="38" rx="5"
+                            fill="rgba(128,128,128,.15)" />
+                        <rect x="150" y="278" width="300" height="38" rx="5"
+                            fill="rgba(20,80,107,.15)" />
+                        <rect x="150" y="332" width="300" height="38" rx="5"
+                            fill="rgba(46,139,87,.15)" />
+                        <rect x="150" y="386" width="300" height="38" rx="5"
+                            fill="rgba(224,168,0,.15)" />
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.3" fill="none">
+                        <path d="M300 46 V62 M300 100 V116 M300 154 V170 M300 208 V224 M300 262 V278 M300 316 V332 M300 370 V386" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="300" y="32" font-weight="bold">Source Code (.c / .h / .s)</text>
+                        <text x="300" y="86" font-weight="bold">Preprocessing</text>
+                        <text x="300" y="140" font-weight="bold">Compilation</text>
+                        <text x="300" y="194" font-weight="bold">Assembly</text>
+                        <text x="300" y="248" font-weight="bold">Linking</text>
+                        <text x="300" y="302" font-weight="bold">ELF File</text>
+                        <text x="300" y="356" font-weight="bold">HEX / BIN File</text>
+                        <text x="300" y="410" font-weight="bold">Flash Programming</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Sau khi nạp Firmware thành công, chương trình có thể bắt đầu thực thi
+                    trên vi điều khiển theo cơ chế khởi động của hệ thống.
+                    Quá trình khởi tạo phần cứng và thiết lập môi trường chạy chương trình
+                    sẽ được tìm hiểu sâu hơn ở Bài 9 về Linker Script, Memory Map và Startup Code.
+                </p>
+
+                <h2>12. Các lỗi thường gặp trong quá trình Build</h2>
+
+                <p>
+                    Trong quá trình biên dịch và phát triển Embedded Software,
+                    lập trình viên có thể gặp nhiều loại lỗi khác nhau.
+                    Việc xác định lỗi thuộc giai đoạn nào sẽ giúp quá trình Debug hiệu quả hơn.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Loại lỗi</th>
+                        <th>Giai đoạn</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td>Preprocessor Error</td>
+                        <td>Preprocessing</td>
+                        <td>Không tìm thấy Header File được khai báo bằng <code>#include</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>Syntax Error</td>
+                        <td>Compilation</td>
+                        <td>Thiếu dấu chấm phẩy, sai cú pháp hoặc khai báo không hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>Type Error</td>
+                        <td>Compilation</td>
+                        <td>Sử dụng kiểu dữ liệu hoặc Function không phù hợp.</td>
+                    </tr>
+                    <tr>
+                        <td>Assembler Error</td>
+                        <td>Assembly</td>
+                        <td>Mã Assembly có lệnh không hợp lệ với kiến trúc mục tiêu.</td>
+                    </tr>
+                    <tr>
+                        <td>Undefined Reference</td>
+                        <td>Linking</td>
+                        <td>Gọi Function nhưng Linker không tìm thấy phần triển khai cần thiết.</td>
+                    </tr>
+                    <tr>
+                        <td>Multiple Definition</td>
+                        <td>Linking</td>
+                        <td>Một Symbol bị định nghĩa trùng lặp trong nhiều Object File.</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Overflow</td>
+                        <td>Linking / Configuration</td>
+                        <td>Các Section được ánh xạ vượt quá vùng nhớ đã cấu hình.</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime Error</td>
+                        <td>Runtime</td>
+                        <td>Chương trình hoạt động sai sau khi nạp Firmware.</td>
+                    </tr>
+                </table>
+
+                <h3>12.1. Preprocessor và Compilation Error</h3>
+
+                <p>
+                    Đây là những lỗi thường được phát hiện trước khi chương trình được tạo thành Object File.
+                    Nguyên nhân có thể đến từ việc không tìm thấy Header File, sai cú pháp,
+                    thiếu khai báo hoặc sử dụng kiểu dữ liệu không phù hợp.
+                </p>
+
+                <h3>12.2. Linking Error</h3>
+
+                <p>
+                    Linking Error thường xuất hiện khi Linker không thể hoàn thành việc kết hợp
+                    các Object File.
+                </p>
+
+                <p>
+                    Ví dụ, một Function đã được khai báo trong Header File và được gọi từ
+                    <code>main.c</code>, nhưng file chứa phần triển khai chưa được đưa vào quá trình Build.
+                </p>
+
+                <pre><code>undefined reference to `add_numbers'</code></pre>
+
+                <p>
+                    Để xử lý, cần kiểm tra xem file chứa Function có được biên dịch thành Object File
+                    và được đưa vào lệnh Linking hay chưa.
+                </p>
+
+                <h3>12.3. Runtime Error</h3>
+
+                <p>
+                    Không phải tất cả lỗi đều được phát hiện trong quá trình Build.
+                    Một chương trình có thể biên dịch và Linking thành công nhưng vẫn hoạt động sai
+                    khi chạy trên vi điều khiển.
+                </p>
+
+                <p>
+                    Ví dụ, chương trình có thể cấu hình ngoại vi không đúng, xử lý dữ liệu sai
+                    hoặc gặp vấn đề khi truy cập bộ nhớ.
+                    Những trường hợp này cần được kiểm tra bằng Debugger,
+                    kiểm thử trên Target Hardware và các công cụ phù hợp.
+                </p>
+
+                <div class="note">
+                    <strong>Build thành công không đồng nghĩa với chương trình hoạt động đúng.</strong>
+                    Compilation và Linking chỉ xác nhận rằng chương trình vượt qua những bước xử lý tương ứng.
+                    Chất lượng và hành vi thực tế của Firmware vẫn cần được kiểm thử và xác minh.
+                </div>
+
+                <h2>13. Debug và kiểm tra các file sau khi Build</h2>
+
+                <p>
+                    Bên cạnh việc tạo ra Firmware, Embedded Toolchain còn cung cấp các công cụ
+                    giúp lập trình viên phân tích kết quả Build.
+                    Một số công cụ hữu ích trong GNU Toolchain bao gồm:
+                </p>
+
+                <h3>13.1. Kiểm tra kích thước chương trình</h3>
+
+                <p>
+                    Có thể sử dụng lệnh <code>size</code> để xem kích thước các Section chính
+                    trong ELF File:
+                </p>
+
+                <pre><code>arm-none-eabi-size firmware.elf</code></pre>
+
+                <p>
+                    Kết quả thường hiển thị kích thước các Section như:
+                </p>
+
+                <ul>
+                    <li><strong>text:</strong> tổng kích thước các Section Code và những Section được tính vào nhóm Text theo công cụ.</li>
+                    <li><strong>data:</strong> dữ liệu đã khởi tạo.</li>
+                    <li><strong>bss:</strong> dữ liệu được khởi tạo bằng 0 hoặc chưa có giá trị khởi tạo tường minh.</li>
+                </ul>
+
+                <p>
+                    Kết quả cụ thể phụ thuộc vào cấu trúc ELF và cách Toolchain phân loại Section.
+                    Những thông tin này giúp lập trình viên có cái nhìn tổng quan về mức sử dụng bộ nhớ.
+                </p>
+
+                <h3>13.2. Phân tích nội dung Object File</h3>
+
+                <p>
+                    Có thể sử dụng <code>objdump</code> để xem thông tin về Section,
+                    Symbol hoặc Assembly tương ứng với chương trình.
+                </p>
+
+                <pre><code>arm-none-eabi-objdump -h firmware.elf
+
+arm-none-eabi-objdump -d firmware.elf</code></pre>
+
+                <ul>
+                    <li><code>-h</code>: hiển thị thông tin các Section.</li>
+                    <li><code>-d</code>: Disassemble các Section chứa mã có thể được giải mã thành lệnh.</li>
+                </ul>
+
+                <h3>13.3. Tạo HEX và BIN từ ELF</h3>
+
+                <p>
+                    Khi cần tạo file để nạp Firmware, có thể sử dụng <code>objcopy</code>:
+                </p>
+
+                <pre><code>arm-none-eabi-objcopy -O ihex firmware.elf firmware.hex
+
+arm-none-eabi-objcopy -O binary firmware.elf firmware.bin</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><code>-O ihex</code>: tạo file theo định dạng Intel HEX.</li>
+                    <li><code>-O binary</code>: tạo file nhị phân thô.</li>
+                </ul>
+
+                <p>
+                    Những lệnh trên chỉ minh họa các thao tác cơ bản với ELF.
+                    Trong một dự án thực tế, cần kiểm tra cấu hình Linker, vùng nhớ và quy định
+                    của công cụ Flash trước khi sử dụng file đầu ra.
+                </p>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    C Compilation Process là quy trình chuyển đổi mã nguồn C thành chương trình
+                    có thể thực thi. Quy trình này thường bao gồm bốn giai đoạn chính:
+                    Preprocessing, Compilation, Assembly và Linking.
+
+                    <br><br>
+
+                    Trong Embedded Development, lập trình viên thường sử dụng Cross Compiler
+                    để tạo chương trình cho vi điều khiển có kiến trúc khác với máy tính phát triển.
+                    Tập hợp các công cụ như Compiler, Assembler, Linker, Library, Build System
+                    và Debugger được gọi là Embedded Toolchain.
+
+                    <br><br>
+
+                    Các loại file quan trọng trong quá trình Build bao gồm Source File (.c),
+                    Header File (.h), Preprocessed File (.i), Assembly File (.s),
+                    Object File (.o), ELF (.elf), HEX (.hex), BIN (.bin) và Map File (.map).
+
+                    <br><br>
+
+                    Hiểu rõ quá trình Compilation và Embedded Toolchain giúp lập trình viên
+                    xác định nguyên nhân các lỗi Build, phân tích kết quả biên dịch và quản lý
+                    quá trình tạo Firmware cho Target Microcontroller.
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-1.html">← Bài trước</a>
+                    <a class="btn" href="lesson-3.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

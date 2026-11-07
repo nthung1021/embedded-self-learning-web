@@ -1,0 +1,2255 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html" class="active" aria-current="page">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+                <h1>Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</h1>
+
+                <p>
+                    Trong quá trình phát triển chương trình C, việc cấp phát và giải phóng
+                    bộ nhớ cần được quản lý chính xác.
+                    Nếu chương trình không giải phóng vùng nhớ khi không còn sử dụng,
+                    tiếp tục truy cập vào vùng nhớ đã bị giải phóng hoặc sử dụng Pointer
+                    không hợp lệ, hệ thống có thể gặp những lỗi nghiêm trọng.
+                </p>
+
+                <p>
+                    Các lỗi này thường khó phát hiện vì chương trình có thể vẫn hoạt động
+                    bình thường trong một số lần chạy, nhưng lại xuất hiện lỗi sau một khoảng
+                    thời gian hoặc khi điều kiện thực thi thay đổi.
+                </p>
+
+                <p>
+                    <strong>Memory Safety</strong> là nhóm nguyên tắc và kỹ thuật nhằm bảo đảm
+                    chương trình quản lý, truy cập và sử dụng bộ nhớ đúng quy tắc.
+                    Trong C, lập trình viên cần chủ động kiểm soát vòng đời của đối tượng,
+                    tính hợp lệ của Pointer và quyền sở hữu các vùng nhớ được cấp phát.
+                </p>
+
+                <div class="note">
+                    Bài học này tập trung vào các lỗi Memory Leak, Dangling Pointer,
+                    Use-after-free, Double Free, Invalid Free và những nguyên tắc
+                    quản lý bộ nhớ an toàn trong C Embedded.
+                    Các kỹ thuật phòng tránh Buffer Overflow sẽ được mở rộng ở Bài 40,
+                    còn Pointer Protection và Defensive Programming sẽ được trình bày
+                    ở các bài học thuộc Phần 6.
+                </div>
+
+                <h2>1. Memory Safety là gì?</h2>
+
+                <p>
+                    <strong>Memory Safety</strong> là khả năng bảo đảm chương trình chỉ truy cập
+                    và thao tác với những vùng nhớ hợp lệ, đúng phạm vi và trong khoảng thời gian
+                    mà các đối tượng tương ứng còn tồn tại.
+                </p>
+
+                <p>
+                    Trong C, lập trình viên có khả năng thao tác trực tiếp với địa chỉ bộ nhớ
+                    thông qua Pointer. Điều này mang lại sự linh hoạt và hiệu quả,
+                    nhưng cũng yêu cầu lập trình viên phải tự quản lý nhiều vấn đề liên quan đến bộ nhớ.
+                </p>
+
+                <p>
+                    Một chương trình quản lý bộ nhớ không an toàn có thể gặp các vấn đề như:
+                </p>
+
+                <ul>
+                    <li>Sử dụng bộ nhớ đã cấp phát nhưng không giải phóng.</li>
+                    <li>Truy cập một vùng nhớ sau khi vùng nhớ đó đã được giải phóng.</li>
+                    <li>Sử dụng Pointer chưa được khởi tạo.</li>
+                    <li>Giải phóng một vùng nhớ nhiều lần.</li>
+                    <li>Giải phóng Pointer không được trả về từ hàm cấp phát động.</li>
+                    <li>Truy cập ngoài phạm vi của vùng nhớ được cấp phát.</li>
+                    <li>Trả về địa chỉ của biến Local đã hết Lifetime.</li>
+                </ul>
+
+                <p>
+                    Những lỗi trên có thể làm chương trình hoạt động không đúng,
+                    gây hỏng dữ liệu, làm gián đoạn quá trình thực thi hoặc khiến hệ thống
+                    bị lỗi khi sử dụng bộ nhớ.
+                </p>
+
+                <h3>1.1. Các nhóm lỗi Memory Safety thường gặp</h3>
+
+                <table>
+                    <tr>
+                        <th>Memory Defect</th>
+                        <th>Mô tả</th>
+                    </tr>
+                    <tr>
+                        <td>Memory Leak</td>
+                        <td>Vùng nhớ đã cấp phát nhưng không còn Pointer hợp lệ để quản lý và giải phóng.</td>
+                    </tr>
+                    <tr>
+                        <td>Dangling Pointer</td>
+                        <td>Pointer vẫn giữ địa chỉ của một đối tượng không còn tồn tại.</td>
+                    </tr>
+                    <tr>
+                        <td>Use-after-free</td>
+                        <td>Truy cập vùng nhớ sau khi đã giải phóng.</td>
+                    </tr>
+                    <tr>
+                        <td>Double Free</td>
+                        <td>Giải phóng cùng một vùng nhớ nhiều lần.</td>
+                    </tr>
+                    <tr>
+                        <td>Invalid Free</td>
+                        <td>Giải phóng Pointer không hợp lệ hoặc không thuộc vùng nhớ được cấp phát phù hợp.</td>
+                    </tr>
+                    <tr>
+                        <td>Uninitialized Pointer</td>
+                        <td>Sử dụng Pointer chưa được khởi tạo giá trị hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>Out-of-bounds Access</td>
+                        <td>Đọc hoặc ghi bên ngoài phạm vi bộ nhớ của đối tượng.</td>
+                    </tr>
+                </table>
+
+                <h2>2. Memory Leak</h2>
+
+                <p>
+                    <strong>Memory Leak</strong> là lỗi xảy ra khi chương trình cấp phát bộ nhớ
+                    nhưng không giải phóng vùng nhớ đó sau khi không còn cần sử dụng.
+                    Đặc biệt nghiêm trọng là trường hợp chương trình làm mất tất cả các Pointer
+                    có thể dùng để quản lý và giải phóng vùng nhớ.
+                </p>
+
+                <p>
+                    Khi một vùng nhớ bị Memory Leak, Memory Allocator vẫn xem vùng nhớ đó
+                    là đang được sử dụng.
+                    Vì vậy, vùng nhớ không thể được cấp phát lại cho những yêu cầu khác
+                    cho đến khi được giải phóng hoặc môi trường thực thi được thiết lập lại.
+                </p>
+
+                <h3>2.1. Ví dụ về Memory Leak</h3>
+
+                <p>
+                    Xét chương trình sau:
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+void process_data(void)
+{
+    int *data = malloc(100U * sizeof(*data));
+
+    if (data == NULL)
+    {
+        return;
+    }
+
+    /* Sử dụng vùng nhớ */
+
+    /* Thiếu free(data) */
+}
+
+int main(void)
+{
+    process_data();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, chương trình sử dụng <code>malloc()</code>
+                    để cấp phát bộ nhớ cho 100 phần tử kiểu <code>int</code>.
+                    Tuy nhiên, Function <code>process_data()</code> kết thúc
+                    mà không gọi <code>free(data)</code>.
+                </p>
+
+                <p>
+                    Biến Pointer <code>data</code> là biến Local.
+                    Khi Function kết thúc, biến Pointer này hết Lifetime.
+                    Tuy nhiên, vùng nhớ được cấp phát động không tự động bị giải phóng
+                    theo biến Pointer.
+                </p>
+
+                <p>
+                    Kết quả là chương trình không còn giữ được địa chỉ của vùng nhớ đã cấp phát.
+                    Đây là một trường hợp Memory Leak.
+                </p>
+
+                <svg viewBox="0 0 600 315" role="img"
+                    aria-label="Memory Leak khi Pointer bị mất nhưng vùng nhớ Heap vẫn được cấp phát"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="35" y="15" width="220" height="110" rx="6"
+                            fill="rgba(20,80,107,.12)" />
+                        <rect x="345" y="15" width="220" height="110" rx="6"
+                            fill="rgba(224,168,0,.13)" />
+
+                        <rect x="380" y="180" width="150" height="80" rx="5"
+                            fill="rgba(224,168,0,.2)" />
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.4" fill="none">
+                        <path d="M145 125 V150 H455 V180" stroke-dasharray="5 4"/>
+                    </g>
+
+                    <g fill="currentColor" text-anchor="middle" font-size="12">
+                        <text x="145" y="40" font-weight="bold">Function</text>
+                        <text x="145" y="66">Local Pointer: data</text>
+                        <text x="145" y="91" font-size="10">Function đã kết thúc</text>
+
+                        <text x="455" y="40" font-weight="bold">Heap</text>
+                        <text x="455" y="66">Allocated Memory</text>
+                        <text x="455" y="91" font-size="10">Vẫn đang được quản lý là đã cấp phát</text>
+
+                        <text x="455" y="212" font-weight="bold">Leaked Block</text>
+                        <text x="455" y="233" font-size="10">Không còn Pointer để giải phóng</text>
+                        <text x="300" y="290" font-size="11">Vùng nhớ bị chiếm dụng nhưng không thể được tái sử dụng</text>
+                    </g>
+                </svg>
+
+                <div class="note">
+                    <strong>Điểm quan trọng:</strong> Lifetime của biến Pointer
+                    và Lifetime của vùng nhớ mà Pointer trỏ đến là hai vấn đề khác nhau.
+                    Khi biến Pointer hết Lifetime, vùng nhớ được cấp phát động
+                    không tự động được giải phóng.
+                </div>
+
+                <h3>2.2. Memory Leak khi cấp phát nhiều lần</h3>
+
+                <p>
+                    Một trường hợp khác là chương trình liên tục yêu cầu cấp phát bộ nhớ
+                    nhưng không giải phóng vùng nhớ cũ.
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+void process_sensor(void)
+{
+    for (int i = 0; i &lt; 100; i++)
+    {
+        int *data = malloc(256U * sizeof(*data));
+
+        if (data == NULL)
+        {
+            return;
+        }
+
+        /* Xử lý dữ liệu */
+
+        /*
+         * Thiếu free(data).
+         * Mỗi vòng lặp sẽ giữ lại một vùng nhớ đã cấp phát.
+         */
+    }
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, mỗi vòng lặp cấp phát một vùng nhớ mới.
+                    Khi vòng lặp chuyển sang lần tiếp theo, Pointer <code>data</code>
+                    được khai báo lại trong Block mới, nhưng vùng nhớ của lần cấp phát trước
+                    không được giải phóng.
+                </p>
+
+                <p>
+                    Sau nhiều lần lặp, lượng Heap khả dụng có thể giảm đáng kể.
+                    Nếu tình trạng này tiếp diễn, các yêu cầu cấp phát trong tương lai
+                    có thể thất bại do không còn đủ bộ nhớ.
+                </p>
+
+                <h3>2.3. Memory Leak khi ghi đè Pointer</h3>
+
+                <p>
+                    Memory Leak cũng có thể xuất hiện khi Pointer đang lưu địa chỉ
+                    của một vùng nhớ được cấp phát nhưng bị ghi đè bằng địa chỉ mới
+                    trước khi vùng nhớ cũ được giải phóng.
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data = malloc(10U * sizeof(*data));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    /* Cấp phát một vùng nhớ mới */
+    data = malloc(20U * sizeof(*data));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    free(data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong chương trình trên, khi lệnh cấp phát thứ hai ghi đè
+                    Pointer <code>data</code>, địa chỉ vùng nhớ đầu tiên bị mất.
+                    Chương trình không còn cách thông thường để truy cập và giải phóng
+                    vùng nhớ ban đầu.
+                </p>
+
+                <p>
+                    Mặc dù vùng nhớ thứ hai được giải phóng ở cuối chương trình,
+                    vùng nhớ đầu tiên vẫn bị Memory Leak.
+                </p>
+
+                <h3>2.4. Ảnh hưởng của Memory Leak</h3>
+
+                <table>
+                    <tr>
+                        <th>Ảnh hưởng</th>
+                        <th>Giải thích</th>
+                    </tr>
+                    <tr>
+                        <td>RAM Usage tăng</td>
+                        <td>Bộ nhớ đã cấp phát tiếp tục bị chiếm dụng dù chương trình không còn cần.</td>
+                    </tr>
+                    <tr>
+                        <td>Allocation Failure</td>
+                        <td>Các yêu cầu cấp phát mới có thể thất bại do thiếu bộ nhớ.</td>
+                    </tr>
+                    <tr>
+                        <td>System Instability</td>
+                        <td>Những thành phần khác có thể không đủ RAM để thực hiện chức năng.</td>
+                    </tr>
+                    <tr>
+                        <td>Performance Degradation</td>
+                        <td>Hệ thống có thể bị ảnh hưởng khi bộ nhớ khả dụng giảm hoặc tình trạng phân mảnh tăng.</td>
+                    </tr>
+                    <tr>
+                        <td>Long-term Failure</td>
+                        <td>Lỗi có thể tích lũy trong quá trình hệ thống hoạt động lâu dài.</td>
+                    </tr>
+                </table>
+
+                <h3>2.5. Memory Leak trong Embedded Systems</h3>
+
+                <p>
+                    Memory Leak đặc biệt đáng quan tâm đối với các hệ thống Embedded
+                    cần hoạt động liên tục trong thời gian dài.
+                </p>
+
+                <p>
+                    Ví dụ, một ECU có thể liên tục thực hiện các tác vụ như:
+                </p>
+
+                <ul>
+                    <li>Nhận và xử lý dữ liệu cảm biến.</li>
+                    <li>Truyền và nhận dữ liệu giao tiếp.</li>
+                    <li>Cập nhật trạng thái hệ thống.</li>
+                    <li>Ghi nhận các sự kiện và thông tin lỗi.</li>
+                    <li>Thực hiện các tác vụ định kỳ.</li>
+                </ul>
+
+                <p>
+                    Nếu một trong những tác vụ này liên tục cấp phát bộ nhớ
+                    nhưng không giải phóng đúng cách, RAM khả dụng có thể giảm dần
+                    sau nhiều chu kỳ hoạt động.
+                </p>
+
+                <div class="note">
+                    Đối với Firmware chạy lâu dài, việc kiểm tra Memory Leak
+                    không chỉ cần thực hiện sau một lần chạy chương trình.
+                    Cần kiểm tra qua nhiều chu kỳ xử lý, nhiều tình huống lỗi
+                    và các trường hợp hoạt động kéo dài.
+                </div>
+
+                <h2>3. Dangling Pointer</h2>
+
+                <p>
+                    <strong>Dangling Pointer</strong> là Pointer vẫn giữ một địa chỉ
+                    nhưng đối tượng mà nó từng tham chiếu đến không còn tồn tại
+                    hoặc không còn hợp lệ để truy cập.
+                </p>
+
+                <p>
+                    Dangling Pointer thường xuất hiện khi:
+                </p>
+
+                <ul>
+                    <li>Vùng nhớ được cấp phát động đã bị giải phóng bằng <code>free()</code>.</li>
+                    <li>Pointer trỏ đến một biến Local đã hết Lifetime.</li>
+                    <li>Vùng nhớ đã được thay đổi hoặc thay thế thông qua một thao tác như <code>realloc()</code>.</li>
+                    <li>Một đối tượng hoặc Buffer bị hủy nhưng các Pointer tham chiếu đến nó vẫn còn được giữ lại.</li>
+                </ul>
+
+                <h3>3.1. Dangling Pointer sau khi free()</h3>
+
+                <p>
+                    Xét chương trình sau:
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data = malloc(sizeof(*data));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    *data = 100;
+
+    printf("Value: %d\n", *data);
+
+    free(data);
+
+    /*
+     * data vẫn giữ địa chỉ cũ,
+     * nhưng vùng nhớ đã được giải phóng.
+     */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Sau khi gọi <code>free(data)</code>,
+                    vùng nhớ được cấp phát động đã được giải phóng.
+                    Tuy nhiên, biến Pointer <code>data</code> không tự động được đặt thành NULL.
+                </p>
+
+                <p>
+                    Do đó, <code>data</code> vẫn chứa địa chỉ cũ
+                    nhưng không còn được phép sử dụng để truy cập đối tượng trước đó.
+                    Pointer này trở thành Dangling Pointer.
+                </p>
+
+                <svg viewBox="0 0 600 265" role="img"
+                    aria-label="Dangling Pointer sau khi vùng nhớ Heap bị giải phóng"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="40" y="35" width="180" height="75" rx="5"
+                            fill="rgba(20,80,107,.16)" />
+                        <rect x="380" y="35" width="180" height="75" rx="5"
+                            fill="rgba(128,128,128,.15)" />
+
+                        <rect x="380" y="160" width="180" height="65" rx="5"
+                            fill="rgba(224,168,0,.16)" />
+                    </g>
+
+                    <g stroke="currentColor" fill="none" stroke-width="1.5">
+                        <path d="M220 72 H380" stroke-dasharray="5 4" />
+                        <path d="M300 59 L313 85 M313 59 L300 85" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="130" y="64" font-weight="bold">Pointer: data</text>
+                        <text x="130" y="84" font-size="10">Vẫn giữ địa chỉ cũ</text>
+
+                        <text x="470" y="64" font-weight="bold">Old Heap Block</text>
+                        <text x="470" y="84" font-size="10">Đã được free()</text>
+
+                        <text x="470" y="187" font-weight="bold">Dangling Pointer</text>
+                        <text x="470" y="206" font-size="10">Không còn trỏ đến đối tượng hợp lệ</text>
+                    </g>
+                </svg>
+
+                <h3>3.2. Dangling Pointer khi trả về địa chỉ biến Local</h3>
+
+                <p>
+                    Một trường hợp khác của Dangling Pointer là trả về địa chỉ
+                    của một biến Local thông thường trong Function.
+                </p>
+
+                <pre><code>int* get_sensor_value(void)
+{
+    int sensor_value = 100;
+
+    return &amp;sensor_value;
+}
+
+int main(void)
+{
+    int *data = get_sensor_value();
+
+    /*
+     * data không trỏ đến một đối tượng
+     * còn tồn tại hợp lệ.
+     */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Biến <code>sensor_value</code> có Automatic Storage Duration.
+                    Khi Function <code>get_sensor_value()</code> kết thúc,
+                    Lifetime của biến Local này cũng kết thúc.
+                </p>
+
+                <p>
+                    Vì vậy, Pointer được trả về không thể được sử dụng
+                    để truy cập biến <code>sensor_value</code> sau khi Function hoàn thành.
+                </p>
+
+                <h3>3.3. Dangling Pointer sau khi realloc()</h3>
+
+                <p>
+                    Như đã tìm hiểu ở Bài 6, <code>realloc()</code> có thể di chuyển
+                    vùng nhớ sang một địa chỉ mới.
+                    Khi thao tác này thành công, đối tượng vùng nhớ cũ được thay thế
+                    bởi vùng nhớ được cấp phát lại.
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data = malloc(5U * sizeof(*data));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    int *alias = data;
+
+    int *temp = realloc(
+        data,
+        10U * sizeof(*data)
+    );
+
+    if (temp == NULL)
+    {
+        free(data);
+        return 1;
+    }
+
+    data = temp;
+
+    /*
+     * alias không được sử dụng tiếp.
+     * Nó vẫn chứa địa chỉ cũ và không còn là
+     * Pointer hợp lệ đến đối tượng sau realloc().
+     */
+
+    free(data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>alias</code> và <code>data</code>
+                    ban đầu cùng trỏ đến một vùng nhớ.
+                    Sau khi <code>realloc()</code> thành công,
+                    Pointer trả về trong <code>temp</code> được sử dụng để tham chiếu
+                    đến vùng nhớ mới.
+                </p>
+
+                <p>
+                    Pointer <code>alias</code> không được sử dụng tiếp vì vùng nhớ
+                    mà nó tham chiếu đến đã được thay thế.
+                    Điều này cần được lưu ý ngay cả khi Allocator giữ nguyên địa chỉ vật lý.
+                </p>
+
+                <div class="note">
+                    Sau realloc() thành công, hãy sử dụng Pointer mới được trả về.
+                    Không nên tiếp tục sử dụng Pointer cũ hoặc các Pointer Alias
+                    được tạo từ vùng nhớ trước khi cấp phát lại.
+                </div>
+
+                <h2>4. Use-after-free</h2>
+
+                <p>
+                    <strong>Use-after-free</strong> là lỗi xảy ra khi chương trình
+                    tiếp tục đọc hoặc ghi dữ liệu thông qua Pointer sau khi vùng nhớ
+                    tương ứng đã được giải phóng.
+                </p>
+
+                <p>
+                    Đây là một trường hợp cụ thể của lỗi truy cập bộ nhớ không hợp lệ
+                    và thường liên quan trực tiếp đến Dangling Pointer.
+                </p>
+
+                <h3>4.1. Ví dụ về Use-after-free</h3>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data = malloc(sizeof(*data));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    *data = 100;
+
+    free(data);
+
+    /*
+     * Sai: truy cập vùng nhớ sau free().
+     * Đây là Use-after-free.
+     */
+
+    printf("%d\n", *data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Lỗi xuất hiện vì chương trình vẫn thực hiện phép đọc
+                    thông qua <code>data</code> sau khi vùng nhớ đã được giải phóng.
+                </p>
+
+                <p>
+                    Sau khi <code>free()</code> được gọi,
+                    chương trình không còn quyền sử dụng đối tượng được cấp phát trước đó.
+                    Việc tiếp tục đọc hoặc ghi vùng nhớ này gây ra Undefined Behavior.
+                </p>
+
+                <h3>4.2. Vì sao Use-after-free nguy hiểm?</h3>
+
+                <p>
+                    Một điểm nguy hiểm là bộ nhớ sau khi giải phóng có thể được
+                    Memory Allocator tái sử dụng cho một yêu cầu cấp phát khác.
+                    Vì vậy, Pointer cũ không thể bảo đảm sẽ luôn tham chiếu đến dữ liệu ban đầu.
+                </p>
+
+                <p>
+                    Tùy thuộc vào trạng thái bộ nhớ và cách Memory Allocator hoạt động,
+                    lỗi có thể biểu hiện theo nhiều cách:
+                </p>
+
+                <ul>
+                    <li>Chương trình đọc được giá trị không còn chính xác.</li>
+                    <li>Chương trình ghi đè dữ liệu thuộc một đối tượng khác.</li>
+                    <li>Chương trình hoạt động không ổn định.</li>
+                    <li>Chương trình gặp lỗi trong quá trình thực thi.</li>
+                </ul>
+
+                <h3>4.3. Cách phòng tránh Use-after-free</h3>
+
+                <p>
+                    Một số nguyên tắc cần áp dụng:
+                </p>
+
+                <ul>
+                    <li>Không sử dụng Pointer sau khi vùng nhớ tương ứng đã được giải phóng.</li>
+                    <li>Chỉ giải phóng bộ nhớ khi đã xác định không còn phần nào của chương trình cần sử dụng.</li>
+                    <li>Quản lý rõ ràng các Pointer Alias.</li>
+                    <li>Đặt Pointer sở hữu về NULL sau khi giải phóng nếu vẫn còn được sử dụng trong phạm vi hiện tại.</li>
+                    <li>Thiết kế quy tắc Ownership để xác định Module nào có trách nhiệm giải phóng vùng nhớ.</li>
+                </ul>
+
+                <h2>5. Double Free</h2>
+
+                <p>
+                    <strong>Double Free</strong> xảy ra khi chương trình gọi <code>free()</code>
+                    nhiều lần đối với cùng một vùng nhớ đã được cấp phát động.
+                </p>
+
+                <p>
+                    Sau lần giải phóng đầu tiên, vùng nhớ đã được trả lại cho Memory Allocator.
+                    Vì vậy, chương trình không được tiếp tục giải phóng chính vùng nhớ đó
+                    thông qua một Pointer cũ.
+                </p>
+
+                <h3>5.1. Ví dụ về Double Free</h3>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data = malloc(10U * sizeof(*data));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    free(data);
+
+    /*
+     * Sai: vùng nhớ đã được giải phóng.
+     * Không được free(data) lần thứ hai.
+     */
+
+    free(data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Sau lần gọi <code>free(data)</code> đầu tiên,
+                    đối tượng được cấp phát đã kết thúc Lifetime.
+                    Lần gọi thứ hai sử dụng Pointer không còn hợp lệ để giải phóng.
+                </p>
+
+                <p>
+                    Theo chuẩn C, hành vi này là Undefined Behavior.
+                    Không nên giả định rằng chương trình sẽ luôn báo lỗi
+                    hoặc luôn dừng ngay tại vị trí xảy ra Double Free.
+                </p>
+
+                <h3>5.2. Double Free do nhiều Pointer cùng tham chiếu</h3>
+
+                <p>
+                    Một trường hợp thường gây nhầm lẫn là hai Pointer cùng trỏ đến
+                    một vùng nhớ được cấp phát động.
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data_a = malloc(10U * sizeof(*data_a));
+
+    if (data_a == NULL)
+    {
+        return 1;
+    }
+
+    int *data_b = data_a;
+
+    /*
+     * data_a và data_b cùng trỏ đến
+     * một vùng nhớ.
+     */
+
+    free(data_a);
+
+    /*
+     * data_b vẫn giữ địa chỉ cũ
+     * nhưng không còn hợp lệ.
+     */
+
+    free(data_b);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, việc sao chép giá trị Pointer không tạo ra
+                    một vùng nhớ mới.
+                    Hai Pointer vẫn cùng tham chiếu đến một đối tượng được cấp phát.
+                </p>
+
+                <p>
+                    Khi <code>data_a</code> giải phóng vùng nhớ,
+                    <code>data_b</code> cũng trở thành Pointer không hợp lệ.
+                    Việc tiếp tục gọi <code>free(data_b)</code> gây ra Double Free.
+                </p>
+
+                <h3>5.3. Cách phòng tránh Double Free</h3>
+
+                <pre><code>int *data = malloc(10U * sizeof(*data));
+
+if (data != NULL)
+{
+    /* Sử dụng dữ liệu */
+
+    free(data);
+
+    data = NULL;
+}</code></pre>
+
+                <p>
+                    Đặt Pointer về <code>NULL</code> sau khi giải phóng giúp tránh
+                    việc vô tình sử dụng lại chính biến Pointer đó.
+                    Ngoài ra, vì <code>free(NULL)</code> là thao tác hợp lệ,
+                    chương trình có thể gọi giải phóng Pointer đã được đặt về NULL
+                    mà không thực hiện hành động nào.
+                </p>
+
+                <div class="note">
+                    Việc đặt một Pointer về NULL chỉ ảnh hưởng đến chính biến Pointer đó.
+                    Những Pointer khác đang giữ cùng địa chỉ vẫn không được tự động đặt NULL.
+                    Vì vậy, giải pháp quan trọng hơn vẫn là quản lý Ownership và Pointer Alias rõ ràng.
+                </div>
+
+                <h2>6. Invalid Free</h2>
+
+                <p>
+                    <strong>Invalid Free</strong> là lỗi xảy ra khi chương trình truyền
+                    một Pointer không hợp lệ cho hàm <code>free()</code>.
+                </p>
+
+                <p>
+                    Theo quy tắc của C, Pointer truyền vào <code>free()</code>
+                    phải là NULL hoặc địa chỉ được trả về từ một hàm cấp phát động
+                    và chưa được giải phóng trước đó.
+                </p>
+
+                <h3>6.1. Giải phóng biến Local</h3>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int value = 100;
+
+    int *data = &amp;value;
+
+    /*
+     * Sai: data trỏ đến biến Local,
+     * không phải vùng nhớ được cấp phát động.
+     */
+
+    free(data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>data</code> trỏ đến biến
+                    <code>value</code> được khai báo thông thường trong Function.
+                    Bộ nhớ của biến này không được tạo bởi <code>malloc()</code>
+                    hoặc các hàm cấp phát động tương ứng.
+                </p>
+
+                <p>
+                    Vì vậy, không được gọi <code>free(data)</code>.
+                    Đây là Invalid Free và gây ra Undefined Behavior.
+                </p>
+
+                <h3>6.2. Giải phóng Pointer nằm giữa vùng nhớ</h3>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data = malloc(10U * sizeof(*data));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    int *next = data + 1;
+
+    /*
+     * Sai: next chỉ là Pointer đến phần tử thứ hai.
+     * Không phải địa chỉ ban đầu do malloc() trả về.
+     */
+
+    free(next);
+
+    free(data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>data</code> trỏ đến đầu vùng nhớ được cấp phát.
+                    Trong khi đó, <code>next</code> trỏ đến một vị trí bên trong vùng nhớ.
+                </p>
+
+                <p>
+                    Chỉ được sử dụng Pointer hợp lệ đại diện cho vùng nhớ đã cấp phát
+                    khi gọi <code>free()</code>.
+                    Không được truyền địa chỉ của một phần tử nằm giữa vùng nhớ
+                    để giải phóng toàn bộ Block.
+                </p>
+
+                <h3>6.3. Giải phóng Pointer chưa khởi tạo</h3>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data;
+
+    /*
+     * Sai: data chưa được khởi tạo
+     * bằng một giá trị Pointer hợp lệ.
+     */
+
+    free(data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Biến <code>data</code> là biến Local thông thường nhưng chưa được khởi tạo.
+                    Giá trị của Pointer là indeterminate và không thể sử dụng
+                    như một Pointer hợp lệ.
+                </p>
+
+                <p>
+                    Cách an toàn hơn là khởi tạo Pointer bằng NULL:
+                </p>
+
+                <pre><code>int *data = NULL;
+
+free(data);</code></pre>
+
+                <h3>6.4. Các trường hợp Invalid Free thường gặp</h3>
+
+                <table>
+                    <tr>
+                        <th>Trường hợp</th>
+                        <th>Nguyên nhân</th>
+                    </tr>
+                    <tr>
+                        <td>Free Local Variable</td>
+                        <td>Pointer trỏ đến đối tượng có Automatic Storage Duration.</td>
+                    </tr>
+                    <tr>
+                        <td>Free Global Variable</td>
+                        <td>Pointer trỏ đến đối tượng có Static Storage Duration.</td>
+                    </tr>
+                    <tr>
+                        <td>Free Interior Pointer</td>
+                        <td>Pointer không trỏ đến địa chỉ đầu vùng nhớ được cấp phát.</td>
+                    </tr>
+                    <tr>
+                        <td>Free Uninitialized Pointer</td>
+                        <td>Pointer chứa giá trị chưa xác định.</td>
+                    </tr>
+                    <tr>
+                        <td>Free Already-freed Pointer</td>
+                        <td>Vùng nhớ đã được giải phóng trước đó.</td>
+                    </tr>
+                </table>
+
+                <h2>7. Uninitialized Pointer</h2>
+
+                <p>
+                    <strong>Uninitialized Pointer</strong> là Pointer được khai báo
+                    nhưng chưa được gán một giá trị hợp lệ trước khi sử dụng.
+                </p>
+
+                <p>
+                    Trong C, khai báo một biến Pointer Local mà không khởi tạo
+                    không có nghĩa Pointer tự động nhận giá trị NULL.
+                    Biến có thể chứa giá trị không xác định.
+                </p>
+
+                <h3>7.1. Ví dụ Uninitialized Pointer</h3>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int *data;
+
+    /*
+     * data chưa được khởi tạo.
+     * Không sử dụng Pointer ở trạng thái này.
+     */
+
+    /*
+     * Không được thực hiện:
+     * *data = 100;
+     */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Nếu chương trình cố gắng đọc hoặc ghi thông qua Pointer chưa được khởi tạo,
+                    nó có thể truy cập đến một địa chỉ không hợp lệ.
+                    Hành vi này có thể dẫn đến Undefined Behavior.
+                </p>
+
+                <h3>7.2. Cách khởi tạo Pointer an toàn</h3>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data = NULL;
+
+    data = malloc(sizeof(*data));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    *data = 100;
+
+    free(data);
+
+    data = NULL;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>Pointer được khởi tạo bằng NULL khi chưa trỏ đến đối tượng nào.</li>
+                    <li>Pointer chỉ được sử dụng sau khi cấp phát bộ nhớ thành công.</li>
+                    <li>Vùng nhớ được giải phóng khi không còn cần thiết.</li>
+                    <li>Pointer được đặt về NULL sau khi giải phóng.</li>
+                </ul>
+
+                <h3>7.3. Null Pointer và Dangling Pointer</h3>
+
+                <p>
+                    Hai khái niệm này không giống nhau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Null Pointer</th>
+                        <th>Dangling Pointer</th>
+                    </tr>
+                    <tr>
+                        <td>Giá trị Pointer</td>
+                        <td>Được thiết lập bằng NULL.</td>
+                        <td>Còn giữ địa chỉ của đối tượng không còn hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>Ý nghĩa</td>
+                        <td>Không tham chiếu đến đối tượng nào.</td>
+                        <td>Từng tham chiếu đến đối tượng nhưng đối tượng đã hết Lifetime hoặc vùng nhớ không còn hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>Truy cập qua Pointer</td>
+                        <td>Không được Dereference.</td>
+                        <td>Không được sử dụng như Pointer hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>Khởi tạo</td>
+                        <td>Có thể chủ động thiết lập bằng NULL.</td>
+                        <td>Thường xuất hiện sau khi đối tượng hoặc vùng nhớ bị giải phóng.</td>
+                    </tr>
+                </table>
+
+                <h2>8. Shallow Copy và Memory Ownership</h2>
+
+                <p>
+                    Một nguyên nhân khác gây ra các lỗi Memory Safety trong C
+                    là sao chép Pointer mà không quản lý rõ ràng quyền sở hữu vùng nhớ.
+                </p>
+
+                <p>
+                    Khi gán một Pointer cho Pointer khác, chương trình chỉ sao chép
+                    giá trị địa chỉ.
+                    Nó không tạo ra một vùng nhớ mới và cũng không tự động thiết lập
+                    quyền sở hữu độc lập cho Pointer mới.
+                </p>
+
+                <h3>8.1. Shallow Copy là gì?</h3>
+
+                <p>
+                    <strong>Shallow Copy</strong> là cách sao chép trong đó các thành viên Pointer
+                    được sao chép giá trị địa chỉ thay vì tạo bản sao độc lập của dữ liệu
+                    mà chúng đang tham chiếu.
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data_a = malloc(5U * sizeof(*data_a));
+
+    if (data_a == NULL)
+    {
+        return 1;
+    }
+
+    /* Shallow Copy */
+    int *data_b = data_a;
+
+    /*
+     * data_a và data_b cùng trỏ
+     * đến một vùng nhớ.
+     */
+
+    free(data_a);
+
+    /*
+     * data_b trở thành Pointer không hợp lệ.
+     */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Sau phép gán:
+                </p>
+
+                <pre><code>int *data_b = data_a;</code></pre>
+
+                <p>
+                    Hai Pointer có giá trị địa chỉ giống nhau.
+                    Nếu một Pointer giải phóng vùng nhớ,
+                    Pointer còn lại cũng không thể tiếp tục sử dụng vùng nhớ đó.
+                </p>
+
+                <h3>8.2. Shallow Copy với Structure</h3>
+
+                <p>
+                    Vấn đề này có thể trở nên khó phát hiện hơn khi Pointer
+                    được đặt bên trong một Structure.
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+typedef struct
+{
+    char *name;
+
+    int id;
+
+} DeviceInfo;
+
+int main(void)
+{
+    DeviceInfo device_a;
+
+    device_a.name = malloc(20U * sizeof(char));
+
+    if (device_a.name == NULL)
+    {
+        return 1;
+    }
+
+    strcpy(device_a.name, "Sensor");
+
+    device_a.id = 1;
+
+    /* Shallow Copy toàn bộ Structure */
+    DeviceInfo device_b = device_a;
+
+    /*
+     * device_a.name và device_b.name
+     * cùng trỏ đến một vùng nhớ.
+     */
+
+    free(device_a.name);
+
+    /*
+     * device_b.name không còn hợp lệ.
+     */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, phép gán Structure chỉ sao chép các thành viên
+                    theo giá trị của chúng.
+                    Vì <code>name</code> là Pointer, địa chỉ được sao chép sang Structure mới.
+                </p>
+
+                <p>
+                    Do đó, cả <code>device_a.name</code> và <code>device_b.name</code>
+                    cùng tham chiếu đến một vùng nhớ được cấp phát động.
+                </p>
+
+                <h3>8.3. Memory Ownership là gì?</h3>
+
+                <p>
+                    <strong>Memory Ownership</strong> là cách thiết kế xác định
+                    thành phần nào chịu trách nhiệm quản lý và giải phóng một vùng nhớ.
+                </p>
+
+                <p>
+                    Ngôn ngữ C không có hệ thống Ownership tự động như một số ngôn ngữ khác.
+                    Vì vậy, lập trình viên cần thiết lập quy tắc rõ ràng trong thiết kế chương trình.
+                </p>
+
+                <p>
+                    Một số nguyên tắc thường áp dụng:
+                </p>
+
+                <ul>
+                    <li>Mỗi vùng nhớ nên có một thành phần chịu trách nhiệm chính về việc giải phóng.</li>
+                    <li>Những Function chỉ đọc hoặc xử lý dữ liệu có thể mượn Pointer mà không sở hữu vùng nhớ.</li>
+                    <li>Quy định rõ Function nào tạo dữ liệu và Function nào có trách nhiệm giải phóng.</li>
+                    <li>Khi chuyển giao quyền sở hữu, cần xác định rõ thành phần nào sẽ tiếp tục quản lý vùng nhớ.</li>
+                </ul>
+
+                <h3>8.4. Ví dụ về Borrowed Pointer</h3>
+
+                <p>
+                    Một Function có thể nhận Pointer để đọc dữ liệu
+                    mà không cần chịu trách nhiệm giải phóng vùng nhớ.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stddef.h&gt;
+
+void print_data(const int *data, size_t count)
+{
+    if (data == NULL)
+    {
+        return;
+    }
+
+    for (size_t i = 0U; i &lt; count; i++)
+    {
+        printf("%d\n", data[i]);
+    }
+
+    /*
+     * Function này chỉ sử dụng Pointer.
+     * Không gọi free(data).
+     */
+}
+
+int main(void)
+{
+    int values[3] = {10, 20, 30};
+
+    print_data(values, 3U);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, Function <code>print_data()</code>
+                    chỉ mượn Pointer để đọc dữ liệu.
+                    Function không sở hữu vùng nhớ nên không được tự ý giải phóng nó.
+                </p>
+
+                <p>
+                    Pointer cũng không được giữ lại để sử dụng sau khi Function
+                    mà đối tượng thuộc về đã kết thúc Lifetime.
+                </p>
+
+                <div class="note">
+                    Ownership là quy ước thiết kế rất quan trọng trong C.
+                    Khi giao tiếp giữa nhiều Module, cần xác định rõ ai tạo vùng nhớ,
+                    ai sử dụng và ai có trách nhiệm giải phóng vùng nhớ đó.
+                </div>
+
+                <h2>9. Memory Safety với realloc() và Pointer Alias</h2>
+
+                <p>
+                    Như đã tìm hiểu, <code>realloc()</code> có thể thay thế vùng nhớ ban đầu
+                    bằng một vùng nhớ mới.
+                    Vì vậy, việc quản lý những Pointer đang tham chiếu đến vùng nhớ đó
+                    cần được thực hiện cẩn thận.
+                </p>
+
+                <h3>9.1. Không sử dụng Pointer Alias cũ</h3>
+
+                <pre><code>int *data = malloc(5U * sizeof(*data));
+
+if (data == NULL)
+{
+    return 1;
+}
+
+int *alias = data;
+
+int *temp = realloc(
+    data,
+    10U * sizeof(*data)
+);
+
+if (temp == NULL)
+{
+    free(data);
+    return 1;
+}
+
+data = temp;
+
+/*
+ * Không sử dụng alias tại đây.
+ * Vùng nhớ ban đầu đã được thay thế.
+ */
+
+free(data);</code></pre>
+
+                <p>
+                    Sau khi <code>realloc()</code> thành công,
+                    chương trình cần sử dụng Pointer mới để tham chiếu
+                    đến vùng nhớ đã cấp phát lại.
+                </p>
+
+                <p>
+                    Các Pointer Alias khác được tạo trước đó không được sử dụng
+                    như những Pointer hợp lệ đến đối tượng mới.
+                </p>
+
+                <h3>9.2. Xử lý khi realloc() thất bại</h3>
+
+                <p>
+                    Ngược lại, khi <code>realloc()</code> thất bại với kích thước khác 0,
+                    Pointer ban đầu vẫn còn hợp lệ và vùng nhớ cũ vẫn chưa bị giải phóng.
+                </p>
+
+                <pre><code>int *data = malloc(5U * sizeof(*data));
+
+if (data == NULL)
+{
+    return 1;
+}
+
+int *temp = realloc(
+    data,
+    10U * sizeof(*data)
+);
+
+if (temp == NULL)
+{
+    /*
+     * realloc thất bại.
+     * data vẫn trỏ đến vùng nhớ cũ.
+     */
+
+    free(data);
+
+    return 1;
+}
+
+data = temp;
+
+/* Tiếp tục sử dụng vùng nhớ mới */
+
+free(data);</code></pre>
+
+                <p>
+                    Vì vậy, cần kiểm tra kết quả trả về của <code>realloc()</code>
+                    trước khi cập nhật Pointer ban đầu.
+                    Đây cũng là một trong những Best Practices được trình bày ở Bài 6.
+                </p>
+
+                <h2>10. Common Memory Safety Defects</h2>
+
+                <p>
+                    Ngoài các lỗi đã tìm hiểu, một số vấn đề khác cũng có thể ảnh hưởng
+                    đến tính an toàn của bộ nhớ.
+                    Chúng thường liên quan đến phạm vi truy cập, vòng đời đối tượng
+                    hoặc việc khởi tạo dữ liệu.
+                </p>
+
+                <h3>10.1. Out-of-bounds Access</h3>
+
+                <p>
+                    <strong>Out-of-bounds Access</strong> xảy ra khi chương trình
+                    đọc hoặc ghi bên ngoài phạm vi hợp lệ của một đối tượng hoặc vùng nhớ.
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    size_t count = 5U;
+
+    int *data = malloc(count * sizeof(*data));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    /* Khởi tạo 5 phần tử */
+    for (size_t i = 0U; i &lt; count; i++)
+    {
+        data[i] = (int)i;
+    }
+
+    /*
+     * Sai: chỉ số hợp lệ là 0 đến 4.
+     * data[5] nằm ngoài phạm vi.
+     */
+
+    /* data[5] = 100; */
+
+    free(data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi cấp phát bộ nhớ cho năm phần tử,
+                    chỉ số hợp lệ là từ 0 đến 4.
+                    Việc truy cập phần tử thứ 6 vượt ra ngoài phạm vi của vùng nhớ.
+                </p>
+
+                <p>
+                    Out-of-bounds Access có thể dẫn đến ghi đè dữ liệu lân cận,
+                    đọc dữ liệu không hợp lệ hoặc gây lỗi thực thi.
+                    Nội dung này sẽ được phân tích sâu hơn trong Bài 40: Buffer Overflow Prevention.
+                </p>
+
+                <h3>10.2. Uninitialized Data</h3>
+
+                <p>
+                    Khi sử dụng <code>malloc()</code>, nội dung vùng nhớ chưa được khởi tạo.
+                    Nếu chương trình đọc dữ liệu trước khi ghi giá trị hợp lệ,
+                    chương trình có thể gặp lỗi liên quan đến dữ liệu chưa khởi tạo.
+                </p>
+
+                <pre><code>int *data = malloc(5U * sizeof(*data));
+
+if (data == NULL)
+{
+    return 1;
+}
+
+/*
+ * Sai: các phần tử chưa được khởi tạo.
+ */
+
+/* printf("%d\n", data[0]); */
+
+/* Khởi tạo trước khi sử dụng */
+data[0] = 100;
+
+free(data);</code></pre>
+
+                <h3>10.3. Dangling Pointer do trả về địa chỉ Local</h3>
+
+                <p>
+                    Không nên trả về địa chỉ của biến Local thông thường
+                    khi Function kết thúc.
+                    Lifetime của đối tượng đã kết thúc nên Pointer trả về không hợp lệ.
+                </p>
+
+                <h3>10.4. Lifetime Mismatch</h3>
+
+                <p>
+                    Lifetime Mismatch xảy ra khi chương trình giữ lại một Pointer
+                    lâu hơn thời gian tồn tại của đối tượng mà Pointer đó tham chiếu.
+                </p>
+
+                <p>
+                    Ví dụ, một Function nhận Pointer đến biến Local của Function khác
+                    rồi lưu lại để sử dụng sau khi Function gọi đã kết thúc.
+                    Nếu Lifetime của đối tượng không còn được bảo đảm,
+                    Pointer được lưu lại sẽ không thể được sử dụng an toàn.
+                </p>
+
+                <h2>11. Các kỹ thuật phòng tránh Memory Safety Defects</h2>
+
+                <p>
+                    Để hạn chế những lỗi bộ nhớ trong C, lập trình viên cần kiểm soát
+                    từ thời điểm khai báo Pointer, cấp phát bộ nhớ, sử dụng vùng nhớ
+                    cho đến khi giải phóng.
+                </p>
+
+                <h3>11.1. Khởi tạo Pointer bằng NULL</h3>
+
+                <pre><code>int *data = NULL;</code></pre>
+
+                <p>
+                    Khi chưa có vùng nhớ hợp lệ, nên khởi tạo Pointer bằng NULL
+                    thay vì để nó chứa một giá trị không xác định.
+                </p>
+
+                <h3>11.2. Kiểm tra kết quả cấp phát</h3>
+
+                <pre><code>int *data = malloc(10U * sizeof(*data));
+
+if (data == NULL)
+{
+    /* Xử lý lỗi cấp phát */
+    return 1;
+}</code></pre>
+
+                <p>
+                    Chỉ sử dụng vùng nhớ sau khi xác nhận việc cấp phát thành công.
+                </p>
+
+                <h3>11.3. Giải phóng bộ nhớ đúng thời điểm</h3>
+
+                <pre><code>int *data = malloc(10U * sizeof(*data));
+
+if (data == NULL)
+{
+    return 1;
+}
+
+/* Sử dụng dữ liệu */
+
+/* Giải phóng khi không còn cần */
+free(data);
+
+data = NULL;</code></pre>
+
+                <p>
+                    Đặt Pointer về NULL sau khi giải phóng giúp giảm nguy cơ
+                    sử dụng nhầm Pointer đã giải phóng thông qua chính biến đó.
+                </p>
+
+                <h3>11.4. Không trả về địa chỉ của biến Local thông thường</h3>
+
+                <p>
+                    Nếu Function cần trả về dữ liệu, có thể lựa chọn những cách thiết kế phù hợp:
+                </p>
+
+                <ul>
+                    <li>Trả về một giá trị có kiểu dữ liệu phù hợp.</li>
+                    <li>Nhận Pointer đầu ra do Caller cung cấp.</li>
+                    <li>Sử dụng đối tượng có Static Storage Duration khi thật sự phù hợp.</li>
+                    <li>Sử dụng vùng nhớ được cấp phát động khi cần và có quy tắc Ownership rõ ràng.</li>
+                </ul>
+
+                <h3>11.5. Quản lý Pointer Alias</h3>
+
+                <p>
+                    Khi một vùng nhớ được nhiều Pointer tham chiếu,
+                    cần xác định rõ Pointer nào chịu trách nhiệm giải phóng.
+                    Các Pointer còn lại chỉ nên được sử dụng trong khoảng thời gian
+                    vùng nhớ vẫn còn hợp lệ.
+                </p>
+
+                <h3>11.6. Kiểm tra phạm vi truy cập</h3>
+
+                <p>
+                    Khi xử lý Array hoặc Buffer, cần kiểm tra chỉ số trước khi đọc và ghi.
+                    Không truy cập vượt quá số lượng phần tử đã cấp phát.
+                </p>
+
+                <h2>12. Cleanup Pattern trong C</h2>
+
+                <p>
+                    Trong những Function có nhiều bước xử lý và nhiều lần cấp phát bộ nhớ,
+                    việc quản lý giải phóng tài nguyên có thể trở nên phức tạp.
+                </p>
+
+                <p>
+                    Nếu một bước xử lý thất bại và Function phải trả về sớm,
+                    lập trình viên cần bảo đảm những vùng nhớ đã cấp phát trước đó
+                    vẫn được giải phóng phù hợp.
+                </p>
+
+                <p>
+                    Một giải pháp thường được sử dụng trong C là
+                    <strong>Cleanup Pattern</strong>.
+                    Ý tưởng là tập trung quá trình giải phóng tài nguyên tại một vị trí
+                    thay vì viết nhiều đoạn giải phóng riêng biệt.
+                </p>
+
+                <h3>12.1. Ví dụ dễ gặp lỗi khi xử lý nhiều nhánh Return</h3>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int process_data(void)
+{
+    int *buffer_a = malloc(100U * sizeof(*buffer_a));
+
+    if (buffer_a == NULL)
+    {
+        return -1;
+    }
+
+    int *buffer_b = malloc(200U * sizeof(*buffer_b));
+
+    if (buffer_b == NULL)
+    {
+        /*
+         * Nếu không giải phóng buffer_a,
+         * chương trình sẽ bị Memory Leak.
+         */
+
+        return -1;
+    }
+
+    /* Xử lý dữ liệu */
+
+    free(buffer_b);
+    free(buffer_a);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, nếu cấp phát <code>buffer_b</code> thất bại,
+                    Function trả về ngay lập tức nhưng <code>buffer_a</code>
+                    vẫn chưa được giải phóng.
+                    Đây là một đường đi có thể gây Memory Leak.
+                </p>
+
+                <h3>12.2. Cleanup Pattern với một vị trí giải phóng chung</h3>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int process_data(void)
+{
+    int result = -1;
+
+    int *buffer_a = NULL;
+    int *buffer_b = NULL;
+
+    buffer_a = malloc(100U * sizeof(*buffer_a));
+
+    if (buffer_a == NULL)
+    {
+        goto cleanup;
+    }
+
+    buffer_b = malloc(200U * sizeof(*buffer_b));
+
+    if (buffer_b == NULL)
+    {
+        goto cleanup;
+    }
+
+    /* Xử lý dữ liệu */
+
+    result = 0;
+
+cleanup:
+
+    free(buffer_b);
+    free(buffer_a);
+
+    return result;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ol>
+                    <li>Hai Pointer được khởi tạo bằng NULL.</li>
+                    <li>Chương trình thực hiện cấp phát từng vùng nhớ.</li>
+                    <li>Nếu một bước thất bại, chương trình chuyển đến nhãn <code>cleanup</code>.</li>
+                    <li>Các vùng nhớ được giải phóng theo thứ tự phù hợp.</li>
+                    <li>Hàm trả về kết quả xử lý.</li>
+                </ol>
+
+                <p>
+                    Vì <code>free(NULL)</code> là thao tác hợp lệ,
+                    chương trình có thể gọi <code>free()</code> cho những Pointer
+                    chưa được cấp phát thành công mà không cần thêm nhiều câu lệnh kiểm tra.
+                </p>
+
+                <div class="note">
+                    Cleanup Pattern là một kỹ thuật tổ chức mã nguồn hữu ích trong C,
+                    đặc biệt khi Function quản lý nhiều tài nguyên.
+                    Cần bảo đảm mọi Pointer được khởi tạo đúng và các đối tượng được giải phóng
+                    theo thứ tự phù hợp với quan hệ phụ thuộc giữa chúng.
+                </div>
+
+                <h2>13. Memory Safety trong Embedded Systems</h2>
+
+                <p>
+                    Những lỗi Memory Safety có thể ảnh hưởng đến nhiều loại hệ thống,
+                    nhưng trong Embedded Systems, hậu quả thường đáng chú ý hơn
+                    do đặc điểm tài nguyên và cách thức hoạt động của Firmware.
+                </p>
+
+                <h3>13.1. Tài nguyên RAM có giới hạn</h3>
+
+                <p>
+                    Nhiều MCU có dung lượng RAM nhỏ.
+                    Nếu chương trình gặp Memory Leak, dung lượng RAM khả dụng
+                    có thể giảm dần và khiến những Module khác không còn đủ bộ nhớ.
+                </p>
+
+                <h3>13.2. Firmware hoạt động lâu dài</h3>
+
+                <p>
+                    Một số Firmware được thiết kế để hoạt động liên tục trong thời gian dài
+                    mà không cần khởi động lại thường xuyên.
+                    Vì vậy, lỗi Memory Leak hoặc Memory Corruption có thể tích lũy
+                    và chỉ xuất hiện sau một khoảng thời gian đáng kể.
+                </p>
+
+                <h3>13.3. Có thể không có Memory Protection Unit</h3>
+
+                <p>
+                    Một số vi điều khiển không có MPU hoặc không sử dụng cơ chế
+                    Memory Protection phù hợp.
+                    Trong những trường hợp này, việc truy cập sai địa chỉ có thể ảnh hưởng
+                    trực tiếp đến các vùng nhớ khác trong hệ thống.
+                </p>
+
+                <p>
+                    Điều này khiến việc phòng tránh lỗi ngay từ thiết kế và quá trình phát triển
+                    trở nên rất quan trọng.
+                </p>
+
+                <h3>13.4. Ảnh hưởng đến nhiều Module</h3>
+
+                <p>
+                    Trong một Firmware có nhiều Module như Sensor Driver,
+                    Communication Driver và Application Logic,
+                    một lỗi ghi đè bộ nhớ trong một Module có thể ảnh hưởng đến
+                    dữ liệu mà Module khác đang sử dụng.
+                </p>
+
+                <p>
+                    Do đó, quản lý đúng vùng nhớ không chỉ là vấn đề của một Function
+                    mà còn ảnh hưởng đến độ ổn định của toàn bộ hệ thống.
+                </p>
+
+                <h3>13.5. Memory Safety và Real-time Requirements</h3>
+
+                <p>
+                    Một số hệ thống Embedded có yêu cầu thời gian thực.
+                    Những thao tác cấp phát, giải phóng và xử lý lỗi bộ nhớ
+                    cần được xem xét cùng với thời gian thực thi của hệ thống.
+                </p>
+
+                <p>
+                    Vì vậy, các dự án có yêu cầu nghiêm ngặt có thể lựa chọn
+                    Static Allocation, Fixed-size Buffer hoặc Memory Pool
+                    để tăng khả năng dự đoán và kiểm soát tài nguyên.
+                </p>
+
+                <h2>14. Ownership và Memory Management trong dự án Embedded</h2>
+
+                <p>
+                    Khi phát triển một dự án Embedded có nhiều Module,
+                    việc quản lý vùng nhớ cần được tổ chức thống nhất.
+                    Nếu mỗi Module cấp phát và giải phóng bộ nhớ theo những quy tắc khác nhau
+                    mà không có sự thống nhất, nguy cơ Memory Leak,
+                    Double Free và Dangling Pointer sẽ tăng lên.
+                </p>
+
+                <h3>14.1. Xác định Owner của vùng nhớ</h3>
+
+                <p>
+                    Một đối tượng được cấp phát động nên có một Owner được xác định rõ ràng.
+                    Owner chịu trách nhiệm quyết định thời điểm kết thúc việc sử dụng
+                    và thực hiện giải phóng vùng nhớ.
+                </p>
+
+                <p>
+                    Những Module khác nếu cần sử dụng dữ liệu có thể nhận Pointer
+                    dưới dạng Borrowed Pointer.
+                    Những Module này chỉ được sử dụng dữ liệu trong khoảng thời gian
+                    mà Owner bảo đảm vùng nhớ vẫn còn hợp lệ.
+                </p>
+
+                <h3>14.2. Ví dụ về quản lý Owner và Borrowed Pointer</h3>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stddef.h&gt;
+
+void Sensor_Print(
+    const int *data,
+    size_t count
+)
+{
+    if (data == NULL)
+    {
+        return;
+    }
+
+    for (size_t i = 0U; i &lt; count; i++)
+    {
+        printf("%d\n", data[i]);
+    }
+
+    /*
+     * Sensor_Print chỉ mượn Pointer.
+     * Không được gọi free(data).
+     */
+}
+
+int main(void)
+{
+    size_t count = 5U;
+
+    /* main() sở hữu vùng nhớ */
+    int *sensor_data = malloc(
+        count * sizeof(*sensor_data)
+    );
+
+    if (sensor_data == NULL)
+    {
+        return 1;
+    }
+
+    for (size_t i = 0U; i &lt; count; i++)
+    {
+        sensor_data[i] = (int)(i * 10U);
+    }
+
+    /* Function khác chỉ sử dụng dữ liệu */
+    Sensor_Print(sensor_data, count);
+
+    /* Owner chịu trách nhiệm giải phóng */
+    free(sensor_data);
+
+    sensor_data = NULL;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>Function <code>main()</code> cấp phát và sở hữu vùng nhớ.</li>
+                    <li>Function <code>Sensor_Print()</code> chỉ nhận Pointer để đọc dữ liệu.</li>
+                    <li><code>Sensor_Print()</code> không tự giải phóng vùng nhớ.</li>
+                    <li>Sau khi sử dụng xong, Owner giải phóng vùng nhớ.</li>
+                </ul>
+
+                <p>
+                    Đây là một cách tổ chức Ownership đơn giản,
+                    giúp hạn chế việc nhiều Module cùng giải phóng một vùng nhớ.
+                </p>
+
+                <h3>14.3. Quản lý bộ nhớ giữa các Task và ISR</h3>
+
+                <p>
+                    Trong hệ thống có RTOS hoặc sử dụng Interrupt,
+                    nhiều ngữ cảnh thực thi có thể cùng truy cập đến một vùng dữ liệu.
+                </p>
+
+                <p>
+                    Nếu một Task giải phóng vùng nhớ trong khi Task khác hoặc ISR
+                    vẫn đang sử dụng Pointer đến vùng nhớ đó,
+                    hệ thống có thể gặp Use-after-free.
+                </p>
+
+                <p>
+                    Vì vậy, cần thiết kế rõ cơ chế sở hữu, đồng bộ và vòng đời dữ liệu
+                    khi chia sẻ Pointer giữa các ngữ cảnh thực thi.
+                    Việc này có liên quan đến Reentrancy, Concurrency và Critical Sections
+                    sẽ được tìm hiểu ở Bài 43.
+                </p>
+
+                <h2>15. Công cụ phát hiện Memory Errors</h2>
+
+                <p>
+                    Ngoài việc kiểm tra mã nguồn thủ công,
+                    lập trình viên có thể sử dụng các công cụ hỗ trợ phát hiện
+                    Memory Leak và những lỗi truy cập bộ nhớ không hợp lệ.
+                </p>
+
+                <h3>15.1. AddressSanitizer (ASan)</h3>
+
+                <p>
+                    <strong>AddressSanitizer (ASan)</strong> là công cụ hỗ trợ phát hiện
+                    những lỗi truy cập bộ nhớ trong quá trình chương trình thực thi.
+                </p>
+
+                <p>
+                    ASan có thể hỗ trợ phát hiện các lỗi như:
+                </p>
+
+                <ul>
+                    <li>Heap Use-after-free.</li>
+                    <li>Heap Buffer Overflow.</li>
+                    <li>Stack Buffer Overflow.</li>
+                    <li>Global Buffer Overflow.</li>
+                    <li>Một số trường hợp truy cập bộ nhớ không hợp lệ khác.</li>
+                </ul>
+
+                <p>
+                    Với GCC hoặc Clang trên nền tảng hỗ trợ,
+                    có thể bật AddressSanitizer bằng tùy chọn:
+                </p>
+
+                <pre><code>gcc -g -O1 -fsanitize=address \
+    -fno-omit-frame-pointer \
+    main.c -o application</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><code>-g</code>: tạo Debug Information.</li>
+                    <li><code>-O1</code>: sử dụng mức tối ưu hóa phù hợp cho quá trình kiểm thử.</li>
+                    <li><code>-fsanitize=address</code>: bật AddressSanitizer.</li>
+                    <li><code>-fno-omit-frame-pointer</code>: hỗ trợ việc thu thập thông tin Stack Trace.</li>
+                </ul>
+
+                <h3>15.2. UndefinedBehaviorSanitizer (UBSan)</h3>
+
+                <p>
+                    <strong>UndefinedBehaviorSanitizer (UBSan)</strong> là công cụ
+                    hỗ trợ phát hiện một số loại Undefined Behavior trong C/C++.
+                </p>
+
+                <p>
+                    UBSan có thể hỗ trợ phát hiện:
+                </p>
+
+                <ul>
+                    <li>Một số trường hợp Signed Integer Overflow.</li>
+                    <li>Truy cập Pointer sai Alignment.</li>
+                    <li>Một số lỗi liên quan đến phép toán và kiểu dữ liệu.</li>
+                    <li>Một số trường hợp Undefined Behavior được công cụ hỗ trợ kiểm tra.</li>
+                </ul>
+
+                <p>
+                    Ví dụ bật UBSan:
+                </p>
+
+                <pre><code>gcc -g -O1 -fsanitize=undefined \
+    main.c -o application</code></pre>
+
+                <h3>15.3. Valgrind</h3>
+
+                <p>
+                    <strong>Valgrind</strong> là bộ công cụ hỗ trợ phân tích chương trình,
+                    thường được sử dụng trên các hệ thống Linux.
+                    Một công cụ trong Valgrind là Memcheck,
+                    có thể hỗ trợ phát hiện những vấn đề liên quan đến sử dụng bộ nhớ.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>valgrind --leak-check=full \
+         --show-leak-kinds=all \
+         ./application</code></pre>
+
+                <p>
+                    Những thông tin có thể được kiểm tra gồm:
+                </p>
+
+                <ul>
+                    <li>Memory Leak.</li>
+                    <li>Invalid Read.</li>
+                    <li>Invalid Write.</li>
+                    <li>Use of Uninitialized Values.</li>
+                    <li>Invalid Free.</li>
+                </ul>
+
+                <h3>15.4. Static Analysis Tools</h3>
+
+                <p>
+                    Static Analysis là phương pháp phân tích mã nguồn mà không cần
+                    thực thi chương trình theo cách thông thường.
+                    Các công cụ phân tích có thể hỗ trợ phát hiện những vấn đề tiềm ẩn
+                    trong cách sử dụng Pointer, quản lý bộ nhớ và luồng điều khiển.
+                </p>
+
+                <p>
+                    Một số công cụ phổ biến:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tool</th>
+                        <th>Vai trò</th>
+                    </tr>
+                    <tr>
+                        <td>GCC Warnings</td>
+                        <td>Cảnh báo một số lỗi tiềm ẩn thông qua quá trình biên dịch.</td>
+                    </tr>
+                    <tr>
+                        <td>Clang Static Analyzer</td>
+                        <td>Phân tích mã nguồn để tìm những vấn đề liên quan đến luồng thực thi và quản lý bộ nhớ.</td>
+                    </tr>
+                    <tr>
+                        <td>Cppcheck</td>
+                        <td>Phân tích mã C/C++ và phát hiện một số lỗi lập trình phổ biến.</td>
+                    </tr>
+                    <tr>
+                        <td>PC-lint Plus</td>
+                        <td>Phân tích mã nguồn và kiểm tra các vấn đề về chất lượng, quy tắc lập trình.</td>
+                    </tr>
+                </table>
+
+                <h3>15.5. Debugger và Memory Inspection</h3>
+
+                <p>
+                    Debugger cũng là công cụ hữu ích khi kiểm tra các lỗi liên quan đến Pointer
+                    và bộ nhớ.
+                </p>
+
+                <p>
+                    Lập trình viên có thể sử dụng Debugger để:
+                </p>
+
+                <ul>
+                    <li>Theo dõi giá trị Pointer.</li>
+                    <li>Kiểm tra địa chỉ vùng nhớ.</li>
+                    <li>Quan sát nội dung bộ nhớ.</li>
+                    <li>Đặt Breakpoint tại các Function cấp phát và giải phóng.</li>
+                    <li>Theo dõi Call Stack khi phát hiện lỗi.</li>
+                    <li>Kiểm tra trạng thái chương trình khi xuất hiện HardFault hoặc lỗi tương tự trên MCU.</li>
+                </ul>
+
+                <div class="note">
+                    ASan, UBSan và Valgrind thường hữu ích trong môi trường Host-based Testing.
+                    Không phải mọi Compiler hoặc Target MCU đều hỗ trợ đầy đủ các công cụ này.
+                    Với Embedded Development, cần kiểm tra khả năng hỗ trợ của Toolchain
+                    và kết hợp các phương pháp Static Analysis, Debugging
+                    cùng kiểm thử trên Target Hardware.
+                </div>
+
+                <h2>16. Best Practices khi quản lý bộ nhớ an toàn trong C Embedded</h2>
+
+                <p>
+                    Để hạn chế Memory Defects và nâng cao độ tin cậy của Firmware,
+                    nên áp dụng những nguyên tắc sau:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Initialize Pointer:</strong> khởi tạo Pointer bằng NULL
+                        hoặc một địa chỉ hợp lệ trước khi sử dụng.
+                    </li>
+                    <li>
+                        <strong>Check Allocation:</strong> kiểm tra kết quả của malloc(),
+                        calloc() và realloc() trước khi truy cập vùng nhớ.
+                    </li>
+                    <li>
+                        <strong>Clear Ownership:</strong> xác định rõ thành phần nào chịu trách nhiệm
+                        giải phóng mỗi vùng nhớ được cấp phát.
+                    </li>
+                    <li>
+                        <strong>Release Memory:</strong> giải phóng vùng nhớ khi không còn cần sử dụng
+                        để tránh Memory Leak.
+                    </li>
+                    <li>
+                        <strong>Avoid Use-after-free:</strong> không truy cập Pointer
+                        sau khi đối tượng tương ứng đã hết Lifetime.
+                    </li>
+                    <li>
+                        <strong>Avoid Double Free:</strong> chỉ giải phóng vùng nhớ một lần
+                        và không sử dụng Pointer đã giải phóng để gọi free() lần nữa.
+                    </li>
+                    <li>
+                        <strong>Validate Pointer Ownership:</strong> không gọi free()
+                        đối với Pointer không thuộc vùng nhớ được cấp phát động phù hợp.
+                    </li>
+                    <li>
+                        <strong>Control Pointer Alias:</strong> quản lý các Pointer cùng tham chiếu
+                        đến một đối tượng và tránh giải phóng vùng nhớ từ nhiều nơi.
+                    </li>
+                    <li>
+                        <strong>Check Object Lifetime:</strong> không giữ Pointer đến biến Local
+                        sau khi Function hoặc Block chứa đối tượng đã kết thúc.
+                    </li>
+                    <li>
+                        <strong>Monitor Memory Usage:</strong> kiểm tra tình trạng sử dụng RAM
+                        và các lỗi bộ nhớ trong thời gian chạy.
+                    </li>
+                    <li>
+                        <strong>Prefer Predictable Allocation:</strong> cân nhắc Static Allocation
+                        hoặc Memory Pool đối với các hệ thống có yêu cầu kiểm soát tài nguyên chặt chẽ.
+                    </li>
+                    <li>
+                        <strong>Use Analysis Tools:</strong> kết hợp Compiler Warnings,
+                        Static Analysis và Runtime Memory Checking trong quá trình phát triển.
+                    </li>
+                </ul>
+
+                <h2>17. Tóm tắt các khái niệm quan trọng</h2>
+
+                <table>
+                    <tr>
+                        <th>Thuật ngữ</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Memory Safety</td>
+                        <td>Đảm bảo việc truy cập và quản lý bộ nhớ tuân theo các quy tắc hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Leak</td>
+                        <td>Vùng nhớ được cấp phát nhưng không còn được quản lý và giải phóng đúng cách.</td>
+                    </tr>
+                    <tr>
+                        <td>Dangling Pointer</td>
+                        <td>Pointer tham chiếu đến đối tượng không còn tồn tại hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>Use-after-free</td>
+                        <td>Truy cập vùng nhớ sau khi đã giải phóng.</td>
+                    </tr>
+                    <tr>
+                        <td>Double Free</td>
+                        <td>Giải phóng cùng một vùng nhớ nhiều lần.</td>
+                    </tr>
+                    <tr>
+                        <td>Invalid Free</td>
+                        <td>Giải phóng Pointer không hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>Uninitialized Pointer</td>
+                        <td>Pointer chưa được khởi tạo giá trị hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>Shallow Copy</td>
+                        <td>Sao chép giá trị Pointer thay vì tạo một bản sao độc lập của vùng dữ liệu.</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Ownership</td>
+                        <td>Quy tắc xác định thành phần chịu trách nhiệm quản lý và giải phóng bộ nhớ.</td>
+                    </tr>
+                    <tr>
+                        <td>Pointer Alias</td>
+                        <td>Nhiều Pointer cùng tham chiếu đến một đối tượng hoặc vùng nhớ.</td>
+                    </tr>
+                    <tr>
+                        <td>Cleanup Pattern</td>
+                        <td>Kỹ thuật tập trung quá trình giải phóng tài nguyên tại một vị trí.</td>
+                    </tr>
+                    <tr>
+                        <td>AddressSanitizer</td>
+                        <td>Công cụ hỗ trợ phát hiện một số lỗi truy cập bộ nhớ trong Runtime.</td>
+                    </tr>
+                    <tr>
+                        <td>UndefinedBehaviorSanitizer</td>
+                        <td>Công cụ hỗ trợ phát hiện một số Undefined Behavior.</td>
+                    </tr>
+                    <tr>
+                        <td>Valgrind</td>
+                        <td>Bộ công cụ phân tích chương trình, bao gồm kiểm tra Memory Errors.</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    Memory Safety là một yếu tố quan trọng trong lập trình C,
+                    đặc biệt khi chương trình phải trực tiếp quản lý Pointer,
+                    cấp phát và giải phóng bộ nhớ.
+
+                    <br><br>
+
+                    Memory Leak xảy ra khi vùng nhớ đã cấp phát không được giải phóng
+                    đúng cách và không còn được quản lý.
+                    Dangling Pointer xuất hiện khi Pointer vẫn giữ địa chỉ của một đối tượng
+                    nhưng đối tượng đã không còn tồn tại hợp lệ.
+                    Use-after-free là hành vi tiếp tục truy cập vùng nhớ sau khi đã giải phóng.
+
+                    <br><br>
+
+                    Double Free xảy ra khi cùng một vùng nhớ bị giải phóng nhiều lần,
+                    trong khi Invalid Free xảy ra khi Pointer truyền cho free()
+                    không đại diện cho một vùng nhớ được cấp phát hợp lệ.
+                    Uninitialized Pointer và Out-of-bounds Access cũng là những lỗi
+                    có thể gây ảnh hưởng nghiêm trọng đến độ ổn định của chương trình.
+
+                    <br><br>
+
+                    Để hạn chế những lỗi này, lập trình viên cần khởi tạo Pointer đúng cách,
+                    kiểm tra kết quả cấp phát, quản lý Ownership, kiểm soát Lifetime,
+                    giải phóng bộ nhớ đúng thời điểm và tránh sử dụng Pointer đã hết hiệu lực.
+                    Cleanup Pattern có thể được sử dụng để tổ chức quá trình giải phóng
+                    tài nguyên trong những Function phức tạp.
+
+                    <br><br>
+
+                    Trong Embedded Systems, việc quản lý bộ nhớ an toàn đặc biệt quan trọng
+                    do RAM có giới hạn và Firmware có thể cần hoạt động liên tục trong thời gian dài.
+                    Kết hợp Coding Best Practices, Static Analysis, Debugging và Runtime Memory Checking
+                    sẽ giúp nâng cao độ tin cậy của phần mềm.
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-6.html">← Bài trước</a>
+                    <a class="btn" href="lesson-8.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

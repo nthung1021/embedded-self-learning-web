@@ -1,0 +1,2098 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 5: Variable Scope, Lifetime &amp; Storage Duration | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html" class="active" aria-current="page">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+                <h1>Bài 5: Variable Scope, Lifetime &amp; Storage Duration</h1>
+
+                <p>
+                    Trong ngôn ngữ C, mỗi biến được khai báo đều có những đặc điểm liên quan
+                    đến phạm vi truy cập, thời gian tồn tại và cách bộ nhớ được quản lý.
+                    Những đặc điểm này ảnh hưởng trực tiếp đến cách một chương trình tổ chức dữ liệu
+                    và cách các Function tương tác với nhau.
+                </p>
+
+                <p>
+                    <strong>Variable Scope, Lifetime &amp; Storage Duration</strong> là ba khái niệm
+                    quan trọng giúp lập trình viên hiểu một biến có thể được truy cập ở đâu,
+                    tồn tại trong bao lâu và được quản lý như thế nào trong quá trình thực thi.
+                </p>
+
+                <p>
+                    Ngoài ra, C còn cung cấp các từ khóa như
+                    <code>auto</code>, <code>static</code> và <code>extern</code>
+                    để xác định hoặc điều chỉnh cách khai báo và liên kết các Identifier.
+                    Việc sử dụng đúng những từ khóa này giúp mã nguồn dễ quản lý hơn,
+                    hạn chế phụ thuộc giữa các Module và tránh các lỗi liên quan đến dữ liệu.
+                </p>
+
+                <div class="note">
+                    Trong bài học này, chúng ta sẽ tập trung vào Scope, Lifetime,
+                    Storage Duration, Storage Class Specifier và Linkage.
+                    Những nội dung chuyên sâu về quản lý biến Global giữa các Module
+                    và Encapsulation sẽ được mở rộng ở Bài 29 và Bài 30.
+                </div>
+
+                <h2>1. Tổng quan về Scope, Lifetime và Storage Duration</h2>
+
+                <p>
+                    Khi một biến được khai báo trong chương trình C, lập trình viên thường
+                    cần trả lời ba câu hỏi:
+                </p>
+
+                <ul>
+                    <li>Biến này có thể được truy cập ở những vị trí nào trong mã nguồn?</li>
+                    <li>Biến này tồn tại trong bao lâu khi chương trình thực thi?</li>
+                    <li>Hệ thống quản lý bộ nhớ dành cho biến này theo cách nào?</li>
+                </ul>
+
+                <p>
+                    Ba câu hỏi trên tương ứng với ba khái niệm Scope, Lifetime và Storage Duration.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Khái niệm</th>
+                        <th>Ý nghĩa</th>
+                        <th>Câu hỏi chính</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Scope</strong></td>
+                        <td>Phạm vi trong mã nguồn mà một Identifier có thể được sử dụng để tham chiếu.</td>
+                        <td>Biến có thể được truy cập ở đâu?</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lifetime</strong></td>
+                        <td>Khoảng thời gian mà một đối tượng tồn tại trong chương trình.</td>
+                        <td>Đối tượng tồn tại trong bao lâu?</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Storage Duration</strong></td>
+                        <td>Đặc tính quy định thời gian lưu trữ của một đối tượng.</td>
+                        <td>Bộ nhớ của đối tượng được duy trì theo cơ chế nào?</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Ba khái niệm này có liên quan nhưng không đồng nghĩa với nhau.
+                    Một biến có phạm vi truy cập chỉ nằm trong một Function
+                    nhưng vẫn có thể tồn tại trong suốt thời gian chương trình chạy.
+                    Ngược lại, một biến có phạm vi truy cập rộng không có nghĩa
+                    là chương trình có thể truy cập nó tại mọi thời điểm.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm quan trọng:</strong> Scope liên quan đến khả năng nhìn thấy
+                    Identifier trong mã nguồn, còn Lifetime và Storage Duration liên quan đến
+                    thời gian tồn tại của đối tượng.
+                </div>
+
+                <h2>2. Variable Scope là gì?</h2>
+
+                <p>
+                    <strong>Scope</strong> là vùng trong mã nguồn mà một Identifier
+                    (chẳng hạn như tên biến, tên Function hoặc tên Typedef)
+                    có thể được sử dụng để tham chiếu đến đối tượng hoặc khai báo tương ứng.
+                </p>
+
+                <p>
+                    Trong C, Scope được xác định dựa trên vị trí khai báo Identifier
+                    và cấu trúc chương trình.
+                    Một Identifier không nhất thiết phải được truy cập từ mọi vị trí
+                    trong toàn bộ chương trình.
+                </p>
+
+                <p>
+                    Có bốn loại Scope chính trong ngôn ngữ C:
+                </p>
+
+                <ul>
+                    <li>Block Scope.</li>
+                    <li>File Scope.</li>
+                    <li>Function Prototype Scope.</li>
+                    <li>Function Scope.</li>
+                </ul>
+
+                <h3>2.1. Block Scope</h3>
+
+                <p>
+                    <strong>Block Scope</strong> là phạm vi của một Identifier được khai báo
+                    bên trong một Block.
+                    Block thường được xác định bởi cặp dấu ngoặc nhọn <code>{ }</code>.
+                </p>
+
+                <p>
+                    Biến Local được khai báo bên trong Function thường có Block Scope.
+                    Những biến này có thể được sử dụng trong Block chứa chúng
+                    và các Block lồng bên trong, tùy theo quy tắc Visibility và Shadowing.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+void process_data(void)
+{
+    int sensor_value = 100;
+
+    if (sensor_value &gt; 50)
+    {
+        int threshold = 50;
+
+        printf("Sensor: %d\n", sensor_value);
+
+        printf("Threshold: %d\n", threshold);
+    }
+
+    /* Có thể truy cập sensor_value */
+    printf("Value: %d\n", sensor_value);
+
+    /* Không thể truy cập threshold tại đây */
+}
+
+int main(void)
+{
+    process_data();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>sensor_value</code> được khai báo trong Block của Function <code>process_data()</code>.</li>
+                    <li><code>threshold</code> được khai báo trong Block của câu lệnh <code>if</code>.</li>
+                    <li><code>threshold</code> chỉ có thể được sử dụng bên trong Block chứa nó.</li>
+                    <li><code>sensor_value</code> có thể được sử dụng trong cả Block của Function và các Block lồng bên trong.</li>
+                </ul>
+
+                <h3>2.2. Nested Block Scope</h3>
+
+                <p>
+                    Một Block có thể chứa nhiều Block khác.
+                    Khi đó, những Identifier được khai báo ở Block bên ngoài
+                    có thể được sử dụng trong Block bên trong nếu không bị một khai báo khác che khuất.
+                </p>
+
+                <pre><code>void example(void)
+{
+    int value = 10;
+
+    {
+        int result = value + 5;
+
+        {
+            int final_value = result * 2;
+
+            /* Có thể truy cập:
+             * value
+             * result
+             * final_value
+             */
+        }
+
+        /* Có thể truy cập:
+         * value
+         * result
+         *
+         * Không thể truy cập final_value
+         */
+    }
+
+    /* Chỉ còn truy cập value */
+}</code></pre>
+
+                <p>
+                    Ví dụ trên cho thấy Block Scope được tổ chức theo cấu trúc lồng nhau.
+                    Identifier được khai báo trong Block bên ngoài có thể được tham chiếu
+                    bên trong Block con, nhưng Identifier được khai báo trong Block con
+                    không thể được sử dụng bên ngoài Block đó.
+                </p>
+
+                <h3>2.3. File Scope</h3>
+
+                <p>
+                    <strong>File Scope</strong> là phạm vi của một Identifier được khai báo
+                    bên ngoài tất cả Function và các Block.
+                    Những khai báo này thường được đặt ở đầu Source File hoặc giữa các Function.
+                </p>
+
+                <p>
+                    Biến được khai báo ở cấp File thường được gọi là Global Variable
+                    trong quá trình phát triển C.
+                    Function được định nghĩa ở cấp File cũng có File Scope.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+/* File Scope */
+int system_status = 1;
+
+uint32_t sensor_counter = 0;
+
+void update_sensor(void)
+{
+    sensor_counter++;
+}
+
+int main(void)
+{
+    update_sensor();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, các Identifier:
+                    <code>system_status</code>, <code>sensor_counter</code>,
+                    <code>update_sensor</code> và <code>main</code>
+                    đều được khai báo ở File Scope.
+                </p>
+
+                <p>
+                    Các biến <code>system_status</code> và <code>sensor_counter</code>
+                    có thể được sử dụng trong các Function thuộc cùng phạm vi nhìn thấy của File.
+                    Tuy nhiên, việc truy cập chúng từ các Source File khác còn phụ thuộc vào Linkage.
+                </p>
+
+                <h3>2.4. Function Prototype Scope</h3>
+
+                <p>
+                    <strong>Function Prototype Scope</strong> là phạm vi của tên tham số
+                    được khai báo bên trong Function Prototype.
+                    Tên tham số chỉ có ý nghĩa trong phần khai báo Function Prototype đó.
+                </p>
+
+                <pre><code>int calculate_sum(int a, int b);
+
+void process_sensor(uint16_t sensor_value);
+
+/*
+ * Các tên a, b và sensor_value
+ * trong Function Prototype không thể được sử dụng
+ * như những biến bên ngoài Function.
+ */</code></pre>
+
+                <p>
+                    Trong ví dụ trên, các tên:
+                    <code>a</code>, <code>b</code> và <code>sensor_value</code>
+                    chỉ tồn tại trong phạm vi của từng Function Prototype.
+                </p>
+
+                <p>
+                    Có thể khai báo lại cùng những tên này trong phần triển khai Function
+                    mà không gây xung đột với Prototype.
+                </p>
+
+                <h3>2.5. Function Scope</h3>
+
+                <p>
+                    <strong>Function Scope</strong> là loại Scope đặc biệt dành cho các nhãn
+                    được khai báo bằng cú pháp Label trong Function.
+                    Khác với Block Scope, nhãn có thể được tham chiếu từ những vị trí khác
+                    trong cùng Function.
+                </p>
+
+                <pre><code>void process_data(void)
+{
+    int status = 0;
+
+    if (status == 0)
+    {
+        goto error_handler;
+    }
+
+    return;
+
+error_handler:
+
+    /* Xử lý lỗi tại đây */
+    return;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, nhãn <code>error_handler</code> có Function Scope.
+                    Nó được sử dụng bởi câu lệnh <code>goto</code> trong cùng Function.
+                </p>
+
+                <div class="note">
+                    Function Scope chủ yếu áp dụng cho Label, không phải cho toàn bộ
+                    biến được khai báo bên trong Function.
+                    Các biến Local thông thường vẫn có Block Scope.
+                </div>
+
+                <h2>3. Scope và Shadowing</h2>
+
+                <p>
+                    Trong C, một Identifier được khai báo ở Block bên trong có thể
+                    sử dụng cùng tên với Identifier ở Block bên ngoài.
+                    Khi đó, khai báo bên trong sẽ che khuất (Shadow) khai báo bên ngoài
+                    trong phạm vi tương ứng.
+                </p>
+
+                <p>
+                    Hiện tượng này được gọi là <strong>Variable Shadowing</strong>.
+                </p>
+
+                <h3>3.1. Ví dụ về Shadowing</h3>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int sensor_value = 100;
+
+void process_sensor(void)
+{
+    int sensor_value = 50;
+
+    printf("Local: %d\n", sensor_value);
+}
+
+int main(void)
+{
+    printf("Global: %d\n", sensor_value);
+
+    process_sensor();
+
+    printf("Global: %d\n", sensor_value);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Kết quả:
+                </p>
+
+                <pre><code>Global: 100
+Local: 50
+Global: 100</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>Biến Global <code>sensor_value</code> có giá trị 100.</li>
+                    <li>Biến Local <code>sensor_value</code> bên trong <code>process_sensor()</code> có giá trị 50.</li>
+                    <li>Trong phạm vi Function, tên <code>sensor_value</code> tham chiếu đến biến Local.</li>
+                    <li>Biến Global vẫn giữ nguyên giá trị 100.</li>
+                </ul>
+
+                <h3>3.2. Tác động của Shadowing</h3>
+
+                <p>
+                    Shadowing là một đặc điểm hợp lệ của C,
+                    tuy nhiên sử dụng quá nhiều Identifier trùng tên có thể khiến mã nguồn
+                    khó đọc và gây nhầm lẫn khi bảo trì.
+                </p>
+
+                <p>
+                    Trong Embedded Software, việc nhầm lẫn giữa biến Local và biến Global
+                    có thể làm cho lập trình viên khó xác định chính xác dữ liệu nào đang được
+                    đọc hoặc thay đổi.
+                </p>
+
+                <p>
+                    Vì vậy, nên đặt tên biến rõ ràng và tránh Shadowing không cần thiết,
+                    đặc biệt đối với những biến liên quan đến trạng thái hệ thống,
+                    cảm biến và các Module điều khiển.
+                </p>
+
+                <h2>4. Lifetime là gì?</h2>
+
+                <p>
+                    <strong>Lifetime</strong> là khoảng thời gian mà một đối tượng
+                    thực sự tồn tại trong chương trình.
+                    Trong thời gian này, đối tượng có thể được sử dụng theo những quy tắc
+                    của ngôn ngữ C.
+                </p>
+
+                <p>
+                    Lifetime thường bắt đầu khi vùng lưu trữ dành cho đối tượng được thiết lập
+                    theo quy tắc tương ứng và kết thúc khi Storage Duration của đối tượng kết thúc
+                    hoặc khi vùng nhớ cấp phát động được giải phóng.
+                </p>
+
+                <p>
+                    Lifetime không đồng nghĩa với Scope.
+                    Một biến có thể không còn được truy cập trực tiếp bằng tên ở một vị trí
+                    trong mã nguồn nhưng đối tượng tương ứng vẫn còn tồn tại trong bộ nhớ.
+                </p>
+
+                <h3>4.1. Lifetime của Local Variable</h3>
+
+                <p>
+                    Một biến Local thông thường có Automatic Storage Duration.
+                    Đối tượng thường được tạo khi chương trình đi vào Block chứa khai báo
+                    và Lifetime kết thúc khi quá trình thực thi rời khỏi Block đó.
+                </p>
+
+                <pre><code>void process_sensor(void)
+{
+    int sensor_value = 100;
+
+    /* sensor_value tồn tại tại đây */
+
+    sensor_value++;
+
+} /* Lifetime của sensor_value kết thúc */</code></pre>
+
+                <p>
+                    Khi Function <code>process_sensor()</code> kết thúc,
+                    biến <code>sensor_value</code> không còn tồn tại dưới dạng đối tượng
+                    có Automatic Storage Duration.
+                    Vùng Stack tương ứng có thể được tái sử dụng cho những hoạt động khác.
+                </p>
+
+                <h3>4.2. Lifetime của Global Variable</h3>
+
+                <p>
+                    Biến Global có Static Storage Duration.
+                    Điều này có nghĩa đối tượng tồn tại trong toàn bộ thời gian thực thi chương trình.
+                </p>
+
+                <pre><code>int system_status = 0;
+
+void update_status(void)
+{
+    system_status = 1;
+}
+
+void reset_status(void)
+{
+    system_status = 0;
+}
+
+int main(void)
+{
+    update_status();
+
+    reset_status();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Biến <code>system_status</code> được khai báo ở File Scope
+                    và tồn tại trong suốt thời gian chương trình hoạt động.
+                    Những Function có thể nhìn thấy khai báo này đều có thể sử dụng nó.
+                </p>
+
+                <h3>4.3. Lifetime của Static Local Variable</h3>
+
+                <p>
+                    Một biến được khai báo bằng <code>static</code> bên trong Function
+                    có một đặc điểm đáng chú ý:
+                    mặc dù có Block Scope nhưng lại có Static Storage Duration.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+void update_counter(void)
+{
+    static int counter = 0;
+
+    counter++;
+
+    printf("Counter: %d\n", counter);
+}
+
+int main(void)
+{
+    update_counter();
+    update_counter();
+    update_counter();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Kết quả:
+                </p>
+
+                <pre><code>Counter: 1
+Counter: 2
+Counter: 3</code></pre>
+
+                <p>
+                    Giải thích:
+                </p>
+
+                <ul>
+                    <li><code>counter</code> chỉ có thể được truy cập trực tiếp bên trong Function <code>update_counter()</code>.</li>
+                    <li>Biến được khởi tạo một lần với giá trị 0.</li>
+                    <li>Giá trị được giữ lại giữa các lần gọi Function.</li>
+                    <li>Lifetime của đối tượng kéo dài trong toàn bộ thời gian thực thi chương trình.</li>
+                </ul>
+
+                <div class="note">
+                    Đây là ví dụ điển hình cho thấy Scope và Lifetime là hai khái niệm khác nhau.
+                    Biến <code>counter</code> có Block Scope nhưng Static Storage Duration.
+                </div>
+
+                <h2>5. Storage Duration là gì?</h2>
+
+                <p>
+                    <strong>Storage Duration</strong> là khái niệm mô tả thời gian mà bộ nhớ
+                    dành cho một đối tượng được duy trì trong chương trình.
+                    Đây là một đặc điểm quan trọng khi phân tích cách C quản lý các biến và dữ liệu.
+                </p>
+
+                <p>
+                    Trong C, có bốn loại Storage Duration chính:
+                </p>
+
+                <ul>
+                    <li>Automatic Storage Duration.</li>
+                    <li>Static Storage Duration.</li>
+                    <li>Thread Storage Duration.</li>
+                    <li>Allocated Storage Duration.</li>
+                </ul>
+
+                <table>
+                    <tr>
+                        <th>Storage Duration</th>
+                        <th>Thời gian tồn tại</th>
+                        <th>Ví dụ</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Automatic</strong></td>
+                        <td>Trong khoảng thời gian thực thi Block tương ứng.</td>
+                        <td>Biến Local thông thường.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Static</strong></td>
+                        <td>Toàn bộ thời gian thực thi chương trình.</td>
+                        <td>Global Variable, Static Variable.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Thread</strong></td>
+                        <td>Trong thời gian tồn tại của Thread tương ứng.</td>
+                        <td>Biến khai báo bằng <code>_Thread_local</code> trong C11.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Allocated</strong></td>
+                        <td>Từ khi cấp phát thành công cho đến khi giải phóng.</td>
+                        <td>Đối tượng được tạo bởi <code>malloc()</code>.</td>
+                    </tr>
+                </table>
+
+                <h3>5.1. Automatic Storage Duration</h3>
+
+                <p>
+                    <strong>Automatic Storage Duration</strong> thường được áp dụng cho
+                    các biến Local được khai báo bên trong Block mà không sử dụng Storage Class
+                    Specifier làm thay đổi thời gian lưu trữ.
+                </p>
+
+                <pre><code>void calculate_average(void)
+{
+    int sum = 100;
+
+    int count = 10;
+
+    int average = sum / count;
+
+    /* Sử dụng average */
+}
+
+int main(void)
+{
+    calculate_average();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Các biến <code>sum</code>, <code>count</code> và <code>average</code>
+                    có Automatic Storage Duration.
+                </p>
+
+                <p>
+                    Khi chương trình thực thi Function <code>calculate_average()</code>,
+                    những đối tượng này được tạo theo cơ chế thực thi tương ứng.
+                    Khi Function kết thúc, Lifetime của chúng cũng kết thúc.
+                </p>
+
+                <h3>5.2. Static Storage Duration</h3>
+
+                <p>
+                    <strong>Static Storage Duration</strong> có nghĩa bộ nhớ dành cho đối tượng
+                    được duy trì trong toàn bộ thời gian thực thi chương trình.
+                </p>
+
+                <p>
+                    Những đối tượng thường có Static Storage Duration bao gồm:
+                </p>
+
+                <ul>
+                    <li>Global Variable.</li>
+                    <li>Static Global Variable.</li>
+                    <li>Static Local Variable.</li>
+                    <li>Các Function-level hoặc File-level Static Object tương ứng.</li>
+                </ul>
+
+                <pre><code>/* Static Storage Duration */
+int system_status = 1;
+
+static int error_count = 0;
+
+void update_counter(void)
+{
+    static int call_count = 0;
+
+    call_count++;
+}
+
+int main(void)
+{
+    update_counter();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Cả ba đối tượng <code>system_status</code>,
+                    <code>error_count</code> và <code>call_count</code>
+                    đều có Static Storage Duration.
+                </p>
+
+                <p>
+                    Tuy nhiên, Scope và Linkage của chúng khác nhau.
+                    Đây là nội dung sẽ được phân tích khi tìm hiểu từ khóa <code>static</code>.
+                </p>
+
+                <h3>5.3. Thread Storage Duration</h3>
+
+                <p>
+                    Thread Storage Duration được giới thiệu trong C11.
+                    Một đối tượng thuộc loại này tồn tại trong suốt thời gian Thread
+                    tương ứng tồn tại.
+                </p>
+
+                <p>
+                    Có thể sử dụng từ khóa <code>_Thread_local</code> để khai báo đối tượng
+                    có Thread Storage Duration.
+                </p>
+
+                <pre><code>/* C11 */
+
+#include &lt;threads.h&gt;
+
+_Thread_local int thread_counter = 0;
+
+void process_task(void)
+{
+    thread_counter++;
+
+    /* Mỗi Thread có đối tượng thread_counter riêng */
+}</code></pre>
+
+                <p>
+                    Khác với Global Variable thông thường,
+                    một đối tượng có Thread Storage Duration được tạo riêng cho mỗi Thread
+                    theo cơ chế của nền tảng hỗ trợ.
+                </p>
+
+                <div class="note">
+                    Thread Storage Duration không phải nội dung thường xuyên cần sử dụng
+                    trong các ứng dụng MCU Bare-metal đơn giản.
+                    Tuy nhiên, khái niệm này hữu ích khi tìm hiểu các hệ thống có hỗ trợ
+                    nhiều Thread hoặc môi trường chạy tương thích C11.
+                </div>
+
+                <h3>5.4. Allocated Storage Duration</h3>
+
+                <p>
+                    <strong>Allocated Storage Duration</strong> được áp dụng cho các đối tượng
+                    được cấp phát bộ nhớ trong Runtime.
+                    Đối tượng tồn tại từ khi vùng nhớ được cấp phát thành công
+                    cho đến khi được giải phóng.
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data = malloc(5 * sizeof(int));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    data[0] = 100;
+
+    /* Đối tượng được cấp phát vẫn tồn tại tại đây */
+
+    free(data);
+
+    /* Lifetime của đối tượng đã được cấp phát kết thúc */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, đối tượng được cấp phát thông qua
+                    <code>malloc()</code> có Allocated Storage Duration.
+                    Vòng đời của nó không phụ thuộc trực tiếp vào việc Function
+                    chứa lời gọi <code>malloc()</code> kết thúc hay chưa.
+                </p>
+
+                <p>
+                    Các vấn đề liên quan đến cấp phát, giải phóng và kiểm soát vòng đời
+                    của đối tượng được cấp phát sẽ được tìm hiểu sâu hơn trong Bài 6 và Bài 7.
+                </p>
+
+                <h2>6. Storage Class Specifier trong C</h2>
+
+                <p>
+                    <strong>Storage Class Specifier</strong> là những từ khóa được sử dụng
+                    trong khai báo để chỉ định một số đặc tính liên quan đến Identifier
+                    và cách đối tượng được quản lý.
+                </p>
+
+                <p>
+                    Trong phạm vi bài học này, chúng ta tập trung vào ba từ khóa quan trọng:
+                    <code>auto</code>, <code>static</code> và <code>extern</code>.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Vai trò chính</th>
+                    </tr>
+                    <tr>
+                        <td><strong>auto</strong></td>
+                        <td>Khai báo đối tượng có Automatic Storage Duration ở Block Scope.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>static</strong></td>
+                        <td>Điều chỉnh Storage Duration hoặc Linkage tùy vị trí khai báo.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>extern</strong></td>
+                        <td>Khai báo một Identifier có External Linkage hoặc liên kết với khai báo có Linkage tương ứng.</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Một điểm cần lưu ý: <code>static</code> và <code>extern</code>
+                    không chỉ đơn giản xác định biến được lưu ở Stack hay Heap.
+                    Chúng liên quan đến những đặc tính như Storage Duration và Linkage.
+                    Vị trí bộ nhớ vật lý cụ thể vẫn phụ thuộc vào Compiler và nền tảng.
+                </div>
+
+                <h2>7. auto Keyword</h2>
+
+                <p>
+                    <strong>auto</strong> là một Storage Class Specifier được sử dụng
+                    để khai báo biến có Automatic Storage Duration tại Block Scope.
+                </p>
+
+                <p>
+                    Trong các phiên bản C phổ biến như C99, C11 và C17,
+                    những biến Local thông thường đã có Automatic Storage Duration mặc định.
+                    Vì vậy, việc ghi thêm từ khóa <code>auto</code> thường không làm thay đổi
+                    hành vi của chương trình.
+                </p>
+
+                <h3>7.1. Cách sử dụng auto</h3>
+
+                <pre><code>void process_sensor(void)
+{
+    auto int sensor_value = 100;
+
+    int threshold = 50;
+
+    /* Cả hai biến đều có Automatic Storage Duration */
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>sensor_value</code> được khai báo với từ khóa <code>auto</code>.</li>
+                    <li><code>threshold</code> được khai báo mà không sử dụng Storage Class Specifier.</li>
+                    <li>Cả hai biến đều có Automatic Storage Duration.</li>
+                    <li>Cả hai biến đều có Block Scope.</li>
+                </ul>
+
+                <h3>7.2. So sánh khai báo auto và khai báo thông thường</h3>
+
+                <pre><code>void example(void)
+{
+    auto int value_a = 10;
+
+    int value_b = 20;
+
+    /*
+     * value_a và value_b có cùng
+     * Automatic Storage Duration.
+     */
+}</code></pre>
+
+                <p>
+                    Trong C, từ khóa <code>auto</code> không có nghĩa là biến sẽ được
+                    cấp phát động trên Heap.
+                    Nó chỉ biểu thị Automatic Storage Duration trong ngữ cảnh khai báo tương ứng.
+                </p>
+
+                <div class="note">
+                    Không nhầm lẫn <code>auto</code> trong C với từ khóa <code>auto</code>
+                    của C++ thường được sử dụng để suy luận kiểu dữ liệu.
+                    Trong các phiên bản C trước C23, <code>auto</code> là Storage Class Specifier.
+                </div>
+
+                <h2>8. static Keyword</h2>
+
+                <p>
+                    <strong>static</strong> là một từ khóa đặc biệt trong C vì ý nghĩa
+                    của nó thay đổi tùy thuộc vào vị trí khai báo.
+                </p>
+
+                <p>
+                    Có hai trường hợp quan trọng:
+                </p>
+
+                <ul>
+                    <li>Static được khai báo bên trong Function hoặc Block.</li>
+                    <li>Static được khai báo ở File Scope.</li>
+                </ul>
+
+                <p>
+                    Cả hai trường hợp đều có liên quan đến Static Storage Duration,
+                    nhưng Linkage và Scope có thể khác nhau.
+                </p>
+
+                <h3>8.1. Static Local Variable</h3>
+
+                <p>
+                    Khi khai báo biến bằng <code>static</code> bên trong Function,
+                    biến đó có Static Storage Duration nhưng vẫn giữ Block Scope.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+void count_calls(void)
+{
+    static int call_count = 0;
+
+    call_count++;
+
+    printf("Call count: %d\n", call_count);
+}
+
+int main(void)
+{
+    count_calls();
+    count_calls();
+    count_calls();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Kết quả:
+                </p>
+
+                <pre><code>Call count: 1
+Call count: 2
+Call count: 3</code></pre>
+
+                <p>
+                    Nếu không có từ khóa <code>static</code>,
+                    biến <code>call_count</code> sẽ được tạo mới theo mỗi lần Function
+                    được thực thi và bắt đầu từ giá trị khởi tạo 0.
+                </p>
+
+                <p>
+                    Tuy nhiên, khi sử dụng <code>static</code>, đối tượng chỉ được khởi tạo một lần
+                    và giữ lại giá trị giữa các lần gọi Function.
+                </p>
+
+                <svg viewBox="0 0 600 270" role="img"
+                    aria-label="So sánh Local Variable và Static Local Variable qua nhiều lần gọi Function"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.3">
+                        <rect x="15" y="12" width="270" height="220" rx="6"
+                            fill="rgba(128,128,128,.09)" />
+                        <rect x="315" y="12" width="270" height="220" rx="6"
+                            fill="rgba(46,139,87,.10)" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="150" y="35" font-weight="bold">Local Variable</text>
+                        <text x="450" y="35" font-weight="bold">Static Local Variable</text>
+
+                        <text x="150" y="75">Lần gọi 1: value = 0</text>
+                        <text x="150" y="115">Lần gọi 2: value = 0</text>
+                        <text x="150" y="155">Lần gọi 3: value = 0</text>
+
+                        <text x="450" y="75">Lần gọi 1: count = 1</text>
+                        <text x="450" y="115">Lần gọi 2: count = 2</text>
+                        <text x="450" y="155">Lần gọi 3: count = 3</text>
+
+                        <text x="150" y="204" font-size="10">Được khởi tạo lại khi vào Function</text>
+                        <text x="450" y="204" font-size="10">Giữ giá trị giữa các lần gọi</text>
+                    </g>
+                </svg>
+
+                <h3>8.2. Static Variable trong Block Scope</h3>
+
+                <p>
+                    Static Local Variable không nhất thiết phải được khai báo trực tiếp
+                    ở cấp Function. Nó có thể được khai báo trong bất kỳ Block phù hợp nào.
+                </p>
+
+                <pre><code>void process_data(void)
+{
+    if (1)
+    {
+        static int event_count = 0;
+
+        event_count++;
+
+        /* event_count chỉ được sử dụng trong Block này */
+    }
+
+    /* Không thể truy cập event_count tại đây */
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>event_count</code> có Block Scope.</li>
+                    <li><code>event_count</code> có Static Storage Duration.</li>
+                    <li>Đối tượng tồn tại trong toàn bộ thời gian thực thi chương trình.</li>
+                    <li>Identifier chỉ có thể được sử dụng trong Block khai báo.</li>
+                </ul>
+
+                <h3>8.3. Static Global Variable</h3>
+
+                <p>
+                    Khi khai báo một biến bằng <code>static</code> ở File Scope,
+                    biến đó có Static Storage Duration và Internal Linkage.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+/* Internal Linkage */
+static uint32_t internal_counter = 0;
+
+void update_counter(void)
+{
+    internal_counter++;
+}
+
+int main(void)
+{
+    update_counter();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Biến <code>internal_counter</code>:
+                </p>
+
+                <ul>
+                    <li>Được khai báo ở File Scope.</li>
+                    <li>Có Static Storage Duration.</li>
+                    <li>Có Internal Linkage.</li>
+                    <li>Có thể được sử dụng trong các Function thuộc cùng Translation Unit nếu khai báo được nhìn thấy.</li>
+                    <li>Không được tham chiếu trực tiếp thông qua External Linkage từ một Source File khác.</li>
+                </ul>
+
+                <h3>8.4. Static Function</h3>
+
+                <p>
+                    Từ khóa <code>static</code> cũng có thể được sử dụng với Function
+                    được khai báo ở File Scope.
+                    Khi đó, Function có Internal Linkage.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+/* Chỉ có Internal Linkage */
+static void print_status(void)
+{
+    printf("System Ready\n");
+}
+
+void initialize_system(void)
+{
+    print_status();
+}
+
+int main(void)
+{
+    initialize_system();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Function <code>print_status()</code> chỉ được tham chiếu
+                    trong cùng Translation Unit.
+                    Các Source File khác không thể liên kết đến Function này thông qua
+                    External Linkage.
+                </p>
+
+                <p>
+                    Đây là kỹ thuật hữu ích khi muốn giới hạn các Function nội bộ
+                    và tránh để lộ những thành phần không cần thiết ra bên ngoài Module.
+                </p>
+
+                <div class="note">
+                    Static Local Variable và Static Global Variable có cùng Static Storage Duration,
+                    nhưng khác nhau về Scope và Linkage:
+                    Static Local có Block Scope và No Linkage;
+                    Static Global có File Scope và Internal Linkage.
+                </div>
+
+                <h2>9. extern Keyword</h2>
+
+                <p>
+                    <strong>extern</strong> là từ khóa thường được sử dụng khi một Source File
+                    cần tham chiếu đến biến hoặc Function được khai báo hoặc định nghĩa
+                    trong một Source File khác.
+                </p>
+
+                <p>
+                    Khai báo <code>extern</code> cho phép Compiler và Linker biết rằng
+                    Identifier được tham chiếu có một định nghĩa tương ứng
+                    ở một vị trí khác trong chương trình.
+                </p>
+
+                <h3>9.1. Khai báo extern với biến Global</h3>
+
+                <p>
+                    Xét ví dụ có hai Source File:
+                    <code>main.c</code> và <code>sensor.c</code>.
+                </p>
+
+                <p>File <code>sensor.c</code>:</p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+/* Definition */
+uint32_t sensor_value = 100;</code></pre>
+
+                <p>File <code>main.c</code>:</p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+/* Declaration */
+extern uint32_t sensor_value;
+
+int main(void)
+{
+    uint32_t value = sensor_value;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong trường hợp này:
+                </p>
+
+                <ul>
+                    <li><code>sensor_value</code> được định nghĩa trong <code>sensor.c</code>.</li>
+                    <li><code>main.c</code> khai báo <code>extern</code> để tham chiếu đến biến đó.</li>
+                    <li>Hai Source File có thể được biên dịch thành các Object File riêng biệt.</li>
+                    <li>Linker sẽ liên kết tham chiếu trong <code>main.o</code> với định nghĩa trong <code>sensor.o</code>.</li>
+                </ul>
+
+                <h3>9.2. extern trong Header File</h3>
+
+                <p>
+                    Trong một dự án C có nhiều Module, cách phổ biến là đặt khai báo
+                    <code>extern</code> vào Header File để các Source File khác có thể sử dụng.
+                </p>
+
+                <p>File <code>sensor.h</code>:</p>
+
+                <pre><code>#ifndef SENSOR_H
+#define SENSOR_H
+
+#include &lt;stdint.h&gt;
+
+/* External declaration */
+extern uint32_t sensor_value;
+
+void Sensor_Update(void);
+
+#endif</code></pre>
+
+                <p>File <code>sensor.c</code>:</p>
+
+                <pre><code>#include "sensor.h"
+
+/* Definition */
+uint32_t sensor_value = 0;
+
+void Sensor_Update(void)
+{
+    sensor_value++;
+}</code></pre>
+
+                <p>File <code>main.c</code>:</p>
+
+                <pre><code>#include "sensor.h"
+
+int main(void)
+{
+    Sensor_Update();
+
+    uint32_t value = sensor_value;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, <code>sensor.h</code> cung cấp các khai báo để
+                    Module khác sử dụng.
+                    Phần định nghĩa thực tế của biến <code>sensor_value</code>
+                    chỉ được đặt trong <code>sensor.c</code>.
+                </p>
+
+                <div class="note">
+                    Một nguyên tắc quan trọng khi tổ chức chương trình nhiều Module:
+                    nên có một nơi định nghĩa biến Global và những nơi khác chỉ khai báo
+                    bằng <code>extern</code> thông qua Header File.
+                    Cách này giúp tránh lỗi Multiple Definition khi Linking.
+                </div>
+
+                <h3>9.3. extern với Function</h3>
+
+                <p>
+                    Function được định nghĩa ở File Scope và không sử dụng <code>static</code>
+                    thường có External Linkage.
+                    Vì vậy, một Source File khác có thể gọi Function thông qua khai báo Prototype.
+                </p>
+
+                <p>File <code>math_utils.h</code>:</p>
+
+                <pre><code>#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int calculate_sum(int a, int b);
+
+#endif</code></pre>
+
+                <p>File <code>math_utils.c</code>:</p>
+
+                <pre><code>#include "math_utils.h"
+
+int calculate_sum(int a, int b)
+{
+    return a + b;
+}</code></pre>
+
+                <p>File <code>main.c</code>:</p>
+
+                <pre><code>#include "math_utils.h"
+
+int main(void)
+{
+    int result = calculate_sum(10, 20);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, Function <code>calculate_sum()</code>
+                    có thể được sử dụng từ nhiều Source File thông qua External Linkage.
+                    Không bắt buộc phải viết từ khóa <code>extern</code> trước Function Prototype
+                    vì khai báo Function ở File Scope mặc định có External Linkage
+                    nếu không bị giới hạn bằng <code>static</code>.
+                </p>
+
+                <h3>9.4. extern không đồng nghĩa với cấp phát bộ nhớ mới</h3>
+
+                <p>
+                    Một điểm quan trọng cần nhớ là <code>extern</code> thường được sử dụng
+                    để khai báo một Identifier đã có định nghĩa ở nơi khác,
+                    chứ không phải để tạo một đối tượng mới cho mỗi Source File.
+                </p>
+
+                <pre><code>/* sensor.c */
+
+/* Định nghĩa đối tượng */
+int sensor_status = 1;</code></pre>
+
+                <pre><code>/* main.c */
+
+/* Khai báo tham chiếu đến đối tượng */
+extern int sensor_status;</code></pre>
+
+                <p>
+                    Ở ví dụ trên, chỉ có một định nghĩa của <code>sensor_status</code>.
+                    Khai báo <code>extern</code> trong <code>main.c</code>
+                    cho phép Source File đó tham chiếu đến cùng đối tượng.
+                </p>
+
+                <h2>10. External Linkage và Internal Linkage</h2>
+
+                <p>
+                    Ngoài Scope và Storage Duration, một khái niệm khác cần hiểu
+                    khi làm việc với nhiều Source File là <strong>Linkage</strong>.
+                </p>
+
+                <p>
+                    Linkage mô tả mối quan hệ giữa các khai báo của cùng một Identifier
+                    trong những phạm vi khác nhau của chương trình.
+                    Đây là cơ chế giúp các Module có thể tham chiếu đến cùng một biến
+                    hoặc Function.
+                </p>
+
+                <p>
+                    Trong C, có ba loại Linkage chính:
+                </p>
+
+                <ul>
+                    <li>External Linkage.</li>
+                    <li>Internal Linkage.</li>
+                    <li>No Linkage.</li>
+                </ul>
+
+                <h3>10.1. External Linkage</h3>
+
+                <p>
+                    <strong>External Linkage</strong> cho phép các khai báo tương ứng
+                    của cùng một Identifier ở những Translation Unit khác nhau
+                    tham chiếu đến cùng một thực thể theo quy tắc của C.
+                </p>
+
+                <p>
+                    Các biến và Function được khai báo ở File Scope thường có External Linkage
+                    nếu không được giới hạn bằng <code>static</code> hoặc một quy tắc khác.
+                </p>
+
+                <pre><code>/* sensor.c */
+
+int sensor_value = 100;
+
+void update_sensor(void)
+{
+    sensor_value++;
+}</code></pre>
+
+                <pre><code>/* main.c */
+
+extern int sensor_value;
+
+void update_sensor(void);
+
+int main(void)
+{
+    update_sensor();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>sensor_value</code> và
+                    <code>update_sensor()</code> có thể được sử dụng từ
+                    <code>main.c</code> thông qua External Linkage.
+                </p>
+
+                <h3>10.2. Internal Linkage</h3>
+
+                <p>
+                    <strong>Internal Linkage</strong> giới hạn việc liên kết một Identifier
+                    trong phạm vi Translation Unit tương ứng.
+                </p>
+
+                <p>
+                    Đối với các biến và Function được khai báo ở File Scope,
+                    từ khóa <code>static</code> thường được sử dụng để tạo Internal Linkage.
+                </p>
+
+                <pre><code>/* sensor.c */
+
+static int sensor_error_count = 0;
+
+static void reset_sensor_error(void)
+{
+    sensor_error_count = 0;
+}
+
+void Sensor_Init(void)
+{
+    reset_sensor_error();
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>sensor_error_count</code> chỉ có Internal Linkage.</li>
+                    <li><code>reset_sensor_error()</code> chỉ có Internal Linkage.</li>
+                    <li>Hai Identifier trên được sử dụng bên trong Translation Unit của <code>sensor.c</code>.</li>
+                    <li>Source File khác không thể tham chiếu trực tiếp đến chúng bằng External Linkage.</li>
+                </ul>
+
+                <h3>10.3. No Linkage</h3>
+
+                <p>
+                    <strong>No Linkage</strong> có nghĩa một Identifier không được liên kết
+                    với những khai báo khác thành cùng một thực thể thông qua Linkage.
+                </p>
+
+                <p>
+                    Ví dụ, biến Local thông thường và Static Local Variable đều có No Linkage.
+                </p>
+
+                <pre><code>void process_sensor(void)
+{
+    int local_value = 100;
+
+    static int call_count = 0;
+
+    call_count++;
+
+    /* Cả local_value và call_count đều có No Linkage */
+}</code></pre>
+
+                <p>
+                    Mặc dù <code>call_count</code> có Static Storage Duration,
+                    Identifier của nó vẫn có No Linkage vì được khai báo ở Block Scope.
+                </p>
+
+                <h3>10.4. So sánh các loại Linkage</h3>
+
+                <table>
+                    <tr>
+                        <th>Linkage</th>
+                        <th>Phạm vi liên kết</th>
+                        <th>Ví dụ phổ biến</th>
+                    </tr>
+                    <tr>
+                        <td><strong>External</strong></td>
+                        <td>Có thể được tham chiếu từ các Translation Unit khác.</td>
+                        <td>Global Variable và Function thông thường ở File Scope.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Internal</strong></td>
+                        <td>Chỉ liên kết trong cùng Translation Unit.</td>
+                        <td>File-scope Variable hoặc Function khai báo bằng <code>static</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>No Linkage</strong></td>
+                        <td>Không liên kết với các khai báo khác.</td>
+                        <td>Local Variable và Static Local Variable.</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Linkage áp dụng cho Identifier, không phải là một Storage Duration.
+                    Một đối tượng có Static Storage Duration không đồng nghĩa với việc
+                    Identifier của nó có External Linkage.
+                </div>
+
+                <h2>11. Phân biệt Scope, Lifetime, Storage Duration và Linkage</h2>
+
+                <p>
+                    Đây là nội dung quan trọng nhất của bài học.
+                    Bốn khái niệm này có mối liên hệ với nhau nhưng không nên sử dụng thay thế cho nhau.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Ví dụ khai báo</th>
+                        <th>Scope</th>
+                        <th>Storage Duration</th>
+                        <th>Linkage</th>
+                    </tr>
+                    <tr>
+                        <td><code>int value;</code> trong Function</td>
+                        <td>Block</td>
+                        <td>Automatic</td>
+                        <td>No Linkage</td>
+                    </tr>
+                    <tr>
+                        <td><code>static int value;</code> trong Function</td>
+                        <td>Block</td>
+                        <td>Static</td>
+                        <td>No Linkage</td>
+                    </tr>
+                    <tr>
+                        <td><code>int value = 10;</code> ở File Scope</td>
+                        <td>File</td>
+                        <td>Static</td>
+                        <td>External</td>
+                    </tr>
+                    <tr>
+                        <td><code>static int value;</code> ở File Scope</td>
+                        <td>File</td>
+                        <td>Static</td>
+                        <td>Internal</td>
+                    </tr>
+                    <tr>
+                        <td><code>extern int value;</code> ở File Scope</td>
+                        <td>File</td>
+                        <td>Static đối với đối tượng được tham chiếu</td>
+                        <td>Thông thường External</td>
+                    </tr>
+                    <tr>
+                        <td><code>malloc()</code> Object</td>
+                        <td>Không áp dụng Scope theo cách khai báo Identifier thông thường</td>
+                        <td>Allocated</td>
+                        <td>Không có Linkage riêng của đối tượng được cấp phát</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Để hiểu rõ hơn, hãy xét hai trường hợp:
+                </p>
+
+                <h3>11.1. Một biến có Block Scope nhưng Static Storage Duration</h3>
+
+                <pre><code>void update_counter(void)
+{
+    static int counter = 0;
+
+    counter++;
+}</code></pre>
+
+                <p>
+                    Biến <code>counter</code>:
+                </p>
+
+                <ul>
+                    <li>Chỉ truy cập được trong Block chứa khai báo.</li>
+                    <li>Không bị tạo lại mỗi khi Function được gọi.</li>
+                    <li>Tồn tại trong toàn bộ thời gian thực thi chương trình.</li>
+                    <li>Có No Linkage.</li>
+                </ul>
+
+                <h3>11.2. Một biến có File Scope và Static Storage Duration</h3>
+
+                <pre><code>static int system_status = 1;
+
+void update_status(void)
+{
+    system_status = 2;
+}</code></pre>
+
+                <p>
+                    Biến <code>system_status</code>:
+                </p>
+
+                <ul>
+                    <li>Có File Scope.</li>
+                    <li>Có Static Storage Duration.</li>
+                    <li>Có Internal Linkage.</li>
+                    <li>Có thể được sử dụng trong các Function phù hợp thuộc cùng Translation Unit.</li>
+                </ul>
+
+                <p>
+                    Hai ví dụ này cho thấy từ khóa <code>static</code> không có cùng
+                    ý nghĩa về Linkage ở mọi vị trí khai báo.
+                </p>
+
+                <h2>12. Bảng tổng hợp các từ khóa auto, static và extern</h2>
+
+                <p>
+                    Để thuận tiện khi lập trình, có thể tổng hợp đặc điểm của các từ khóa
+                    đã học như sau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Vị trí khai báo</th>
+                        <th>Storage Duration</th>
+                        <th>Linkage</th>
+                    </tr>
+                    <tr>
+                        <td><code>auto</code></td>
+                        <td>Block Scope</td>
+                        <td>Automatic</td>
+                        <td>No Linkage (đối với biến Local thông thường)</td>
+                    </tr>
+                    <tr>
+                        <td><code>static</code></td>
+                        <td>Block Scope</td>
+                        <td>Static</td>
+                        <td>No Linkage</td>
+                    </tr>
+                    <tr>
+                        <td><code>static</code></td>
+                        <td>File Scope</td>
+                        <td>Static</td>
+                        <td>Internal</td>
+                    </tr>
+                    <tr>
+                        <td><code>extern</code></td>
+                        <td>File Scope</td>
+                        <td>Thường là Static đối với đối tượng được khai báo</td>
+                        <td>Thông thường External</td>
+                    </tr>
+                    <tr>
+                        <td><code>extern</code></td>
+                        <td>Block Scope</td>
+                        <td>Phụ thuộc đối tượng được tham chiếu</td>
+                        <td>Theo Linkage của khai báo tương ứng</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Bảng trên mô tả những trường hợp khai báo phổ biến.
+                    Đối với <code>extern</code>, quy tắc Linkage còn phụ thuộc vào
+                    những khai báo trước đó của cùng Identifier.
+                    Khi làm việc với dự án nhiều Source File, nên kiểm tra toàn bộ
+                    các khai báo liên quan thay vì chỉ nhìn vào một dòng code riêng lẻ.
+                </div>
+
+                <h2>13. Ứng dụng trong Embedded Systems</h2>
+
+                <p>
+                    Việc hiểu Scope, Lifetime, Storage Duration và Linkage rất quan trọng
+                    khi phát triển Embedded Software.
+                    Những khái niệm này ảnh hưởng đến cách tổ chức dữ liệu,
+                    mức sử dụng bộ nhớ và sự phụ thuộc giữa các Module.
+                </p>
+
+                <h3>13.1. Quản lý biến Global trong Firmware</h3>
+
+                <p>
+                    Trong Embedded Systems, một số dữ liệu như trạng thái hệ thống,
+                    bộ đếm lỗi và giá trị cảm biến có thể cần được truy cập từ nhiều Function.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+/* Global State */
+uint8_t system_state = 0;
+
+void System_Update(void)
+{
+    system_state = 1;
+}
+
+void System_Reset(void)
+{
+    system_state = 0;
+}
+
+int main(void)
+{
+    System_Update();
+
+    System_Reset();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Cách khai báo này cho phép nhiều Function cùng truy cập dữ liệu.
+                    Tuy nhiên, việc sử dụng quá nhiều biến Global có thể tạo ra
+                    sự phụ thuộc lớn giữa các phần của chương trình.
+                </p>
+
+                <p>
+                    Đối với dự án có nhiều Module, nên quản lý rõ ràng các biến dùng chung
+                    và hạn chế việc truy cập trực tiếp đến dữ liệu nội bộ của Module khác.
+                </p>
+
+                <h3>13.2. Sử dụng Static để quản lý trạng thái nội bộ</h3>
+
+                <p>
+                    Khi một Module cần giữ lại trạng thái giữa các lần gọi Function
+                    nhưng không muốn công khai biến đó ra bên ngoài,
+                    Static Local Variable có thể là một lựa chọn phù hợp.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+void Sensor_Process(void)
+{
+    static uint32_t sample_count = 0;
+
+    sample_count++;
+
+    /* Xử lý mẫu dữ liệu */
+}</code></pre>
+
+                <p>
+                    Biến <code>sample_count</code> được giữ lại giữa các lần gọi Function,
+                    nhưng các Function khác không thể truy cập trực tiếp bằng Identifier này.
+                </p>
+
+                <h3>13.3. Sử dụng static để giới hạn Function nội bộ</h3>
+
+                <p>
+                    Trong một Driver, không phải tất cả Function đều cần được sử dụng
+                    bởi các Module bên ngoài.
+                    Những Function chỉ phục vụ xử lý nội bộ có thể được khai báo bằng
+                    <code>static</code>.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+static void Sensor_ValidateData(uint16_t value)
+{
+    /* Kiểm tra dữ liệu nội bộ */
+}
+
+void Sensor_Read(void)
+{
+    uint16_t value = 100;
+
+    Sensor_ValidateData(value);
+}</code></pre>
+
+                <p>
+                    Function <code>Sensor_ValidateData()</code> chỉ có Internal Linkage.
+                    Những Source File khác không thể liên kết trực tiếp với Function này.
+                </p>
+
+                <h3>13.4. Chia sẻ dữ liệu giữa các Module bằng extern</h3>
+
+                <p>
+                    Khi một Module cần cung cấp dữ liệu cho những Module khác,
+                    có thể sử dụng Header File để khai báo giao diện truy cập.
+                </p>
+
+                <pre><code>/* system_status.h */
+
+#ifndef SYSTEM_STATUS_H
+#define SYSTEM_STATUS_H
+
+#include &lt;stdint.h&gt;
+
+extern uint8_t system_status;
+
+#endif</code></pre>
+
+                <pre><code>/* system_status.c */
+
+#include "system_status.h"
+
+/* Chỉ định nghĩa một lần */
+uint8_t system_status = 0;</code></pre>
+
+                <pre><code>/* main.c */
+
+#include "system_status.h"
+
+int main(void)
+{
+    system_status = 1;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Cách tổ chức trên cho phép các Source File sử dụng cùng một đối tượng
+                    thông qua External Linkage.
+                    Tuy nhiên, trong một kiến trúc phần mềm có tính Encapsulation cao,
+                    có thể ưu tiên cung cấp Function để đọc và cập nhật trạng thái
+                    thay vì công khai biến Global trực tiếp.
+                </p>
+
+                <h2>14. Common Mistakes khi sử dụng Scope và Storage Duration</h2>
+
+                <p>
+                    Một số lỗi thường gặp khi làm việc với các biến trong C xuất phát từ việc
+                    không phân biệt rõ Scope, Lifetime và Storage Duration.
+                </p>
+
+                <h3>14.1. Nhầm lẫn Local Variable và Static Local Variable</h3>
+
+                <pre><code>void process_data(void)
+{
+    int counter = 0;
+
+    counter++;
+
+    /* Counter luôn bắt đầu từ 0 mỗi lần gọi */
+}</code></pre>
+
+                <p>
+                    Nếu lập trình viên muốn lưu lại giá trị của <code>counter</code>
+                    qua các lần gọi Function nhưng không sử dụng <code>static</code>,
+                    kết quả sẽ không đáp ứng mục đích đó.
+                </p>
+
+                <h3>14.2. Trả về địa chỉ của Local Variable</h3>
+
+                <pre><code>int* get_sensor_value(void)
+{
+    int sensor_value = 100;
+
+    return &amp;sensor_value;
+}</code></pre>
+
+                <p>
+                    Đây là cách viết không hợp lệ về mặt sử dụng đối tượng sau khi Function kết thúc.
+                    Biến <code>sensor_value</code> có Automatic Storage Duration,
+                    nên Lifetime của nó kết thúc khi Function hoàn thành.
+                </p>
+
+                <p>
+                    Pointer được trả về không còn trỏ đến một đối tượng còn tồn tại.
+                    Việc sử dụng Pointer này sau đó gây ra Undefined Behavior.
+                </p>
+
+                <div class="note">
+                    Cần bảo đảm Lifetime của đối tượng dài ít nhất bằng khoảng thời gian
+                    mà chương trình cần sử dụng đối tượng thông qua Pointer.
+                </div>
+
+                <h3>14.3. Khai báo trùng Global Variable</h3>
+
+                <p>
+                    Một lỗi thường gặp trong dự án nhiều Source File là định nghĩa
+                    cùng một biến Global ở nhiều nơi.
+                </p>
+
+                <pre><code>/* main.c */
+int system_status = 1;</code></pre>
+
+                <pre><code>/* sensor.c */
+int system_status = 1;</code></pre>
+
+                <p>
+                    Nếu cả hai file được đưa vào cùng chương trình,
+                    Linker có thể báo lỗi Multiple Definition vì có hai định nghĩa
+                    External Linkage của cùng Identifier.
+                </p>
+
+                <p>
+                    Cách tổ chức phù hợp hơn:
+                </p>
+
+                <pre><code>/* system_status.c */
+int system_status = 1;</code></pre>
+
+                <pre><code>/* system_status.h */
+#ifndef SYSTEM_STATUS_H
+#define SYSTEM_STATUS_H
+
+extern int system_status;
+
+#endif</code></pre>
+
+                <h3>14.4. Lạm dụng Global Variable</h3>
+
+                <p>
+                    Việc khai báo quá nhiều biến Global có thể làm tăng sự phụ thuộc
+                    giữa các Module và khiến việc xác định nơi thay đổi dữ liệu trở nên khó khăn.
+                </p>
+
+                <p>
+                    Nên cân nhắc sử dụng Static Local Variable,
+                    Function Interface hoặc các cấu trúc dữ liệu được quản lý bởi từng Module
+                    để hạn chế việc truy cập trực tiếp đến trạng thái dùng chung.
+                </p>
+
+                <h3>14.5. Nhầm lẫn Static Storage Duration và Internal Linkage</h3>
+
+                <p>
+                    Không phải cứ một biến có Static Storage Duration thì nó đều có Internal Linkage.
+                </p>
+
+                <pre><code>/* File Scope */
+int global_value;
+
+/* Static Storage Duration + External Linkage */
+
+/* File Scope */
+static int private_value;
+
+/* Static Storage Duration + Internal Linkage */
+
+void process(void)
+{
+    /* Block Scope */
+    static int call_count;
+
+    /* Static Storage Duration + No Linkage */
+}</code></pre>
+
+                <p>
+                    Đây là ba trường hợp khác nhau dù cả ba đối tượng đều có Static Storage Duration.
+                </p>
+
+                <h2>15. Best Practices khi quản lý biến trong C Embedded</h2>
+
+                <p>
+                    Khi phát triển Firmware, lập trình viên nên áp dụng một số nguyên tắc
+                    sau để quản lý dữ liệu rõ ràng và giảm sự phụ thuộc giữa các Module:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Scope Management:</strong> ưu tiên khai báo biến ở phạm vi nhỏ nhất
+                        đáp ứng yêu cầu của chương trình.
+                    </li>
+                    <li>
+                        <strong>Static Local Variable:</strong> sử dụng khi cần lưu trạng thái
+                        qua nhiều lần gọi Function nhưng không cần công khai Identifier.
+                    </li>
+                    <li>
+                        <strong>Internal Linkage:</strong> sử dụng <code>static</code>
+                        cho các biến và Function chỉ phục vụ nội bộ một Translation Unit.
+                    </li>
+                    <li>
+                        <strong>External Linkage:</strong> chỉ công khai những Function hoặc dữ liệu
+                        thực sự cần được sử dụng bởi Module khác.
+                    </li>
+                    <li>
+                        <strong>extern Declaration:</strong> đặt các khai báo dùng chung trong Header File
+                        và chỉ định nghĩa đối tượng tại một Source File phù hợp.
+                    </li>
+                    <li>
+                        <strong>Lifetime Management:</strong> không truy cập một đối tượng sau khi
+                        Lifetime của nó đã kết thúc.
+                    </li>
+                    <li>
+                        <strong>Global Variable Management:</strong> tránh tạo quá nhiều trạng thái
+                        Global không cần thiết.
+                    </li>
+                    <li>
+                        <strong>Code Readability:</strong> tránh Shadowing không cần thiết
+                        và sử dụng tên biến có ý nghĩa rõ ràng.
+                    </li>
+                </ul>
+
+                <h2>16. Tóm tắt các khái niệm quan trọng</h2>
+
+                <table>
+                    <tr>
+                        <th>Thuật ngữ</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Scope</td>
+                        <td>Phạm vi trong mã nguồn mà Identifier có thể được tham chiếu.</td>
+                    </tr>
+                    <tr>
+                        <td>Block Scope</td>
+                        <td>Phạm vi của Identifier được khai báo trong Block.</td>
+                    </tr>
+                    <tr>
+                        <td>File Scope</td>
+                        <td>Phạm vi của Identifier được khai báo ở cấp File.</td>
+                    </tr>
+                    <tr>
+                        <td>Lifetime</td>
+                        <td>Khoảng thời gian mà một đối tượng tồn tại.</td>
+                    </tr>
+                    <tr>
+                        <td>Storage Duration</td>
+                        <td>Đặc tính xác định thời gian lưu trữ của đối tượng.</td>
+                    </tr>
+                    <tr>
+                        <td>Automatic Storage Duration</td>
+                        <td>Đối tượng tồn tại trong thời gian thực thi Block tương ứng.</td>
+                    </tr>
+                    <tr>
+                        <td>Static Storage Duration</td>
+                        <td>Đối tượng tồn tại trong toàn bộ thời gian thực thi chương trình.</td>
+                    </tr>
+                    <tr>
+                        <td>Thread Storage Duration</td>
+                        <td>Đối tượng tồn tại trong thời gian Thread tương ứng.</td>
+                    </tr>
+                    <tr>
+                        <td>Allocated Storage Duration</td>
+                        <td>Đối tượng tồn tại từ khi cấp phát đến khi được giải phóng.</td>
+                    </tr>
+                    <tr>
+                        <td>auto</td>
+                        <td>Storage Class Specifier dành cho Automatic Storage Duration.</td>
+                    </tr>
+                    <tr>
+                        <td>static</td>
+                        <td>Có thể xác định Static Storage Duration hoặc Internal Linkage tùy vị trí khai báo.</td>
+                    </tr>
+                    <tr>
+                        <td>extern</td>
+                        <td>Khai báo Identifier có Linkage tương ứng, thường được sử dụng để chia sẻ khai báo giữa các Source File.</td>
+                    </tr>
+                    <tr>
+                        <td>External Linkage</td>
+                        <td>Cho phép liên kết các khai báo tương ứng giữa những Translation Unit.</td>
+                    </tr>
+                    <tr>
+                        <td>Internal Linkage</td>
+                        <td>Giới hạn Linkage trong cùng Translation Unit.</td>
+                    </tr>
+                    <tr>
+                        <td>No Linkage</td>
+                        <td>Identifier không được liên kết với các khai báo khác.</td>
+                    </tr>
+                    <tr>
+                        <td>Shadowing</td>
+                        <td>Identifier ở phạm vi bên trong che khuất Identifier cùng tên ở phạm vi bên ngoài.</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    Scope, Lifetime và Storage Duration là ba khái niệm quan trọng giúp
+                    lập trình viên hiểu cách biến và đối tượng được quản lý trong C.
+
+                    <br><br>
+
+                    Scope xác định phạm vi mà Identifier có thể được sử dụng trong mã nguồn.
+                    Các loại Scope chính bao gồm Block Scope, File Scope,
+                    Function Prototype Scope và Function Scope.
+
+                    <br><br>
+
+                    Lifetime là khoảng thời gian một đối tượng thực sự tồn tại trong chương trình.
+                    Trong khi đó, Storage Duration mô tả cơ chế duy trì vùng nhớ của đối tượng.
+                    C có bốn loại Storage Duration chính:
+                    Automatic, Static, Thread và Allocated.
+
+                    <br><br>
+
+                    Các từ khóa auto, static và extern giúp điều chỉnh những đặc tính
+                    liên quan đến việc khai báo và liên kết Identifier.
+                    Đặc biệt, static có ý nghĩa khác nhau tùy thuộc vào vị trí khai báo:
+                    Static Local có Block Scope, Static Storage Duration và No Linkage;
+                    Static Global có File Scope, Static Storage Duration và Internal Linkage.
+
+                    <br><br>
+
+                    External Linkage cho phép các Source File khác tham chiếu đến cùng một
+                    biến hoặc Function thông qua những khai báo tương ứng.
+                    Ngược lại, Internal Linkage giới hạn việc liên kết trong một Translation Unit.
+
+                    <br><br>
+
+                    Hiểu rõ những khái niệm này giúp lập trình viên quản lý biến hiệu quả,
+                    tổ chức các Module tốt hơn, hạn chế lỗi liên quan đến Lifetime
+                    và xây dựng phần mềm Embedded có cấu trúc rõ ràng, dễ bảo trì.
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-4.html">← Bài trước</a>
+                    <a class="btn" href="lesson-6.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

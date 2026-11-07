@@ -1,0 +1,2350 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 9: Linker Script, Memory Map &amp; Startup Code | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html" class="active" aria-current="page">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 9: Linker Script, Memory Map &amp; Startup Code</h1>
+
+                <p>
+                    Trong các bài học trước, chúng ta đã tìm hiểu cách chương trình C sử dụng
+                    bộ nhớ, bao gồm Stack, Heap, Data Segment, BSS Segment, Memory Alignment
+                    và Padding. Tuy nhiên, trong một hệ thống Embedded, vẫn còn một câu hỏi
+                    quan trọng: những vùng dữ liệu và mã lệnh đó thực sự được đặt ở đâu
+                    trong bộ nhớ vật lý của MCU?
+                </p>
+
+                <p>
+                    Một chương trình Embedded thường chạy trực tiếp trên vi điều khiển,
+                    nơi dung lượng Flash và RAM có giới hạn, đồng thời mỗi vùng nhớ có
+                    địa chỉ và mục đích sử dụng riêng. Compiler không tự quyết định toàn bộ
+                    cách chương trình được phân bố vào các vùng nhớ này.
+                </p>
+
+                <p>
+                    Đây là nhiệm vụ của Linker và Linker Script. Bên cạnh đó, trước khi
+                    chương trình có thể thực thi hàm <code>main()</code>, hệ thống còn cần
+                    thực hiện một số bước khởi tạo ban đầu. Những công việc này thuộc
+                    Startup Code.
+                </p>
+
+                <h2>1. Tổng quan về Linker trong Embedded C</h2>
+
+                <h3>1.1. Linker là gì?</h3>
+
+                <p>
+                    <strong>Linker</strong> là công cụ kết hợp các Object File và thư viện
+                    cần thiết thành một chương trình hoàn chỉnh. Trong quá trình này,
+                    Linker thực hiện việc liên kết các symbol, giải quyết những tham chiếu
+                    giữa các module và bố trí các section vào những địa chỉ bộ nhớ cụ thể.
+                </p>
+
+                <p>
+                    Khi một project C có nhiều file source, mỗi file thường được biên dịch
+                    thành một Object File riêng. Các Object File này có thể chứa:
+                </p>
+
+                <ul>
+                    <li>Mã máy của các function.</li>
+                    <li>Dữ liệu toàn cục và dữ liệu static.</li>
+                    <li>Thông tin về các symbol được định nghĩa hoặc được tham chiếu.</li>
+                    <li>Các section chứa code và data.</li>
+                    <li>Thông tin relocation để Linker điều chỉnh địa chỉ tham chiếu.</li>
+                </ul>
+
+                <p>
+                    Linker sẽ kết hợp những thành phần này và tạo ra file chương trình
+                    có thể được sử dụng bởi debugger, programmer hoặc các công cụ tạo
+                    firmware image.
+                </p>
+
+                <h3>1.2. Compiler và Linker khác nhau như thế nào?</h3>
+
+                <p>
+                    Compiler và Linker là hai thành phần khác nhau trong quá trình
+                    xây dựng chương trình.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Compiler</th>
+                            <th>Linker</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Đầu vào</td>
+                            <td>Source Code như file .c và header liên quan.</td>
+                            <td>Object File và Library.</td>
+                        </tr>
+                        <tr>
+                            <td>Nhiệm vụ</td>
+                            <td>
+                                Phân tích, kiểm tra và chuyển đổi source code
+                                thành mã máy hoặc Assembly.
+                            </td>
+                            <td>
+                                Kết hợp các Object File, giải quyết symbol
+                                và bố trí section.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Đầu ra</td>
+                            <td>Object File hoặc Assembly tùy cấu hình.</td>
+                            <td>
+                                Executable, ELF hoặc định dạng đầu ra khác
+                                tùy toolchain.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Lỗi thường gặp</td>
+                            <td>Syntax Error, Type Error, Compilation Error.</td>
+                            <td>
+                                Undefined Reference, Multiple Definition,
+                                Memory Region Overflow.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>1.3. Vai trò của Linker trong Embedded Systems</h3>
+
+                <p>
+                    Trong ứng dụng chạy trên máy tính thông thường, hệ điều hành
+                    thường chịu trách nhiệm nạp chương trình và cấp phát một không gian
+                    địa chỉ cho process.
+                </p>
+
+                <p>
+                    Trong nhiều hệ thống Embedded Bare-metal, chương trình được nạp
+                    trực tiếp vào Flash hoặc một vùng nhớ xác định của MCU. Do đó,
+                    Linker cần biết chính xác:
+                </p>
+
+                <ul>
+                    <li>Flash bắt đầu tại địa chỉ nào và có dung lượng bao nhiêu.</li>
+                    <li>RAM bắt đầu tại địa chỉ nào và có dung lượng bao nhiêu.</li>
+                    <li>Code và constant data sẽ được lưu ở đâu.</li>
+                    <li>Biến global và static sẽ được bố trí ở vùng RAM nào.</li>
+                    <li>Vùng Stack và Heap được sử dụng như thế nào.</li>
+                    <li>Vector Table cần nằm tại vị trí nào theo yêu cầu của MCU.</li>
+                </ul>
+
+                <p>
+                    Linker Script cung cấp thông tin và quy tắc để Linker thực hiện
+                    việc bố trí đó.
+                </p>
+
+                <h2>2. Object File và các Section</h2>
+
+                <h3>2.1. Object File là gì?</h3>
+
+                <p>
+                    Sau khi một source file được biên dịch, compiler thường tạo ra
+                    Object File, chẳng hạn file có phần mở rộng <code>.o</code>
+                    hoặc <code>.obj</code>.
+                </p>
+
+                <p>
+                    Object File chưa nhất thiết là chương trình hoàn chỉnh. Nó có thể
+                    chứa các tham chiếu đến function hoặc variable được định nghĩa
+                    trong những module khác.
+                </p>
+
+                <p>
+                    Ví dụ project có cấu trúc:
+                </p>
+
+                <pre><code>project/
+|
+|-- main.c
+|-- sensor.c
+|-- uart.c
+|
+|-- main.o
+|-- sensor.o
+|-- uart.o</code></pre>
+
+                <p>
+                    Sau quá trình compile, mỗi file source có thể tạo ra một Object File
+                    tương ứng. Linker sau đó kết hợp các Object File cần thiết thành
+                    chương trình cuối cùng.
+                </p>
+
+                <h3>2.2. Section là gì?</h3>
+
+                <p>
+                    <strong>Section</strong> là một vùng trong Object File dùng để chứa
+                    một nhóm nội dung có đặc điểm hoặc mục đích tương tự nhau.
+                </p>
+
+                <p>
+                    Ví dụ, code của function thường được đưa vào section
+                    <code>.text</code>, trong khi dữ liệu global đã khởi tạo có thể
+                    được đưa vào <code>.data</code>.
+                </p>
+
+                <p>Một số section phổ biến trong Embedded C:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Section</th>
+                            <th>Nội dung</th>
+                            <th>Vị trí thường gặp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>.text</code></td>
+                            <td>Mã lệnh của các function.</td>
+                            <td>Flash / Code Memory</td>
+                        </tr>
+                        <tr>
+                            <td><code>.rodata</code></td>
+                            <td>
+                                Read-only data như string literal
+                                và một số constant.
+                            </td>
+                            <td>Flash / Read-only Memory</td>
+                        </tr>
+                        <tr>
+                            <td><code>.data</code></td>
+                            <td>Biến global hoặc static đã khởi tạo.</td>
+                            <td>RAM khi chạy; giá trị khởi tạo được lưu trong Flash.</td>
+                        </tr>
+                        <tr>
+                            <td><code>.bss</code></td>
+                            <td>
+                                Biến global hoặc static chưa khởi tạo rõ ràng
+                                hoặc được khởi tạo bằng zero theo quy tắc C.
+                            </td>
+                            <td>RAM</td>
+                        </tr>
+                        <tr>
+                            <td><code>.noinit</code></td>
+                            <td>
+                                Vùng dữ liệu tùy chỉnh không được Startup Code
+                                khởi tạo lại theo cách thông thường.
+                            </td>
+                            <td>RAM</td>
+                        </tr>
+                        <tr>
+                            <td><code>.isr_vector</code></td>
+                            <td>Vector Table của interrupt và exception.</td>
+                            <td>Flash hoặc vùng nhớ được MCU yêu cầu.</td>
+                        </tr>
+                        <tr>
+                            <td><code>.init_array</code></td>
+                            <td>
+                                Danh sách function khởi tạo được runtime
+                                gọi trước main trong những toolchain hỗ trợ.
+                            </td>
+                            <td>Thường nằm trong Flash</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Tên section và cách compiler tạo ra chúng
+                    phụ thuộc vào toolchain. Các tên như <code>.text</code>,
+                    <code>.data</code> và <code>.bss</code> rất phổ biến trong
+                    hệ sinh thái GNU, nhưng không nên xem đây là tên bắt buộc
+                    của mọi compiler.
+                </div>
+
+                <h3>2.3. Ví dụ về các biến thuộc những section khác nhau</h3>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+uint32_t global_init = 100U;
+
+uint32_t global_zero = 0U;
+
+uint32_t global_uninit;
+
+static uint16_t sensor_value = 50U;
+
+const uint32_t MAX_SENSOR_VALUE = 1000U;
+
+void read_sensor(void)
+{
+    static uint32_t read_count = 0U;
+
+    read_count++;
+
+    /* Sensor reading logic */
+}
+
+int main(void)
+{
+    read_sensor();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trên một toolchain Embedded phổ biến, có thể hình dung cách
+                    phân loại như sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Biến / Thành phần</th>
+                            <th>Section có thể sử dụng</th>
+                            <th>Lý do</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>global_init</code></td>
+                            <td><code>.data</code></td>
+                            <td>Global variable có giá trị khởi tạo khác zero.</td>
+                        </tr>
+                        <tr>
+                            <td><code>global_zero</code></td>
+                            <td><code>.bss</code></td>
+                            <td>Global variable được khởi tạo bằng zero.</td>
+                        </tr>
+                        <tr>
+                            <td><code>global_uninit</code></td>
+                            <td><code>.bss</code></td>
+                            <td>Global variable không có initializer.</td>
+                        </tr>
+                        <tr>
+                            <td><code>sensor_value</code></td>
+                            <td><code>.data</code></td>
+                            <td>Static variable đã khởi tạo.</td>
+                        </tr>
+                        <tr>
+                            <td><code>MAX_SENSOR_VALUE</code></td>
+                            <td><code>.rodata</code></td>
+                            <td>Constant object có thể được đặt trong read-only section.</td>
+                        </tr>
+                        <tr>
+                            <td><code>read_sensor()</code></td>
+                            <td><code>.text</code></td>
+                            <td>Function code.</td>
+                        </tr>
+                        <tr>
+                            <td><code>read_count</code></td>
+                            <td><code>.data</code></td>
+                            <td>Static local variable có thời gian tồn tại static.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Việc một biến được đưa vào section nào còn phụ thuộc vào
+                    compiler, optimization và các tùy chọn biên dịch. Bảng trên
+                    mô tả cách phân loại phổ biến để chúng ta hiểu nguyên lý.
+                </p>
+
+                <h2>3. Memory Map trong Embedded Systems</h2>
+
+                <h3>3.1. Memory Map là gì?</h3>
+
+                <p>
+                    <strong>Memory Map</strong> mô tả cách các vùng nhớ được bố trí
+                    trong không gian địa chỉ của một hệ thống.
+                </p>
+
+                <p>
+                    Đối với một MCU, Memory Map thường thể hiện các vùng như:
+                </p>
+
+                <ul>
+                    <li>Flash Memory: lưu firmware và dữ liệu không mất khi mất nguồn.</li>
+                    <li>SRAM: lưu dữ liệu chương trình trong quá trình chạy.</li>
+                    <li>Peripheral Memory: vùng địa chỉ dùng để truy cập các peripheral register.</li>
+                    <li>System Memory: một số vùng nhớ hệ thống đặc biệt theo thiết kế MCU.</li>
+                    <li>External Memory: bộ nhớ ngoài nếu hệ thống có hỗ trợ.</li>
+                </ul>
+
+                <h3>3.2. Ví dụ Memory Map đơn giản</h3>
+
+                <p>
+                    Giả sử một MCU có:
+                </p>
+
+                <ul>
+                    <li>Flash Memory: 512 KB, bắt đầu tại địa chỉ <code>0x08000000</code>.</li>
+                    <li>SRAM: 128 KB, bắt đầu tại địa chỉ <code>0x20000000</code>.</li>
+                </ul>
+
+                <p>
+                    Memory Map minh họa có thể được biểu diễn như sau:
+                </p>
+
+                <svg viewBox="0 0 700 430" width="100%" role="img"
+                    aria-label="Memory Map minh họa gồm Flash và SRAM">
+                    <text x="175" y="25" text-anchor="middle"
+                        font-size="15" fill="currentColor">FLASH MEMORY</text>
+
+                    <rect x="35" y="40" width="280" height="250" rx="5"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <rect x="35" y="40" width="280" height="48"
+                        fill="#b8d5f8" stroke="#4b83c3" />
+                    <text x="175" y="60" text-anchor="middle"
+                        font-size="13" fill="#173d68">Vector Table</text>
+                    <text x="175" y="77" text-anchor="middle"
+                        font-size="11" fill="#173d68">Interrupt / Exception Vectors</text>
+
+                    <rect x="35" y="88" width="280" height="125"
+                        fill="#dceaff" stroke="#4b83c3" />
+                    <text x="175" y="140" text-anchor="middle"
+                        font-size="14" fill="#173d68">.text</text>
+                    <text x="175" y="160" text-anchor="middle"
+                        font-size="12" fill="#173d68">Program Code</text>
+
+                    <rect x="35" y="213" width="280" height="77"
+                        fill="#eef4fc" stroke="#4b83c3" />
+                    <text x="175" y="244" text-anchor="middle"
+                        font-size="14" fill="#173d68">.rodata / .data load image</text>
+                    <text x="175" y="264" text-anchor="middle"
+                        font-size="11" fill="#173d68">Read-only and initialization data</text>
+
+                    <text x="175" y="315" text-anchor="middle"
+                        font-size="12" fill="currentColor">0x08000000</text>
+                    <text x="175" y="335" text-anchor="middle"
+                        font-size="12" fill="currentColor">Flash end: 0x0807FFFF</text>
+
+                    <text x="525" y="25" text-anchor="middle"
+                        font-size="15" fill="currentColor">SRAM</text>
+
+                    <rect x="385" y="40" width="280" height="250" rx="5"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+
+                    <rect x="385" y="40" width="280" height="66"
+                        fill="#b8e2c7" stroke="#34845a" />
+                    <text x="525" y="68" text-anchor="middle"
+                        font-size="14" fill="#174d2e">Stack</text>
+                    <text x="525" y="87" text-anchor="middle"
+                        font-size="11" fill="#174d2e">Local variables / Function calls</text>
+
+                    <rect x="385" y="106" width="280" height="72"
+                        fill="#d4eddd" stroke="#34845a" />
+                    <text x="525" y="137" text-anchor="middle"
+                        font-size="14" fill="#174d2e">Heap</text>
+                    <text x="525" y="156" text-anchor="middle"
+                        font-size="11" fill="#174d2e">Dynamic allocation</text>
+
+                    <rect x="385" y="178" width="280" height="55"
+                        fill="#e9f6ed" stroke="#34845a" />
+                    <text x="525" y="201" text-anchor="middle"
+                        font-size="14" fill="#174d2e">.bss</text>
+                    <text x="525" y="218" text-anchor="middle"
+                        font-size="11" fill="#174d2e">Zero-initialized data</text>
+
+                    <rect x="385" y="233" width="280" height="57"
+                        fill="#c7e6d2" stroke="#34845a" />
+                    <text x="525" y="256" text-anchor="middle"
+                        font-size="14" fill="#174d2e">.data</text>
+                    <text x="525" y="275" text-anchor="middle"
+                        font-size="11" fill="#174d2e">Initialized data</text>
+
+                    <text x="525" y="315" text-anchor="middle"
+                        font-size="12" fill="currentColor">0x20000000</text>
+                    <text x="525" y="335" text-anchor="middle"
+                        font-size="12" fill="currentColor">RAM end: 0x2001FFFF</text>
+
+                    <text x="350" y="385" text-anchor="middle"
+                        font-size="12" fill="currentColor">
+                        Memory Map chỉ mang tính minh họa, không đại diện cho mọi MCU.
+                    </text>
+                </svg>
+
+                <p>
+                    Hình trên mô tả một cách tổ chức bộ nhớ thường gặp, nhưng cần lưu ý
+                    rằng vị trí Stack, Heap và các section trong RAM có thể khác nhau
+                    tùy Linker Script và thiết kế hệ thống.
+                </p>
+
+                <h3>3.3. Địa chỉ bắt đầu và dung lượng vùng nhớ</h3>
+
+                <p>
+                    Khi làm việc với Memory Map, hai thông tin rất quan trọng là:
+                </p>
+
+                <ul>
+                    <li><strong>ORIGIN:</strong> địa chỉ bắt đầu của vùng nhớ.</li>
+                    <li><strong>LENGTH:</strong> dung lượng của vùng nhớ.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, nếu Flash bắt đầu tại <code>0x08000000</code> và có dung lượng
+                    512 KB:
+                </p>
+
+                <pre><code>Flash Start = 0x08000000
+Flash Size  = 512 KB
+Flash End   = 0x0807FFFF</code></pre>
+
+                <p>
+                    Nếu SRAM bắt đầu tại <code>0x20000000</code> và có dung lượng
+                    128 KB:
+                </p>
+
+                <pre><code>RAM Start = 0x20000000
+RAM Size  = 128 KB
+RAM End   = 0x2001FFFF</code></pre>
+
+                <p>
+                    Các địa chỉ trên chỉ là ví dụ. Khi phát triển firmware, phải lấy
+                    thông tin chính xác từ datasheet, reference manual và tài liệu
+                    memory map của MCU đang sử dụng.
+                </p>
+
+                <h2>4. Linker Script là gì?</h2>
+
+                <h3>4.1. Khái niệm Linker Script</h3>
+
+                <p>
+                    <strong>Linker Script</strong> là file cấu hình mô tả cách Linker
+                    bố trí các section của chương trình vào không gian địa chỉ.
+                </p>
+
+                <p>
+                    Với GNU Linker (GNU ld), Linker Script thường sử dụng phần mở rộng
+                    <code>.ld</code>. Nó giúp xác định:
+                </p>
+
+                <ul>
+                    <li>Các vùng nhớ mà chương trình được phép sử dụng.</li>
+                    <li>Địa chỉ bắt đầu và dung lượng của từng vùng.</li>
+                    <li>Section nào được đặt trong Flash hoặc RAM.</li>
+                    <li>Địa chỉ nạp dữ liệu và địa chỉ sử dụng dữ liệu khi chạy.</li>
+                    <li>Các symbol phục vụ quá trình Startup.</li>
+                    <li>Những section cần được giữ lại hoặc xử lý đặc biệt.</li>
+                </ul>
+
+                <h3>4.2. Cấu trúc cơ bản của Linker Script</h3>
+
+                <p>
+                    Một GNU Linker Script thường có hai phần quan trọng:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phần</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>MEMORY</code></td>
+                            <td>
+                                Khai báo các vùng nhớ có thể sử dụng,
+                                địa chỉ bắt đầu và dung lượng.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>SECTIONS</code></td>
+                            <td>
+                                Quy định cách các input section được gom
+                                và đặt vào output section.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>4.3. Ví dụ khai báo MEMORY</h3>
+
+                <pre><code>MEMORY
+{
+    FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 512K
+    RAM   (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+}</code></pre>
+
+                <p>Giải thích:</p>
+
+                <ul>
+                    <li><code>FLASH</code> là tên vùng nhớ Flash.</li>
+                    <li><code>RAM</code> là tên vùng nhớ RAM.</li>
+                    <li><code>ORIGIN</code> xác định địa chỉ bắt đầu.</li>
+                    <li><code>LENGTH</code> xác định dung lượng của vùng nhớ.</li>
+                    <li>
+                        Các ký hiệu <code>r</code>, <code>w</code>, <code>x</code>
+                        mô tả thuộc tính vùng nhớ theo cú pháp của GNU ld:
+                        đọc, ghi và thực thi.
+                    </li>
+                </ul>
+
+                <p>
+                    Đây là cách khai báo phổ biến trong GNU Linker Script.
+                    Các toolchain khác có thể sử dụng định dạng file và cú pháp khác.
+                </p>
+
+                <h3>4.4. Ví dụ khai báo SECTIONS</h3>
+
+                <p>
+                    Sau khi khai báo vùng nhớ, chúng ta sử dụng
+                    <code>SECTIONS</code> để chỉ định vị trí của các section.
+                </p>
+
+                <pre><code>SECTIONS
+{
+    .text :
+    {
+        *(.text)
+        *(.text*)
+    } &gt; FLASH
+
+    .rodata :
+    {
+        *(.rodata)
+        *(.rodata*)
+    } &gt; FLASH
+
+    .data :
+    {
+        *(.data)
+        *(.data*)
+    } &gt; RAM
+
+    .bss :
+    {
+        *(.bss)
+        *(.bss*)
+        *(COMMON)
+    } &gt; RAM
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>.text</code> được đặt vào vùng <code>FLASH</code>.</li>
+                    <li><code>.rodata</code> được đặt vào vùng <code>FLASH</code>.</li>
+                    <li><code>.data</code> được đặt vào vùng <code>RAM</code>.</li>
+                    <li><code>.bss</code> được đặt vào vùng <code>RAM</code>.</li>
+                </ul>
+
+                <p>
+                    Cú pháp <code>*(&lt;section-name&gt;)</code> dùng để chọn
+                    những input section tương ứng từ các Object File đầu vào.
+                    Ví dụ <code>*(.text*)</code> có thể chọn cả những section
+                    bắt đầu bằng <code>.text</code>.
+                </p>
+
+                <div class="note">
+                    Ví dụ trên chỉ thể hiện ý tưởng cơ bản. Trong Embedded thực tế,
+                    section <code>.data</code> cần có cả vùng lưu bản khởi tạo trong
+                    Flash và vùng sử dụng khi chạy trong RAM. Phần này sẽ được trình bày
+                    cụ thể ở mục tiếp theo.
+                </div>
+
+                <h2>5. Load Address và Run Address</h2>
+
+                <h3>5.1. Sự khác nhau giữa LMA và VMA</h3>
+
+                <p>
+                    Một khái niệm rất quan trọng khi đọc Linker Script là sự khác nhau
+                    giữa địa chỉ lưu dữ liệu trong file chương trình và địa chỉ mà
+                    dữ liệu được sử dụng khi chạy.
+                </p>
+
+                <p>
+                    Hai khái niệm thường gặp là:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Load Memory Address (LMA)</td>
+                            <td>
+                                Địa chỉ nạp hoặc lưu nội dung ban đầu của section
+                                trong image.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Virtual Memory Address (VMA)</td>
+                            <td>
+                                Địa chỉ mà section được sử dụng khi chương trình chạy.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong nhiều hệ thống MCU, một biến global có giá trị khởi tạo
+                    được lưu bản khởi tạo trong Flash, nhưng lại cần nằm trong RAM
+                    khi chương trình chạy.
+                </p>
+
+                <p>
+                    Khi đó:
+                </p>
+
+                <ul>
+                    <li>LMA của section <code>.data</code> nằm trong Flash.</li>
+                    <li>VMA của section <code>.data</code> nằm trong RAM.</li>
+                </ul>
+
+                <h3>5.2. Ví dụ với biến global đã khởi tạo</h3>
+
+                <pre><code>uint32_t sensor_timeout = 5000U;
+
+int main(void)
+{
+    sensor_timeout++;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Biến <code>sensor_timeout</code> cần có giá trị ban đầu là 5000.
+                    Vì biến có thể thay đổi trong quá trình chương trình chạy,
+                    nó thường được đặt trong RAM.
+                </p>
+
+                <p>
+                    Tuy nhiên, ngay sau khi MCU reset, RAM không tự động chứa
+                    giá trị khởi tạo 5000 theo cách mà chương trình C yêu cầu.
+                    Do đó, giá trị ban đầu cần được lưu trong Flash và được
+                    Startup Code sao chép sang RAM.
+                </p>
+
+                <svg viewBox="0 0 700 300" width="100%" role="img"
+                    aria-label="Luồng sao chép dữ liệu từ Flash sang RAM khi khởi động">
+                    <rect x="35" y="35" width="245" height="105" rx="7"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <text x="157" y="60" text-anchor="middle"
+                        font-size="15" fill="#173d68">FLASH</text>
+                    <text x="157" y="85" text-anchor="middle"
+                        font-size="13" fill="#173d68">.data initialization image</text>
+                    <text x="157" y="108" text-anchor="middle"
+                        font-size="12" fill="#173d68">sensor_timeout = 5000</text>
+
+                    <rect x="420" y="35" width="245" height="105" rx="7"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+
+                    <text x="542" y="60" text-anchor="middle"
+                        font-size="15" fill="#174d2e">RAM</text>
+                    <text x="542" y="85" text-anchor="middle"
+                        font-size="13" fill="#174d2e">.data runtime section</text>
+                    <text x="542" y="108" text-anchor="middle"
+                        font-size="12" fill="#174d2e">sensor_timeout = 5000</text>
+
+                    <path d="M 285 88 L 410 88" stroke="#287c50"
+                        stroke-width="2.5" fill="none" />
+                    <path d="M 400 80 L 410 88 L 400 96"
+                        stroke="#287c50" stroke-width="2.5" fill="none" />
+
+                    <text x="347" y="68" text-anchor="middle"
+                        font-size="11" fill="currentColor">Copy</text>
+
+                    <rect x="170" y="185" width="360" height="70" rx="7"
+                        fill="#f0f0f0" stroke="#888888" />
+
+                    <text x="350" y="211" text-anchor="middle"
+                        font-size="14" fill="#333333">Startup Code</text>
+                    <text x="350" y="233" text-anchor="middle"
+                        font-size="12" fill="#333333">Copy .data initialization values</text>
+                </svg>
+
+                <p>
+                    Quá trình này thường được thực hiện trước khi gọi
+                    <code>main()</code>, thông qua các địa chỉ được định nghĩa
+                    bởi Linker Script.
+                </p>
+
+                <h3>5.3. Cách biểu diễn trong GNU Linker Script</h3>
+
+                <p>
+                    Với GNU ld, có thể sử dụng <code>AT&gt;</code> để chỉ định
+                    vùng nhớ nạp dữ liệu khác với vùng nhớ chạy.
+                </p>
+
+                <pre><code>.data :
+{
+    . = ALIGN(4);
+
+    _sdata = .;
+
+    *(.data)
+    *(.data*)
+
+    . = ALIGN(4);
+
+    _edata = .;
+} &gt; RAM AT&gt; FLASH
+
+_sidata = LOADADDR(.data);</code></pre>
+
+                <p>Giải thích:</p>
+
+                <ul>
+                    <li>
+                        <code>&gt; RAM</code>: VMA của section <code>.data</code>
+                        nằm trong RAM.
+                    </li>
+                    <li>
+                        <code>AT&gt; FLASH</code>: LMA của section
+                        <code>.data</code> nằm trong Flash.
+                    </li>
+                    <li>
+                        <code>_sdata</code>: symbol đánh dấu địa chỉ bắt đầu
+                        của vùng <code>.data</code> trong RAM.
+                    </li>
+                    <li>
+                        <code>_edata</code>: symbol đánh dấu địa chỉ kết thúc
+                        của vùng <code>.data</code> trong RAM.
+                    </li>
+                    <li>
+                        <code>LOADADDR(.data)</code>: lấy địa chỉ nạp của section
+                        <code>.data</code>.
+                    </li>
+                    <li>
+                        <code>_sidata</code>: symbol lưu địa chỉ nguồn để
+                        Startup Code sao chép dữ liệu.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    Các tên như <code>_sdata</code>, <code>_edata</code> và
+                    <code>_sidata</code> là symbol do người thiết kế Linker Script
+                    đặt tên. Startup Code phải sử dụng đúng những tên mà Linker Script
+                    thực sự cung cấp.
+                </div>
+
+                <h2>6. BSS Section và quá trình Zero Initialization</h2>
+
+                <h3>6.1. Tại sao cần khởi tạo BSS?</h3>
+
+                <p>
+                    Trong C, các biến có static storage duration không được khởi tạo
+                    tường minh sẽ được khởi tạo bằng giá trị zero theo quy tắc của ngôn ngữ.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+uint32_t system_status;
+static uint8_t sensor_ready;
+
+int main(void)
+{
+    /* Both variables should begin with zero values */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Những biến này thường được đưa vào section <code>.bss</code>.
+                    Khi khởi động, Startup Code cần đảm bảo vùng BSS được đưa về zero
+                    trước khi chương trình sử dụng các biến đó.
+                </p>
+
+                <h3>6.2. Cách khai báo BSS trong Linker Script</h3>
+
+                <pre><code>.bss (NOLOAD) :
+{
+    . = ALIGN(4);
+
+    _sbss = .;
+
+    *(.bss)
+    *(.bss*)
+    *(COMMON)
+
+    . = ALIGN(4);
+
+    _ebss = .;
+} &gt; RAM</code></pre>
+
+                <p>Giải thích:</p>
+
+                <ul>
+                    <li>
+                        <code>.bss</code> là output section dành cho dữ liệu BSS.
+                    </li>
+                    <li>
+                        <code>NOLOAD</code> trong GNU ld chỉ định section không cần
+                        được tải như một vùng dữ liệu khởi tạo thông thường.
+                    </li>
+                    <li>
+                        <code>_sbss</code> đánh dấu địa chỉ bắt đầu của BSS.
+                    </li>
+                    <li>
+                        <code>_ebss</code> đánh dấu địa chỉ kết thúc của BSS.
+                    </li>
+                    <li>
+                        <code>&gt; RAM</code> đặt section vào vùng RAM.
+                    </li>
+                </ul>
+
+                <h3>6.3. Zero Initialization</h3>
+
+                <p>
+                    Startup Code có thể sử dụng hai symbol <code>_sbss</code>
+                    và <code>_ebss</code> để xác định phạm vi cần xóa dữ liệu.
+                </p>
+
+                <pre><code>extern uint32_t _sbss;
+extern uint32_t _ebss;
+
+static void zero_bss(void)
+{
+    uint32_t *dst = &amp;_sbss;
+
+    while (dst &lt; &amp;_ebss) {
+        *dst = 0U;
+        dst++;
+    }
+}</code></pre>
+
+                <p>
+                    Hàm trên minh họa việc ghi zero vào vùng BSS theo từng đơn vị
+                    <code>uint32_t</code>. Cách triển khai thực tế cần đảm bảo
+                    Alignment, kích thước section và ABI phù hợp với nền tảng.
+                </p>
+
+                <h2>7. Linker Script hoàn chỉnh ở mức cơ bản</h2>
+
+                <h3>7.1. Ví dụ Linker Script sử dụng GNU ld</h3>
+
+                <p>
+                    Dưới đây là một ví dụ tổng hợp để minh họa cách khai báo
+                    Flash, RAM và một số section thường gặp trong firmware.
+                </p>
+
+                <p>
+                    Giả định:
+                </p>
+
+                <ul>
+                    <li>Flash có dung lượng 512 KB.</li>
+                    <li>RAM có dung lượng 128 KB.</li>
+                    <li>Vector Table được đặt đầu vùng Flash.</li>
+                    <li>Code và read-only data được đặt trong Flash.</li>
+                    <li>Dữ liệu khởi tạo được lưu trong Flash và chạy trong RAM.</li>
+                    <li>BSS và vùng noinit nằm trong RAM.</li>
+                </ul>
+
+                <pre><code>/* Example linker script for GNU ld */
+
+ENTRY(Reset_Handler)
+
+MEMORY
+{
+    FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 512K
+    RAM   (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+}
+
+__StackTop = ORIGIN(RAM) + LENGTH(RAM);
+
+SECTIONS
+{
+    /* Interrupt Vector Table */
+    .isr_vector :
+    {
+        . = ALIGN(4);
+
+        KEEP(*(.isr_vector))
+
+        . = ALIGN(4);
+    } &gt; FLASH
+
+    /* Program Code */
+    .text :
+    {
+        . = ALIGN(4);
+
+        *(.text)
+        *(.text*)
+
+        . = ALIGN(4);
+    } &gt; FLASH
+
+    /* Read-only Data */
+    .rodata :
+    {
+        . = ALIGN(4);
+
+        *(.rodata)
+        *(.rodata*)
+
+        . = ALIGN(4);
+    } &gt; FLASH
+
+    /* Initialization Function Pointers */
+    .init_array :
+    {
+        . = ALIGN(4);
+
+        PROVIDE_HIDDEN(__init_array_start = .);
+
+        KEEP(*(.init_array*))
+
+        PROVIDE_HIDDEN(__init_array_end = .);
+
+        . = ALIGN(4);
+    } &gt; FLASH
+
+    /* Initialized Data:
+       Load Address: FLASH
+       Run Address : RAM */
+    .data :
+    {
+        . = ALIGN(4);
+
+        _sdata = .;
+
+        *(.data)
+        *(.data*)
+
+        . = ALIGN(4);
+
+        _edata = .;
+    } &gt; RAM AT&gt; FLASH
+
+    _sidata = LOADADDR(.data);
+
+    /* Zero-initialized Data */
+    .bss (NOLOAD) :
+    {
+        . = ALIGN(4);
+
+        _sbss = .;
+
+        *(.bss)
+        *(.bss*)
+        *(COMMON)
+
+        . = ALIGN(4);
+
+        _ebss = .;
+    } &gt; RAM
+
+    /* Data that should not be cleared by normal startup */
+    .noinit (NOLOAD) :
+    {
+        . = ALIGN(4);
+
+        *(.noinit)
+        *(.noinit*)
+
+        . = ALIGN(4);
+    } &gt; RAM
+
+    /* End of statically allocated RAM data */
+    _end = .;
+
+    /* Check that static RAM sections do not overlap the stack reserve */
+    ASSERT(_end &lt;= (__StackTop - 0x400),
+           "RAM overflow: static data overlaps stack reserve")
+}</code></pre>
+
+                <p>
+                    Đây là Linker Script minh họa cho một môi trường sử dụng GNU ld.
+                    Nó chưa phải cấu hình hoàn chỉnh cho một MCU cụ thể vì mỗi
+                    architecture và startup environment có thể yêu cầu thêm section,
+                    symbol hoặc cách bố trí riêng.
+                </p>
+
+                <h3>7.2. Giải thích các thành phần quan trọng</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>ENTRY(Reset_Handler)</code></td>
+                            <td>
+                                Khai báo entry point của chương trình cho Linker.
+                                Trên MCU, quá trình reset thực tế thường đi qua
+                                cơ chế Reset Vector của kiến trúc.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>MEMORY</code></td>
+                            <td>
+                                Khai báo vùng nhớ Flash và RAM.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>SECTIONS</code></td>
+                            <td>
+                                Định nghĩa cách bố trí output section.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>KEEP()</code></td>
+                            <td>
+                                Yêu cầu Linker giữ lại input section được chỉ định
+                                ngay cả khi sử dụng một số cơ chế loại bỏ section
+                                không được tham chiếu.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>ALIGN(4)</code></td>
+                            <td>
+                                Điều chỉnh vị trí hiện tại theo Alignment 4 byte
+                                trong ví dụ.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>AT&gt; FLASH</code></td>
+                            <td>
+                                Đặt vùng load của section vào Flash.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>LOADADDR()</code></td>
+                            <td>
+                                Lấy Load Memory Address của một section.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>ASSERT()</code></td>
+                            <td>
+                                Kiểm tra một điều kiện trong quá trình Link.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>7.3. Tại sao cần KEEP()?</h3>
+
+                <p>
+                    Một số toolchain hỗ trợ loại bỏ những section không được tham chiếu
+                    khi bật các tùy chọn như <code>--gc-sections</code>.
+                </p>
+
+                <p>
+                    Tuy nhiên, Vector Table có thể không được chương trình C tham chiếu
+                    trực tiếp bằng một symbol thông thường. Nếu bị loại bỏ, firmware
+                    sẽ không có Vector Table như mong đợi.
+                </p>
+
+                <p>
+                    Vì vậy, GNU Linker cung cấp <code>KEEP()</code> để yêu cầu giữ lại
+                    section quan trọng.
+                </p>
+
+                <pre><code>.isr_vector :
+{
+    KEEP(*(.isr_vector))
+} &gt; FLASH</code></pre>
+
+                <div class="note">
+                    Không phải mọi section đều cần KEEP(). Chỉ nên sử dụng cho các
+                    section cần tồn tại theo yêu cầu của hệ thống, chẳng hạn Vector Table
+                    hoặc một số vùng metadata đặc biệt.
+                </div>
+
+                <h2>8. Startup Code là gì?</h2>
+
+                <h3>8.1. Khái niệm Startup Code</h3>
+
+                <p>
+                    <strong>Startup Code</strong> là phần code thực hiện các bước
+                    khởi tạo ban đầu sau khi MCU reset và trước khi chương trình
+                    bắt đầu thực thi logic chính trong <code>main()</code>.
+                </p>
+
+                <p>
+                    Startup Code thường được cung cấp bởi:
+                </p>
+
+                <ul>
+                    <li>Nhà sản xuất MCU.</li>
+                    <li>CMSIS hoặc framework hỗ trợ kiến trúc.</li>
+                    <li>Embedded SDK hoặc Hardware Abstraction Package.</li>
+                    <li>Toolchain hoặc runtime library.</li>
+                    <li>Project tự xây dựng nếu có yêu cầu đặc biệt.</li>
+                </ul>
+
+                <p>
+                    Startup Code thường được viết bằng Assembly, C hoặc kết hợp cả hai,
+                    tùy architecture và toolchain.
+                </p>
+
+                <h3>8.2. Tại sao không thể gọi main() ngay sau khi reset?</h3>
+
+                <p>
+                    Khi MCU vừa reset, môi trường thực thi C chưa chắc đã được chuẩn bị
+                    đầy đủ. Các biến global và static cần có giá trị đúng, Stack Pointer
+                    phải được thiết lập và một số cấu hình hệ thống có thể cần được
+                    khởi tạo.
+                </p>
+
+                <p>
+                    Ví dụ, xét chương trình:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+uint32_t system_counter = 100U;
+uint32_t error_count;
+
+int main(void)
+{
+    system_counter++;
+
+    if (error_count == 0U) {
+        /* Normal startup behavior */
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trước khi thực thi logic trong <code>main()</code>:
+                </p>
+
+                <ul>
+                    <li><code>system_counter</code> cần nhận giá trị khởi tạo 100.</li>
+                    <li><code>error_count</code> cần được khởi tạo bằng zero.</li>
+                    <li>Stack cần sẵn sàng để sử dụng cho function call và local variable.</li>
+                </ul>
+
+                <p>
+                    Startup Code và C runtime thực hiện những bước cần thiết
+                    để tạo môi trường chạy phù hợp.
+                </p>
+
+                <h2>9. Trình tự khởi động của một MCU</h2>
+
+                <h3>9.1. Reset Sequence tổng quát</h3>
+
+                <p>
+                    Khi MCU nhận một sự kiện reset, CPU sẽ bắt đầu quá trình khởi động
+                    theo quy tắc của kiến trúc phần cứng.
+                </p>
+
+                <p>
+                    Với một MCU sử dụng cơ chế Vector Table, quá trình tổng quát
+                    có thể được hình dung như sau:
+                </p>
+
+                <svg viewBox="0 0 700 660" width="100%" role="img"
+                    aria-label="Luồng khởi động từ reset đến main trong Embedded MCU">
+                    <defs>
+                        <marker id="arrow9" markerWidth="8" markerHeight="8"
+                            refX="6" refY="3" orient="auto">
+                            <path d="M0,0 L6,3 L0,6" fill="#4b83c3" />
+                        </marker>
+                    </defs>
+
+                    <g font-size="13" text-anchor="middle">
+                        <rect x="205" y="20" width="290" height="48" rx="7"
+                            fill="#eeeeee" stroke="#888888" />
+                        <text x="350" y="49" fill="#333333">MCU Reset</text>
+
+                        <path d="M350 68 V94" stroke="#4b83c3"
+                            stroke-width="2" marker-end="url(#arrow9)" />
+
+                        <rect x="205" y="100" width="290" height="55" rx="7"
+                            fill="#dceaff" stroke="#4b83c3" />
+                        <text x="350" y="124" fill="#173d68">Load Initial Stack Pointer</text>
+                        <text x="350" y="141" font-size="11" fill="#173d68">From Vector Table, if defined by architecture</text>
+
+                        <path d="M350 155 V181" stroke="#4b83c3"
+                            stroke-width="2" marker-end="url(#arrow9)" />
+
+                        <rect x="205" y="187" width="290" height="48" rx="7"
+                            fill="#dceaff" stroke="#4b83c3" />
+                        <text x="350" y="216" fill="#173d68">Execute Reset Handler</text>
+
+                        <path d="M350 235 V261" stroke="#4b83c3"
+                            stroke-width="2" marker-end="url(#arrow9)" />
+
+                        <rect x="205" y="267" width="290" height="48" rx="7"
+                            fill="#dceaff" stroke="#4b83c3" />
+                        <text x="350" y="296" fill="#173d68">Initialize .data Section</text>
+
+                        <path d="M350 315 V341" stroke="#4b83c3"
+                            stroke-width="2" marker-end="url(#arrow9)" />
+
+                        <rect x="205" y="347" width="290" height="48" rx="7"
+                            fill="#dceaff" stroke="#4b83c3" />
+                        <text x="350" y="376" fill="#173d68">Zero Initialize .bss Section</text>
+
+                        <path d="M350 395 V421" stroke="#4b83c3"
+                            stroke-width="2" marker-end="url(#arrow9)" />
+
+                        <rect x="205" y="427" width="290" height="48" rx="7"
+                            fill="#e1f3e8" stroke="#34845a" />
+                        <text x="350" y="456" fill="#174d2e">System / Runtime Initialization</text>
+
+                        <path d="M350 475 V501" stroke="#4b83c3"
+                            stroke-width="2" marker-end="url(#arrow9)" />
+
+                        <rect x="205" y="507" width="290" height="48" rx="7"
+                            fill="#e1f3e8" stroke="#34845a" />
+                        <text x="350" y="536" fill="#174d2e">Call main()</text>
+
+                        <path d="M350 555 V581" stroke="#4b83c3"
+                            stroke-width="2" marker-end="url(#arrow9)" />
+
+                        <rect x="205" y="587" width="290" height="48" rx="7"
+                            fill="#b8e2c7" stroke="#34845a" />
+                        <text x="350" y="616" fill="#174d2e">Application Execution</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Đây là luồng minh họa tổng quát. Thứ tự chính xác của các bước
+                    như System Initialization, FPU initialization, runtime initialization
+                    và C library initialization có thể khác nhau giữa các MCU và toolchain.
+                </p>
+
+                <h3>9.2. Vector Table</h3>
+
+                <p>
+                    <strong>Vector Table</strong> là bảng chứa các thông tin liên quan
+                    đến điểm bắt đầu và địa chỉ các exception hoặc interrupt handler
+                    theo quy tắc của kiến trúc MCU.
+                </p>
+
+                <p>
+                    Với một số kiến trúc, entry đầu tiên của Vector Table chứa giá trị
+                    Stack Pointer ban đầu. Entry tiếp theo chứa địa chỉ của Reset Handler.
+                    Các entry sau đó tương ứng với những exception hoặc interrupt khác.
+                </p>
+
+                <p>
+                    Có thể hình dung một bảng đơn giản như sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Entry</th>
+                            <th>Nội dung minh họa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Entry 0</td>
+                            <td>Initial Stack Pointer</td>
+                        </tr>
+                        <tr>
+                            <td>Entry 1</td>
+                            <td>Reset Handler</td>
+                        </tr>
+                        <tr>
+                            <td>Entry 2</td>
+                            <td>NMI Handler</td>
+                        </tr>
+                        <tr>
+                            <td>Entry 3</td>
+                            <td>Hard Fault Handler</td>
+                        </tr>
+                        <tr>
+                            <td>Entry tiếp theo</td>
+                            <td>Các exception và interrupt handler khác</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cấu trúc cụ thể của Vector Table phụ thuộc vào kiến trúc MCU.
+                    Không phải mọi vi điều khiển đều sử dụng cùng một định dạng.
+                </p>
+
+                <h3>9.3. Reset Handler</h3>
+
+                <p>
+                    <strong>Reset Handler</strong> là function hoặc routine được gọi
+                    đầu tiên sau khi cơ chế reset của CPU chuyển quyền thực thi
+                    cho chương trình.
+                </p>
+
+                <p>
+                    Reset Handler thường chịu trách nhiệm:
+                </p>
+
+                <ul>
+                    <li>Thực hiện những bước thiết lập môi trường ban đầu.</li>
+                    <li>Sao chép dữ liệu khởi tạo từ Flash sang RAM.</li>
+                    <li>Đưa vùng BSS về zero.</li>
+                    <li>Gọi các bước khởi tạo hệ thống cần thiết.</li>
+                    <li>Khởi tạo C runtime nếu được yêu cầu.</li>
+                    <li>Chuyển quyền điều khiển đến <code>main()</code>.</li>
+                </ul>
+
+                <h2>10. Data Initialization và BSS Initialization trong Startup Code</h2>
+
+                <h3>10.1. Sao chép .data từ Flash sang RAM</h3>
+
+                <p>
+                    Như đã trình bày ở phần LMA và VMA, dữ liệu khởi tạo của
+                    section <code>.data</code> thường có bản lưu trong Flash,
+                    trong khi địa chỉ sử dụng khi chạy nằm trong RAM.
+                </p>
+
+                <p>
+                    Startup Code cần sao chép nội dung từ địa chỉ nguồn
+                    <code>_sidata</code> sang vùng đích bắt đầu tại
+                    <code>_sdata</code> và kết thúc tại <code>_edata</code>.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+extern uint32_t _sidata;
+extern uint32_t _sdata;
+extern uint32_t _edata;
+
+static void initialize_data(void)
+{
+    uint32_t *src = &amp;_sidata;
+    uint32_t *dst = &amp;_sdata;
+
+    while (dst &lt; &amp;_edata) {
+        *dst = *src;
+
+        dst++;
+        src++;
+    }
+}</code></pre>
+
+                <p>
+                    Hàm trên minh họa cách sao chép dữ liệu theo từng word 32 bit.
+                    Việc này giả định các symbol và vùng dữ liệu đã được căn chỉnh
+                    phù hợp. Startup Code thực tế có thể dùng Assembly hoặc cách
+                    sao chép khác tùy toolchain.
+                </p>
+
+                <h3>10.2. Khởi tạo .bss về zero</h3>
+
+                <p>
+                    Tiếp theo, vùng <code>.bss</code> được đưa về zero:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+extern uint32_t _sbss;
+extern uint32_t _ebss;
+
+static void initialize_bss(void)
+{
+    uint32_t *dst = &amp;_sbss;
+
+    while (dst &lt; &amp;_ebss) {
+        *dst = 0U;
+        dst++;
+    }
+}</code></pre>
+
+                <p>
+                    Việc khởi tạo này giúp các biến global và static trong BSS
+                    có giá trị ban đầu phù hợp với yêu cầu của ngôn ngữ C.
+                </p>
+
+                <h3>10.3. Startup Code minh họa</h3>
+
+                <p>
+                    Có thể kết hợp hai hàm trên thành một Reset Handler đơn giản:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+extern uint32_t _sidata;
+extern uint32_t _sdata;
+extern uint32_t _edata;
+
+extern uint32_t _sbss;
+extern uint32_t _ebss;
+
+extern void SystemInit(void);
+extern void __libc_init_array(void);
+extern int main(void);
+
+void Reset_Handler(void)
+{
+    uint32_t *src;
+    uint32_t *dst;
+
+    /* Copy initialized data from Flash to RAM */
+    src = &amp;_sidata;
+    dst = &amp;_sdata;
+
+    while (dst &lt; &amp;_edata) {
+        *dst++ = *src++;
+    }
+
+    /* Clear BSS section */
+    dst = &amp;_sbss;
+
+    while (dst &lt; &amp;_ebss) {
+        *dst++ = 0U;
+    }
+
+    /* Initialize MCU-specific system configuration */
+    SystemInit();
+
+    /* Initialize C runtime functions, if required */
+    __libc_init_array();
+
+    /* Start the application */
+    (void)main();
+
+    /* main() should not normally return in a bare-metal application */
+    for (;;) {
+    }
+}</code></pre>
+
+                <p>
+                    Đoạn code trên giúp minh họa trách nhiệm của Reset Handler,
+                    không phải Startup Code hoàn chỉnh cho mọi MCU.
+                </p>
+
+                <div class="note">
+                    <strong>Quan trọng:</strong> Reset Handler thực tế thường cần
+                    được viết hoặc gọi theo đúng quy ước của CPU. Trên một số kiến trúc,
+                    việc thiết lập Stack Pointer được thực hiện bởi phần cứng từ
+                    Vector Table trước khi Reset Handler chạy. Ngoài ra, việc khởi tạo
+                    clock, FPU, C runtime và các vùng nhớ đặc biệt phải tuân theo
+                    startup implementation của toolchain và MCU.
+                </div>
+
+                <h2>11. Stack và Heap trong Linker Script</h2>
+
+                <h3>11.1. Vì sao Stack cần được xem xét?</h3>
+
+                <p>
+                    Stack được sử dụng trong quá trình thực thi function, lưu trữ
+                    local variable, return address và một số thông tin phục vụ
+                    hoạt động của CPU theo calling convention.
+                </p>
+
+                <p>
+                    Trong Embedded Systems, dung lượng Stack thường bị giới hạn
+                    bởi tổng dung lượng RAM. Nếu Stack sử dụng vượt quá vùng được
+                    cấp phát, chương trình có thể gây Stack Overflow và làm hỏng
+                    dữ liệu ở những vùng nhớ khác.
+                </p>
+
+                <h3>11.2. Stack Pointer ban đầu</h3>
+
+                <p>
+                    Nhiều kiến trúc MCU sử dụng Stack Pointer để xác định vị trí
+                    hiện tại của Stack. Giá trị ban đầu thường được thiết lập
+                    theo quy tắc của kiến trúc hoặc Startup Code.
+                </p>
+
+                <p>
+                    Ví dụ trong GNU Linker Script:
+                </p>
+
+                <pre><code>__StackTop = ORIGIN(RAM) + LENGTH(RAM);</code></pre>
+
+                <p>
+                    Symbol <code>__StackTop</code> biểu diễn địa chỉ ở cuối
+                    vùng RAM trong ví dụ. Trên các hệ thống mà Stack phát triển
+                    theo hướng địa chỉ giảm, đây thường là vị trí khởi tạo
+                    Stack Pointer.
+                </p>
+
+                <h3>11.3. Heap và vùng RAM còn lại</h3>
+
+                <p>
+                    Heap được sử dụng khi chương trình cần cấp phát bộ nhớ động,
+                    chẳng hạn thông qua <code>malloc()</code>, <code>calloc()</code>
+                    hoặc <code>realloc()</code>.
+                </p>
+
+                <p>
+                    Trong một số bare-metal toolchain, Heap có thể được quản lý
+                    thông qua runtime library và các symbol do Linker Script cung cấp.
+                    Tuy nhiên, không phải mọi Embedded project đều sử dụng Heap.
+                </p>
+
+                <p>
+                    Ví dụ, một firmware có thể lựa chọn:
+                </p>
+
+                <ul>
+                    <li>Sử dụng Stack cho biến cục bộ và function call.</li>
+                    <li>Sử dụng Static Allocation cho các buffer có kích thước cố định.</li>
+                    <li>Hạn chế hoặc không sử dụng Dynamic Allocation.</li>
+                </ul>
+
+                <p>
+                    Cách tổ chức này giúp kiểm soát dung lượng RAM và thời gian
+                    thực thi tốt hơn trong nhiều ứng dụng có yêu cầu ổn định cao.
+                </p>
+
+                <h3>11.4. Kiểm tra vùng nhớ dành cho Stack</h3>
+
+                <p>
+                    Một Linker Script có thể sử dụng <code>ASSERT</code> để kiểm tra
+                    một vùng RAM dự phòng cho Stack.
+                </p>
+
+                <pre><code>__StackTop = ORIGIN(RAM) + LENGTH(RAM);
+
+_Min_Stack_Size = 0x400;
+
+ASSERT(_end &lt;= (__StackTop - _Min_Stack_Size),
+       "Not enough RAM for stack")</code></pre>
+
+                <p>
+                    Trong ví dụ này, Linker kiểm tra xem vùng dữ liệu tĩnh đã sử dụng
+                    có vượt quá giới hạn dành cho Stack hay không.
+                </p>
+
+                <p>
+                    Đây chỉ là kiểm tra mức bố trí ban đầu. Nó không đảm bảo Stack
+                    sẽ không bị tràn trong lúc chương trình chạy. Việc xác định
+                    Stack Size vẫn cần dựa trên phân tích call depth, local variable,
+                    interrupt nesting và cách RTOS quản lý task stack nếu có.
+                </p>
+
+                <h2>12. Memory Map File và cách đọc kết quả Linker</h2>
+
+                <h3>12.1. Memory Map File là gì?</h3>
+
+                <p>
+                    <strong>Map File</strong> là file báo cáo do Linker tạo ra,
+                    mô tả cách các section, symbol và vùng nhớ được bố trí
+                    trong chương trình sau khi Link.
+                </p>
+
+                <p>
+                    Trong GNU toolchain, Map File thường được tạo bằng tùy chọn
+                    <code>-Map</code>.
+                </p>
+
+                <pre><code>arm-none-eabi-gcc \
+    main.o sensor.o uart.o \
+    -T linker_script.ld \
+    -Wl,-Map=firmware.map \
+    -o firmware.elf</code></pre>
+
+                <p>
+                    File <code>firmware.map</code> giúp developer kiểm tra:
+                </p>
+
+                <ul>
+                    <li>Section được đặt tại địa chỉ nào.</li>
+                    <li>Code và data chiếm bao nhiêu bộ nhớ.</li>
+                    <li>Symbol nào nằm ở địa chỉ cụ thể.</li>
+                    <li>Object File hoặc Library nào đóng góp vào section.</li>
+                    <li>Có vùng nhớ nào vượt quá giới hạn được khai báo hay không.</li>
+                </ul>
+
+                <h3>12.2. Ví dụ nội dung Map File đơn giản</h3>
+
+                <p>
+                    Một phần Map File có thể chứa thông tin minh họa như sau:
+                </p>
+
+                <pre><code>Memory Configuration
+
+Name        Origin          Length
+FLASH       0x08000000      0x00080000
+RAM         0x20000000      0x00020000
+
+
+Linker script and memory map
+
+.isr_vector  0x08000000   0x00000100
+.text        0x08000100   0x00012000
+.rodata      0x08012100   0x00002000
+
+.data        0x20000000   0x00001000
+.bss         0x20001000   0x00000800
+.noinit      0x20001800   0x00000100</code></pre>
+
+                <p>
+                    Các địa chỉ và kích thước ở trên chỉ là ví dụ để minh họa
+                    cách đọc báo cáo.
+                </p>
+
+                <h3>12.3. Ý nghĩa của thông tin trong Map File</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thông tin</th>
+                            <th>Cách hiểu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Memory Configuration</td>
+                            <td>
+                                Các vùng nhớ được khai báo trong Linker Script.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Origin</td>
+                            <td>
+                                Địa chỉ bắt đầu của một vùng nhớ.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Length</td>
+                            <td>
+                                Dung lượng của vùng nhớ.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Section Address</td>
+                            <td>
+                                Địa chỉ bố trí của section.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Section Size</td>
+                            <td>
+                                Kích thước section.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Symbol</td>
+                            <td>
+                                Tên và địa chỉ của function, variable hoặc
+                                symbol do Linker tạo ra.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>12.4. Tính dung lượng bộ nhớ được sử dụng</h3>
+
+                <p>
+                    Giả sử Map File cho thấy:
+                </p>
+
+                <pre><code>.text   = 72 KB
+.rodata = 12 KB
+.data   = 4 KB
+.bss    = 16 KB</code></pre>
+
+                <p>
+                    Có thể ước lượng:
+                </p>
+
+                <ul>
+                    <li>Flash cần chứa code và read-only data, cùng dữ liệu khởi tạo của .data.</li>
+                    <li>RAM cần chứa .data, .bss và các vùng dữ liệu runtime khác.</li>
+                </ul>
+
+                <p>
+                    Theo ví dụ trên, phần dữ liệu tĩnh trong RAM là khoảng:
+                </p>
+
+                <pre><code>RAM static usage = .data + .bss
+                 = 4 KB + 16 KB
+                 = 20 KB</code></pre>
+
+                <p>
+                    Phần Flash sử dụng cho các section đang xét có thể ước lượng:
+                </p>
+
+                <pre><code>Flash usage = .text + .rodata + .data load image
+            = 72 KB + 12 KB + 4 KB
+            = 88 KB</code></pre>
+
+                <p>
+                    Khi phân tích Map File thực tế, cần kiểm tra cả các section khác
+                    như Vector Table, initialization data, metadata, boot information
+                    và các vùng dành riêng.
+                </p>
+
+                <h2>13. Các công cụ hỗ trợ kiểm tra Memory Layout</h2>
+
+                <h3>13.1. readelf</h3>
+
+                <p>
+                    <code>readelf</code> là công cụ có thể sử dụng để kiểm tra
+                    thông tin trong file ELF.
+                </p>
+
+                <pre><code>arm-none-eabi-readelf -S firmware.elf</code></pre>
+
+                <p>
+                    Tùy chọn <code>-S</code> hiển thị thông tin các section,
+                    bao gồm tên, kích thước và thuộc tính.
+                </p>
+
+                <h3>13.2. objdump</h3>
+
+                <p>
+                    <code>objdump</code> hỗ trợ phân tích cấu trúc file object
+                    hoặc executable.
+                </p>
+
+                <pre><code>arm-none-eabi-objdump -h firmware.elf</code></pre>
+
+                <p>
+                    Tùy chọn <code>-h</code> hiển thị thông tin các section.
+                    Có thể sử dụng thêm tùy chọn disassembly khi cần kiểm tra
+                    mã máy của chương trình.
+                </p>
+
+                <h3>13.3. nm</h3>
+
+                <p>
+                    <code>nm</code> được dùng để liệt kê symbol trong Object File
+                    hoặc file ELF.
+                </p>
+
+                <pre><code>arm-none-eabi-nm -n firmware.elf</code></pre>
+
+                <p>
+                    Lệnh trên giúp hiển thị symbol theo thứ tự địa chỉ tăng dần,
+                    hữu ích khi kiểm tra các symbol như:
+                </p>
+
+                <ul>
+                    <li><code>Reset_Handler</code></li>
+                    <li><code>_sdata</code></li>
+                    <li><code>_edata</code></li>
+                    <li><code>_sidata</code></li>
+                    <li><code>_sbss</code></li>
+                    <li><code>_ebss</code></li>
+                    <li><code>__StackTop</code></li>
+                </ul>
+
+                <h3>13.4. So sánh các công cụ</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Công cụ</th>
+                            <th>Mục đích sử dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Map File</td>
+                            <td>
+                                Xem tổng quan bố trí section và symbol sau khi Link.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>readelf</code></td>
+                            <td>
+                                Phân tích section, segment và thông tin ELF.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>objdump</code></td>
+                            <td>
+                                Kiểm tra section, disassembly và thông tin Object File.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>nm</code></td>
+                            <td>
+                                Liệt kê và kiểm tra symbol.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Debugger</td>
+                            <td>
+                                Kiểm tra nội dung bộ nhớ, Stack Pointer,
+                                Program Counter và trạng thái CPU khi chạy.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>14. Các lỗi thường gặp liên quan đến Linker và Startup</h2>
+
+                <h3>14.1. Undefined Reference</h3>
+
+                <p>
+                    Lỗi <strong>Undefined Reference</strong> xảy ra khi Linker
+                    không tìm thấy định nghĩa của một symbol đang được tham chiếu.
+                </p>
+
+                <pre><code>/* main.c */
+
+extern void sensor_init(void);
+
+int main(void)
+{
+    sensor_init();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Nếu project không cung cấp implementation của
+                    <code>sensor_init()</code> hoặc file chứa implementation
+                    không được đưa vào quá trình Link, Linker có thể báo lỗi
+                    Undefined Reference.
+                </p>
+
+                <h3>14.2. Multiple Definition</h3>
+
+                <p>
+                    Lỗi <strong>Multiple Definition</strong> xảy ra khi nhiều
+                    Object File cùng định nghĩa một symbol không được phép
+                    có nhiều định nghĩa theo cách sử dụng đó.
+                </p>
+
+                <p>
+                    Ví dụ, khai báo một biến global trong header mà không sử dụng
+                    <code>extern</code> có thể dẫn đến nhiều định nghĩa khi header
+                    được include ở nhiều source file.
+                </p>
+
+                <h3>14.3. Region RAM Overflowed</h3>
+
+                <p>
+                    Lỗi này xảy ra khi tổng lượng dữ liệu mà Linker bố trí vượt
+                    quá dung lượng vùng RAM được khai báo.
+                </p>
+
+                <p>
+                    Một số nguyên nhân thường gặp:
+                </p>
+
+                <ul>
+                    <li>Có quá nhiều biến global hoặc static.</li>
+                    <li>Khai báo buffer kích thước lớn.</li>
+                    <li>Stack hoặc Heap được dành dung lượng quá lớn.</li>
+                    <li>Vùng RAM bị giới hạn nhưng project sử dụng nhiều dữ liệu hơn dự kiến.</li>
+                </ul>
+
+                <h3>14.4. Region FLASH Overflowed</h3>
+
+                <p>
+                    Lỗi này xuất hiện khi chương trình hoặc dữ liệu cần lưu trong Flash
+                    vượt quá dung lượng được khai báo.
+                </p>
+
+                <p>
+                    Nguyên nhân có thể là:
+                </p>
+
+                <ul>
+                    <li>Code size quá lớn.</li>
+                    <li>Có nhiều constant data hoặc lookup table.</li>
+                    <li>Link thêm Library không cần thiết.</li>
+                    <li>Các section đặc biệt chiếm nhiều dung lượng.</li>
+                    <li>Vùng Flash bị chia sẻ với Bootloader hoặc khu vực dữ liệu riêng.</li>
+                </ul>
+
+                <h3>14.5. Startup không khởi tạo đúng .data hoặc .bss</h3>
+
+                <p>
+                    Nếu các symbol trong Linker Script không trùng với những symbol
+                    được Startup Code sử dụng, quá trình copy hoặc zero initialization
+                    có thể không hoạt động đúng.
+                </p>
+
+                <p>
+                    Một số biểu hiện có thể gặp:
+                </p>
+
+                <ul>
+                    <li>Biến global có giá trị khác với giá trị khởi tạo mong muốn.</li>
+                    <li>Biến global chưa khởi tạo không nhận được giá trị zero.</li>
+                    <li>Chương trình gặp lỗi ngay sau reset.</li>
+                    <li>Dữ liệu RAM bị ghi sai vùng nhớ.</li>
+                </ul>
+
+                <h3>14.6. Vector Table đặt sai vị trí</h3>
+
+                <p>
+                    Nếu Vector Table không nằm ở địa chỉ mà MCU mong đợi hoặc không
+                    được cấu hình đúng theo cơ chế của kiến trúc, CPU có thể không
+                    thực thi đúng Reset Handler hoặc không xử lý interrupt như mong muốn.
+                </p>
+
+                <div class="note">
+                    Khi gặp lỗi khởi động, không nên chỉ kiểm tra source code.
+                    Cần kiểm tra đồng thời Linker Script, Vector Table, Startup Code,
+                    Memory Map và cấu hình nạp firmware.
+                </div>
+
+                <h2>15. Linker Script và Startup Code trong thực tế Embedded Project</h2>
+
+                <h3>15.1. Khi sử dụng MCU SDK hoặc Vendor IDE</h3>
+
+                <p>
+                    Trong một project sử dụng SDK hoặc IDE của nhà sản xuất MCU,
+                    developer thường không cần tự viết toàn bộ Linker Script
+                    hoặc Startup Code từ đầu.
+                </p>
+
+                <p>
+                    Những thành phần này thường được cung cấp sẵn trong:
+                </p>
+
+                <ul>
+                    <li>MCU Startup Package.</li>
+                    <li>CMSIS Device Package.</li>
+                    <li>Vendor SDK hoặc Hardware Abstraction Library.</li>
+                    <li>Project Template do IDE tạo ra.</li>
+                    <li>Toolchain support package.</li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, developer vẫn cần hiểu cách chúng hoạt động để
+                    có thể đọc cấu hình, kiểm tra lỗi và điều chỉnh khi project
+                    có yêu cầu đặc biệt.
+                </p>
+
+                <h3>15.2. Khi sử dụng Bootloader</h3>
+
+                <p>
+                    Một số hệ thống Embedded có Bootloader nằm ở một vùng Flash riêng.
+                    Application Firmware sẽ được đặt tại một địa chỉ khác thay vì
+                    địa chỉ bắt đầu mặc định của Flash.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <pre><code>Flash Start       : 0x08000000
+Bootloader Region : 0x08000000 - 0x08007FFF
+Application Start : 0x08008000</code></pre>
+
+                <p>
+                    Khi đó, Linker Script của Application phải được cấu hình để
+                    bố trí Vector Table và các section theo vùng nhớ dành cho
+                    Application.
+                </p>
+
+                <p>
+                    Ngoài ra, Bootloader và Application cần tuân thủ cùng một
+                    quy ước về cách chuyển quyền điều khiển, Stack Pointer
+                    và vị trí Vector Table.
+                </p>
+
+                <div class="note">
+                    Các địa chỉ trong ví dụ chỉ mang tính minh họa. Cấu hình thực tế
+                    phải tuân theo memory layout, boot configuration và yêu cầu
+                    bảo vệ bộ nhớ của MCU.
+                </div>
+
+                <h3>15.3. Khi sử dụng RTOS</h3>
+
+                <p>
+                    Trong hệ thống sử dụng RTOS, ngoài Main Stack hoặc Stack ban đầu
+                    của hệ thống, mỗi Task thường có Stack riêng.
+                </p>
+
+                <p>
+                    Do đó, việc tính toán bộ nhớ cần xem xét:
+                </p>
+
+                <ul>
+                    <li>System hoặc Main Stack.</li>
+                    <li>Stack của từng Task.</li>
+                    <li>RTOS object và control block.</li>
+                    <li>Heap hoặc Memory Pool theo cấu hình RTOS.</li>
+                    <li>Global và static data của các module.</li>
+                    <li>Buffer phục vụ communication và peripheral.</li>
+                </ul>
+
+                <p>
+                    Linker Script quản lý cách bố trí các section tĩnh, trong khi
+                    RTOS có thể quản lý một phần bộ nhớ runtime thông qua cơ chế
+                    cấp phát riêng.
+                </p>
+
+                <h2>16. Best Practices khi làm việc với Linker Script và Startup Code</h2>
+
+                <p>
+                    Một số nguyên tắc hữu ích khi phát triển và bảo trì firmware:
+                </p>
+
+                <ol>
+                    <li>
+                        <strong>Luôn kiểm tra Memory Map của MCU:</strong>
+                        Không sử dụng địa chỉ Flash hoặc RAM theo phỏng đoán.
+                        Cần đối chiếu với datasheet và reference manual.
+                    </li>
+                    <li>
+                        <strong>Hiểu Linker Script đang sử dụng:</strong>
+                        Nắm được các vùng nhớ, section và symbol chính.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra LMA và VMA:</strong>
+                        Đặc biệt quan trọng với section <code>.data</code>
+                        và các vùng cần sao chép khi khởi động.
+                    </li>
+                    <li>
+                        <strong>Không tùy tiện thay đổi Startup Code:</strong>
+                        Những thay đổi không đúng có thể ảnh hưởng đến
+                        quá trình khởi tạo bộ nhớ và runtime.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra Vector Table:</strong>
+                        Đảm bảo vị trí và cách bố trí đúng với architecture.
+                    </li>
+                    <li>
+                        <strong>Sử dụng Map File:</strong>
+                        Theo dõi mức sử dụng Flash và RAM sau mỗi lần build quan trọng.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra Stack và Heap:</strong>
+                        Đánh giá dung lượng cần thiết theo workload thực tế.
+                    </li>
+                    <li>
+                        <strong>Sử dụng ASSERT khi phù hợp:</strong>
+                        Phát hiện sớm tình trạng vượt giới hạn vùng nhớ trong quá trình Link.
+                    </li>
+                    <li>
+                        <strong>Chú ý Bootloader:</strong>
+                        Đảm bảo Application được Link vào đúng vùng nhớ mà hệ thống quy định.
+                    </li>
+                    <li>
+                        <strong>Ưu tiên cấu hình đã được nhà sản xuất kiểm chứng:</strong>
+                        Khi sử dụng Vendor SDK, nên hiểu và điều chỉnh trên cơ sở
+                        cấu hình chính thức thay vì tự thay thế toàn bộ startup environment.
+                    </li>
+                </ol>
+
+                <h2>17. Tổng kết</h2>
+
+                <p>
+                    Trong bài học này, chúng ta đã tìm hiểu quá trình Link và cách
+                    firmware được bố trí vào Flash và RAM trước khi chương trình
+                    bắt đầu chạy.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Linker</td>
+                            <td>
+                                Kết hợp Object File, giải quyết symbol và
+                                bố trí các section của chương trình.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Object File</td>
+                            <td>
+                                File trung gian chứa code, data, symbol
+                                và thông tin cần thiết cho quá trình Link.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Section</td>
+                            <td>
+                                Vùng nội dung trong Object File hoặc Executable,
+                                chẳng hạn .text, .data và .bss.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Memory Map</td>
+                            <td>
+                                Mô tả không gian địa chỉ và các vùng nhớ của hệ thống.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Linker Script</td>
+                            <td>
+                                Quy định cách Linker đặt các section vào
+                                những vùng nhớ cụ thể.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>LMA</td>
+                            <td>
+                                Địa chỉ nạp hoặc lưu nội dung ban đầu của section.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>VMA</td>
+                            <td>
+                                Địa chỉ sử dụng của section khi chương trình chạy.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Startup Code</td>
+                            <td>
+                                Chuẩn bị môi trường thực thi trước khi gọi main().
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Vector Table</td>
+                            <td>
+                                Chứa thông tin địa chỉ phục vụ reset,
+                                exception và interrupt theo kiến trúc MCU.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Reset Handler</td>
+                            <td>
+                                Routine khởi động ban đầu của firmware.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Memory Initialization</td>
+                            <td>
+                                Sao chép .data và đưa .bss về zero trước khi
+                                chương trình sử dụng các biến tương ứng.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Map File</td>
+                            <td>
+                                Báo cáo cách Linker bố trí section và symbol
+                                sau quá trình Link.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể tóm tắt mối liên hệ giữa các thành phần như sau:
+                </p>
+
+                <ul>
+                    <li><strong>Compiler:</strong> chuyển Source Code thành Object File.</li>
+                    <li><strong>Linker:</strong> kết hợp Object File và bố trí các Section.</li>
+                    <li><strong>Linker Script:</strong> quy định cách bố trí chương trình vào Memory Map.</li>
+                    <li><strong>Startup Code:</strong> chuẩn bị bộ nhớ và runtime environment khi MCU khởi động.</li>
+                    <li><strong>main():</strong> điểm bắt đầu của logic ứng dụng C sau các bước khởi tạo cần thiết.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Trong Embedded Systems, việc chương trình
+                    biên dịch thành công chưa có nghĩa là firmware đã được bố trí bộ nhớ
+                    đúng cách hoặc có thể khởi động chính xác. Cần kiểm tra đồng thời
+                    Linker Script, Memory Map, Startup Code và kết quả Link.
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-8.html">← Bài trước</a>
+                    <a class="btn" href="lesson-10.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+</html>

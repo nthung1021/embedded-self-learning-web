@@ -1,0 +1,1588 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 8: Memory Alignment, Padding &amp; Structure Packing | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html" class="active" aria-current="page">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 8: Memory Alignment, Padding &amp; Structure Packing</h1>
+
+                <p>
+                    Khi khai báo một biến hoặc một cấu trúc trong C, chúng ta thường quan tâm đến
+                    kiểu dữ liệu và giá trị của nó. Tuy nhiên, ở mức bộ nhớ, compiler còn phải
+                    quyết định vị trí bắt đầu của dữ liệu và cách sắp xếp các thành viên.
+                </p>
+
+                <p>
+                    Đây là lý do tại sao kích thước thực tế của một <code>struct</code> đôi khi
+                    lớn hơn tổng kích thước các thành viên bên trong. Phần bộ nhớ được thêm vào
+                    để đáp ứng yêu cầu sắp xếp dữ liệu được gọi là <strong>Padding</strong>.
+                </p>
+
+                <p>
+                    Trong Embedded C, hiểu rõ Memory Alignment và Padding giúp chúng ta tối ưu
+                    RAM, tránh truy cập bộ nhớ không hợp lệ hoặc kém hiệu quả, đồng thời xử lý
+                    dữ liệu giữa phần mềm và phần cứng một cách an toàn hơn.
+                </p>
+
+                <h2>1. Memory Alignment là gì?</h2>
+
+                <h3>1.1. Khái niệm Memory Alignment</h3>
+
+                <p>
+                    <strong>Memory Alignment</strong> là quy tắc sắp xếp dữ liệu trong bộ nhớ
+                    sao cho địa chỉ bắt đầu của một object đáp ứng yêu cầu căn chỉnh của kiểu
+                    dữ liệu hoặc nền tảng đang sử dụng.
+                </p>
+
+                <p>
+                    Ví dụ, trên một nền tảng phổ biến, một biến kiểu <code>int</code> có thể
+                    yêu cầu địa chỉ bắt đầu phải chia hết cho 4. Điều đó có nghĩa là các địa chỉ
+                    như 0, 4, 8, 12 có thể đáp ứng yêu cầu căn chỉnh 4 byte.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Yêu cầu Alignment phụ thuộc vào compiler, ABI,
+                    kiến trúc CPU và kiểu dữ liệu. Không nên mặc định rằng mọi hệ thống đều
+                    căn chỉnh <code>int</code> theo 4 byte hoặc <code>double</code> theo 8 byte.
+                </div>
+
+                <h3>1.2. Tại sao cần Memory Alignment?</h3>
+
+                <p>
+                    Một số CPU có thể truy cập dữ liệu hiệu quả hơn khi dữ liệu được đặt tại
+                    địa chỉ đã căn chỉnh. Ngoài ra, một số kiến trúc yêu cầu địa chỉ truy cập
+                    phải đáp ứng Alignment nhất định.
+                </p>
+
+                <p>Có thể hiểu vai trò của Memory Alignment thông qua các điểm sau:</p>
+
+                <ul>
+                    <li>
+                        <strong>Hiệu suất:</strong> CPU có thể đọc hoặc ghi dữ liệu hiệu quả
+                        hơn khi địa chỉ truy cập được căn chỉnh phù hợp.
+                    </li>
+                    <li>
+                        <strong>Yêu cầu phần cứng:</strong> Một số kiến trúc không hỗ trợ hoặc
+                        xử lý đặc biệt khi truy cập dữ liệu không được căn chỉnh.
+                    </li>
+                    <li>
+                        <strong>Tổ chức cấu trúc dữ liệu:</strong> Compiler sử dụng Alignment
+                        để xác định vị trí các thành viên trong <code>struct</code>.
+                    </li>
+                    <li>
+                        <strong>Tương tác với phần cứng:</strong> Buffer dùng cho DMA hoặc
+                        một số vùng nhớ đặc biệt có thể cần Alignment cụ thể theo yêu cầu
+                        của MCU và peripheral.
+                    </li>
+                </ul>
+
+                <h3>1.3. Minh họa địa chỉ được căn chỉnh</h3>
+
+                <p>
+                    Giả sử một kiểu dữ liệu yêu cầu Alignment là 4 byte. Các địa chỉ bắt đầu
+                    sau đây có thể đáp ứng yêu cầu đó:
+                </p>
+
+                <svg viewBox="0 0 700 190" width="100%" role="img"
+                    aria-label="Minh họa các địa chỉ bộ nhớ được căn chỉnh theo 4 byte">
+                    <rect x="20" y="45" width="640" height="55" rx="6"
+                        fill="#e8f1ff" stroke="#4b83c3" />
+
+                    <g font-size="13" text-anchor="middle" fill="#26384a">
+                        <rect x="20" y="45" width="80" height="55" fill="#d7e8ff"
+                            stroke="#4b83c3" />
+                        <rect x="100" y="45" width="80" height="55" fill="#f4f7fb"
+                            stroke="#4b83c3" />
+                        <rect x="180" y="45" width="80" height="55" fill="#f4f7fb"
+                            stroke="#4b83c3" />
+                        <rect x="260" y="45" width="80" height="55" fill="#f4f7fb"
+                            stroke="#4b83c3" />
+                        <rect x="340" y="45" width="80" height="55" fill="#d7e8ff"
+                            stroke="#4b83c3" />
+                        <rect x="420" y="45" width="80" height="55" fill="#f4f7fb"
+                            stroke="#4b83c3" />
+                        <rect x="500" y="45" width="80" height="55" fill="#f4f7fb"
+                            stroke="#4b83c3" />
+                        <rect x="580" y="45" width="80" height="55" fill="#f4f7fb"
+                            stroke="#4b83c3" />
+
+                        <text x="60" y="78">0</text>
+                        <text x="140" y="78">1</text>
+                        <text x="220" y="78">2</text>
+                        <text x="300" y="78">3</text>
+                        <text x="380" y="78">4</text>
+                        <text x="460" y="78">5</text>
+                        <text x="540" y="78">6</text>
+                        <text x="620" y="78">7</text>
+                    </g>
+
+                    <g font-size="13" fill="#26384a">
+                        <text x="20" y="25">Địa chỉ bộ nhớ</text>
+                        <text x="20" y="130">Địa chỉ bắt đầu phù hợp với Alignment 4:</text>
+                        <text x="40" y="157" fill="#237a4b">0</text>
+                        <text x="120" y="157" fill="#237a4b">4</text>
+                        <text x="200" y="157" fill="#237a4b">8</text>
+                        <text x="280" y="157" fill="#237a4b">12</text>
+                        <text x="360" y="157" fill="#237a4b">16</text>
+                        <text x="440" y="157" fill="#237a4b">...</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Hình trên chỉ minh họa các địa chỉ chia hết cho 4. Trong thực tế,
+                    Alignment của từng kiểu dữ liệu do nền tảng và compiler quy định.
+                </p>
+
+                <h2>2. Padding là gì?</h2>
+
+                <h3>2.1. Khái niệm Padding</h3>
+
+                <p>
+                    <strong>Padding</strong> là những byte được compiler thêm vào giữa các
+                    thành viên hoặc ở cuối một cấu trúc nhằm đáp ứng các yêu cầu Alignment.
+                </p>
+
+                <p>
+                    Padding không phải là một thành viên mà lập trình viên khai báo. Nó là
+                    phần không gian bổ sung trong cách compiler bố trí object.
+                </p>
+
+                <p>Xét ví dụ sau:</p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+struct Example {
+    uint8_t  a;
+    uint32_t b;
+    uint8_t  c;
+};</code></pre>
+
+                <p>
+                    Giả sử nền tảng đang sử dụng có các đặc điểm:
+                </p>
+
+                <ul>
+                    <li><code>uint8_t</code> có kích thước 1 byte và Alignment 1.</li>
+                    <li><code>uint32_t</code> có kích thước 4 byte và Alignment 4.</li>
+                    <li>Alignment của <code>struct Example</code> là 4 byte.</li>
+                </ul>
+
+                <p>
+                    Khi đó, compiler có thể sắp xếp các thành viên như sau:
+                </p>
+
+                <svg viewBox="0 0 700 250" width="100%" role="img"
+                    aria-label="Minh họa padding trong struct Example">
+                    <text x="20" y="25" font-size="14" fill="currentColor">
+                        struct Example
+                    </text>
+
+                    <g font-size="12" text-anchor="middle">
+                        <rect x="20" y="55" width="80" height="55" fill="#b8e2c7"
+                            stroke="#34845a" />
+                        <text x="60" y="77" fill="#173d28">a</text>
+                        <text x="60" y="94" fill="#173d28">1 byte</text>
+
+                        <rect x="100" y="55" width="80" height="55" fill="#eeeeee"
+                            stroke="#999999" />
+                        <text x="140" y="87" fill="#555555">Padding</text>
+
+                        <rect x="180" y="55" width="320" height="55" fill="#c5dcf8"
+                            stroke="#4b83c3" />
+                        <text x="340" y="77" fill="#213f62">b</text>
+                        <text x="340" y="94" fill="#213f62">4 bytes</text>
+
+                        <rect x="500" y="55" width="80" height="55" fill="#b8e2c7"
+                            stroke="#34845a" />
+                        <text x="540" y="77" fill="#173d28">c</text>
+                        <text x="540" y="94" fill="#173d28">1 byte</text>
+
+                        <rect x="580" y="55" width="80" height="55" fill="#eeeeee"
+                            stroke="#999999" />
+                        <text x="620" y="87" fill="#555555">Padding</text>
+                    </g>
+
+                    <g font-size="12" fill="currentColor">
+                        <text x="20" y="140">Offset 0</text>
+                        <text x="100" y="140">Offset 1–3</text>
+                        <text x="180" y="140">Offset 4–7</text>
+                        <text x="500" y="140">Offset 8</text>
+                        <text x="580" y="140">Offset 9–11</text>
+
+                        <text x="20" y="185">Tổng kích thước các thành viên: 1 + 4 + 1 = 6 bytes</text>
+                        <text x="20" y="210">Kích thước struct trong ví dụ: 12 bytes</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>a</code> nằm ở offset 0.</li>
+                    <li>Compiler thêm 3 byte Padding để <code>b</code> bắt đầu tại offset 4.</li>
+                    <li><code>b</code> chiếm các byte từ offset 4 đến offset 7.</li>
+                    <li><code>c</code> nằm tại offset 8.</li>
+                    <li>Compiler thêm 3 byte Padding ở cuối để kích thước struct là bội số của 4.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, tổng kích thước là 12 byte thay vì 6 byte.
+                </p>
+
+                <div class="note">
+                    <strong>Quan trọng:</strong> Kết quả 12 byte ở trên là ví dụ minh họa
+                    theo một cách bố trí bộ nhớ phổ biến, không phải kết quả được C Standard
+                    đảm bảo cho mọi compiler và mọi nền tảng.
+                </div>
+
+                <h3>2.2. Internal Padding và Trailing Padding</h3>
+
+                <p>
+                    Padding trong một cấu trúc thường được chia thành hai loại:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại</th>
+                            <th>Vị trí</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Internal Padding</td>
+                            <td>Nằm giữa các thành viên.</td>
+                            <td>
+                                Căn chỉnh địa chỉ bắt đầu của thành viên tiếp theo.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Trailing Padding</td>
+                            <td>Nằm ở cuối struct.</td>
+                            <td>
+                                Đảm bảo kích thước struct phù hợp với Alignment của chính nó.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>2.3. Tại sao cần Trailing Padding?</h3>
+
+                <p>
+                    Hãy xét một mảng chứa nhiều phần tử của cùng một cấu trúc:
+                </p>
+
+                <pre><code>struct Example {
+    uint8_t  a;
+    uint32_t b;
+    uint8_t  c;
+};
+
+struct Example items[3];</code></pre>
+
+                <p>
+                    Các phần tử của mảng được bố trí liên tiếp. Khoảng cách giữa hai phần tử
+                    chính là <code>sizeof(struct Example)</code>.
+                </p>
+
+                <p>
+                    Nếu cấu trúc có kích thước 12 byte, các phần tử sẽ bắt đầu tại các
+                    offset tương ứng:
+                </p>
+
+                <pre><code>items[0] : offset 0
+items[1] : offset 12
+items[2] : offset 24</code></pre>
+
+                <p>
+                    Vì 12 chia hết cho 4, các phần tử tiếp theo vẫn có thể bắt đầu tại địa chỉ
+                    đáp ứng Alignment 4. Đây là một trong những lý do cấu trúc có thể cần
+                    Trailing Padding.
+                </p>
+
+                <h2>3. Cách compiler bố trí một Structure</h2>
+
+                <h3>3.1. Nguyên tắc bố trí thành viên</h3>
+
+                <p>
+                    Khi compiler bố trí một <code>struct</code>, nó phải giữ thứ tự khai báo
+                    của các thành viên theo quy tắc của C, đồng thời đáp ứng các yêu cầu
+                    Alignment tương ứng.
+                </p>
+
+                <p>
+                    Với cách bố trí phổ biến, có thể hình dung quá trình này như sau:
+                </p>
+
+                <ol>
+                    <li>Bắt đầu từ offset phù hợp với thành viên đầu tiên.</li>
+                    <li>
+                        Xác định vị trí thành viên tiếp theo sao cho địa chỉ của nó đáp ứng
+                        Alignment của kiểu dữ liệu.
+                    </li>
+                    <li>
+                        Nếu cần thiết, thêm Padding vào khoảng trống giữa hai thành viên.
+                    </li>
+                    <li>
+                        Sau thành viên cuối cùng, có thể thêm Padding để kích thước tổng
+                        thể phù hợp với Alignment của struct.
+                    </li>
+                </ol>
+
+                <h3>3.2. Alignment của Structure</h3>
+
+                <p>
+                    Trong nhiều ABI phổ biến, Alignment của một <code>struct</code> thường
+                    được xác định dựa trên Alignment lớn nhất trong các thành viên của nó.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>struct Sample {
+    uint8_t  a;     // Alignment 1
+    uint16_t b;     // Alignment 2
+    uint32_t c;     // Alignment 4
+};</code></pre>
+
+                <p>
+                    Với giả định Alignment tương ứng là 1, 2 và 4 byte, Alignment của
+                    <code>struct Sample</code> thường là 4 byte.
+                </p>
+
+                <div class="note">
+                    Đây là cách bố trí phổ biến trên nhiều nền tảng, nhưng chi tiết
+                    Alignment và Padding vẫn phụ thuộc vào ABI và compiler.
+                </div>
+
+                <h3>3.3. Sử dụng sizeof để kiểm tra kích thước</h3>
+
+                <p>
+                    Toán tử <code>sizeof</code> cho biết kích thước của một kiểu dữ liệu
+                    hoặc object tính theo byte.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+struct Example {
+    uint8_t  a;
+    uint32_t b;
+    uint8_t  c;
+};
+
+int main(void)
+{
+    printf("Size of uint8_t: %zu bytes\n", sizeof(uint8_t));
+    printf("Size of uint32_t: %zu bytes\n", sizeof(uint32_t));
+
+    printf("Size of struct Example: %zu bytes\n",
+           sizeof(struct Example));
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Với giả định bố trí đã phân tích ở trên, kết quả có thể là:
+                </p>
+
+                <pre><code>Size of uint8_t: 1 bytes
+Size of uint32_t: 4 bytes
+Size of struct Example: 12 bytes</code></pre>
+
+                <p>
+                    Khi làm việc trên MCU thực tế, nên kiểm tra kết quả bằng compiler
+                    và toolchain đang sử dụng thay vì dựa vào một kết quả cố định.
+                </p>
+
+                <h2>4. Kiểm tra Offset của thành viên bằng offsetof</h2>
+
+                <h3>4.1. offsetof là gì?</h3>
+
+                <p>
+                    Ngoài <code>sizeof</code>, C còn cung cấp macro
+                    <code>offsetof</code> trong header <code>&lt;stddef.h&gt;</code>.
+                    Macro này dùng để xác định offset của một thành viên tính từ đầu
+                    cấu trúc.
+                </p>
+
+                <p>Cú pháp:</p>
+
+                <pre><code>offsetof(struct_type, member)</code></pre>
+
+                <h3>4.2. Ví dụ sử dụng offsetof</h3>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stddef.h&gt;
+
+struct Example {
+    uint8_t  a;
+    uint32_t b;
+    uint8_t  c;
+};
+
+int main(void)
+{
+    printf("Offset of a: %zu\n",
+           offsetof(struct Example, a));
+
+    printf("Offset of b: %zu\n",
+           offsetof(struct Example, b));
+
+    printf("Offset of c: %zu\n",
+           offsetof(struct Example, c));
+
+    printf("Struct size: %zu\n",
+           sizeof(struct Example));
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Với cách bố trí phổ biến đã giả định, kết quả có thể là:
+                </p>
+
+                <pre><code>Offset of a: 0
+Offset of b: 4
+Offset of c: 8
+Struct size: 12</code></pre>
+
+                <p>
+                    <code>offsetof</code> đặc biệt hữu ích khi cần kiểm tra layout của cấu trúc,
+                    làm việc với dữ liệu ngoại vi hoặc xác minh các giả định về bố trí bộ nhớ.
+                </p>
+
+                <h2>5. Ảnh hưởng của thứ tự khai báo thành viên</h2>
+
+                <h3>5.1. Hai struct có cùng thành viên nhưng kích thước khác nhau</h3>
+
+                <p>
+                    Một trong những cách tối ưu Padding đơn giản là thay đổi thứ tự khai báo
+                    các thành viên, thường bằng cách nhóm các thành viên có Alignment lớn
+                    trước và các thành viên nhỏ hơn sau.
+                </p>
+
+                <p>Xét hai cấu trúc sau:</p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+struct StructA {
+    uint8_t  a;
+    uint32_t b;
+    uint8_t  c;
+    uint16_t d;
+};
+
+struct StructB {
+    uint32_t b;
+    uint16_t d;
+    uint8_t  a;
+    uint8_t  c;
+};</code></pre>
+
+                <p>
+                    Giả sử:
+                </p>
+
+                <ul>
+                    <li><code>uint8_t</code>: 1 byte, Alignment 1.</li>
+                    <li><code>uint16_t</code>: 2 byte, Alignment 2.</li>
+                    <li><code>uint32_t</code>: 4 byte, Alignment 4.</li>
+                </ul>
+
+                <p>
+                    Cách bố trí phổ biến có thể được minh họa như sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>StructA</th>
+                            <th>Offset</th>
+                            <th>Kích thước</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>a</code></td>
+                            <td>0</td>
+                            <td>1 byte</td>
+                        </tr>
+                        <tr>
+                            <td>Padding</td>
+                            <td>1–3</td>
+                            <td>3 bytes</td>
+                        </tr>
+                        <tr>
+                            <td><code>b</code></td>
+                            <td>4–7</td>
+                            <td>4 bytes</td>
+                        </tr>
+                        <tr>
+                            <td><code>c</code></td>
+                            <td>8</td>
+                            <td>1 byte</td>
+                        </tr>
+                        <tr>
+                            <td>Padding</td>
+                            <td>9</td>
+                            <td>1 byte</td>
+                        </tr>
+                        <tr>
+                            <td><code>d</code></td>
+                            <td>10–11</td>
+                            <td>2 bytes</td>
+                        </tr>
+                        <tr>
+                            <td>Trailing Padding</td>
+                            <td>12–15</td>
+                            <td>4 bytes</td>
+                        </tr>
+                        <tr>
+                            <th colspan="2">Tổng kích thước</th>
+                            <th>16 bytes</th>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>StructB</th>
+                            <th>Offset</th>
+                            <th>Kích thước</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>b</code></td>
+                            <td>0–3</td>
+                            <td>4 bytes</td>
+                        </tr>
+                        <tr>
+                            <td><code>d</code></td>
+                            <td>4–5</td>
+                            <td>2 bytes</td>
+                        </tr>
+                        <tr>
+                            <td><code>a</code></td>
+                            <td>6</td>
+                            <td>1 byte</td>
+                        </tr>
+                        <tr>
+                            <td><code>c</code></td>
+                            <td>7</td>
+                            <td>1 byte</td>
+                        </tr>
+                        <tr>
+                            <td>Không cần Padding bổ sung</td>
+                            <td>—</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <th colspan="2">Tổng kích thước</th>
+                            <th>8 bytes</th>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong ví dụ này, <code>StructB</code> có kích thước 8 byte, nhỏ hơn
+                    <code>StructA</code> với kích thước 16 byte. Cả hai đều chứa cùng các
+                    thành viên và cùng kiểu dữ liệu.
+                </p>
+
+                <div class="note">
+                    <strong>Nguyên tắc thực hành:</strong> Khi tối ưu kích thước struct,
+                    có thể thử nhóm các thành viên có Alignment lớn trước, sau đó đến
+                    các thành viên nhỏ hơn. Tuy nhiên, cần kiểm tra lại bằng
+                    <code>sizeof</code> và <code>offsetof</code> trên toolchain mục tiêu.
+                    Không nên thay đổi thứ tự nếu cấu trúc có yêu cầu layout cố định
+                    từ giao thức, phần cứng hoặc interface bên ngoài.
+                </div>
+
+                <h3>5.2. Ví dụ kiểm tra kích thước hai struct</h3>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+struct StructA {
+    uint8_t  a;
+    uint32_t b;
+    uint8_t  c;
+    uint16_t d;
+};
+
+struct StructB {
+    uint32_t b;
+    uint16_t d;
+    uint8_t  a;
+    uint8_t  c;
+};
+
+int main(void)
+{
+    printf("StructA size: %zu\n", sizeof(struct StructA));
+    printf("StructB size: %zu\n", sizeof(struct StructB));
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Kết quả theo giả định của ví dụ:
+                </p>
+
+                <pre><code>StructA size: 16
+StructB size: 8</code></pre>
+
+                <h2>6. Alignment trong Nested Structure</h2>
+
+                <h3>6.1. Padding khi sử dụng struct lồng nhau</h3>
+
+                <p>
+                    <strong>Nested Structure</strong> là cấu trúc có một hoặc nhiều thành viên
+                    là các struct khác. Khi sử dụng kiểu dữ liệu này, các yêu cầu Alignment
+                    của struct bên trong cũng ảnh hưởng đến vị trí thành viên.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+struct Header {
+    uint8_t  type;
+    uint32_t length;
+};
+
+struct Packet {
+    uint8_t source;
+    struct Header header;
+    uint16_t checksum;
+};</code></pre>
+
+                <p>
+                    Giả sử <code>struct Header</code> có Alignment 4. Thành viên
+                    <code>header</code> trong <code>struct Packet</code> cần được bố trí
+                    tại một offset phù hợp với Alignment của nó.
+                </p>
+
+                <p>
+                    Với một cách bố trí phổ biến:
+                </p>
+
+                <ul>
+                    <li><code>source</code> nằm ở offset 0.</li>
+                    <li>Padding được thêm trước <code>header</code>.</li>
+                    <li><code>header</code> có thể bắt đầu tại offset 4.</li>
+                    <li><code>checksum</code> được bố trí sau struct <code>header</code> sao cho đáp ứng Alignment 2.</li>
+                    <li>Cuối cùng có thể có Trailing Padding cho toàn bộ <code>Packet</code>.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, khi thiết kế cấu trúc dữ liệu nhiều cấp, cần xem xét cả
+                    Alignment của các struct thành viên chứ không chỉ từng trường riêng lẻ.
+                </p>
+
+                <h2>7. Structure Packing là gì?</h2>
+
+                <h3>7.1. Khái niệm Structure Packing</h3>
+
+                <p>
+                    <strong>Structure Packing</strong> là kỹ thuật yêu cầu compiler sử dụng
+                    cách bố trí cấu trúc ít Padding hơn hoặc giới hạn Alignment của các
+                    thành viên.
+                </p>
+
+                <p>
+                    Packing thường được sử dụng khi cần:
+                </p>
+
+                <ul>
+                    <li>Giảm kích thước của cấu trúc dữ liệu.</li>
+                    <li>Làm việc với định dạng dữ liệu có layout được quy định sẵn.</li>
+                    <li>Đọc hoặc ghi một số vùng dữ liệu có bố trí byte cụ thể.</li>
+                    <li>Tương tác với giao diện phần cứng hoặc dữ liệu tương thích với một ABI cụ thể.</li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, Structure Packing thường phụ thuộc vào compiler extension
+                    hoặc tùy chọn riêng của toolchain, không phải một tính năng có cú pháp
+                    thống nhất trong mọi phiên bản C.
+                </p>
+
+                <h3>7.2. Sử dụng GCC Attribute packed</h3>
+
+                <p>
+                    Với GCC và một số compiler tương thích, có thể sử dụng
+                    <code>__attribute__((packed))</code>:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+struct __attribute__((packed)) PackedData {
+    uint8_t  a;
+    uint32_t b;
+    uint8_t  c;
+};</code></pre>
+
+                <p>
+                    Trong trường hợp compiler hỗ trợ và áp dụng packed như mong đợi,
+                    các thành viên có thể được bố trí sát nhau mà không có Padding
+                    thông thường giữa chúng.
+                </p>
+
+                <p>
+                    Với ví dụ trên, kích thước có thể là:
+                </p>
+
+                <pre><code>sizeof(struct PackedData) == 6</code></pre>
+
+                <p>
+                    So sánh:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cấu trúc</th>
+                            <th>Kích thước minh họa</th>
+                            <th>Đặc điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>struct Example</code></td>
+                            <td>12 bytes</td>
+                            <td>Bố trí thông thường theo giả định của ví dụ.</td>
+                        </tr>
+                        <tr>
+                            <td><code>struct PackedData</code></td>
+                            <td>6 bytes</td>
+                            <td>Compiler hỗ trợ packed và loại bỏ Padding thông thường.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Chú ý:</strong> Không nên giả định mọi compiler đều hỗ trợ
+                    <code>__attribute__((packed))</code> hoặc xử lý nó giống hệt nhau.
+                    Đây là extension của compiler, vì vậy cần xem tài liệu của toolchain.
+                </div>
+
+                <h3>7.3. Sử dụng #pragma pack</h3>
+
+                <p>
+                    Một số compiler hỗ trợ chỉ thị <code>#pragma pack</code> để điều chỉnh
+                    quy tắc đóng gói cấu trúc.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#pragma pack(push, 1)
+
+struct PackedData {
+    uint8_t  a;
+    uint32_t b;
+    uint8_t  c;
+};
+
+#pragma pack(pop)</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>#pragma pack(push, 1)</code> yêu cầu thiết lập mức packing 1 theo quy ước của compiler hỗ trợ.</li>
+                    <li><code>struct PackedData</code> được khai báo trong phạm vi thiết lập đó.</li>
+                    <li><code>#pragma pack(pop)</code> khôi phục thiết lập packing trước đó.</li>
+                </ul>
+
+                <p>
+                    Cách sử dụng <code>#pragma pack</code> và ý nghĩa chính xác của tham số
+                    có thể khác nhau giữa các compiler. Cần kiểm tra tài liệu tương ứng
+                    trước khi áp dụng vào project.
+                </p>
+
+                <h3>7.4. So sánh các cách khai báo</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phương pháp</th>
+                            <th>Đặc điểm</th>
+                            <th>Lưu ý</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Struct thông thường</td>
+                            <td>Compiler tự bố trí Alignment và Padding.</td>
+                            <td>Phù hợp với phần lớn cấu trúc dữ liệu nội bộ.</td>
+                        </tr>
+                        <tr>
+                            <td><code>__attribute__((packed))</code></td>
+                            <td>Extension thường gặp trong GCC và compiler tương thích.</td>
+                            <td>Không portable giữa mọi compiler.</td>
+                        </tr>
+                        <tr>
+                            <td><code>#pragma pack</code></td>
+                            <td>Điều chỉnh packing theo quy tắc riêng của compiler.</td>
+                            <td>Cần kiểm tra phạm vi và cách khôi phục thiết lập.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>8. Rủi ro khi sử dụng Packed Structure</h2>
+
+                <h3>8.1. Unaligned Memory Access</h3>
+
+                <p>
+                    Một vấn đề quan trọng khi sử dụng Packed Structure là các thành viên
+                    có thể không còn được căn chỉnh theo yêu cầu thông thường của kiểu dữ liệu.
+                </p>
+
+                <p>
+                    Ví dụ, một biến <code>uint32_t</code> thường có thể yêu cầu Alignment
+                    4 byte. Nhưng trong một cấu trúc packed, thành viên này có thể nằm
+                    tại offset 1.
+                </p>
+
+                <pre><code>struct __attribute__((packed)) PackedData {
+    uint8_t  type;
+    uint32_t value;
+};</code></pre>
+
+                <p>
+                    Nếu <code>type</code> bắt đầu tại offset 0, thành viên
+                    <code>value</code> có thể bắt đầu tại offset 1.
+                </p>
+
+                <p>
+                    Điều đó có thể tạo ra một truy cập dữ liệu không được căn chỉnh
+                    phù hợp với yêu cầu của nền tảng.
+                </p>
+
+                <p>
+                    Tùy kiến trúc và compiler, việc truy cập thành viên như vậy có thể:
+                </p>
+
+                <ul>
+                    <li>Được hỗ trợ nhưng chậm hơn truy cập đã căn chỉnh.</li>
+                    <li>Được compiler xử lý bằng nhiều lệnh truy cập nhỏ hơn.</li>
+                    <li>Gây lỗi hoặc exception trên một số kiến trúc.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong> Không phải CPU nào cũng xử lý Unaligned
+                    Access giống nhau. Code chạy được trên máy tính hoặc một MCU có thể
+                    không hoạt động đúng trên một kiến trúc khác.
+                </div>
+
+                <h3>8.2. Ảnh hưởng đến hiệu suất</h3>
+
+                <p>
+                    Packing có thể giảm số byte sử dụng nhưng không đồng nghĩa với việc
+                    chương trình luôn chạy nhanh hơn.
+                </p>
+
+                <p>
+                    Khi CPU phải xử lý dữ liệu không căn chỉnh, nó có thể cần nhiều thao tác
+                    hơn so với truy cập một biến được căn chỉnh đúng cách.
+                </p>
+
+                <p>
+                    Vì vậy, cần cân nhắc giữa hai yếu tố:
+                </p>
+
+                <ul>
+                    <li><strong>Memory Optimization:</strong> giảm dung lượng bộ nhớ sử dụng.</li>
+                    <li><strong>Runtime Performance:</strong> duy trì tốc độ truy cập dữ liệu.</li>
+                </ul>
+
+                <h3>8.3. Không nên dùng Packed Structure một cách tùy tiện</h3>
+
+                <p>
+                    Packed Structure không nên được xem là giải pháp mặc định để tối ưu
+                    tất cả các cấu trúc dữ liệu trong Embedded C.
+                </p>
+
+                <p>
+                    Với dữ liệu nội bộ cần truy cập thường xuyên, struct thông thường có thể
+                    phù hợp hơn vì compiler được quyền bố trí dữ liệu theo Alignment của
+                    nền tảng.
+                </p>
+
+                <p>
+                    Chỉ nên sử dụng Packing khi có lý do cụ thể, chẳng hạn một định dạng dữ liệu
+                    hoặc interface yêu cầu layout xác định, và đã đánh giá các rủi ro liên quan.
+                </p>
+
+                <h2>9. Kiểm soát Alignment trong C11</h2>
+
+                <h3>9.1. Sử dụng _Alignof</h3>
+
+                <p>
+                    Từ C11, ngôn ngữ C cung cấp toán tử <code>_Alignof</code> để kiểm tra
+                    yêu cầu Alignment của một kiểu dữ liệu.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    printf("Alignment of uint8_t: %zu\n",
+           _Alignof(uint8_t));
+
+    printf("Alignment of uint16_t: %zu\n",
+           _Alignof(uint16_t));
+
+    printf("Alignment of uint32_t: %zu\n",
+           _Alignof(uint32_t));
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Kết quả phụ thuộc vào nền tảng và compiler. Ví dụ, một toolchain
+                    có thể trả về Alignment lần lượt là 1, 2 và 4 byte.
+                </p>
+
+                <h3>9.2. Sử dụng _Alignas</h3>
+
+                <p>
+                    C11 còn cung cấp <code>_Alignas</code> để yêu cầu Alignment cho
+                    một object hoặc biến.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+_Alignas(16) uint8_t buffer[128];
+
+int main(void)
+{
+    buffer[0] = 0x01;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, chương trình yêu cầu biến <code>buffer</code>
+                    được đặt tại địa chỉ đáp ứng Alignment 16 byte.
+                </p>
+
+                <p>
+                    Một số trường hợp sử dụng:
+                </p>
+
+                <ul>
+                    <li>Buffer phục vụ DMA nếu phần cứng yêu cầu Alignment cụ thể.</li>
+                    <li>Vùng nhớ dùng cho các thao tác xử lý dữ liệu có yêu cầu Alignment.</li>
+                    <li>Biến hoặc buffer cần đáp ứng điều kiện của một thư viện hoặc peripheral.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> <code>_Alignas</code> chỉ yêu cầu căn chỉnh
+                    địa chỉ theo quy tắc của C implementation. Nó không tự động cấu hình
+                    DMA, cache, MPU hoặc các yêu cầu phần cứng khác. Cần kiểm tra thêm
+                    reference manual và tài liệu của MCU.
+                </div>
+
+                <h3>9.3. Static Assertion để kiểm tra kích thước</h3>
+
+                <p>
+                    C11 cung cấp <code>_Static_assert</code> để kiểm tra một điều kiện
+                    ngay tại thời điểm biên dịch.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+struct CompactData {
+    uint32_t id;
+    uint16_t value;
+    uint8_t  state;
+    uint8_t  flags;
+};
+
+_Static_assert(sizeof(struct CompactData) == 8,
+               "Unexpected CompactData size");
+
+int main(void)
+{
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, chương trình yêu cầu kích thước của
+                    <code>struct CompactData</code> phải bằng 8 byte.
+                </p>
+
+                <p>
+                    Nếu compiler tạo ra kích thước khác, quá trình biên dịch sẽ báo lỗi.
+                    Kỹ thuật này hữu ích khi kích thước cấu trúc là một phần của yêu cầu
+                    thiết kế hoặc interface.
+                </p>
+
+                <div class="note">
+                    Chỉ sử dụng kiểm tra kích thước cố định khi project thực sự yêu cầu
+                    kích thước đó trên tất cả các cấu hình mục tiêu. Một static assertion
+                    không làm cho layout trở nên portable; nó chỉ giúp phát hiện khi
+                    giả định layout không còn đúng.
+                </div>
+
+                <h2>10. Memory Alignment trong Embedded Systems</h2>
+
+                <h3>10.1. Tối ưu RAM</h3>
+
+                <p>
+                    Trong Embedded Systems, dung lượng RAM thường bị giới hạn.
+                    Một cấu trúc dữ liệu có Padding không cần thiết có thể làm tăng
+                    bộ nhớ sử dụng, đặc biệt khi chương trình lưu trữ nhiều phần tử
+                    trong một mảng.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>struct SensorData {
+    uint8_t  status;
+    uint32_t timestamp;
+    uint16_t temperature;
+};
+
+struct SensorData sensor_buffer[100];</code></pre>
+
+                <p>
+                    Nếu mỗi phần tử có kích thước lớn hơn dự kiến do Padding,
+                    tổng dung lượng của mảng cũng tăng theo.
+                </p>
+
+                <p>
+                    Vì vậy, cần xem xét layout của struct trước khi tạo những buffer lớn
+                    hoặc những cấu trúc được sử dụng với số lượng phần tử nhiều.
+                </p>
+
+                <h3>10.2. DMA Buffer Alignment</h3>
+
+                <p>
+                    DMA (Direct Memory Access) cho phép một peripheral hoặc bộ điều khiển
+                    DMA truyền dữ liệu giữa các vùng nhớ mà không cần CPU xử lý từng byte.
+                </p>
+
+                <p>
+                    Tùy MCU, DMA có thể yêu cầu địa chỉ buffer đáp ứng một số điều kiện
+                    Alignment nhất định. Một số hệ thống còn có yêu cầu liên quan đến
+                    cache line hoặc vùng RAM mà DMA có thể truy cập.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define DMA_BUFFER_SIZE 128U
+
+_Alignas(16) static uint8_t dma_rx_buffer[DMA_BUFFER_SIZE];
+_Alignas(16) static uint8_t dma_tx_buffer[DMA_BUFFER_SIZE];
+
+int main(void)
+{
+    /* DMA buffer initialization and configuration */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Ví dụ trên yêu cầu Alignment 16 byte theo cú pháp C11. Giá trị 16
+                    chỉ mang tính minh họa; trong project thật, phải sử dụng yêu cầu
+                    từ tài liệu MCU, DMA controller và cache architecture.
+                </p>
+
+                <h3>10.3. Memory-Mapped Register</h3>
+
+                <p>
+                    Trong Embedded C, một số peripheral register được ánh xạ vào
+                    địa chỉ bộ nhớ cụ thể. Các thanh ghi này thường có quy định riêng
+                    về kích thước và cách truy cập.
+                </p>
+
+                <p>
+                    Khi khai báo hoặc truy cập register, cần tuân theo tài liệu phần cứng
+                    và header do nhà sản xuất cung cấp.
+                </p>
+
+                <p>
+                    Không nên tự ý sử dụng <code>packed</code> cho một nhóm register
+                    rồi giả định rằng mọi truy cập sẽ phù hợp với yêu cầu của peripheral.
+                    Packing không thay thế các quy tắc về access width, alignment,
+                    <code>volatile</code> hoặc thứ tự truy cập phần cứng.
+                </p>
+
+                <h3>10.4. Trao đổi dữ liệu giữa các module hoặc ECU</h3>
+
+                <p>
+                    Khi trao đổi dữ liệu giữa các module, ECU hoặc thiết bị khác nhau,
+                    không nên mặc định rằng hai phía có cùng cách bố trí một struct trong RAM.
+                </p>
+
+                <p>
+                    Layout của struct có thể khác nhau do:
+                </p>
+
+                <ul>
+                    <li>Compiler hoặc phiên bản compiler khác nhau.</li>
+                    <li>Kiến trúc CPU và ABI khác nhau.</li>
+                    <li>Quy tắc Alignment hoặc packing khác nhau.</li>
+                    <li>Endianness khác nhau.</li>
+                </ul>
+
+                <p>
+                    Đối với dữ liệu truyền qua CAN, LIN, Ethernet hoặc lưu vào file,
+                    nên định nghĩa định dạng byte rõ ràng và thực hiện Serialization
+                    / Deserialization thay vì gửi trực tiếp toàn bộ vùng nhớ của struct.
+                </p>
+
+                <h2>11. Padding và việc sao chép dữ liệu</h2>
+
+                <h3>11.1. Không nên xem struct là một chuỗi byte portable</h3>
+
+                <p>
+                    Một struct có thể chứa Padding giữa các thành viên và ở cuối cấu trúc.
+                    Các byte Padding không phải là dữ liệu nghiệp vụ mà chương trình
+                    thường cần quan tâm.
+                </p>
+
+                <p>
+                    Vì vậy, không nên mặc định rằng toàn bộ byte của một struct luôn có
+                    giá trị xác định hoặc có thể được sử dụng làm định dạng truyền dữ liệu.
+                </p>
+
+                <h3>11.2. Rủi ro khi sử dụng memcmp</h3>
+
+                <p>
+                    Xét ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;string.h&gt;
+
+struct Data {
+    uint8_t  type;
+    uint32_t value;
+};
+
+struct Data first;
+struct Data second;
+
+/* Assign the same member values */
+first.type = 1U;
+first.value = 100U;
+
+second.type = 1U;
+second.value = 100U;
+
+/* Not a reliable way to compare struct values */
+int result = memcmp(&amp;first, &amp;second, sizeof(struct Data));</code></pre>
+
+                <p>
+                    Hai cấu trúc có thể có cùng giá trị ở tất cả thành viên,
+                    nhưng các byte Padding không nhất thiết giống nhau.
+                    Do đó, <code>memcmp</code> có thể cho kết quả khác 0 dù
+                    các thành viên có giá trị tương ứng bằng nhau.
+                </p>
+
+                <p>
+                    Cách phù hợp hơn là so sánh từng thành viên:
+                </p>
+
+                <pre><code>int data_equal(const struct Data *a,
+               const struct Data *b)
+{
+    if (a == NULL || b == NULL) {
+        return 0;
+    }
+
+    return (a-&gt;type == b-&gt;type) &&
+           (a-&gt;value == b-&gt;value);
+}</code></pre>
+
+                <h3>11.3. Không gửi trực tiếp struct qua Communication Bus</h3>
+
+                <p>
+                    Ví dụ, không nên mặc định truyền toàn bộ struct bằng cách gửi
+                    trực tiếp địa chỉ và kích thước của nó:
+                </p>
+
+                <pre><code>struct SensorData {
+    uint8_t  status;
+    uint32_t temperature;
+};
+
+/* Avoid treating raw struct memory as a portable wire format */
+send_data((const uint8_t *)&amp;sensor_data,
+          sizeof(sensor_data));</code></pre>
+
+                <p>
+                    Cách làm này có thể đưa cả Padding vào dữ liệu truyền.
+                    Ngoài ra, cách biểu diễn các trường đa byte còn phụ thuộc vào
+                    Endianness và định dạng mà phía nhận mong đợi.
+                </p>
+
+                <p>
+                    Thay vào đó, nên xây dựng buffer truyền dữ liệu một cách tường minh:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+void encode_sensor_data(uint8_t *buffer,
+                        uint8_t status,
+                        uint16_t temperature)
+{
+    if (buffer == NULL) {
+        return;
+    }
+
+    buffer[0] = status;
+
+    /* Example: big-endian encoding */
+    buffer[1] = (uint8_t)(temperature &gt;&gt; 8);
+    buffer[2] = (uint8_t)(temperature &amp; 0xFFU);
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, chương trình tự quy định vị trí và thứ tự byte
+                    của từng trường. Định dạng thực tế phải tuân theo protocol
+                    mà hệ thống sử dụng.
+                </p>
+
+                <h2>12. Thực hành: So sánh Struct thông thường và Packed Struct</h2>
+
+                <p>
+                    Ví dụ dưới đây minh họa cách kiểm tra kích thước và offset của
+                    các thành viên bằng <code>sizeof</code> và <code>offsetof</code>.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stddef.h&gt;
+
+struct NormalData {
+    uint8_t  type;
+    uint32_t value;
+    uint16_t counter;
+};
+
+struct __attribute__((packed)) PackedData {
+    uint8_t  type;
+    uint32_t value;
+    uint16_t counter;
+};
+
+int main(void)
+{
+    printf("NormalData size: %zu\n",
+           sizeof(struct NormalData));
+
+    printf("NormalData type offset: %zu\n",
+           offsetof(struct NormalData, type));
+
+    printf("NormalData value offset: %zu\n",
+           offsetof(struct NormalData, value));
+
+    printf("NormalData counter offset: %zu\n",
+           offsetof(struct NormalData, counter));
+
+    printf("\n");
+
+    printf("PackedData size: %zu\n",
+           sizeof(struct PackedData));
+
+    printf("PackedData type offset: %zu\n",
+           offsetof(struct PackedData, type));
+
+    printf("PackedData value offset: %zu\n",
+           offsetof(struct PackedData, value));
+
+    printf("PackedData counter offset: %zu\n",
+           offsetof(struct PackedData, counter));
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Với giả định toolchain có cách bố trí thông thường như những ví dụ
+                    phía trên và hỗ trợ GCC packed attribute, kết quả có thể là:
+                </p>
+
+                <pre><code>NormalData size: 12
+NormalData type offset: 0
+NormalData value offset: 4
+NormalData counter offset: 8
+
+PackedData size: 7
+PackedData type offset: 0
+PackedData value offset: 1
+PackedData counter offset: 5</code></pre>
+
+                <p>
+                    Qua ví dụ này, có thể thấy Packed Structure giúp giảm kích thước
+                    trong trường hợp cụ thể, nhưng đồng thời làm cho thành viên
+                    <code>value</code> không còn được đặt tại offset 4.
+                </p>
+
+                <p>
+                    Đây chính là điểm cần cân nhắc khi lựa chọn giữa tiết kiệm RAM
+                    và yêu cầu truy cập dữ liệu đã căn chỉnh.
+                </p>
+
+                <h2>13. Best Practices khi làm việc với Alignment và Padding</h2>
+
+                <p>
+                    Một số nguyên tắc nên áp dụng khi thiết kế cấu trúc dữ liệu trong
+                    Embedded C:
+                </p>
+
+                <ol>
+                    <li>
+                        <strong>Hiểu Alignment của nền tảng:</strong>
+                        Kiểm tra tài liệu compiler, ABI và kiến trúc MCU thay vì
+                        giả định mọi kiểu dữ liệu có Alignment giống nhau trên mọi hệ thống.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra kích thước struct:</strong>
+                        Sử dụng <code>sizeof</code> để xác minh kích thước thực tế
+                        sau khi biên dịch.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra offset thành viên:</strong>
+                        Sử dụng <code>offsetof</code> khi cần xác minh layout.
+                    </li>
+                    <li>
+                        <strong>Sắp xếp thành viên hợp lý:</strong>
+                        Với cấu trúc nội bộ không có layout cố định, có thể nhóm
+                        các thành viên có Alignment lớn trước để giảm Padding.
+                    </li>
+                    <li>
+                        <strong>Không lạm dụng Packed Structure:</strong>
+                        Chỉ sử dụng khi có yêu cầu rõ ràng và đã đánh giá rủi ro
+                        Unaligned Access.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra DMA Alignment:</strong>
+                        Đảm bảo buffer đáp ứng đúng yêu cầu của DMA controller,
+                        cache và vùng RAM trên MCU.
+                    </li>
+                    <li>
+                        <strong>Không truyền raw struct tùy tiện:</strong>
+                        Định nghĩa Serialization rõ ràng cho dữ liệu truyền qua
+                        CAN, LIN, Ethernet hoặc lưu trữ.
+                    </li>
+                    <li>
+                        <strong>Kiểm tra layout khi đổi compiler:</strong>
+                        Những thay đổi về ABI, compiler option hoặc target architecture
+                        có thể làm thay đổi kích thước và cách bố trí struct.
+                    </li>
+                </ol>
+
+                <h2>14. Tổng kết</h2>
+
+                <p>
+                    Trong bài học này, chúng ta đã tìm hiểu cách compiler sắp xếp dữ liệu
+                    trong bộ nhớ và những yếu tố ảnh hưởng đến kích thước thực tế của
+                    một cấu trúc trong C.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Memory Alignment</td>
+                            <td>
+                                Quy tắc căn chỉnh địa chỉ bắt đầu của object theo yêu cầu
+                                của kiểu dữ liệu và nền tảng.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Padding</td>
+                            <td>
+                                Các byte bổ sung giữa hoặc cuối struct để đáp ứng Alignment.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Internal Padding</td>
+                            <td>
+                                Khoảng trống giữa các thành viên trong struct.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Trailing Padding</td>
+                            <td>
+                                Padding ở cuối struct để đảm bảo kích thước phù hợp
+                                với Alignment của cấu trúc.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Structure Packing</td>
+                            <td>
+                                Kỹ thuật giới hạn hoặc loại bỏ Padding theo quy tắc
+                                của compiler.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>sizeof</code></td>
+                            <td>
+                                Kiểm tra kích thước của kiểu dữ liệu hoặc object.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>offsetof</code></td>
+                            <td>
+                                Kiểm tra offset của thành viên trong struct.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>_Alignof</code></td>
+                            <td>
+                                Kiểm tra yêu cầu Alignment của một kiểu dữ liệu trong C11.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>_Alignas</code></td>
+                            <td>
+                                Yêu cầu Alignment cụ thể cho object hoặc biến trong C11.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Memory Alignment và Padding không chỉ là kiến thức về cách compiler
+                    tổ chức bộ nhớ. Đây còn là cơ sở để tối ưu RAM, thiết kế buffer,
+                    làm việc với DMA và đảm bảo tính tương thích dữ liệu trong
+                    Embedded Systems.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Không phải cứ giảm Padding là chương trình
+                    sẽ tốt hơn. Khi thiết kế Embedded Software, cần cân bằng giữa
+                    Memory Usage, Runtime Performance, yêu cầu phần cứng và tính
+                    tương thích của dữ liệu.
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-7.html">← Bài trước</a>
+                    <a class="btn" href="lesson-9.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+</html>

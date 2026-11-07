@@ -1,0 +1,1403 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 3: Memory Layout of a C Program | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html" class="active" aria-current="page">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+                <h1>Bài 3: Memory Layout of a C Program</h1>
+
+                <p>
+                    Khi một chương trình C được biên dịch và thực thi, các thành phần bên trong chương trình
+                    cần được tổ chức trong bộ nhớ để CPU có thể truy cập và xử lý.
+                    Những thành phần này bao gồm mã lệnh, dữ liệu, biến, vùng nhớ tạm thời và các vùng nhớ
+                    được sử dụng trong quá trình thực thi.
+                </p>
+
+                <p>
+                    <strong>Memory Layout of a C Program</strong> mô tả cách một chương trình được tổ chức
+                    thành các vùng nhớ khác nhau. Trong một mô hình phổ biến, các vùng nhớ này bao gồm
+                    Text Segment, Read-only Data Segment, Initialized Data Segment, BSS Segment,
+                    Heap và Stack.
+                </p>
+
+                <p>
+                    Việc hiểu rõ Memory Layout giúp lập trình viên biết dữ liệu được lưu trữ ở đâu,
+                    chương trình sử dụng bộ nhớ như thế nào và những vùng nhớ nào có liên quan đến
+                    quá trình thực thi của một ứng dụng Embedded.
+                </p>
+
+                <div class="note">
+                    Trong bài học này, chúng ta sẽ tập trung vào tổng quan Memory Layout và vai trò
+                    của từng vùng nhớ. Cơ chế hoạt động chi tiết của Stack, Heap, Dynamic Allocation,
+                    Memory Alignment và Linker Script sẽ được trình bày ở các bài học tiếp theo.
+                </div>
+
+                <h2>1. Memory Layout là gì?</h2>
+
+                <p>
+                    <strong>Memory Layout</strong> là cách tổ chức và phân bố các thành phần của chương trình
+                    trong không gian bộ nhớ (Memory Address Space).
+                </p>
+
+                <p>
+                    Khi thực thi chương trình, CPU cần truy cập các lệnh để xử lý và dữ liệu để thực hiện
+                    các phép toán. Những thành phần này không được lưu trữ một cách tùy ý mà được tổ chức
+                    thành các vùng nhớ có chức năng và mục đích riêng.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>Mã lệnh của Function được đặt trong vùng nhớ chứa chương trình.</li>
+                    <li>Các hằng số và dữ liệu chỉ đọc thường được tổ chức trong vùng dữ liệu chỉ đọc.</li>
+                    <li>Các biến Global đã khởi tạo có thể được đặt trong vùng Initialized Data.</li>
+                    <li>Các biến Global chưa khởi tạo hoặc được khởi tạo bằng 0 thường thuộc BSS.</li>
+                    <li>Bộ nhớ được cấp phát động thường được quản lý trong Heap.</li>
+                    <li>Các biến Local và thông tin phục vụ quá trình gọi hàm thường được quản lý trên Stack.</li>
+                </ul>
+
+                <p>
+                    Mỗi vùng nhớ có cách sử dụng khác nhau. Việc phân chia này giúp hệ thống quản lý
+                    chương trình và dữ liệu hiệu quả hơn.
+                </p>
+
+                <h2>2. Tổng quan các vùng nhớ trong chương trình C</h2>
+
+                <p>
+                    Một mô hình Memory Layout phổ biến của chương trình C bao gồm sáu vùng nhớ chính:
+                </p>
+
+                <svg viewBox="0 0 600 480" role="img"
+                    aria-label="Memory Layout gồm Text, Read-only Data, Data, BSS, Heap và Stack"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="105" y="10" width="390" height="54" rx="5"
+                            fill="rgba(20,80,107,.20)" />
+                        <rect x="105" y="66" width="390" height="54" rx="5"
+                            fill="rgba(46,139,87,.18)" />
+                        <rect x="105" y="122" width="390" height="54" rx="5"
+                            fill="rgba(224,168,0,.22)" />
+                        <rect x="105" y="178" width="390" height="54" rx="5"
+                            fill="rgba(128,128,128,.19)" />
+                        <rect x="105" y="232" width="390" height="104" rx="5"
+                            fill="rgba(46,139,87,.12)" />
+                        <rect x="105" y="374" width="390" height="78" rx="5"
+                            fill="rgba(224,168,0,.13)" />
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.2" fill="none">
+                        <path d="M495 37 H530" />
+                        <path d="M495 93 H530" />
+                        <path d="M495 149 H530" />
+                        <path d="M495 205 H530" />
+                        <path d="M495 284 H530" />
+                        <path d="M495 413 H530" />
+                        <path d="M300 336 V353" />
+                        <path d="M292 345 L300 353 L308 345" />
+                    </g>
+
+                    <g fill="currentColor" text-anchor="middle" font-size="12">
+                        <text x="300" y="32" font-weight="bold">Text Segment</text>
+                        <text x="300" y="49" font-size="10">Program Instructions / Machine Code</text>
+
+                        <text x="300" y="88" font-weight="bold">Read-only Data (.rodata)</text>
+                        <text x="300" y="105" font-size="10">Constant Data / String Literals</text>
+
+                        <text x="300" y="144" font-weight="bold">Initialized Data (.data)</text>
+                        <text x="300" y="161" font-size="10">Initialized Global / Static Variables</text>
+
+                        <text x="300" y="200" font-weight="bold">BSS Segment (.bss)</text>
+                        <text x="300" y="217" font-size="10">Zero-initialized / Uninitialized Static Data</text>
+
+                        <text x="300" y="265" font-weight="bold">Heap</text>
+                        <text x="300" y="285" font-size="11">Dynamic Memory Allocation</text>
+                        <text x="300" y="305" font-size="10">Thường tăng về phía địa chỉ cao hơn</text>
+                        <text x="300" y="354" font-size="10">Vùng nhớ có thể còn khoảng trống giữa Heap và Stack</text>
+
+                        <text x="300" y="404" font-weight="bold">Stack</text>
+                        <text x="300" y="423" font-size="11">Function Calls / Local Variables</text>
+                        <text x="300" y="440" font-size="10">Minh họa hướng tăng về địa chỉ thấp hơn</text>
+                    </g>
+
+                    <g fill="currentColor" font-size="10">
+                        <text x="22" y="25">Địa chỉ</text>
+                        <text x="28" y="41">thấp</text>
+                        <text x="22" y="438">Địa chỉ</text>
+                        <text x="28" y="454">cao</text>
+                    </g>
+                </svg>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Đây là sơ đồ khái niệm để giải thích các vùng nhớ,
+                    không phải sơ đồ địa chỉ cố định cho mọi hệ thống.
+                    Thứ tự thực tế, hướng tăng giảm địa chỉ, vị trí Stack và Heap phụ thuộc vào
+                    kiến trúc, Compiler, Linker và cấu hình nền tảng.
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Memory Region</th>
+                        <th>Chức năng chính</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Text Segment</strong></td>
+                        <td>Lưu trữ mã lệnh của chương trình.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Read-only Data</strong></td>
+                        <td>Lưu các dữ liệu chỉ đọc như hằng số và String Literal.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Initialized Data</strong></td>
+                        <td>Lưu các biến Global và Static có giá trị khởi tạo khác 0 hoặc thuộc vùng dữ liệu đã khởi tạo.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>BSS</strong></td>
+                        <td>Lưu các biến Static và Global chưa khởi tạo hoặc được khởi tạo bằng 0.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Heap</strong></td>
+                        <td>Quản lý bộ nhớ được cấp phát động trong quá trình thực thi.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stack</strong></td>
+                        <td>Quản lý dữ liệu phục vụ quá trình gọi hàm và các đối tượng có thời gian lưu trữ tự động trong cách triển khai phổ biến.</td>
+                    </tr>
+                </table>
+
+                <h2>3. Text Segment (Code Segment)</h2>
+
+                <p>
+                    <strong>Text Segment</strong>, còn được gọi là Code Segment, là vùng nhớ chứa
+                    các lệnh máy được tạo ra từ quá trình biên dịch chương trình.
+                </p>
+
+                <p>
+                    Đây là phần chứa mã thực thi của các Function trong chương trình C.
+                    CPU sẽ lấy các lệnh từ vùng nhớ này để thực hiện các thao tác theo luồng điều khiển
+                    của chương trình.
+                </p>
+
+                <h3>3.1. Thành phần được lưu trong Text Segment</h3>
+
+                <p>
+                    Text Segment thường chứa:
+                </p>
+
+                <ul>
+                    <li>Mã lệnh của Function.</li>
+                    <li>Mã lệnh của Function <code>main()</code>.</li>
+                    <li>Mã lệnh của các Function được lập trình viên định nghĩa.</li>
+                    <li>Mã thực thi của những thư viện được liên kết vào chương trình nếu chúng nằm trong Image tương ứng.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>int add_numbers(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    int result = add_numbers(10, 20);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, hai Function <code>add_numbers()</code> và <code>main()</code>
+                    đều được Compiler chuyển thành mã máy.
+                    Phần mã máy tương ứng thường được đặt trong các Section chứa Code,
+                    chẳng hạn như <code>.text</code>.
+                </p>
+
+                <h3>3.2. Đặc điểm của Text Segment</h3>
+
+                <ul>
+                    <li>Chứa các lệnh máy được thực thi bởi CPU.</li>
+                    <li>Thường được tổ chức với quyền truy cập đọc và thực thi.</li>
+                    <li>Trong nhiều hệ thống, không cho phép ghi vào vùng mã lệnh khi chương trình chạy.</li>
+                    <li>Có thể được lưu trong Flash hoặc một vùng nhớ chứa mã thực thi tùy nền tảng.</li>
+                </ul>
+
+                <p>
+                    Trên nhiều vi điều khiển, mã chương trình được lưu trong bộ nhớ Flash
+                    vì Flash có khả năng giữ dữ liệu khi mất nguồn điện.
+                </p>
+
+                <div class="note">
+                    Trong Embedded Systems, Text Segment thường được ánh xạ vào Flash.
+                    Tuy nhiên, một số hệ thống có thể hỗ trợ thực thi code từ RAM,
+                    chẳng hạn khi cần chạy một số đoạn chương trình trong vùng RAM chuyên dụng.
+                </div>
+
+                <h2>4. Read-only Data Segment (.rodata)</h2>
+
+                <p>
+                    <strong>Read-only Data Segment</strong> là vùng chứa dữ liệu chỉ đọc
+                    được chương trình sử dụng trong quá trình thực thi.
+                    Trong nhiều Toolchain, vùng này thường được thể hiện bằng Section
+                    có tên <code>.rodata</code>.
+                </p>
+
+                <p>
+                    Không giống Text Segment chứa mã lệnh, Read-only Data chứa các giá trị dữ liệu
+                    không được chương trình sửa đổi thông qua cách sử dụng hợp lệ.
+                </p>
+
+                <h3>4.1. Các dữ liệu thường được đặt trong .rodata</h3>
+
+                <p>
+                    Một số ví dụ phổ biến bao gồm:
+                </p>
+
+                <ul>
+                    <li>Các hằng số được khai báo bằng <code>const</code> có static storage duration.</li>
+                    <li>String Literal.</li>
+                    <li>Các bảng dữ liệu cố định mà Compiler và Linker đặt trong vùng chỉ đọc.</li>
+                </ul>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+const int MAX_SENSOR_COUNT = 8;
+
+int main(void)
+{
+    const float reference_voltage = 3.3f;
+
+    printf("Maximum sensors: %d\n", MAX_SENSOR_COUNT);
+
+    printf("Voltage: %.1f\n", reference_voltage);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong đoạn chương trình trên, <code>MAX_SENSOR_COUNT</code> là một biến
+                    có static storage duration và được khai báo chỉ đọc.
+                    Compiler hoặc Linker thường có thể đặt dữ liệu này trong Read-only Data Section.
+                </p>
+
+                <p>
+                    Còn <code>reference_voltage</code> là một biến Local có automatic storage duration.
+                    Việc khai báo <code>const</code> không tự động đồng nghĩa với việc biến này được đặt
+                    trong <code>.rodata</code>.
+                    Vị trí lưu trữ của nó phụ thuộc vào Compiler và cách chương trình sử dụng biến.
+                </p>
+
+                <h3>4.2. String Literal</h3>
+
+                <p>
+                    String Literal là những chuỗi ký tự được viết trực tiếp trong mã nguồn C.
+                    Ví dụ:
+                </p>
+
+                <pre><code>const char *device_name = "Embedded Controller";
+
+const char *message = "System Ready";</code></pre>
+
+                <p>
+                    Các String Literal thường được Compiler đặt trong vùng dữ liệu chỉ đọc.
+                    Vì vậy, lập trình viên không nên cố gắng thay đổi nội dung của chúng.
+                </p>
+
+                <pre><code>const char *message = "System Ready";
+
+/* Không được phép sửa nội dung String Literal */
+/* message[0] = 'X';  // Undefined Behavior */</code></pre>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Trong C, String Literal có kiểu mảng ký tự
+                    nhưng việc sửa đổi nội dung String Literal dẫn đến Undefined Behavior.
+                    Sử dụng Pointer-to-const là cách thể hiện rõ ý định không thay đổi nội dung chuỗi.
+                </div>
+
+                <h3>4.3. Vai trò của .rodata trong Embedded</h3>
+
+                <p>
+                    Trong Embedded Systems, bộ nhớ RAM thường có dung lượng hạn chế.
+                    Vì vậy, việc đặt dữ liệu chỉ đọc trong Flash thay vì RAM có thể giúp tiết kiệm
+                    dung lượng RAM dành cho các dữ liệu cần thay đổi trong quá trình thực thi.
+                </p>
+
+                <p>
+                    Ví dụ, một hệ thống có thể sử dụng các bảng tra cứu cố định,
+                    thông số hiệu chuẩn mặc định hoặc chuỗi thông báo không thay đổi.
+                    Những dữ liệu này có thể được tổ chức trong các vùng nhớ chỉ đọc
+                    phù hợp với cấu hình của Compiler và Linker.
+                </p>
+
+                <h2>5. Initialized Data Segment (.data)</h2>
+
+                <p>
+                    <strong>Initialized Data Segment</strong>, thường được gọi là Data Segment,
+                    là vùng dùng để lưu các biến có static storage duration đã được khởi tạo
+                    và cần có giá trị ban đầu trong quá trình thực thi.
+                </p>
+
+                <p>
+                    Những biến thuộc nhóm này thường bao gồm biến Global và biến Static
+                    được khởi tạo bằng các giá trị khác 0.
+                </p>
+
+                <h3>5.1. Các biến thường thuộc .data</h3>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+int system_status = 1;
+
+uint32_t device_counter = 100;
+
+static int error_code = 5;
+
+int main(void)
+{
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>system_status</code> là biến Global được khởi tạo bằng 1.</li>
+                    <li><code>device_counter</code> là biến Global được khởi tạo bằng 100.</li>
+                    <li><code>error_code</code> là biến Static ở cấp File được khởi tạo bằng 5.</li>
+                </ul>
+
+                <p>
+                    Các biến này có static storage duration và thường được đưa vào
+                    Initialized Data Segment.
+                </p>
+
+                <h3>5.2. Đặc điểm của .data</h3>
+
+                <ul>
+                    <li>Lưu các biến cần giữ giá trị khởi tạo khi chương trình bắt đầu thực thi.</li>
+                    <li>Thông thường có thể thay đổi trong quá trình chương trình chạy.</li>
+                    <li>Chiếm dung lượng trong RAM khi hệ thống sử dụng cấu trúc Data Segment thông thường.</li>
+                    <li>Giá trị khởi tạo ban đầu thường được lưu trong Load Image nằm trong Flash hoặc bộ nhớ không mất dữ liệu.</li>
+                </ul>
+
+                <h3>5.3. Cách .data hoạt động trong Embedded</h3>
+
+                <p>
+                    Trên nhiều vi điều khiển, chương trình được lưu trong Flash nhưng các biến
+                    thuộc Data Segment lại cần được truy cập và thay đổi trong RAM.
+                </p>
+
+                <p>
+                    Vì vậy, quá trình khởi động thường cần thực hiện việc sao chép giá trị khởi tạo
+                    từ vùng lưu trữ ban đầu trong Flash sang vùng RAM được sử dụng khi chương trình chạy.
+                </p>
+
+                <svg viewBox="0 0 600 270" role="img"
+                    aria-label="Quá trình copy dữ liệu Initialized Data từ Flash sang RAM khi khởi động"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="25" y="25" width="225" height="205" rx="7"
+                            fill="rgba(224,168,0,.14)" />
+                        <rect x="350" y="25" width="225" height="205" rx="7"
+                            fill="rgba(46,139,87,.14)" />
+
+                        <rect x="55" y="70" width="165" height="48" rx="5" />
+                        <rect x="55" y="140" width="165" height="48" rx="5" />
+
+                        <rect x="380" y="70" width="165" height="48" rx="5" />
+                        <rect x="380" y="140" width="165" height="48" rx="5" />
+                    </g>
+
+                    <g stroke="currentColor" fill="none" stroke-width="1.5">
+                        <path d="M250 94 H350" />
+                        <path d="M337 86 L350 94 L337 102" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="137" y="48" font-weight="bold">FLASH</text>
+                        <text x="462" y="48" font-weight="bold">RAM</text>
+
+                        <text x="137" y="89" font-weight="bold">.data Initial Values</text>
+                        <text x="137" y="105" font-size="10">Giá trị khởi tạo</text>
+
+                        <text x="137" y="159" font-weight="bold">.text / .rodata</text>
+                        <text x="137" y="175" font-size="10">Code và dữ liệu chỉ đọc</text>
+
+                        <text x="462" y="89" font-weight="bold">.data Runtime</text>
+                        <text x="462" y="105" font-size="10">Biến được sử dụng khi chạy</text>
+
+                        <text x="462" y="159" font-weight="bold">.bss</text>
+                        <text x="462" y="175" font-size="10">Vùng sẽ được khởi tạo bằng 0</text>
+
+                        <text x="300" y="82" font-size="10">Copy</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Ví dụ, nếu một biến có giá trị khởi tạo là 100, giá trị ban đầu này
+                    sẽ được lưu trong Image được Linker bố trí.
+                    Khi hệ thống khởi động, Startup Code sẽ đưa giá trị đó vào vị trí RAM tương ứng.
+                </p>
+
+                <p>
+                    Sau khi khởi tạo xong, chương trình có thể đọc và thay đổi biến trong RAM
+                    theo logic ứng dụng.
+                </p>
+
+                <div class="note">
+                    Cơ chế Load Address trong Flash và Run Address trong RAM là một khái niệm
+                    quan trọng trong Embedded.
+                    Phần này sẽ được tìm hiểu sâu hơn ở Bài 9: Linker Script, Memory Map &amp; Startup Code.
+                </div>
+
+                <h2>6. BSS Segment (.bss)</h2>
+
+                <p>
+                    <strong>BSS Segment</strong> là vùng nhớ thường dùng để lưu các biến có
+                    static storage duration chưa được khởi tạo tường minh hoặc được khởi tạo
+                    bằng giá trị 0.
+                </p>
+
+                <p>
+                    Tên BSS bắt nguồn từ thuật ngữ Block Started by Symbol.
+                    Trong nhiều Toolchain hiện đại, vùng nhớ này thường được biểu diễn
+                    bằng Section có tên <code>.bss</code>.
+                </p>
+
+                <h3>6.1. Các biến thường thuộc .bss</h3>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+int global_counter;
+
+int system_status = 0;
+
+static uint32_t sensor_value;
+
+static int error_count = 0;
+
+int main(void)
+{
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, các biến:
+                </p>
+
+                <ul>
+                    <li><code>global_counter</code> chưa được khởi tạo tường minh.</li>
+                    <li><code>system_status</code> được khởi tạo bằng 0.</li>
+                    <li><code>sensor_value</code> chưa được khởi tạo tường minh.</li>
+                    <li><code>error_count</code> được khởi tạo bằng 0.</li>
+                </ul>
+
+                <p>
+                    Theo quy tắc của C, các biến có static storage duration
+                    sẽ được khởi tạo mặc định bằng 0 nếu không có giá trị khởi tạo tường minh.
+                    Vì vậy, chúng thường được tổ chức trong BSS Segment.
+                </p>
+
+                <h3>6.2. Đặc điểm của .bss</h3>
+
+                <ul>
+                    <li>Chứa các biến Global và Static thuộc nhóm chưa khởi tạo hoặc được khởi tạo bằng 0.</li>
+                    <li>Các biến trong vùng này thường chiếm dung lượng RAM khi chương trình chạy.</li>
+                    <li>Vùng nhớ thường được Startup Code thiết lập về 0 trước khi gọi <code>main()</code>.</li>
+                    <li>Trong ELF, Section <code>.bss</code> thường có kích thước bộ nhớ khi chạy nhưng không cần lưu toàn bộ byte 0 trong file Image.</li>
+                </ul>
+
+                <h3>6.3. Vì sao BSS không cần lưu các giá trị 0 trong Flash?</h3>
+
+                <p>
+                    Hãy xem xét một hệ thống có hàng trăm biến Global cần được khởi tạo bằng 0.
+                    Nếu toàn bộ các byte 0 này đều phải được lưu trữ tường minh trong file chương trình,
+                    kích thước Image có thể tăng lên không cần thiết.
+                </p>
+
+                <p>
+                    Thay vì lưu tất cả các byte 0, hệ thống có thể chỉ lưu thông tin về kích thước
+                    và vị trí của vùng BSS.
+                    Sau đó, Startup Code sẽ tự động ghi giá trị 0 vào vùng RAM tương ứng
+                    trong quá trình khởi động.
+                </p>
+
+                <pre><code>/* Ví dụ minh họa BSS */
+
+uint8_t sensor_buffer[256];
+
+int system_state;
+
+static int error_counter;
+
+/*
+ * Các biến trên có static storage duration.
+ * Nếu được bố trí trong .bss:
+ * - Vùng nhớ được dành riêng trong RAM.
+ * - Startup Code khởi tạo vùng nhớ bằng 0.
+ */</code></pre>
+
+                <div class="note">
+                    Không nên nhầm lẫn biến Global chưa khởi tạo với biến Local chưa khởi tạo.
+                    Biến Global và Static có static storage duration được khởi tạo mặc định bằng 0.
+                    Trong khi đó, biến Local thông thường có automatic storage duration
+                    không tự động nhận giá trị 0.
+                </div>
+
+                <h2>7. Heap Segment</h2>
+
+                <p>
+                    <strong>Heap</strong> là vùng nhớ thường được sử dụng để cấp phát bộ nhớ động
+                    trong quá trình chương trình đang chạy.
+                </p>
+
+                <p>
+                    Khác với các vùng nhớ dành cho biến Global và Static đã được xác định
+                    trong quá trình Build, Heap cho phép chương trình yêu cầu thêm bộ nhớ
+                    khi cần thiết.
+                </p>
+
+                <h3>7.1. Các đối tượng thường được lưu trong Heap</h3>
+
+                <p>
+                    Trong C, lập trình viên có thể sử dụng các hàm thuộc thư viện chuẩn
+                    để yêu cầu cấp phát bộ nhớ động.
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *data = malloc(10 * sizeof(int));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    free(data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>Biến Pointer <code>data</code> có thời gian lưu trữ tự động vì nó là biến Local thông thường.</li>
+                    <li>Vùng nhớ được yêu cầu thông qua <code>malloc()</code> là vùng nhớ được cấp phát động.</li>
+                    <li>Địa chỉ của vùng nhớ được trả về và lưu vào Pointer <code>data</code>.</li>
+                    <li><code>free()</code> thông báo rằng chương trình không còn cần vùng nhớ đã cấp phát.</li>
+                </ul>
+
+                <h3>7.2. Vai trò của Heap</h3>
+
+                <p>
+                    Heap hữu ích trong những trường hợp kích thước dữ liệu chưa xác định
+                    tại thời điểm biên dịch hoặc cần thay đổi trong quá trình thực thi.
+                </p>
+
+                <p>
+                    Một số ứng dụng có thể sử dụng Heap để:
+                </p>
+
+                <ul>
+                    <li>Cấp phát Buffer có kích thước thay đổi.</li>
+                    <li>Tạo các cấu trúc dữ liệu có kích thước linh hoạt.</li>
+                    <li>Lưu trữ dữ liệu được nhận từ thiết bị ngoại vi.</li>
+                    <li>Tạo các đối tượng chỉ cần tồn tại trong một khoảng thời gian nhất định.</li>
+                </ul>
+
+                <h3>7.3. Heap trong Embedded Systems</h3>
+
+                <p>
+                    Mặc dù Heap cung cấp khả năng cấp phát bộ nhớ linh hoạt,
+                    việc sử dụng nó trong Embedded Systems cần được cân nhắc cẩn thận.
+                </p>
+
+                <p>
+                    Một số vi điều khiển có dung lượng RAM nhỏ, do đó việc sử dụng Heap
+                    không hợp lý có thể khiến hệ thống thiếu bộ nhớ hoặc gặp hiện tượng
+                    Memory Fragmentation.
+                </p>
+
+                <p>
+                    Ngoài ra, thời gian thực hiện cấp phát và giải phóng bộ nhớ
+                    có thể ảnh hưởng đến tính xác định của hệ thống.
+                </p>
+
+                <div class="note">
+                    Trong các dự án Embedded, không phải lúc nào cũng nên sử dụng
+                    Dynamic Memory Allocation.
+                    Một số dự án ưu tiên cấp phát tĩnh hoặc sử dụng các Buffer có kích thước cố định
+                    để kiểm soát tài nguyên tốt hơn.
+                    Chủ đề này sẽ được trình bày chi tiết ở Bài 6.
+                </div>
+
+                <h2>8. Stack Segment</h2>
+
+                <p>
+                    <strong>Stack</strong> là vùng nhớ thường được sử dụng để lưu trữ dữ liệu
+                    phục vụ quá trình thực thi các Function.
+                </p>
+
+                <p>
+                    Khi một Function được gọi, hệ thống cần quản lý các thông tin liên quan đến
+                    quá trình gọi hàm, chẳng hạn như dữ liệu Local, thông tin trả về
+                    và những giá trị cần thiết khác theo quy ước gọi hàm của kiến trúc.
+                </p>
+
+                <h3>8.1. Các dữ liệu thường liên quan đến Stack</h3>
+
+                <ul>
+                    <li>Biến Local có automatic storage duration.</li>
+                    <li>Các giá trị tạm thời và dữ liệu phục vụ Function Call.</li>
+                    <li>Địa chỉ quay trở lại sau khi Function hoàn thành, nếu được lưu trên Stack theo ABI.</li>
+                    <li>Một số tham số hàm và dữ liệu trung gian tùy theo Compiler và Calling Convention.</li>
+                </ul>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>void calculate_sum(void)
+{
+    int a = 10;
+    int b = 20;
+
+    int result = a + b;
+}
+
+int main(void)
+{
+    calculate_sum();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, các biến Local như <code>a</code>, <code>b</code>
+                    và <code>result</code> có automatic storage duration.
+                    Trong một cách triển khai phổ biến, chúng có thể được lưu trong Stack Frame
+                    của Function <code>calculate_sum()</code>.
+                </p>
+
+                <h3>8.2. Stack Frame</h3>
+
+                <p>
+                    <strong>Stack Frame</strong> là vùng dữ liệu phục vụ cho một lần gọi Function.
+                    Khi chương trình gọi một Function, Stack Frame tương ứng có thể được tạo ra
+                    để quản lý dữ liệu của lần gọi đó.
+                </p>
+
+                <p>
+                    Ví dụ, khi Function <code>main()</code> gọi <code>calculate_sum()</code>,
+                    hệ thống sẽ quản lý dữ liệu của hai Function theo quy ước gọi hàm.
+                    Sau khi Function con hoàn thành, tài nguyên liên quan đến lần gọi đó
+                    sẽ được giải phóng hoặc tái sử dụng.
+                </p>
+
+                <h3>8.3. Đặc điểm của Stack</h3>
+
+                <ul>
+                    <li>Thường được quản lý tự động theo vòng đời của các lần gọi Function.</li>
+                    <li>Có tốc độ cấp phát và thu hồi thông thường rất nhanh.</li>
+                    <li>Có giới hạn dung lượng được cấu hình cho từng chương trình hoặc Task.</li>
+                    <li>Nếu sử dụng vượt quá giới hạn, hệ thống có thể gặp Stack Overflow.</li>
+                </ul>
+
+                <p>
+                    Trong Embedded Systems, Stack cần được quan tâm đặc biệt vì một số MCU
+                    có dung lượng RAM hạn chế và vùng Stack có thể được cấu hình với kích thước cố định.
+                </p>
+
+                <h2>9. So sánh sáu vùng nhớ chính</h2>
+
+                <p>
+                    Sau khi tìm hiểu từng vùng nhớ, có thể tổng hợp các đặc điểm quan trọng
+                    trong bảng sau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Vùng nhớ</th>
+                        <th>Dữ liệu</th>
+                        <th>Vị trí thường gặp trong Embedded</th>
+                    </tr>
+                    <tr>
+                        <td><strong>.text</strong></td>
+                        <td>Mã máy của chương trình.</td>
+                        <td>Flash</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.rodata</strong></td>
+                        <td>Hằng số, String Literal.</td>
+                        <td>Flash / Read-only Memory</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.data</strong></td>
+                        <td>Biến Global và Static đã khởi tạo.</td>
+                        <td>RAM khi chạy, giá trị ban đầu nằm trong Load Image.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>.bss</strong></td>
+                        <td>Biến Global và Static chưa khởi tạo hoặc khởi tạo bằng 0.</td>
+                        <td>RAM</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Heap</strong></td>
+                        <td>Bộ nhớ được cấp phát động.</td>
+                        <td>RAM</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stack</strong></td>
+                        <td>Function Call Data và các dữ liệu có automatic storage duration theo cách triển khai phổ biến.</td>
+                        <td>RAM</td>
+                    </tr>
+                </table>
+
+                <h2>10. Ví dụ tổng hợp: Xác định vị trí các biến trong Memory Layout</h2>
+
+                <p>
+                    Để hiểu rõ hơn cách các biến được tổ chức trong bộ nhớ,
+                    hãy xem chương trình C sau:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;
+
+/* Initialized Data */
+int system_status = 1;
+
+static int error_count = 5;
+
+/* BSS */
+int global_counter;
+
+static uint32_t sensor_value;
+
+/* Read-only Data (typical implementation) */
+const int MAX_DEVICES = 10;
+
+const char device_name[] = "Embedded MCU";
+
+/* Text Segment */
+void update_status(void)
+{
+    system_status = 2;
+}
+
+int main(void)
+{
+    /* Automatic local variables */
+    int local_value = 100;
+
+    uint32_t local_counter = 0;
+
+    /* Dynamic memory allocation */
+    int *dynamic_data = malloc(5 * sizeof(int));
+
+    if (dynamic_data == NULL)
+    {
+        return 1;
+    }
+
+    dynamic_data[0] = local_value;
+
+    update_status();
+
+    free(dynamic_data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Chương trình trên có nhiều loại biến và dữ liệu khác nhau.
+                    Dựa vào đặc điểm khai báo, chúng ta có thể xác định cách chúng thường
+                    được tổ chức trong Memory Layout như sau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Biến / Thành phần</th>
+                        <th>Đặc điểm</th>
+                        <th>Vùng nhớ thường gặp</th>
+                    </tr>
+                    <tr>
+                        <td><code>update_status()</code></td>
+                        <td>Mã thực thi của Function.</td>
+                        <td>.text</td>
+                    </tr>
+                    <tr>
+                        <td><code>main()</code></td>
+                        <td>Mã thực thi của Function.</td>
+                        <td>.text</td>
+                    </tr>
+                    <tr>
+                        <td><code>system_status</code></td>
+                        <td>Global, khởi tạo bằng 1.</td>
+                        <td>.data</td>
+                    </tr>
+                    <tr>
+                        <td><code>error_count</code></td>
+                        <td>Static, khởi tạo bằng 5.</td>
+                        <td>.data</td>
+                    </tr>
+                    <tr>
+                        <td><code>global_counter</code></td>
+                        <td>Global, chưa khởi tạo.</td>
+                        <td>.bss</td>
+                    </tr>
+                    <tr>
+                        <td><code>sensor_value</code></td>
+                        <td>Static, chưa khởi tạo.</td>
+                        <td>.bss</td>
+                    </tr>
+                    <tr>
+                        <td><code>MAX_DEVICES</code></td>
+                        <td>Const có static storage duration.</td>
+                        <td>.rodata (thường gặp)</td>
+                    </tr>
+                    <tr>
+                        <td><code>device_name</code></td>
+                        <td>Mảng ký tự const có static storage duration.</td>
+                        <td>.rodata (thường gặp)</td>
+                    </tr>
+                    <tr>
+                        <td><code>local_value</code></td>
+                        <td>Local automatic variable.</td>
+                        <td>Stack hoặc được Compiler tối ưu hóa</td>
+                    </tr>
+                    <tr>
+                        <td><code>local_counter</code></td>
+                        <td>Local automatic variable.</td>
+                        <td>Stack hoặc được Compiler tối ưu hóa</td>
+                    </tr>
+                    <tr>
+                        <td><code>dynamic_data</code></td>
+                        <td>Biến Pointer Local.</td>
+                        <td>Stack hoặc Register tùy Compiler</td>
+                    </tr>
+                    <tr>
+                        <td>Vùng nhớ malloc</td>
+                        <td>Được cấp phát động.</td>
+                        <td>Heap (theo cách triển khai thông thường)</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm quan trọng:</strong> Vị trí của biến Pointer không nhất thiết
+                    giống vị trí của vùng nhớ mà Pointer trỏ đến.
+
+                    Trong ví dụ trên, biến <code>dynamic_data</code> là một biến Local,
+                    nhưng vùng nhớ được cấp phát bằng <code>malloc()</code> là vùng nhớ động.
+                    Hai đối tượng này có thể nằm ở hai vùng nhớ khác nhau.
+                </div>
+
+                <h2>11. Memory Layout trong Embedded Systems</h2>
+
+                <p>
+                    Trong các chương trình chạy trên máy tính, hệ điều hành thường quản lý
+                    không gian địa chỉ và cấp phát tài nguyên cho mỗi tiến trình.
+                    Tuy nhiên, với các hệ thống Embedded Bare-metal,
+                    Firmware thường hoạt động trực tiếp trên bộ nhớ vật lý của vi điều khiển.
+                </p>
+
+                <p>
+                    Điều này khiến cho việc tổ chức Memory Layout có liên hệ chặt chẽ
+                    với cấu trúc phần cứng của MCU.
+                </p>
+
+                <h3>11.1. Flash Memory và RAM</h3>
+
+                <p>
+                    Hai loại bộ nhớ quan trọng trong nhiều vi điều khiển là Flash và RAM.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Flash</th>
+                        <th>RAM</th>
+                    </tr>
+                    <tr>
+                        <td>Khả năng lưu dữ liệu khi mất nguồn</td>
+                        <td>Có.</td>
+                        <td>Thông thường không.</td>
+                    </tr>
+                    <tr>
+                        <td>Mục đích chính</td>
+                        <td>Lưu Firmware và dữ liệu cố định.</td>
+                        <td>Lưu dữ liệu khi chương trình đang chạy.</td>
+                    </tr>
+                    <tr>
+                        <td>Các vùng dữ liệu thường gặp</td>
+                        <td>.text, .rodata và giá trị khởi tạo ban đầu của .data.</td>
+                        <td>.data, .bss, Heap và Stack.</td>
+                    </tr>
+                    <tr>
+                        <td>Khả năng ghi</td>
+                        <td>Thường cần quy trình ghi và xóa theo đặc tính Flash.</td>
+                        <td>Có thể đọc và ghi thường xuyên.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Ví dụ, một vi điều khiển có:
+                </p>
+
+                <ul>
+                    <li>Flash: 512 KB.</li>
+                    <li>RAM: 128 KB.</li>
+                </ul>
+
+                <p>
+                    Khi chương trình được Build, mã lệnh và dữ liệu chỉ đọc có thể được lưu
+                    trong Flash. Trong khi đó, những dữ liệu thay đổi trong lúc chạy
+                    cần có không gian lưu trữ thích hợp trong RAM.
+                </p>
+
+                <h3>11.2. Tổng quan Memory Mapping</h3>
+
+                <p>
+                    <strong>Memory Mapping</strong> là quá trình ánh xạ các thành phần chương trình
+                    vào các địa chỉ bộ nhớ cụ thể theo cấu hình hệ thống.
+                </p>
+
+                <p>
+                    Một cấu hình phổ biến trên MCU có thể tổ chức bộ nhớ theo cách minh họa sau:
+                </p>
+
+                <svg viewBox="0 0 600 390" role="img"
+                    aria-label="Memory Mapping minh họa phân chia Flash và RAM trên vi điều khiển"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="25" y="12" width="255" height="365" rx="7"
+                            fill="rgba(224,168,0,.09)" />
+                        <rect x="320" y="12" width="255" height="365" rx="7"
+                            fill="rgba(46,139,87,.09)" />
+
+                        <rect x="52" y="65" width="201" height="75" rx="5"
+                            fill="rgba(20,80,107,.20)" />
+                        <rect x="52" y="152" width="201" height="55" rx="5"
+                            fill="rgba(46,139,87,.2)" />
+                        <rect x="52" y="219" width="201" height="55" rx="5"
+                            fill="rgba(128,128,128,.2)" />
+
+                        <rect x="347" y="65" width="201" height="65" rx="5"
+                            fill="rgba(224,168,0,.2)" />
+                        <rect x="347" y="142" width="201" height="55" rx="5"
+                            fill="rgba(128,128,128,.2)" />
+                        <rect x="347" y="209" width="201" height="55" rx="5"
+                            fill="rgba(46,139,87,.2)" />
+                        <rect x="347" y="276" width="201" height="55" rx="5"
+                            fill="rgba(20,80,107,.2)" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="152" y="37" font-weight="bold">FLASH MEMORY</text>
+                        <text x="447" y="37" font-weight="bold">RAM MEMORY</text>
+
+                        <text x="152" y="91" font-weight="bold">.text</text>
+                        <text x="152" y="111" font-size="10">Program Code</text>
+                        <text x="152" y="126" font-size="10">Executable Instructions</text>
+
+                        <text x="152" y="176" font-weight="bold">.rodata</text>
+                        <text x="152" y="193" font-size="10">Read-only Data</text>
+
+                        <text x="152" y="243" font-weight="bold">.data Load Image</text>
+                        <text x="152" y="260" font-size="10">Initial Values</text>
+
+                        <text x="447" y="91" font-weight="bold">.data Runtime</text>
+                        <text x="447" y="111" font-size="10">Initialized Variables</text>
+
+                        <text x="447" y="176" font-weight="bold">.bss</text>
+                        <text x="447" y="191" font-size="10">Zero-initialized Data</text>
+
+                        <text x="447" y="243" font-weight="bold">Heap</text>
+                        <text x="447" y="258" font-size="10">Dynamic Allocation</text>
+
+                        <text x="447" y="310" font-weight="bold">Stack</text>
+                        <text x="447" y="325" font-size="10">Function Runtime Data</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.4" fill="none">
+                        <path d="M253 246 H347" />
+                        <path d="M335 238 L347 246 L335 254" />
+                    </g>
+
+                    <g fill="currentColor" font-size="10" text-anchor="middle">
+                        <text x="300" y="230">Copy .data</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Trong sơ đồ trên:
+                </p>
+
+                <ul>
+                    <li><strong>Flash:</strong> lưu mã chương trình, dữ liệu chỉ đọc và giá trị khởi tạo ban đầu của Data Segment.</li>
+                    <li><strong>RAM:</strong> chứa những vùng dữ liệu cần được sử dụng khi chương trình chạy.</li>
+                    <li><strong>.data:</strong> được sao chép từ Load Image sang vùng RAM tương ứng khi khởi động.</li>
+                    <li><strong>.bss:</strong> được khởi tạo bằng 0 trong quá trình Startup.</li>
+                    <li><strong>Heap và Stack:</strong> sử dụng phần RAM được cấu hình dành cho các hoạt động trong thời gian chạy.</li>
+                </ul>
+
+                <div class="note">
+                    Đây chỉ là một cách phân chia bộ nhớ phổ biến để minh họa.
+                    Vị trí thực tế của các Section phụ thuộc vào Memory Map của MCU,
+                    cấu hình Linker và các vùng nhớ được thiết kế cho dự án.
+                </div>
+
+                <h2>12. Vai trò của Startup Code trong Memory Initialization</h2>
+
+                <p>
+                    Trước khi chương trình Embedded bắt đầu thực thi Function <code>main()</code>,
+                    hệ thống thường phải thực hiện một số công việc khởi tạo cần thiết.
+                </p>
+
+                <p>
+                    Một trong những nhiệm vụ quan trọng của Startup Code là thiết lập
+                    các vùng dữ liệu trong RAM theo yêu cầu của chương trình.
+                </p>
+
+                <h3>12.1. Khởi tạo Data Segment</h3>
+
+                <p>
+                    Giá trị khởi tạo ban đầu của các biến thuộc Initialized Data thường được lưu
+                    trong vùng Load Image.
+                    Startup Code sao chép những giá trị này đến vùng RAM tương ứng.
+                </p>
+
+                <h3>12.2. Khởi tạo BSS Segment</h3>
+
+                <p>
+                    Các biến trong BSS cần nhận giá trị ban đầu bằng 0.
+                    Startup Code thường thực hiện việc ghi 0 vào toàn bộ vùng nhớ
+                    được dành cho BSS.
+                </p>
+
+                <h3>12.3. Thiết lập Stack</h3>
+
+                <p>
+                    Hệ thống cần thiết lập Stack Pointer để CPU có thể quản lý
+                    quá trình gọi hàm và các dữ liệu liên quan.
+                </p>
+
+                <p>
+                    Địa chỉ Stack ban đầu thường được xác định bởi cấu hình bộ nhớ
+                    và cơ chế khởi động của kiến trúc vi điều khiển.
+                </p>
+
+                <h3>12.4. Chuyển đến main()</h3>
+
+                <p>
+                    Sau khi hoàn thành các công việc khởi tạo cần thiết,
+                    quá trình khởi động sẽ chuyển quyền điều khiển đến chương trình chính.
+                </p>
+
+                <svg viewBox="0 0 600 340" role="img"
+                    aria-label="Quy trình Startup Code khởi tạo Memory trước khi gọi main"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="145" y="10" width="310" height="42" rx="5"
+                            fill="rgba(20,80,107,.17)" />
+                        <rect x="145" y="74" width="310" height="42" rx="5"
+                            fill="rgba(224,168,0,.18)" />
+                        <rect x="145" y="138" width="310" height="42" rx="5"
+                            fill="rgba(46,139,87,.18)" />
+                        <rect x="145" y="202" width="310" height="42" rx="5"
+                            fill="rgba(128,128,128,.18)" />
+                        <rect x="145" y="266" width="310" height="42" rx="5"
+                            fill="rgba(20,80,107,.2)" />
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.4" fill="none">
+                        <path d="M300 52 V74 M300 116 V138 M300 180 V202 M300 244 V266" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="300" y="36" font-weight="bold">Reset / Startup Entry</text>
+                        <text x="300" y="100" font-weight="bold">Copy .data Initial Values</text>
+                        <text x="300" y="164" font-weight="bold">Zero-initialize .bss</text>
+                        <text x="300" y="228" font-weight="bold">Set Runtime Environment</text>
+                        <text x="300" y="292" font-weight="bold">Call main()</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Quy trình này giúp bảo đảm các biến có static storage duration
+                    được đưa về trạng thái ban đầu đúng theo quy định trước khi chương trình chính chạy.
+                </p>
+
+                <p>
+                    Startup Code thường được cung cấp bởi Toolchain, nhà cung cấp MCU
+                    hoặc được cấu hình trong dự án.
+                    Cách triển khai cụ thể sẽ được tìm hiểu ở Bài 9.
+                </p>
+
+                <h2>13. Các điểm cần chú ý khi phân tích Memory Layout</h2>
+
+                <p>
+                    Khi tìm hiểu Memory Layout của chương trình C, cần lưu ý rằng
+                    các tên như Text, Data, BSS, Heap và Stack là những khái niệm phổ biến
+                    trong cách triển khai hệ thống, chứ không phải tất cả đều là các vùng
+                    được C Standard quy định bắt buộc.
+                </p>
+
+                <p>
+                    Chuẩn ngôn ngữ C quy định các khái niệm về storage duration,
+                    object và cách chương trình hoạt động.
+                    Việc ánh xạ các đối tượng vào những Section cụ thể là trách nhiệm
+                    của Compiler, Linker và nền tảng thực thi.
+                </p>
+
+                <h3>13.1. Không phải mọi biến Local đều chắc chắn nằm trên Stack</h3>
+
+                <p>
+                    Biến Local thông thường có automatic storage duration.
+                    Tuy nhiên, Compiler có thể tối ưu hóa và lưu giá trị của biến trong CPU Register
+                    hoặc loại bỏ biến nếu không cần thiết.
+                </p>
+
+                <p>
+                    Vì vậy, không nên cho rằng mọi biến được khai báo bên trong Function
+                    đều luôn chiếm một vị trí cụ thể trên Stack.
+                </p>
+
+                <h3>13.2. Không phải mọi biến const đều nằm trong .rodata</h3>
+
+                <p>
+                    Từ khóa <code>const</code> thể hiện rằng đối tượng không được sửa đổi
+                    thông qua cách truy cập hợp lệ tương ứng.
+                    Tuy nhiên, vị trí lưu trữ của đối tượng vẫn phụ thuộc vào Storage Duration,
+                    Compiler và cấu hình nền tảng.
+                </p>
+
+                <h3>13.3. Section Name có thể khác nhau</h3>
+
+                <p>
+                    Những tên như <code>.text</code>, <code>.data</code> và <code>.bss</code>
+                    phổ biến trong các Toolchain sử dụng định dạng ELF.
+                    Tuy nhiên, các Compiler và hệ thống khác có thể sử dụng tên Section
+                    hoặc cơ chế tổ chức khác.
+                </p>
+
+                <h3>13.4. Flash và RAM không phải lúc nào cũng là cách phân chia duy nhất</h3>
+
+                <p>
+                    Một hệ thống Embedded có thể chứa nhiều loại bộ nhớ như SRAM, Flash,
+                    EEPROM, External RAM hoặc các vùng nhớ chuyên dụng.
+                    Một số MCU còn có nhiều Bank RAM với chức năng và đặc tính riêng.
+                </p>
+
+                <p>
+                    Do đó, cần dựa vào Datasheet, Reference Manual và cấu hình dự án
+                    để hiểu chính xác Memory Layout của Target MCU.
+                </p>
+
+                <h2>14. Tóm tắt các khái niệm quan trọng</h2>
+
+                <table>
+                    <tr>
+                        <th>Thuật ngữ</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Memory Layout</td>
+                        <td>Cách tổ chức các thành phần chương trình trong không gian bộ nhớ.</td>
+                    </tr>
+                    <tr>
+                        <td>Text Segment</td>
+                        <td>Vùng chứa mã lệnh thực thi.</td>
+                    </tr>
+                    <tr>
+                        <td>Read-only Data</td>
+                        <td>Vùng chứa các dữ liệu chỉ đọc.</td>
+                    </tr>
+                    <tr>
+                        <td>Initialized Data</td>
+                        <td>Vùng chứa các biến Global và Static đã khởi tạo.</td>
+                    </tr>
+                    <tr>
+                        <td>BSS</td>
+                        <td>Vùng chứa các biến Global và Static chưa khởi tạo hoặc được khởi tạo bằng 0.</td>
+                    </tr>
+                    <tr>
+                        <td>Heap</td>
+                        <td>Vùng nhớ phục vụ Dynamic Memory Allocation.</td>
+                    </tr>
+                    <tr>
+                        <td>Stack</td>
+                        <td>Vùng nhớ phục vụ Function Call và các dữ liệu có automatic storage duration theo cách triển khai thông thường.</td>
+                    </tr>
+                    <tr>
+                        <td>Flash</td>
+                        <td>Bộ nhớ không mất dữ liệu, thường lưu Firmware.</td>
+                    </tr>
+                    <tr>
+                        <td>RAM</td>
+                        <td>Bộ nhớ làm việc được sử dụng trong quá trình thực thi.</td>
+                    </tr>
+                    <tr>
+                        <td>Startup Code</td>
+                        <td>Mã khởi động thiết lập môi trường chạy trước khi gọi chương trình chính.</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    Memory Layout of a C Program mô tả cách chương trình C được tổ chức
+                    thành các vùng nhớ có chức năng khác nhau.
+
+                    <br><br>
+
+                    Sáu vùng nhớ thường gặp gồm Text Segment chứa mã lệnh,
+                    Read-only Data chứa dữ liệu chỉ đọc, Initialized Data chứa các biến
+                    đã khởi tạo, BSS chứa các biến chưa khởi tạo hoặc được khởi tạo bằng 0,
+                    Heap phục vụ cấp phát bộ nhớ động và Stack phục vụ quá trình thực thi Function.
+
+                    <br><br>
+
+                    Trong Embedded Systems, các vùng nhớ này thường được ánh xạ
+                    vào Flash và RAM theo cấu hình của hệ thống.
+                    Các giá trị khởi tạo của Data Segment thường được sao chép từ Flash sang RAM,
+                    trong khi BSS được khởi tạo bằng 0 trước khi chương trình chính chạy.
+
+                    <br><br>
+
+                    Hiểu được Memory Layout giúp lập trình viên xác định cách chương trình
+                    sử dụng bộ nhớ và là cơ sở để tiếp tục nghiên cứu Stack, Heap,
+                    Dynamic Memory Allocation và Memory Management trong các bài tiếp theo.
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-2.html">← Bài trước</a>
+                    <a class="btn" href="lesson-4.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>

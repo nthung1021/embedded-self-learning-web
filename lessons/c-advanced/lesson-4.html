@@ -1,0 +1,2207 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 4: Stack vs Heap vs Data vs BSS Segments | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html" class="active" aria-current="page">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+                <h1>Bài 4: Stack vs Heap vs Data vs BSS Segments</h1>
+
+                <p>
+                    Ở bài trước, chúng ta đã tìm hiểu tổng quan về Memory Layout của một chương trình C,
+                    bao gồm Text Segment, Read-only Data, Initialized Data, BSS, Heap và Stack.
+                    Trong đó, mỗi vùng nhớ có nhiệm vụ riêng và được sử dụng cho những mục đích khác nhau.
+                </p>
+
+                <p>
+                    Trong bài học này, chúng ta sẽ tập trung phân tích sâu hơn bốn vùng nhớ quan trọng:
+                    <strong>Stack, Heap, Data và BSS</strong>.
+                    Đây là những vùng nhớ có ảnh hưởng trực tiếp đến cách chương trình lưu trữ biến,
+                    quản lý dữ liệu và sử dụng tài nguyên RAM.
+                </p>
+
+                <p>
+                    Đối với Embedded Systems, việc hiểu rõ cách hoạt động của các vùng nhớ này
+                    đặc biệt quan trọng vì các vi điều khiển thường có dung lượng RAM giới hạn.
+                    Một chương trình sử dụng Stack quá nhiều, cấp phát Heap không hợp lý
+                    hoặc tổ chức dữ liệu Global không hiệu quả đều có thể gây ra những vấn đề
+                    về bộ nhớ và ảnh hưởng đến độ ổn định của hệ thống.
+                </p>
+
+                <div class="note">
+                    Bài học này tập trung vào cơ chế hoạt động, đặc điểm và cách sử dụng Stack,
+                    Heap, Data và BSS. Các kỹ thuật cấp phát động chuyên sâu sẽ được trình bày
+                    ở Bài 6, trong khi Memory Leakage, Dangling Pointer và Memory Safety
+                    sẽ được phân tích ở Bài 7.
+                </div>
+
+                <h2>1. Tổng quan về Stack, Heap, Data và BSS</h2>
+
+                <p>
+                    Trong một chương trình C, các biến và dữ liệu không được lưu trữ trong cùng
+                    một vùng nhớ. Vị trí lưu trữ thường phụ thuộc vào Storage Duration,
+                    cách khai báo biến, mục đích sử dụng và cách Compiler triển khai chương trình.
+                </p>
+
+                <p>
+                    Bốn vùng nhớ được tìm hiểu trong bài này có những chức năng chính như sau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Vùng nhớ</th>
+                        <th>Chức năng</th>
+                        <th>Dữ liệu thường gặp</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Stack</strong></td>
+                        <td>Quản lý dữ liệu liên quan đến quá trình thực thi các Function.</td>
+                        <td>Local Variable, Function Call Data và một số tham số hàm.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Heap</strong></td>
+                        <td>Cung cấp bộ nhớ được cấp phát trong thời gian chương trình chạy.</td>
+                        <td>Dynamic Memory được yêu cầu thông qua malloc và các hàm liên quan.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data</strong></td>
+                        <td>Lưu các biến có Static Storage Duration với giá trị khởi tạo cần được duy trì.</td>
+                        <td>Global Variable và Static Variable đã khởi tạo.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>BSS</strong></td>
+                        <td>Lưu các dữ liệu có Static Storage Duration được khởi tạo mặc định bằng 0 hoặc khởi tạo bằng 0.</td>
+                        <td>Global Variable và Static Variable chưa khởi tạo hoặc khởi tạo bằng 0.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Sơ đồ sau minh họa mối quan hệ giữa các vùng nhớ này trong một mô hình
+                    chương trình C phổ biến:
+                </p>
+
+                <svg viewBox="0 0 600 450" role="img"
+                    aria-label="Sơ đồ tổng quan Stack, Heap, Data và BSS trong Memory Layout"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="90" y="10" width="420" height="48" rx="5"
+                            fill="rgba(20,80,107,.18)" />
+                        <rect x="90" y="60" width="420" height="48" rx="5"
+                            fill="rgba(224,168,0,.18)" />
+                        <rect x="90" y="110" width="420" height="48" rx="5"
+                            fill="rgba(128,128,128,.17)" />
+                        <rect x="90" y="160" width="420" height="92" rx="5"
+                            fill="rgba(46,139,87,.13)" />
+                        <rect x="90" y="320" width="420" height="48" rx="5"
+                            fill="rgba(224,168,0,.18)" />
+                        <rect x="90" y="370" width="420" height="48" rx="5"
+                            fill="rgba(46,139,87,.18)" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="300" y="30" font-weight="bold">Initialized Data (.data)</text>
+                        <text x="300" y="46" font-size="10">Global / Static đã khởi tạo</text>
+
+                        <text x="300" y="80" font-weight="bold">BSS Segment (.bss)</text>
+                        <text x="300" y="96" font-size="10">Global / Static khởi tạo bằng 0</text>
+
+                        <text x="300" y="130" font-weight="bold">Other Runtime Data</text>
+                        <text x="300" y="146" font-size="10">Các vùng dữ liệu khác theo nền tảng</text>
+
+                        <text x="300" y="185" font-weight="bold">Heap</text>
+                        <text x="300" y="206">Dynamic Memory Allocation</text>
+                        <text x="300" y="225" font-size="10">Có thể phát triển khi yêu cầu cấp phát bộ nhớ</text>
+                        <text x="300" y="243" font-size="10">Theo cơ chế quản lý của Memory Allocator</text>
+
+                        <text x="300" y="340" font-weight="bold">Available Memory</text>
+                        <text x="300" y="356" font-size="10">Vùng bộ nhớ còn lại tùy cấu hình</text>
+
+                        <text x="300" y="390" font-weight="bold">Stack</text>
+                        <text x="300" y="406" font-size="10">Function Call / Local Data</text>
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.3" fill="none">
+                        <path d="M300 252 V275" />
+                        <path d="M291 267 L300 275 L309 267" />
+                        <path d="M300 320 V297" />
+                        <path d="M291 305 L300 297 L309 305" />
+                    </g>
+
+                    <g fill="currentColor" font-size="10" text-anchor="middle">
+                        <text x="300" y="288">Khoảng trống có thể thay đổi</text>
+                    </g>
+                </svg>
+
+                <div class="note">
+                    Sơ đồ trên chỉ mang tính khái niệm, không thể hiện địa chỉ thật hoặc thứ tự
+                    bắt buộc trên mọi nền tảng. Hướng phát triển của Stack và Heap phụ thuộc
+                    vào kiến trúc, Runtime, Compiler và cấu hình bộ nhớ.
+                </div>
+
+                <h2>2. Stack Memory</h2>
+
+                <p>
+                    <strong>Stack Memory</strong> là vùng nhớ được sử dụng để quản lý dữ liệu
+                    liên quan đến quá trình thực thi các Function.
+                    Trong những hệ thống phổ biến, Stack hoạt động theo nguyên tắc
+                    <strong>LIFO (Last In, First Out)</strong>, nghĩa là phần tử được đưa vào sau cùng
+                    sẽ được lấy ra trước.
+                </p>
+
+                <p>
+                    Khi một Function được gọi, hệ thống có thể tạo một vùng dữ liệu gọi là
+                    <strong>Stack Frame</strong> để quản lý các thông tin cần thiết cho lần gọi hàm đó.
+                    Khi Function hoàn thành, vùng dữ liệu liên quan sẽ được thu hồi hoặc tái sử dụng.
+                </p>
+
+                <h3>2.1. Nguyên lý hoạt động của Stack</h3>
+
+                <p>
+                    Để hiểu cách Stack hoạt động, hãy xem xét một chương trình có Function gọi
+                    Function khác:
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+void function_c(void)
+{
+    int value_c = 30;
+    printf("C: %d\n", value_c);
+}
+
+void function_b(void)
+{
+    int value_b = 20;
+
+    function_c();
+
+    printf("B: %d\n", value_b);
+}
+
+void function_a(void)
+{
+    int value_a = 10;
+
+    function_b();
+
+    printf("A: %d\n", value_a);
+}
+
+int main(void)
+{
+    function_a();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trình tự gọi Function trong chương trình là:
+                </p>
+
+                <pre><code>main()
+   |
+   +-- function_a()
+          |
+          +-- function_b()
+                 |
+                 +-- function_c()</code></pre>
+
+                <p>
+                    Khi chương trình thực thi, mỗi lần gọi Function sẽ tạo ra một ngữ cảnh
+                    thực thi riêng. Trong cách triển khai sử dụng Stack, các Stack Frame
+                    được tổ chức theo thứ tự gọi hàm.
+                </p>
+
+                <p>
+                    Khi <code>function_c()</code> hoàn thành, chương trình quay về
+                    <code>function_b()</code>. Sau đó <code>function_b()</code> hoàn thành
+                    và chương trình tiếp tục quay về <code>function_a()</code>.
+                    Cuối cùng, chương trình trở lại <code>main()</code>.
+                </p>
+
+                <svg viewBox="0 0 600 390" role="img"
+                    aria-label="Stack Frame khi các Function lồng nhau được gọi"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="100" y="15" width="400" height="70" rx="5"
+                            fill="rgba(20,80,107,.15)" />
+                        <rect x="100" y="87" width="400" height="70" rx="5"
+                            fill="rgba(46,139,87,.16)" />
+                        <rect x="100" y="159" width="400" height="70" rx="5"
+                            fill="rgba(224,168,0,.18)" />
+                        <rect x="100" y="231" width="400" height="70" rx="5"
+                            fill="rgba(128,128,128,.18)" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="300" y="39" font-weight="bold">main() Stack Frame</text>
+                        <text x="300" y="59" font-size="10">Thông tin của main()</text>
+
+                        <text x="300" y="111" font-weight="bold">function_a() Stack Frame</text>
+                        <text x="300" y="131" font-size="10">Local Data: value_a</text>
+
+                        <text x="300" y="183" font-weight="bold">function_b() Stack Frame</text>
+                        <text x="300" y="203" font-size="10">Local Data: value_b</text>
+
+                        <text x="300" y="255" font-weight="bold">function_c() Stack Frame</text>
+                        <text x="300" y="275" font-size="10">Local Data: value_c</text>
+                    </g>
+
+                    <g fill="currentColor" font-size="10" text-anchor="middle">
+                        <text x="300" y="330">Các Function được gọi theo thứ tự</text>
+                        <text x="300" y="348">main → A → B → C</text>
+                        <text x="300" y="372">Sau khi C kết thúc, Stack được thu hồi theo thứ tự ngược lại</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Sơ đồ trên minh họa bốn Stack Frame tương ứng với bốn Function đang hoạt động.
+                    Khi Function cuối cùng kết thúc, Stack Frame của nó được giải phóng trước.
+                </p>
+
+                <h3>2.2. Stack Frame gồm những gì?</h3>
+
+                <p>
+                    Một Stack Frame có thể chứa nhiều loại thông tin phục vụ quá trình thực thi Function.
+                    Thành phần cụ thể phụ thuộc vào kiến trúc CPU, Calling Convention,
+                    Compiler và cách tối ưu mã nguồn.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Vai trò</th>
+                    </tr>
+                    <tr>
+                        <td>Local Variables</td>
+                        <td>Lưu các biến Local cần không gian lưu trữ trong Stack Frame.</td>
+                    </tr>
+                    <tr>
+                        <td>Function Parameters</td>
+                        <td>Lưu các tham số hàm nếu chúng được truyền hoặc lưu trên Stack.</td>
+                    </tr>
+                    <tr>
+                        <td>Return Address</td>
+                        <td>Thông tin phục vụ việc quay lại vị trí gọi Function.</td>
+                    </tr>
+                    <tr>
+                        <td>Saved Registers</td>
+                        <td>Lưu các CPU Register cần bảo toàn khi gọi Function theo Calling Convention.</td>
+                    </tr>
+                    <tr>
+                        <td>Temporary Data</td>
+                        <td>Lưu dữ liệu tạm thời cần thiết cho quá trình xử lý.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Không phải tất cả các thành phần trên đều luôn nằm trong Stack.
+                    Ví dụ, tham số Function có thể được truyền thông qua CPU Register
+                    theo quy ước gọi hàm.
+                    Compiler cũng có thể tối ưu và không tạo một Stack Frame riêng
+                    cho một số Function đơn giản.
+                </p>
+
+                <h3>2.3. Stack Pointer (SP)</h3>
+
+                <p>
+                    <strong>Stack Pointer (SP)</strong> là một thanh ghi CPU được sử dụng
+                    để theo dõi vị trí hiện tại của Stack.
+                </p>
+
+                <p>
+                    Khi chương trình thực hiện các thao tác liên quan đến Stack,
+                    giá trị của Stack Pointer có thể được thay đổi để quản lý vùng nhớ
+                    dành cho các Stack Frame.
+                </p>
+
+                <p>
+                    Trên nhiều kiến trúc vi xử lý, Stack có thể phát triển theo hướng địa chỉ thấp hơn
+                    (Descending Stack). Tuy nhiên, đây không phải quy tắc bắt buộc đối với mọi CPU.
+                </p>
+
+                <p>
+                    Ví dụ khái niệm:
+                </p>
+
+                <pre><code>/* Pseudocode minh họa */
+
+push(value);
+
+/*
+ * Stack Pointer thay đổi
+ * để phản ánh dữ liệu vừa được đưa vào Stack.
+ */
+
+pop();
+
+/*
+ * Stack Pointer thay đổi trở lại
+ * khi dữ liệu được lấy khỏi Stack.
+ */</code></pre>
+
+                <div class="note">
+                    Stack Pointer là một thành phần ở mức kiến trúc CPU.
+                    Khi làm việc với một MCU cụ thể, cần tham khảo Architecture Reference Manual
+                    để biết cách tổ chức Stack, quy ước gọi hàm và các thanh ghi liên quan.
+                </div>
+
+                <h3>2.4. Stack Allocation</h3>
+
+                <p>
+                    Một đặc điểm quan trọng của Stack là việc quản lý bộ nhớ thường được thực hiện
+                    theo vòng đời của Function.
+                    Khi Function bắt đầu hoạt động, không gian cần thiết cho các dữ liệu tương ứng
+                    được thiết lập. Khi Function kết thúc, không gian này có thể được thu hồi
+                    để sử dụng cho các lần gọi hàm tiếp theo.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>void process_sensor(void)
+{
+    int sensor_value = 100;
+
+    int converted_value = sensor_value * 2;
+
+    /* Xử lý dữ liệu */
+
+} /* Dữ liệu có automatic storage duration hết lifetime */</code></pre>
+
+                <p>
+                    Hai biến <code>sensor_value</code> và <code>converted_value</code>
+                    có Automatic Storage Duration.
+                    Khi Function kết thúc, lifetime của hai biến này kết thúc.
+                </p>
+
+                <p>
+                    Đây là lý do Stack thường được xem là một vùng nhớ có cơ chế quản lý
+                    tương đối đơn giản và nhanh trong các chương trình C.
+                </p>
+
+                <h3>2.5. Recursion và ảnh hưởng đến Stack</h3>
+
+                <p>
+                    <strong>Recursion</strong> là kỹ thuật một Function gọi lại chính nó.
+                    Mỗi lần gọi đệ quy thường tạo thêm một ngữ cảnh thực thi mới
+                    và có thể cần thêm Stack Frame.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>int factorial(int n)
+{
+    if (n &lt;= 1)
+    {
+        return 1;
+    }
+
+    return n * factorial(n - 1);
+}
+
+int main(void)
+{
+    int result = factorial(5);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi <code>factorial(5)</code> được thực thi, các lần gọi Function
+                    tiếp theo được tạo ra cho đến khi đạt điều kiện dừng.
+                    Sau đó các Function lần lượt trả kết quả về cho lần gọi trước đó.
+                </p>
+
+                <svg viewBox="0 0 600 345" role="img"
+                    aria-label="Stack Frame trong quá trình gọi đệ quy factorial"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="55" y="10" width="490" height="48" rx="5"
+                            fill="rgba(20,80,107,.15)" />
+                        <rect x="55" y="62" width="490" height="48" rx="5"
+                            fill="rgba(46,139,87,.15)" />
+                        <rect x="55" y="114" width="490" height="48" rx="5"
+                            fill="rgba(224,168,0,.18)" />
+                        <rect x="55" y="166" width="490" height="48" rx="5"
+                            fill="rgba(128,128,128,.16)" />
+                        <rect x="55" y="218" width="490" height="48" rx="5"
+                            fill="rgba(20,80,107,.12)" />
+                    </g>
+
+                    <g fill="currentColor" text-anchor="middle" font-size="12">
+                        <text x="300" y="39">factorial(5)</text>
+                        <text x="300" y="91">factorial(4)</text>
+                        <text x="300" y="143">factorial(3)</text>
+                        <text x="300" y="195">factorial(2)</text>
+                        <text x="300" y="247">factorial(1)</text>
+                        <text x="300" y="298" font-size="11">Mỗi lần gọi cần quản lý dữ liệu riêng</text>
+                        <text x="300" y="317" font-size="10">Sau điều kiện dừng, các lần gọi lần lượt hoàn thành</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Trong trường hợp số lần gọi đệ quy quá lớn,
+                    Stack có thể sử dụng hết dung lượng được cấp phát và gây ra Stack Overflow.
+                </p>
+
+                <div class="note">
+                    Trong Embedded Systems, nên cân nhắc cẩn thận khi sử dụng Recursion,
+                    đặc biệt trong những Function có thể được gọi với độ sâu không giới hạn.
+                    Các giải pháp lặp (Iteration) có thể giúp kiểm soát việc sử dụng Stack dễ dàng hơn.
+                </div>
+
+                <h3>2.6. Stack trong Embedded Systems và RTOS</h3>
+
+                <p>
+                    Trong hệ thống Embedded Bare-metal, chương trình thường sử dụng một hoặc một số
+                    vùng Stack được cấu hình dành cho quá trình thực thi.
+                    Kích thước Stack cần phù hợp với mức sử dụng dữ liệu của chương trình.
+                </p>
+
+                <p>
+                    Khi sử dụng RTOS, mỗi Task thường được cấp một vùng Stack riêng
+                    để quản lý các Function Call và dữ liệu Local trong quá trình Task đó chạy.
+                </p>
+
+                <svg viewBox="0 0 600 320" role="img"
+                    aria-label="Mô hình RTOS với các Task Stack riêng biệt"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="155" y="10" width="290" height="52" rx="5"
+                            fill="rgba(20,80,107,.18)" />
+
+                        <rect x="25" y="115" width="160" height="145" rx="6"
+                            fill="rgba(46,139,87,.12)" />
+                        <rect x="220" y="115" width="160" height="145" rx="6"
+                            fill="rgba(224,168,0,.14)" />
+                        <rect x="415" y="115" width="160" height="145" rx="6"
+                            fill="rgba(128,128,128,.14)" />
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.3" fill="none">
+                        <path d="M300 62 V86 H105 V115" />
+                        <path d="M300 86 H300 V115" />
+                        <path d="M300 86 H495 V115" />
+                    </g>
+
+                    <g fill="currentColor" text-anchor="middle" font-size="12">
+                        <text x="300" y="33" font-weight="bold">RTOS Scheduler</text>
+                        <text x="105" y="140" font-weight="bold">Task A</text>
+                        <text x="105" y="165">Stack A</text>
+                        <text x="105" y="190" font-size="10">Local Variables</text>
+                        <text x="105" y="207" font-size="10">Function Calls</text>
+
+                        <text x="300" y="140" font-weight="bold">Task B</text>
+                        <text x="300" y="165">Stack B</text>
+                        <text x="300" y="190" font-size="10">Local Variables</text>
+                        <text x="300" y="207" font-size="10">Function Calls</text>
+
+                        <text x="495" y="140" font-weight="bold">Task C</text>
+                        <text x="495" y="165">Stack C</text>
+                        <text x="495" y="190" font-size="10">Local Variables</text>
+                        <text x="495" y="207" font-size="10">Function Calls</text>
+
+                        <text x="300" y="291" font-size="11">Mỗi Task sử dụng vùng Stack được cấp phát riêng</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Kích thước Stack của từng Task là một phần quan trọng trong cấu hình RTOS.
+                    Nếu Stack của Task không đủ lớn, chương trình có thể gặp lỗi khi Task thực hiện
+                    Function Call lồng nhau hoặc xử lý những dữ liệu Local có kích thước lớn.
+                </p>
+
+                <p>
+                    Ngoài ra, Interrupt có thể sử dụng Stack theo quy định của kiến trúc CPU
+                    và cấu hình hệ thống. Với một số RTOS, Interrupt Handler có thể sử dụng
+                    System Stack riêng hoặc Stack đang hoạt động tùy thiết kế nền tảng.
+                </p>
+
+                <h2>3. Stack Overflow và Stack Management</h2>
+
+                <p>
+                    <strong>Stack Overflow</strong> xảy ra khi chương trình sử dụng Stack vượt quá
+                    vùng nhớ được cấp phát hoặc cấu hình cho Stack.
+                    Đây là một vấn đề nghiêm trọng trong Embedded Systems vì có thể làm ghi đè
+                    lên vùng nhớ lân cận và gây ra hành vi không mong muốn.
+                </p>
+
+                <h3>3.1. Nguyên nhân gây Stack Overflow</h3>
+
+                <p>
+                    Một số nguyên nhân phổ biến bao gồm:
+                </p>
+
+                <ul>
+                    <li>Function gọi lồng nhau quá nhiều cấp.</li>
+                    <li>Recursion có độ sâu lớn hoặc không có điều kiện dừng phù hợp.</li>
+                    <li>Khai báo Array hoặc Structure có kích thước lớn dưới dạng biến Local.</li>
+                    <li>Interrupt lồng nhau làm tăng mức sử dụng Stack.</li>
+                    <li>Stack của RTOS Task được cấu hình quá nhỏ.</li>
+                    <li>Compiler hoặc ABI yêu cầu thêm Stack cho dữ liệu tạm thời và các Function Call.</li>
+                </ul>
+
+                <h3>3.2. Ví dụ về sử dụng Stack quá nhiều</h3>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+void process_data(void)
+{
+    /* Local Array có kích thước lớn */
+    uint8_t buffer[4096];
+
+    /* Xử lý dữ liệu */
+
+    buffer[0] = 0;
+}
+
+int main(void)
+{
+    process_data();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, Function <code>process_data()</code> khai báo một Array
+                    có kích thước 4096 byte.
+                    Nếu Compiler đặt Array này trên Stack, lượng Stack cần thiết sẽ tăng đáng kể.
+                </p>
+
+                <p>
+                    Đối với một vi điều khiển chỉ có vài chục KB RAM,
+                    việc khai báo nhiều Buffer Local có kích thước lớn có thể khiến
+                    Stack không còn đủ không gian cho các hoạt động khác.
+                </p>
+
+                <h3>3.3. Biện pháp hạn chế Stack Overflow</h3>
+
+                <table>
+                    <tr>
+                        <th>Biện pháp</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Kiểm soát Local Variable</td>
+                        <td>Hạn chế khai báo những biến hoặc Array quá lớn trong Function.</td>
+                    </tr>
+                    <tr>
+                        <td>Kiểm soát Function Call</td>
+                        <td>Tránh các chuỗi gọi hàm quá sâu và không cần thiết.</td>
+                    </tr>
+                    <tr>
+                        <td>Hạn chế Recursion</td>
+                        <td>Sử dụng Iteration nếu cần kiểm soát chặt chẽ mức sử dụng Stack.</td>
+                    </tr>
+                    <tr>
+                        <td>Stack Sizing</td>
+                        <td>Cấu hình kích thước Stack dựa trên việc phân tích và kiểm thử.</td>
+                    </tr>
+                    <tr>
+                        <td>Stack Monitoring</td>
+                        <td>Kiểm tra mức sử dụng Stack trong quá trình phát triển.</td>
+                    </tr>
+                    <tr>
+                        <td>Stack Protection</td>
+                        <td>Sử dụng Stack Guard hoặc cơ chế kiểm tra Overflow nếu nền tảng hỗ trợ.</td>
+                    </tr>
+                </table>
+
+                <h3>3.4. Stack Monitoring trong Embedded</h3>
+
+                <p>
+                    Trong quá trình phát triển Firmware, lập trình viên cần xác định
+                    chương trình đã sử dụng bao nhiêu Stack và còn lại bao nhiêu dung lượng.
+                </p>
+
+                <p>
+                    Một số phương pháp thường được sử dụng:
+                </p>
+
+                <ul>
+                    <li><strong>Stack Watermarking:</strong> điền một mẫu dữ liệu cố định vào Stack khi khởi tạo, sau đó kiểm tra phần dữ liệu đã bị ghi đè để ước lượng mức sử dụng cao nhất.</li>
+                    <li><strong>Stack Canary:</strong> đặt một giá trị kiểm tra tại vùng được giám sát để phát hiện một số trường hợp ghi đè Stack.</li>
+                    <li><strong>Debugger Inspection:</strong> quan sát Stack Pointer và vùng Stack trong quá trình Debug.</li>
+                    <li><strong>RTOS Stack Monitoring:</strong> sử dụng các API hoặc chức năng hỗ trợ kiểm tra mức sử dụng Stack của Task.</li>
+                </ul>
+
+                <div class="note">
+                    Stack Watermarking và Stack Canary có thể giúp phát hiện hoặc đánh giá
+                    một số vấn đề về Stack, nhưng không bảo đảm phát hiện mọi trường hợp Overflow.
+                    Cần kết hợp phân tích tĩnh, kiểm thử và kiểm tra trên Target Hardware.
+                </div>
+
+                <h2>4. Heap Memory</h2>
+
+                <p>
+                    <strong>Heap Memory</strong> là vùng nhớ được sử dụng để cấp phát bộ nhớ động
+                    trong quá trình chương trình đang chạy.
+                    Khác với Stack, việc tạo và giải phóng các vùng nhớ Heap không nhất thiết
+                    gắn với thời điểm bắt đầu và kết thúc của một Function.
+                </p>
+
+                <p>
+                    Trong C, chương trình thường sử dụng các Function như
+                    <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> và
+                    <code>free()</code> để quản lý bộ nhớ động.
+                </p>
+
+                <h3>4.1. Nguyên lý hoạt động của Heap</h3>
+
+                <p>
+                    Khi chương trình yêu cầu cấp phát bộ nhớ động,
+                    Memory Allocator sẽ tìm một vùng nhớ phù hợp trong khu vực Heap
+                    mà nó quản lý và trả về địa chỉ của vùng nhớ đó.
+                </p>
+
+                <p>
+                    Vùng nhớ được cấp phát sẽ tiếp tục tồn tại cho đến khi được giải phóng
+                    theo cơ chế quản lý tương ứng.
+                    Lifetime của vùng nhớ này không tự động kết thúc chỉ vì Function
+                    đã thực hiện yêu cầu cấp phát kết thúc.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdlib.h&gt;
+#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    uint32_t *data = malloc(10 * sizeof(uint32_t));
+
+    if (data == NULL)
+    {
+        return 1;
+    }
+
+    data[0] = 100;
+
+    /* Sử dụng vùng nhớ được cấp phát */
+
+    free(data);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, cần phân biệt hai đối tượng:
+                </p>
+
+                <ul>
+                    <li><code>data</code> là biến Pointer Local, có automatic storage duration.</li>
+                    <li>Vùng nhớ được cấp phát thông qua <code>malloc()</code> là đối tượng được quản lý bằng Dynamic Memory Allocation.</li>
+                </ul>
+
+                <p>
+                    Hai đối tượng này không nhất thiết nằm trong cùng một vùng nhớ.
+                    Biến Pointer có thể được lưu trên Stack hoặc Register,
+                    trong khi vùng nhớ được cấp phát được lấy từ Heap của Memory Allocator.
+                </p>
+
+                <h3>4.2. Memory Allocator</h3>
+
+                <p>
+                    <strong>Memory Allocator</strong> là thành phần quản lý việc cấp phát
+                    và giải phóng bộ nhớ động.
+                </p>
+
+                <p>
+                    Khi sử dụng <code>malloc()</code>, chương trình không cần tự xác định
+                    chính xác địa chỉ của vùng nhớ có thể sử dụng.
+                    Memory Allocator sẽ quản lý các vùng nhớ và tìm một khu vực phù hợp
+                    với yêu cầu cấp phát.
+                </p>
+
+                <p>
+                    Tùy theo thuật toán được sử dụng, Memory Allocator có thể duy trì
+                    thông tin về các Block đã cấp phát, các Block còn trống và kích thước
+                    của từng vùng nhớ.
+                </p>
+
+                <svg viewBox="0 0 600 290" role="img"
+                    aria-label="Heap Memory được chia thành các Block đã cấp phát và còn trống"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="40" y="12" width="520" height="220" rx="6"
+                            fill="rgba(46,139,87,.06)" />
+
+                        <rect x="62" y="55" width="112" height="140" rx="4"
+                            fill="rgba(20,80,107,.2)" />
+                        <rect x="180" y="55" width="112" height="140" rx="4"
+                            fill="rgba(128,128,128,.2)" />
+                        <rect x="298" y="55" width="112" height="140" rx="4"
+                            fill="rgba(224,168,0,.2)" />
+                        <rect x="416" y="55" width="122" height="140" rx="4"
+                            fill="rgba(46,139,87,.2)" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="300" y="34" font-weight="bold">Heap Memory</text>
+
+                        <text x="118" y="110" font-weight="bold">Block A</text>
+                        <text x="118" y="130" font-size="10">Allocated</text>
+
+                        <text x="236" y="110" font-weight="bold">Block B</text>
+                        <text x="236" y="130" font-size="10">Free</text>
+
+                        <text x="354" y="110" font-weight="bold">Block C</text>
+                        <text x="354" y="130" font-size="10">Allocated</text>
+
+                        <text x="477" y="110" font-weight="bold">Block D</text>
+                        <text x="477" y="130" font-size="10">Free</text>
+
+                        <text x="300" y="255" font-size="11">Mỗi Block có thể được quản lý theo kích thước và trạng thái riêng</text>
+                        <text x="300" y="273" font-size="10">Minh họa khái niệm Memory Allocator</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Trong sơ đồ trên, Heap được minh họa thành các Block có trạng thái khác nhau.
+                    Memory Allocator có thể tìm Block còn trống phù hợp để phục vụ yêu cầu mới.
+                </p>
+
+                <h3>4.3. Đặc điểm của Heap</h3>
+
+                <ul>
+                    <li>Cho phép cấp phát bộ nhớ trong Runtime.</li>
+                    <li>Kích thước vùng nhớ có thể thay đổi theo yêu cầu chương trình.</li>
+                    <li>Đối tượng được cấp phát có thể tồn tại sau khi Function yêu cầu cấp phát kết thúc.</li>
+                    <li>Việc giải phóng bộ nhớ thường cần được quản lý rõ ràng.</li>
+                    <li>Có thể phát sinh Memory Fragmentation.</li>
+                    <li>Thời gian cấp phát và giải phóng có thể phụ thuộc vào thuật toán Memory Allocator.</li>
+                </ul>
+
+                <h3>4.4. Heap trong Embedded Systems</h3>
+
+                <p>
+                    Trong các ứng dụng Embedded, Heap có thể hữu ích khi dữ liệu có kích thước
+                    không xác định trước hoặc cần thay đổi trong quá trình chương trình hoạt động.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>Các Buffer được tạo theo kích thước dữ liệu nhận được.</li>
+                    <li>Các cấu trúc dữ liệu có kích thước linh hoạt.</li>
+                    <li>Các đối tượng được tạo và giải phóng theo yêu cầu ứng dụng.</li>
+                    <li>Các Module cần quản lý vùng nhớ có vòng đời độc lập với Function hiện tại.</li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, Heap cần được sử dụng thận trọng trên MCU có RAM nhỏ.
+                    Nếu Memory Allocator hoạt động không phù hợp, chương trình có thể gặp
+                    tình trạng thiếu bộ nhớ hoặc không đáp ứng được yêu cầu thời gian thực.
+                </p>
+
+                <h2>5. Heap Fragmentation</h2>
+
+                <p>
+                    Một trong những vấn đề quan trọng khi sử dụng Heap là
+                    <strong>Memory Fragmentation</strong>.
+                    Đây là hiện tượng bộ nhớ bị chia thành nhiều vùng nhỏ sau quá trình
+                    cấp phát và giải phóng các Block có kích thước khác nhau.
+                </p>
+
+                <h3>5.1. External Fragmentation</h3>
+
+                <p>
+                    <strong>External Fragmentation</strong> xảy ra khi tổng dung lượng bộ nhớ
+                    còn trống vẫn đủ lớn, nhưng các vùng nhớ trống lại bị chia nhỏ
+                    và không có vùng liên tục nào đáp ứng được yêu cầu cấp phát.
+                </p>
+
+                <p>
+                    Ví dụ, một Heap có các Block như sau:
+                </p>
+
+                <svg viewBox="0 0 600 250" role="img"
+                    aria-label="Minh họa External Fragmentation trong Heap"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.3">
+                        <rect x="35" y="48" width="530" height="72" rx="5"
+                            fill="rgba(128,128,128,.12)" />
+
+                        <rect x="35" y="48" width="105" height="72"
+                            fill="rgba(20,80,107,.2)" />
+                        <rect x="140" y="48" width="70" height="72"
+                            fill="rgba(46,139,87,.2)" />
+                        <rect x="210" y="48" width="125" height="72"
+                            fill="rgba(224,168,0,.2)" />
+                        <rect x="335" y="48" width="90" height="72"
+                            fill="rgba(46,139,87,.2)" />
+                        <rect x="425" y="48" width="140" height="72"
+                            fill="rgba(20,80,107,.2)" />
+                    </g>
+
+                    <g fill="currentColor" text-anchor="middle" font-size="11">
+                        <text x="87" y="85">Used</text>
+                        <text x="175" y="85">Free</text>
+                        <text x="272" y="85">Used</text>
+                        <text x="380" y="85">Free</text>
+                        <text x="495" y="85">Used</text>
+
+                        <text x="175" y="143">Free Block 1</text>
+                        <text x="380" y="143">Free Block 2</text>
+                        <text x="300" y="183" font-weight="bold">Total Free Memory: 160 units</text>
+                        <text x="300" y="201">Giả sử yêu cầu mới cần một Block liên tục 150 units</text>
+                        <text x="300" y="221" font-size="10">Từng vùng riêng lẻ không đủ lớn để đáp ứng yêu cầu</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Trong sơ đồ minh họa, tổng dung lượng Free Memory là 160 units.
+                    Tuy nhiên, hai Block trống chỉ có kích thước 70 và 90 units.
+                    Nếu Memory Allocator cần một vùng liên tục có kích thước 150 units,
+                    yêu cầu cấp phát có thể thất bại.
+                </p>
+
+                <h3>5.2. Internal Fragmentation</h3>
+
+                <p>
+                    <strong>Internal Fragmentation</strong> xảy ra khi một Block được cấp phát
+                    có kích thước lớn hơn lượng bộ nhớ thực tế mà chương trình cần sử dụng.
+                    Phần bộ nhớ dư bên trong Block đã cấp phát không thể được sử dụng
+                    cho những yêu cầu khác trong thời gian đó.
+                </p>
+
+                <p>
+                    Ví dụ, Memory Allocator cấp phát một Block 64 bytes
+                    trong khi chương trình chỉ cần sử dụng 40 bytes.
+                    Khi đó, 24 bytes còn lại nằm trong vùng đã cấp phát nhưng không được sử dụng.
+                </p>
+
+                <svg viewBox="0 0 600 190" role="img"
+                    aria-label="Minh họa Internal Fragmentation trong một Block được cấp phát"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="65" y="25" width="470" height="70" rx="5"
+                            fill="rgba(128,128,128,.12)" />
+                        <rect x="65" y="25" width="294" height="70" rx="5"
+                            fill="rgba(46,139,87,.22)" />
+                        <rect x="359" y="25" width="176" height="70" rx="5"
+                            fill="rgba(224,168,0,.25)" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="212" y="54" font-weight="bold">40 Bytes</text>
+                        <text x="212" y="74" font-size="10">Application Data</text>
+                        <text x="447" y="54" font-weight="bold">24 Bytes</text>
+                        <text x="447" y="74" font-size="10">Unused Space</text>
+                        <text x="300" y="122" font-weight="bold">Allocated Block: 64 Bytes</text>
+                        <text x="300" y="143" font-size="11">Internal Fragmentation: 24 Bytes</text>
+                    </g>
+                </svg>
+
+                <h3>5.3. So sánh External và Internal Fragmentation</h3>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>External Fragmentation</th>
+                        <th>Internal Fragmentation</th>
+                    </tr>
+                    <tr>
+                        <td>Đặc điểm</td>
+                        <td>Bộ nhớ trống bị chia thành nhiều Block nhỏ.</td>
+                        <td>Bộ nhớ dư bên trong Block đã cấp phát.</td>
+                    </tr>
+                    <tr>
+                        <td>Vị trí bộ nhớ lãng phí</td>
+                        <td>Nằm giữa các Block đã cấp phát.</td>
+                        <td>Nằm bên trong Block đã cấp phát.</td>
+                    </tr>
+                    <tr>
+                        <td>Ảnh hưởng</td>
+                        <td>Có thể không cấp phát được một vùng liên tục đủ lớn.</td>
+                        <td>Làm giảm lượng bộ nhớ thực tế có thể sử dụng.</td>
+                    </tr>
+                    <tr>
+                        <td>Giải pháp thường gặp</td>
+                        <td>Memory Pool, thuật toán Allocator phù hợp và kiểm soát vòng đời cấp phát.</td>
+                        <td>Thiết kế kích thước Block và cơ chế cấp phát phù hợp.</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    Trong các ứng dụng Embedded yêu cầu hoạt động ổn định lâu dài,
+                    cần đặc biệt chú ý đến Fragmentation khi sử dụng Dynamic Memory Allocation.
+                    Đây là một trong những lý do nhiều dự án lựa chọn Static Allocation
+                    hoặc Memory Pool thay cho việc cấp phát và giải phóng tùy ý.
+                </div>
+
+                <h2>6. Initialized Data Segment (.data)</h2>
+
+                <p>
+                    <strong>Data Segment</strong> là vùng nhớ chứa các biến có
+                    <strong>Static Storage Duration</strong> đã được khởi tạo và cần có giá trị ban đầu.
+                    Trong những Toolchain phổ biến, vùng này thường được biểu diễn bằng
+                    Section <code>.data</code>.
+                </p>
+
+                <p>
+                    Những biến thuộc nhóm này thường là Global Variable hoặc Static Variable.
+                    Khác với biến Local thông thường, các biến này tồn tại trong suốt
+                    thời gian thực thi của chương trình.
+                </p>
+
+                <h3>6.1. Biến Global đã khởi tạo</h3>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+/* Global variable */
+int system_status = 1;
+
+uint32_t device_counter = 100;
+
+int main(void)
+{
+    system_status = 2;
+
+    device_counter++;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Hai biến <code>system_status</code> và <code>device_counter</code>
+                    được khai báo bên ngoài tất cả Function.
+                    Chúng có Static Storage Duration và có giá trị khởi tạo tường minh.
+                </p>
+
+                <p>
+                    Trong một cách triển khai phổ biến, các biến này được bố trí
+                    trong Initialized Data Segment.
+                    Giá trị ban đầu của chúng được lưu trong Load Image và được thiết lập
+                    vào RAM khi chương trình khởi động.
+                </p>
+
+                <h3>6.2. Biến Static đã khởi tạo</h3>
+
+                <p>
+                    Từ khóa <code>static</code> có thể được sử dụng để khai báo các biến
+                    có Static Storage Duration, kể cả khi biến được khai báo bên trong Function.
+                </p>
+
+                <pre><code>void update_counter(void)
+{
+    static int call_count = 1;
+
+    call_count++;
+
+    /* Xử lý khác */
+}
+
+int main(void)
+{
+    update_counter();
+    update_counter();
+    update_counter();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Biến <code>call_count</code> là biến Static Local.
+                    Mặc dù được khai báo bên trong Function, nó không được tạo mới
+                    và khởi tạo lại mỗi lần Function được gọi.
+                </p>
+
+                <p>
+                    Giá trị của biến được giữ lại giữa các lần gọi Function.
+                    Do được khởi tạo bằng 1, biến này thường được đưa vào Initialized Data Segment
+                    trong cách triển khai phổ biến.
+                </p>
+
+                <h3>6.3. Đặc điểm của Data Segment</h3>
+
+                <ul>
+                    <li>Thường chứa biến Global và Static đã khởi tạo.</li>
+                    <li>Các biến có thể được đọc và thay đổi nếu không được khai báo chỉ đọc.</li>
+                    <li>Các đối tượng có Static Storage Duration tồn tại trong toàn bộ quá trình thực thi chương trình.</li>
+                    <li>Vùng dữ liệu Runtime thường nằm trong RAM.</li>
+                    <li>Giá trị khởi tạo ban đầu thường được lưu trong Load Image.</li>
+                </ul>
+
+                <h3>6.4. Quá trình khởi tạo Data Segment</h3>
+
+                <p>
+                    Trong Embedded Systems, giá trị khởi tạo của các biến Data thường được
+                    đặt trong bộ nhớ không mất dữ liệu như Flash.
+                    Khi MCU khởi động, Startup Code sẽ sao chép dữ liệu này vào vùng RAM tương ứng.
+                </p>
+
+                <svg viewBox="0 0 600 255" role="img"
+                    aria-label="Quá trình khởi tạo Initialized Data trong Flash và RAM"
+                    style="width:100%;height:auto;max-width:640px">
+
+                    <g stroke="currentColor" stroke-width="1.4">
+                        <rect x="25" y="15" width="225" height="200" rx="6"
+                            fill="rgba(224,168,0,.12)" />
+                        <rect x="350" y="15" width="225" height="200" rx="6"
+                            fill="rgba(46,139,87,.13)" />
+
+                        <rect x="55" y="66" width="165" height="55" rx="5"
+                            fill="rgba(224,168,0,.18)" />
+                        <rect x="380" y="66" width="165" height="55" rx="5"
+                            fill="rgba(46,139,87,.2)" />
+                    </g>
+
+                    <g stroke="currentColor" stroke-width="1.5" fill="none">
+                        <path d="M250 94 H350" />
+                        <path d="M337 86 L350 94 L337 102" />
+                    </g>
+
+                    <g fill="currentColor" font-size="12" text-anchor="middle">
+                        <text x="137" y="39" font-weight="bold">FLASH</text>
+                        <text x="462" y="39" font-weight="bold">RAM</text>
+
+                        <text x="137" y="88" font-weight="bold">Initial Values</text>
+                        <text x="137" y="105" font-size="10">Data Load Image</text>
+
+                        <text x="462" y="88" font-weight="bold">Initialized Data</text>
+                        <text x="462" y="105" font-size="10">Runtime Variables</text>
+
+                        <text x="300" y="77" font-size="10">Copy</text>
+                        <text x="300" y="236" font-size="11">Startup Code thực hiện sao chép trước main()</text>
+                    </g>
+                </svg>
+
+                <p>
+                    Sau khi sao chép, các biến có thể được sử dụng trong chương trình với
+                    giá trị khởi tạo ban đầu như đã khai báo trong mã nguồn.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>int system_status = 1;
+
+/*
+ * Sau khi Startup Code hoàn thành:
+ *
+ * system_status = 1
+ *
+ * Chương trình có thể thay đổi giá trị này
+ * trong quá trình hoạt động.
+ */</code></pre>
+
+                <div class="note">
+                    Cần phân biệt vị trí lưu trữ ban đầu của dữ liệu và vị trí sử dụng
+                    khi chương trình chạy.
+                    Một biến thuộc .data thường có Run Address trong RAM,
+                    trong khi giá trị khởi tạo của nó được lưu tại Load Address trong Flash.
+                </div>
+
+                <h2>7. BSS Segment (.bss)</h2>
+
+                <p>
+                    <strong>BSS Segment</strong> là vùng nhớ được sử dụng cho những biến
+                    có Static Storage Duration chưa được khởi tạo tường minh
+                    hoặc được khởi tạo bằng giá trị 0.
+                </p>
+
+                <p>
+                    Trong nhiều Toolchain, vùng này được biểu diễn bằng Section
+                    có tên <code>.bss</code>.
+                    Các biến thuộc vùng này thường được dành riêng không gian trong RAM
+                    và được Startup Code khởi tạo về 0 trước khi chương trình chính chạy.
+                </p>
+
+                <h3>7.1. Biến Global chưa khởi tạo</h3>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+/* Global variables */
+int system_state;
+
+uint32_t sensor_value;
+
+int main(void)
+{
+    /* Các biến trên có giá trị ban đầu bằng 0 */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, các biến Global được khai báo nhưng không có giá trị
+                    khởi tạo tường minh.
+                    Theo quy tắc của C, chúng được khởi tạo mặc định bằng 0.
+                </p>
+
+                <p>
+                    Trong cách triển khai phổ biến, các biến này được đưa vào BSS Segment.
+                </p>
+
+                <h3>7.2. Biến Static chưa khởi tạo</h3>
+
+                <p>
+                    Các biến được khai báo bằng từ khóa <code>static</code>
+                    cũng có Static Storage Duration.
+                    Nếu không có giá trị khởi tạo tường minh, chúng được khởi tạo mặc định bằng 0.
+                </p>
+
+                <pre><code>void update_sensor(void)
+{
+    static int sample_count;
+
+    sample_count++;
+
+    /* Sample Count được giữ lại qua các lần gọi */
+}
+
+int main(void)
+{
+    update_sensor();
+    update_sensor();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, <code>sample_count</code> là biến Static Local.
+                    Biến có lifetime kéo dài trong toàn bộ quá trình thực thi chương trình
+                    và giá trị ban đầu bằng 0.
+                </p>
+
+                <h3>7.3. Biến khởi tạo tường minh bằng 0</h3>
+
+                <p>
+                    Không chỉ biến chưa được khởi tạo tường minh mới có thể nằm trong BSS.
+                    Một số Compiler và Linker cũng đưa các biến được khởi tạo bằng 0
+                    vào vùng này.
+                </p>
+
+                <pre><code>int error_code = 0;
+
+static int retry_count = 0;
+
+int main(void)
+{
+    return 0;
+}</code></pre>
+
+                <p>
+                    Mặc dù hai biến đã được khai báo với giá trị ban đầu,
+                    giá trị của chúng bằng 0 nên Toolchain có thể bố trí chúng trong BSS
+                    để giảm lượng dữ liệu khởi tạo cần lưu trong Image.
+                </p>
+
+                <h3>7.4. Đặc điểm của BSS</h3>
+
+                <ul>
+                    <li>Chứa các biến có Static Storage Duration được khởi tạo mặc định bằng 0 hoặc khởi tạo tường minh bằng 0 trong cách triển khai phổ biến.</li>
+                    <li>Các biến được dành riêng không gian trong RAM.</li>
+                    <li>Startup Code thường thực hiện việc khởi tạo vùng nhớ về 0.</li>
+                    <li>Trong ELF, BSS thường được biểu diễn bằng một loại Section không cần lưu toàn bộ byte 0 trong file Image.</li>
+                    <li>Giúp giảm kích thước dữ liệu khởi tạo phải lưu trong chương trình.</li>
+                </ul>
+
+                <h3>7.5. Vì sao BSS không cần lưu toàn bộ giá trị 0 trong Flash?</h3>
+
+                <p>
+                    Giả sử chương trình có một Buffer Global với kích thước 4096 bytes
+                    và cần được khởi tạo ban đầu bằng 0.
+                </p>
+
+                <pre><code>uint8_t receive_buffer[4096];</code></pre>
+
+                <p>
+                    Nếu toàn bộ 4096 bytes đều phải được ghi rõ trong file Image,
+                    kích thước dữ liệu khởi tạo sẽ tăng lên đáng kể.
+                </p>
+
+                <p>
+                    Thay vào đó, Toolchain có thể chỉ lưu thông tin về vị trí
+                    và kích thước của vùng BSS.
+                    Khi hệ thống khởi động, Startup Code thực hiện việc ghi 0 vào toàn bộ vùng này.
+                </p>
+
+                <div class="note">
+                    BSS giúp tiết kiệm không gian lưu trữ của Load Image.
+                    Tuy nhiên, các biến thuộc BSS vẫn chiếm RAM khi chương trình chạy.
+                    Vì vậy, khai báo Buffer Global có kích thước lớn vẫn làm tăng
+                    mức sử dụng RAM của Firmware.
+                </div>
+
+                <h2>8. So sánh Stack, Heap, Data và BSS</h2>
+
+                <p>
+                    Bốn vùng nhớ này có cách quản lý và vòng đời dữ liệu khác nhau.
+                    Bảng sau tổng hợp những đặc điểm quan trọng:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Stack</th>
+                        <th>Heap</th>
+                        <th>Data</th>
+                        <th>BSS</th>
+                    </tr>
+                    <tr>
+                        <td>Chức năng</td>
+                        <td>Function Execution</td>
+                        <td>Dynamic Allocation</td>
+                        <td>Initialized Static Data</td>
+                        <td>Zero-initialized Static Data</td>
+                    </tr>
+                    <tr>
+                        <td>Dữ liệu thường gặp</td>
+                        <td>Local Variables, Function Data</td>
+                        <td>Dynamic Objects</td>
+                        <td>Global / Static đã khởi tạo</td>
+                        <td>Global / Static chưa khởi tạo hoặc khởi tạo bằng 0</td>
+                    </tr>
+                    <tr>
+                        <td>Quản lý</td>
+                        <td>Thường tự động theo Function Call</td>
+                        <td>Memory Allocator</td>
+                        <td>Thời gian tồn tại của chương trình</td>
+                        <td>Thời gian tồn tại của chương trình</td>
+                    </tr>
+                    <tr>
+                        <td>Thời điểm cấp phát</td>
+                        <td>Khi tạo ngữ cảnh thực thi tương ứng</td>
+                        <td>Trong Runtime</td>
+                        <td>Được bố trí khi Build</td>
+                        <td>Được bố trí khi Build</td>
+                    </tr>
+                    <tr>
+                        <td>Thời điểm thu hồi</td>
+                        <td>Khi Function hoàn thành theo cơ chế triển khai</td>
+                        <td>Khi được giải phóng</td>
+                        <td>Khi chương trình kết thúc</td>
+                        <td>Khi chương trình kết thúc</td>
+                    </tr>
+                    <tr>
+                        <td>Khởi tạo dữ liệu</td>
+                        <td>Phụ thuộc cách khai báo và quá trình thực thi</td>
+                        <td>Phụ thuộc Function cấp phát</td>
+                        <td>Có giá trị khởi tạo ban đầu</td>
+                        <td>Được khởi tạo bằng 0</td>
+                    </tr>
+                    <tr>
+                        <td>Vấn đề phổ biến</td>
+                        <td>Stack Overflow</td>
+                        <td>Fragmentation, thiếu bộ nhớ</td>
+                        <td>Tăng RAM Usage</td>
+                        <td>Tăng RAM Usage</td>
+                    </tr>
+                    <tr>
+                        <td>Vị trí thường gặp</td>
+                        <td>RAM</td>
+                        <td>RAM</td>
+                        <td>Runtime trong RAM, Initial Values trong Flash</td>
+                        <td>RAM</td>
+                    </tr>
+                </table>
+
+                <h3>8.1. Điểm khác biệt quan trọng nhất</h3>
+
+                <p>
+                    Có thể phân biệt bốn vùng nhớ dựa trên cách chương trình quản lý dữ liệu:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Stack:</strong> thường gắn với quá trình gọi và kết thúc Function.
+                    </li>
+                    <li>
+                        <strong>Heap:</strong> được quản lý thông qua các yêu cầu cấp phát
+                        và giải phóng bộ nhớ động.
+                    </li>
+                    <li>
+                        <strong>Data:</strong> chứa các biến có Static Storage Duration
+                        với giá trị khởi tạo cần được lưu.
+                    </li>
+                    <li>
+                        <strong>BSS:</strong> chứa các biến có Static Storage Duration
+                        được khởi tạo về 0.
+                    </li>
+                </ul>
+
+                <p>
+                    Một điểm rất quan trọng là Data và BSS không được phân biệt dựa trên
+                    việc biến có được truy cập nhiều lần hay không,
+                    mà dựa trên đặc điểm khởi tạo và cách Compiler/Linker bố trí dữ liệu.
+                </p>
+
+                <h2>9. Ví dụ tổng hợp: Phân loại biến theo từng vùng nhớ</h2>
+
+                <p>
+                    Xét chương trình C sau:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;
+
+/* Initialized Data */
+int system_status = 1;
+
+static int error_count = 5;
+
+/* BSS */
+int global_counter;
+
+static uint32_t sensor_value;
+
+/* Read-only Data - typical implementation */
+const char device_name[] = "Embedded ECU";
+
+/* Function */
+void process_sensor(void)
+{
+    int local_value = 100;
+
+    static int call_count;
+
+    call_count++;
+
+    local_value++;
+}
+
+int main(void)
+{
+    int main_counter = 0;
+
+    /* Pointer local */
+    int *buffer = malloc(10 * sizeof(int));
+
+    if (buffer == NULL)
+    {
+        return 1;
+    }
+
+    buffer[0] = 100;
+
+    process_sensor();
+
+    free(buffer);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Dựa trên cách khai báo các biến, chúng ta có thể phân loại như sau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Đối tượng</th>
+                        <th>Đặc điểm</th>
+                        <th>Vùng nhớ thường gặp</th>
+                    </tr>
+                    <tr>
+                        <td><code>system_status</code></td>
+                        <td>Global, khởi tạo bằng 1.</td>
+                        <td>.data</td>
+                    </tr>
+                    <tr>
+                        <td><code>error_count</code></td>
+                        <td>Static Global, khởi tạo bằng 5.</td>
+                        <td>.data</td>
+                    </tr>
+                    <tr>
+                        <td><code>global_counter</code></td>
+                        <td>Global, chưa khởi tạo.</td>
+                        <td>.bss</td>
+                    </tr>
+                    <tr>
+                        <td><code>sensor_value</code></td>
+                        <td>Static Global, chưa khởi tạo.</td>
+                        <td>.bss</td>
+                    </tr>
+                    <tr>
+                        <td><code>device_name</code></td>
+                        <td>Const Array có Static Storage Duration.</td>
+                        <td>.rodata (thường gặp)</td>
+                    </tr>
+                    <tr>
+                        <td><code>local_value</code></td>
+                        <td>Automatic Local Variable.</td>
+                        <td>Stack hoặc Register tùy Compiler</td>
+                    </tr>
+                    <tr>
+                        <td><code>call_count</code></td>
+                        <td>Static Local Variable, chưa khởi tạo.</td>
+                        <td>.bss (thường gặp)</td>
+                    </tr>
+                    <tr>
+                        <td><code>main_counter</code></td>
+                        <td>Automatic Local Variable.</td>
+                        <td>Stack hoặc Register tùy Compiler</td>
+                    </tr>
+                    <tr>
+                        <td><code>buffer</code></td>
+                        <td>Local Pointer Variable.</td>
+                        <td>Stack hoặc Register tùy Compiler</td>
+                    </tr>
+                    <tr>
+                        <td>Vùng nhớ malloc</td>
+                        <td>Đối tượng được cấp phát động.</td>
+                        <td>Heap</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    <strong>Điểm cần ghi nhớ:</strong> Vùng nhớ chứa Pointer không nhất thiết
+                    là vùng nhớ chứa dữ liệu mà Pointer trỏ đến.
+
+                    Trong ví dụ này, <code>buffer</code> là một biến Pointer Local,
+                    còn vùng nhớ được cấp phát bằng <code>malloc()</code> được quản lý trong Heap.
+                </div>
+
+                <h2>10. Stack vs Heap trong Embedded Systems</h2>
+
+                <p>
+                    Trong các ứng dụng Embedded, việc lựa chọn giữa Stack và Heap
+                    không chỉ phụ thuộc vào cách khai báo biến mà còn liên quan đến
+                    tài nguyên phần cứng, yêu cầu thời gian thực và tính ổn định của Firmware.
+                </p>
+
+                <h3>10.1. Stack phù hợp với những trường hợp nào?</h3>
+
+                <p>
+                    Stack thường phù hợp với những dữ liệu:
+                </p>
+
+                <ul>
+                    <li>Có kích thước tương đối nhỏ và xác định được trước.</li>
+                    <li>Chỉ cần tồn tại trong thời gian Function đang thực thi.</li>
+                    <li>Không cần chia sẻ vòng đời với các Function khác.</li>
+                    <li>Có thể quản lý theo cấu trúc gọi hàm thông thường.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>void calculate_average(void)
+{
+    uint16_t sum = 0;
+    uint8_t count = 10;
+    uint16_t average;
+
+    sum = 500;
+
+    average = sum / count;
+
+    /* Sử dụng average */
+}</code></pre>
+
+                <p>
+                    Trong trường hợp này, các biến Local có kích thước nhỏ
+                    và chỉ cần phục vụ việc tính toán bên trong Function.
+                    Do đó, việc sử dụng Automatic Storage Duration là lựa chọn hợp lý.
+                </p>
+
+                <h3>10.2. Heap phù hợp với những trường hợp nào?</h3>
+
+                <p>
+                    Heap có thể phù hợp khi:
+                </p>
+
+                <ul>
+                    <li>Kích thước dữ liệu chưa xác định trước thời điểm Build.</li>
+                    <li>Đối tượng cần tồn tại sau khi Function tạo ra nó kết thúc.</li>
+                    <li>Ứng dụng cần tạo cấu trúc dữ liệu có kích thước thay đổi.</li>
+                    <li>Hệ thống có cơ chế quản lý bộ nhớ động phù hợp.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, một ứng dụng cần tạo Buffer dựa trên kích thước dữ liệu
+                    nhận được từ một thiết bị ngoại vi.
+                    Trong một số thiết kế, bộ nhớ động có thể giúp ứng dụng linh hoạt hơn.
+                </p>
+
+                <h3>10.3. So sánh Stack và Heap trong Embedded</h3>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>Stack</th>
+                        <th>Heap</th>
+                    </tr>
+                    <tr>
+                        <td>Cấp phát</td>
+                        <td>Thường được quản lý tự động khi thực thi Function.</td>
+                        <td>Được yêu cầu thông qua Memory Allocator.</td>
+                    </tr>
+                    <tr>
+                        <td>Giải phóng</td>
+                        <td>Thường tự động theo vòng đời của Function.</td>
+                        <td>Cần thực hiện quản lý giải phóng phù hợp.</td>
+                    </tr>
+                    <tr>
+                        <td>Tốc độ</td>
+                        <td>Thường nhanh và có chi phí quản lý tương đối thấp.</td>
+                        <td>Phụ thuộc thuật toán Allocator và trạng thái Heap.</td>
+                    </tr>
+                    <tr>
+                        <td>Fragmentation</td>
+                        <td>Ít gặp vấn đề Fragmentation theo cách quản lý Stack thông thường.</td>
+                        <td>Có thể gặp External và Internal Fragmentation.</td>
+                    </tr>
+                    <tr>
+                        <td>Kiểm soát kích thước</td>
+                        <td>Cần phân tích độ sâu Function Call và dung lượng Stack.</td>
+                        <td>Cần quản lý tổng dung lượng, kích thước Block và vòng đời cấp phát.</td>
+                    </tr>
+                    <tr>
+                        <td>Real-time</td>
+                        <td>Thường có thời gian quản lý dễ dự đoán hơn.</td>
+                        <td>Có thể có thời gian cấp phát thay đổi tùy Allocator.</td>
+                    </tr>
+                    <tr>
+                        <td>Ứng dụng</td>
+                        <td>Local Variable, dữ liệu tạm thời và Function Call.</td>
+                        <td>Buffer và đối tượng có kích thước hoặc vòng đời linh hoạt.</td>
+                    </tr>
+                </table>
+
+                <h3>10.4. Vì sao nhiều dự án Embedded hạn chế sử dụng Heap?</h3>
+
+                <p>
+                    Không phải tất cả dự án Embedded đều cấm sử dụng Heap.
+                    Tuy nhiên, một số dự án lựa chọn hạn chế Dynamic Memory Allocation
+                    vì những lý do sau:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Predictability:</strong> cấp phát động có thể khiến thời gian
+                        xử lý thay đổi tùy trạng thái Memory Allocator.
+                    </li>
+                    <li>
+                        <strong>Fragmentation:</strong> việc cấp phát và giải phóng liên tục
+                        có thể làm Heap bị phân mảnh.
+                    </li>
+                    <li>
+                        <strong>Resource Limitation:</strong> các MCU có RAM nhỏ cần kiểm soát
+                        chặt chẽ dung lượng bộ nhớ.
+                    </li>
+                    <li>
+                        <strong>Reliability:</strong> lỗi liên quan đến vòng đời và quản lý bộ nhớ
+                        có thể gây ra sự cố khó phát hiện.
+                    </li>
+                    <li>
+                        <strong>Verification:</strong> việc xác định chính xác mức sử dụng bộ nhớ
+                        có thể phức tạp hơn khi bộ nhớ được cấp phát linh hoạt trong Runtime.
+                    </li>
+                </ul>
+
+                <h3>10.5. Các giải pháp thay thế Heap</h3>
+
+                <p>
+                    Trong những ứng dụng cần kiểm soát bộ nhớ chặt chẽ,
+                    lập trình viên có thể sử dụng các phương pháp thay thế:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Phương pháp</th>
+                        <th>Mô tả</th>
+                    </tr>
+                    <tr>
+                        <td>Static Allocation</td>
+                        <td>Khai báo các vùng dữ liệu có kích thước cố định trước khi chương trình chạy.</td>
+                    </tr>
+                    <tr>
+                        <td>Fixed-size Buffer</td>
+                        <td>Sử dụng các Buffer có kích thước xác định và tái sử dụng chúng.</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Pool</td>
+                        <td>Chia một vùng nhớ thành những Block có kích thước xác định để quản lý.</td>
+                    </tr>
+                    <tr>
+                        <td>Object Pool</td>
+                        <td>Quản lý tập hợp các đối tượng có cùng cấu trúc và tái sử dụng khi cần.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Những phương pháp này có thể giúp việc sử dụng bộ nhớ trở nên dễ dự đoán hơn,
+                    đặc biệt đối với hệ thống có yêu cầu thời gian thực.
+                </p>
+
+                <h2>11. Data và BSS trong Embedded Systems</h2>
+
+                <p>
+                    Đối với các hệ thống Embedded, Data và BSS có liên hệ trực tiếp
+                    đến dung lượng RAM mà Firmware sử dụng.
+                    Hai vùng nhớ này thường được xác định trong quá trình Build
+                    và được Startup Code khởi tạo trước khi ứng dụng bắt đầu chạy.
+                </p>
+
+                <h3>11.1. Ảnh hưởng của biến Global đến RAM Usage</h3>
+
+                <p>
+                    Giả sử một chương trình khai báo:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+uint8_t receive_buffer[1024];
+
+uint8_t transmit_buffer[1024];
+
+int system_status = 1;
+
+int error_count = 0;
+
+int main(void)
+{
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong một cách triển khai phổ biến:
+                </p>
+
+                <ul>
+                    <li><code>receive_buffer</code> và <code>transmit_buffer</code> thường thuộc BSS.</li>
+                    <li><code>system_status</code> thường thuộc Data.</li>
+                    <li><code>error_count</code> có thể được đưa vào BSS vì giá trị khởi tạo bằng 0.</li>
+                </ul>
+
+                <p>
+                    Mặc dù các Buffer chưa được sử dụng ngay lập tức,
+                    chúng vẫn cần không gian trong RAM vì có Static Storage Duration.
+                </p>
+
+                <h3>11.2. Ví dụ phân bổ RAM</h3>
+
+                <p>
+                    Giả sử một vi điều khiển có RAM tổng cộng 64 KB.
+                    Sau khi phân tích Build và cấu hình bộ nhớ,
+                    một dự án có thể có mức phân bổ giả định như sau:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Thành phần</th>
+                        <th>Dung lượng</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                    <tr>
+                        <td>.data</td>
+                        <td>4 KB</td>
+                        <td>Biến Global và Static đã khởi tạo.</td>
+                    </tr>
+                    <tr>
+                        <td>.bss</td>
+                        <td>12 KB</td>
+                        <td>Biến Global và Static khởi tạo bằng 0.</td>
+                    </tr>
+                    <tr>
+                        <td>Heap</td>
+                        <td>8 KB</td>
+                        <td>Vùng bộ nhớ dành cho cấp phát động.</td>
+                    </tr>
+                    <tr>
+                        <td>Stack</td>
+                        <td>8 KB</td>
+                        <td>Vùng Stack được dành riêng theo cấu hình.</td>
+                    </tr>
+                    <tr>
+                        <td>Other / Reserved</td>
+                        <td>8 KB</td>
+                        <td>Các vùng RAM chuyên dụng hoặc dự trữ.</td>
+                    </tr>
+                    <tr>
+                        <th>Tổng đã phân bổ</th>
+                        <th>40 KB</th>
+                        <th>Minh họa giả định.</th>
+                    </tr>
+                    <tr>
+                        <td>Remaining RAM</td>
+                        <td>24 KB</td>
+                        <td>Phụ thuộc Memory Map và cách hệ thống phân bổ thực tế.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Ví dụ này cho thấy RAM không chỉ được sử dụng bởi các biến trong chương trình.
+                    Stack, Heap và các vùng dữ liệu dành riêng cho hệ thống cũng cần được tính đến.
+                </p>
+
+                <div class="note">
+                    Đây là ví dụ phân bổ RAM giả định, không phải quy tắc cố định cho mọi MCU.
+                    Khi phát triển Firmware thực tế, cần sử dụng Linker Map File,
+                    tài liệu phần cứng và cấu hình Build để xác định dung lượng thực sự của từng vùng.
+                </div>
+
+                <h3>11.3. Tác động của BSS đến dung lượng RAM</h3>
+
+                <p>
+                    Một sai lầm thường gặp là cho rằng các biến thuộc BSS không tiêu tốn bộ nhớ
+                    vì chúng không cần lưu các byte 0 trong Flash.
+                </p>
+
+                <p>
+                    Trên thực tế, BSS vẫn chiếm dung lượng RAM tương ứng với kích thước
+                    các đối tượng được đặt trong vùng này.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>uint8_t large_buffer[8192];</code></pre>
+
+                <p>
+                    Biến trên có thể được bố trí trong BSS và chiếm khoảng 8 KB RAM.
+                    Mặc dù không cần lưu toàn bộ 8192 byte giá trị 0 trong Load Image,
+                    vùng RAM tương ứng vẫn phải được dành riêng khi chương trình hoạt động.
+                </p>
+
+                <h2>12. Những lỗi thường gặp khi sử dụng các vùng nhớ</h2>
+
+                <p>
+                    Khi làm việc với chương trình C, lập trình viên cần hiểu rõ
+                    cách mỗi vùng nhớ được quản lý.
+                    Một số lỗi thường xuất hiện khi sử dụng Stack, Heap, Data và BSS không hợp lý.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Lỗi</th>
+                        <th>Nguyên nhân</th>
+                        <th>Hướng xử lý</th>
+                    </tr>
+                    <tr>
+                        <td>Stack Overflow</td>
+                        <td>Sử dụng Stack vượt giới hạn cấu hình.</td>
+                        <td>Phân tích Stack Usage, giới hạn Function Call và kiểm soát Local Data.</td>
+                    </tr>
+                    <tr>
+                        <td>Heap Fragmentation</td>
+                        <td>Cấp phát và giải phóng các Block có kích thước không đồng đều.</td>
+                        <td>Kiểm soát vòng đời bộ nhớ và cân nhắc Memory Pool.</td>
+                    </tr>
+                    <tr>
+                        <td>RAM Exhaustion</td>
+                        <td>Tổng Data, BSS, Stack và Heap vượt quá khả năng RAM.</td>
+                        <td>Phân tích Memory Map và tối ưu RAM Usage.</td>
+                    </tr>
+                    <tr>
+                        <td>Incorrect Initialization</td>
+                        <td>Startup Code không thiết lập Data hoặc BSS đúng cách.</td>
+                        <td>Kiểm tra Startup Code và cấu hình Linker.</td>
+                    </tr>
+                    <tr>
+                        <td>Large Local Array</td>
+                        <td>Khai báo Buffer lớn trong Function.</td>
+                        <td>Cân nhắc Static Buffer hoặc giải pháp quản lý bộ nhớ khác.</td>
+                    </tr>
+                    <tr>
+                        <td>Lifetime Misunderstanding</td>
+                        <td>Nhầm lẫn giữa vòng đời của Pointer và vùng nhớ được Pointer trỏ đến.</td>
+                        <td>Phân biệt Storage Duration và Lifetime của từng đối tượng.</td>
+                    </tr>
+                </table>
+
+                <h3>12.1. Sử dụng Buffer lớn trên Stack</h3>
+
+                <pre><code>void receive_data(void)
+{
+    uint8_t data[8192];
+
+    /* Xử lý dữ liệu */
+}</code></pre>
+
+                <p>
+                    Nếu Buffer được đặt trên Stack, Function có thể yêu cầu một lượng Stack
+                    rất lớn mỗi khi được gọi.
+                    Điều này cần được xem xét kỹ trên các MCU có RAM hạn chế.
+                </p>
+
+                <h3>12.2. Khai báo quá nhiều biến Global</h3>
+
+                <pre><code>uint8_t buffer_a[4096];
+
+uint8_t buffer_b[4096];
+
+uint8_t buffer_c[4096];
+
+int main(void)
+{
+    return 0;
+}</code></pre>
+
+                <p>
+                    Các Buffer trên có Static Storage Duration nên sẽ chiếm không gian RAM
+                    trong toàn bộ thời gian chương trình chạy, dù tại một thời điểm chỉ có
+                    một Buffer được sử dụng.
+                </p>
+
+                <p>
+                    Trong trường hợp các Buffer không cần sử dụng đồng thời,
+                    lập trình viên có thể xem xét thiết kế một cơ chế quản lý và tái sử dụng
+                    vùng nhớ phù hợp với yêu cầu hệ thống.
+                </p>
+
+                <h3>12.3. Nhầm lẫn giữa Pointer và vùng nhớ được cấp phát</h3>
+
+                <pre><code>void example(void)
+{
+    int *data;
+
+    data = malloc(100 * sizeof(int));
+
+    if (data == NULL)
+    {
+        return;
+    }
+
+    /*
+     * data là Pointer Local.
+     * Vùng nhớ được cấp phát là Dynamic Memory.
+     */
+
+    free(data);
+}</code></pre>
+
+                <p>
+                    Trong trường hợp này, cần phân biệt vòng đời của biến Pointer
+                    với vòng đời của vùng nhớ được cấp phát.
+                    Đây là một trong những kiến thức cơ bản để quản lý bộ nhớ an toàn trong C.
+                </p>
+
+                <h2>13. Công cụ kiểm tra Memory Usage</h2>
+
+                <p>
+                    Trong các dự án Embedded thực tế, lập trình viên không nên chỉ dựa vào
+                    việc đọc mã nguồn để ước lượng bộ nhớ chương trình.
+                    Các công cụ Build và Debug có thể cung cấp thông tin hữu ích
+                    để phân tích mức sử dụng RAM và Flash.
+                </p>
+
+                <h3>13.1. Kiểm tra Section bằng size</h3>
+
+                <p>
+                    Có thể sử dụng GNU Toolchain để kiểm tra kích thước các Section
+                    trong ELF File:
+                </p>
+
+                <pre><code>arm-none-eabi-size firmware.elf</code></pre>
+
+                <p>
+                    Kết quả thường bao gồm những thông tin:
+                </p>
+
+                <ul>
+                    <li><strong>text:</strong> nhóm Section chứa mã và một số dữ liệu chỉ đọc theo cách phân loại của công cụ.</li>
+                    <li><strong>data:</strong> kích thước nhóm dữ liệu đã khởi tạo.</li>
+                    <li><strong>bss:</strong> kích thước nhóm dữ liệu chưa khởi tạo hoặc khởi tạo bằng 0.</li>
+                </ul>
+
+                <p>
+                    Những thông tin này giúp lập trình viên đánh giá kích thước chương trình
+                    và mức sử dụng dữ liệu tĩnh.
+                </p>
+
+                <h3>13.2. Kiểm tra Memory Map File</h3>
+
+                <p>
+                    Map File cung cấp thông tin về vị trí các Section,
+                    kích thước dữ liệu và địa chỉ các Symbol sau khi Linking.
+                </p>
+
+                <p>
+                    Ví dụ, một số thông tin có thể tìm thấy trong Map File:
+                </p>
+
+                <ul>
+                    <li>Địa chỉ bắt đầu và kết thúc của .text.</li>
+                    <li>Kích thước của .data và .bss.</li>
+                    <li>Vị trí của các biến Global.</li>
+                    <li>Phân vùng bộ nhớ và mức sử dụng RAM, Flash.</li>
+                    <li>Các Symbol liên quan đến Stack và Heap nếu được cấu hình.</li>
+                </ul>
+
+                <h3>13.3. Theo dõi Stack trong Debugger</h3>
+
+                <p>
+                    Debugger có thể hỗ trợ theo dõi Stack Pointer,
+                    kiểm tra vùng Stack và quan sát các Function Call trong Call Stack.
+                </p>
+
+                <p>
+                    Trong quá trình Debug, lập trình viên có thể đặt Breakpoint,
+                    quan sát Call Stack và kiểm tra các biến Local
+                    để hiểu cách chương trình đang sử dụng dữ liệu.
+                </p>
+
+                <div class="note">
+                    Stack, Heap, Data và BSS cần được đánh giá cùng nhau khi phân tích RAM Usage.
+                    Chỉ kiểm tra kích thước .data và .bss là chưa đủ để xác định
+                    tổng lượng RAM mà Firmware thực sự cần trong Runtime.
+                </div>
+
+                <h2>14. Best Practices khi quản lý bộ nhớ trong C Embedded</h2>
+
+                <p>
+                    Để xây dựng một chương trình Embedded ổn định,
+                    lập trình viên cần lựa chọn vùng nhớ phù hợp cho từng loại dữ liệu
+                    và kiểm soát cách chương trình sử dụng tài nguyên.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Đối với Stack:</strong> ưu tiên sử dụng cho các biến Local có kích thước
+                        phù hợp; tránh khai báo Buffer quá lớn hoặc sử dụng Recursion không kiểm soát.
+                    </li>
+                    <li>
+                        <strong>Đối với Heap:</strong> cân nhắc nhu cầu thực tế trước khi cấp phát động;
+                        kiểm soát kích thước, vòng đời và khả năng cấp phát thất bại.
+                    </li>
+                    <li>
+                        <strong>Đối với Data:</strong> chỉ sử dụng các biến Global và Static khi cần
+                        duy trì dữ liệu trong suốt thời gian hoạt động của chương trình.
+                    </li>
+                    <li>
+                        <strong>Đối với BSS:</strong> lưu ý rằng Buffer lớn vẫn tiêu tốn RAM
+                        dù các giá trị ban đầu đều bằng 0.
+                    </li>
+                    <li>
+                        <strong>Memory Monitoring:</strong> sử dụng Map File, Size Tool và Debugger
+                        để theo dõi mức sử dụng bộ nhớ.
+                    </li>
+                    <li>
+                        <strong>Memory Planning:</strong> xác định ngân sách RAM và Flash
+                        phù hợp với tài nguyên của Target MCU.
+                    </li>
+                    <li>
+                        <strong>Code Optimization:</strong> tổ chức dữ liệu và các Buffer hợp lý,
+                        tránh duy trì những vùng nhớ không cần thiết.
+                    </li>
+                </ul>
+
+                <h2>15. Tóm tắt các khái niệm quan trọng</h2>
+
+                <table>
+                    <tr>
+                        <th>Thuật ngữ</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Stack Memory</td>
+                        <td>Vùng nhớ phục vụ Function Call và dữ liệu có Automatic Storage Duration theo cách triển khai phổ biến.</td>
+                    </tr>
+                    <tr>
+                        <td>Stack Frame</td>
+                        <td>Vùng dữ liệu phục vụ một lần gọi Function.</td>
+                    </tr>
+                    <tr>
+                        <td>Stack Pointer</td>
+                        <td>Thanh ghi theo dõi vị trí Stack.</td>
+                    </tr>
+                    <tr>
+                        <td>Stack Overflow</td>
+                        <td>Tình trạng sử dụng Stack vượt quá vùng nhớ được cấp phát.</td>
+                    </tr>
+                    <tr>
+                        <td>Heap Memory</td>
+                        <td>Vùng nhớ được sử dụng cho Dynamic Memory Allocation.</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Allocator</td>
+                        <td>Thành phần quản lý cấp phát và giải phóng bộ nhớ động.</td>
+                    </tr>
+                    <tr>
+                        <td>External Fragmentation</td>
+                        <td>Bộ nhớ trống bị chia thành nhiều vùng nhỏ không liên tục.</td>
+                    </tr>
+                    <tr>
+                        <td>Internal Fragmentation</td>
+                        <td>Bộ nhớ dư bên trong Block đã cấp phát.</td>
+                    </tr>
+                    <tr>
+                        <td>Data Segment</td>
+                        <td>Vùng chứa dữ liệu đã khởi tạo có Static Storage Duration.</td>
+                    </tr>
+                    <tr>
+                        <td>BSS Segment</td>
+                        <td>Vùng chứa dữ liệu có Static Storage Duration được khởi tạo về 0.</td>
+                    </tr>
+                    <tr>
+                        <td>Static Storage Duration</td>
+                        <td>Thời gian tồn tại của đối tượng trong toàn bộ quá trình thực thi chương trình.</td>
+                    </tr>
+                    <tr>
+                        <td>Automatic Storage Duration</td>
+                        <td>Thời gian tồn tại của đối tượng gắn với phạm vi thực thi tự động tương ứng.</td>
+                    </tr>
+                </table>
+
+                <h2>Tóm tắt</h2>
+
+                <div class="note">
+                    Stack, Heap, Data và BSS là bốn vùng nhớ quan trọng trong quá trình
+                    tổ chức và quản lý bộ nhớ của chương trình C.
+
+                    <br><br>
+
+                    Stack thường được sử dụng để quản lý dữ liệu liên quan đến Function Call,
+                    bao gồm các biến Local và những thông tin cần thiết cho quá trình thực thi.
+                    Stack có cơ chế quản lý nhanh nhưng cần được kiểm soát để tránh Stack Overflow.
+
+                    <br><br>
+
+                    Heap cung cấp khả năng cấp phát bộ nhớ động trong Runtime.
+                    Mặc dù linh hoạt, Heap có thể gặp các vấn đề như Fragmentation,
+                    thiếu bộ nhớ và thời gian cấp phát khó dự đoán.
+                    Đây là lý do nhiều ứng dụng Embedded hạn chế sử dụng Dynamic Memory Allocation.
+
+                    <br><br>
+
+                    Data chứa các biến có Static Storage Duration với giá trị khởi tạo,
+                    trong khi BSS chứa các biến có Static Storage Duration được khởi tạo mặc định
+                    bằng 0 hoặc khởi tạo tường minh bằng 0.
+                    Trong nhiều hệ thống Embedded, Startup Code sẽ sao chép Data từ Flash sang RAM
+                    và khởi tạo BSS trước khi gọi main().
+
+                    <br><br>
+
+                    Hiểu rõ đặc điểm của từng vùng nhớ giúp lập trình viên lựa chọn cách lưu trữ
+                    dữ liệu phù hợp, kiểm soát RAM Usage và xây dựng Firmware ổn định hơn,
+                    đặc biệt trên những vi điều khiển có tài nguyên hạn chế.
+                </div>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-3.html">← Bài trước</a>
+                    <a class="btn" href="lesson-5.html">Bài tiếp theo →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>EmLearn - 2026</footer>
+
+</body>
+
+</html>
