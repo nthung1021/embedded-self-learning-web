@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 36: Hardware Register Configuration Techniques | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+
+                <h4>Part 1. Advanced C Fundamentals &amp; Memory Management</h4>
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <h4>Part 2. Advanced Pointer Programming</h4>
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <h4>Part 3. Advanced C Data Types</h4>
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <h4>Part 4. Preprocessor &amp; Modular Programming</h4>
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <h4>Part 5. Bit Manipulation &amp; Embedded-Oriented Programming</h4>
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html" class="active" aria-current="page">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <h4>Part 6. Defensive Programming &amp; Reliable C</h4>
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <h4>Part 7. Programming Optimization &amp; Design Patterns in C</h4>
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <h4>Part 8. Code Quality, MISRA C &amp; Software Verification</h4>
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 36: Hardware Register Configuration Techniques</h1>
+
+                <p>
+                    Trong bài học trước, chúng ta đã tìm hiểu về Memory-Mapped I/O,
+                    cách Hardware Register được ánh xạ vào không gian địa chỉ và cách
+                    sử dụng Pointer trong C để đọc hoặc ghi các thanh ghi phần cứng.
+                </p>
+
+                <p>
+                    Tuy nhiên, việc truy cập được một thanh ghi mới chỉ là bước đầu.
+                    Trong quá trình phát triển Embedded Software, chúng ta còn cần biết
+                    cách thiết lập những bit và trường dữ liệu bên trong thanh ghi để
+                    cấu hình hoạt động của Peripheral.
+                </p>
+
+                <p>
+                    Ví dụ, khi cấu hình GPIO, lập trình viên có thể cần lựa chọn chế độ
+                    Input hoặc Output. Khi cấu hình UART, chúng ta có thể cần thiết lập
+                    Baud Rate, Data Bits, Parity và Stop Bits. Với Timer, các thanh ghi
+                    có thể được sử dụng để cấu hình Prescaler, Counter và chế độ hoạt động.
+                </p>
+
+                <p>
+                    Những thao tác này thường được thực hiện bằng cách kết hợp Bit Masking,
+                    Bit Shifting và các phép toán Bitwise để thay đổi chính xác những bit
+                    cần thiết mà không ảnh hưởng đến những trường dữ liệu khác.
+                </p>
+
+                <p>
+                    Bài học này sẽ tập trung vào những kỹ thuật cấu hình Hardware Register
+                    bằng Embedded C, cách thiết lập từng Register Field, cách tổ chức
+                    những hàm cấu hình và những vấn đề cần chú ý khi thao tác trực tiếp
+                    với thanh ghi phần cứng.
+                </p>
+
+                <h2>1. Hardware Register Configuration là gì?</h2>
+
+                <h3>1.1. Khái niệm</h3>
+
+                <p>
+                    Hardware Register Configuration là quá trình thiết lập giá trị của
+                    những thanh ghi phần cứng nhằm xác định cách một Peripheral hoạt động.
+                </p>
+
+                <p>
+                    Mỗi Hardware Register có thể chứa nhiều bit hoặc nhiều nhóm bit,
+                    trong đó mỗi nhóm đảm nhiệm một chức năng cấu hình riêng.
+                </p>
+
+                <p>
+                    Ví dụ, một GPIO Control Register có thể chứa những trường dữ liệu:
+                </p>
+
+                <ul>
+                    <li>Enable Bit: Bật hoặc tắt chức năng GPIO.</li>
+                    <li>Mode Field: Lựa chọn Input, Output hoặc Alternate Function.</li>
+                    <li>Pull-up/Pull-down Field: Cấu hình điện trở kéo lên hoặc kéo xuống.</li>
+                    <li>Speed Field: Cấu hình tốc độ hoạt động của chân GPIO.</li>
+                </ul>
+
+                <p>
+                    Để Peripheral hoạt động theo yêu cầu, phần mềm cần ghi những giá trị
+                    phù hợp vào từng trường dữ liệu này.
+                </p>
+
+                <h3>1.2. Register Configuration và Register Access</h3>
+
+                <p>
+                    Hai khái niệm này có liên quan nhưng không hoàn toàn giống nhau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Register Access</td>
+                            <td>Thực hiện thao tác đọc hoặc ghi Hardware Register.</td>
+                            <td>Đọc Status Register hoặc ghi Control Register.</td>
+                        </tr>
+                        <tr>
+                            <td>Register Configuration</td>
+                            <td>Thiết lập các bit và trường dữ liệu để cấu hình Peripheral.</td>
+                            <td>Chọn GPIO Output Mode hoặc UART Baud Rate.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể hiểu đơn giản:
+                </p>
+
+                <pre><code>Register Access
+       |
+       v
+Read / Write Hardware Register
+       |
+       v
+Register Configuration
+       |
+       v
+Set Peripheral Operating Parameters</code></pre>
+
+                <p>
+                    Register Configuration sử dụng những thao tác truy cập thanh ghi,
+                    nhưng tập trung vào mục đích thiết lập trạng thái và thông số hoạt
+                    động của phần cứng.
+                </p>
+
+                <h3>1.3. Ví dụ về Register Configuration</h3>
+
+                <p>
+                    Giả sử một Peripheral có Control Register với cấu trúc minh họa:
+                </p>
+
+                <pre><code>Bit 31                                  Bit 0
++-----------------------------------------+
+| Reserved | MODE [2:1] | ENABLE | RESET  |
++-----------------------------------------+</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li>Bit 0: RESET.</li>
+                    <li>Bit 1: ENABLE.</li>
+                    <li>Bit 2-3: MODE.</li>
+                    <li>Các bit còn lại: Reserved.</li>
+                </ul>
+
+                <p>
+                    Nếu muốn bật Peripheral và lựa chọn MODE bằng giá trị 2,
+                    chương trình cần thiết lập những trường tương ứng theo quy định
+                    của thanh ghi.
+                </p>
+
+                <pre><code>#define ENABLE_BIT       (1U &lt;&lt; 1U)
+#define MODE_POSITION    (2U)
+#define MODE_MASK        (3U &lt;&lt; MODE_POSITION)
+
+void ConfigurePeripheral(void)
+{
+    uint32_t value;
+
+    value = PERIPHERAL-&gt;CONTROL;
+
+    value &amp;= ~MODE_MASK;
+    value |= (2U &lt;&lt; MODE_POSITION);
+    value |= ENABLE_BIT;
+
+    PERIPHERAL-&gt;CONTROL = value;
+}</code></pre>
+
+                <p>
+                    Ví dụ trên minh họa việc thay đổi một số trường dữ liệu trong Register.
+                    Trong phần tiếp theo, chúng ta sẽ tìm hiểu chi tiết cách tạo Mask,
+                    thiết lập Field và tổ chức những thao tác này thành các kỹ thuật
+                    có thể tái sử dụng.
+                </p>
+
+                <h2>2. Register Field, Bit Position và Bit Mask</h2>
+
+                <h3>2.1. Register Field là gì?</h3>
+
+                <p>
+                    Register Field là một nhóm bit liên tiếp trong Hardware Register,
+                    được sử dụng để biểu diễn một thông số hoặc một chức năng cấu hình.
+                </p>
+
+                <p>
+                    Ví dụ, một Register 32-bit có thể được chia thành nhiều Field:
+                </p>
+
+                <pre><code>31            16 15       8 7        4 3       0
++---------------+----------+----------+---------+
+|   Reserved    |  BAUD    |   MODE   | CONTROL |
++---------------+----------+----------+---------+</code></pre>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Register Field</th>
+                            <th>Bit Range</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CONTROL</td>
+                            <td>[3:0]</td>
+                            <td>Chứa những bit điều khiển.</td>
+                        </tr>
+                        <tr>
+                            <td>MODE</td>
+                            <td>[7:4]</td>
+                            <td>Lựa chọn chế độ hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <td>BAUD</td>
+                            <td>[15:8]</td>
+                            <td>Chứa giá trị cấu hình Baud Rate theo thiết kế minh họa.</td>
+                        </tr>
+                        <tr>
+                            <td>Reserved</td>
+                            <td>[31:16]</td>
+                            <td>Những bit không được sử dụng theo mục đích thông thường.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Thay vì thay đổi toàn bộ Register, chúng ta thường chỉ thao tác với
+                    những Field cần cấu hình.
+                </p>
+
+                <h3>2.2. Bit Position</h3>
+
+                <p>
+                    Bit Position là vị trí của một bit hoặc vị trí bắt đầu của một
+                    Register Field trong thanh ghi.
+                </p>
+
+                <p>
+                    Ví dụ, nếu một Field bắt đầu từ bit số 4, chúng ta có:
+                </p>
+
+                <pre><code>#define MODE_POSITION    (4U)</code></pre>
+
+                <p>
+                    Khi sử dụng Bit Shifting, giá trị cần thiết lập sẽ được dịch trái
+                    đến vị trí tương ứng.
+                </p>
+
+                <pre><code>uint32_t mode_value = (2U &lt;&lt; MODE_POSITION);</code></pre>
+
+                <p>
+                    Trong trường hợp này, giá trị 2 được dịch trái 4 bit.
+                </p>
+
+                <h3>2.3. Bit Mask</h3>
+
+                <p>
+                    Bit Mask là một giá trị nhị phân được sử dụng để lựa chọn những bit
+                    cần thao tác trong một Register.
+                </p>
+
+                <p>
+                    Ví dụ, nếu cần lựa chọn Field gồm 3 bit từ bit 4 đến bit 6:
+                </p>
+
+                <pre><code>Bit Position:    6 5 4
+                 | | |
+Mask:            1 1 1
+
+Binary:          00000000 00000000 00000000 01110000
+Hexadecimal:     0x00000070</code></pre>
+
+                <p>
+                    Có thể định nghĩa Mask bằng cách dịch trái một nhóm bit:
+                </p>
+
+                <pre><code>#define MODE_POSITION    (4U)
+#define MODE_WIDTH       (3U)
+
+#define MODE_MASK        (((1U &lt;&lt; MODE_WIDTH) - 1U) &lt;&lt; MODE_POSITION)</code></pre>
+
+                <p>
+                    Với ví dụ trên, <code>MODE_MASK</code> lựa chọn ba bit từ vị trí
+                    4 đến vị trí 6.
+                </p>
+
+                <p>
+                    Trong code thực tế, cần bảo đảm phép dịch bit không vượt quá độ rộng
+                    của kiểu dữ liệu. Với Field chiếm toàn bộ 32 bit, không nên sử dụng
+                    trực tiếp biểu thức <code>1U &lt;&lt; 32U</code>.
+                </p>
+
+                <h3>2.4. Field Value</h3>
+
+                <p>
+                    Field Value là giá trị được ghi vào một Register Field sau khi
+                    đã được dịch đến đúng vị trí.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define MODE_POSITION    (4U)
+
+#define MODE_INPUT       (0U)
+#define MODE_OUTPUT      (1U)
+#define MODE_ALTERNATE   (2U)
+#define MODE_ANALOG      (3U)
+
+uint32_t mode_value = (MODE_OUTPUT &lt;&lt; MODE_POSITION);</code></pre>
+
+                <p>
+                    Giá trị <code>MODE_OUTPUT</code> được dịch đến vị trí bắt đầu của
+                    Field trước khi kết hợp với Register.
+                </p>
+
+                <p>
+                    Cần phân biệt:
+                </p>
+
+                <ul>
+                    <li><strong>Position:</strong> Vị trí bắt đầu của Field.</li>
+                    <li><strong>Mask:</strong> Những bit thuộc Field cần thao tác.</li>
+                    <li><strong>Value:</strong> Giá trị logic muốn thiết lập cho Field.</li>
+                    <li><strong>Shifted Value:</strong> Giá trị sau khi được dịch đến đúng vị trí.</li>
+                </ul>
+
+                <h2>3. Các kỹ thuật Set, Clear và Toggle Bit</h2>
+
+                <h3>3.1. Set Bit</h3>
+
+                <p>
+                    Set Bit là thao tác đưa một hoặc nhiều bit được lựa chọn về giá trị 1,
+                    đồng thời giữ nguyên những bit khác.
+                </p>
+
+                <p>
+                    Kỹ thuật này thường sử dụng phép OR:
+                </p>
+
+                <pre><code>REGISTER |= MASK;</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define ENABLE_BIT    (1U &lt;&lt; 0U)
+
+void EnablePeripheral(void)
+{
+    PERIPHERAL-&gt;CONTROL |= ENABLE_BIT;
+}</code></pre>
+
+                <p>
+                    Khi thực hiện phép OR, những bit có giá trị 1 trong Mask sẽ được
+                    đặt thành 1 trong Register.
+                </p>
+
+                <p>
+                    Những bit có giá trị 0 trong Mask sẽ không làm thay đổi giá trị
+                    tương ứng của Register.
+                </p>
+
+                <h3>3.2. Clear Bit</h3>
+
+                <p>
+                    Clear Bit là thao tác đưa những bit được lựa chọn về giá trị 0.
+                </p>
+
+                <p>
+                    Kỹ thuật này sử dụng phép AND kết hợp với phép NOT:
+                </p>
+
+                <pre><code>REGISTER &amp;= ~MASK;</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define ENABLE_BIT    (1U &lt;&lt; 0U)
+
+void DisablePeripheral(void)
+{
+    PERIPHERAL-&gt;CONTROL &amp;= ~ENABLE_BIT;
+}</code></pre>
+
+                <p>
+                    Khi đảo Mask bằng phép NOT, những vị trí cần Clear sẽ trở thành 0.
+                    Phép AND sau đó giữ nguyên những bit còn lại.
+                </p>
+
+                <h3>3.3. Toggle Bit</h3>
+
+                <p>
+                    Toggle Bit là thao tác đảo trạng thái của những bit được lựa chọn:
+                </p>
+
+                <pre><code>REGISTER ^= MASK;</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define STATUS_BIT    (1U &lt;&lt; 2U)
+
+void ToggleStatusBit(void)
+{
+    PERIPHERAL-&gt;CONTROL ^= STATUS_BIT;
+}</code></pre>
+
+                <p>
+                    Với phép XOR:
+                </p>
+
+                <ul>
+                    <li>Bit 0 XOR 1 sẽ trở thành 1.</li>
+                    <li>Bit 1 XOR 1 sẽ trở thành 0.</li>
+                    <li>Bit XOR 0 sẽ giữ nguyên trạng thái.</li>
+                </ul>
+
+                <p>
+                    Toggle thường hữu ích khi cần đảo trạng thái một bit điều khiển.
+                    Tuy nhiên, không nên mặc định sử dụng nó với mọi Hardware Register,
+                    đặc biệt khi thanh ghi có những quy tắc ghi đặc biệt.
+                </p>
+
+                <h3>3.4. So sánh Set, Clear và Toggle</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thao tác</th>
+                            <th>Biểu thức</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Set</td>
+                            <td><code>REG |= MASK</code></td>
+                            <td>Đặt những bit được chọn thành 1.</td>
+                        </tr>
+                        <tr>
+                            <td>Clear</td>
+                            <td><code>REG &amp;= ~MASK</code></td>
+                            <td>Đặt những bit được chọn thành 0.</td>
+                        </tr>
+                        <tr>
+                            <td>Toggle</td>
+                            <td><code>REG ^= MASK</code></td>
+                            <td>Đảo trạng thái những bit được chọn.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những biểu thức này thường được sử dụng trong Embedded C để thao tác
+                    với các bit điều khiển của Hardware Register.
+                </p>
+
+                <h2>4. Cấu hình Register Field bằng Bit Masking</h2>
+
+                <h3>4.1. Vì sao không nên ghi trực tiếp Field Value?</h3>
+
+                <p>
+                    Giả sử một Control Register có nhiều Field:
+                </p>
+
+                <pre><code>31                8 7       4 3       0
++------------------+---------+---------+
+|     Reserved     |  MODE   | CONTROL |
++------------------+---------+---------+</code></pre>
+
+                <p>
+                    Nếu chúng ta ghi trực tiếp một giá trị mới vào toàn bộ Register:
+                </p>
+
+                <pre><code>PERIPHERAL-&gt;CONTROL = 0x00000020U;</code></pre>
+
+                <p>
+                    Những bit khác trong Register cũng có thể bị thay đổi theo giá trị
+                    được ghi.
+                </p>
+
+                <p>
+                    Điều này có thể gây ra vấn đề nếu những bit đó đang chứa cấu hình
+                    khác hoặc phải được giữ theo một quy tắc cụ thể.
+                </p>
+
+                <p>
+                    Vì vậy, khi chỉ cần thay đổi một Field, chúng ta thường sử dụng
+                    kỹ thuật Read-Modify-Write với Mask phù hợp, nếu loại Register
+                    cho phép thao tác này.
+                </p>
+
+                <h3>4.2. Công thức cập nhật một Register Field</h3>
+
+                <p>
+                    Công thức thường dùng để cập nhật một Field là:
+                </p>
+
+                <pre><code>REG = (REG &amp; ~FIELD_MASK) | ((VALUE &lt;&lt; FIELD_POSITION) &amp; FIELD_MASK);</code></pre>
+
+                <p>
+                    Công thức này gồm hai bước chính:
+                </p>
+
+                <ol>
+                    <li>
+                        Sử dụng <code>REG &amp; ~FIELD_MASK</code> để xóa giá trị cũ
+                        của Field cần cập nhật.
+                    </li>
+                    <li>
+                        Sử dụng phép OR để đưa giá trị mới vào đúng vị trí của Field.
+                    </li>
+                </ol>
+
+                <p>
+                    Phần <code>VALUE &lt;&lt; FIELD_POSITION</code> dịch giá trị đến
+                    vị trí cần thiết. Sau đó, phép AND với Field Mask giới hạn giá trị
+                    trong phạm vi Field.
+                </p>
+
+                <h3>4.3. Ví dụ cập nhật MODE Field</h3>
+
+                <p>
+                    Giả sử MODE Field nằm ở bit 4 đến bit 6:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define MODE_POSITION    (4U)
+#define MODE_MASK        (0x7U &lt;&lt; MODE_POSITION)
+
+#define MODE_INPUT       (0U)
+#define MODE_OUTPUT      (1U)
+#define MODE_ALTERNATE   (2U)
+#define MODE_ANALOG      (3U)
+
+void SetPeripheralMode(uint32_t mode)
+{
+    uint32_t value;
+
+    value = PERIPHERAL-&gt;CONTROL;
+
+    value &amp;= ~MODE_MASK;
+    value |= ((mode &lt;&lt; MODE_POSITION) &amp; MODE_MASK);
+
+    PERIPHERAL-&gt;CONTROL = value;
+}</code></pre>
+
+                <p>
+                    Khi gọi:
+                </p>
+
+                <pre><code>SetPeripheralMode(MODE_OUTPUT);</code></pre>
+
+                <p>
+                    Chương trình sẽ:
+                </p>
+
+                <ol>
+                    <li>Đọc giá trị hiện tại của Control Register.</li>
+                    <li>Xóa ba bit thuộc MODE Field.</li>
+                    <li>Dịch giá trị MODE_OUTPUT đến đúng vị trí.</li>
+                    <li>Ghi giá trị mới vào Register.</li>
+                </ol>
+
+                <p>
+                    Những bit nằm ngoài MODE Field được giữ nguyên trong giá trị
+                    Read-Modify-Write này.
+                </p>
+
+                <p>
+                    Lưu ý: Ví dụ trên giả định Control Register cho phép đọc và ghi
+                    theo cách thông thường. Nếu Register có W1C, Read-to-Clear hoặc
+                    những quy tắc đặc biệt khác, cần sử dụng phương pháp cấu hình
+                    riêng theo Reference Manual.
+                </p>
+
+                <h3>4.4. Giới hạn giá trị Field trước khi ghi</h3>
+
+                <p>
+                    Một Field có độ rộng giới hạn chỉ có thể biểu diễn một số lượng
+                    giá trị nhất định.
+                </p>
+
+                <p>
+                    Ví dụ, một Field có 3 bit có thể biểu diễn các giá trị từ 0 đến 7.
+                </p>
+
+                <pre><code>3-bit Field:
+
+000 = 0
+001 = 1
+010 = 2
+011 = 3
+100 = 4
+101 = 5
+110 = 6
+111 = 7</code></pre>
+
+                <p>
+                    Nếu chương trình truyền một giá trị lớn hơn phạm vi cho phép,
+                    những bit nằm ngoài Field có thể bị loại bỏ khi áp dụng Mask.
+                </p>
+
+                <p>
+                    Tuy nhiên, không nên chỉ dựa vào Mask để xử lý giá trị không hợp lệ.
+                    Nên kiểm tra đầu vào trước khi thực hiện cấu hình.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define MODE_POSITION    (4U)
+#define MODE_MASK        (0x7U &lt;&lt; MODE_POSITION)
+#define MODE_MAX_VALUE   (7U)
+
+uint8_t SetPeripheralMode(uint32_t mode)
+{
+    uint32_t value;
+
+    if (mode &gt; MODE_MAX_VALUE)
+    {
+        return 0U;
+    }
+
+    value = PERIPHERAL-&gt;CONTROL;
+
+    value &amp;= ~MODE_MASK;
+    value |= (mode &lt;&lt; MODE_POSITION);
+
+    PERIPHERAL-&gt;CONTROL = value;
+
+    return 1U;
+}</code></pre>
+
+                <p>
+                    Hàm trả về 0 nếu giá trị đầu vào không hợp lệ và trả về 1 nếu
+                    thao tác cấu hình được thực hiện theo logic của ví dụ.
+                </p>
+
+                <p>
+                    Trong dự án thực tế, phạm vi giá trị hợp lệ còn phụ thuộc vào
+                    những chế độ mà Peripheral thực sự hỗ trợ.
+                </p>
+
+                <h2>5. Cấu hình nhiều Register Field</h2>
+
+                <h3>5.1. Một Register có nhiều Field</h3>
+
+                <p>
+                    Trong thực tế, một Peripheral thường có nhiều thông số cấu hình
+                    được lưu trong cùng một Register.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>31             8 7       4 3       2 1       0
++---------------+---------+---------+---------+
+|   Reserved    |  SPEED  |  MODE   | ENABLE  |
++---------------+---------+---------+---------+</code></pre>
+
+                <p>
+                    Giả sử:
+                </p>
+
+                <ul>
+                    <li>Bit 0: ENABLE.</li>
+                    <li>Bit 2-3: MODE.</li>
+                    <li>Bit 4-7: SPEED.</li>
+                    <li>Bit 8-31: Reserved.</li>
+                </ul>
+
+                <p>
+                    Chúng ta có thể định nghĩa Position và Mask cho từng Field:
+                </p>
+
+                <pre><code>#define ENABLE_POSITION    (0U)
+#define ENABLE_MASK        (1U &lt;&lt; ENABLE_POSITION)
+
+#define MODE_POSITION     (2U)
+#define MODE_MASK         (0x3U &lt;&lt; MODE_POSITION)
+
+#define SPEED_POSITION    (4U)
+#define SPEED_MASK        (0xFU &lt;&lt; SPEED_POSITION)</code></pre>
+
+                <p>
+                    Việc định nghĩa riêng từng Field giúp chương trình dễ đọc và
+                    hạn chế việc sử dụng những con số không có ý nghĩa rõ ràng.
+                </p>
+
+                <h3>5.2. Cấu hình từng Field riêng biệt</h3>
+
+                <p>
+                    Một cách tổ chức là viết những hàm riêng để cấu hình từng Field:
+                </p>
+
+                <pre><code>void EnablePeripheral(void)
+{
+    PERIPHERAL-&gt;CONTROL |= ENABLE_MASK;
+}
+
+void SetPeripheralMode(uint32_t mode)
+{
+    uint32_t value;
+
+    value = PERIPHERAL-&gt;CONTROL;
+    value &amp;= ~MODE_MASK;
+    value |= ((mode &lt;&lt; MODE_POSITION) &amp; MODE_MASK);
+
+    PERIPHERAL-&gt;CONTROL = value;
+}
+
+void SetPeripheralSpeed(uint32_t speed)
+{
+    uint32_t value;
+
+    value = PERIPHERAL-&gt;CONTROL;
+    value &amp;= ~SPEED_MASK;
+    value |= ((speed &lt;&lt; SPEED_POSITION) &amp; SPEED_MASK);
+
+    PERIPHERAL-&gt;CONTROL = value;
+}</code></pre>
+
+                <p>
+                    Ưu điểm của cách tổ chức này:
+                </p>
+
+                <ul>
+                    <li>Mỗi hàm chỉ chịu trách nhiệm cho một nhóm cấu hình.</li>
+                    <li>Dễ kiểm tra giá trị đầu vào.</li>
+                    <li>Dễ tái sử dụng trong nhiều thành phần của chương trình.</li>
+                    <li>Dễ kiểm thử và bảo trì.</li>
+                </ul>
+
+                <h3>5.3. Cấu hình nhiều Field trong một lần</h3>
+
+                <p>
+                    Nếu cần cấu hình nhiều Field cùng lúc, có thể xây dựng một giá trị
+                    Register mới bằng cách kết hợp các Mask và Field Value.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define ENABLE_MASK       (1U &lt;&lt; 0U)
+
+#define MODE_POSITION     (2U)
+#define MODE_MASK         (0x3U &lt;&lt; MODE_POSITION)
+
+#define SPEED_POSITION    (4U)
+#define SPEED_MASK        (0xFU &lt;&lt; SPEED_POSITION)
+
+void ConfigurePeripheral(
+    uint32_t mode,
+    uint32_t speed
+)
+{
+    uint32_t value;
+
+    value = PERIPHERAL-&gt;CONTROL;
+
+    value &amp;= ~(ENABLE_MASK | MODE_MASK | SPEED_MASK);
+
+    value |= ENABLE_MASK;
+    value |= ((mode &lt;&lt; MODE_POSITION) &amp; MODE_MASK);
+    value |= ((speed &lt;&lt; SPEED_POSITION) &amp; SPEED_MASK);
+
+    PERIPHERAL-&gt;CONTROL = value;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, chương trình:
+                </p>
+
+                <ol>
+                    <li>Đọc giá trị hiện tại của Control Register.</li>
+                    <li>Xóa những Field cần cấu hình.</li>
+                    <li>Thiết lập ENABLE.</li>
+                    <li>Thiết lập MODE.</li>
+                    <li>Thiết lập SPEED.</li>
+                    <li>Ghi giá trị mới trở lại Register.</li>
+                </ol>
+
+                <p>
+                    Cách làm này giúp giảm số lần Read-Modify-Write so với việc cập nhật
+                    từng Field riêng biệt.
+                </p>
+
+                <p>
+                    Tuy nhiên, chỉ nên sử dụng khi các Field có thể được cấu hình cùng
+                    nhau và Register hỗ trợ thao tác đọc/ghi theo cách này. Cần kiểm tra
+                    những yêu cầu về Reserved Bits và các quy tắc đặc biệt của Register.
+                </p>
+
+                <h3>5.4. Sử dụng Configuration Structure</h3>
+
+                <p>
+                    Khi Peripheral có nhiều thông số cấu hình, có thể sử dụng Struct
+                    để gom những thông số đó thành một nhóm.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint32_t mode;
+    uint32_t speed;
+    uint8_t enable;
+
+} Peripheral_ConfigType;</code></pre>
+
+                <p>
+                    Sau đó, xây dựng hàm nhận Configuration Structure:
+                </p>
+
+                <pre><code>uint8_t Peripheral_Configure(
+    const Peripheral_ConfigType *config
+)
+{
+    uint32_t value;
+
+    if (config == 0)
+    {
+        return 0U;
+    }
+
+    if ((config-&gt;mode &gt; 3U) ||
+        (config-&gt;speed &gt; 15U) ||
+        (config-&gt;enable &gt; 1U))
+    {
+        return 0U;
+    }
+
+    value = PERIPHERAL-&gt;CONTROL;
+
+    value &amp;= ~(ENABLE_MASK | MODE_MASK | SPEED_MASK);
+
+    value |= ((uint32_t)config-&gt;enable &amp; 1U);
+    value |= ((config-&gt;mode &lt;&lt; MODE_POSITION) &amp; MODE_MASK);
+    value |= ((config-&gt;speed &lt;&lt; SPEED_POSITION) &amp; SPEED_MASK);
+
+    PERIPHERAL-&gt;CONTROL = value;
+
+    return 1U;
+}</code></pre>
+
+                <p>
+                    Khi sử dụng:
+                </p>
+
+                <pre><code>Peripheral_ConfigType config =
+{
+    .mode = 2U,
+    .speed = 8U,
+    .enable = 1U
+};
+
+Peripheral_Configure(&amp;config);</code></pre>
+
+                <p>
+                    Cách tổ chức này thường hữu ích khi một Peripheral có nhiều thông số
+                    cấu hình và cần được khởi tạo theo một bộ tham số xác định.
+                </p>
+
+                <h2>6. Các kỹ thuật định nghĩa Register và Field bằng Macro</h2>
+
+                <h3>6.1. Sử dụng Macro cho Bit Position</h3>
+
+                <p>
+                    Thay vì sử dụng trực tiếp vị trí bit trong nhiều câu lệnh, chúng ta
+                    có thể định nghĩa những Macro có tên rõ ràng.
+                </p>
+
+                <pre><code>#define UART_ENABLE_POSITION    (0U)
+#define UART_PARITY_POSITION    (3U)
+#define UART_STOP_POSITION      (5U)</code></pre>
+
+                <p>
+                    Những tên này giúp người đọc dễ hiểu mục đích của từng bit.
+                </p>
+
+                <h3>6.2. Sử dụng Macro cho Bit Mask</h3>
+
+                <pre><code>#define UART_ENABLE_MASK    (1U &lt;&lt; UART_ENABLE_POSITION)
+#define UART_PARITY_MASK    (0x3U &lt;&lt; UART_PARITY_POSITION)
+#define UART_STOP_MASK      (0x1U &lt;&lt; UART_STOP_POSITION)</code></pre>
+
+                <p>
+                    Mỗi Mask đại diện cho một nhóm bit cần thao tác trong UART Control
+                    Register.
+                </p>
+
+                <h3>6.3. Sử dụng Macro cho Field Value</h3>
+
+                <p>
+                    Những giá trị cấu hình có thể được định nghĩa bằng Macro hoặc Enum.
+                </p>
+
+                <pre><code>typedef enum
+{
+    UART_PARITY_NONE = 0U,
+    UART_PARITY_EVEN = 1U,
+    UART_PARITY_ODD  = 2U
+
+} UART_ParityType;
+
+typedef enum
+{
+    UART_STOP_1_BIT = 0U,
+    UART_STOP_2_BIT = 1U
+
+} UART_StopBitType;</code></pre>
+
+                <p>
+                    Khi đó, code cấu hình có thể sử dụng tên có ý nghĩa thay vì những
+                    giá trị số khó hiểu.
+                </p>
+
+                <pre><code>UART_ParityType parity = UART_PARITY_EVEN;
+UART_StopBitType stop_bits = UART_STOP_1_BIT;</code></pre>
+
+                <h3>6.4. Xây dựng Macro tạo Field Mask</h3>
+
+                <p>
+                    Có thể xây dựng một Macro tổng quát để tạo Mask dựa trên Width
+                    và Position:
+                </p>
+
+                <pre><code>#define FIELD_MASK(width, position) \
+    (((1U &lt;&lt; (width)) - 1U) &lt;&lt; (position))</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define MODE_MASK     FIELD_MASK(3U, 4U)
+#define SPEED_MASK    FIELD_MASK(4U, 8U)</code></pre>
+
+                <p>
+                    Tuy nhiên, Macro này chỉ phù hợp với những trường hợp Width và
+                    Position đã được kiểm soát để không gây dịch bit vượt giới hạn.
+                    Không nên sử dụng trực tiếp với Field có độ rộng bằng toàn bộ
+                    kiểu dữ liệu mà không có xử lý riêng.
+                </p>
+
+                <h3>6.5. Xây dựng Macro cập nhật Field</h3>
+
+                <p>
+                    Có thể định nghĩa Macro để biểu diễn thao tác cập nhật Field:
+                </p>
+
+                <pre><code>#define FIELD_PREP(value, position, mask) \
+    (((value) &lt;&lt; (position)) &amp; (mask))</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>uint32_t field_value;
+
+field_value = FIELD_PREP(
+    MODE_OUTPUT,
+    MODE_POSITION,
+    MODE_MASK
+);</code></pre>
+
+                <p>
+                    Sau đó có thể kết hợp với Register:
+                </p>
+
+                <pre><code>uint32_t value = PERIPHERAL-&gt;CONTROL;
+
+value &amp;= ~MODE_MASK;
+value |= FIELD_PREP(
+    MODE_OUTPUT,
+    MODE_POSITION,
+    MODE_MASK
+);
+
+PERIPHERAL-&gt;CONTROL = value;</code></pre>
+
+                <p>
+                    Cách viết này giúp tách biệt việc tạo Field Value và thao tác
+                    cập nhật Register.
+                </p>
+
+                <p>
+                    Trong dự án thực tế, nên ưu tiên những Macro hoặc API đã được kiểm
+                    tra trong Device Header hoặc SDK chính thức nếu có.
+                </p>
+
+                <h2>7. Hardware Register Configuration Sequence</h2>
+
+                <h3>7.1. Vì sao cần có trình tự cấu hình?</h3>
+
+                <p>
+                    Không phải Peripheral nào cũng có thể được cấu hình bằng cách ghi
+                    các thanh ghi theo một thứ tự tùy ý.
+                </p>
+
+                <p>
+                    Một số Peripheral yêu cầu phải bật Clock trước khi truy cập Register.
+                    Một số khác cần được Reset hoặc phải chờ một trạng thái nhất định
+                    trước khi tiếp tục cấu hình.
+                </p>
+
+                <p>
+                    Vì vậy, việc tổ chức một trình tự cấu hình rõ ràng là rất quan trọng.
+                </p>
+
+                <h3>7.2. Trình tự cấu hình tổng quát</h3>
+
+                <p>
+                    Một trình tự khởi tạo Peripheral thường có thể được tổ chức như sau:
+                </p>
+
+                <pre><code>+-----------------------------+
+|       Start Configuration  |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|   Enable Peripheral Clock  |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Reset Peripheral         |
+|    (If Required)            |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Wait for Ready State     |
+|    (If Required)            |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Configure Register       |
+|    Fields                   |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Enable Peripheral        |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Verify Configuration     |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|       Configuration Done    |
++-----------------------------+</code></pre>
+
+                <p>
+                    Đây là trình tự tổng quát để tham khảo. Thứ tự thực tế phải tuân
+                    theo tài liệu của từng Peripheral và vi điều khiển.
+                </p>
+
+                <h3>7.3. Enable Peripheral Clock</h3>
+
+                <p>
+                    Nhiều vi điều khiển có Clock Control Register dùng để bật hoặc tắt
+                    Clock cho từng Peripheral.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <pre><code>#define GPIO_CLOCK_ENABLE_BIT    (1U &lt;&lt; 2U)
+
+void GPIO_EnableClock(void)
+{
+    CLOCK-&gt;ENABLE |= GPIO_CLOCK_ENABLE_BIT;
+}</code></pre>
+
+                <p>
+                    Khi Clock được bật, GPIO Peripheral mới có thể hoạt động theo
+                    yêu cầu của thiết kế phần cứng.
+                </p>
+
+                <p>
+                    Lưu ý rằng việc bật Clock có thể cần tuân thủ những quy tắc cụ thể,
+                    chẳng hạn như chờ một khoảng thời gian hoặc kiểm tra trạng thái
+                    Clock Ready.
+                </p>
+
+                <h3>7.4. Reset Peripheral</h3>
+
+                <p>
+                    Một số Peripheral cần được đưa về trạng thái ban đầu trước khi
+                    cấu hình.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <pre><code>#define GPIO_RESET_BIT    (1U &lt;&lt; 2U)
+
+void GPIO_Reset(void)
+{
+    RESET-&gt;CONTROL |= GPIO_RESET_BIT;
+
+    RESET-&gt;CONTROL &amp;= ~GPIO_RESET_BIT;
+}</code></pre>
+
+                <p>
+                    Ví dụ trên chỉ minh họa thao tác điều khiển Reset thông qua
+                    Register. Cách kích hoạt và giải phóng Reset thực tế phụ thuộc
+                    vào thiết kế của vi điều khiển.
+                </p>
+
+                <h3>7.5. Configure Register Fields</h3>
+
+                <p>
+                    Sau khi Peripheral đã sẵn sàng, chương trình có thể cấu hình
+                    những Field cần thiết.
+                </p>
+
+                <p>
+                    Ví dụ với GPIO:
+                </p>
+
+                <ul>
+                    <li>Chọn Input hoặc Output Mode.</li>
+                    <li>Chọn Pull-up hoặc Pull-down.</li>
+                    <li>Chọn Output Speed.</li>
+                    <li>Chọn Alternate Function nếu cần.</li>
+                </ul>
+
+                <p>
+                    Các giá trị này thường được ghi vào những Register tương ứng
+                    theo hướng dẫn của nhà sản xuất.
+                </p>
+
+                <h3>7.6. Enable Peripheral</h3>
+
+                <p>
+                    Sau khi những thông số cần thiết đã được cấu hình, chương trình
+                    có thể bật Peripheral hoặc kích hoạt chức năng tương ứng.
+                </p>
+
+                <pre><code>#define PERIPHERAL_ENABLE_BIT    (1U &lt;&lt; 0U)
+
+void Peripheral_Enable(void)
+{
+    PERIPHERAL-&gt;CONTROL |= PERIPHERAL_ENABLE_BIT;
+}</code></pre>
+
+                <p>
+                    Cần kiểm tra tài liệu phần cứng để xác định Enable Bit nên được
+                    thiết lập ở giai đoạn nào trong quá trình khởi tạo.
+                </p>
+
+                <h3>7.7. Verify Configuration</h3>
+
+                <p>
+                    Sau khi cấu hình, một số Peripheral cho phép đọc lại Register
+                    để kiểm tra giá trị đã thiết lập.
+                </p>
+
+                <pre><code>uint8_t Peripheral_IsEnabled(void)
+{
+    if ((PERIPHERAL-&gt;CONTROL &amp; PERIPHERAL_ENABLE_BIT) != 0U)
+    {
+        return 1U;
+    }
+
+    return 0U;
+}</code></pre>
+
+                <p>
+                    Tuy nhiên, không phải mọi Register đều hỗ trợ đọc lại giá trị vừa ghi.
+                    Một số thanh ghi có thể là Write-only hoặc có cơ chế đọc đặc biệt.
+                </p>
+
+                <p>
+                    Vì vậy, việc xác minh cần dựa trên những Register được phép đọc
+                    và những trạng thái mà Peripheral cung cấp.
+                </p>
+
+                <h2>8. Những vấn đề cần lưu ý khi cấu hình Hardware Register</h2>
+
+                <h3>8.1. Không ghi đè những bit không liên quan</h3>
+
+                <p>
+                    Một trong những lỗi phổ biến là ghi trực tiếp một giá trị mới vào
+                    toàn bộ Register trong khi chỉ cần thay đổi một Field.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* Potentially unsafe for a register with other fields */
+PERIPHERAL-&gt;CONTROL = (1U &lt;&lt; MODE_POSITION);</code></pre>
+
+                <p>
+                    Câu lệnh này ghi giá trị mới vào toàn bộ Register. Những bit khác
+                    có thể bị đưa về 0 hoặc thay đổi theo giá trị được ghi.
+                </p>
+
+                <p>
+                    Nếu Register cho phép Read-Modify-Write, có thể sử dụng:
+                </p>
+
+                <pre><code>uint32_t value;
+
+value = PERIPHERAL-&gt;CONTROL;
+value &amp;= ~MODE_MASK;
+value |= ((mode &lt;&lt; MODE_POSITION) &amp; MODE_MASK);
+
+PERIPHERAL-&gt;CONTROL = value;</code></pre>
+
+                <p>
+                    Tuy nhiên, cần kiểm tra quy tắc của Register trước khi sử dụng
+                    Read-Modify-Write.
+                </p>
+
+                <h3>8.2. Reserved Bits</h3>
+
+                <p>
+                    Reserved Bits là những bit được dành riêng cho mục đích nội bộ
+                    hoặc những chức năng chưa được công bố trong tài liệu phần cứng.
+                </p>
+
+                <p>
+                    Khi cấu hình Register, cần chú ý những yêu cầu như:
+                </p>
+
+                <ul>
+                    <li>Ghi 0 vào Reserved Bits.</li>
+                    <li>Giữ nguyên giá trị của Reserved Bits.</li>
+                    <li>Không thực hiện thao tác ghi vào một số vị trí nhất định.</li>
+                    <li>Tuân thủ giá trị được yêu cầu trong tài liệu kỹ thuật.</li>
+                </ul>
+
+                <p>
+                    Không nên tự suy luận rằng Reserved Bits luôn có thể ghi 0 hoặc
+                    luôn có thể giữ nguyên. Cần kiểm tra quy định cụ thể của Register.
+                </p>
+
+                <h3>8.3. Write-1-to-Clear Register</h3>
+
+                <p>
+                    Một số Status Register sử dụng cơ chế Write-1-to-Clear (W1C).
+                    Với loại Register này, việc ghi giá trị 1 vào một bit sẽ xóa cờ
+                    trạng thái tương ứng.
+                </p>
+
+                <p>
+                    Ví dụ, giả sử một Status Register có ba cờ:
+                </p>
+
+                <pre><code>Bit 0: RX_COMPLETE
+Bit 1: TX_COMPLETE
+Bit 2: ERROR_FLAG</code></pre>
+
+                <p>
+                    Nếu muốn xóa cờ ERROR_FLAG, có thể cần ghi:
+                </p>
+
+                <pre><code>STATUS_REGISTER = (1U &lt;&lt; 2U);</code></pre>
+
+                <p>
+                    Không nên sử dụng một thao tác Read-Modify-Write thông thường
+                    như sau nếu Register có semantics W1C:
+                </p>
+
+                <pre><code>STATUS_REGISTER |= (1U &lt;&lt; 2U);</code></pre>
+
+                <p>
+                    Vì phép OR có thể ghi lại giá trị 1 của những cờ khác đang được
+                    đọc từ Register, dẫn đến việc xóa ngoài ý muốn những trạng thái đó.
+                </p>
+
+                <p>
+                    Với W1C Register, cần sử dụng đúng cách ghi được quy định trong
+                    Reference Manual.
+                </p>
+
+                <h3>8.4. Read-Modify-Write Hazard</h3>
+
+                <p>
+                    Read-Modify-Write Hazard có thể xảy ra khi một thanh ghi được thay
+                    đổi bởi phần cứng hoặc một thành phần khác trong lúc chương trình
+                    đang thực hiện chuỗi đọc, sửa và ghi.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>uint32_t value;
+
+value = PERIPHERAL-&gt;CONTROL;
+value |= ENABLE_MASK;
+PERIPHERAL-&gt;CONTROL = value;</code></pre>
+
+                <p>
+                    Nếu một thành phần khác thay đổi Register giữa thao tác đọc và ghi,
+                    giá trị được ghi trở lại có thể không còn phản ánh trạng thái mới nhất.
+                </p>
+
+                <p>
+                    Một số giải pháp có thể được sử dụng tùy theo phần cứng:
+                </p>
+
+                <ul>
+                    <li>Sử dụng Register Set/Clear riêng nếu Peripheral hỗ trợ.</li>
+                    <li>Sử dụng cơ chế Atomic Set/Clear do phần cứng cung cấp.</li>
+                    <li>Kiểm soát quyền truy cập giữa Main Code và ISR.</li>
+                    <li>Sử dụng Critical Section khi phù hợp.</li>
+                    <li>Tuân thủ trình tự truy cập được quy định trong tài liệu kỹ thuật.</li>
+                </ul>
+
+                <h3>8.5. Volatile không bảo đảm Atomicity</h3>
+
+                <p>
+                    Khi khai báo Hardware Register, chúng ta thường sử dụng
+                    <code>volatile</code> để bảo đảm compiler thực hiện những thao tác
+                    truy cập theo yêu cầu của chương trình.
+                </p>
+
+                <p>
+                    Tuy nhiên, volatile không tự bảo đảm rằng một chuỗi thao tác
+                    Read-Modify-Write là nguyên tử.
+                </p>
+
+                <pre><code>volatile uint32_t *control_register;
+
+*control_register |= ENABLE_MASK;</code></pre>
+
+                <p>
+                    Câu lệnh trên vẫn có thể được triển khai thành nhiều thao tác
+                    đọc, xử lý và ghi.
+                </p>
+
+                <p>
+                    Vì vậy, khi có nhiều thành phần cùng truy cập một Register,
+                    cần xem xét cơ chế đồng bộ và khả năng hỗ trợ Atomic Operation
+                    của nền tảng.
+                </p>
+
+                <h3>8.6. Register có trạng thái đặc biệt</h3>
+
+                <p>
+                    Không phải mọi Register đều là những vùng lưu trữ dữ liệu thông thường.
+                    Một số Register có thể có những hành vi đặc biệt:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại Register</th>
+                            <th>Đặc điểm</th>
+                            <th>Lưu ý</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Read-only</td>
+                            <td>Chỉ cho phép đọc.</td>
+                            <td>Không ghi giá trị vào Register.</td>
+                        </tr>
+                        <tr>
+                            <td>Write-only</td>
+                            <td>Chỉ cho phép ghi.</td>
+                            <td>Không sử dụng Read-Modify-Write.</td>
+                        </tr>
+                        <tr>
+                            <td>Write-1-to-Clear</td>
+                            <td>Ghi 1 để xóa cờ.</td>
+                            <td>Ghi đúng Mask cần xóa.</td>
+                        </tr>
+                        <tr>
+                            <td>Read-to-Clear</td>
+                            <td>Đọc có thể làm thay đổi trạng thái.</td>
+                            <td>Không đọc tùy tiện nhiều lần.</td>
+                        </tr>
+                        <tr>
+                            <td>Hardware-updated</td>
+                            <td>Phần cứng có thể thay đổi giá trị.</td>
+                            <td>Cần chú ý thời điểm và cách đọc.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>9. Ví dụ tổng hợp: Cấu hình GPIO Register</h2>
+
+                <h3>9.1. Mô hình GPIO Peripheral</h3>
+
+                <p>
+                    Hãy giả sử chúng ta có một GPIO Peripheral với các thanh ghi sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Register</th>
+                            <th>Offset</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MODE</td>
+                            <td>0x00</td>
+                            <td>Cấu hình chế độ hoạt động của GPIO.</td>
+                        </tr>
+                        <tr>
+                            <td>OUTPUT_TYPE</td>
+                            <td>0x04</td>
+                            <td>Cấu hình kiểu Output.</td>
+                        </tr>
+                        <tr>
+                            <td>OUTPUT_SPEED</td>
+                            <td>0x08</td>
+                            <td>Cấu hình tốc độ Output.</td>
+                        </tr>
+                        <tr>
+                            <td>PULL</td>
+                            <td>0x0C</td>
+                            <td>Cấu hình Pull-up/Pull-down.</td>
+                        </tr>
+                        <tr>
+                            <td>INPUT</td>
+                            <td>0x10</td>
+                            <td>Đọc trạng thái Input.</td>
+                        </tr>
+                        <tr>
+                            <td>OUTPUT</td>
+                            <td>0x14</td>
+                            <td>Ghi trạng thái Output.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Base Address của GPIO trong ví dụ:
+                </p>
+
+                <pre><code>GPIO_BASE_ADDRESS = 0x40020000U</code></pre>
+
+                <p>
+                    Các địa chỉ và cấu trúc trên chỉ mang tính minh họa, không đại diện
+                    cho một vi điều khiển cụ thể.
+                </p>
+
+                <h3>9.2. Định nghĩa Register Structure</h3>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    volatile uint32_t MODE;           /* Offset 0x00 */
+    volatile uint32_t OUTPUT_TYPE;    /* Offset 0x04 */
+    volatile uint32_t OUTPUT_SPEED;   /* Offset 0x08 */
+    volatile uint32_t PULL;           /* Offset 0x0C */
+    volatile uint32_t INPUT;          /* Offset 0x10 */
+    volatile uint32_t OUTPUT;         /* Offset 0x14 */
+
+} GPIO_TypeDef;
+
+#define GPIO_BASE_ADDRESS    (0x40020000U)
+
+#define GPIO \
+    ((GPIO_TypeDef *)GPIO_BASE_ADDRESS)</code></pre>
+
+                <p>
+                    Struct trên mô tả những thanh ghi của GPIO Peripheral theo Offset
+                    được giả định trong ví dụ.
+                </p>
+
+                <h3>9.3. Định nghĩa GPIO Pin và Mode</h3>
+
+                <p>
+                    Giả sử mỗi GPIO Pin sử dụng 2 bit trong MODE Register để lựa chọn
+                    chế độ hoạt động.
+                </p>
+
+                <pre><code>#define GPIO_PIN_0_POSITION    (0U)
+#define GPIO_PIN_0_MASK        (0x3U &lt;&lt; GPIO_PIN_0_POSITION)
+
+typedef enum
+{
+    GPIO_MODE_INPUT  = 0U,
+    GPIO_MODE_OUTPUT = 1U,
+    GPIO_MODE_ALT    = 2U,
+    GPIO_MODE_ANALOG = 3U
+
+} GPIO_ModeType;</code></pre>
+
+                <p>
+                    Với cấu trúc giả định này, Pin 0 sử dụng bit 0 và bit 1 trong
+                    MODE Register.
+                </p>
+
+                <h3>9.4. Cấu hình GPIO Pin thành Output</h3>
+
+                <p>
+                    Để cấu hình Pin 0 thành Output, chúng ta cần xóa giá trị cũ của
+                    MODE Field và ghi giá trị mới.
+                </p>
+
+                <pre><code>void GPIO_SetMode(
+    uint32_t pin_position,
+    GPIO_ModeType mode
+)
+{
+    uint32_t shift;
+    uint32_t mask;
+    uint32_t value;
+
+    shift = pin_position * 2U;
+    mask = (0x3U &lt;&lt; shift);
+
+    value = GPIO-&gt;MODE;
+
+    value &amp;= ~mask;
+    value |= (((uint32_t)mode &lt;&lt; shift) &amp; mask);
+
+    GPIO-&gt;MODE = value;
+}</code></pre>
+
+                <p>
+                    Khi gọi:
+                </p>
+
+                <pre><code>GPIO_SetMode(0U, GPIO_MODE_OUTPUT);</code></pre>
+
+                <p>
+                    Hàm sẽ cấu hình Field tương ứng với Pin 0 thành Output Mode.
+                </p>
+
+                <p>
+                    Đây là cách triển khai minh họa cho một Register có mỗi Pin sử dụng
+                    2 bit. Trong dự án thực tế, cần kiểm tra chính xác cách bố trí Field
+                    và những chế độ hợp lệ của GPIO Peripheral.
+                </p>
+
+                <h3>9.5. Cấu hình Output Type</h3>
+
+                <p>
+                    Giả sử mỗi Pin sử dụng một bit trong OUTPUT_TYPE Register:
+                </p>
+
+                <pre><code>#define GPIO_OUTPUT_TYPE_POSITION(pin)    (pin)
+#define GPIO_OUTPUT_TYPE_MASK(pin)        (1U &lt;&lt; GPIO_OUTPUT_TYPE_POSITION(pin))
+
+#define GPIO_OUTPUT_PUSH_PULL    (0U)
+#define GPIO_OUTPUT_OPEN_DRAIN   (1U)
+
+void GPIO_SetOutputType(
+    uint32_t pin,
+    uint32_t output_type
+)
+{
+    uint32_t mask;
+
+    mask = GPIO_OUTPUT_TYPE_MASK(pin);
+
+    if (output_type == GPIO_OUTPUT_OPEN_DRAIN)
+    {
+        GPIO-&gt;OUTPUT_TYPE |= mask;
+    }
+    else
+    {
+        GPIO-&gt;OUTPUT_TYPE &amp;= ~mask;
+    }
+}</code></pre>
+
+                <p>
+                    Hàm trên sử dụng một bit để lựa chọn giữa hai kiểu Output:
+                </p>
+
+                <ul>
+                    <li>Push-Pull: Giá trị bit bằng 0.</li>
+                    <li>Open-Drain: Giá trị bit bằng 1.</li>
+                </ul>
+
+                <p>
+                    Đây là cách mã hóa giả định trong ví dụ. Cách cấu hình thực tế
+                    phụ thuộc vào GPIO Peripheral của từng vi điều khiển.
+                </p>
+
+                <h3>9.6. Cấu hình Output Speed</h3>
+
+                <p>
+                    Giả sử mỗi Pin sử dụng 2 bit trong OUTPUT_SPEED Register.
+                </p>
+
+                <pre><code>#define GPIO_SPEED_POSITION(pin)    ((pin) * 2U)
+#define GPIO_SPEED_MASK(pin)        (0x3U &lt;&lt; GPIO_SPEED_POSITION(pin))
+
+typedef enum
+{
+    GPIO_SPEED_LOW    = 0U,
+    GPIO_SPEED_MEDIUM = 1U,
+    GPIO_SPEED_HIGH   = 2U,
+    GPIO_SPEED_VERY_HIGH = 3U
+
+} GPIO_SpeedType;
+
+void GPIO_SetSpeed(
+    uint32_t pin,
+    GPIO_SpeedType speed
+)
+{
+    uint32_t shift;
+    uint32_t mask;
+    uint32_t value;
+
+    if ((uint32_t)speed &gt; 3U)
+    {
+        return;
+    }
+
+    shift = GPIO_SPEED_POSITION(pin);
+    mask = GPIO_SPEED_MASK(pin);
+
+    value = GPIO-&gt;OUTPUT_SPEED;
+    value &amp;= ~mask;
+    value |= (((uint32_t)speed &lt;&lt; shift) &amp; mask);
+
+    GPIO-&gt;OUTPUT_SPEED = value;
+}</code></pre>
+
+                <p>
+                    Hàm này thay đổi đúng Field tương ứng với Pin được truyền vào,
+                    đồng thời giữ nguyên những Field khác trong giá trị Register
+                    được đọc trước đó.
+                </p>
+
+                <h3>9.7. Tạo hàm cấu hình GPIO hoàn chỉnh</h3>
+
+                <p>
+                    Sau khi có những hàm cấu hình riêng, chúng ta có thể kết hợp chúng
+                    thành một API cấu hình GPIO.
+                </p>
+
+                <pre><code>typedef struct
+{
+    uint32_t pin;
+    GPIO_ModeType mode;
+    uint32_t output_type;
+    GPIO_SpeedType speed;
+
+} GPIO_ConfigType;
+
+uint8_t GPIO_Init(const GPIO_ConfigType *config)
+{
+    if (config == 0)
+    {
+        return 0U;
+    }
+
+    if (config-&gt;pin &gt; 15U)
+    {
+        return 0U;
+    }
+
+    if ((uint32_t)config-&gt;mode &gt; 3U)
+    {
+        return 0U;
+    }
+
+    if (config-&gt;output_type &gt; 1U)
+    {
+        return 0U;
+    }
+
+    if ((uint32_t)config-&gt;speed &gt; 3U)
+    {
+        return 0U;
+    }
+
+    GPIO_SetMode(config-&gt;pin, config-&gt;mode);
+
+    if (config-&gt;mode == GPIO_MODE_OUTPUT)
+    {
+        GPIO_SetOutputType(
+            config-&gt;pin,
+            config-&gt;output_type
+        );
+
+        GPIO_SetSpeed(
+            config-&gt;pin,
+            config-&gt;speed
+        );
+    }
+
+    return 1U;
+}</code></pre>
+
+                <p>
+                    Hàm GPIO_Init nhận một Configuration Structure, kiểm tra những
+                    tham số đầu vào và gọi những hàm cấu hình tương ứng.
+                </p>
+
+                <p>
+                    Ví dụ sử dụng:
+                </p>
+
+                <pre><code>int main(void)
+{
+    GPIO_ConfigType gpio_config =
+    {
+        .pin = 0U,
+        .mode = GPIO_MODE_OUTPUT,
+        .output_type = GPIO_OUTPUT_PUSH_PULL,
+        .speed = GPIO_SPEED_MEDIUM
+    };
+
+    GPIO_Init(&amp;gpio_config);
+
+    while (1)
+    {
+        /* Main application loop */
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Ví dụ này thể hiện cách tổ chức một Peripheral Driver ở mức cơ bản:
+                </p>
+
+                <ol>
+                    <li>Định nghĩa Hardware Register.</li>
+                    <li>Định nghĩa những Bit Position và Bit Mask.</li>
+                    <li>Xây dựng các hàm cấu hình từng Field.</li>
+                    <li>Gom thông số cấu hình bằng Struct.</li>
+                    <li>Kiểm tra đầu vào trước khi thao tác với Register.</li>
+                    <li>Kết hợp các hàm thành API khởi tạo GPIO.</li>
+                </ol>
+
+                <p>
+                    Lưu ý: Đây là ví dụ minh họa về kỹ thuật tổ chức code, không phải
+                    Driver hoàn chỉnh cho một vi điều khiển cụ thể. Chương trình thực tế
+                    cần bổ sung Clock Configuration, Pin Multiplexing, kiểm tra giới hạn
+                    Pin, quy tắc truy cập Register và những yêu cầu riêng của Hardware.
+                </p>
+
+                <h2>10. Các phương pháp cấu hình Hardware Register</h2>
+
+                <h3>10.1. Direct Register Configuration</h3>
+
+                <p>
+                    Direct Register Configuration là cách ghi hoặc cập nhật Register
+                    trực tiếp tại vị trí cần thiết.
+                </p>
+
+                <pre><code>GPIO-&gt;MODE &amp;= ~(0x3U &lt;&lt; 0U);
+GPIO-&gt;MODE |= (0x1U &lt;&lt; 0U);</code></pre>
+
+                <p>
+                    Ưu điểm:
+                </p>
+
+                <ul>
+                    <li>Cú pháp ngắn gọn.</li>
+                    <li>Dễ sử dụng trong những chương trình nhỏ.</li>
+                    <li>Thể hiện trực tiếp thao tác trên Register.</li>
+                </ul>
+
+                <p>
+                    Hạn chế:
+                </p>
+
+                <ul>
+                    <li>Có thể khó đọc nếu sử dụng nhiều giá trị số trực tiếp.</li>
+                    <li>Khó tái sử dụng khi có nhiều Peripheral.</li>
+                    <li>Dễ xảy ra lỗi khi sử dụng sai Mask hoặc Position.</li>
+                </ul>
+
+                <h3>10.2. Macro-based Configuration</h3>
+
+                <p>
+                    Phương pháp này sử dụng Macro để định nghĩa những Field và thao tác
+                    cấu hình thường dùng.
+                </p>
+
+                <pre><code>#define GPIO_MODE_POSITION(pin)    ((pin) * 2U)
+#define GPIO_MODE_MASK(pin)        (0x3U &lt;&lt; GPIO_MODE_POSITION(pin))
+
+#define GPIO_SET_MODE(pin, mode)                  \
+    do                                            \
+    {                                             \
+        uint32_t value;                           \
+        uint32_t mask;                            \
+                                                  \
+        mask = GPIO_MODE_MASK(pin);               \
+        value = GPIO-&gt;MODE;                       \
+        value &amp;= ~mask;                           \
+        value |= (((mode) &lt;&lt; GPIO_MODE_POSITION(pin)) &amp; mask); \
+        GPIO-&gt;MODE = value;                       \
+    } while (0)</code></pre>
+
+                <p>
+                    Ưu điểm:
+                </p>
+
+                <ul>
+                    <li>Có thể tái sử dụng thao tác cấu hình.</li>
+                    <li>Giảm việc lặp lại code.</li>
+                    <li>Cho phép chuẩn hóa cách truy cập Register.</li>
+                </ul>
+
+                <p>
+                    Hạn chế:
+                </p>
+
+                <ul>
+                    <li>Macro có thể khó debug hơn Function.</li>
+                    <li>Cần chú ý đến Side Effect và cách đặt dấu ngoặc.</li>
+                    <li>Khó kiểm soát kiểu dữ liệu và giá trị đầu vào hơn khi thiết kế không cẩn thận.</li>
+                </ul>
+
+                <h3>10.3. Function-based Configuration</h3>
+
+                <p>
+                    Function-based Configuration đóng gói thao tác cấu hình Register
+                    thành những hàm có tên và tham số rõ ràng.
+                </p>
+
+                <pre><code>void GPIO_SetMode(
+    uint32_t pin,
+    GPIO_ModeType mode
+)
+{
+    uint32_t shift;
+    uint32_t mask;
+    uint32_t value;
+
+    shift = pin * 2U;
+    mask = (0x3U &lt;&lt; shift);
+
+    value = GPIO-&gt;MODE;
+    value &amp;= ~mask;
+    value |= (((uint32_t)mode &lt;&lt; shift) &amp; mask);
+
+    GPIO-&gt;MODE = value;
+}</code></pre>
+
+                <p>
+                    Ưu điểm:
+                </p>
+
+                <ul>
+                    <li>Dễ đọc và dễ bảo trì.</li>
+                    <li>Có thể kiểm tra tham số đầu vào.</li>
+                    <li>Dễ sử dụng trong nhiều module.</li>
+                    <li>Thuận tiện cho Unit Testing.</li>
+                </ul>
+
+                <h3>10.4. So sánh các phương pháp</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phương pháp</th>
+                            <th>Ưu điểm</th>
+                            <th>Hạn chế</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Direct Register</td>
+                            <td>Đơn giản, trực tiếp.</td>
+                            <td>Khó tái sử dụng khi code lớn.</td>
+                        </tr>
+                        <tr>
+                            <td>Macro-based</td>
+                            <td>Giảm lặp code, chuẩn hóa thao tác.</td>
+                            <td>Cần kiểm soát Macro cẩn thận.</td>
+                        </tr>
+                        <tr>
+                            <td>Function-based</td>
+                            <td>Dễ đọc, kiểm tra đầu vào và bảo trì.</td>
+                            <td>Cần thiết kế API phù hợp.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong dự án Embedded thực tế, có thể kết hợp nhiều phương pháp.
+                    Ví dụ, sử dụng Macro để định nghĩa Mask, Function để xử lý logic
+                    cấu hình và Struct để quản lý thông số của Peripheral.
+                </p>
+
+                <h2>11. Nguyên tắc thiết kế Register Configuration trong Embedded C</h2>
+
+                <h3>11.1. Sử dụng tên có ý nghĩa</h3>
+
+                <p>
+                    Không nên sử dụng những giá trị số trực tiếp trong những câu lệnh
+                    cấu hình nếu có thể thay thế bằng tên có ý nghĩa.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* Less readable */
+GPIO-&gt;MODE |= (1U &lt;&lt; 4U);
+
+/* More readable */
+#define GPIO_MODE_POSITION    (4U)
+
+GPIO-&gt;MODE |= (1U &lt;&lt; GPIO_MODE_POSITION);</code></pre>
+
+                <p>
+                    Cách viết thứ hai giúp người đọc hiểu được mục đích của vị trí bit
+                    mà không cần phải ghi nhớ con số 4.
+                </p>
+
+                <h3>11.2. Sử dụng kiểu dữ liệu Unsigned phù hợp</h3>
+
+                <p>
+                    Khi thao tác với Bitwise Operator, nên sử dụng kiểu dữ liệu Unsigned
+                    có độ rộng phù hợp với Register.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+uint32_t mask = (1U &lt;&lt; 5U);</code></pre>
+
+                <p>
+                    Đối với Register 32-bit, kiểu <code>uint32_t</code> thường được
+                    sử dụng để biểu diễn giá trị.
+                </p>
+
+                <p>
+                    Cần chú ý rằng phép dịch bit phải nằm trong phạm vi hợp lệ của
+                    kiểu dữ liệu và không được sử dụng giá trị dịch không hợp lệ.
+                </p>
+
+                <h3>11.3. Kiểm tra tham số đầu vào</h3>
+
+                <p>
+                    Những hàm cấu hình nên kiểm tra giá trị đầu vào trước khi ghi vào
+                    Hardware Register.
+                </p>
+
+                <pre><code>uint8_t GPIO_SetMode(
+    uint32_t pin,
+    uint32_t mode
+)
+{
+    if (pin &gt; 15U)
+    {
+        return 0U;
+    }
+
+    if (mode &gt; 3U)
+    {
+        return 0U;
+    }
+
+    /* Register configuration */
+
+    return 1U;
+}</code></pre>
+
+                <p>
+                    Việc kiểm tra giúp hạn chế trường hợp sử dụng Pin không tồn tại
+                    hoặc Mode không được hỗ trợ.
+                </p>
+
+                <h3>11.4. Tách biệt Configuration và Runtime Control</h3>
+
+                <p>
+                    Configuration và Runtime Control là hai nhóm thao tác có mục đích
+                    khác nhau.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Configuration:</strong> Thiết lập những thông số hoạt động
+                        của Peripheral, thường được thực hiện trong quá trình khởi tạo
+                        hoặc thay đổi cấu hình.
+                    </li>
+                    <li>
+                        <strong>Runtime Control:</strong> Điều khiển hoạt động của Peripheral
+                        trong lúc chương trình đang chạy.
+                    </li>
+                </ul>
+
+                <p>
+                    Ví dụ với GPIO:
+                </p>
+
+                <pre><code>/* Configuration */
+GPIO_SetMode(0U, GPIO_MODE_OUTPUT);
+
+/* Runtime Control */
+GPIO_SetPin(0U);
+GPIO_ClearPin(0U);</code></pre>
+
+                <p>
+                    Việc phân chia này giúp API của Driver rõ ràng hơn và tránh trộn lẫn
+                    những thao tác khởi tạo với thao tác điều khiển thường xuyên.
+                </p>
+
+                <h3>11.5. Tổ chức Register Configuration thành Module</h3>
+
+                <p>
+                    Trong dự án thực tế, nên tổ chức Register Definition và các hàm
+                    cấu hình thành những module riêng.
+                </p>
+
+                <pre><code>Application Layer
+        |
+        v
+Peripheral Driver API
+        |
+        v
+Configuration Functions
+        |
+        v
+Bit Mask / Register Definition
+        |
+        v
+Hardware Register</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Application Layer:</strong> Gọi những API như
+                        <code>GPIO_Init()</code> hoặc <code>UART_Init()</code>.
+                    </li>
+                    <li>
+                        <strong>Peripheral Driver API:</strong> Cung cấp giao diện
+                        cấu hình và điều khiển Peripheral.
+                    </li>
+                    <li>
+                        <strong>Configuration Functions:</strong> Xử lý việc thiết lập
+                        từng Register Field.
+                    </li>
+                    <li>
+                        <strong>Register Definition:</strong> Chứa Base Address,
+                        Register Structure, Bit Position và Bit Mask.
+                    </li>
+                    <li>
+                        <strong>Hardware Register:</strong> Thực hiện chức năng thực tế
+                        của Peripheral.
+                    </li>
+                </ul>
+
+                <p>
+                    Cách tổ chức này giúp Application Code không cần trực tiếp thao tác
+                    với từng bit của Hardware Register.
+                </p>
+
+                <h3>11.6. Tra cứu Reference Manual trước khi cấu hình</h3>
+
+                <p>
+                    Trước khi thiết lập một Hardware Register, cần kiểm tra những thông tin:
+                </p>
+
+                <ul>
+                    <li>Địa chỉ và Offset của Register.</li>
+                    <li>Ý nghĩa của từng Bit và Register Field.</li>
+                    <li>Độ rộng và phạm vi giá trị hợp lệ của Field.</li>
+                    <li>Giá trị mặc định sau Reset.</li>
+                    <li>Quyền truy cập Read-only, Write-only hoặc Read/Write.</li>
+                    <li>Những bit được đánh dấu Reserved.</li>
+                    <li>Quy tắc đặc biệt như W1C hoặc Read-to-Clear.</li>
+                    <li>Trình tự cấu hình và yêu cầu Clock.</li>
+                    <li>Những điều kiện cần thiết trước khi Enable Peripheral.</li>
+                </ul>
+
+                <p>
+                    Reference Manual là tài liệu quan trọng để xác định chính xác cách
+                    cấu hình từng Peripheral. Không nên áp dụng một cách cấu hình chung
+                    cho mọi vi điều khiển.
+                </p>
+
+                <h2>12. Checklist kiến thức cần nắm</h2>
+
+                <ul>
+                    <li>Hiểu khái niệm Hardware Register Configuration.</li>
+                    <li>Phân biệt Register Access và Register Configuration.</li>
+                    <li>Hiểu Register Field, Bit Position và Bit Mask.</li>
+                    <li>Biết cách tạo Mask bằng Bit Shifting.</li>
+                    <li>Hiểu cách sử dụng Set Bit, Clear Bit và Toggle Bit.</li>
+                    <li>Biết cách cập nhật một Register Field mà không thay đổi những bit khác.</li>
+                    <li>Hiểu công thức Read-Modify-Write để cập nhật Field.</li>
+                    <li>Biết kiểm tra phạm vi giá trị trước khi ghi vào Field.</li>
+                    <li>Biết cách cấu hình nhiều Field trong cùng một Register.</li>
+                    <li>Biết sử dụng Macro để định nghĩa Position, Mask và Field Value.</li>
+                    <li>Biết sử dụng Enum để biểu diễn những giá trị cấu hình.</li>
+                    <li>Hiểu cách sử dụng Configuration Structure.</li>
+                    <li>Hiểu trình tự Enable Clock, Reset, Configure và Enable Peripheral.</li>
+                    <li>Biết cách xác minh trạng thái cấu hình khi phần cứng hỗ trợ.</li>
+                    <li>Nhận biết những rủi ro khi ghi đè toàn bộ Register.</li>
+                    <li>Hiểu Reserved Bits và những quy tắc truy cập đặc biệt.</li>
+                    <li>Hiểu W1C Register và lý do không nên sử dụng Read-Modify-Write thông thường.</li>
+                    <li>Hiểu Read-Modify-Write Hazard và vấn đề Atomicity.</li>
+                    <li>Phân biệt Direct, Macro-based và Function-based Configuration.</li>
+                    <li>Biết tách biệt Configuration và Runtime Control.</li>
+                    <li>Biết tổ chức Register Configuration thành Peripheral Driver Module.</li>
+                    <li>Biết tra cứu Reference Manual trước khi cấu hình Hardware Register.</li>
+                </ul>
+
+                <h2>13. Bài học tiếp theo</h2>
+
+                <p>
+                    Ở bài tiếp theo, chúng ta sẽ tìm hiểu về
+                    <strong>Interrupt Service Routine (ISR) in C</strong>.
+                </p>
+
+                <p>
+                    Sau khi đã tìm hiểu cách truy cập và cấu hình Hardware Register,
+                    bước tiếp theo là tìm hiểu cách vi điều khiển xử lý những sự kiện
+                    xảy ra từ phần cứng thông qua cơ chế Interrupt.
+                </p>
+
+                <p>
+                    Chúng ta sẽ tìm hiểu Interrupt là gì, cách CPU phản ứng khi có
+                    Interrupt Request, vai trò của Interrupt Vector Table và cách
+                    triển khai Interrupt Service Routine bằng C.
+                </p>
+
+                <p>
+                    Ngoài ra, bài học sẽ đề cập đến những nguyên tắc quan trọng khi
+                    viết ISR, chẳng hạn như thời gian xử lý, chia sẻ dữ liệu giữa ISR
+                    và Main Code, sử dụng Volatile, cũng như những thao tác nên tránh
+                    trong Interrupt Context.
+                </p>
+
+                <p>
+                    Đây là kiến thức quan trọng trong lập trình Embedded vì nhiều
+                    Peripheral như GPIO, Timer, UART, SPI, ADC và CAN có thể sử dụng
+                    Interrupt để thông báo sự kiện cho CPU.
+                </p>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-35.html">← Bài trước</a>
+                    <a class="btn" href="lesson-37.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>EmLearn - 2026</p>
+    </footer>
+
+</body>
+</html>

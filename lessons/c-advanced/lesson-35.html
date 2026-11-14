@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 35: Memory-Mapped I/O &amp; Register Access | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+
+                <h4>Part 1. Advanced C Fundamentals &amp; Memory Management</h4>
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <h4>Part 2. Advanced Pointer Programming</h4>
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <h4>Part 3. Advanced C Data Types</h4>
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <h4>Part 4. Preprocessor &amp; Modular Programming</h4>
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <h4>Part 5. Bit Manipulation &amp; Embedded-Oriented Programming</h4>
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html" class="active" aria-current="page">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <h4>Part 6. Defensive Programming &amp; Reliable C</h4>
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <h4>Part 7. Programming Optimization &amp; Design Patterns in C</h4>
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <h4>Part 8. Code Quality, MISRA C &amp; Software Verification</h4>
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 35: Memory-Mapped I/O &amp; Register Access</h1>
+
+                <p>
+                    Trong bài học trước, chúng ta đã tìm hiểu từ khóa <code>volatile</code>
+                    và lý do vì sao nó thường được sử dụng khi làm việc với Hardware Register,
+                    Interrupt và những dữ liệu có thể thay đổi từ bên ngoài luồng chương trình.
+                </p>
+
+                <p>
+                    Tuy nhiên, để thực sự điều khiển được phần cứng bằng C, chúng ta cần hiểu
+                    cách CPU truy cập các thanh ghi của những ngoại vi như GPIO, Timer, UART,
+                    SPI, ADC và CAN.
+                </p>
+
+                <p>
+                    Trong nhiều vi điều khiển, các thanh ghi phần cứng được ánh xạ vào một
+                    vùng địa chỉ trong không gian địa chỉ bộ nhớ. Cơ chế này được gọi là
+                    <strong>Memory-Mapped I/O (MMIO)</strong>.
+                </p>
+
+                <p>
+                    Bài học này sẽ tập trung vào cách Memory-Mapped I/O hoạt động, cách xác
+                    định địa chỉ thanh ghi, cách sử dụng pointer để đọc và ghi Hardware
+                    Register, cũng như những vấn đề cần lưu ý khi truy cập trực tiếp phần cứng
+                    bằng Embedded C.
+                </p>
+
+                <h2>1. Memory-Mapped I/O là gì?</h2>
+
+                <h3>1.1. Khái niệm</h3>
+
+                <p>
+                    Memory-Mapped I/O là cơ chế trong đó các thanh ghi của thiết bị ngoại vi
+                    được ánh xạ vào một vùng địa chỉ trong không gian địa chỉ mà CPU có thể
+                    truy cập.
+                </p>
+
+                <p>
+                    Thay vì phải sử dụng một hệ thống lệnh I/O riêng biệt, CPU có thể truy
+                    cập các thanh ghi ngoại vi thông qua những thao tác đọc và ghi bộ nhớ
+                    thông thường theo kiến trúc của hệ thống.
+                </p>
+
+                <p>
+                    Ví dụ, một vi điều khiển có thể quy định:
+                </p>
+
+                <ul>
+                    <li>Địa chỉ A dùng để điều khiển GPIO.</li>
+                    <li>Địa chỉ B dùng để đọc trạng thái GPIO.</li>
+                    <li>Địa chỉ C dùng để cấu hình Timer.</li>
+                    <li>Địa chỉ D dùng để đọc trạng thái UART.</li>
+                    <li>Địa chỉ E dùng để cấu hình ADC.</li>
+                </ul>
+
+                <p>
+                    Những địa chỉ này không nhất thiết tương ứng với RAM hoặc Flash thông
+                    thường. Chúng có thể được giải mã bởi phần cứng để truy cập các
+                    Peripheral Register.
+                </p>
+
+                <h3>1.2. Ý tưởng hoạt động</h3>
+
+                <p>
+                    Hãy tưởng tượng CPU đang làm việc với một không gian địa chỉ có nhiều
+                    vùng khác nhau:
+                </p>
+
+                <pre><code>+----------------------------------+
+|          Address Space           |
++----------------------------------+
+|                                  |
+|       Flash Memory               |
+|       Program Code               |
+|                                  |
++----------------------------------+
+|                                  |
+|       SRAM                       |
+|       Variables / Stack          |
+|                                  |
++----------------------------------+
+|                                  |
+|       Peripheral Registers       |
+|       GPIO / UART / Timer / ADC  |
+|                                  |
++----------------------------------+
+|                                  |
+|       Other Memory Regions       |
+|                                  |
++----------------------------------+</code></pre>
+
+                <p>
+                    Khi CPU thực hiện một thao tác đọc hoặc ghi tại một địa chỉ thuộc vùng
+                    Peripheral Register, hệ thống bus và phần cứng sẽ định tuyến thao tác
+                    đó đến ngoại vi tương ứng.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>uint32_t value = *register_address;</code></pre>
+
+                <p>
+                    Nếu <code>register_address</code> trỏ đến một địa chỉ được ánh xạ tới
+                    Hardware Register, thao tác đọc có thể khiến CPU nhận được giá trị
+                    trạng thái từ ngoại vi.
+                </p>
+
+                <h3>1.3. Memory-Mapped I/O trong vi điều khiển</h3>
+
+                <p>
+                    Memory-Mapped I/O được sử dụng rất phổ biến trong các hệ thống
+                    Microcontroller.
+                </p>
+
+                <p>
+                    Một số Peripheral thường được truy cập thông qua MMIO:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Peripheral</th>
+                            <th>Chức năng</th>
+                            <th>Ví dụ thanh ghi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GPIO</td>
+                            <td>Điều khiển và đọc trạng thái chân I/O.</td>
+                            <td>Direction, Input, Output Register.</td>
+                        </tr>
+                        <tr>
+                            <td>UART</td>
+                            <td>Truyền và nhận dữ liệu nối tiếp.</td>
+                            <td>Data, Status, Control Register.</td>
+                        </tr>
+                        <tr>
+                            <td>Timer</td>
+                            <td>Đếm thời gian và tạo sự kiện định kỳ.</td>
+                            <td>Counter, Prescaler, Control Register.</td>
+                        </tr>
+                        <tr>
+                            <td>ADC</td>
+                            <td>Chuyển đổi tín hiệu analog sang digital.</td>
+                            <td>Control, Status, Data Register.</td>
+                        </tr>
+                        <tr>
+                            <td>SPI</td>
+                            <td>Giao tiếp nối tiếp đồng bộ.</td>
+                            <td>Data, Status, Configuration Register.</td>
+                        </tr>
+                        <tr>
+                            <td>CAN</td>
+                            <td>Giao tiếp trên mạng CAN.</td>
+                            <td>Control, Status, Message Buffer Register.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>2. Memory Address và Peripheral Register</h2>
+
+                <h3>2.1. Địa chỉ thanh ghi</h3>
+
+                <p>
+                    Mỗi Hardware Register thường được gán một địa chỉ cụ thể trong
+                    Address Space của vi điều khiển.
+                </p>
+
+                <p>
+                    Địa chỉ này được quy định bởi nhà sản xuất và được mô tả trong tài liệu
+                    kỹ thuật như:
+                </p>
+
+                <ul>
+                    <li>Datasheet.</li>
+                    <li>Reference Manual.</li>
+                    <li>Technical Reference Manual.</li>
+                    <li>Memory Map Documentation.</li>
+                </ul>
+
+                <p>
+                    Ví dụ minh họa một Peripheral có Base Address là
+                    <code>0x40020000</code>:
+                </p>
+
+                <pre><code>Peripheral Base Address: 0x40020000
+
++----------------------+------------------+
+| Register             | Address          |
++----------------------+------------------+
+| CONTROL_REGISTER     | 0x40020000       |
+| STATUS_REGISTER      | 0x40020004       |
+| DATA_REGISTER        | 0x40020008       |
+| CONFIG_REGISTER      | 0x4002000C       |
++----------------------+------------------+</code></pre>
+
+                <p>
+                    Các địa chỉ trên chỉ mang tính minh họa. Trên vi điều khiển thực tế,
+                    vị trí và khoảng cách giữa các thanh ghi phụ thuộc vào thiết kế phần cứng.
+                </p>
+
+                <h3>2.2. Base Address và Register Offset</h3>
+
+                <p>
+                    Trong tài liệu của vi điều khiển, các thanh ghi thường được mô tả
+                    bằng Base Address và Offset.
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Base Address:</strong> Địa chỉ bắt đầu của một Peripheral
+                        hoặc một nhóm thanh ghi.
+                    </li>
+                    <li>
+                        <strong>Register Offset:</strong> Khoảng cách từ Base Address đến
+                        thanh ghi cần truy cập.
+                    </li>
+                </ul>
+
+                <p>
+                    Địa chỉ của một thanh ghi có thể được tính bằng:
+                </p>
+
+                <pre><code>Register Address = Base Address + Offset</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define GPIO_BASE_ADDRESS       (0x40020000U)
+#define GPIO_MODE_OFFSET        (0x00U)
+#define GPIO_INPUT_OFFSET       (0x10U)
+#define GPIO_OUTPUT_OFFSET      (0x14U)
+
+#define GPIO_MODE_ADDRESS       (GPIO_BASE_ADDRESS + GPIO_MODE_OFFSET)
+#define GPIO_INPUT_ADDRESS      (GPIO_BASE_ADDRESS + GPIO_INPUT_OFFSET)
+#define GPIO_OUTPUT_ADDRESS     (GPIO_BASE_ADDRESS + GPIO_OUTPUT_OFFSET)</code></pre>
+
+                <p>
+                    Cách tổ chức này giúp chương trình dễ đọc hơn so với việc sử dụng
+                    trực tiếp những địa chỉ hexadecimal ở nhiều vị trí khác nhau.
+                </p>
+
+                <h3>2.3. Register Width</h3>
+
+                <p>
+                    Hardware Register có thể có nhiều kích thước khác nhau tùy theo
+                    kiến trúc và thiết kế của Peripheral.
+                </p>
+
+                <p>
+                    Một số độ rộng thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Register Width</th>
+                            <th>Số bit</th>
+                            <th>Kích thước</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>8-bit</td>
+                            <td>8 bits</td>
+                            <td>1 byte</td>
+                        </tr>
+                        <tr>
+                            <td>16-bit</td>
+                            <td>16 bits</td>
+                            <td>2 bytes</td>
+                        </tr>
+                        <tr>
+                            <td>32-bit</td>
+                            <td>32 bits</td>
+                            <td>4 bytes</td>
+                        </tr>
+                        <tr>
+                            <td>64-bit</td>
+                            <td>64 bits</td>
+                            <td>8 bytes</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Khi truy cập thanh ghi, cần sử dụng kiểu dữ liệu có độ rộng phù hợp
+                    với yêu cầu của phần cứng.
+                </p>
+
+                <p>
+                    Ví dụ, nếu một thanh ghi được quy định là 32-bit, chúng ta thường sử
+                    dụng kiểu <code>uint32_t</code> để biểu diễn dữ liệu truy cập.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+volatile uint32_t *register_32bit;</code></pre>
+
+                <p>
+                    Không nên tùy tiện thay đổi kích thước truy cập nếu Reference Manual
+                    không cho phép. Một số Peripheral chỉ hỗ trợ những kích thước truy cập
+                    nhất định.
+                </p>
+
+                <h2>3. Register Access trong C</h2>
+
+                <h3>3.1. Sử dụng Pointer để truy cập thanh ghi</h3>
+
+                <p>
+                    Trong C, chúng ta có thể sử dụng Pointer để truy cập một địa chỉ cụ thể
+                    trong không gian địa chỉ.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define REGISTER_ADDRESS    (0x40020000U)
+
+volatile uint32_t *register_ptr =
+    (volatile uint32_t *)REGISTER_ADDRESS;</code></pre>
+
+                <p>
+                    Phân tích:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>REGISTER_ADDRESS</code> là địa chỉ của thanh ghi.
+                    </li>
+                    <li>
+                        <code>(volatile uint32_t *)</code> chuyển giá trị địa chỉ sang
+                        kiểu con trỏ đến <code>volatile uint32_t</code>.
+                    </li>
+                    <li>
+                        <code>register_ptr</code> lưu địa chỉ của thanh ghi.
+                    </li>
+                    <li>
+                        <code>*register_ptr</code> biểu diễn đối tượng tại địa chỉ đó.
+                    </li>
+                </ul>
+
+                <p>
+                    Khi sử dụng trên phần cứng thực tế, địa chỉ phải hợp lệ và đúng với
+                    Memory Map của vi điều khiển.
+                </p>
+
+                <h3>3.2. Đọc giá trị từ Hardware Register</h3>
+
+                <p>
+                    Để đọc giá trị của một thanh ghi, chúng ta sử dụng toán tử giải tham
+                    chiếu <code>*</code>.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define STATUS_REGISTER_ADDRESS    (0x40020004U)
+
+uint32_t ReadStatusRegister(void)
+{
+    volatile uint32_t *status_register =
+        (volatile uint32_t *)STATUS_REGISTER_ADDRESS;
+
+    return *status_register;
+}</code></pre>
+
+                <p>
+                    Khi hàm được gọi:
+                </p>
+
+                <ol>
+                    <li>Tạo con trỏ trỏ đến địa chỉ của Status Register.</li>
+                    <li>Thực hiện thao tác đọc tại địa chỉ đó.</li>
+                    <li>Trả về giá trị đọc được.</li>
+                </ol>
+
+                <p>
+                    Vì con trỏ trỏ đến đối tượng volatile, thao tác đọc phải tuân thủ
+                    các quy tắc truy cập volatile của C.
+                </p>
+
+                <h3>3.3. Ghi giá trị vào Hardware Register</h3>
+
+                <p>
+                    Để ghi dữ liệu vào thanh ghi, chúng ta có thể sử dụng phép gán thông
+                    qua Pointer.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define CONTROL_REGISTER_ADDRESS    (0x40020000U)
+
+void WriteControlRegister(uint32_t value)
+{
+    volatile uint32_t *control_register =
+        (volatile uint32_t *)CONTROL_REGISTER_ADDRESS;
+
+    *control_register = value;
+}</code></pre>
+
+                <p>
+                    Câu lệnh:
+                </p>
+
+                <pre><code>*control_register = value;</code></pre>
+
+                <p>
+                    thực hiện thao tác ghi giá trị vào địa chỉ của Control Register.
+                </p>
+
+                <p>
+                    Cần lưu ý rằng không phải mọi thanh ghi đều cho phép ghi một giá trị
+                    bất kỳ. Giá trị ghi phải tuân thủ cách hoạt động và các bit được hỗ trợ
+                    của thanh ghi đó.
+                </p>
+
+                <h3>3.4. Đọc và ghi thanh ghi thông qua Function</h3>
+
+                <p>
+                    Trong dự án Embedded, chúng ta thường đóng gói thao tác đọc và ghi
+                    Hardware Register thành những hàm riêng biệt.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define DEVICE_REGISTER_ADDRESS    (0x40020000U)
+
+uint32_t Register_Read(void)
+{
+    volatile uint32_t *reg =
+        (volatile uint32_t *)DEVICE_REGISTER_ADDRESS;
+
+    return *reg;
+}
+
+void Register_Write(uint32_t value)
+{
+    volatile uint32_t *reg =
+        (volatile uint32_t *)DEVICE_REGISTER_ADDRESS;
+
+    *reg = value;
+}</code></pre>
+
+                <p>
+                    Việc đóng gói này giúp:
+                </p>
+
+                <ul>
+                    <li>Giảm việc lặp lại thao tác truy cập địa chỉ.</li>
+                    <li>Giúp code dễ đọc và dễ bảo trì.</li>
+                    <li>Tạo giao diện truy cập thống nhất cho những thành phần khác.</li>
+                    <li>Dễ dàng thay đổi cách triển khai khi chuyển sang phần cứng khác.</li>
+                </ul>
+
+                <h2>4. Kết hợp Memory-Mapped I/O với Bit Masking</h2>
+
+                <h3>4.1. Vì sao cần Bit Masking khi truy cập Register?</h3>
+
+                <p>
+                    Một Hardware Register thường chứa nhiều bit hoặc nhiều nhóm bit,
+                    mỗi nhóm có thể điều khiển một chức năng khác nhau.
+                </p>
+
+                <p>
+                    Ví dụ, một Control Register 32-bit có thể được tổ chức như sau:
+                </p>
+
+                <pre><code>Bit 31                         Bit 0
++----------------------------------+
+| Reserved | Mode | Enable | Config|
++----------------------------------+</code></pre>
+
+                <p>
+                    Khi muốn thay đổi một trường dữ liệu, chúng ta thường không muốn ghi
+                    đè toàn bộ những bit còn lại.
+                </p>
+
+                <p>
+                    Vì vậy, Bit Masking là kỹ thuật thường được sử dụng khi thao tác với
+                    Hardware Register.
+                </p>
+
+                <h3>4.2. Set một bit trong Register</h3>
+
+                <p>
+                    Để đặt một bit thành 1 mà không thay đổi những bit khác, có thể sử dụng
+                    phép OR.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define CONTROL_REGISTER_ADDRESS    (0x40020000U)
+#define ENABLE_BIT                  (1U &lt;&lt; 0U)
+
+void EnablePeripheral(void)
+{
+    volatile uint32_t *control_register =
+        (volatile uint32_t *)CONTROL_REGISTER_ADDRESS;
+
+    *control_register |= ENABLE_BIT;
+}</code></pre>
+
+                <p>
+                    Phép toán:
+                </p>
+
+                <pre><code>*control_register |= ENABLE_BIT;</code></pre>
+
+                <p>
+                    tương đương với việc đọc giá trị hiện tại, thực hiện phép OR với
+                    <code>ENABLE_BIT</code>, sau đó ghi kết quả trở lại thanh ghi.
+                </p>
+
+                <h3>4.3. Clear một bit trong Register</h3>
+
+                <p>
+                    Để đưa một bit về 0, chúng ta có thể sử dụng phép AND kết hợp với
+                    phép NOT.
+                </p>
+
+                <pre><code>#define ENABLE_BIT    (1U &lt;&lt; 0U)
+
+void DisablePeripheral(void)
+{
+    volatile uint32_t *control_register =
+        (volatile uint32_t *)CONTROL_REGISTER_ADDRESS;
+
+    *control_register &amp;= ~ENABLE_BIT;
+}</code></pre>
+
+                <p>
+                    Phép toán này giữ nguyên những bit không thuộc mask và đưa bit được
+                    lựa chọn về 0.
+                </p>
+
+                <h3>4.4. Toggle một bit trong Register</h3>
+
+                <p>
+                    Phép XOR có thể được sử dụng để đảo trạng thái của một bit.
+                </p>
+
+                <pre><code>#define ENABLE_BIT    (1U &lt;&lt; 0U)
+
+void TogglePeripheralEnable(void)
+{
+    volatile uint32_t *control_register =
+        (volatile uint32_t *)CONTROL_REGISTER_ADDRESS;
+
+    *control_register ^= ENABLE_BIT;
+}</code></pre>
+
+                <p>
+                    Nếu bit đang là 0, nó sẽ trở thành 1. Nếu bit đang là 1, nó sẽ trở
+                    thành 0.
+                </p>
+
+                <p>
+                    Tuy nhiên, không phải mọi thanh ghi đều phù hợp với thao tác Toggle
+                    theo cách Read-Modify-Write. Cần kiểm tra quy định của từng thanh ghi
+                    trước khi sử dụng.
+                </p>
+
+                <h3>4.5. Đọc trạng thái một bit</h3>
+
+                <p>
+                    Có thể sử dụng phép AND để kiểm tra trạng thái của một bit trong
+                    Status Register.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define STATUS_REGISTER_ADDRESS    (0x40020004U)
+#define READY_BIT                  (1U &lt;&lt; 0U)
+
+uint8_t IsPeripheralReady(void)
+{
+    volatile uint32_t *status_register =
+        (volatile uint32_t *)STATUS_REGISTER_ADDRESS;
+
+    if ((*status_register &amp; READY_BIT) != 0U)
+    {
+        return 1U;
+    }
+
+    return 0U;
+}</code></pre>
+
+                <p>
+                    Nếu bit READY bằng 1, hàm trả về 1. Ngược lại, hàm trả về 0.
+                </p>
+
+                <p>
+                    Những thao tác trên là sự kết hợp trực tiếp giữa kiến thức Bit Masking
+                    ở Bài 32 và Memory-Mapped I/O trong bài học này.
+                </p>
+
+                <h2>5. Register Mapping bằng Struct</h2>
+
+                <h3>5.1. Vì sao sử dụng Struct?</h3>
+
+                <p>
+                    Khi một Peripheral có nhiều thanh ghi nằm ở những Offset khác nhau,
+                    việc khai báo từng địa chỉ bằng Macro có thể khiến code dài và khó
+                    quản lý.
+                </p>
+
+                <p>
+                    Một cách tổ chức phổ biến trong Embedded C là sử dụng
+                    <strong>Struct</strong> để mô tả bố cục các thanh ghi của Peripheral.
+                </p>
+
+                <p>
+                    Mỗi thành viên trong Struct tương ứng với một Hardware Register.
+                </p>
+
+                <h3>5.2. Ví dụ định nghĩa Register Structure</h3>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    volatile uint32_t CONTROL;
+    volatile uint32_t STATUS;
+    volatile uint32_t DATA;
+    volatile uint32_t CONFIG;
+
+} Peripheral_TypeDef;</code></pre>
+
+                <p>
+                    Struct trên mô tả một Peripheral có bốn thanh ghi:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th>Offset minh họa</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>CONTROL</code></td>
+                            <td>0x00</td>
+                            <td>Điều khiển Peripheral.</td>
+                        </tr>
+                        <tr>
+                            <td><code>STATUS</code></td>
+                            <td>0x04</td>
+                            <td>Chứa trạng thái Peripheral.</td>
+                        </tr>
+                        <tr>
+                            <td><code>DATA</code></td>
+                            <td>0x08</td>
+                            <td>Chứa dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td><code>CONFIG</code></td>
+                            <td>0x0C</td>
+                            <td>Cấu hình Peripheral.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Các Offset trên giả định mỗi thanh ghi có kích thước 32-bit và được
+                    đặt liên tiếp. Bố cục thực tế phải tuân theo Memory Map của vi điều khiển.
+                </p>
+
+                <h3>5.3. Ánh xạ Struct vào Base Address</h3>
+
+                <p>
+                    Sau khi định nghĩa Struct, chúng ta có thể tạo một Pointer trỏ đến
+                    Base Address của Peripheral.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    volatile uint32_t CONTROL;
+    volatile uint32_t STATUS;
+    volatile uint32_t DATA;
+    volatile uint32_t CONFIG;
+
+} Peripheral_TypeDef;
+
+#define PERIPHERAL_BASE_ADDRESS    (0x40020000U)
+
+#define PERIPHERAL \
+    ((Peripheral_TypeDef *)PERIPHERAL_BASE_ADDRESS)</code></pre>
+
+                <p>
+                    Khi đó, chúng ta có thể truy cập các thanh ghi thông qua tên thành viên:
+                </p>
+
+                <pre><code>void EnablePeripheral(void)
+{
+    PERIPHERAL-&gt;CONTROL |= (1U &lt;&lt; 0U);
+}
+
+uint32_t ReadPeripheralStatus(void)
+{
+    return PERIPHERAL-&gt;STATUS;
+}
+
+void WritePeripheralData(uint32_t value)
+{
+    PERIPHERAL-&gt;DATA = value;
+}</code></pre>
+
+                <p>
+                    Cách viết này giúp code dễ đọc hơn vì lập trình viên có thể sử dụng
+                    tên thanh ghi thay vì phải nhớ từng địa chỉ riêng biệt.
+                </p>
+
+                <h3>5.4. Vai trò của Struct Layout</h3>
+
+                <p>
+                    Khi sử dụng Struct để ánh xạ Hardware Register, thứ tự và Offset
+                    của các thành viên phải khớp với bố cục phần cứng.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>typedef struct
+{
+    volatile uint32_t CONTROL;   /* Offset 0x00 */
+    volatile uint32_t STATUS;    /* Offset 0x04 */
+    volatile uint32_t DATA;      /* Offset 0x08 */
+
+} Device_TypeDef;</code></pre>
+
+                <p>
+                    Nếu thanh ghi STATUS thực tế nằm tại Offset 0x10 thay vì 0x04,
+                    Struct trên sẽ ánh xạ sai địa chỉ.
+                </p>
+
+                <p>
+                    Trong trường hợp có những khoảng trống giữa các thanh ghi, cần sử dụng
+                    Reserved Member hoặc cách tổ chức phù hợp để giữ đúng Offset.
+                </p>
+
+                <pre><code>typedef struct
+{
+    volatile uint32_t CONTROL;       /* Offset 0x00 */
+    uint32_t RESERVED0[3];           /* Offset 0x04 - 0x0C */
+    volatile uint32_t STATUS;        /* Offset 0x10 */
+    volatile uint32_t DATA;          /* Offset 0x14 */
+
+} Device_TypeDef;</code></pre>
+
+                <p>
+                    Ví dụ này giả định mỗi Reserved Member có kích thước 4 byte.
+                    Cần kiểm tra kích thước kiểu dữ liệu, alignment và Offset thực tế
+                    theo compiler và kiến trúc mục tiêu.
+                </p>
+
+                <h3>5.5. Kiểm tra Offset của Struct</h3>
+
+                <p>
+                    Trong một số dự án, có thể sử dụng <code>offsetof</code> trong
+                    thư viện <code>&lt;stddef.h&gt;</code> để kiểm tra vị trí của một
+                    thành viên trong Struct.
+                </p>
+
+                <pre><code>#include &lt;stddef.h&gt;
+#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    volatile uint32_t CONTROL;
+    uint32_t RESERVED0[3];
+    volatile uint32_t STATUS;
+
+} Device_TypeDef;
+
+_Static_assert(
+    offsetof(Device_TypeDef, STATUS) == 0x10U,
+    "Incorrect STATUS register offset"
+);</code></pre>
+
+                <p>
+                    <code>_Static_assert</code> cho phép kiểm tra điều kiện ngay trong
+                    quá trình biên dịch. Nếu Offset không đúng như mong đợi, compiler
+                    sẽ báo lỗi.
+                </p>
+
+                <p>
+                    Đây là một kỹ thuật hữu ích để phát hiện lỗi trong quá trình định nghĩa
+                    Register Structure.
+                </p>
+
+                <h2>6. Các kiểu truy cập Hardware Register</h2>
+
+                <h3>6.1. Direct Address Access</h3>
+
+                <p>
+                    Direct Address Access là cách truy cập trực tiếp thanh ghi thông qua
+                    địa chỉ cụ thể.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define GPIO_OUTPUT_ADDRESS    (0x40020014U)
+
+void WriteGPIO(uint32_t value)
+{
+    volatile uint32_t *gpio_output =
+        (volatile uint32_t *)GPIO_OUTPUT_ADDRESS;
+
+    *gpio_output = value;
+}</code></pre>
+
+                <p>
+                    Ưu điểm:
+                </p>
+
+                <ul>
+                    <li>Cú pháp đơn giản.</li>
+                    <li>Dễ hiểu khi chỉ có một vài thanh ghi cần truy cập.</li>
+                    <li>Phù hợp với ví dụ nhỏ hoặc thao tác đơn lẻ.</li>
+                </ul>
+
+                <p>
+                    Nhược điểm:
+                </p>
+
+                <ul>
+                    <li>Khó quản lý khi có nhiều thanh ghi.</li>
+                    <li>Địa chỉ có thể bị lặp lại ở nhiều nơi.</li>
+                    <li>Khó bảo trì khi chuyển sang phần cứng khác.</li>
+                </ul>
+
+                <h3>6.2. Macro-based Register Access</h3>
+
+                <p>
+                    Có thể sử dụng Macro để chuẩn hóa cách định nghĩa địa chỉ và thao tác
+                    truy cập thanh ghi.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define REG32(address) \
+    (*(volatile uint32_t *)(address))
+
+#define GPIO_CONTROL_ADDRESS    (0x40020000U)
+#define GPIO_STATUS_ADDRESS     (0x40020004U)
+
+void EnableGPIO(void)
+{
+    REG32(GPIO_CONTROL_ADDRESS) |= (1U &lt;&lt; 0U);
+}
+
+uint32_t ReadGPIOStatus(void)
+{
+    return REG32(GPIO_STATUS_ADDRESS);
+}</code></pre>
+
+                <p>
+                    Macro <code>REG32(address)</code> biểu diễn thao tác truy cập một
+                    thanh ghi 32-bit tại địa chỉ được truyền vào.
+                </p>
+
+                <p>
+                    Ưu điểm:
+                </p>
+
+                <ul>
+                    <li>Giảm code lặp lại.</li>
+                    <li>Chuẩn hóa cách truy cập thanh ghi.</li>
+                    <li>Dễ kết hợp với các Macro Bit Masking.</li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, Macro này chỉ là một ví dụ minh họa. Trong dự án thực tế,
+                    cần kiểm tra kiểu dữ liệu, alignment, địa chỉ hợp lệ và quy tắc truy cập
+                    của thanh ghi.
+                </p>
+
+                <h3>6.3. Struct-based Register Mapping</h3>
+
+                <p>
+                    Struct-based Register Mapping là cách tổ chức các thanh ghi của cùng
+                    một Peripheral thành một cấu trúc dữ liệu.
+                </p>
+
+                <pre><code>typedef struct
+{
+    volatile uint32_t CONTROL;
+    volatile uint32_t STATUS;
+    volatile uint32_t DATA;
+
+} UART_TypeDef;
+
+#define UART0_BASE_ADDRESS    (0x40010000U)
+
+#define UART0 \
+    ((UART_TypeDef *)UART0_BASE_ADDRESS)
+
+void UART_Enable(void)
+{
+    UART0-&gt;CONTROL |= (1U &lt;&lt; 0U);
+}</code></pre>
+
+                <p>
+                    Cách này giúp thể hiện mối quan hệ giữa các thanh ghi và thường được
+                    sử dụng trong những header file mô tả Peripheral của vi điều khiển.
+                </p>
+
+                <h3>6.4. So sánh các phương pháp</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phương pháp</th>
+                            <th>Ưu điểm</th>
+                            <th>Hạn chế</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Direct Address</td>
+                            <td>Đơn giản, dễ hiểu.</td>
+                            <td>Khó quản lý nhiều địa chỉ.</td>
+                        </tr>
+                        <tr>
+                            <td>Macro-based</td>
+                            <td>Tái sử dụng và chuẩn hóa thao tác.</td>
+                            <td>Cần kiểm soát Macro và kiểu dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Struct-based</td>
+                            <td>Code rõ ràng, thể hiện bố cục Peripheral.</td>
+                            <td>Phải bảo đảm Struct Layout khớp Memory Map.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>7. Những vấn đề cần lưu ý khi truy cập Register</h2>
+
+                <h3>7.1. Sử dụng Volatile đúng cách</h3>
+
+                <p>
+                    Khi truy cập Hardware Register, cần bảo đảm đối tượng được truy cập
+                    với qualifier volatile phù hợp.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>volatile uint32_t *status_register =
+    (volatile uint32_t *)0x40020004U;
+
+uint32_t status = *status_register;</code></pre>
+
+                <p>
+                    Nếu không có volatile, compiler có thể áp dụng những tối ưu hóa không
+                    phù hợp với mục đích đọc thanh ghi phần cứng.
+                </p>
+
+                <p>
+                    Tuy nhiên, volatile không tự bảo đảm atomicity, thread safety hoặc
+                    thứ tự truy cập ở cấp độ phần cứng. Những yêu cầu này cần được xử lý
+                    riêng theo nền tảng.
+                </p>
+
+                <h3>7.2. Alignment</h3>
+
+                <p>
+                    Alignment là yêu cầu về vị trí địa chỉ bộ nhớ mà một kiểu dữ liệu
+                    cần được đặt hoặc truy cập.
+                </p>
+
+                <p>
+                    Ví dụ, một hệ thống có thể yêu cầu truy cập 32-bit tại địa chỉ chia hết
+                    cho 4.
+                </p>
+
+                <pre><code>0x40020000    Valid 32-bit aligned address
+0x40020004    Valid 32-bit aligned address
+0x40020008    Valid 32-bit aligned address
+0x40020002    Potentially unaligned address</code></pre>
+
+                <p>
+                    Truy cập sai alignment có thể gây lỗi, tạo ra nhiều giao dịch bus hoặc
+                    không được phần cứng hỗ trợ, tùy theo kiến trúc.
+                </p>
+
+                <p>
+                    Vì vậy, địa chỉ thanh ghi và kiểu truy cập cần tuân thủ yêu cầu của
+                    vi điều khiển.
+                </p>
+
+                <h3>7.3. Register Access Width</h3>
+
+                <p>
+                    Không phải thanh ghi nào cũng hỗ trợ mọi kích thước truy cập.
+                </p>
+
+                <p>
+                    Ví dụ, một thanh ghi 32-bit có thể yêu cầu truy cập bằng một giao dịch
+                    32-bit. Nếu chương trình sử dụng con trỏ 8-bit để đọc từng byte, hành vi
+                    có thể không được phần cứng hỗ trợ hoặc có thể tạo ra kết quả không
+                    mong muốn.
+                </p>
+
+                <pre><code>volatile uint32_t *reg32 =
+    (volatile uint32_t *)REGISTER_ADDRESS;
+
+uint32_t value = *reg32;</code></pre>
+
+                <p>
+                    Cần sử dụng đúng kích thước truy cập được quy định trong Reference Manual.
+                </p>
+
+                <h3>7.4. Reserved Bits</h3>
+
+                <p>
+                    Một số thanh ghi có những bit được đánh dấu là Reserved trong tài liệu
+                    phần cứng.
+                </p>
+
+                <p>
+                    Những bit này không được sử dụng như những bit điều khiển thông thường.
+                    Tùy Peripheral, nhà sản xuất có thể yêu cầu:
+                </p>
+
+                <ul>
+                    <li>Giữ Reserved Bit ở giá trị 0.</li>
+                    <li>Giữ nguyên giá trị hiện tại.</li>
+                    <li>Không ghi vào những bit đó.</li>
+                    <li>Tuân thủ một quy tắc truy cập cụ thể.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, không nên tùy tiện ghi toàn bộ giá trị vào thanh ghi nếu chưa
+                    hiểu ý nghĩa của từng bit.
+                </p>
+
+                <h3>7.5. Read-Modify-Write</h3>
+
+                <p>
+                    Read-Modify-Write là kỹ thuật:
+                </p>
+
+                <ol>
+                    <li>Đọc giá trị hiện tại của thanh ghi.</li>
+                    <li>Thay đổi một hoặc một số bit.</li>
+                    <li>Ghi giá trị mới trở lại thanh ghi.</li>
+                </ol>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>*control_register |= (1U &lt;&lt; 0U);</code></pre>
+
+                <p>
+                    Về bản chất, thao tác này tương đương:
+                </p>
+
+                <pre><code>uint32_t temp;
+
+temp = *control_register;
+temp = temp | (1U &lt;&lt; 0U);
+*control_register = temp;</code></pre>
+
+                <p>
+                    Cách làm này có thể phù hợp với những thanh ghi cho phép đọc và ghi
+                    thông thường. Tuy nhiên, nó không phải lúc nào cũng an toàn.
+                </p>
+
+                <p>
+                    Một số thanh ghi có những đặc tính đặc biệt:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Write-1-to-Clear (W1C):</strong> Ghi 1 vào một bit sẽ xóa
+                        cờ tương ứng.
+                    </li>
+                    <li>
+                        <strong>Read-to-Clear:</strong> Đọc thanh ghi có thể làm thay đổi
+                        hoặc xóa trạng thái của một số bit.
+                    </li>
+                    <li>
+                        <strong>Write-only Register:</strong> Thanh ghi chỉ cho phép ghi,
+                        không cho phép đọc theo cách thông thường.
+                    </li>
+                    <li>
+                        <strong>Hardware-updated Register:</strong> Giá trị có thể được
+                        phần cứng cập nhật trong khi phần mềm đang xử lý.
+                    </li>
+                </ul>
+
+                <p>
+                    Với những thanh ghi này, thao tác Read-Modify-Write có thể gây ra
+                    những tác động ngoài mong muốn. Cần sử dụng đúng phương pháp truy cập
+                    được nhà sản xuất quy định.
+                </p>
+
+                <h3>7.6. Atomicity và Concurrent Access</h3>
+
+                <p>
+                    Khi chương trình chính và ISR cùng truy cập một Hardware Register,
+                    cần xem xét khả năng xảy ra xung đột giữa các thao tác đọc và ghi.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>volatile uint32_t *control_register =
+    (volatile uint32_t *)REGISTER_ADDRESS;
+
+void EnableFeature(void)
+{
+    *control_register |= (1U &lt;&lt; 0U);
+}</code></pre>
+
+                <p>
+                    Nếu một ISR hoặc một thành phần khác cũng thay đổi thanh ghi trong
+                    khoảng thời gian Read-Modify-Write, kết quả có thể không như mong đợi.
+                </p>
+
+                <p>
+                    Cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>Peripheral có hỗ trợ thao tác Set/Clear riêng hay không.</li>
+                    <li>Thanh ghi có hỗ trợ thao tác ghi nguyên tử hay không.</li>
+                    <li>Có cần Critical Section hay cơ chế đồng bộ hay không.</li>
+                    <li>Có quy tắc truy cập đặc biệt nào trong tài liệu phần cứng không.</li>
+                </ul>
+
+                <h2>8. Ví dụ tổng hợp: Truy cập GPIO Register</h2>
+
+                <h3>8.1. Mô hình GPIO Register</h3>
+
+                <p>
+                    Hãy giả sử chúng ta có một GPIO Peripheral với các thanh ghi sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Register</th>
+                            <th>Offset</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MODE</td>
+                            <td>0x00</td>
+                            <td>Cấu hình chế độ hoạt động của GPIO.</td>
+                        </tr>
+                        <tr>
+                            <td>INPUT</td>
+                            <td>0x10</td>
+                            <td>Đọc trạng thái chân GPIO.</td>
+                        </tr>
+                        <tr>
+                            <td>OUTPUT</td>
+                            <td>0x14</td>
+                            <td>Ghi trạng thái đầu ra GPIO.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Giả sử Base Address của GPIO là:
+                </p>
+
+                <pre><code>GPIO_BASE_ADDRESS = 0x40020000U</code></pre>
+
+                <h3>8.2. Định nghĩa Register Structure</h3>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    volatile uint32_t MODE;          /* Offset 0x00 */
+
+    uint32_t RESERVED0[3];           /* Offset 0x04 - 0x0C */
+
+    volatile uint32_t INPUT;         /* Offset 0x10 */
+    volatile uint32_t OUTPUT;        /* Offset 0x14 */
+
+} GPIO_TypeDef;
+
+#define GPIO_BASE_ADDRESS    (0x40020000U)
+
+#define GPIO \
+    ((GPIO_TypeDef *)GPIO_BASE_ADDRESS)</code></pre>
+
+                <p>
+                    Struct được thiết kế sao cho các thành viên tương ứng với Offset
+                    của thanh ghi trong ví dụ.
+                </p>
+
+                <h3>8.3. Đọc trạng thái GPIO</h3>
+
+                <pre><code>#define GPIO_PIN_0    (1U &lt;&lt; 0U)
+
+uint8_t GPIO_ReadPin0(void)
+{
+    if ((GPIO-&gt;INPUT &amp; GPIO_PIN_0) != 0U)
+    {
+        return 1U;
+    }
+
+    return 0U;
+}</code></pre>
+
+                <p>
+                    Hàm trên đọc Input Register và kiểm tra bit 0 để xác định trạng thái
+                    của GPIO Pin 0.
+                </p>
+
+                <h3>8.4. Ghi trạng thái GPIO</h3>
+
+                <pre><code>#define GPIO_PIN_0    (1U &lt;&lt; 0U)
+
+void GPIO_SetPin0(void)
+{
+    GPIO-&gt;OUTPUT |= GPIO_PIN_0;
+}
+
+void GPIO_ClearPin0(void)
+{
+    GPIO-&gt;OUTPUT &amp;= ~GPIO_PIN_0;
+}</code></pre>
+
+                <p>
+                    Hai hàm trên sử dụng Bit Masking để thay đổi trạng thái của bit 0
+                    trong Output Register.
+                </p>
+
+                <p>
+                    Đây là ví dụ minh họa cách tổ chức code. Trong vi điều khiển thực tế,
+                    cần sử dụng đúng thanh ghi và thao tác được hỗ trợ. Một số GPIO Peripheral
+                    cung cấp riêng thanh ghi Set và Clear để tránh Read-Modify-Write.
+                </p>
+
+                <h3>8.5. Sử dụng các hàm GPIO</h3>
+
+                <pre><code>int main(void)
+{
+    uint8_t pin_state;
+
+    pin_state = GPIO_ReadPin0();
+
+    if (pin_state != 0U)
+    {
+        GPIO_ClearPin0();
+    }
+    else
+    {
+        GPIO_SetPin0();
+    }
+
+    while (1)
+    {
+        /* Main application loop */
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Ví dụ này minh họa luồng sử dụng GPIO Register:
+                </p>
+
+                <ol>
+                    <li>Đọc trạng thái đầu vào từ Input Register.</li>
+                    <li>Kiểm tra trạng thái của Pin 0.</li>
+                    <li>Thay đổi giá trị Output Register dựa trên kết quả đọc.</li>
+                    <li>Tiếp tục vòng lặp chính.</li>
+                </ol>
+
+                <p>
+                    Lưu ý: Đây là ví dụ minh họa về cách truy cập thanh ghi, không phải
+                    chương trình GPIO hoàn chỉnh cho một vi điều khiển cụ thể. Chương trình
+                    thực tế còn cần cấu hình Clock, Pin Mode, Pin Multiplexing và các thiết
+                    lập liên quan theo tài liệu phần cứng.
+                </p>
+
+                <h2>9. Memory-Mapped I/O và Port-Mapped I/O</h2>
+
+                <h3>9.1. Port-Mapped I/O là gì?</h3>
+
+                <p>
+                    Ngoài Memory-Mapped I/O, một số kiến trúc máy tính còn sử dụng cơ chế
+                    Port-Mapped I/O, còn được gọi là Isolated I/O.
+                </p>
+
+                <p>
+                    Trong cơ chế này, thiết bị I/O sử dụng một không gian địa chỉ riêng,
+                    tách biệt với không gian địa chỉ bộ nhớ thông thường.
+                </p>
+
+                <p>
+                    CPU có thể cần những lệnh chuyên biệt để đọc hoặc ghi các I/O Port.
+                </p>
+
+                <h3>9.2. So sánh Memory-Mapped I/O và Port-Mapped I/O</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Memory-Mapped I/O</th>
+                            <th>Port-Mapped I/O</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Không gian địa chỉ</td>
+                            <td>Sử dụng không gian địa chỉ được ánh xạ cho I/O.</td>
+                            <td>Sử dụng không gian địa chỉ I/O riêng.</td>
+                        </tr>
+                        <tr>
+                            <td>Truy cập</td>
+                            <td>Thường sử dụng các thao tác đọc/ghi bộ nhớ.</td>
+                            <td>Có thể sử dụng lệnh I/O chuyên biệt.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>Phổ biến trong nhiều Microcontroller.</td>
+                            <td>Có mặt trong một số kiến trúc máy tính như x86.</td>
+                        </tr>
+                        <tr>
+                            <td>Cách sử dụng trong C</td>
+                            <td>Có thể sử dụng pointer đến địa chỉ MMIO theo nền tảng.</td>
+                            <td>Thường cần compiler intrinsic, assembly hoặc API riêng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong lập trình Microcontroller, Memory-Mapped I/O là cơ chế rất phổ biến
+                    để truy cập Peripheral Register.
+                </p>
+
+                <h2>10. Những lỗi thường gặp khi sử dụng Memory-Mapped I/O</h2>
+
+                <h3>10.1. Sử dụng sai địa chỉ Register</h3>
+
+                <p>
+                    Nếu địa chỉ được khai báo không đúng với Memory Map, chương trình có
+                    thể truy cập nhầm vùng nhớ hoặc nhầm Peripheral.
+                </p>
+
+                <pre><code>#define GPIO_BASE_ADDRESS    (0x40020000U)
+
+/* Address must be verified against MCU documentation */</code></pre>
+
+                <p>
+                    Cần kiểm tra Base Address và Offset trong Reference Manual trước khi
+                    sử dụng.
+                </p>
+
+                <h3>10.2. Quên Volatile</h3>
+
+                <p>
+                    Nếu Hardware Register được truy cập thông qua một con trỏ không có
+                    volatile phù hợp, compiler có thể tối ưu các thao tác truy cập theo
+                    cách không phù hợp với mục đích làm việc với phần cứng.
+                </p>
+
+                <p>
+                    Ví dụ khai báo thường dùng:
+                </p>
+
+                <pre><code>volatile uint32_t *register_ptr;</code></pre>
+
+                <h3>10.3. Sai Register Width</h3>
+
+                <p>
+                    Sử dụng kiểu dữ liệu có kích thước không phù hợp có thể tạo ra thao tác
+                    truy cập mà Peripheral không hỗ trợ.
+                </p>
+
+                <p>
+                    Cần xác định chính xác thanh ghi hỗ trợ truy cập 8-bit, 16-bit hay
+                    32-bit.
+                </p>
+
+                <h3>10.4. Struct Layout không khớp Hardware Layout</h3>
+
+                <p>
+                    Nếu Struct không có đúng Offset, các thành viên có thể trỏ đến sai
+                    địa chỉ thanh ghi.
+                </p>
+
+                <p>
+                    Cần kiểm tra:
+                </p>
+
+                <ul>
+                    <li>Kích thước từng thành viên.</li>
+                    <li>Alignment và Padding.</li>
+                    <li>Reserved Register.</li>
+                    <li>Offset của từng thanh ghi.</li>
+                </ul>
+
+                <h3>10.5. Sử dụng Read-Modify-Write không đúng</h3>
+
+                <p>
+                    Không phải thanh ghi nào cũng có thể sử dụng toán tử
+                    <code>|=</code>, <code>&amp;=</code> hoặc <code>^=</code> một cách
+                    an toàn.
+                </p>
+
+                <p>
+                    Đặc biệt cần chú ý những thanh ghi có cơ chế Write-1-to-Clear,
+                    Read-to-Clear hoặc có phần cứng cập nhật giá trị đồng thời.
+                </p>
+
+                <h3>10.6. Truy cập Register khi Peripheral chưa được bật Clock</h3>
+
+                <p>
+                    Một số vi điều khiển yêu cầu bật Clock cho Peripheral trước khi
+                    thực hiện truy cập các thanh ghi của nó.
+                </p>
+
+                <p>
+                    Nếu chưa bật Clock hoặc chưa thực hiện các bước khởi tạo cần thiết,
+                    việc truy cập có thể không hoạt động như mong đợi.
+                </p>
+
+                <p>
+                    Trình tự khởi tạo thường cần xem xét:
+                </p>
+
+                <ol>
+                    <li>Bật Clock cho Peripheral.</li>
+                    <li>Thực hiện Reset Peripheral nếu cần.</li>
+                    <li>Cấu hình các thanh ghi liên quan.</li>
+                    <li>Bắt đầu sử dụng Peripheral.</li>
+                </ol>
+
+                <h2>11. Nguyên tắc khi thiết kế Register Access trong Embedded C</h2>
+
+                <h3>11.1. Tách biệt Hardware Definition và Application Logic</h3>
+
+                <p>
+                    Trong dự án thực tế, không nên để toàn bộ Application Code truy cập
+                    trực tiếp các địa chỉ thanh ghi ở nhiều nơi.
+                </p>
+
+                <p>
+                    Thay vào đó, có thể tổ chức thành các lớp hoặc module:
+                </p>
+
+                <pre><code>Application Layer
+        |
+        v
+Peripheral Driver
+        |
+        v
+Register Definition
+        |
+        v
+Hardware Register</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Application Layer:</strong> Sử dụng các API như
+                        <code>GPIO_SetPin()</code> hoặc <code>UART_Transmit()</code>.
+                    </li>
+                    <li>
+                        <strong>Peripheral Driver:</strong> Xử lý logic điều khiển ngoại vi.
+                    </li>
+                    <li>
+                        <strong>Register Definition:</strong> Định nghĩa địa chỉ và cấu trúc
+                        thanh ghi.
+                    </li>
+                    <li>
+                        <strong>Hardware:</strong> Thực hiện chức năng thực tế của Peripheral.
+                    </li>
+                </ul>
+
+                <p>
+                    Cách tổ chức này giúp giảm sự phụ thuộc của Application Code vào
+                    địa chỉ phần cứng cụ thể.
+                </p>
+
+                <h3>11.2. Sử dụng Header File cho Register Definition</h3>
+
+                <p>
+                    Các định nghĩa Register thường được đặt trong Header File để nhiều
+                    module có thể sử dụng thống nhất.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* gpio_registers.h */
+
+#ifndef GPIO_REGISTERS_H
+#define GPIO_REGISTERS_H
+
+#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    volatile uint32_t MODE;
+    uint32_t RESERVED0[3];
+    volatile uint32_t INPUT;
+    volatile uint32_t OUTPUT;
+
+} GPIO_TypeDef;
+
+#define GPIO_BASE_ADDRESS    (0x40020000U)
+
+#define GPIO \
+    ((GPIO_TypeDef *)GPIO_BASE_ADDRESS)
+
+#endif</code></pre>
+
+                <p>
+                    Những module khác có thể include Header File này để sử dụng định nghĩa
+                    GPIO Register.
+                </p>
+
+                <h3>11.3. Ưu tiên sử dụng Device Header hoặc SDK chính thức</h3>
+
+                <p>
+                    Nhiều nhà sản xuất vi điều khiển cung cấp sẵn Header File chứa định nghĩa
+                    Peripheral Register.
+                </p>
+
+                <p>
+                    Những file này thường đã bao gồm:
+                </p>
+
+                <ul>
+                    <li>Base Address của từng Peripheral.</li>
+                    <li>Register Structure.</li>
+                    <li>Offset của từng thanh ghi.</li>
+                    <li>Bit Definition và Bit Mask.</li>
+                    <li>Kiểu dữ liệu phù hợp với thiết bị.</li>
+                </ul>
+
+                <p>
+                    Trong dự án thực tế, nên ưu tiên sử dụng các định nghĩa chính thức
+                    này thay vì tự viết lại toàn bộ nếu không có yêu cầu đặc biệt.
+                </p>
+
+                <h3>11.4. Kiểm tra tài liệu phần cứng trước khi truy cập</h3>
+
+                <p>
+                    Trước khi đọc hoặc ghi một Hardware Register, cần xác định:
+                </p>
+
+                <ul>
+                    <li>Địa chỉ chính xác của thanh ghi.</li>
+                    <li>Độ rộng dữ liệu được phép truy cập.</li>
+                    <li>Ý nghĩa của từng bit.</li>
+                    <li>Quyền Read/Write/Read-only/Write-only.</li>
+                    <li>Giá trị mặc định sau Reset.</li>
+                    <li>Cơ chế đặc biệt như Write-1-to-Clear.</li>
+                    <li>Yêu cầu về Clock và trình tự khởi tạo.</li>
+                </ul>
+
+                <p>
+                    Đây là những thông tin rất quan trọng để tránh việc truy cập sai
+                    thanh ghi và gây ra lỗi phần cứng.
+                </p>
+
+                <h2>12. Checklist kiến thức cần nắm</h2>
+
+                <ul>
+                    <li>Hiểu khái niệm Memory-Mapped I/O.</li>
+                    <li>Hiểu cách Peripheral Register được ánh xạ vào Address Space.</li>
+                    <li>Phân biệt Memory Region và Peripheral Register Region.</li>
+                    <li>Hiểu Base Address và Register Offset.</li>
+                    <li>Biết cách xác định địa chỉ của một Hardware Register.</li>
+                    <li>Hiểu Register Width và cách chọn kiểu dữ liệu phù hợp.</li>
+                    <li>Biết sử dụng Pointer để đọc và ghi Hardware Register.</li>
+                    <li>Hiểu vai trò của Volatile trong Register Access.</li>
+                    <li>Biết kết hợp Memory-Mapped I/O với Bit Masking.</li>
+                    <li>Biết cách tổ chức Register Structure bằng Struct.</li>
+                    <li>Hiểu vai trò của Struct Layout và Reserved Member.</li>
+                    <li>Biết sử dụng offsetof và _Static_assert để kiểm tra Offset.</li>
+                    <li>Phân biệt Direct Address, Macro-based và Struct-based Register Access.</li>
+                    <li>Hiểu các vấn đề về Alignment và Register Access Width.</li>
+                    <li>Nhận biết Reserved Bits và những quy tắc truy cập đặc biệt.</li>
+                    <li>Hiểu Read-Modify-Write và những trường hợp không nên sử dụng.</li>
+                    <li>Phân biệt Memory-Mapped I/O và Port-Mapped I/O.</li>
+                    <li>Biết tổ chức Register Definition và Peripheral Driver trong Embedded C.</li>
+                    <li>Biết tra cứu Reference Manual và Device Header khi làm việc với phần cứng.</li>
+                </ul>
+
+                <h2>13. Bài học tiếp theo</h2>
+
+                <p>
+                    Ở bài tiếp theo, chúng ta sẽ tìm hiểu về
+                    <strong>Hardware Register Configuration Techniques</strong>.
+                </p>
+
+                <p>
+                    Sau khi đã hiểu cách Hardware Register được ánh xạ vào không gian địa
+                    chỉ và cách truy cập chúng bằng C, bước tiếp theo là tìm hiểu cách tổ
+                    chức việc cấu hình các thanh ghi để điều khiển Peripheral.
+                </p>
+
+                <p>
+                    Chúng ta sẽ tìm hiểu các kỹ thuật cấu hình Register bằng Bit Masking,
+                    cách thiết lập từng trường dữ liệu, cách bảo toàn những bit không liên
+                    quan và cách tổ chức các thao tác cấu hình thành những hàm dễ tái sử dụng.
+                </p>
+
+                <p>
+                    Đây là kiến thức quan trọng khi xây dựng Peripheral Driver cho GPIO,
+                    Timer, UART, SPI, ADC và những thành phần phần cứng khác trong hệ thống
+                    Embedded.
+                </p>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-34.html">← Bài trước</a>
+                    <a class="btn" href="lesson-36.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>EmLearn - 2026</p>
+    </footer>
+
+</body>
+</html>

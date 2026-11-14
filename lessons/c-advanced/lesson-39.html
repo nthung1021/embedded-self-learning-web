@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="../../index.html" class="logo">Em<span>Learn</span></a>
+
+            <nav class="main-nav">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../index.html#lessons">Bài học</a>
+                <a href="../../quiz/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container page-container">
+
+        <aside class="sidebar">
+            <h3>Danh sách bài học</h3>
+
+            <div class="sidebar-section">
+                <h4>AUTOSAR</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="lesson-25.html">Bài 25: Diagnostic Communication Manager (DCM)</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>ISO Standards</h4>
+
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+                <a href="lesson-38.html">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
+                <a href="lesson-39.html" class="active" aria-current="page">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer</a>
+                <a href="lesson-40.html">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN</a>
+                <a href="lesson-41.html">Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP)</a>
+                <a href="lesson-42.html">Bài 42: Tổng quan bộ tiêu chuẩn ISO 15031</a>
+                <a href="lesson-43.html">Bài 43: Tổng quan ISO 26262 - Functional Safety</a>
+            </div>
+
+            <a href="../../index.html" class="back-link">← Tất cả bài học</a>
+        </aside>
+
+        <main class="content">
+
+            <article class="lesson-content">
+
+                <h1>Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer</h1>
+
+                <p>
+                    Trong bài trước, chúng ta đã tìm hiểu <strong>ISO 14229-1 - UDS Application Layer</strong>,
+                    bao gồm cấu trúc Diagnostic Request, Positive Response, Negative Response, SID,
+                    Sub-function và các Diagnostic Services.
+                </p>
+
+                <p>
+                    Tuy nhiên, khi một Diagnostic Tester giao tiếp với ECU, chỉ có việc gửi Request
+                    và nhận Response là chưa đủ. Hệ thống còn cần quản lý trạng thái của phiên chẩn đoán,
+                    kiểm soát thời gian phản hồi, duy trì kết nối chẩn đoán và xử lý các tình huống
+                    ECU cần thêm thời gian để thực hiện một yêu cầu.
+                </p>
+
+                <p>
+                    Đây là những vấn đề liên quan đến <strong>UDS Session Layer</strong>,
+                    được mô tả trong tiêu chuẩn <strong>ISO 14229-2</strong>.
+                </p>
+
+                <div class="note-box">
+                    <strong>Mục tiêu bài học:</strong>
+                    <ul>
+                        <li>Hiểu vai trò của ISO 14229-2 trong kiến trúc UDS.</li>
+                        <li>Phân biệt Application Layer và Session Layer.</li>
+                        <li>Hiểu Diagnostic Session và các trạng thái hoạt động của ECU.</li>
+                        <li>Nắm được các loại Diagnostic Session phổ biến.</li>
+                        <li>Hiểu cơ chế quản lý thời gian P2, P2* và S3.</li>
+                        <li>Hiểu cách TesterPresent duy trì phiên chẩn đoán.</li>
+                        <li>Liên hệ Session Layer với AUTOSAR Diagnostic Communication Manager.</li>
+                    </ul>
+                </div>
+
+                <h2>1. Tổng quan về ISO 14229-2</h2>
+
+                <h3>1.1. ISO 14229-2 là gì?</h3>
+
+                <p>
+                    <strong>ISO 14229-2</strong> là một phần trong bộ tiêu chuẩn Unified Diagnostic Services (UDS),
+                    mô tả các chức năng và cơ chế thuộc <strong>Session Layer</strong> trong kiến trúc
+                    chẩn đoán UDS.
+                </p>
+
+                <p>
+                    Trong quá trình chẩn đoán, ECU không phải lúc nào cũng xử lý mọi yêu cầu theo cùng một cách.
+                    Một số chức năng chỉ được phép thực hiện trong một phiên chẩn đoán nhất định.
+                    Ngoài ra, ECU cần có cơ chế kiểm soát thời gian phản hồi và xác định khi nào
+                    một phiên chẩn đoán còn hiệu lực.
+                </p>
+
+                <p>
+                    Session Layer cung cấp các cơ chế liên quan đến việc quản lý phiên giao tiếp
+                    và các tham số thời gian của hoạt động chẩn đoán.
+                </p>
+
+                <h3>1.2. Vị trí của ISO 14229-2 trong kiến trúc UDS</h3>
+
+                <p>
+                    Có thể hình dung các phần tiêu chuẩn UDS liên quan với nhau như sau:
+                </p>
+
+                <pre><code>              Diagnostic Tester
+                      |
+                      |
+              +------------------+
+              | UDS Application  |
+              |     Layer        |
+              |   ISO 14229-1    |
+              +------------------+
+                      |
+                      |
+              +------------------+
+              |   UDS Session    |
+              |      Layer       |
+              |   ISO 14229-2    |
+              +------------------+
+                      |
+                      |
+              +------------------+
+              | Transport /      |
+              | Network Layer    |
+              +------------------+
+                      |
+              +------------------+
+              | Communication    |
+              | Network          |
+              +------------------+
+
+        Ví dụ các phần tiêu chuẩn:
+
+        ISO 14229-1 : UDS Application Layer
+        ISO 14229-2 : UDS Session Layer
+        ISO 14229-3 : UDS on CAN
+        ISO 15765-2 : DoCAN Transport Protocol
+        ISO 13400   : Diagnostics over IP (DoIP)</code></pre>
+
+                <p>
+                    Mỗi phần tiêu chuẩn đảm nhiệm một phạm vi khác nhau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chuẩn</th>
+                            <th>Phạm vi chính</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ISO 14229-1</td>
+                            <td>Định nghĩa UDS Diagnostic Services ở Application Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-2</td>
+                            <td>Định nghĩa các chức năng và cơ chế Session Layer.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 14229-3</td>
+                            <td>Quy định việc triển khai UDS trên CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 15765-2</td>
+                            <td>Quy định cơ chế Transport Protocol cho Diagnostic Communication over CAN.</td>
+                        </tr>
+                        <tr>
+                            <td>ISO 13400</td>
+                            <td>Quy định Diagnostics over Internet Protocol (DoIP).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note-box">
+                    <strong>Lưu ý:</strong>
+                    ISO 14229-1 định nghĩa các Diagnostic Services, trong khi ISO 14229-2
+                    quy định các cơ chế thuộc Session Layer. Không nên xem hai tiêu chuẩn này
+                    là hai bộ Diagnostic Services độc lập.
+                </div>
+
+                <h2>2. Phân biệt Application Layer và Session Layer</h2>
+
+                <p>
+                    Đây là một trong những điểm quan trọng nhất cần hiểu khi học kiến trúc UDS.
+                    Hai tầng có liên quan chặt chẽ nhưng đảm nhiệm các trách nhiệm khác nhau.
+                </p>
+
+                <h3>2.1. Application Layer</h3>
+
+                <p>
+                    Application Layer chịu trách nhiệm định nghĩa các dịch vụ chẩn đoán mà Tester
+                    có thể yêu cầu ECU thực hiện.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <ul>
+                    <li><strong>0x10 - DiagnosticSessionControl:</strong> Yêu cầu ECU chuyển sang Diagnostic Session khác.</li>
+                    <li><strong>0x11 - ECUReset:</strong> Yêu cầu ECU thực hiện Reset.</li>
+                    <li><strong>0x19 - ReadDTCInformation:</strong> Đọc thông tin Diagnostic Trouble Code.</li>
+                    <li><strong>0x22 - ReadDataByIdentifier:</strong> Đọc dữ liệu theo Data Identifier.</li>
+                    <li><strong>0x27 - SecurityAccess:</strong> Thực hiện cơ chế kiểm soát truy cập.</li>
+                    <li><strong>0x3E - TesterPresent:</strong> Thông báo Tester vẫn đang duy trì hoạt động chẩn đoán.</li>
+                </ul>
+
+                <h3>2.2. Session Layer</h3>
+
+                <p>
+                    Session Layer tập trung vào việc quản lý trạng thái và thời gian của hoạt động
+                    chẩn đoán, thay vì định nghĩa ý nghĩa nghiệp vụ của từng Diagnostic Service.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <ul>
+                    <li>Quản lý phiên chẩn đoán hiện tại của ECU.</li>
+                    <li>Kiểm soát thời gian ECU được phép phản hồi một Request.</li>
+                    <li>Xử lý khoảng thời gian chờ khi ECU cần thêm thời gian xử lý.</li>
+                    <li>Quản lý thời gian duy trì phiên chẩn đoán.</li>
+                    <li>Xác định hành vi khi phiên chẩn đoán không còn được duy trì.</li>
+                </ul>
+
+                <h3>2.3. So sánh hai tầng</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Application Layer</th>
+                            <th>Session Layer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tiêu chuẩn</td>
+                            <td>ISO 14229-1</td>
+                            <td>ISO 14229-2</td>
+                        </tr>
+                        <tr>
+                            <td>Trách nhiệm</td>
+                            <td>Định nghĩa Diagnostic Services.</td>
+                            <td>Quản lý phiên và các cơ chế thời gian.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>ReadDataByIdentifier, ECUReset, RoutineControl.</td>
+                            <td>Session Management, Timing Management.</td>
+                        </tr>
+                        <tr>
+                            <td>Diagnostic Session</td>
+                            <td>Có Service để yêu cầu thay đổi Session.</td>
+                            <td>Quản lý trạng thái Session và các hành vi liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>Timing</td>
+                            <td>Gửi và nhận các Diagnostic Messages.</td>
+                            <td>Quản lý các tham số thời gian chẩn đoán.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note-box">
+                    <strong>Cách ghi nhớ:</strong>
+                    <ul>
+                        <li>Application Layer trả lời câu hỏi: Tester muốn ECU thực hiện chức năng gì?</li>
+                        <li>Session Layer trả lời câu hỏi: Phiên chẩn đoán đang ở trạng thái nào và giao tiếp cần tuân theo thời gian nào?</li>
+                    </ul>
+                </div>
+
+                <h2>3. Diagnostic Session là gì?</h2>
+
+                <h3>3.1. Khái niệm Diagnostic Session</h3>
+
+                <p>
+                    <strong>Diagnostic Session</strong> là trạng thái hoạt động chẩn đoán mà ECU đang sử dụng.
+                    Mỗi Session có thể cho phép một nhóm Diagnostic Services và chức năng khác nhau.
+                </p>
+
+                <p>
+                    Khi ECU vừa khởi động hoặc chưa nhận yêu cầu chuyển Session,
+                    nó thường hoạt động trong Default Session.
+                    Nếu Tester muốn sử dụng những chức năng chẩn đoán nâng cao hơn,
+                    Tester có thể yêu cầu ECU chuyển sang một Session khác.
+                </p>
+
+                <p>
+                    Ví dụ, một số chức năng đọc dữ liệu cơ bản có thể được hỗ trợ trong Default Session,
+                    trong khi các chức năng lập trình hoặc cấu hình đặc biệt có thể yêu cầu
+                    Programming Session hoặc một Session khác được ECU hỗ trợ.
+                </p>
+
+                <h3>3.2. Vì sao cần nhiều Diagnostic Session?</h3>
+
+                <p>
+                    Không phải mọi chức năng chẩn đoán đều nên được phép thực hiện trong mọi thời điểm.
+                    Việc chia thành nhiều Session giúp ECU kiểm soát phạm vi chức năng được phép sử dụng.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <ul>
+                    <li>Ngăn các chức năng lập trình ECU được thực hiện trong trạng thái chẩn đoán thông thường.</li>
+                    <li>Cho phép các chức năng kiểm tra hoặc cấu hình đặc biệt trong Extended Session.</li>
+                    <li>Giới hạn các chức năng nhạy cảm theo trạng thái và điều kiện hoạt động của ECU.</li>
+                    <li>Giúp ECU quản lý quá trình chẩn đoán theo yêu cầu của nhà sản xuất.</li>
+                </ul>
+
+                <h3>3.3. Session ảnh hưởng đến Diagnostic Services như thế nào?</h3>
+
+                <p>
+                    Một Diagnostic Service có thể được ECU hỗ trợ nhưng chỉ được phép thực hiện
+                    trong một số Session nhất định.
+                </p>
+
+                <p>Ví dụ minh họa:</p>
+
+                <pre><code>ECU Diagnostic Configuration
+|
++-- Default Session
+|   |
+|   +-- Read basic information
+|   +-- Read selected DTC information
+|
++-- Extended Diagnostic Session
+|   |
+|   +-- Additional diagnostic functions
+|   +-- Selected actuator tests
+|   +-- Additional data access
+|
++-- Programming Session
+    |
+    +-- Programming-related services
+    +-- Download-related services</code></pre>
+
+                <p>
+                    Đây chỉ là ví dụ minh họa. Việc một Service được hỗ trợ trong Session nào
+                    phụ thuộc vào cấu hình ECU, yêu cầu của OEM và đặc tả chẩn đoán của dự án.
+                </p>
+
+                <h2>4. Các loại Diagnostic Session phổ biến</h2>
+
+                <p>
+                    UDS định nghĩa một số loại Diagnostic Session phổ biến.
+                    ECU có thể hỗ trợ một phần hoặc nhiều loại Session tùy theo chức năng của nó.
+                </p>
+
+                <h3>4.1. Default Session</h3>
+
+                <p>
+                    <strong>Default Session</strong> là phiên chẩn đoán mặc định.
+                    Đây thường là trạng thái mà ECU sử dụng khi không có yêu cầu chuyển sang
+                    một Diagnostic Session khác.
+                </p>
+
+                <ul>
+                    <li>Được xem là trạng thái chẩn đoán cơ bản.</li>
+                    <li>Hỗ trợ các Diagnostic Services được cho phép trong Default Session.</li>
+                    <li>Thường là Session mà ECU quay về khi Session khác hết thời gian duy trì.</li>
+                </ul>
+
+                <h3>4.2. Programming Session</h3>
+
+                <p>
+                    <strong>Programming Session</strong> thường được sử dụng trong quá trình
+                    lập trình hoặc cập nhật phần mềm ECU.
+                </p>
+
+                <p>
+                    Trong Session này, ECU có thể cho phép những chức năng liên quan đến
+                    quá trình Download và Transfer dữ liệu.
+                </p>
+
+                <p>Ví dụ một số Diagnostic Services có thể liên quan:</p>
+
+                <ul>
+                    <li>RequestDownload - SID 0x34.</li>
+                    <li>TransferData - SID 0x36.</li>
+                    <li>RequestTransferExit - SID 0x37.</li>
+                    <li>RoutineControl - SID 0x31, nếu ECU sử dụng Routine tương ứng.</li>
+                </ul>
+
+                <p>
+                    Không phải ECU nào cũng hỗ trợ Programming Session hoặc cho phép tất cả
+                    các Service trên trong Session này.
+                </p>
+
+                <h3>4.3. Extended Diagnostic Session</h3>
+
+                <p>
+                    <strong>Extended Diagnostic Session</strong> cung cấp phạm vi chức năng
+                    chẩn đoán mở rộng so với Default Session.
+                </p>
+
+                <p>
+                    Tùy theo cấu hình ECU, Session này có thể cho phép các chức năng như:
+                </p>
+
+                <ul>
+                    <li>Đọc thêm các thông tin nội bộ của ECU.</li>
+                    <li>Thực hiện một số chức năng kiểm tra nâng cao.</li>
+                    <li>Truy cập các Diagnostic Data Identifier bổ sung.</li>
+                    <li>Sử dụng một số Routine phục vụ kiểm tra hoặc bảo trì.</li>
+                </ul>
+
+                <h3>4.4. Safety System Diagnostic Session</h3>
+
+                <p>
+                    <strong>Safety System Diagnostic Session</strong> là một loại Session
+                    được định nghĩa cho các mục đích chẩn đoán liên quan đến hệ thống an toàn.
+                </p>
+
+                <p>
+                    Session này không nhất thiết được triển khai trên mọi ECU.
+                    Việc hỗ trợ và các chức năng được phép sử dụng phụ thuộc vào thiết kế,
+                    yêu cầu an toàn và cấu hình của hệ thống.
+                </p>
+
+                <h3>4.5. Tổng hợp các Session</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Session</th>
+                            <th>Sub-function</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Default Session</td>
+                            <td>0x01</td>
+                            <td>Phiên chẩn đoán mặc định.</td>
+                        </tr>
+                        <tr>
+                            <td>Programming Session</td>
+                            <td>0x02</td>
+                            <td>Phục vụ các chức năng lập trình ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>Extended Diagnostic Session</td>
+                            <td>0x03</td>
+                            <td>Phục vụ các chức năng chẩn đoán mở rộng.</td>
+                        </tr>
+                        <tr>
+                            <td>Safety System Diagnostic Session</td>
+                            <td>0x04</td>
+                            <td>Phục vụ các chức năng chẩn đoán liên quan đến hệ thống an toàn.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note-box">
+                    <strong>Lưu ý:</strong>
+                    Các giá trị Sub-function trên là những giá trị Session Control phổ biến.
+                    Không nên giả định rằng mọi ECU đều hỗ trợ tất cả các Session.
+                    Cần kiểm tra Diagnostic Specification của ECU hoặc yêu cầu từ OEM.
+                </div>
+
+                <h2>5. DiagnosticSessionControl - SID 0x10</h2>
+
+                <h3>5.1. Vai trò của DiagnosticSessionControl</h3>
+
+                <p>
+                    Trong ISO 14229-1, Service <strong>DiagnosticSessionControl (SID 0x10)</strong>
+                    được sử dụng để yêu cầu ECU chuyển sang một Diagnostic Session được chỉ định.
+                </p>
+
+                <p>
+                    Đây là Application Layer Service, nhưng hành vi chuyển đổi và quản lý Session
+                    có liên quan trực tiếp đến các cơ chế của Session Layer.
+                </p>
+
+                <p>Cấu trúc Request cơ bản:</p>
+
+                <pre><code>10 [Sub-function]
+
+Ví dụ:
+
+10 01    Request Default Session
+10 02    Request Programming Session
+10 03    Request Extended Diagnostic Session
+10 04    Request Safety System Diagnostic Session</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><strong>0x10:</strong> Service Identifier của DiagnosticSessionControl.</li>
+                    <li><strong>Sub-function:</strong> Xác định loại Session mà Tester muốn yêu cầu.</li>
+                </ul>
+
+                <h3>5.2. Positive Response</h3>
+
+                <p>
+                    Nếu ECU chấp nhận yêu cầu chuyển Session, ECU sẽ gửi Positive Response.
+                    Positive Response SID của Service 0x10 là 0x50.
+                </p>
+
+                <pre><code>Request:
+10 03
+
+Response:
+50 03 [P2Server_max] [P2*Server_max]</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><strong>0x50:</strong> Positive Response SID tương ứng với Request SID 0x10.</li>
+                    <li><strong>0x03:</strong> Session được yêu cầu là Extended Diagnostic Session.</li>
+                    <li><strong>P2Server_max:</strong> Thông tin về thời gian phản hồi P2 tối đa của Server.</li>
+                    <li><strong>P2*Server_max:</strong> Thông tin về thời gian phản hồi mở rộng P2* tối đa của Server.</li>
+                </ul>
+
+                <p>
+                    Các tham số thời gian được truyền trong Response để Tester có thể sử dụng
+                    trong việc kiểm soát thời gian chờ cho các Request tiếp theo.
+                </p>
+
+                <h3>5.3. Negative Response</h3>
+
+                <p>
+                    Nếu ECU không thể chấp nhận yêu cầu chuyển Session, ECU có thể trả về
+                    Negative Response.
+                </p>
+
+                <pre><code>Request:
+10 03
+
+Negative Response:
+7F 10 12</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><strong>0x7F:</strong> Negative Response SID.</li>
+                    <li><strong>0x10:</strong> Request SID ban đầu.</li>
+                    <li><strong>0x12:</strong> NRC SubFunctionNotSupported.</li>
+                </ul>
+
+                <p>
+                    Một số NRC khác có thể xuất hiện tùy theo điều kiện xử lý và yêu cầu của ECU,
+                    chẳng hạn như ConditionsNotCorrect hoặc RequestOutOfRange.
+                </p>
+
+                <h3>5.4. Quy trình chuyển Diagnostic Session</h3>
+
+                <pre><code>       Diagnostic Tester                  ECU
+               |                           |
+               |                           |
+               |------ 10 03 -------------->|
+               |                           |
+               |                    Check requested
+               |                    Diagnostic Session
+               |                           |
+               |                    Validate conditions
+               |                           |
+               |                    Change Session
+               |                           |
+               |<----- 50 03 --------------|
+               |                           |
+               |  Update timing parameters |
+               |                           |
+               |  Send next diagnostic     |
+               |  request                  |
+               |                           |</code></pre>
+
+                <p>
+                    Lưu ý rằng việc chuyển Session không chỉ đơn giản là thay đổi một byte trạng thái.
+                    ECU còn phải thực hiện các xử lý liên quan đến quyền truy cập, điều kiện hoạt động
+                    và cấu hình của các Diagnostic Services.
+                </p>
+
+                <h2>6. Diagnostic Timing - Tổng quan</h2>
+
+                <h3>6.1. Vì sao cần quản lý thời gian?</h3>
+
+                <p>
+                    Khi Tester gửi một Diagnostic Request, ECU cần có một khoảng thời gian nhất định
+                    để xử lý yêu cầu và gửi Response.
+                </p>
+
+                <p>
+                    Thời gian xử lý có thể khác nhau tùy theo loại Service.
+                    Một số Request chỉ cần đọc dữ liệu có sẵn, trong khi những Request khác có thể
+                    cần thực hiện nhiều thao tác nội bộ hoặc chờ phần cứng phản hồi.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <ul>
+                    <li>Đọc một DID đơn giản có thể được xử lý tương đối nhanh.</li>
+                    <li>Thực hiện một Routine có thể cần nhiều thời gian xử lý hơn.</li>
+                    <li>Một số thao tác liên quan đến bộ nhớ hoặc lập trình ECU có thể cần thời gian dài.</li>
+                </ul>
+
+                <p>
+                    Nếu Tester không có cơ chế kiểm soát thời gian, Tester có thể kết luận sai
+                    rằng ECU không phản hồi hoặc giao tiếp đã gặp lỗi.
+                </p>
+
+                <h3>6.2. Các tham số thời gian quan trọng</h3>
+
+                <p>
+                    Trong UDS, có một số tham số thời gian quan trọng cần phân biệt:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tham số</th>
+                            <th>Ý nghĩa tổng quát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>P2Server</td>
+                            <td>Thời gian phản hồi mà Tester chờ Response ban đầu từ ECU.</td>
+                        </tr>
+                        <tr>
+                            <td>P2*Server</td>
+                            <td>Thời gian phản hồi mở rộng khi ECU thông báo cần thêm thời gian xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>S3Server</td>
+                            <td>Thời gian giám sát việc duy trì Diagnostic Session tại ECU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong quá trình giao tiếp, Tester cũng cần sử dụng các giá trị thời gian tương ứng
+                    theo vai trò Client, chẳng hạn như P2Client và P2*Client.
+                </p>
+
+                <div class="note-box">
+                    <strong>Phân biệt vai trò:</strong>
+                    <ul>
+                        <li>Client thường là Diagnostic Tester.</li>
+                        <li>Server thường là ECU cung cấp chức năng chẩn đoán.</li>
+                        <li>P2Server và P2*Server mô tả giới hạn thời gian phản hồi từ phía ECU.</li>
+                        <li>P2Client và P2*Client liên quan đến cách Tester kiểm soát thời gian chờ.</li>
+                    </ul>
+                </div>
+
+                <h2>7. P2 Timing - Thời gian phản hồi cơ bản</h2>
+
+                <h3>7.1. P2Server là gì?</h3>
+
+                <p>
+                    <strong>P2Server</strong> là tham số thời gian liên quan đến khoảng thời gian
+                    ECU được phép sử dụng để gửi Response ban đầu sau khi nhận được Diagnostic Request.
+                </p>
+
+                <p>
+                    Khi Tester gửi Request, Tester bắt đầu theo dõi thời gian phản hồi.
+                    ECU cần gửi Response phù hợp trong khoảng thời gian P2 đã được quy định.
+                </p>
+
+                <pre><code>Diagnostic Tester                     ECU
+       |                                |
+       |---------- Request ------------>|
+       |                                |
+       |                         Process Request
+       |                                |
+       |<--------- Response ------------|
+       |                                |
+
+       |<--------- P2 ----------------->|
+
+       P2: Khoảng thời gian chờ Response
+           ban đầu theo timing parameters.</code></pre>
+
+                <h3>7.2. Ví dụ thực tế</h3>
+
+                <p>
+                    Giả sử Tester gửi yêu cầu đọc dữ liệu từ ECU bằng Service 0x22.
+                    ECU xử lý Request và trả về Response trong giới hạn P2Server.
+                </p>
+
+                <pre><code>Tester -> ECU:
+22 F1 90
+
+ECU -> Tester:
+62 F1 90 [VIN Data]</code></pre>
+
+                <p>
+                    Nếu ECU có thể hoàn thành xử lý trong khoảng thời gian P2,
+                    ECU sẽ trả về Positive Response mà không cần sử dụng cơ chế Response Pending.
+                </p>
+
+                <h3>7.3. Nếu ECU không phản hồi trong P2?</h3>
+
+                <p>
+                    Nếu thời gian chờ vượt quá giới hạn mà Tester cho phép,
+                    Tester có thể xác định rằng phản hồi đã bị timeout.
+                </p>
+
+                <p>
+                    Tuy nhiên, cần phân biệt timeout với việc ECU chủ động gửi
+                    Negative Response có NRC 0x78. Đây là hai tình huống khác nhau.
+                </p>
+
+                <h2>8. P2* Timing và Response Pending</h2>
+
+                <h3>8.1. P2*Server là gì?</h3>
+
+                <p>
+                    <strong>P2*Server</strong> là tham số thời gian phản hồi mở rộng.
+                    Nó được sử dụng khi ECU cần thêm thời gian để xử lý một Diagnostic Request.
+                </p>
+
+                <p>
+                    Thay vì để Tester chờ mà không biết trạng thái xử lý,
+                    ECU có thể gửi một Negative Response đặc biệt với NRC 0x78.
+                    Response này thông báo rằng Request đã được nhận và xử lý,
+                    nhưng ECU chưa thể hoàn thành ngay.
+                </p>
+
+                <h3>8.2. NRC 0x78 - RequestCorrectlyReceived-ResponsePending</h3>
+
+                <p>
+                    NRC <strong>0x78 - RequestCorrectlyReceived-ResponsePending</strong>
+                    được sử dụng để thông báo rằng ECU cần thêm thời gian trước khi gửi Response cuối cùng.
+                </p>
+
+                <p>Cấu trúc Response:</p>
+
+                <pre><code>7F [Request SID] 78
+
+Ví dụ:
+
+Request:
+31 01 12 34
+
+Response Pending:
+7F 31 78</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><strong>0x7F:</strong> Negative Response SID.</li>
+                    <li><strong>0x31:</strong> Request SID ban đầu là RoutineControl.</li>
+                    <li><strong>0x78:</strong> ECU đã nhận Request nhưng cần thêm thời gian xử lý.</li>
+                </ul>
+
+                <p>
+                    Sau khi nhận NRC 0x78, Tester không nên xem Request đã thất bại.
+                    Tester cần tiếp tục chờ Response cuối cùng theo P2* timing.
+                </p>
+
+                <h3>8.3. Quy trình P2 và P2*</h3>
+
+                <pre><code>       Diagnostic Tester                  ECU
+               |                           |
+               |------ Request ------------>|
+               |                           |
+               |                    Process Request
+               |                           |
+               |                    Need more time
+               |                           |
+               |<----- 7F SID 78 -----------|
+               |                           |
+               |     Start P2* waiting     |
+               |                           |
+               |                    Continue processing
+               |                           |
+               |<----- Final Response -----|
+               |                           |
+               |     Request completed     |</code></pre>
+
+                <h3>8.4. Ví dụ với RoutineControl</h3>
+
+                <p>
+                    Giả sử Tester yêu cầu ECU thực hiện một Routine bằng Service 0x31.
+                    Routine này cần thời gian để hoàn thành.
+                </p>
+
+                <pre><code>Tester -> ECU:
+31 01 12 34
+
+ECU -> Tester:
+7F 31 78
+
+ECU continues processing...
+
+ECU -> Tester:
+71 01 12 34 [Routine Result]</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li>0x31 là Request SID của RoutineControl.</li>
+                    <li>0x01 là StartRoutine Sub-function.</li>
+                    <li>0x12 0x34 là ví dụ Routine Identifier.</li>
+                    <li>0x78 thông báo ECU cần thêm thời gian.</li>
+                    <li>0x71 là Positive Response SID của RoutineControl.</li>
+                </ul>
+
+                <div class="note-box">
+                    <strong>Điểm cần nhớ:</strong>
+                    NRC 0x78 không phải là một Response cuối cùng thông báo Request thất bại.
+                    Nó cho biết ECU đã nhận Request và đang cần thêm thời gian.
+                    Tester cần chờ kết quả cuối cùng theo cơ chế timing phù hợp.
+                </div>
+
+                <h2>9. S3 Timing - Duy trì Diagnostic Session</h2>
+
+                <h3>9.1. S3Server là gì?</h3>
+
+                <p>
+                    <strong>S3Server</strong> là tham số thời gian liên quan đến việc duy trì
+                    Diagnostic Session tại ECU.
+                </p>
+
+                <p>
+                    Khi ECU đang ở một Session khác Default Session,
+                    ECU cần biết Tester có còn duy trì hoạt động chẩn đoán hay không.
+                </p>
+
+                <p>
+                    Nếu không nhận được thông tin duy trì phiên trong khoảng thời gian được quy định,
+                    ECU có thể kết thúc Session hiện tại và quay về Default Session.
+                </p>
+
+                <h3>9.2. Vì sao cần S3Server?</h3>
+
+                <p>
+                    Hãy tưởng tượng Tester yêu cầu ECU chuyển sang Extended Diagnostic Session,
+                    sau đó Tester không gửi thêm bất kỳ Diagnostic Request nào.
+                </p>
+
+                <p>
+                    Nếu ECU giữ nguyên Session này vô thời hạn, các chức năng chẩn đoán đặc biệt
+                    có thể tiếp tục được duy trì dù Tester đã ngừng giao tiếp.
+                </p>
+
+                <p>
+                    S3Server giúp ECU có cơ chế kiểm soát thời gian duy trì Session
+                    và tự động quay về trạng thái mặc định khi không còn hoạt động chẩn đoán phù hợp.
+                </p>
+
+                <h3>9.3. Minh họa S3Server Timeout</h3>
+
+                <pre><code>       Diagnostic Tester                  ECU
+               |                           |
+               |------ 10 03 -------------->|
+               |                           |
+               |<----- 50 03 --------------|
+               |                           |
+               |                    Extended Session
+               |                           |
+               |                           |
+               |        No diagnostic      |
+               |        communication      |
+               |                           |
+               |                    S3Server timeout
+               |                           |
+               |                    Return to Default
+               |                    Session
+               |                           |</code></pre>
+
+                <p>
+                    S3Server không phải là thời gian chờ Response của một Request riêng lẻ.
+                    Nó là cơ chế giám sát việc duy trì Diagnostic Session.
+                </p>
+
+                <h2>10. TesterPresent - SID 0x3E</h2>
+
+                <h3>10.1. TesterPresent là gì?</h3>
+
+                <p>
+                    <strong>TesterPresent (SID 0x3E)</strong> là một Diagnostic Service
+                    được sử dụng để thông báo với ECU rằng Tester vẫn đang hoạt động
+                    và muốn duy trì phiên chẩn đoán.
+                </p>
+
+                <p>
+                    Service này đặc biệt hữu ích khi Tester cần thực hiện nhiều thao tác
+                    nhưng giữa các thao tác có thể xuất hiện khoảng thời gian chờ.
+                </p>
+
+                <p>Cấu trúc Request phổ biến:</p>
+
+                <pre><code>3E 00
+
+Trong đó:
+
+3E : TesterPresent SID
+00 : Zero Sub-function</code></pre>
+
+                <h3>10.2. Positive Response</h3>
+
+                <p>
+                    Khi ECU xử lý TesterPresent và gửi Positive Response,
+                    Response SID tương ứng là 0x7E.
+                </p>
+
+                <pre><code>Tester -> ECU:
+3E 00
+
+ECU -> Tester:
+7E 00</code></pre>
+
+                <h3>10.3. Suppress Positive Response</h3>
+
+                <p>
+                    TesterPresent cũng có thể được gửi với Suppress Positive Response Message Indication Bit
+                    được bật, nếu hành vi này được hỗ trợ.
+                </p>
+
+                <pre><code>3E 80</code></pre>
+
+                <p>
+                    Trong trường hợp này, Tester yêu cầu ECU không gửi Positive Response thông thường
+                    cho Request đó.
+                </p>
+
+                <p>
+                    Việc không nhận Positive Response trong trường hợp này không đồng nghĩa với việc
+                    ECU không nhận được Request.
+                </p>
+
+                <h3>10.4. TesterPresent và S3Server</h3>
+
+                <p>
+                    TesterPresent thường được sử dụng để duy trì Diagnostic Session.
+                    Khi ECU nhận được một thông điệp phù hợp để duy trì phiên,
+                    cơ chế giám sát Session có thể được cập nhật theo quy định của giao thức.
+                </p>
+
+                <pre><code>       Diagnostic Tester                  ECU
+               |                           |
+               |------ 10 03 -------------->|
+               |                           |
+               |<----- 50 03 --------------|
+               |                           |
+               |                    Extended Session
+               |                           |
+               |------ 3E 00 -------------->|
+               |                           |
+               |<----- 7E 00 --------------|
+               |                           |
+               |                    Maintain Session
+               |                           |
+               |------ 3E 00 -------------->|
+               |                           |
+               |<----- 7E 00 --------------|
+               |                           |
+               |                    Session remains active
+               |</code></pre>
+
+                <h3>10.5. TesterPresent trong thực tế</h3>
+
+                <p>
+                    Khi sử dụng Diagnostic Tester, công cụ chẩn đoán có thể tự động gửi TesterPresent
+                    theo chu kỳ phù hợp trong quá trình thực hiện các thao tác chẩn đoán.
+                </p>
+
+                <p>
+                    Điều này giúp tránh việc Session bị timeout khi Tester cần thời gian
+                    để thực hiện các bước tiếp theo.
+                </p>
+
+                <div class="note-box">
+                    <strong>Lưu ý:</strong>
+                    Không nên mặc định một chu kỳ TesterPresent cố định cho mọi ECU.
+                    Chu kỳ gửi cần được thiết lập dựa trên S3Server timing và yêu cầu của dự án.
+                </div>
+
+                <h2>11. Kết hợp Diagnostic Session và Timing</h2>
+
+                <p>
+                    Các cơ chế Session Management và Timing Management hoạt động cùng nhau
+                    trong suốt quá trình chẩn đoán.
+                </p>
+
+                <p>
+                    Ví dụ, khi Tester chuyển ECU sang Extended Diagnostic Session,
+                    ECU trả về các tham số P2 và P2* để Tester sử dụng trong những Request tiếp theo.
+                    Trong thời gian duy trì Session, Tester có thể gửi TesterPresent
+                    để tránh S3Server timeout.
+                </p>
+
+                <h3>11.1. Một quy trình chẩn đoán tổng quát</h3>
+
+                <pre><code>       Diagnostic Tester                  ECU
+               |                           |
+               |------ 10 03 -------------->|
+               |                           |
+               |<----- 50 03 --------------|
+               |                           |
+               |   Update P2 / P2* timing  |
+               |                           |
+               |------ 22 F1 90 ---------->|
+               |                           |
+               |<----- 62 F1 90 ... --------|
+               |                           |
+               |------ 3E 00 -------------->|
+               |                           |
+               |<----- 7E 00 --------------|
+               |                           |
+               |------ 31 01 ... ---------->|
+               |                           |
+               |<----- 7F 31 78 ------------|
+               |                           |
+               |        Wait P2*           |
+               |                           |
+               |<----- 71 01 ... -----------|
+               |                           |
+               |                           |
+               |     Diagnostic tasks      |
+               |     completed              |
+               |                           |
+               |                    S3Server timeout
+               |                           |
+               |                    Default Session
+               |                           |</code></pre>
+
+                <h3>11.2. Vai trò của từng cơ chế</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cơ chế</th>
+                            <th>Vai trò trong quy trình</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DiagnosticSessionControl</td>
+                            <td>Yêu cầu ECU chuyển sang Session cần thiết.</td>
+                        </tr>
+                        <tr>
+                            <td>P2</td>
+                            <td>Kiểm soát thời gian chờ Response ban đầu.</td>
+                        </tr>
+                        <tr>
+                            <td>P2*</td>
+                            <td>Kiểm soát thời gian chờ mở rộng khi ECU gửi Response Pending.</td>
+                        </tr>
+                        <tr>
+                            <td>TesterPresent</td>
+                            <td>Duy trì hoạt động chẩn đoán trong Session.</td>
+                        </tr>
+                        <tr>
+                            <td>S3Server</td>
+                            <td>Giám sát thời gian duy trì Session tại ECU.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>12. Liên hệ với AUTOSAR Diagnostic Communication Manager</h2>
+
+                <h3>12.1. DCM trong AUTOSAR Classic</h3>
+
+                <p>
+                    Trong AUTOSAR Classic, <strong>Diagnostic Communication Manager (DCM)</strong>
+                    là một Basic Software module đảm nhiệm việc xử lý các yêu cầu chẩn đoán
+                    theo cấu hình của ECU.
+                </p>
+
+                <p>
+                    DCM có trách nhiệm xử lý nhiều khía cạnh của UDS,
+                    bao gồm tiếp nhận Diagnostic Request, quản lý Diagnostic Session,
+                    kiểm soát Security Access và xử lý các Diagnostic Services được cấu hình.
+                </p>
+
+                <h3>12.2. Vai trò của DSL, DSD và DSP</h3>
+
+                <p>
+                    DCM thường được tìm hiểu thông qua ba thành phần chính:
+                </p>
+
+                <pre><code>                DCM
+                 |
+      +----------+----------+
+      |          |          |
+     DSL        DSD        DSP
+      |          |          |
+      |          |          |
+  Session    Service     Service
+  & Timing   Dispatch    Processing
+  Management              |
+                          |
+                   Diagnostic Service
+                   Implementation</code></pre>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DSL - Diagnostic Session Layer</td>
+                            <td>Quản lý các khía cạnh liên quan đến Diagnostic Session, timing và luồng giao tiếp chẩn đoán.</td>
+                        </tr>
+                        <tr>
+                            <td>DSD - Diagnostic Service Dispatcher</td>
+                            <td>Phân phối Request đến Service Handler tương ứng và kiểm tra các điều kiện xử lý liên quan.</td>
+                        </tr>
+                        <tr>
+                            <td>DSP - Diagnostic Service Processing</td>
+                            <td>Thực hiện xử lý các Diagnostic Services theo cấu hình.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>12.3. Session Layer và DCM DSL</h3>
+
+                <p>
+                    Trong AUTOSAR Classic, DCM DSL có vai trò quan trọng trong việc triển khai
+                    các chức năng quản lý Session và Timing.
+                </p>
+
+                <p>Một số trách nhiệm liên quan có thể bao gồm:</p>
+
+                <ul>
+                    <li>Quản lý trạng thái Diagnostic Session hiện tại.</li>
+                    <li>Phối hợp xử lý yêu cầu chuyển Session.</li>
+                    <li>Quản lý các tham số thời gian phản hồi.</li>
+                    <li>Quản lý cơ chế duy trì Diagnostic Session.</li>
+                    <li>Phối hợp xử lý Response Pending và luồng truyền nhận Diagnostic Message.</li>
+                </ul>
+
+                <h3>12.4. Luồng xử lý minh họa trong AUTOSAR</h3>
+
+                <pre><code>Diagnostic Tester
+       |
+       |
+       v
+Communication Bus
+       |
+       v
+CanTp / DoIP Transport
+       |
+       v
+PduR
+       |
+       v
+DCM
+       |
+       +----------------------+
+       |                      |
+       v                      v
+      DSL                    DSD
+       |                      |
+       |                      v
+       |                     DSP
+       |                      |
+       |                      v
+       |               Diagnostic Service
+       |                 Processing
+       |                      |
+       +----------------------+
+                  |
+                  v
+             DCM Response
+                  |
+                  v
+                PduR
+                  |
+                  v
+             Transport Layer
+                  |
+                  v
+           Diagnostic Tester</code></pre>
+
+                <p>
+                    Sơ đồ trên thể hiện luồng tổng quát để hình dung vị trí của DCM
+                    trong Diagnostic Communication Stack.
+                    Cách triển khai cụ thể và phân chia trách nhiệm nội bộ phụ thuộc
+                    vào phiên bản AUTOSAR và cấu hình của dự án.
+                </p>
+
+                <div class="note-box">
+                    <strong>Liên hệ với các bài học trước:</strong>
+                    <ul>
+                        <li>Bài 25: Tổng quan Diagnostic Communication Manager.</li>
+                        <li>Bài 26: Chi tiết DCM - Diagnostic Session Layer.</li>
+                        <li>Bài 27: Chi tiết DCM - Diagnostic Service Dispatcher.</li>
+                        <li>Bài 28: Chi tiết DCM - Diagnostic Service Processing.</li>
+                    </ul>
+                    Những bài này giúp hiểu cách các khái niệm UDS được triển khai
+                    trong AUTOSAR Classic.
+                </div>
+
+                <h2>13. Những điểm cần lưu ý khi làm việc với UDS Session Layer</h2>
+
+                <h3>13.1. Không phải ECU nào cũng hỗ trợ mọi Session</h3>
+
+                <p>
+                    Mỗi ECU có chức năng và yêu cầu chẩn đoán khác nhau.
+                    Vì vậy, không nên giả định rằng tất cả ECU đều hỗ trợ Programming Session,
+                    Extended Diagnostic Session hoặc Safety System Diagnostic Session.
+                </p>
+
+                <h3>13.2. Session và Security Access là hai khái niệm khác nhau</h3>
+
+                <p>
+                    Diagnostic Session xác định trạng thái chẩn đoán và phạm vi chức năng
+                    có thể được phép sử dụng.
+                </p>
+
+                <p>
+                    SecurityAccess (SID 0x27) là một Diagnostic Service riêng,
+                    được sử dụng để kiểm soát quyền truy cập thông qua cơ chế xác thực
+                    do hệ thống quy định.
+                </p>
+
+                <p>
+                    Một Service có thể yêu cầu ECU đang ở đúng Session và đồng thời
+                    phải đáp ứng điều kiện Security Access.
+                    Chuyển sang một Session khác không đồng nghĩa với việc tự động
+                    được cấp mọi quyền truy cập.
+                </p>
+
+                <h3>13.3. Không nhầm P2/P2* với S3</h3>
+
+                <p>
+                    Đây là lỗi dễ gặp khi mới tìm hiểu UDS:
+                </p>
+
+                <ul>
+                    <li>P2/P2* liên quan đến thời gian chờ Response của Diagnostic Request.</li>
+                    <li>S3Server liên quan đến thời gian duy trì Diagnostic Session.</li>
+                </ul>
+
+                <p>
+                    Hai nhóm tham số này có mục đích khác nhau và không thể thay thế cho nhau.
+                </p>
+
+                <h3>13.4. Timing phải được cấu hình phù hợp</h3>
+
+                <p>
+                    Timing parameters cần được thiết lập dựa trên yêu cầu của ECU,
+                    Diagnostic Specification và cấu hình dự án.
+                    Không nên sử dụng một giá trị timeout tùy ý cho mọi Diagnostic Service.
+                </p>
+
+                <h3>13.5. Phân biệt timeout và NRC 0x78</h3>
+
+                <p>
+                    Khi ECU gửi NRC 0x78, ECU đang thông báo rằng Request cần thêm thời gian xử lý.
+                    Đây không phải là tình huống giống với việc Tester chờ quá thời gian
+                    mà không nhận được Response phù hợp.
+                </p>
+
+                <h2>14. Ví dụ thực tế: Phân tích Diagnostic Session trong CAN Trace</h2>
+
+                <p>
+                    Khi sử dụng công cụ phân tích CAN hoặc Diagnostic Tester,
+                    kỹ sư Embedded có thể quan sát các Diagnostic Message để xác định
+                    Session hiện tại và trạng thái xử lý của ECU.
+                </p>
+
+                <p>
+                    Ví dụ dưới đây minh họa một chuỗi giao tiếp UDS trên CAN.
+                    Giả sử sử dụng ISO-TP Normal Addressing và các thông điệp ngắn
+                    được truyền trong Single Frame.
+                </p>
+
+                <h3>14.1. Yêu cầu chuyển sang Extended Session</h3>
+
+                <pre><code>CAN Data:
+03 10 03 00 00 00 00 00
+
+ISO-TP:
+03          Single Frame, UDS payload length = 3
+10 03       DiagnosticSessionControl Request</code></pre>
+
+                <p>
+                    ECU phản hồi:
+                </p>
+
+                <pre><code>CAN Data:
+06 50 03 xx xx yy yy 00
+
+ISO-TP:
+06          Single Frame, UDS payload length = 6
+50 03       Positive Response
+xx xx       P2Server timing information
+yy yy       P2*Server timing information</code></pre>
+
+                <p>
+                    Các byte timing ở trên chỉ là ký hiệu minh họa,
+                    không phải giá trị thời gian cụ thể.
+                </p>
+
+                <h3>14.2. Gửi TesterPresent</h3>
+
+                <pre><code>Tester -> ECU:
+
+02 3E 00 00 00 00 00 00
+
+ISO-TP:
+02          Single Frame, UDS payload length = 2
+3E 00       TesterPresent Request</code></pre>
+
+                <p>ECU phản hồi:</p>
+
+                <pre><code>02 7E 00 00 00 00 00 00
+
+ISO-TP:
+02          Single Frame, UDS payload length = 2
+7E 00       TesterPresent Positive Response</code></pre>
+
+                <h3>14.3. Quan sát Response Pending</h3>
+
+                <pre><code>Tester -> ECU:
+
+04 31 01 12 34 00 00 00
+
+ISO-TP:
+04          Single Frame, UDS payload length = 4
+31 01 12 34 RoutineControl Request
+
+ECU -> Tester:
+
+03 7F 31 78 00 00 00 00
+
+ISO-TP:
+03          Single Frame, UDS payload length = 3
+7F 31 78    Negative Response - Response Pending</code></pre>
+
+                <p>
+                    Khi thấy NRC 0x78 trong CAN Trace, kỹ sư cần hiểu rằng ECU đã nhận
+                    Request nhưng chưa hoàn thành xử lý.
+                    Tester cần tiếp tục chờ Response cuối cùng theo P2* timing.
+                </p>
+
+                <div class="note-box">
+                    <strong>Điểm quan trọng khi đọc CAN Trace:</strong>
+                    Byte đầu tiên của ví dụ trên là ISO-TP Protocol Control Information (PCI),
+                    không phải UDS SID.
+                    Sau khi Transport Layer xử lý và tái tạo UDS Message,
+                    các byte UDS mới được chuyển đến Diagnostic Application.
+                </div>
+
+                <h2>15. Tổng kết bài học</h2>
+
+                <p>
+                    Qua bài học này, chúng ta đã tìm hiểu vai trò của
+                    <strong>ISO 14229-2 - UDS Session Layer</strong> trong kiến trúc UDS.
+                    Đây là tầng có nhiệm vụ quản lý các cơ chế liên quan đến phiên chẩn đoán
+                    và thời gian giao tiếp.
+                </p>
+
+                <p>Những kiến thức quan trọng cần ghi nhớ:</p>
+
+                <ul>
+                    <li>ISO 14229-2 mô tả các chức năng thuộc UDS Session Layer.</li>
+                    <li>Application Layer định nghĩa Diagnostic Services, còn Session Layer quản lý các cơ chế phiên và thời gian.</li>
+                    <li>DiagnosticSessionControl (SID 0x10) được dùng để yêu cầu chuyển Diagnostic Session.</li>
+                    <li>Các Session phổ biến gồm Default, Programming, Extended và Safety System Diagnostic Session.</li>
+                    <li>P2Server liên quan đến thời gian phản hồi ban đầu của ECU.</li>
+                    <li>P2*Server liên quan đến thời gian phản hồi mở rộng khi ECU cần thêm thời gian.</li>
+                    <li>NRC 0x78 thông báo Request đã được nhận nhưng Response cuối cùng chưa sẵn sàng.</li>
+                    <li>S3Server giám sát thời gian duy trì Diagnostic Session.</li>
+                    <li>TesterPresent (SID 0x3E) thường được dùng để duy trì phiên chẩn đoán.</li>
+                    <li>Trong AUTOSAR Classic, DCM DSL đảm nhiệm nhiều chức năng liên quan đến Session và Timing Management.</li>
+                </ul>
+
+                <h3>Kiểm tra kiến thức</h3>
+
+                <ol>
+                    <li>ISO 14229-2 định nghĩa chức năng gì trong kiến trúc UDS?</li>
+                    <li>Application Layer và Session Layer khác nhau như thế nào?</li>
+                    <li>DiagnosticSessionControl (SID 0x10) được sử dụng để làm gì?</li>
+                    <li>Programming Session và Extended Diagnostic Session có mục đích gì?</li>
+                    <li>P2Server và P2*Server khác nhau như thế nào?</li>
+                    <li>NRC 0x78 có ý nghĩa gì? Tester cần xử lý Response này như thế nào?</li>
+                    <li>S3Server được sử dụng để kiểm soát điều gì?</li>
+                    <li>TesterPresent (SID 0x3E) có vai trò gì trong việc duy trì Diagnostic Session?</li>
+                    <li>Vì sao chuyển sang Extended Session không đồng nghĩa với việc ECU cấp mọi quyền truy cập?</li>
+                    <li>Trong AUTOSAR Classic, thành phần nào của DCM liên quan nhiều đến Session và Timing Management?</li>
+                </ol>
+
+                <div class="lesson-navigation">
+                    <h3>Bài học tiếp theo</h3>
+
+                    <p>
+                        Ở bài tiếp theo, chúng ta sẽ tìm hiểu
+                        <strong>ISO 14229-3 - UDS on CAN</strong>.
+                        Nội dung sẽ tập trung vào cách triển khai UDS trên mạng CAN,
+                        mối quan hệ giữa UDS và CAN Transport Protocol,
+                        cũng như cách Diagnostic Message được truyền giữa Tester và ECU.
+                    </p>
+
+                    <a href="lesson-40.html" class="btn">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN →</a>
+                </div>
+
+            </article>
+
+            <div class="lesson-pager">
+                <a href="lesson-38.html" class="btn">← Bài trước</a>
+                <a href="lesson-40.html" class="btn">Bài tiếp theo →</a>
+            </div>
+
+        </main>
+
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>EmLearn - 2026</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

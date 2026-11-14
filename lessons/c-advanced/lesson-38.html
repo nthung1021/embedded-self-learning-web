@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer | Tự học Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
+                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
+                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
+                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
+                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
+                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
+                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
+                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
+                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
+                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
+                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
+                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
+                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
+                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
+                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
+                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
+                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
+                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
+                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
+                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
+                <a href="lesson-21.html">Bài 21: MCAL</a>
+                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
+                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
+                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
+                <a href="lesson-25.html">Bài 25: Diagnostic Communication Manager (DCM)</a>
+                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
+                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
+                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
+                <a href="lesson-29.html">Bài 29: DCM Generator</a>
+                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
+                <a href="lesson-31.html">Bài 31: UDS</a>
+                <a href="lesson-32.html">Bài 32: OBD</a>
+                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
+                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
+                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
+                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
+                <a href="lesson-37.html">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
+                <a href="lesson-38.html" class="active" aria-current="page">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
+                <a href="lesson-39.html">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer</a>
+                <a href="lesson-40.html">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN</a>
+                <a href="lesson-41.html">Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP)</a>
+                <a href="lesson-42.html">Bài 42: Tổng quan bộ tiêu chuẩn ISO 15031</a>
+                <a href="lesson-43.html">Bài 43: Tổng quan ISO 26262 - Functional Safety</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</h1>
+
+                <p>
+                    Trong các hệ thống Automotive, Diagnostic Tester được sử dụng
+                    để giao tiếp với ECU nhằm đọc thông tin, kiểm tra trạng thái,
+                    truy xuất dữ liệu, xóa lỗi và thực hiện các thao tác bảo dưỡng
+                    hoặc lập trình cần thiết.
+                </p>
+
+                <p>
+                    Để các thiết bị chẩn đoán và ECU có thể giao tiếp theo một
+                    quy tắc thống nhất, ngành Automotive sử dụng giao thức
+                    <strong>UDS (Unified Diagnostic Services)</strong>.
+                    Giao thức này định nghĩa các dịch vụ chẩn đoán mà Client
+                    có thể yêu cầu và Server phải xử lý.
+                </p>
+
+                <p>
+                    Phần Application Layer của UDS được quy định trong
+                    <strong>ISO 14229-1 - Road vehicles - Unified diagnostic
+                    services (UDS) - Part 1: Application layer</strong>.
+                    Tiêu chuẩn này mô tả cấu trúc Diagnostic Message,
+                    các Diagnostic Services, cách xử lý Request và Response,
+                    cũng như những quy tắc giao tiếp giữa Client và Server.
+                </p>
+
+                <p>
+                    Khác với ISO 15765-2 tập trung vào việc truyền dữ liệu
+                    qua CAN, ISO 14229-1 tập trung vào nội dung và ý nghĩa
+                    của các yêu cầu chẩn đoán.
+                </p>
+
+                <div class="note">
+                    <strong>Phạm vi bài học:</strong>
+                    Bài này tập trung vào ISO 14229-1, UDS Application Layer,
+                    Client/Server Model, Diagnostic Request, Positive Response,
+                    Negative Response, Service Identifier (SID), Sub-function,
+                    Data Identifier (DID), Negative Response Code (NRC),
+                    Diagnostic Session, Security Access và các nhóm
+                    Diagnostic Services quan trọng.
+                    Bài học cũng giới thiệu cách đọc UDS Message,
+                    phân tích Diagnostic Trace và mối quan hệ giữa
+                    UDS Application Layer với AUTOSAR DCM.
+                </div>
+
+
+                <h2>1. ISO 14229-1 là gì?</h2>
+
+                <h3>1.1. Khái niệm</h3>
+
+                <p>
+                    <strong>ISO 14229-1</strong> là một phần của bộ tiêu chuẩn
+                    Unified Diagnostic Services (UDS), định nghĩa các chức năng
+                    và dịch vụ chẩn đoán ở Application Layer dành cho
+                    các phương tiện giao thông đường bộ.
+                </p>
+
+                <p>
+                    Tiêu chuẩn này quy định cách một thiết bị chẩn đoán
+                    gửi yêu cầu đến ECU, cách ECU xử lý yêu cầu và cách ECU
+                    phản hồi kết quả cho thiết bị chẩn đoán.
+                </p>
+
+                <p>
+                    Thay vì mỗi nhà sản xuất tự xây dựng một tập lệnh
+                    chẩn đoán hoàn toàn khác nhau, UDS cung cấp một bộ
+                    Diagnostic Services có cấu trúc và quy tắc chung.
+                </p>
+
+                <p>
+                    Nhờ đó, Diagnostic Tester có thể sử dụng các dịch vụ
+                    tiêu chuẩn để tương tác với nhiều loại ECU khác nhau,
+                    miễn là những ECU đó hỗ trợ các dịch vụ tương ứng
+                    theo cấu hình và yêu cầu của nhà sản xuất.
+                </p>
+
+                <h3>1.2. Tên đầy đủ của tiêu chuẩn</h3>
+
+                <div class="note">
+                    <strong>ISO 14229-1</strong><br>
+                    Road vehicles - Unified diagnostic services (UDS) -
+                    Part 1: Application layer.
+                </div>
+
+                <p>
+                    ISO 14229 được chia thành nhiều phần để mô tả
+                    các khía cạnh khác nhau của hệ thống UDS.
+                    Trong đó, Part 1 tập trung vào Application Layer,
+                    nơi định nghĩa các Diagnostic Services và cấu trúc
+                    dữ liệu request/response.
+                </p>
+
+                <h3>1.3. Phạm vi của ISO 14229-1</h3>
+
+                <p>
+                    ISO 14229-1 định nghĩa các dịch vụ chẩn đoán mà
+                    Client có thể yêu cầu từ Server.
+                    Những dịch vụ này phục vụ nhiều mục đích khác nhau:
+                </p>
+
+                <ul>
+                    <li>Chuyển đổi Diagnostic Session.</li>
+                    <li>Đọc dữ liệu và thông tin của ECU.</li>
+                    <li>Đọc thông tin lỗi chẩn đoán.</li>
+                    <li>Xóa thông tin lỗi được lưu trữ.</li>
+                    <li>Điều khiển một số chức năng của ECU.</li>
+                    <li>Thực hiện các Routine phục vụ kiểm tra hoặc bảo dưỡng.</li>
+                    <li>Kiểm soát quyền truy cập vào các chức năng được bảo vệ.</li>
+                    <li>Thực hiện các thao tác liên quan đến Download và Upload dữ liệu.</li>
+                    <li>Kiểm tra khả năng giao tiếp và trạng thái của ECU.</li>
+                </ul>
+
+                <p>
+                    Tiêu chuẩn cũng định nghĩa cách biểu diễn
+                    Positive Response và Negative Response,
+                    giúp Client xác định kết quả xử lý của từng yêu cầu.
+                </p>
+
+                <h3>1.4. Quan hệ với các phần khác của ISO 14229</h3>
+
+                <p>
+                    ISO 14229 không chỉ bao gồm Application Layer.
+                    Các phần khác của bộ tiêu chuẩn mô tả những khía cạnh
+                    bổ sung để hình thành một hệ thống UDS hoàn chỉnh.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tiêu chuẩn</th>
+                        <th>Phạm vi chính</th>
+                    </tr>
+                    <tr>
+                        <td>ISO 14229-1</td>
+                        <td>UDS Application Layer và Diagnostic Services.</td>
+                    </tr>
+                    <tr>
+                        <td>ISO 14229-2</td>
+                        <td>UDS Session Layer Services.</td>
+                    </tr>
+                    <tr>
+                        <td>ISO 14229-3</td>
+                        <td>UDS trên CAN, dựa trên các yêu cầu giao thức tương ứng.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Trong các bài tiếp theo, chúng ta sẽ tìm hiểu sâu hơn
+                    về ISO 14229-2 và ISO 14229-3 để hiểu rõ cách UDS
+                    phối hợp với các tầng giao tiếp bên dưới.
+                </p>
+
+
+                <h2>2. Vai trò của UDS Application Layer</h2>
+
+                <h3>2.1. Vấn đề cần giải quyết</h3>
+
+                <p>
+                    Một ECU Automotive có thể cần hỗ trợ nhiều chức năng
+                    chẩn đoán khác nhau. Ví dụ, kỹ thuật viên cần đọc
+                    mã lỗi, kiểm tra phiên bản phần mềm, xem dữ liệu cảm biến
+                    hoặc thực hiện một số thao tác bảo dưỡng.
+                </p>
+
+                <p>
+                    Nếu mỗi chức năng được triển khai bằng một giao thức
+                    riêng biệt, Diagnostic Tester sẽ phải hiểu nhiều
+                    định dạng giao tiếp khác nhau.
+                </p>
+
+                <p>
+                    Điều này làm tăng độ phức tạp trong quá trình phát triển
+                    và bảo trì hệ thống chẩn đoán.
+                </p>
+
+                <h3>2.2. Giải pháp của UDS</h3>
+
+                <p>
+                    UDS cung cấp một tập hợp Diagnostic Services
+                    với cấu trúc Request và Response thống nhất.
+                </p>
+
+                <p>
+                    Mỗi dịch vụ được xác định bằng một
+                    <strong>Service Identifier (SID)</strong>.
+                    Client gửi SID để yêu cầu một chức năng cụ thể,
+                    còn Server xử lý và trả về kết quả tương ứng.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>0x22: ReadDataByIdentifier.</li>
+                    <li>0x19: ReadDTCInformation.</li>
+                    <li>0x14: ClearDiagnosticInformation.</li>
+                    <li>0x10: DiagnosticSessionControl.</li>
+                    <li>0x2E: WriteDataByIdentifier.</li>
+                </ul>
+
+                <p>
+                    Nhờ cách tổ chức này, Client có thể sử dụng cùng
+                    một quy tắc giao tiếp để yêu cầu nhiều chức năng
+                    chẩn đoán khác nhau.
+                </p>
+
+                <h3>2.3. Vai trò của Application Layer</h3>
+
+                <p>
+                    UDS Application Layer chịu trách nhiệm xác định
+                    ý nghĩa của thông điệp chẩn đoán.
+                </p>
+
+                <p>
+                    Ví dụ, khi nhận được Request có SID 0x22,
+                    ECU hiểu rằng Client đang yêu cầu đọc dữ liệu
+                    thông qua Data Identifier.
+                </p>
+
+                <p>
+                    Application Layer không trực tiếp quyết định
+                    CAN Identifier hoặc cách chia nhỏ dữ liệu thành
+                    nhiều CAN Frame. Những chức năng đó thuộc về
+                    các tầng giao tiếp bên dưới.
+                </p>
+
+
+                <h2>3. Client/Server Model</h2>
+
+                <h3>3.1. Client là gì?</h3>
+
+                <p>
+                    <strong>Client</strong> là thiết bị hoặc thành phần
+                    khởi tạo yêu cầu chẩn đoán.
+                </p>
+
+                <p>
+                    Trong hệ thống Automotive, Client thường là
+                    Diagnostic Tester hoặc một thiết bị chẩn đoán
+                    được sử dụng trong quá trình phát triển,
+                    kiểm thử hoặc bảo dưỡng phương tiện.
+                </p>
+
+                <p>
+                    Client có thể gửi các yêu cầu như:
+                </p>
+
+                <ul>
+                    <li>Yêu cầu ECU chuyển sang Diagnostic Session khác.</li>
+                    <li>Yêu cầu đọc một Data Identifier.</li>
+                    <li>Yêu cầu đọc thông tin Diagnostic Trouble Code.</li>
+                    <li>Yêu cầu xóa thông tin lỗi.</li>
+                    <li>Yêu cầu thực hiện một Routine.</li>
+                </ul>
+
+                <h3>3.2. Server là gì?</h3>
+
+                <p>
+                    <strong>Server</strong> là thiết bị nhận và xử lý
+                    các yêu cầu chẩn đoán từ Client.
+                </p>
+
+                <p>
+                    Trong hệ thống UDS, Server thường là ECU cần được
+                    kiểm tra hoặc chẩn đoán.
+                </p>
+
+                <p>
+                    Server có trách nhiệm kiểm tra Request,
+                    xác định dịch vụ được yêu cầu, kiểm tra các điều kiện
+                    thực hiện và gửi Response phù hợp.
+                </p>
+
+                <h3>3.3. Luồng giao tiếp Client/Server</h3>
+
+                <pre><code>Diagnostic Tester (Client)
+          |
+          | Diagnostic Request
+          v
+      Communication
+          |
+          v
+       ECU (Server)
+          |
+          | Validate Request
+          | Execute Service
+          | Prepare Response
+          |
+          v
+      Communication
+          |
+          | Diagnostic Response
+          v
+Diagnostic Tester (Client)</code></pre>
+
+                <p>
+                    Một chu trình giao tiếp thông thường gồm:
+                </p>
+
+                <ol>
+                    <li>Client tạo Diagnostic Request.</li>
+                    <li>Request được truyền đến ECU.</li>
+                    <li>Server kiểm tra tính hợp lệ của Request.</li>
+                    <li>Server kiểm tra điều kiện thực hiện dịch vụ.</li>
+                    <li>Server thực hiện chức năng được yêu cầu nếu hợp lệ.</li>
+                    <li>Server tạo Response và gửi lại Client.</li>
+                    <li>Client phân tích Response để xác định kết quả.</li>
+                </ol>
+
+                <h3>3.4. Ví dụ thực tế</h3>
+
+                <p>
+                    Giả sử kỹ thuật viên muốn đọc thông tin phiên bản
+                    phần mềm của một ECU.
+                </p>
+
+                <p>
+                    Diagnostic Tester đóng vai trò Client và gửi
+                    một ReadDataByIdentifier Request đến ECU.
+                    ECU đóng vai trò Server, kiểm tra DID được yêu cầu
+                    và trả về dữ liệu tương ứng nếu dịch vụ được hỗ trợ
+                    và các điều kiện cần thiết được đáp ứng.
+                </p>
+
+                <p>
+                    Client sau đó phân tích Response để lấy thông tin
+                    phiên bản phần mềm.
+                </p>
+
+
+                <h2>4. Cấu trúc Diagnostic Message</h2>
+
+                <h3>4.1. Diagnostic Request</h3>
+
+                <p>
+                    Diagnostic Request là thông điệp được Client gửi đến
+                    Server để yêu cầu một Diagnostic Service.
+                </p>
+
+                <p>
+                    Một Request thường bắt đầu bằng Service Identifier,
+                    tiếp theo là các trường dữ liệu cần thiết
+                    cho dịch vụ đó.
+                </p>
+
+                <pre><code>+----------------+-------------------------+
+| Service ID     | Service-specific Data   |
++----------------+-------------------------+
+       |
+       +-- SID
+
+Ví dụ:
+22 F1 90
+
+22    : Service Identifier
+F1 90 : Data Identifier (DID)</code></pre>
+
+                <p>
+                    Cấu trúc cụ thể phụ thuộc vào Diagnostic Service.
+                    Một số dịch vụ chỉ cần SID, trong khi những dịch vụ
+                    khác cần thêm Sub-function, DID hoặc các trường dữ liệu.
+                </p>
+
+                <h3>4.2. Positive Response</h3>
+
+                <p>
+                    Positive Response là phản hồi cho biết Request
+                    đã được xử lý thành công theo quy tắc của dịch vụ.
+                </p>
+
+                <p>
+                    Đối với các dịch vụ sử dụng quy tắc Positive Response
+                    SID thông thường, Response SID được xác định bằng cách
+                    cộng 0x40 vào Request SID.
+                </p>
+
+                <pre><code>Positive Response SID = Request SID + 0x40
+
+Ví dụ:
+
+Request:
+22 F1 90
+
+Positive Response:
+62 F1 90 ...data...</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>0x22 là SID của ReadDataByIdentifier.</li>
+                    <li>0x62 là Positive Response SID tương ứng.</li>
+                    <li>F1 90 là DID được yêu cầu.</li>
+                    <li>Phần dữ liệu tiếp theo chứa giá trị được ECU trả về.</li>
+                </ul>
+
+                <h3>4.3. Negative Response</h3>
+
+                <p>
+                    Negative Response được sử dụng khi Server không thể
+                    xử lý Request theo yêu cầu.
+                </p>
+
+                <p>
+                    Negative Response có cấu trúc cơ bản gồm ba byte:
+                </p>
+
+                <pre><code>+----------------+----------------+----------------+
+| 0x7F           | Request SID    | NRC            |
++----------------+----------------+----------------+
+       |                |               |
+       |                |               +-- Lý do từ chối
+       |                +------------------ SID của Request
+       +----------------------------------- Negative Response</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><strong>0x7F:</strong> Negative Response SID.</li>
+                    <li><strong>Request SID:</strong> SID của yêu cầu ban đầu.</li>
+                    <li><strong>NRC:</strong> Negative Response Code.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Request:
+22 F1 90
+
+Negative Response:
+7F 22 31</code></pre>
+
+                <p>
+                    Có thể hiểu:
+                </p>
+
+                <ul>
+                    <li>0x7F cho biết đây là Negative Response.</li>
+                    <li>0x22 cho biết Response liên quan đến Request ReadDataByIdentifier.</li>
+                    <li>0x31 là NRC RequestOutOfRange.</li>
+                </ul>
+
+                <p>
+                    Điều này có nghĩa là ECU không chấp nhận yêu cầu
+                    theo điều kiện được thể hiện bởi NRC.
+                </p>
+
+                <h3>4.4. So sánh các loại Message</h3>
+
+                <table>
+                    <tr>
+                        <th>Loại Message</th>
+                        <th>Đặc điểm</th>
+                    </tr>
+                    <tr>
+                        <td>Request</td>
+                        <td>Được Client gửi đến Server để yêu cầu dịch vụ.</td>
+                    </tr>
+                    <tr>
+                        <td>Positive Response</td>
+                        <td>Cho biết yêu cầu được xử lý thành công.</td>
+                    </tr>
+                    <tr>
+                        <td>Negative Response</td>
+                        <td>Cho biết yêu cầu không được xử lý thành công và cung cấp NRC.</td>
+                    </tr>
+                </table>
+
+
+                <h2>5. Service Identifier (SID)</h2>
+
+                <h3>5.1. SID là gì?</h3>
+
+                <p>
+                    <strong>Service Identifier (SID)</strong> là trường
+                    dữ liệu dùng để xác định Diagnostic Service
+                    được yêu cầu trong UDS.
+                </p>
+
+                <p>
+                    SID thường là byte đầu tiên của UDS Diagnostic Message.
+                    Server dựa vào SID để xác định chức năng cần xử lý.
+                </p>
+
+                <p>
+                    Mỗi Diagnostic Service được gán một giá trị SID
+                    tương ứng trong tiêu chuẩn.
+                </p>
+
+                <h3>5.2. Một số SID quan trọng</h3>
+
+                <table>
+                    <tr>
+                        <th>SID</th>
+                        <th>Service Name</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td>0x10</td>
+                        <td>DiagnosticSessionControl</td>
+                        <td>Chuyển đổi Diagnostic Session.</td>
+                    </tr>
+                    <tr>
+                        <td>0x11</td>
+                        <td>ECUReset</td>
+                        <td>Yêu cầu ECU thực hiện reset.</td>
+                    </tr>
+                    <tr>
+                        <td>0x14</td>
+                        <td>ClearDiagnosticInformation</td>
+                        <td>Xóa thông tin Diagnostic Trouble Code.</td>
+                    </tr>
+                    <tr>
+                        <td>0x19</td>
+                        <td>ReadDTCInformation</td>
+                        <td>Đọc thông tin Diagnostic Trouble Code.</td>
+                    </tr>
+                    <tr>
+                        <td>0x22</td>
+                        <td>ReadDataByIdentifier</td>
+                        <td>Đọc dữ liệu theo DID.</td>
+                    </tr>
+                    <tr>
+                        <td>0x23</td>
+                        <td>ReadMemoryByAddress</td>
+                        <td>Đọc dữ liệu theo địa chỉ bộ nhớ.</td>
+                    </tr>
+                    <tr>
+                        <td>0x27</td>
+                        <td>SecurityAccess</td>
+                        <td>Thực hiện cơ chế kiểm soát quyền truy cập.</td>
+                    </tr>
+                    <tr>
+                        <td>0x28</td>
+                        <td>CommunicationControl</td>
+                        <td>Điều khiển một số chức năng truyền thông.</td>
+                    </tr>
+                    <tr>
+                        <td>0x2E</td>
+                        <td>WriteDataByIdentifier</td>
+                        <td>Ghi dữ liệu theo DID.</td>
+                    </tr>
+                    <tr>
+                        <td>0x2F</td>
+                        <td>InputOutputControlByIdentifier</td>
+                        <td>Điều khiển Input/Output theo Identifier.</td>
+                    </tr>
+                    <tr>
+                        <td>0x31</td>
+                        <td>RoutineControl</td>
+                        <td>Điều khiển và thực hiện Routine.</td>
+                    </tr>
+                    <tr>
+                        <td>0x34</td>
+                        <td>RequestDownload</td>
+                        <td>Yêu cầu bắt đầu quá trình Download.</td>
+                    </tr>
+                    <tr>
+                        <td>0x36</td>
+                        <td>TransferData</td>
+                        <td>Truyền dữ liệu trong quá trình Download hoặc Upload.</td>
+                    </tr>
+                    <tr>
+                        <td>0x37</td>
+                        <td>RequestTransferExit</td>
+                        <td>Kết thúc quá trình truyền dữ liệu.</td>
+                    </tr>
+                    <tr>
+                        <td>0x3E</td>
+                        <td>TesterPresent</td>
+                        <td>Thông báo Client vẫn đang hoạt động.</td>
+                    </tr>
+                    <tr>
+                        <td>0x85</td>
+                        <td>ControlDTCSetting</td>
+                        <td>Điều khiển việc ghi nhận thông tin DTC.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Đây là những SID thường gặp trong các hệ thống
+                    Diagnostic Communication. Không phải ECU nào cũng
+                    hỗ trợ toàn bộ các dịch vụ trên.
+                </p>
+
+                <h3>5.3. Quan hệ giữa Request SID và Response SID</h3>
+
+                <p>
+                    Đối với những Diagnostic Service sử dụng quy tắc
+                    Positive Response SID thông thường, giá trị Response
+                    được xác định bằng cách cộng 0x40 vào Request SID.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Request SID</th>
+                        <th>Service</th>
+                        <th>Positive Response SID</th>
+                    </tr>
+                    <tr>
+                        <td>0x10</td>
+                        <td>DiagnosticSessionControl</td>
+                        <td>0x50</td>
+                    </tr>
+                    <tr>
+                        <td>0x11</td>
+                        <td>ECUReset</td>
+                        <td>0x51</td>
+                    </tr>
+                    <tr>
+                        <td>0x19</td>
+                        <td>ReadDTCInformation</td>
+                        <td>0x59</td>
+                    </tr>
+                    <tr>
+                        <td>0x22</td>
+                        <td>ReadDataByIdentifier</td>
+                        <td>0x62</td>
+                    </tr>
+                    <tr>
+                        <td>0x27</td>
+                        <td>SecurityAccess</td>
+                        <td>0x67</td>
+                    </tr>
+                    <tr>
+                        <td>0x2E</td>
+                        <td>WriteDataByIdentifier</td>
+                        <td>0x6E</td>
+                    </tr>
+                    <tr>
+                        <td>0x31</td>
+                        <td>RoutineControl</td>
+                        <td>0x71</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Khi phân tích UDS Trace, việc nhận diện cặp SID
+                    giúp kỹ sư nhanh chóng xác định Request và Response
+                    thuộc dịch vụ nào.
+                </p>
+
+
+                <h2>6. Sub-function</h2>
+
+                <h3>6.1. Sub-function là gì?</h3>
+
+                <p>
+                    Một số Diagnostic Service cần thực hiện nhiều
+                    chức năng hoặc chế độ hoạt động khác nhau.
+                    Vì vậy, ngoài SID, Request còn có thể chứa
+                    một trường gọi là <strong>Sub-function</strong>.
+                </p>
+
+                <p>
+                    Sub-function giúp Server xác định chính xác
+                    hành động mà Client muốn thực hiện trong một Service.
+                </p>
+
+                <p>
+                    Ví dụ, DiagnosticSessionControl có thể sử dụng
+                    những Sub-function khác nhau để yêu cầu ECU
+                    chuyển sang các Diagnostic Session khác nhau.
+                </p>
+
+                <h3>6.2. Cấu trúc Request có Sub-function</h3>
+
+                <pre><code>+----------------+----------------+----------------------+
+| Service ID     | Sub-function   | Additional Data      |
++----------------+----------------+----------------------+
+       |                 |
+       |                 +-- Xác định chức năng cụ thể
+       +-------------------- Xác định Diagnostic Service</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>10 03
+
+10 : DiagnosticSessionControl
+03 : ExtendedDiagnosticSession</code></pre>
+
+                <p>
+                    Trong ví dụ trên, Client yêu cầu ECU chuyển sang
+                    Extended Diagnostic Session.
+                </p>
+
+                <h3>6.3. Suppress Positive Response Message Indication Bit</h3>
+
+                <p>
+                    Một số dịch vụ UDS có Sub-function hỗ trợ
+                    <strong>Suppress Positive Response Message Indication Bit</strong>.
+                </p>
+
+                <p>
+                    Đây là một bit được sử dụng để yêu cầu Server
+                    không gửi Positive Response đối với Request tương ứng,
+                    nếu dịch vụ và điều kiện giao tiếp cho phép.
+                </p>
+
+                <p>
+                    Bit này nằm ở bit cao nhất của byte Sub-function.
+                    Khi bit được đặt bằng 1, Client yêu cầu bỏ qua
+                    Positive Response.
+                </p>
+
+                <pre><code>Sub-function Byte
++---+---------------------------+
+| 7 | Bits 6 ... 0               |
++---+---------------------------+
+  |
+  +-- Suppress Positive Response Bit</code></pre>
+
+                <p>
+                    Ví dụ với DiagnosticSessionControl:
+                </p>
+
+                <pre><code>Request:
+10 83
+
+10 : DiagnosticSessionControl
+83 : Extended Session + Suppress Positive Response Bit</code></pre>
+
+                <p>
+                    Giá trị 0x83 có bit cao nhất bằng 1,
+                    còn 7 bit thấp biểu diễn Sub-function 0x03.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Không phải tất cả Diagnostic Service đều có Sub-function.
+                    Ngoài ra, việc sử dụng Suppress Positive Response
+                    phụ thuộc vào quy tắc của từng Service.
+                    Không nên mặc định mọi byte Sub-function đều hỗ trợ bit này.
+                </div>
+
+
+                <h2>7. Data Identifier (DID)</h2>
+
+                <h3>7.1. DID là gì?</h3>
+
+                <p>
+                    <strong>Data Identifier (DID)</strong> là một
+                    định danh được sử dụng trong UDS để truy cập
+                    một loại dữ liệu cụ thể của ECU.
+                </p>
+
+                <p>
+                    DID có độ dài 2 byte và thường được sử dụng
+                    trong các dịch vụ như ReadDataByIdentifier
+                    và WriteDataByIdentifier.
+                </p>
+
+                <p>
+                    Mỗi DID có thể đại diện cho một loại thông tin,
+                    chẳng hạn:
+                </p>
+
+                <ul>
+                    <li>Vehicle Identification Number (VIN).</li>
+                    <li>Thông tin phiên bản phần mềm.</li>
+                    <li>Thông tin phiên bản phần cứng.</li>
+                    <li>Thông tin nhà sản xuất.</li>
+                    <li>Dữ liệu cấu hình của ECU.</li>
+                    <li>Các thông tin vận hành được OEM định nghĩa.</li>
+                </ul>
+
+                <h3>7.2. Cấu trúc DID</h3>
+
+                <p>
+                    DID được biểu diễn bằng 2 byte:
+                </p>
+
+                <pre><code>+----------------+----------------+
+| DID High Byte  | DID Low Byte   |
++----------------+----------------+
+       1 byte          1 byte
+
+Ví dụ:
+F1 90</code></pre>
+
+                <p>
+                    Giá trị DID xác định loại dữ liệu cần truy cập.
+                    Ý nghĩa cụ thể của DID có thể được quy định
+                    bởi tiêu chuẩn hoặc được nhà sản xuất ECU định nghĩa.
+                </p>
+
+                <h3>7.3. Một số DID thường gặp</h3>
+
+                <table>
+                    <tr>
+                        <th>DID</th>
+                        <th>Ý nghĩa thường gặp</th>
+                    </tr>
+                    <tr>
+                        <td>0xF190</td>
+                        <td>Vehicle Identification Number (VIN).</td>
+                    </tr>
+                    <tr>
+                        <td>0xF187</td>
+                        <td>Vehicle Manufacturer Spare Part Number.</td>
+                    </tr>
+                    <tr>
+                        <td>0xF188</td>
+                        <td>Vehicle Manufacturer ECU Software Number.</td>
+                    </tr>
+                    <tr>
+                        <td>0xF189</td>
+                        <td>Vehicle Manufacturer ECU Software Version Number.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Những DID trên là ví dụ về các định danh thường
+                    được sử dụng trong hệ thống UDS.
+                    Ý nghĩa, quyền truy cập và cách mã hóa dữ liệu
+                    cần được xác định theo tài liệu tiêu chuẩn
+                    và yêu cầu của dự án.
+                </p>
+
+                <h3>7.4. DID trong ReadDataByIdentifier</h3>
+
+                <p>
+                    ReadDataByIdentifier sử dụng SID 0x22 để yêu cầu
+                    ECU trả về dữ liệu tương ứng với một hoặc nhiều DID.
+                </p>
+
+                <p>
+                    Ví dụ, Client muốn đọc DID 0xF190:
+                </p>
+
+                <pre><code>Request:
+22 F1 90
+
+22    : ReadDataByIdentifier
+F1 90 : DID</code></pre>
+
+                <p>
+                    Nếu yêu cầu hợp lệ và ECU hỗ trợ DID này,
+                    ECU có thể trả về Positive Response:
+                </p>
+
+                <pre><code>Response:
+62 F1 90 [VIN Data]</code></pre>
+
+                <p>
+                    Trong đó, phần dữ liệu sau DID chứa giá trị
+                    thực tế được ECU cung cấp.
+                </p>
+
+                <h3>7.5. DID trong WriteDataByIdentifier</h3>
+
+                <p>
+                    WriteDataByIdentifier sử dụng SID 0x2E để yêu cầu
+                    ECU ghi dữ liệu vào một Data Identifier được hỗ trợ.
+                </p>
+
+                <pre><code>Request:
+2E F1 90 [Data]
+
+2E    : WriteDataByIdentifier
+F1 90 : DID
+Data  : Dữ liệu cần ghi</code></pre>
+
+                <p>
+                    Nếu thao tác ghi được chấp nhận,
+                    ECU trả về Positive Response:
+                </p>
+
+                <pre><code>Response:
+6E F1 90</code></pre>
+
+                <p>
+                    Việc ghi dữ liệu không phải lúc nào cũng được phép.
+                    ECU có thể kiểm tra Diagnostic Session,
+                    Security Access và các điều kiện vận hành
+                    trước khi thực hiện yêu cầu.
+                </p>
+
+
+                <h2>8. Negative Response Code (NRC)</h2>
+
+                <h3>8.1. NRC là gì?</h3>
+
+                <p>
+                    <strong>Negative Response Code (NRC)</strong> là mã
+                    được sử dụng để mô tả lý do Server không chấp nhận
+                    hoặc không thể xử lý một Diagnostic Request.
+                </p>
+
+                <p>
+                    Khi một Request không thể được xử lý thành công,
+                    Server có thể trả về Negative Response chứa NRC
+                    phù hợp với tình huống.
+                </p>
+
+                <h3>8.2. Cấu trúc Negative Response</h3>
+
+                <pre><code>+--------+-------------+---------+
+| 0x7F   | Request SID |   NRC   |
++--------+-------------+---------+
+
+Ví dụ:
+7F 22 31
+
+7F : Negative Response
+22 : Request SID
+31 : RequestOutOfRange</code></pre>
+
+                <h3>8.3. Một số NRC thường gặp</h3>
+
+                <table>
+                    <tr>
+                        <th>NRC</th>
+                        <th>Tên</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>0x10</td>
+                        <td>GeneralReject</td>
+                        <td>Yêu cầu bị từ chối vì một lý do chung.</td>
+                    </tr>
+                    <tr>
+                        <td>0x11</td>
+                        <td>ServiceNotSupported</td>
+                        <td>ECU không hỗ trợ Service được yêu cầu.</td>
+                    </tr>
+                    <tr>
+                        <td>0x12</td>
+                        <td>SubFunctionNotSupported</td>
+                        <td>Sub-function được yêu cầu không được hỗ trợ.</td>
+                    </tr>
+                    <tr>
+                        <td>0x13</td>
+                        <td>IncorrectMessageLengthOrInvalidFormat</td>
+                        <td>Độ dài hoặc định dạng Request không hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>0x21</td>
+                        <td>BusyRepeatRequest</td>
+                        <td>Server đang bận và yêu cầu Client gửi lại sau.</td>
+                    </tr>
+                    <tr>
+                        <td>0x22</td>
+                        <td>ConditionsNotCorrect</td>
+                        <td>Điều kiện thực hiện Service chưa được đáp ứng.</td>
+                    </tr>
+                    <tr>
+                        <td>0x24</td>
+                        <td>RequestSequenceError</td>
+                        <td>Thứ tự thực hiện Request không hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>0x31</td>
+                        <td>RequestOutOfRange</td>
+                        <td>Dữ liệu hoặc tham số yêu cầu nằm ngoài phạm vi hỗ trợ.</td>
+                    </tr>
+                    <tr>
+                        <td>0x33</td>
+                        <td>SecurityAccessDenied</td>
+                        <td>Quyền truy cập bảo mật chưa được cấp.</td>
+                    </tr>
+                    <tr>
+                        <td>0x35</td>
+                        <td>InvalidKey</td>
+                        <td>Key được cung cấp không hợp lệ.</td>
+                    </tr>
+                    <tr>
+                        <td>0x36</td>
+                        <td>ExceedNumberOfAttempts</td>
+                        <td>Số lần thử vượt quá giới hạn cho phép.</td>
+                    </tr>
+                    <tr>
+                        <td>0x37</td>
+                        <td>RequiredTimeDelayNotExpired</td>
+                        <td>Thời gian chờ bắt buộc chưa kết thúc.</td>
+                    </tr>
+                    <tr>
+                        <td>0x70</td>
+                        <td>UploadDownloadNotAccepted</td>
+                        <td>Yêu cầu Upload hoặc Download không được chấp nhận.</td>
+                    </tr>
+                    <tr>
+                        <td>0x71</td>
+                        <td>TransferDataSuspended</td>
+                        <td>Quá trình truyền dữ liệu bị tạm dừng.</td>
+                    </tr>
+                    <tr>
+                        <td>0x72</td>
+                        <td>GeneralProgrammingFailure</td>
+                        <td>Xảy ra lỗi trong quá trình lập trình.</td>
+                    </tr>
+                    <tr>
+                        <td>0x73</td>
+                        <td>WrongBlockSequenceCounter</td>
+                        <td>Block Sequence Counter không đúng.</td>
+                    </tr>
+                    <tr>
+                        <td>0x78</td>
+                        <td>ResponsePending</td>
+                        <td>Server cần thêm thời gian để xử lý Request.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Một số NRC chỉ được sử dụng trong những nhóm dịch vụ
+                    hoặc tình huống nhất định. Vì vậy, không phải mọi NRC
+                    đều có thể được trả về cho mọi loại Request.
+                </p>
+
+                <h3>8.4. NRC ResponsePending (0x78)</h3>
+
+                <p>
+                    Một số Diagnostic Service cần thời gian xử lý dài,
+                    chẳng hạn các thao tác kiểm tra hoặc thực hiện Routine.
+                </p>
+
+                <p>
+                    Trong trường hợp Server chưa thể hoàn tất Request
+                    trong thời gian phản hồi thông thường,
+                    Server có thể gửi Negative Response với NRC 0x78
+                    để thông báo rằng việc xử lý vẫn đang tiếp tục.
+                </p>
+
+                <pre><code>Request:
+31 01 ...
+
+ResponsePending:
+7F 31 78
+
+Final Response:
+71 01 ...</code></pre>
+
+                <p>
+                    NRC 0x78 không có nghĩa là Request đã thất bại.
+                    Nó cho biết Server chưa hoàn tất xử lý
+                    và Client cần tiếp tục chờ kết quả cuối cùng
+                    theo quy tắc giao tiếp.
+                </p>
+
+                <h3>8.5. Vai trò của NRC khi Debug</h3>
+
+                <p>
+                    Khi phân tích lỗi Diagnostic Communication,
+                    NRC giúp kỹ sư xác định nhóm nguyên nhân
+                    khiến Request không được chấp nhận.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>NRC 0x11: Kiểm tra ECU có hỗ trợ Service hay không.</li>
+                    <li>NRC 0x13: Kiểm tra độ dài và định dạng Request.</li>
+                    <li>NRC 0x22: Kiểm tra các điều kiện thực hiện Service.</li>
+                    <li>NRC 0x31: Kiểm tra DID hoặc tham số được yêu cầu.</li>
+                    <li>NRC 0x33: Kiểm tra trạng thái Security Access.</li>
+                    <li>NRC 0x78: Kiểm tra thời gian xử lý và Response tiếp theo.</li>
+                </ul>
+
+
+                <h2>9. Diagnostic Session</h2>
+
+                <h3>9.1. Diagnostic Session là gì?</h3>
+
+                <p>
+                    Diagnostic Session là trạng thái hoạt động
+                    của ECU trong quá trình chẩn đoán.
+                </p>
+
+                <p>
+                    Tùy theo Session hiện tại, ECU có thể cho phép
+                    hoặc từ chối một số Diagnostic Service nhất định.
+                </p>
+
+                <p>
+                    Ví dụ, một số chức năng đọc thông tin cơ bản
+                    có thể được thực hiện trong Default Session,
+                    trong khi các chức năng cấu hình hoặc lập trình
+                    có thể yêu cầu Session khác.
+                </p>
+
+                <h3>9.2. DiagnosticSessionControl (SID 0x10)</h3>
+
+                <p>
+                    DiagnosticSessionControl được sử dụng để yêu cầu ECU
+                    chuyển sang một Diagnostic Session cụ thể.
+                </p>
+
+                <p>
+                    Một số Sub-function thường gặp:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Sub-function</th>
+                        <th>Session</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>0x01</td>
+                        <td>Default Session</td>
+                        <td>Session chẩn đoán mặc định.</td>
+                    </tr>
+                    <tr>
+                        <td>0x02</td>
+                        <td>Programming Session</td>
+                        <td>Session phục vụ các chức năng lập trình.</td>
+                    </tr>
+                    <tr>
+                        <td>0x03</td>
+                        <td>Extended Diagnostic Session</td>
+                        <td>Session mở rộng cho các chức năng chẩn đoán.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Các Session khác có thể được hỗ trợ tùy theo
+                    yêu cầu của tiêu chuẩn và nhà sản xuất ECU.
+                </p>
+
+                <h3>9.3. Ví dụ chuyển Session</h3>
+
+                <p>
+                    Client gửi Request yêu cầu ECU chuyển sang
+                    Extended Diagnostic Session:
+                </p>
+
+                <pre><code>Request:
+10 03
+
+10 : DiagnosticSessionControl
+03 : Extended Diagnostic Session</code></pre>
+
+                <p>
+                    Nếu yêu cầu được chấp nhận,
+                    ECU trả về Positive Response:
+                </p>
+
+                <pre><code>Response:
+50 03 [Session Parameter Record]</code></pre>
+
+                <p>
+                    Response có thể chứa thêm các tham số liên quan
+                    đến thời gian phản hồi và các thông tin khác
+                    được định nghĩa cho dịch vụ này.
+                </p>
+
+                <h3>9.4. Session ảnh hưởng đến Diagnostic Service</h3>
+
+                <p>
+                    Một Diagnostic Service có thể được hỗ trợ
+                    nhưng chỉ được phép thực hiện trong một số
+                    Diagnostic Session nhất định.
+                </p>
+
+                <p>
+                    Vì vậy, khi một Request bị từ chối,
+                    kỹ sư cần kiểm tra không chỉ SID và dữ liệu
+                    mà còn phải kiểm tra Session hiện tại của ECU.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Diagnostic Session là một phần quan trọng
+                    trong việc quản lý quyền thực hiện dịch vụ.
+                    Chi tiết về Session Timing và Session Layer
+                    sẽ được tìm hiểu sâu hơn trong Bài 39:
+                    ISO 14229-2 - UDS Session Layer.
+                </div>
+
+
+                <h2>10. Security Access</h2>
+
+                <h3>10.1. Security Access là gì?</h3>
+
+                <p>
+                    <strong>SecurityAccess (SID 0x27)</strong> là dịch vụ
+                    được sử dụng để kiểm soát quyền truy cập
+                    vào những chức năng chẩn đoán được bảo vệ.
+                </p>
+
+                <p>
+                    Một số chức năng của ECU có thể ảnh hưởng đến
+                    cấu hình, phần mềm hoặc trạng thái vận hành.
+                    Vì vậy, ECU cần xác minh quyền truy cập
+                    trước khi cho phép thực hiện các chức năng này.
+                </p>
+
+                <h3>10.2. Seed và Key</h3>
+
+                <p>
+                    SecurityAccess thường sử dụng cơ chế
+                    <strong>Seed/Key</strong>.
+                </p>
+
+                <p>
+                    Về mặt tổng quát, quá trình này gồm hai bước:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Seed:</strong>
+                        ECU cung cấp một giá trị thử thách
+                        cho Client.
+                    </li>
+                    <li>
+                        <strong>Key:</strong>
+                        Client gửi giá trị phản hồi tương ứng
+                        theo cơ chế bảo mật được hệ thống quy định.
+                    </li>
+                </ul>
+
+                <h3>10.3. Luồng giao tiếp tổng quát</h3>
+
+                <pre><code>Diagnostic Tester (Client)
+          |
+          | Request Seed
+          v
+       ECU (Server)
+          |
+          | Send Seed
+          v
+Diagnostic Tester
+          |
+          | Calculate Key
+          | Submit Key
+          v
+       ECU (Server)
+          |
+          | Validate Key
+          |
+          +------ Valid ------> Access Granted
+          |
+          +------ Invalid ----> Negative Response</code></pre>
+
+                <p>
+                    Sau khi xác minh thành công,
+                    ECU có thể cho phép Client thực hiện
+                    những Diagnostic Service được bảo vệ
+                    theo cấu hình của hệ thống.
+                </p>
+
+                <h3>10.4. Các tình huống lỗi</h3>
+
+                <table>
+                    <tr>
+                        <th>NRC</th>
+                        <th>Tình huống</th>
+                    </tr>
+                    <tr>
+                        <td>0x33</td>
+                        <td>SecurityAccessDenied.</td>
+                    </tr>
+                    <tr>
+                        <td>0x35</td>
+                        <td>InvalidKey.</td>
+                    </tr>
+                    <tr>
+                        <td>0x36</td>
+                        <td>ExceedNumberOfAttempts.</td>
+                    </tr>
+                    <tr>
+                        <td>0x37</td>
+                        <td>RequiredTimeDelayNotExpired.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Các lỗi này giúp Client xác định rằng
+                    quá trình xác thực chưa thành công
+                    hoặc chưa đáp ứng điều kiện truy cập.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    ISO 14229-1 định nghĩa dịch vụ SecurityAccess
+                    và cấu trúc giao tiếp tương ứng.
+                    Thuật toán tạo và kiểm tra Key cụ thể có thể
+                    phụ thuộc vào yêu cầu bảo mật của nhà sản xuất.
+                    Không nên mặc định mọi ECU đều sử dụng
+                    cùng một thuật toán Seed/Key.
+                </div>
+
+
+                <h2>11. Các nhóm Diagnostic Services quan trọng</h2>
+
+                <h3>11.1. Session và ECU Control Services</h3>
+
+                <p>
+                    Nhóm dịch vụ này được sử dụng để quản lý
+                    trạng thái chẩn đoán và một số chức năng điều khiển ECU.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>SID</th>
+                        <th>Service</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td>0x10</td>
+                        <td>DiagnosticSessionControl</td>
+                        <td>Chuyển đổi Diagnostic Session.</td>
+                    </tr>
+                    <tr>
+                        <td>0x11</td>
+                        <td>ECUReset</td>
+                        <td>Yêu cầu ECU thực hiện reset.</td>
+                    </tr>
+                    <tr>
+                        <td>0x3E</td>
+                        <td>TesterPresent</td>
+                        <td>Thông báo Client vẫn đang hoạt động.</td>
+                    </tr>
+                </table>
+
+                <h3>11.2. Data Access Services</h3>
+
+                <p>
+                    Nhóm dịch vụ này cho phép Client đọc hoặc ghi
+                    dữ liệu được ECU cung cấp thông qua các Identifier.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>SID</th>
+                        <th>Service</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td>0x22</td>
+                        <td>ReadDataByIdentifier</td>
+                        <td>Đọc dữ liệu theo DID.</td>
+                    </tr>
+                    <tr>
+                        <td>0x2E</td>
+                        <td>WriteDataByIdentifier</td>
+                        <td>Ghi dữ liệu theo DID.</td>
+                    </tr>
+                    <tr>
+                        <td>0x23</td>
+                        <td>ReadMemoryByAddress</td>
+                        <td>Đọc dữ liệu theo địa chỉ bộ nhớ.</td>
+                    </tr>
+                </table>
+
+                <h3>11.3. Diagnostic Trouble Code Services</h3>
+
+                <p>
+                    Nhóm dịch vụ này phục vụ việc truy xuất
+                    và quản lý thông tin lỗi được lưu trữ trong ECU.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>SID</th>
+                        <th>Service</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td>0x14</td>
+                        <td>ClearDiagnosticInformation</td>
+                        <td>Xóa thông tin DTC theo phạm vi được hỗ trợ.</td>
+                    </tr>
+                    <tr>
+                        <td>0x19</td>
+                        <td>ReadDTCInformation</td>
+                        <td>Đọc DTC và các thông tin liên quan.</td>
+                    </tr>
+                    <tr>
+                        <td>0x85</td>
+                        <td>ControlDTCSetting</td>
+                        <td>Điều khiển việc ghi nhận thông tin DTC.</td>
+                    </tr>
+                </table>
+
+                <h3>11.4. Input/Output và Routine Services</h3>
+
+                <p>
+                    Nhóm dịch vụ này hỗ trợ kiểm tra hoặc điều khiển
+                    một số chức năng của ECU.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>SID</th>
+                        <th>Service</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td>0x2F</td>
+                        <td>InputOutputControlByIdentifier</td>
+                        <td>Điều khiển Input/Output theo Identifier.</td>
+                    </tr>
+                    <tr>
+                        <td>0x31</td>
+                        <td>RoutineControl</td>
+                        <td>Khởi động, dừng hoặc yêu cầu kết quả Routine.</td>
+                    </tr>
+                </table>
+
+                <h3>11.5. Upload và Download Services</h3>
+
+                <p>
+                    Các dịch vụ này được sử dụng trong quá trình
+                    truyền dữ liệu giữa Diagnostic Tester và ECU,
+                    thường gặp trong các quy trình lập trình ECU.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>SID</th>
+                        <th>Service</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td>0x34</td>
+                        <td>RequestDownload</td>
+                        <td>Yêu cầu bắt đầu quá trình Download.</td>
+                    </tr>
+                    <tr>
+                        <td>0x35</td>
+                        <td>RequestUpload</td>
+                        <td>Yêu cầu bắt đầu quá trình Upload.</td>
+                    </tr>
+                    <tr>
+                        <td>0x36</td>
+                        <td>TransferData</td>
+                        <td>Truyền từng block dữ liệu.</td>
+                    </tr>
+                    <tr>
+                        <td>0x37</td>
+                        <td>RequestTransferExit</td>
+                        <td>Kết thúc quá trình truyền dữ liệu.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Các dịch vụ này thường phối hợp với nhau
+                    theo một trình tự nhất định.
+                    Chi tiết về quá trình lập trình ECU
+                    sẽ cần xem xét thêm các yêu cầu của Bootloader
+                    và quy trình Flash Programming của dự án.
+                </p>
+
+
+                <h2>12. Một số Diagnostic Services tiêu biểu</h2>
+
+                <h3>12.1. DiagnosticSessionControl (0x10)</h3>
+
+                <p>
+                    DiagnosticSessionControl cho phép Client yêu cầu ECU
+                    chuyển sang một Session cụ thể.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Request:
+10 03
+
+Positive Response:
+50 03 [Session Parameter Record]</code></pre>
+
+                <p>
+                    Đây là một trong những dịch vụ quan trọng
+                    vì Session hiện tại có thể ảnh hưởng đến
+                    quyền thực hiện những dịch vụ khác.
+                </p>
+
+                <h3>12.2. ECUReset (0x11)</h3>
+
+                <p>
+                    ECUReset được sử dụng để yêu cầu ECU thực hiện
+                    một kiểu reset được hỗ trợ.
+                </p>
+
+                <p>
+                    Một số Sub-function thường gặp:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Sub-function</th>
+                        <th>Tên</th>
+                    </tr>
+                    <tr>
+                        <td>0x01</td>
+                        <td>Hard Reset</td>
+                    </tr>
+                    <tr>
+                        <td>0x02</td>
+                        <td>Key Off On Reset</td>
+                    </tr>
+                    <tr>
+                        <td>0x03</td>
+                        <td>Soft Reset</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Ví dụ một Request:
+                </p>
+
+                <pre><code>Request:
+11 01
+
+11 : ECUReset
+01 : Hard Reset</code></pre>
+
+                <p>
+                    Nếu được chấp nhận, ECU có thể trả về
+                    Positive Response trước khi thực hiện
+                    quá trình reset theo quy định.
+                </p>
+
+                <h3>12.3. ReadDTCInformation (0x19)</h3>
+
+                <p>
+                    ReadDTCInformation được sử dụng để đọc
+                    Diagnostic Trouble Code và những thông tin
+                    liên quan đến trạng thái lỗi.
+                </p>
+
+                <p>
+                    Dịch vụ này có nhiều Sub-function để hỗ trợ
+                    các kiểu truy vấn khác nhau.
+                </p>
+
+                <p>
+                    Ví dụ, Diagnostic Tester có thể yêu cầu ECU
+                    cung cấp danh sách DTC đang được lưu trữ.
+                </p>
+
+                <pre><code>Request:
+19 02 FF
+
+19 : ReadDTCInformation
+02 : Sub-function minh họa
+FF : DTC Status Mask</code></pre>
+
+                <p>
+                    Response có thể chứa số lượng DTC,
+                    mã DTC và thông tin trạng thái tương ứng.
+                </p>
+
+                <h3>12.4. ClearDiagnosticInformation (0x14)</h3>
+
+                <p>
+                    ClearDiagnosticInformation được sử dụng để yêu cầu ECU
+                    xóa thông tin DTC trong phạm vi được chỉ định.
+                </p>
+
+                <pre><code>Request:
+14 FF FF FF
+
+14       : ClearDiagnosticInformation
+FF FF FF : Group Of DTC</code></pre>
+
+                <p>
+                    Nếu yêu cầu được chấp nhận, ECU có thể trả về:
+                </p>
+
+                <pre><code>Positive Response:
+54</code></pre>
+
+                <p>
+                    Việc xóa DTC cần tuân theo chính sách chẩn đoán
+                    của ECU và có thể chịu ảnh hưởng bởi các điều kiện
+                    vận hành hoặc yêu cầu của nhà sản xuất.
+                </p>
+
+                <h3>12.5. TesterPresent (0x3E)</h3>
+
+                <p>
+                    TesterPresent được sử dụng để thông báo cho ECU
+                    rằng Client vẫn đang hoạt động và duy trì
+                    giao tiếp chẩn đoán.
+                </p>
+
+                <pre><code>Request:
+3E 00
+
+3E : TesterPresent
+00 : Sub-function</code></pre>
+
+                <p>
+                    Trong một số hệ thống, nếu ECU không nhận được
+                    TesterPresent trong khoảng thời gian quy định,
+                    ECU có thể quay về Default Session.
+                </p>
+
+                <p>
+                    TesterPresent thường được sử dụng khi Diagnostic Tester
+                    cần duy trì một Session trong quá trình thực hiện
+                    nhiều thao tác chẩn đoán liên tiếp.
+                </p>
+
+                <h3>12.6. RoutineControl (0x31)</h3>
+
+                <p>
+                    RoutineControl cho phép Client yêu cầu ECU
+                    thực hiện hoặc kiểm tra trạng thái của một Routine.
+                </p>
+
+                <p>
+                    Dịch vụ này sử dụng Sub-function để xác định
+                    hành động cần thực hiện.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Sub-function</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>0x01</td>
+                        <td>StartRoutine.</td>
+                    </tr>
+                    <tr>
+                        <td>0x02</td>
+                        <td>StopRoutine.</td>
+                    </tr>
+                    <tr>
+                        <td>0x03</td>
+                        <td>RequestRoutineResults.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Ngoài Sub-function, Request còn chứa
+                    Routine Identifier (RID) để xác định Routine
+                    cụ thể cần thực hiện.
+                </p>
+
+                <pre><code>Request:
+31 01 [RID High] [RID Low] [Option Record]
+
+31 : RoutineControl
+01 : StartRoutine
+RID: Routine Identifier</code></pre>
+
+                <p>
+                    Ý nghĩa của từng RID phụ thuộc vào
+                    cấu hình và yêu cầu của nhà sản xuất ECU.
+                </p>
+
+
+                <h2>13. UDS Download và Upload Process</h2>
+
+                <h3>13.1. Tổng quan</h3>
+
+                <p>
+                    Trong quá trình phát triển và bảo trì phương tiện,
+                    ECU có thể cần nhận hoặc cung cấp dữ liệu
+                    thông qua Diagnostic Communication.
+                </p>
+
+                <p>
+                    UDS định nghĩa một nhóm dịch vụ để quản lý
+                    quá trình truyền dữ liệu này.
+                </p>
+
+                <p>
+                    Các dịch vụ chính bao gồm:
+                </p>
+
+                <ul>
+                    <li>RequestDownload (0x34).</li>
+                    <li>RequestUpload (0x35).</li>
+                    <li>TransferData (0x36).</li>
+                    <li>RequestTransferExit (0x37).</li>
+                </ul>
+
+                <h3>13.2. RequestDownload</h3>
+
+                <p>
+                    RequestDownload được sử dụng khi Client muốn
+                    bắt đầu gửi dữ liệu xuống ECU.
+                </p>
+
+                <p>
+                    Request có thể chứa thông tin về địa chỉ
+                    và kích thước vùng dữ liệu cần Download.
+                </p>
+
+                <pre><code>Request:
+34 [Data Format Identifier]
+   [Address And Length Format Identifier]
+   [Memory Address]
+   [Memory Size]</code></pre>
+
+                <p>
+                    Nếu ECU chấp nhận yêu cầu,
+                    Server trả về thông tin liên quan đến
+                    khả năng tiếp nhận dữ liệu.
+                </p>
+
+                <h3>13.3. TransferData</h3>
+
+                <p>
+                    TransferData được sử dụng để truyền dữ liệu
+                    theo từng block trong quá trình Upload hoặc Download.
+                </p>
+
+                <p>
+                    Mỗi Request có thể chứa Block Sequence Counter
+                    để xác định thứ tự của block dữ liệu.
+                </p>
+
+                <pre><code>Request:
+36 [Block Sequence Counter] [Transfer Data]
+
+Positive Response:
+76 [Block Sequence Counter] [Optional Data]</code></pre>
+
+                <p>
+                    Block Sequence Counter giúp Client và Server
+                    theo dõi thứ tự các block trong quá trình truyền.
+                </p>
+
+                <h3>13.4. RequestTransferExit</h3>
+
+                <p>
+                    RequestTransferExit được sử dụng để thông báo
+                    kết thúc quá trình truyền dữ liệu.
+                </p>
+
+                <pre><code>Request:
+37 [Transfer Request Parameter Record]
+
+Positive Response:
+77 [Transfer Response Parameter Record]</code></pre>
+
+                <p>
+                    ECU có thể thực hiện các bước kiểm tra cần thiết
+                    trước khi xác nhận quá trình truyền đã hoàn tất.
+                </p>
+
+                <h3>13.5. Luồng Download tổng quát</h3>
+
+                <pre><code>Diagnostic Tester
+       |
+       | RequestDownload (0x34)
+       v
+      ECU
+       |
+       | Positive Response
+       v
+Diagnostic Tester
+       |
+       | TransferData (0x36)
+       | Block 1
+       v
+      ECU
+       |
+       | Positive Response
+       v
+Diagnostic Tester
+       |
+       | TransferData (0x36)
+       | Block 2
+       v
+      ECU
+       |
+       | Positive Response
+       v
+      ...
+       |
+       | RequestTransferExit (0x37)
+       v
+      ECU
+       |
+       | Positive Response
+       v
+Download Process Completed</code></pre>
+
+                <p>
+                    Đây là luồng tổng quát.
+                    Quá trình lập trình ECU thực tế còn có thể cần
+                    các bước kiểm tra, xác thực và xử lý bổ sung
+                    theo yêu cầu của Bootloader và OEM.
+                </p>
+
+
+                <h2>14. UDS Application Layer trong AUTOSAR</h2>
+
+                <h3>14.1. DCM là gì?</h3>
+
+                <p>
+                    Trong AUTOSAR Classic Platform,
+                    chức năng xử lý Diagnostic Communication
+                    được triển khai chủ yếu bởi module
+                    <strong>DCM (Diagnostic Communication Manager)</strong>.
+                </p>
+
+                <p>
+                    DCM là một module thuộc Basic Software,
+                    chịu trách nhiệm tiếp nhận và xử lý
+                    các Diagnostic Request theo cấu hình UDS
+                    của ECU.
+                </p>
+
+                <p>
+                    Những chức năng chính của DCM bao gồm:
+                </p>
+
+                <ul>
+                    <li>Tiếp nhận Diagnostic Request.</li>
+                    <li>Phân tích SID và các trường dữ liệu của Request.</li>
+                    <li>Kiểm tra điều kiện thực hiện Diagnostic Service.</li>
+                    <li>Xử lý Positive Response và Negative Response.</li>
+                    <li>Quản lý Diagnostic Session.</li>
+                    <li>Quản lý Security Access theo cấu hình.</li>
+                    <li>Giao tiếp với các thành phần khác của ECU để lấy hoặc ghi dữ liệu.</li>
+                </ul>
+
+                <h3>14.2. Vị trí của DCM trong AUTOSAR</h3>
+
+                <pre><code>             Diagnostic Tester
+                     |
+                     v
+               CAN / DoIP
+                     |
+                     v
+                   CanTp
+                     |
+                     v
+                   PduR
+                     |
+                     v
+                   DCM
+                     |
+          +----------+----------+
+          |          |          |
+          v          v          v
+        DEM        SWC       Other BSW
+          |          |          |
+          v          v          v
+       DTC Data   Application  ECU Services</code></pre>
+
+                <p>
+                    Sơ đồ trên minh họa mối quan hệ tổng quát
+                    giữa DCM và những thành phần khác trong ECU.
+                    Đường truyền thực tế phụ thuộc vào loại
+                    Diagnostic Service và cấu hình AUTOSAR.
+                </p>
+
+                <h3>14.3. DCM và UDS Application Layer</h3>
+
+                <p>
+                    ISO 14229-1 định nghĩa các Diagnostic Service
+                    và quy tắc giao tiếp UDS.
+                </p>
+
+                <p>
+                    DCM là module AUTOSAR triển khai các chức năng
+                    Diagnostic Communication tương ứng trong ECU.
+                </p>
+
+                <p>
+                    Ví dụ, khi nhận Request:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    DCM xác định SID 0x22, phân tích DID 0xF190,
+                    kiểm tra cấu hình và điều kiện truy cập,
+                    sau đó thực hiện xử lý tương ứng để tạo Response.
+                </p>
+
+                <h3>14.4. Quan hệ giữa DCM và DEM</h3>
+
+                <p>
+                    <strong>DEM (Diagnostic Event Manager)</strong>
+                    là module AUTOSAR quản lý Diagnostic Event
+                    và Diagnostic Trouble Code.
+                </p>
+
+                <p>
+                    Trong quá trình xử lý các dịch vụ liên quan đến DTC,
+                    DCM có thể phối hợp với DEM để lấy thông tin lỗi,
+                    trạng thái DTC hoặc thực hiện những thao tác
+                    quản lý DTC được hỗ trợ.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Module</th>
+                        <th>Vai trò</th>
+                    </tr>
+                    <tr>
+                        <td>DCM</td>
+                        <td>Tiếp nhận và xử lý Diagnostic Request/Response.</td>
+                    </tr>
+                    <tr>
+                        <td>DEM</td>
+                        <td>Quản lý Diagnostic Event và Diagnostic Trouble Code.</td>
+                    </tr>
+                    <tr>
+                        <td>PduR</td>
+                        <td>Định tuyến dữ liệu giữa các module giao tiếp.</td>
+                    </tr>
+                    <tr>
+                        <td>CanTp</td>
+                        <td>Thực hiện Transport Protocol trên CAN.</td>
+                    </tr>
+                </table>
+
+
+                <h2>15. Phân tích UDS Trace</h2>
+
+                <h3>15.1. UDS Trace là gì?</h3>
+
+                <p>
+                    UDS Trace là dữ liệu ghi lại quá trình trao đổi
+                    Diagnostic Request và Response giữa Client
+                    và Server.
+                </p>
+
+                <p>
+                    Kỹ sư Embedded có thể sử dụng UDS Trace
+                    để kiểm tra nội dung Request, xác định Service,
+                    phân tích Response và tìm nguyên nhân
+                    khi Diagnostic Communication không hoạt động
+                    như mong đợi.
+                </p>
+
+                <h3>15.2. Ví dụ ReadDataByIdentifier</h3>
+
+                <p>
+                    Giả sử Diagnostic Tester gửi Request:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    ECU trả về:
+                </p>
+
+                <pre><code>62 F1 90 31 48 47 43 4D 38 32 36 33 33 41 30 30 30 30 30 31</code></pre>
+
+                <p>
+                    Có thể phân tích:
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Byte</th>
+                        <th>Giá trị</th>
+                        <th>Ý nghĩa</th>
+                    </tr>
+                    <tr>
+                        <td>Byte 0</td>
+                        <td>62</td>
+                        <td>Positive Response của SID 0x22.</td>
+                    </tr>
+                    <tr>
+                        <td>Byte 1-2</td>
+                        <td>F1 90</td>
+                        <td>DID được yêu cầu.</td>
+                    </tr>
+                    <tr>
+                        <td>Byte 3 trở đi</td>
+                        <td>...</td>
+                        <td>Dữ liệu được ECU trả về.</td>
+                    </tr>
+                </table>
+
+                <p>
+                    Khi đọc Trace, cần xác định chính xác độ dài
+                    và định dạng dữ liệu của DID theo cấu hình ECU.
+                </p>
+
+                <h3>15.3. Ví dụ Negative Response</h3>
+
+                <p>
+                    Giả sử Client gửi Request:
+                </p>
+
+                <pre><code>22 F1 90</code></pre>
+
+                <p>
+                    ECU trả về:
+                </p>
+
+                <pre><code>7F 22 31</code></pre>
+
+                <p>
+                    Có thể phân tích:
+                </p>
+
+                <ul>
+                    <li>0x7F: Negative Response.</li>
+                    <li>0x22: Request SID ban đầu.</li>
+                    <li>0x31: RequestOutOfRange.</li>
+                </ul>
+
+                <p>
+                    Khi gặp trường hợp này, kỹ sư cần kiểm tra
+                    DID có được hỗ trợ hay không, Request có đúng
+                    định dạng không và cấu hình của ECU có phù hợp
+                    với yêu cầu kiểm thử hay không.
+                </p>
+
+                <h3>15.4. Ví dụ DiagnosticSessionControl</h3>
+
+                <pre><code>Tester -> ECU:
+10 03
+
+ECU -> Tester:
+50 03 00 32 01 F4</code></pre>
+
+                <p>
+                    Có thể nhận diện:
+                </p>
+
+                <ul>
+                    <li>0x10: DiagnosticSessionControl Request.</li>
+                    <li>0x03: Extended Diagnostic Session.</li>
+                    <li>0x50: Positive Response SID.</li>
+                    <li>0x03: Session được yêu cầu.</li>
+                    <li>Các byte tiếp theo: Session Parameter Record.</li>
+                </ul>
+
+                <p>
+                    Khi phân tích thực tế, cần tham khảo cấu trúc
+                    Response của dịch vụ tương ứng để giải mã
+                    chính xác những tham số bổ sung.
+                </p>
+
+                <h3>15.5. Quy trình phân tích UDS Trace</h3>
+
+                <ol>
+                    <li>Xác định chiều truyền Request và Response.</li>
+                    <li>Đọc SID để nhận diện Diagnostic Service.</li>
+                    <li>Kiểm tra Sub-function nếu dịch vụ có sử dụng.</li>
+                    <li>Phân tích DID, RID hoặc các tham số bổ sung.</li>
+                    <li>Xác định Response là Positive hay Negative.</li>
+                    <li>Nếu là Negative Response, kiểm tra NRC.</li>
+                    <li>Kiểm tra Diagnostic Session và điều kiện truy cập.</li>
+                    <li>Đối chiếu nội dung Trace với cấu hình và yêu cầu của ECU.</li>
+                </ol>
+
+
+                <h2>16. Những lỗi thường gặp khi triển khai UDS</h2>
+
+                <h3>16.1. Sai SID hoặc định dạng Request</h3>
+
+                <p>
+                    Nếu Request chứa SID không được hỗ trợ
+                    hoặc có cấu trúc không đúng quy định,
+                    ECU có thể trả về Negative Response.
+                </p>
+
+                <p>
+                    Cần kiểm tra SID, Sub-function và các trường dữ liệu
+                    bắt buộc của Diagnostic Service.
+                </p>
+
+                <h3>16.2. Sai DID hoặc dữ liệu không hợp lệ</h3>
+
+                <p>
+                    Với ReadDataByIdentifier hoặc WriteDataByIdentifier,
+                    DID không được hỗ trợ hoặc dữ liệu không phù hợp
+                    có thể khiến ECU từ chối Request.
+                </p>
+
+                <p>
+                    Cần kiểm tra DID, kích thước dữ liệu,
+                    quyền truy cập và cấu hình của ECU.
+                </p>
+
+                <h3>16.3. Sai Diagnostic Session</h3>
+
+                <p>
+                    Một Diagnostic Service có thể chỉ được phép
+                    thực hiện trong một số Session nhất định.
+                </p>
+
+                <p>
+                    Nếu Client gửi Request trong Session không phù hợp,
+                    ECU có thể trả về Negative Response.
+                </p>
+
+                <h3>16.4. Chưa đáp ứng Security Access</h3>
+
+                <p>
+                    Một số dịch vụ được bảo vệ bằng cơ chế
+                    Security Access.
+                </p>
+
+                <p>
+                    Nếu Client chưa có quyền truy cập phù hợp,
+                    ECU có thể từ chối thực hiện yêu cầu.
+                </p>
+
+                <h3>16.5. Sai trình tự thực hiện dịch vụ</h3>
+
+                <p>
+                    Một số Diagnostic Service yêu cầu thực hiện
+                    theo một trình tự cụ thể.
+                </p>
+
+                <p>
+                    Ví dụ, trong quá trình truyền dữ liệu,
+                    việc gửi TransferData trước khi bắt đầu
+                    quá trình Download hoặc Upload có thể
+                    khiến ECU từ chối Request.
+                </p>
+
+                <h3>16.6. ResponsePending bị hiểu nhầm là lỗi</h3>
+
+                <p>
+                    NRC 0x78 thông báo rằng Server cần thêm thời gian
+                    để xử lý Request.
+                </p>
+
+                <p>
+                    Nếu Client coi đây là lỗi ngay lập tức,
+                    quá trình xử lý những dịch vụ cần thời gian dài
+                    có thể bị gián đoạn không cần thiết.
+                </p>
+
+                <h3>16.7. Không phân biệt UDS với Transport Protocol</h3>
+
+                <p>
+                    UDS Application Layer và Transport Protocol
+                    có trách nhiệm khác nhau.
+                </p>
+
+                <p>
+                    Khi một Diagnostic Message không truyền thành công,
+                    cần xác định lỗi xuất hiện ở tầng nào.
+                </p>
+
+                <table>
+                    <tr>
+                        <th>Tầng</th>
+                        <th>Ví dụ vấn đề</th>
+                    </tr>
+                    <tr>
+                        <td>UDS Application Layer</td>
+                        <td>Sai SID, DID, Sub-function hoặc điều kiện thực hiện Service.</td>
+                    </tr>
+                    <tr>
+                        <td>Transport Layer</td>
+                        <td>Timeout, Sequence Number sai hoặc lỗi Flow Control.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Data Link Layer</td>
+                        <td>CAN Frame không được truyền hoặc nhận đúng.</td>
+                    </tr>
+                    <tr>
+                        <td>CAN Physical Layer</td>
+                        <td>Lỗi kết nối vật lý hoặc tín hiệu trên CAN Bus.</td>
+                    </tr>
+                </table>
+
+
+                <h2>17. Checklist kiến thức cần nắm</h2>
+
+                <ul>
+                    <li>Hiểu ISO 14229-1 là gì và vai trò trong Automotive.</li>
+                    <li>Phân biệt ISO 14229-1 với ISO 14229-2 và ISO 14229-3.</li>
+                    <li>Hiểu vai trò của UDS Application Layer.</li>
+                    <li>Hiểu Client/Server Model trong UDS.</li>
+                    <li>Phân biệt Diagnostic Request, Positive Response và Negative Response.</li>
+                    <li>Hiểu Service Identifier (SID).</li>
+                    <li>Biết quy tắc Positive Response SID = Request SID + 0x40 trong các dịch vụ áp dụng quy tắc này.</li>
+                    <li>Hiểu Sub-function và vai trò của nó.</li>
+                    <li>Hiểu Suppress Positive Response Message Indication Bit.</li>
+                    <li>Hiểu Data Identifier (DID).</li>
+                    <li>Phân biệt ReadDataByIdentifier và WriteDataByIdentifier.</li>
+                    <li>Hiểu cấu trúc Negative Response.</li>
+                    <li>Nhận biết những NRC thường gặp.</li>
+                    <li>Hiểu NRC ResponsePending (0x78).</li>
+                    <li>Hiểu Diagnostic Session và DiagnosticSessionControl.</li>
+                    <li>Hiểu mục đích của SecurityAccess và cơ chế Seed/Key.</li>
+                    <li>Nhận biết những nhóm Diagnostic Services quan trọng.</li>
+                    <li>Hiểu vai trò của RequestDownload, TransferData và RequestTransferExit.</li>
+                    <li>Hiểu mối quan hệ giữa UDS Application Layer và AUTOSAR DCM.</li>
+                    <li>Phân biệt vai trò của DCM, DEM, PduR và CanTp.</li>
+                    <li>Biết cách đọc và phân tích UDS Trace.</li>
+                    <li>Nhận biết những lỗi thường gặp khi triển khai UDS.</li>
+                </ul>
+
+
+                <h2>18. Bài học tiếp theo</h2>
+
+                <p>
+                    Ở bài tiếp theo, chúng ta sẽ tìm hiểu về
+                    <strong>ISO 14229-2 - UDS Session Layer</strong>.
+                </p>
+
+                <p>
+                    Đây là phần tiêu chuẩn tập trung vào Session Layer Services,
+                    mô tả các dịch vụ và cơ chế hỗ trợ giao tiếp giữa
+                    UDS Application Layer với các tầng bên dưới.
+                </p>
+
+                <p>
+                    Chúng ta sẽ tìm hiểu mối quan hệ giữa Application Layer
+                    và Session Layer, các dịch vụ giao tiếp trừu tượng,
+                    cách quản lý thời gian phản hồi và những khái niệm
+                    liên quan đến việc duy trì Diagnostic Communication.
+                </p>
+
+                <p>
+                    Sau khi hoàn thành Bài 38, chúng ta đã hiểu được
+                    cách UDS định nghĩa nội dung và ý nghĩa của
+                    Diagnostic Request/Response. Bài 39 sẽ giúp
+                    làm rõ hơn các cơ chế Session Layer hỗ trợ
+                    quá trình giao tiếp đó.
+                </p>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-37.html">← Bài trước</a>
+                    <a class="btn" href="lesson-39.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>EmLearn - 2026</p>
+    </footer>
+
+</body>
+
+</html>
