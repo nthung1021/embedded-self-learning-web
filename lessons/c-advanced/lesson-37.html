@@ -1,11 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol | Tự học Embedded</title>
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 37: Interrupt Service Routine (ISR) in C | Advanced C Embedded</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 
@@ -29,782 +29,533 @@
             <aside class="side">
                 <h4>Danh sách bài học</h4>
 
-                <a href="lesson-1.html">Bài 1: AUTOSAR</a>
-                <a href="lesson-2.html">Bài 2: Tổng quan kiến trúc AUTOSAR Classic</a>
-                <a href="lesson-3.html">Bài 3: Tổng quan các Software Layer chính</a>
-                <a href="lesson-4.html">Bài 4: Tổng quan tầng Application Software</a>
-                <a href="lesson-5.html">Bài 5: Tổng quan tầng Runtime Environment</a>
-                <a href="lesson-6.html">Bài 6: Tổng quan tầng Basic Software</a>
-                <a href="lesson-7.html">Bài 7: Tổng quan Hardware và Hardware Abstraction</a>
-                <a href="lesson-8.html">Bài 8: Tổng quan luồng dữ liệu xuyên suốt AUTOSAR</a>
-                <a href="lesson-9.html">Bài 9: Tổng quan Communication Stack</a>
-                <a href="lesson-10.html">Bài 10: Tổng quan Service và ECU Management</a>
-                <a href="lesson-11.html">Bài 11: Tổng quan về quan hệ giữa các tầng</a>
-                <a href="lesson-12.html">Bài 12: Một ví dụ hoàn chỉnh từ Application đến Hardware</a>
-                <a href="lesson-13.html">Bài 13: Chi tiết Tầng Application Software</a>
-                <a href="lesson-14.html">Bài 14: Chi tiết tầng Runtime Environment</a>
-                <a href="lesson-15.html">Bài 15: Chi tiết tầng Basic Software</a>
-                <a href="lesson-16.html">Bài 16: Chi tiết Communication Stack</a>
-                <a href="lesson-17.html">Bài 17: Chi tiết Memory Stack</a>
-                <a href="lesson-18.html">Bài 18: ECU State và System Services</a>
-                <a href="lesson-19.html">Bài 19: Chi tiết Diagnostic Stack</a>
-                <a href="lesson-20.html">Bài 20: ECU Abstraction và I/O</a>
-                <a href="lesson-21.html">Bài 21: MCAL</a>
-                <a href="lesson-22.html">Bài 22: AUTOSAR Interfaces và Dependencies</a>
-                <a href="lesson-23.html">Bài 23: AUTOSAR Configuration và ARXML</a>
-                <a href="lesson-24.html">Bài 24: End-to-End AUTOSAR Data Flows</a>
-                <a href="lesson-25.html">Bài 25: Diagnostic Communication Manager (DCM)</a>
-                <a href="lesson-26.html">Bài 26: DCM - Diagnostic Session Layer (DSL)</a>
-                <a href="lesson-27.html">Bài 27: DCM - Diagnostic Service Dispatcher (DSD)</a>
-                <a href="lesson-28.html">Bài 28: DCM - Diagnostic Service Processing (DSP)</a>
-                <a href="lesson-29.html">Bài 29: DCM Generator</a>
-                <a href="lesson-30.html">Bài 30: Flash Bootloader (FBL)</a>
-                <a href="lesson-31.html">Bài 31: UDS</a>
-                <a href="lesson-32.html">Bài 32: OBD</a>
-                <a href="lesson-33.html">Bài 33: Tổng quan các tiêu chuẩn ISO trong Automotive</a>
-                <a href="lesson-34.html">Bài 34: Chi tiết ISO 11898-1 - CAN Protocol</a>
-                <a href="lesson-35.html">Bài 35: Chi tiết ISO 11898-2 - CAN Physical Layer</a>
-                <a href="lesson-36.html">Bài 36: Chi tiết ISO 11898-3 - Low-speed Fault-tolerant CAN</a>
-                <a href="lesson-37.html" class="active" aria-current="page">Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</a>
-                <a href="lesson-38.html">Bài 38: Chi tiết ISO 14229-1 - UDS Application Layer</a>
-                <a href="lesson-39.html">Bài 39: Chi tiết ISO 14229-2 - UDS Session Layer</a>
-                <a href="lesson-40.html">Bài 40: Chi tiết ISO 14229-3 - UDS on CAN</a>
-                <a href="lesson-41.html">Bài 41: Chi tiết ISO 13400 - Diagnostics over Internet Protocol (DoIP)</a>
-                <a href="lesson-42.html">Bài 42: Tổng quan bộ tiêu chuẩn ISO 15031</a>
-                <a href="lesson-43.html">Bài 43: Tổng quan ISO 26262 - Functional Safety</a>
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
 
-                <a class="btn" href="index.html">← Tất cả bài học AUTOSAR</a>
+                <h4>Part 1. Advanced C Fundamentals &amp; Memory Management</h4>
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <h4>Part 2. Advanced Pointer Programming</h4>
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <h4>Part 3. Advanced C Data Types</h4>
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <h4>Part 4. Preprocessor &amp; Modular Programming</h4>
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <h4>Part 5. Bit Manipulation &amp; Embedded-Oriented Programming</h4>
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html" class="active" aria-current="page">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <h4>Part 6. Defensive Programming &amp; Reliable C</h4>
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <h4>Part 7. Programming Optimization &amp; Design Patterns in C</h4>
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <h4>Part 8. Code Quality, MISRA C &amp; Software Verification</h4>
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
             </aside>
 
             <article>
 
-                <h1>Bài 37: Chi tiết ISO 15765-2 - CAN Transport Protocol</h1>
+                <h1>Bài 37: Interrupt Service Routine (ISR) in C</h1>
 
                 <p>
-                    Trong các hệ thống Automotive, giao tiếp CAN thường được sử dụng
-                    để trao đổi dữ liệu giữa các ECU. CAN Frame có kích thước dữ liệu
-                    giới hạn, vì vậy không phải lúc nào một thông điệp cũng có thể
-                    được truyền đi chỉ bằng một frame duy nhất.
+                    Trong bài học trước, chúng ta đã tìm hiểu cách cấu hình Hardware Register
+                    bằng Bit Masking, Bit Shifting và những kỹ thuật Read-Modify-Write.
+                    Đây là những kiến thức quan trọng để điều khiển hoạt động của Peripheral
+                    trong vi điều khiển.
                 </p>
 
                 <p>
-                    Ví dụ, khi Diagnostic Tester gửi một yêu cầu đọc dữ liệu hoặc
-                    thực hiện một thao tác chẩn đoán, nội dung request có thể tương
-                    đối nhỏ. Tuy nhiên, khi ECU trả về dữ liệu lớn, thông điệp có thể
-                    vượt quá số byte mà một CAN Frame có thể chứa.
+                    Tuy nhiên, trong Embedded Systems, không phải lúc nào CPU cũng có thể
+                    liên tục kiểm tra trạng thái của từng Peripheral để biết khi nào một
+                    sự kiện xảy ra. Ví dụ, khi UART nhận được dữ liệu, Timer đạt đến giá trị
+                    tràn hoặc GPIO phát hiện một cạnh tín hiệu, hệ thống cần có cách thông
+                    báo những sự kiện này đến CPU.
                 </p>
 
                 <p>
-                    Để giải quyết vấn đề này, ngành Automotive sử dụng
-                    <strong>ISO 15765-2 - Diagnostic communication over Controller
-                    Area Network (DoCAN) - Part 2: Transport protocol and network
-                    layer services</strong>.
+                    Một trong những cơ chế được sử dụng phổ biến để giải quyết vấn đề này
+                    là Interrupt (Ngắt). Khi một sự kiện thỏa mãn điều kiện ngắt xảy ra,
+                    phần cứng có thể yêu cầu CPU tạm dừng luồng chương trình hiện tại để
+                    xử lý sự kiện đó.
                 </p>
 
                 <p>
-                    Tiêu chuẩn này định nghĩa cơ chế truyền dữ liệu ở Transport Layer
-                    và Network Layer trên CAN, bao gồm việc chia nhỏ dữ liệu thành
-                    nhiều frame, kiểm soát tốc độ truyền và ghép các frame lại thành
-                    thông điệp ban đầu.
-                </p>
-
-                <div class="note">
-                    <strong>Phạm vi bài học:</strong>
-                    Bài này tập trung vào ISO 15765-2:2024, vai trò của
-                    CAN Transport Protocol, mối quan hệ với UDS và AUTOSAR CanTp,
-                    Network Layer, N_PDU, N_PCI, Single Frame, First Frame,
-                    Consecutive Frame, Flow Control, Flow Status, Block Size,
-                    STmin, Addressing Format và quá trình Segmentation/Reassembly.
-                    Bài học cũng giới thiệu cách đọc CAN Trace và phân tích
-                    những lỗi thường gặp trong Diagnostic Communication.
-                </div>
-
-
-                <h2>1. ISO 15765-2 là gì?</h2>
-
-                <h3>1.1. Khái niệm</h3>
-
-                <p>
-                    <strong>ISO 15765-2</strong> là một phần của bộ tiêu chuẩn
-                    Diagnostic Communication over Controller Area Network
-                    (DoCAN), quy định giao thức Transport Protocol và các dịch vụ
-                    Network Layer dành cho hệ thống truyền thông dựa trên CAN.
+                    Đoạn chương trình được thực thi để xử lý Interrupt được gọi là
+                    Interrupt Service Routine (ISR), hay còn gọi là Interrupt Handler.
                 </p>
 
                 <p>
-                    Tiêu chuẩn này xác định cách một thông điệp có thể được truyền
-                    qua mạng CAN ngay cả khi kích thước dữ liệu của nó vượt quá
-                    khả năng chứa của một CAN Frame.
+                    ISR là một thành phần quan trọng trong Embedded Software vì nó cho
+                    phép hệ thống phản ứng với những sự kiện phần cứng mà không cần phải
+                    liên tục kiểm tra trạng thái Peripheral bằng vòng lặp Polling.
                 </p>
 
                 <p>
-                    Thay vì yêu cầu tầng phía trên tự xử lý từng CAN Frame,
-                    ISO 15765-2 cung cấp một cơ chế trung gian để chia nhỏ,
-                    truyền và ghép dữ liệu. Tầng phía trên có thể làm việc
-                    với một thông điệp hoàn chỉnh mà không cần trực tiếp
-                    quản lý từng phần dữ liệu được truyền trên bus.
+                    Bài học này sẽ tập trung vào cơ chế Interrupt, Interrupt Vector Table,
+                    cách CPU xử lý Interrupt, cách khai báo ISR trong C, Interrupt Context,
+                    chia sẻ dữ liệu giữa ISR và Main Program, cùng những nguyên tắc cần
+                    tuân thủ khi viết Interrupt Service Routine.
+                </p>
+
+                <h2>1. Interrupt và Interrupt Handling là gì?</h2>
+
+                <h3>1.1. Khái niệm Interrupt</h3>
+
+                <p>
+                    Interrupt là cơ chế cho phép một sự kiện từ phần cứng hoặc một nguồn
+                    bên trong hệ thống yêu cầu CPU tạm thời chuyển sang xử lý một công việc
+                    ưu tiên, thay vì tiếp tục thực hiện luồng chương trình hiện tại.
                 </p>
 
                 <p>
-                    ISO 15765-2 hỗ trợ các giao thức Application Layer như
-                    UDS theo ISO 14229 và các hệ thống chẩn đoán OBD.
-                    Do đó, nó đóng vai trò quan trọng trong Diagnostic
-                    Communication của các ECU Automotive.
-                </p>
-
-                <h3>1.2. Phiên bản tiêu chuẩn</h3>
-
-                <p>
-                    ISO 15765-2:2024 là phiên bản thứ tư của tiêu chuẩn,
-                    được công bố vào tháng 04 năm 2024 và thay thế
-                    ISO 15765-2:2016.
+                    Khi một Interrupt được chấp nhận, CPU sẽ thực hiện những bước cần thiết
+                    để chuyển sang Interrupt Handler tương ứng. Sau khi xử lý xong,
+                    chương trình có thể tiếp tục từ vị trí đã bị gián đoạn.
                 </p>
 
                 <p>
-                    Tiêu chuẩn có tên đầy đủ:
-                </p>
-
-                <div class="note">
-                    <strong>ISO 15765-2:2024</strong><br>
-                    Road vehicles - Diagnostic communication over Controller
-                    Area Network (DoCAN) - Part 2: Transport protocol and
-                    network layer services.
-                </div>
-
-                <p>
-                    Khi đọc tài liệu kỹ thuật hoặc làm việc với một dự án Automotive,
-                    cần chú ý phiên bản ISO được dự án tham chiếu. Các dự án khác nhau
-                    có thể sử dụng phiên bản tiêu chuẩn hoặc yêu cầu OEM khác nhau.
-                </p>
-
-                <h3>1.3. Phạm vi của ISO 15765-2</h3>
-
-                <p>
-                    ISO 15765-2 tập trung vào việc cung cấp Transport Protocol
-                    và Network Layer Services cho các hệ thống giao tiếp chẩn đoán
-                    sử dụng CAN.
-                </p>
-
-                <p>
-                    Những chức năng chính bao gồm:
+                    Một số nguồn Interrupt thường gặp trong vi điều khiển:
                 </p>
 
                 <ul>
-                    <li>Truyền thông điệp có kích thước nhỏ bằng một frame.</li>
-                    <li>Chia thông điệp lớn thành nhiều frame để truyền.</li>
-                    <li>Kiểm soát luồng truyền giữa sender và receiver.</li>
-                    <li>Ghép các phần dữ liệu nhận được thành thông điệp hoàn chỉnh.</li>
-                    <li>Hỗ trợ các kiểu địa chỉ và định dạng truyền thông khác nhau.</li>
-                    <li>Cung cấp các dịch vụ Network Layer cho tầng phía trên.</li>
+                    <li>GPIO Interrupt: Phát hiện thay đổi trạng thái của chân GPIO.</li>
+                    <li>Timer Interrupt: Xảy ra khi Timer đạt đến một điều kiện xác định.</li>
+                    <li>UART Interrupt: Thông báo khi có dữ liệu nhận hoặc truyền.</li>
+                    <li>SPI Interrupt: Thông báo trạng thái truyền nhận SPI.</li>
+                    <li>ADC Interrupt: Thông báo khi quá trình chuyển đổi ADC hoàn tất.</li>
+                    <li>DMA Interrupt: Thông báo khi một quá trình truyền dữ liệu DMA hoàn thành.</li>
+                    <li>System Interrupt: Những sự kiện nội bộ liên quan đến hoạt động của CPU.</li>
                 </ul>
 
+                <h3>1.2. Vì sao cần sử dụng Interrupt?</h3>
+
                 <p>
-                    ISO 15765-2 không định nghĩa nội dung nghiệp vụ của các
-                    Diagnostic Service như ReadDataByIdentifier hay
-                    DiagnosticSessionControl. Những nội dung này thuộc
-                    các tiêu chuẩn ở tầng phía trên, chẳng hạn ISO 14229-1.
+                    Giả sử một vi điều khiển cần nhận dữ liệu từ UART. Nếu sử dụng Polling,
+                    chương trình phải liên tục kiểm tra trạng thái của UART để xác định
+                    khi nào dữ liệu đã sẵn sàng.
                 </p>
 
+                <pre><code>while (1)
+{
+    if (UART_DataAvailable())
+    {
+        uint8_t data = UART_ReadData();
 
-                <h2>2. Vì sao cần CAN Transport Protocol?</h2>
+        ProcessData(data);
+    }
 
-                <h3>2.1. Giới hạn kích thước dữ liệu của CAN Frame</h3>
-
-                <p>
-                    Với CAN Classic, một CAN Data Frame có thể chứa tối đa
-                    8 byte dữ liệu trong Data Field.
-                </p>
-
-                <p>
-                    Điều này phù hợp với nhiều tín hiệu điều khiển thông thường,
-                    nhưng có thể không đủ khi truyền những thông điệp chẩn đoán
-                    có kích thước lớn.
-                </p>
+    /* Other application tasks */
+}</code></pre>
 
                 <p>
-                    Ví dụ, một Diagnostic Response có thể chứa nhiều byte dữ liệu
-                    được đọc từ ECU. Nếu toàn bộ dữ liệu lớn hơn khả năng chứa
-                    của một CAN Frame, việc truyền trực tiếp bằng một frame
-                    sẽ không thực hiện được.
-                </p>
-
-                <h3>2.2. Giải pháp Segmentation và Reassembly</h3>
-
-                <p>
-                    ISO 15765-2 giải quyết vấn đề này bằng hai cơ chế:
-                </p>
-
-                <ul>
-                    <li>
-                        <strong>Segmentation:</strong> Chia một thông điệp lớn
-                        thành nhiều phần nhỏ để truyền qua các CAN Frame.
-                    </li>
-                    <li>
-                        <strong>Reassembly:</strong> Ghép các phần dữ liệu
-                        được nhận thành thông điệp ban đầu.
-                    </li>
-                </ul>
-
-                <p>
-                    Nhờ cơ chế này, tầng phía trên có thể gửi hoặc nhận một
-                    thông điệp có kích thước lớn hơn giới hạn của một CAN Frame.
-                </p>
-
-                <div class="note">
-                    <strong>Ví dụ:</strong>
-                    Giả sử một Diagnostic Message có tổng kích thước 20 byte.
-                    Với CAN Classic, thông điệp này không thể được truyền
-                    trong một CAN Frame duy nhất. Transport Protocol sẽ chia
-                    dữ liệu thành First Frame và các Consecutive Frame,
-                    sau đó receiver ghép chúng lại thành thông điệp 20 byte.
-                </div>
-
-                <h3>2.3. Vai trò của Flow Control</h3>
-
-                <p>
-                    Khi một thông điệp được chia thành nhiều frame,
-                    sender không nên gửi toàn bộ các frame liên tiếp
-                    mà không quan tâm đến khả năng tiếp nhận của receiver.
+                    Cách làm này có thể hoạt động, nhưng CPU phải thường xuyên kiểm tra
+                    trạng thái UART ngay cả khi chưa có dữ liệu mới.
                 </p>
 
                 <p>
-                    Receiver có thể cần thời gian để xử lý dữ liệu,
-                    lưu dữ liệu vào buffer hoặc chuẩn bị nhận block tiếp theo.
+                    Với Interrupt, Peripheral có thể thông báo cho CPU khi một sự kiện
+                    xảy ra. Khi đó, CPU chỉ cần xử lý sự kiện khi có yêu cầu phù hợp.
                 </p>
 
+                <pre><code>int main(void)
+{
+    UART_Init();
+    UART_EnableReceiveInterrupt();
+
+    while (1)
+    {
+        /* Main application tasks */
+    }
+}
+
+/* Called when UART receive event occurs */
+void UART_Receive_IRQHandler(void)
+{
+    uint8_t data = UART_ReadData();
+
+    /* Handle received data */
+}</code></pre>
+
                 <p>
-                    Vì vậy, ISO 15765-2 sử dụng
-                    <strong>Flow Control (FC)</strong> để receiver thông báo
-                    cho sender biết trạng thái tiếp nhận và điều kiện
-                    truyền các Consecutive Frame tiếp theo.
+                    Ví dụ trên chỉ minh họa ý tưởng. Cách khai báo Handler và cơ chế
+                    xác định sự kiện UART phụ thuộc vào MCU, Compiler và thư viện
+                    phần cứng đang sử dụng.
                 </p>
 
-
-                <h2>3. Vị trí của ISO 15765-2 trong OSI Model</h2>
-
-                <h3>3.1. Transport Layer và Network Layer</h3>
+                <h3>1.3. Polling vs Interrupt</h3>
 
                 <p>
-                    ISO 15765-2 mô tả các chức năng thuộc Transport Layer
-                    và Network Layer trong mô hình giao tiếp.
-                </p>
-
-                <p>
-                    Network Layer chịu trách nhiệm xử lý việc truyền thông điệp
-                    thông qua mạng CAN, bao gồm chia nhỏ dữ liệu, đóng gói
-                    Network Protocol Data Unit và ghép dữ liệu ở phía nhận.
-                </p>
-
-                <p>
-                    Trong khi đó, Transport Layer thường được hiểu là tầng
-                    cung cấp khả năng truyền một thông điệp lớn hơn kích thước
-                    mà Data Link Layer có thể chuyển trong một lần.
-                </p>
-
-                <p>
-                    Khi áp dụng ISO 15765-2, cần chú ý rằng tài liệu tiêu chuẩn
-                    sử dụng các thuật ngữ và dịch vụ Network Layer riêng.
-                    Vì vậy, không nên mặc định mọi tên dịch vụ đều giống
-                    hoàn toàn với các giao thức mạng phổ biến trên máy tính.
-                </p>
-
-                <h3>3.2. Quan hệ với các tầng khác</h3>
-
-                <p>
-                    Trong một hệ thống Diagnostic Communication sử dụng UDS
-                    trên CAN, có thể hình dung luồng giao tiếp tổng quát như sau:
-                </p>
-
-                <pre><code>Diagnostic Tester
-       |
-       v
-UDS Application Layer
-       |
-       v
-Transport / Network Layer
-       |
-       v
-CAN Data Link Layer
-       |
-       v
-CAN Physical Layer
-       |
-       v
-CAN Bus
-       |
-       v
-CAN Physical Layer
-       |
-       v
-CAN Data Link Layer
-       |
-       v
-Transport / Network Layer
-       |
-       v
-UDS Application Layer
-       |
-       v
-ECU Diagnostic Application</code></pre>
-
-                <p>
-                    Trong sơ đồ trên:
-                </p>
-
-                <ul>
-                    <li>
-                        <strong>UDS Application Layer:</strong>
-                        Xử lý các Diagnostic Service và nội dung request/response.
-                    </li>
-                    <li>
-                        <strong>Transport / Network Layer:</strong>
-                        Chia nhỏ, truyền và ghép các thông điệp.
-                    </li>
-                    <li>
-                        <strong>CAN Data Link Layer:</strong>
-                        Đóng gói dữ liệu thành CAN Frame và xử lý truyền nhận frame.
-                    </li>
-                    <li>
-                        <strong>CAN Physical Layer:</strong>
-                        Truyền tín hiệu điện trên CAN Bus.
-                    </li>
-                </ul>
-
-                <h3>3.3. Quan hệ với ISO 14229</h3>
-
-                <p>
-                    ISO 14229 định nghĩa các dịch vụ chẩn đoán UDS,
-                    trong khi ISO 15765-2 cung cấp cơ chế truyền thông
-                    điệp trên CAN.
-                </p>
-
-                <p>
-                    Hai tiêu chuẩn này có trách nhiệm khác nhau nhưng
-                    phối hợp với nhau trong hệ thống chẩn đoán.
+                    Polling và Interrupt là hai phương pháp phổ biến để xử lý sự kiện
+                    từ Peripheral.
                 </p>
 
                 <table>
-                    <tr>
-                        <th>Tiêu chuẩn</th>
-                        <th>Vai trò chính</th>
-                    </tr>
-                    <tr>
-                        <td>ISO 14229-1</td>
-                        <td>Định nghĩa UDS Application Layer và các Diagnostic Services.</td>
-                    </tr>
-                    <tr>
-                        <td>ISO 14229-2</td>
-                        <td>Định nghĩa Session Layer Services và giao diện dịch vụ trừu tượng.</td>
-                    </tr>
-                    <tr>
-                        <td>ISO 15765-2</td>
-                        <td>Định nghĩa Transport Protocol và Network Layer Services trên CAN.</td>
-                    </tr>
-                    <tr>
-                        <td>ISO 11898</td>
-                        <td>Định nghĩa các đặc điểm của mạng CAN ở Data Link Layer và Physical Layer.</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Polling</th>
+                            <th>Interrupt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cách phát hiện sự kiện</td>
+                            <td>CPU chủ động kiểm tra trạng thái.</td>
+                            <td>Phần cứng gửi yêu cầu ngắt khi có sự kiện.</td>
+                        </tr>
+                        <tr>
+                            <td>Hoạt động của CPU</td>
+                            <td>Có thể phải kiểm tra liên tục.</td>
+                            <td>CPU có thể thực hiện công việc khác trước khi ngắt được xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Độ phản hồi</td>
+                            <td>Phụ thuộc chu kỳ kiểm tra.</td>
+                            <td>Có thể phản hồi nhanh khi Interrupt được cho phép và được chấp nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>Độ phức tạp</td>
+                            <td>Thường dễ triển khai hơn.</td>
+                            <td>Cần quản lý ISR, Priority và dữ liệu chia sẻ.</td>
+                        </tr>
+                        <tr>
+                            <td>Ứng dụng</td>
+                            <td>Kiểm tra trạng thái đơn giản hoặc sự kiện không yêu cầu phản hồi nhanh.</td>
+                            <td>Timer, UART, GPIO và những sự kiện phần cứng cần phản hồi.</td>
+                        </tr>
+                    </tbody>
                 </table>
 
+                <p>
+                    Không phải lúc nào Interrupt cũng tốt hơn Polling. Việc lựa chọn
+                    phụ thuộc vào yêu cầu thời gian phản hồi, mức độ phức tạp, tần suất
+                    sự kiện và tài nguyên của hệ thống.
+                </p>
 
-                <h2>4. Các khái niệm cơ bản trong ISO 15765-2</h2>
-
-                <h3>4.1. N_SDU - Network Service Data Unit</h3>
+                <h3>1.4. Interrupt và Exception</h3>
 
                 <p>
-                    <strong>N_SDU</strong> là dữ liệu được trao đổi giữa
-                    Network Layer và tầng phía trên thông qua giao diện
-                    dịch vụ của Network Layer.
+                    Trong kiến trúc CPU, Interrupt và Exception đều có thể khiến bộ xử lý
+                    chuyển sang một luồng xử lý đặc biệt.
                 </p>
 
                 <p>
-                    Có thể hiểu N_SDU là thông điệp mà tầng phía trên muốn
-                    truyền đi hoặc nhận được, trước khi Network Layer
-                    thực hiện các thao tác đóng gói và chia nhỏ dữ liệu.
-                </p>
-
-                <h3>4.2. N_PDU - Network Protocol Data Unit</h3>
-
-                <p>
-                    <strong>N_PDU</strong> là đơn vị dữ liệu giao thức
-                    được Network Layer tạo ra để truyền qua mạng.
-                </p>
-
-                <p>
-                    Một N_PDU có thể chứa một phần dữ liệu của N_SDU
-                    cùng với thông tin điều khiển giao thức.
-                </p>
-
-                <p>
-                    Trong ISO 15765-2, các loại N_PDU quan trọng bao gồm:
-                </p>
-
-                <ul>
-                    <li>SF N_PDU - Single Frame.</li>
-                    <li>FF N_PDU - First Frame.</li>
-                    <li>CF N_PDU - Consecutive Frame.</li>
-                    <li>FC N_PDU - Flow Control.</li>
-                </ul>
-
-                <h3>4.3. N_PCI - Network Protocol Control Information</h3>
-
-                <p>
-                    <strong>N_PCI</strong> là phần thông tin điều khiển
-                    được sử dụng để xác định loại N_PDU và các thông tin
-                    cần thiết cho việc xử lý dữ liệu.
-                </p>
-
-                <p>
-                    N_PCI thường được đặt ở phần đầu dữ liệu của CAN Frame.
-                    Byte đầu tiên chứa thông tin xác định loại frame
-                    thông qua các bit cao.
+                    Tuy nhiên, hai khái niệm này thường được phân biệt như sau:
                 </p>
 
                 <table>
-                    <tr>
-                        <th>N_PDU Type</th>
-                        <th>Giá trị PCI Type</th>
-                        <th>Ý nghĩa</th>
-                    </tr>
-                    <tr>
-                        <td>Single Frame (SF)</td>
-                        <td>0x0</td>
-                        <td>Truyền thông điệp trong một frame.</td>
-                    </tr>
-                    <tr>
-                        <td>First Frame (FF)</td>
-                        <td>0x1</td>
-                        <td>Bắt đầu một thông điệp được phân đoạn.</td>
-                    </tr>
-                    <tr>
-                        <td>Consecutive Frame (CF)</td>
-                        <td>0x2</td>
-                        <td>Truyền các phần dữ liệu tiếp theo.</td>
-                    </tr>
-                    <tr>
-                        <td>Flow Control (FC)</td>
-                        <td>0x3</td>
-                        <td>Điều khiển luồng truyền dữ liệu.</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ý nghĩa</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Interrupt</td>
+                            <td>Thường được kích hoạt bởi một sự kiện bất đồng bộ từ phần cứng hoặc bộ điều khiển ngắt.</td>
+                            <td>UART Receive, Timer Update.</td>
+                        </tr>
+                        <tr>
+                            <td>Exception</td>
+                            <td>Thường liên quan đến những sự kiện đặc biệt trong quá trình thực thi CPU.</td>
+                            <td>HardFault, UsageFault.</td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <p>
-                    Các giá trị trên là giá trị của 4 bit PCI Type
-                    trong trường hợp biểu diễn thông thường.
-                    Chúng không phải toàn bộ giá trị của byte PCI,
-                    vì các bit còn lại được sử dụng cho những trường
-                    thông tin khác tùy theo loại frame.
+                    Cách phân loại cụ thể phụ thuộc vào kiến trúc vi xử lý. Ví dụ,
+                    ARM Cortex-M sử dụng một hệ thống Exception bao gồm cả những
+                    Exception nội bộ và những External Interrupt.
                 </p>
 
-                <h3>4.4. N_Data</h3>
+                <h2>2. Các thành phần trong hệ thống Interrupt</h2>
+
+                <h3>2.1. Interrupt Source</h3>
 
                 <p>
-                    <strong>N_Data</strong> là phần dữ liệu được truyền
-                    trong N_PDU sau khi dành chỗ cho N_PCI và các thông tin
-                    cần thiết khác.
-                </p>
-
-                <p>
-                    Kích thước N_Data phụ thuộc vào loại N_PDU,
-                    CAN Data Length và Addressing Format được sử dụng.
-                </p>
-
-
-                <h2>5. Bốn loại N_PDU trong ISO 15765-2</h2>
-
-                <p>
-                    ISO 15765-2 định nghĩa bốn loại frame chính
-                    để thực hiện quá trình truyền thông điệp.
-                    Mỗi loại frame có một nhiệm vụ riêng.
-                </p>
-
-                <h3>5.1. Single Frame (SF)</h3>
-
-                <p>
-                    <strong>Single Frame</strong> được sử dụng khi toàn bộ
-                    thông điệp có thể được truyền trong một CAN Frame.
+                    Interrupt Source là nguồn phát sinh sự kiện có khả năng tạo ra
+                    Interrupt Request.
                 </p>
 
                 <p>
-                    Đây là cách truyền đơn giản nhất vì không cần thực hiện
-                    quá trình phân đoạn dữ liệu hoặc Flow Control.
-                </p>
-
-                <p>
-                    Với CAN Classic và Normal Addressing, cấu trúc cơ bản
-                    của một Single Frame có thể được biểu diễn như sau:
-                </p>
-
-                <pre><code>Byte 0       Byte 1 ... Byte N
-+--------+----------------------+
-| SF PCI |      N_Data          |
-+--------+----------------------+
-  |   |
-  |   +-- SF_DL: Data Length
-  +------ PCI Type = 0</code></pre>
-
-                <p>
-                    Trong đó:
+                    Nguồn Interrupt có thể đến từ:
                 </p>
 
                 <ul>
-                    <li>
-                        <strong>PCI Type:</strong>
-                        Xác định đây là Single Frame.
-                    </li>
-                    <li>
-                        <strong>SF_DL:</strong>
-                        Cho biết số byte dữ liệu của thông điệp.
-                    </li>
-                    <li>
-                        <strong>N_Data:</strong>
-                        Chứa dữ liệu thực tế của thông điệp.
-                    </li>
+                    <li>Peripheral bên ngoài CPU như GPIO, UART, SPI và Timer.</li>
+                    <li>DMA Controller.</li>
+                    <li>Watchdog Timer.</li>
+                    <li>Những sự kiện nội bộ của CPU.</li>
                 </ul>
 
                 <p>
-                    Ví dụ minh họa một Single Frame truyền 3 byte dữ liệu:
+                    Ví dụ, khi UART nhận được một byte dữ liệu hoàn chỉnh, UART Peripheral
+                    có thể thiết lập một cờ trạng thái và gửi yêu cầu Interrupt đến
+                    Interrupt Controller.
                 </p>
 
-                <pre><code>03 22 F1 90 00 00 00 00</code></pre>
+                <h3>2.2. Interrupt Request (IRQ)</h3>
 
                 <p>
-                    Có thể phân tích:
-                </p>
-
-                <table>
-                    <tr>
-                        <th>Byte</th>
-                        <th>Giá trị</th>
-                        <th>Ý nghĩa</th>
-                    </tr>
-                    <tr>
-                        <td>Byte 0</td>
-                        <td>03</td>
-                        <td>PCI Type = 0, SF_DL = 3.</td>
-                    </tr>
-                    <tr>
-                        <td>Byte 1</td>
-                        <td>22</td>
-                        <td>UDS Service Identifier minh họa.</td>
-                    </tr>
-                    <tr>
-                        <td>Byte 2</td>
-                        <td>F1</td>
-                        <td>Byte đầu của dữ liệu DID.</td>
-                    </tr>
-                    <tr>
-                        <td>Byte 3</td>
-                        <td>90</td>
-                        <td>Byte tiếp theo của DID.</td>
-                    </tr>
-                    <tr>
-                        <td>Byte 4-7</td>
-                        <td>00</td>
-                        <td>Byte đệm trong ví dụ minh họa.</td>
-                    </tr>
-                </table>
-
-                <p>
-                    Trong ví dụ này, dữ liệu UDS có 3 byte là
-                    <strong>22 F1 90</strong>. Những byte 00 còn lại
-                    chỉ được sử dụng để minh họa việc đệm frame;
-                    cách xử lý padding thực tế phụ thuộc vào cấu hình
-                    và yêu cầu giao tiếp.
-                </p>
-
-                <h3>5.2. First Frame (FF)</h3>
-
-                <p>
-                    <strong>First Frame</strong> được sử dụng khi thông điệp
-                    không thể truyền hết trong một Single Frame.
+                    Interrupt Request (IRQ) là yêu cầu ngắt được tạo ra bởi một nguồn
+                    Interrupt.
                 </p>
 
                 <p>
-                    First Frame là frame đầu tiên của một thông điệp
-                    được phân đoạn. Nó chứa thông tin về tổng kích thước
-                    của thông điệp và phần dữ liệu đầu tiên.
+                    IRQ cho biết một sự kiện cần được xử lý đã xảy ra hoặc một điều kiện
+                    ngắt đã được thỏa mãn.
                 </p>
 
-                <pre><code>Byte 0       Byte 1       Byte 2 ...
-+--------+------------+----------------+
-| FF PCI |   FF_DL    |     N_Data      |
-+--------+------------+----------------+
-  |   |
-  |   +-- Thông tin chiều dài message
-  +------ PCI Type = 1</code></pre>
-
                 <p>
-                    Các trường chính:
+                    Tuy nhiên, việc có IRQ không đồng nghĩa CPU sẽ lập tức thực thi ISR.
+                    Yêu cầu ngắt còn phụ thuộc vào những điều kiện như:
                 </p>
 
                 <ul>
-                    <li>
-                        <strong>PCI Type:</strong>
-                        Có giá trị 1 để nhận diện First Frame.
-                    </li>
-                    <li>
-                        <strong>FF_DL:</strong>
-                        Cho biết tổng chiều dài của thông điệp.
-                    </li>
-                    <li>
-                        <strong>N_Data:</strong>
-                        Phần dữ liệu đầu tiên của thông điệp.
-                    </li>
+                    <li>Interrupt đã được Enable hay chưa.</li>
+                    <li>Interrupt có đang bị Mask hay không.</li>
+                    <li>Priority của Interrupt.</li>
+                    <li>CPU có đang xử lý một Exception hoặc Interrupt ưu tiên cao hơn hay không.</li>
+                    <li>Interrupt Controller có chấp nhận yêu cầu tại thời điểm đó hay không.</li>
                 </ul>
 
+                <h3>2.3. Interrupt Controller</h3>
+
                 <p>
-                    Với định dạng chiều dài thông thường, FF_DL được biểu diễn
-                    bằng các bit trong Byte 0 và Byte 1. Đối với những
-                    thông điệp có kích thước lớn hơn, tiêu chuẩn cũng định nghĩa
-                    cách biểu diễn chiều dài mở rộng.
+                    Interrupt Controller là thành phần quản lý những yêu cầu ngắt
+                    trước khi chúng được chuyển đến CPU.
                 </p>
 
                 <p>
-                    Sau khi nhận được First Frame hợp lệ, receiver biết rằng
-                    một thông điệp nhiều frame đang được truyền và có thể
-                    bắt đầu quá trình tiếp nhận dữ liệu.
-                </p>
-
-                <h3>5.3. Consecutive Frame (CF)</h3>
-
-                <p>
-                    <strong>Consecutive Frame</strong> được sử dụng để truyền
-                    các phần dữ liệu tiếp theo sau First Frame.
-                </p>
-
-                <p>
-                    Một thông điệp được phân đoạn có thể chứa nhiều
-                    Consecutive Frame. Mỗi frame mang một phần dữ liệu
-                    của thông điệp ban đầu.
-                </p>
-
-                <pre><code>Byte 0       Byte 1 ...
-+--------+----------------------+
-| CF PCI |       N_Data         |
-+--------+----------------------+
-  |   |
-  |   +-- SN: Sequence Number
-  +------ PCI Type = 2</code></pre>
-
-                <p>
-                    Trường <strong>SN (Sequence Number)</strong> được sử dụng
-                    để đánh số thứ tự các Consecutive Frame.
-                </p>
-
-                <p>
-                    Sequence Number giúp receiver nhận biết thứ tự các frame
-                    và phát hiện một số tình huống bất thường trong quá trình
-                    truyền dữ liệu.
-                </p>
-
-                <p>
-                    Trong cơ chế thông thường, Sequence Number bắt đầu từ 1
-                    ở Consecutive Frame đầu tiên và tăng dần theo từng frame.
-                    Trường này có độ rộng 4 bit nên giá trị sẽ quay vòng
-                    sau khi đạt giới hạn.
-                </p>
-
-                <h3>5.4. Flow Control (FC)</h3>
-
-                <p>
-                    <strong>Flow Control</strong> được gửi từ receiver
-                    về sender để điều khiển việc truyền các Consecutive Frame.
-                </p>
-
-                <p>
-                    Sau khi nhận được First Frame, receiver có thể gửi
-                    Flow Control để thông báo sender được tiếp tục truyền
-                    dữ liệu hay cần tạm dừng.
-                </p>
-
-                <pre><code>Byte 0       Byte 1    Byte 2    Byte 3
-+--------+----------+---------+----------+
-| FC PCI |    FS    |   BS    |  STmin   |
-+--------+----------+---------+----------+
-  |   |       |         |          |
-  |   |       |         |          +-- Separation Time
-  |   |       |         +------------- Block Size
-  |   |       +----------------------- Flow Status
-  |   +------------------------------- PCI Type = 3</code></pre>
-
-                <p>
-                    Flow Control chứa ba trường quan trọng:
+                    Tùy theo kiến trúc MCU, Interrupt Controller có thể hỗ trợ:
                 </p>
 
                 <ul>
-                    <li><strong>FS:</strong> Flow Status.</li>
-                    <li><strong>BS:</strong> Block Size.</li>
-                    <li><strong>STmin:</strong> Minimum Separation Time.</li>
+                    <li>Enable hoặc Disable từng nguồn Interrupt.</li>
+                    <li>Quản lý Interrupt Priority.</li>
+                    <li>Mask hoặc Unmask Interrupt.</li>
+                    <li>Quản lý trạng thái Pending.</li>
+                    <li>Hỗ trợ Nested Interrupt.</li>
+                    <li>Chuyển yêu cầu ngắt đến CPU.</li>
                 </ul>
 
                 <p>
-                    Ba trường này giúp receiver kiểm soát cách sender
-                    tiếp tục truyền dữ liệu.
+                    Ví dụ, trên ARM Cortex-M, NVIC (Nested Vectored Interrupt Controller)
+                    là thành phần quản lý những External Interrupt và hỗ trợ Priority,
+                    Enable, Pending cũng như những cơ chế liên quan đến việc xử lý ngắt.
                 </p>
 
-
-                <h2>6. Flow Control chi tiết</h2>
-
-                <h3>6.1. Flow Status (FS)</h3>
+                <h3>2.4. Interrupt Handler / ISR</h3>
 
                 <p>
-                    Flow Status cho biết trạng thái của receiver
-                    đối với quá trình truyền Consecutive Frame.
-                </p>
-
-                <table>
-                    <tr>
-                        <th>FS</th>
-                        <th>Tên</th>
-                        <th>Ý nghĩa</th>
-                    </tr>
-                    <tr>
-                        <td>0</td>
-                        <td>Continue To Send (CTS)</td>
-                        <td>Cho phép sender tiếp tục truyền Consecutive Frame.</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Wait (WT)</td>
-                        <td>Yêu cầu sender tạm thời chờ trước khi tiếp tục.</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Overflow (OVFLW)</td>
-                        <td>Thông báo receiver không thể tiếp nhận thông điệp có chiều dài được khai báo.</td>
-                    </tr>
-                </table>
-
-                <p>
-                    <strong>Continue To Send:</strong>
-                    Receiver sẵn sàng nhận dữ liệu tiếp theo.
-                    Sender có thể tiếp tục truyền các Consecutive Frame
-                    theo những điều kiện được thông báo trong Flow Control.
+                    Interrupt Handler là hàm hoặc đoạn chương trình được thực thi để
+                    xử lý một Interrupt cụ thể.
                 </p>
 
                 <p>
-                    <strong>Wait:</strong>
-                    Receiver chưa sẵn sàng tiếp nhận thêm dữ liệu.
-                    Sender cần tạm dừng và chờ Flow Control tiếp theo
-                    theo quy định của giao thức.
+                    Trong ngôn ngữ C Embedded, Interrupt Handler thường được triển khai
+                    bằng một Function đặc biệt theo quy định của Compiler và MCU.
+                </p>
+
+                <pre><code>void TIMER_IRQHandler(void)
+{
+    /* Handle Timer interrupt */
+}</code></pre>
+
+                <p>
+                    Tên hàm trong ví dụ chỉ mang tính minh họa. Tên Handler thực tế
+                    thường phải khớp với tên được định nghĩa trong Startup File,
+                    Vector Table hoặc Device Header.
+                </p>
+
+                <h3>2.5. Interrupt Vector Table</h3>
+
+                <p>
+                    Interrupt Vector Table là bảng chứa những địa chỉ hoặc thông tin
+                    xác định vị trí của các Exception Handler và Interrupt Handler.
                 </p>
 
                 <p>
-                    <strong>Overflow:</strong>
-                    Receiver không thể tiếp nhận thông điệp được yêu cầu,
-                    chẳng hạn do kích thước thông điệp vượt quá khả năng
-                    buffer được hỗ trợ. Quá trình truyền thông điệp
-                    được kết thúc theo quy định của giao thức.
+                    Khi một Interrupt được chấp nhận, CPU sử dụng thông tin tương ứng
+                    trong Vector Table để chuyển đến Handler phù hợp.
                 </p>
 
-                <h3>6.2. Block Size (BS)</h3>
+                <p>
+                    Một Vector Table minh họa có thể được tổ chức như sau:
+                </p>
+
+                <pre><code>+-----------------------------+
+| Initial Stack Pointer       |
++-----------------------------+
+| Reset Handler               |
++-----------------------------+
+| NMI Handler                 |
++-----------------------------+
+| HardFault Handler           |
++-----------------------------+
+| MemManage Handler           |
++-----------------------------+
+| BusFault Handler            |
++-----------------------------+
+| UsageFault Handler          |
++-----------------------------+
+| Reserved Entries            |
++-----------------------------+
+| SVCall Handler              |
++-----------------------------+
+| PendSV Handler              |
++-----------------------------+
+| SysTick Handler             |
++-----------------------------+
+| External IRQ 0 Handler      |
++-----------------------------+
+| External IRQ 1 Handler      |
++-----------------------------+
+| External IRQ 2 Handler      |
++-----------------------------+
+| ...                         |
++-----------------------------+</code></pre>
 
                 <p>
-                    <strong>Block Size</strong> xác định số lượng
-                    Consecutive Frame tối đa mà sender được phép truyền
-                    sau một Flow Control trước khi cần nhận Flow Control
-                    tiếp theo.
+                    Đây là mô hình minh họa dựa trên cách tổ chức thường gặp ở
+                    ARM Cortex-M. Vector Table của những kiến trúc khác có thể
+                    có cấu trúc và cơ chế hoạt động khác.
+                </p>
+
+                <h2>3. Cách CPU xử lý Interrupt</h2>
+
+                <h3>3.1. Interrupt Handling Sequence</h3>
+
+                <p>
+                    Khi một sự kiện Interrupt xảy ra, CPU và Interrupt Controller
+                    phối hợp thực hiện quá trình xử lý.
+                </p>
+
+                <p>
+                    Một trình tự tổng quát có thể được mô tả như sau:
+                </p>
+
+                <pre><code>+-----------------------------+
+|      Main Program           |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Interrupt Event Occurs   |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Generate Interrupt IRQ   |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Check Interrupt State    |
+|    Enable / Mask / Priority |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    CPU Accepts Interrupt    |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Save Execution Context   |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Find Handler in Vector   |
+|    Table                    |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|       Execute ISR           |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Complete Interrupt      |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Restore Execution State |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|    Resume Main Program     |
++-----------------------------+</code></pre>
+
+                <p>
+                    Đây là trình tự tổng quát. Một số bước như lưu Context, xác định
+                    Vector và khôi phục trạng thái có thể được phần cứng thực hiện
+                    tự động, tùy thuộc vào kiến trúc CPU.
+                </p>
+
+                <h3>3.2. Interrupt Event Occurs</h3>
+
+                <p>
+                    Quá trình bắt đầu khi một sự kiện thỏa mãn điều kiện tạo Interrupt.
                 </p>
 
                 <p>
@@ -812,890 +563,2194 @@ ECU Diagnostic Application</code></pre>
                 </p>
 
                 <ul>
+                    <li>Timer Counter đạt đến giá trị được cấu hình.</li>
+                    <li>UART nhận được một byte dữ liệu.</li>
+                    <li>GPIO phát hiện cạnh lên hoặc cạnh xuống.</li>
+                    <li>ADC hoàn tất quá trình chuyển đổi.</li>
+                </ul>
+
+                <p>
+                    Peripheral có thể thiết lập một Status Flag để ghi nhận sự kiện
+                    và tạo Interrupt Request nếu chức năng Interrupt đã được Enable.
+                </p>
+
+                <h3>3.3. CPU Accepts Interrupt</h3>
+
+                <p>
+                    Khi nhận được yêu cầu ngắt, CPU kiểm tra những điều kiện cần thiết
+                    trước khi chấp nhận xử lý.
+                </p>
+
+                <p>
+                    Nếu Interrupt đang bị Disable hoặc Mask, CPU có thể chưa thực hiện
+                    Handler ngay tại thời điểm đó.
+                </p>
+
+                <p>
+                    Trong một số hệ thống, yêu cầu ngắt có thể được giữ ở trạng thái
+                    Pending để chờ CPU xử lý khi điều kiện cho phép.
+                </p>
+
+                <h3>3.4. Save Execution Context</h3>
+
+                <p>
+                    Trước khi chuyển sang ISR, CPU cần bảo toàn những thông tin cần thiết
+                    để có thể tiếp tục chương trình đã bị gián đoạn.
+                </p>
+
+                <p>
+                    Những thông tin này có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Program Counter (PC).</li>
+                    <li>Processor Status Register.</li>
+                    <li>Những thanh ghi CPU cần được bảo toàn.</li>
+                    <li>Stack Pointer và những thông tin trạng thái liên quan.</li>
+                </ul>
+
+                <p>
+                    Trên một số kiến trúc, phần cứng tự động lưu một phần Context khi
+                    chấp nhận Interrupt. Phần còn lại có thể được Compiler hoặc
+                    Interrupt Handler bảo toàn theo Calling Convention.
+                </p>
+
+                <p>
+                    Vì vậy, lập trình viên không nên giả định rằng mọi MCU đều lưu
+                    Context theo cùng một cách.
+                </p>
+
+                <h3>3.5. Execute ISR</h3>
+
+                <p>
+                    Sau khi xác định Handler phù hợp, CPU chuyển đến ISR để xử lý
+                    sự kiện.
+                </p>
+
+                <p>
+                    ISR có thể thực hiện những công việc như:
+                </p>
+
+                <ul>
+                    <li>Đọc dữ liệu từ Peripheral.</li>
+                    <li>Kiểm tra Status Flag.</li>
+                    <li>Xóa hoặc xác nhận cờ Interrupt theo quy định phần cứng.</li>
+                    <li>Cập nhật một biến trạng thái.</li>
+                    <li>Đặt Event Flag để Main Loop xử lý tiếp.</li>
+                </ul>
+
+                <h3>3.6. Return from Interrupt</h3>
+
+                <p>
+                    Sau khi ISR hoàn thành, CPU thực hiện cơ chế kết thúc Interrupt
+                    theo kiến trúc phần cứng.
+                </p>
+
+                <p>
+                    Những thông tin Context cần thiết được khôi phục và CPU tiếp tục
+                    thực thi chương trình từ vị trí đã bị gián đoạn.
+                </p>
+
+                <p>
+                    Trên một số kiến trúc, quá trình này sử dụng một cơ chế Return
+                    đặc biệt thay vì một lệnh Return thông thường.
+                </p>
+
+                <h2>4. Interrupt Vector Table và Startup Code</h2>
+
+                <h3>4.1. Vai trò của Vector Table</h3>
+
+                <p>
+                    Vector Table giúp CPU xác định Handler tương ứng với từng nguồn
+                    Interrupt hoặc Exception.
+                </p>
+
+                <p>
+                    Nếu không có cơ chế ánh xạ phù hợp, CPU sẽ không thể xác định
+                    chính xác vị trí chương trình cần thực thi khi một Interrupt
+                    được chấp nhận.
+                </p>
+
+                <p>
+                    Ví dụ, một số Handler thường gặp trên MCU:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Handler</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Reset_Handler</td>
+                            <td>Xử lý quá trình khởi động sau Reset.</td>
+                        </tr>
+                        <tr>
+                            <td>NMI_Handler</td>
+                            <td>Xử lý Non-Maskable Interrupt.</td>
+                        </tr>
+                        <tr>
+                            <td>HardFault_Handler</td>
+                            <td>Xử lý những lỗi nghiêm trọng theo kiến trúc CPU.</td>
+                        </tr>
+                        <tr>
+                            <td>SysTick_Handler</td>
+                            <td>Xử lý sự kiện ngắt từ SysTick Timer.</td>
+                        </tr>
+                        <tr>
+                            <td>USART_IRQHandler</td>
+                            <td>Xử lý Interrupt từ USART/UART.</td>
+                        </tr>
+                        <tr>
+                            <td>TIM_IRQHandler</td>
+                            <td>Xử lý Interrupt từ Timer.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Tên Handler thực tế có thể khác nhau giữa các dòng MCU và
+                    thư viện phát triển.
+                </p>
+
+                <h3>4.2. Vector Table trong Startup File</h3>
+
+                <p>
+                    Trong một Embedded Project, Startup File thường chứa những
+                    thành phần phục vụ quá trình khởi động, bao gồm Vector Table
+                    và các Handler mặc định.
+                </p>
+
+                <p>
+                    Ví dụ minh họa về cách ánh xạ Handler:
+                </p>
+
+                <pre><code>/* Simplified vector table illustration */
+
+const void *InterruptVectorTable[] =
+{
+    (void *)INITIAL_STACK_ADDRESS,
+
+    Reset_Handler,
+    NMI_Handler,
+    HardFault_Handler,
+
+    /* Other exception handlers */
+
+    SysTick_Handler,
+    UART_IRQHandler,
+    TIMER_IRQHandler
+};</code></pre>
+
+                <p>
+                    Đoạn code trên chỉ nhằm minh họa ý tưởng ánh xạ các Handler.
+                    Nó không phải cách khai báo Vector Table chuẩn có thể sử dụng
+                    trực tiếp trên mọi Compiler.
+                </p>
+
+                <p>
+                    Trong dự án thực tế, Vector Table thường được khai báo bằng
+                    Assembly, các Section đặc biệt hoặc những cơ chế do Compiler
+                    và Startup Library cung cấp.
+                </p>
+
+                <h3>4.3. Default Interrupt Handler</h3>
+
+                <p>
+                    Một số Startup File cung cấp Default Handler để xử lý những
+                    Interrupt chưa được lập trình viên triển khai.
+                </p>
+
+                <pre><code>void Default_Handler(void)
+{
+    while (1)
+    {
+        /* Stay here for debugging */
+    }
+}</code></pre>
+
+                <p>
+                    Những Handler chưa được định nghĩa riêng có thể được ánh xạ
+                    đến Default Handler.
+                </p>
+
+                <p>
+                    Khi xảy ra Interrupt tương ứng, chương trình sẽ chuyển đến
+                    Default Handler thay vì thực hiện một ISR cụ thể.
+                </p>
+
+                <p>
+                    Điều này giúp phát hiện một số lỗi cấu hình hoặc những Interrupt
+                    chưa được xử lý trong quá trình phát triển.
+                </p>
+
+                <h3>4.4. Liên kết ISR với Vector Table</h3>
+
+                <p>
+                    Khi lập trình viên tạo một ISR, hàm đó cần được liên kết với
+                    đúng vị trí trong Vector Table.
+                </p>
+
+                <p>
+                    Tùy theo nền tảng, việc này có thể được thực hiện bằng:
+                </p>
+
+                <ul>
+                    <li>Định nghĩa Function với đúng tên Handler được quy định.</li>
+                    <li>Sử dụng Interrupt Attribute do Compiler cung cấp.</li>
+                    <li>Cấu hình Vector Table bằng Startup File.</li>
+                    <li>Sử dụng thư viện Device Support chính thức.</li>
+                </ul>
+
+                <p>
+                    Việc chỉ tạo một Function có tên bất kỳ không đảm bảo CPU sẽ
+                    tự động gọi Function đó khi Interrupt xảy ra.
+                </p>
+
+                <h2>5. Cách khai báo và sử dụng ISR trong C</h2>
+
+                <h3>5.1. ISR và Function thông thường</h3>
+
+                <p>
+                    Về mặt cú pháp, ISR có thể trông giống một Function C thông thường.
+                    Tuy nhiên, cách CPU gọi ISR và cách ISR kết thúc khác với Function
+                    được gọi bằng một câu lệnh thông thường trong chương trình.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Normal Function</th>
+                            <th>ISR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cách được gọi</td>
+                            <td>Thông qua Function Call.</td>
+                            <td>Được kích hoạt bởi Interrupt Mechanism.</td>
+                        </tr>
+                        <tr>
+                            <td>Thời điểm thực thi</td>
+                            <td>Khi chương trình gọi hàm.</td>
+                            <td>Khi CPU chấp nhận Interrupt.</td>
+                        </tr>
+                        <tr>
+                            <td>Execution Context</td>
+                            <td>Main Program hoặc Context đang gọi.</td>
+                            <td>Interrupt Context.</td>
+                        </tr>
+                        <tr>
+                            <td>Tham số</td>
+                            <td>Có thể nhận tham số theo thiết kế.</td>
+                            <td>Thông thường không nhận tham số như Function thông thường.</td>
+                        </tr>
+                        <tr>
+                            <td>Giá trị trả về</td>
+                            <td>Có thể trả về giá trị.</td>
+                            <td>Thông thường không trả về giá trị cho Main Program.</td>
+                        </tr>
+                        <tr>
+                            <td>Cơ chế kết thúc</td>
+                            <td>Return theo Calling Convention thông thường.</td>
+                            <td>Sử dụng cơ chế Return from Interrupt của nền tảng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>5.2. Khai báo ISR theo quy định của Compiler</h3>
+
+                <p>
+                    Không có một cú pháp khai báo ISR duy nhất áp dụng cho mọi
+                    vi điều khiển và Compiler.
+                </p>
+
+                <p>
+                    Trên một số nền tảng, ISR được khai báo bằng tên Handler
+                    đã được định nghĩa trong Startup File:
+                </p>
+
+                <pre><code>void TIMER_IRQHandler(void)
+{
+    /* Timer interrupt processing */
+}</code></pre>
+
+                <p>
+                    Một số Compiler khác có thể yêu cầu sử dụng Interrupt Attribute
+                    hoặc Keyword riêng.
+                </p>
+
+                <p>
+                    Ví dụ minh họa về một kiểu khai báo đặc thù:
+                </p>
+
+                <pre><code>/* Compiler-specific syntax illustration */
+
+void __interrupt Timer_ISR(void)
+{
+    /* Handle Timer interrupt */
+}</code></pre>
+
+                <p>
+                    Từ khóa <code>__interrupt</code> trong ví dụ không phải từ khóa
+                    chuẩn của ngôn ngữ C. Cú pháp thực tế phải được kiểm tra trong
+                    tài liệu Compiler đang sử dụng.
+                </p>
+
+                <p>
+                    Đối với những MCU đã cung cấp Device Header và Startup File,
+                    nên ưu tiên sử dụng cơ chế Handler chính thức của nền tảng.
+                </p>
+
+                <h3>5.3. Ví dụ ISR cho Timer</h3>
+
+                <p>
+                    Giả sử một Timer Peripheral tạo Interrupt mỗi khi xảy ra
+                    sự kiện Update.
+                </p>
+
+                <p>
+                    Khi Interrupt xảy ra, ISR sẽ tăng một biến đếm số lần Timer
+                    đã phát sinh sự kiện.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+volatile uint32_t timer_interrupt_count = 0U;
+
+void TIMER_IRQHandler(void)
+{
+    /* Check Timer interrupt flag */
+
+    if (TIMER-&gt;STATUS &amp; TIMER_UPDATE_FLAG)
+    {
+        /* Clear interrupt flag according to hardware specification */
+
+        TIMER-&gt;STATUS = TIMER_UPDATE_FLAG;
+
+        timer_interrupt_count++;
+    }
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li>Timer tạo yêu cầu ngắt khi xảy ra Update Event.</li>
+                    <li>CPU chuyển đến <code>TIMER_IRQHandler()</code>.</li>
+                    <li>ISR kiểm tra cờ trạng thái của Timer.</li>
+                    <li>ISR xác nhận hoặc xóa cờ Interrupt theo quy định phần cứng.</li>
+                    <li>Biến <code>timer_interrupt_count</code> được tăng lên.</li>
+                </ul>
+
+                <p>
+                    Lưu ý: Cách xóa cờ Interrupt trong ví dụ chỉ mang tính minh họa.
+                    Một số Register sử dụng W1C, một số khác có thể yêu cầu thao tác
+                    đọc, ghi hoặc thứ tự truy cập riêng.
+                </p>
+
+                <h3>5.4. Ví dụ ISR cho GPIO External Interrupt</h3>
+
+                <p>
+                    Giả sử GPIO được cấu hình để phát sinh Interrupt khi phát hiện
+                    một cạnh tín hiệu.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+volatile uint8_t button_event = 0U;
+
+void GPIO_IRQHandler(void)
+{
+    if (GPIO-&gt;INTERRUPT_STATUS &amp; BUTTON_INTERRUPT_MASK)
+    {
+        /* Acknowledge interrupt according to hardware specification */
+
+        GPIO-&gt;INTERRUPT_STATUS = BUTTON_INTERRUPT_MASK;
+
+        button_event = 1U;
+    }
+}</code></pre>
+
+                <p>
+                    ISR không cần thực hiện toàn bộ xử lý của nút nhấn. Nó chỉ cần
+                    xác nhận sự kiện và thông báo cho Main Loop thông qua một biến
+                    trạng thái.
+                </p>
+
+                <p>
+                    Main Loop có thể kiểm tra biến này để thực hiện công việc tiếp theo.
+                </p>
+
+                <pre><code>int main(void)
+{
+    GPIO_Init();
+    GPIO_EnableInterrupt();
+
+    while (1)
+    {
+        if (button_event != 0U)
+        {
+            button_event = 0U;
+
+            ProcessButtonEvent();
+        }
+
+        /* Other application tasks */
+    }
+}</code></pre>
+
+                <p>
+                    Ví dụ này minh họa mô hình ISR thông báo sự kiện và Main Loop
+                    xử lý công việc chính. Khi cần bảo đảm không mất sự kiện hoặc
+                    xử lý nhiều sự kiện liên tiếp, cần sử dụng cơ chế lưu trữ và
+                    đồng bộ phù hợp.
+                </p>
+
+                <h3>5.5. ISR cần xác định đúng nguồn Interrupt</h3>
+
+                <p>
+                    Một số Interrupt Handler có thể phục vụ nhiều nguồn sự kiện
+                    hoặc nhiều điều kiện khác nhau trong cùng một Peripheral.
+                </p>
+
+                <p>
+                    Vì vậy, ISR cần kiểm tra Status Flag để xác định nguyên nhân
+                    khiến Interrupt xảy ra.
+                </p>
+
+                <pre><code>void UART_IRQHandler(void)
+{
+    uint32_t status;
+
+    status = UART-&gt;STATUS;
+
+    if ((status &amp; UART_RX_FLAG) != 0U)
+    {
+        UART_HandleReceiveEvent();
+    }
+
+    if ((status &amp; UART_TX_FLAG) != 0U)
+    {
+        UART_HandleTransmitEvent();
+    }
+
+    if ((status &amp; UART_ERROR_FLAG) != 0U)
+    {
+        UART_HandleErrorEvent();
+    }
+}</code></pre>
+
+                <p>
+                    Việc kiểm tra từng nguồn sự kiện giúp ISR xác định chính xác
+                    công việc cần thực hiện.
+                </p>
+
+                <p>
+                    Tuy nhiên, cần chú ý cách đọc và xóa Status Flag. Một số cờ
+                    có thể bị thay đổi khi đọc hoặc có quy tắc xác nhận riêng.
+                </p>
+
+                <h2>6. Interrupt Enable, Disable, Pending và Priority</h2>
+
+                <h3>6.1. Enable và Disable Interrupt</h3>
+
+                <p>
+                    Interrupt Enable cho phép một nguồn Interrupt được chuyển đến
+                    Interrupt Controller hoặc CPU để xử lý theo cấu hình của hệ thống.
+                </p>
+
+                <p>
+                    Ngược lại, Disable Interrupt ngăn một nguồn ngắt được chấp nhận
+                    theo cơ chế tương ứng của MCU.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <pre><code>void UART_EnableInterrupt(void)
+{
+    UART-&gt;INTERRUPT_ENABLE |= UART_RX_INTERRUPT_MASK;
+}
+
+void UART_DisableInterrupt(void)
+{
+    UART-&gt;INTERRUPT_ENABLE &amp;= ~UART_RX_INTERRUPT_MASK;
+}</code></pre>
+
+                <p>
+                    Cần phân biệt hai loại thao tác:
+                </p>
+
+                <ul>
                     <li>
-                        BS = 0: Không giới hạn số Consecutive Frame
-                        trong block theo cơ chế Block Size.
+                        <strong>Peripheral Interrupt Enable:</strong> Cho phép Peripheral
+                        phát sinh yêu cầu ngắt cho một sự kiện cụ thể.
                     </li>
                     <li>
-                        BS = 4: Sender được truyền tối đa 4 Consecutive Frame
-                        trước khi cần chờ Flow Control tiếp theo.
-                    </li>
-                    <li>
-                        BS = 8: Sender được truyền tối đa 8 Consecutive Frame
-                        trước khi cần chờ Flow Control tiếp theo.
+                        <strong>Interrupt Controller Enable:</strong> Cho phép
+                        Interrupt Controller chuyển yêu cầu ngắt tương ứng đến CPU.
                     </li>
                 </ul>
 
                 <p>
-                    Block Size giúp receiver kiểm soát lượng dữ liệu
-                    được gửi đến trong từng block, thay vì phải tiếp nhận
-                    toàn bộ thông điệp trong một chuỗi truyền liên tục.
+                    Trong nhiều hệ thống, cần cấu hình cả hai cấp để Interrupt
+                    có thể được xử lý.
                 </p>
 
-                <h3>6.3. STmin - Separation Time Minimum</h3>
+                <h3>6.2. Interrupt Masking</h3>
 
                 <p>
-                    <strong>STmin</strong> xác định khoảng thời gian tối thiểu
-                    giữa hai lần truyền Consecutive Frame liên tiếp
-                    theo cơ chế Flow Control.
-                </p>
-
-                <p>
-                    Trường này giúp receiver kiểm soát tốc độ gửi dữ liệu
-                    và tạo khoảng thời gian cần thiết để xử lý dữ liệu nhận được.
+                    Interrupt Masking là cơ chế ngăn một hoặc nhiều Interrupt được
+                    xử lý trong một khoảng thời gian hoặc trong những điều kiện
+                    nhất định.
                 </p>
 
                 <p>
-                    STmin có thể biểu diễn khoảng thời gian theo đơn vị
-                    mili giây hoặc các giá trị micro giây được quy định
-                    trong tiêu chuẩn.
+                    Một số nền tảng cho phép:
+                </p>
+
+                <ul>
+                    <li>Mask từng nguồn Interrupt.</li>
+                    <li>Mask một nhóm Interrupt.</li>
+                    <li>Mask những Interrupt có Priority thấp hơn một ngưỡng nhất định.</li>
+                    <li>Mask phần lớn Interrupt có thể bị vô hiệu hóa trong CPU.</li>
+                </ul>
+
+                <p>
+                    Masking thường được sử dụng để bảo vệ những đoạn xử lý nhạy cảm
+                    hoặc kiểm soát thời điểm hệ thống tiếp nhận Interrupt.
                 </p>
 
                 <p>
-                    Một số giá trị thường gặp:
+                    Tuy nhiên, việc Mask Interrupt trong thời gian dài có thể làm tăng
+                    độ trễ xử lý và khiến hệ thống bỏ lỡ những sự kiện không được lưu
+                    hoặc không được giữ Pending.
+                </p>
+
+                <h3>6.3. Pending Interrupt</h3>
+
+                <p>
+                    Pending là trạng thái cho biết một yêu cầu Interrupt đang chờ
+                    được xử lý.
+                </p>
+
+                <p>
+                    Ví dụ, nếu một Interrupt xảy ra khi CPU đang tạm thời không
+                    chấp nhận nguồn ngắt đó, Interrupt Controller có thể giữ trạng
+                    thái Pending.
+                </p>
+
+                <p>
+                    Khi điều kiện cho phép, CPU có thể tiếp nhận và thực hiện Handler.
+                </p>
+
+                <p>
+                    Cần lưu ý rằng không phải mọi Peripheral đều lưu lại số lượng
+                    sự kiện đã xảy ra. Một số hệ thống chỉ sử dụng một Pending Flag,
+                    vì vậy nhiều sự kiện xảy ra liên tiếp có thể được gộp lại thành
+                    một trạng thái chờ.
+                </p>
+
+                <h3>6.4. Interrupt Priority</h3>
+
+                <p>
+                    Interrupt Priority xác định mức độ ưu tiên giữa những nguồn
+                    Interrupt.
+                </p>
+
+                <p>
+                    Khi nhiều Interrupt cùng chờ xử lý, Interrupt Controller sử dụng
+                    Priority để xác định yêu cầu nào được xử lý trước theo quy tắc
+                    của kiến trúc.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
                 </p>
 
                 <table>
-                    <tr>
-                        <th>Giá trị STmin</th>
-                        <th>Ý nghĩa</th>
-                    </tr>
-                    <tr>
-                        <td>0x00 - 0x7F</td>
-                        <td>Khoảng thời gian từ 0 đến 127 ms.</td>
-                    </tr>
-                    <tr>
-                        <td>0xF1 - 0xF9</td>
-                        <td>Khoảng thời gian từ 100 đến 900 micro giây.</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Interrupt</th>
+                            <th>Priority minh họa</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Emergency Input</td>
+                            <td>0</td>
+                            <td>Phản hồi một sự kiện quan trọng.</td>
+                        </tr>
+                        <tr>
+                            <td>Timer Interrupt</td>
+                            <td>2</td>
+                            <td>Phục vụ sự kiện định kỳ.</td>
+                        </tr>
+                        <tr>
+                            <td>UART Interrupt</td>
+                            <td>4</td>
+                            <td>Xử lý dữ liệu truyền nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>Background Event</td>
+                            <td>6</td>
+                            <td>Xử lý sự kiện ít ưu tiên hơn.</td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <p>
-                    Các giá trị nằm ngoài những khoảng được định nghĩa
-                    có thể được xem là reserved hoặc cần xử lý theo
-                    quy định của phiên bản tiêu chuẩn đang áp dụng.
+                    Bảng trên sử dụng quy ước số nhỏ hơn tương ứng với Priority
+                    cao hơn. Đây là cách biểu diễn thường gặp trên ARM Cortex-M,
+                    nhưng không phải mọi kiến trúc đều sử dụng cùng một quy ước.
                 </p>
 
-                <div class="note">
-                    <strong>Lưu ý:</strong>
-                    BS và STmin là hai thông số khác nhau.
-                    BS giới hạn số Consecutive Frame trong một block,
-                    còn STmin quy định khoảng cách thời gian tối thiểu
-                    giữa các Consecutive Frame.
-                </div>
-
-
-                <h2>7. Quá trình truyền dữ liệu nhiều frame</h2>
-
-                <h3>7.1. Tổng quan quá trình truyền</h3>
+                <h3>6.5. Nested Interrupt</h3>
 
                 <p>
-                    Khi sender cần truyền một thông điệp có kích thước lớn,
-                    quá trình truyền thường diễn ra theo thứ tự:
+                    Nested Interrupt là cơ chế cho phép một Interrupt có Priority
+                    cao hơn tạm thời ngắt quá trình xử lý của một ISR có Priority
+                    thấp hơn.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Main Program
+     |
+     v
+Low Priority ISR
+     |
+     | High Priority Interrupt occurs
+     v
+High Priority ISR
+     |
+     v
+Return to Low Priority ISR
+     |
+     v
+Return to Main Program</code></pre>
+
+                <p>
+                    Cơ chế này cho phép hệ thống phản hồi những sự kiện quan trọng
+                    mà không phải chờ ISR có mức ưu tiên thấp hơn hoàn thành.
+                </p>
+
+                <p>
+                    Tuy nhiên, Nested Interrupt làm tăng độ phức tạp của hệ thống
+                    vì nhiều ISR có thể cùng tồn tại trên những mức thực thi khác nhau.
+                </p>
+
+                <p>
+                    Do đó, cần xem xét Stack Usage, Priority, thời gian thực thi
+                    và dữ liệu được chia sẻ giữa những ISR.
+                </p>
+
+                <h3>6.6. Bảng tổng hợp các trạng thái Interrupt</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trạng thái / Cơ chế</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Enabled</td>
+                            <td>Nguồn Interrupt được cho phép xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Disabled</td>
+                            <td>Nguồn Interrupt không được cho phép xử lý theo cấu hình tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Masked</td>
+                            <td>Interrupt bị ngăn chấp nhận trong một phạm vi nhất định.</td>
+                        </tr>
+                        <tr>
+                            <td>Pending</td>
+                            <td>Yêu cầu Interrupt đang chờ được xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Active</td>
+                            <td>Interrupt đang được CPU xử lý.</td>
+                        </tr>
+                        <tr>
+                            <td>Priority</td>
+                            <td>Xác định thứ tự ưu tiên giữa các nguồn ngắt.</td>
+                        </tr>
+                        <tr>
+                            <td>Nested</td>
+                            <td>Cho phép Interrupt ưu tiên cao hơn ngắt một ISR khác.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>7. Interrupt Context và Main Program Context</h2>
+
+                <h3>7.1. Main Program Context</h3>
+
+                <p>
+                    Main Program Context là môi trường thực thi của chương trình
+                    chính, nơi những Function được gọi theo luồng điều khiển thông
+                    thường.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>int main(void)
+{
+    System_Init();
+
+    while (1)
+    {
+        ReadSensors();
+        UpdateApplication();
+        HandleCommunication();
+    }
+}</code></pre>
+
+                <p>
+                    Những Function trong Main Loop thường được thực thi theo thứ tự
+                    mà chương trình quy định.
+                </p>
+
+                <h3>7.2. Interrupt Context</h3>
+
+                <p>
+                    Interrupt Context là môi trường thực thi khi CPU đang xử lý
+                    một Interrupt.
+                </p>
+
+                <p>
+                    ISR có thể được kích hoạt bất đồng bộ so với luồng Main Program.
+                    Vì vậy, ISR có thể xuất hiện tại nhiều thời điểm khác nhau
+                    trong quá trình chương trình đang chạy.
+                </p>
+
+                <pre><code>int main(void)
+{
+    while (1)
+    {
+        Application_Task_A();
+
+        /* Timer Interrupt may occur here */
+
+        Application_Task_B();
+    }
+}
+
+void TIMER_IRQHandler(void)
+{
+    /* Executed in Interrupt Context */
+}</code></pre>
+
+                <p>
+                    Main Program không cần chủ động gọi ISR. CPU chuyển sang ISR
+                    khi Interrupt được chấp nhận.
+                </p>
+
+                <h3>7.3. Sự khác biệt giữa hai Context</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Main Program Context</th>
+                            <th>Interrupt Context</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Điều kiện bắt đầu</td>
+                            <td>Luồng chương trình thực hiện Function hoặc Main Loop.</td>
+                            <td>CPU chấp nhận một Interrupt.</td>
+                        </tr>
+                        <tr>
+                            <td>Thời điểm thực thi</td>
+                            <td>Theo luồng điều khiển của chương trình.</td>
+                            <td>Có thể xảy ra bất đồng bộ.</td>
+                        </tr>
+                        <tr>
+                            <td>Thời gian xử lý</td>
+                            <td>Phụ thuộc nhiệm vụ của ứng dụng.</td>
+                            <td>Thường cần giới hạn ngắn.</td>
+                        </tr>
+                        <tr>
+                            <td>Function sử dụng</td>
+                            <td>Có thể gọi những Function phù hợp với Main Context.</td>
+                            <td>Cần ưu tiên những Function an toàn trong Interrupt Context.</td>
+                        </tr>
+                        <tr>
+                            <td>Dữ liệu chia sẻ</td>
+                            <td>Có thể truy cập dữ liệu được ISR cập nhật.</td>
+                            <td>Có thể truy cập dữ liệu mà Main Program đang sử dụng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>7.4. Vì sao không nên thực hiện quá nhiều công việc trong ISR?</h3>
+
+                <p>
+                    Khi CPU đang thực thi ISR, những công việc khác có thể phải
+                    chờ cho đến khi ISR hoàn thành hoặc cho đến khi chúng đủ điều
+                    kiện được ưu tiên xử lý.
+                </p>
+
+                <p>
+                    Nếu ISR thực hiện quá nhiều công việc, hệ thống có thể gặp:
+                </p>
+
+                <ul>
+                    <li>Tăng Interrupt Latency của những Interrupt khác.</li>
+                    <li>Giảm thời gian CPU dành cho Main Program.</li>
+                    <li>Tăng nguy cơ bỏ lỡ sự kiện phần cứng.</li>
+                    <li>Tăng Stack Usage nếu có Nested Interrupt.</li>
+                    <li>Khó phân tích và kiểm soát thời gian thực thi.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, ISR thường chỉ nên xử lý những công việc cần phản hồi
+                    ngay lập tức. Những công việc xử lý phức tạp nên được chuyển
+                    sang Main Loop hoặc một Task phù hợp.
+                </p>
+
+                <h2>8. Shared Data giữa ISR và Main Program</h2>
+
+                <h3>8.1. Shared Data là gì?</h3>
+
+                <p>
+                    Shared Data là dữ liệu được truy cập bởi nhiều luồng thực thi
+                    hoặc nhiều Context khác nhau.
+                </p>
+
+                <p>
+                    Trong Embedded C, một trường hợp phổ biến là dữ liệu được
+                    cập nhật trong ISR nhưng được đọc hoặc xử lý trong Main Loop.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>volatile uint32_t timer_count = 0U;
+
+void TIMER_IRQHandler(void)
+{
+    timer_count++;
+}
+
+int main(void)
+{
+    while (1)
+    {
+        if (timer_count &gt; 100U)
+        {
+            ProcessTimerEvent();
+        }
+    }
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>ISR cập nhật <code>timer_count</code>.</li>
+                    <li>Main Loop đọc giá trị <code>timer_count</code>.</li>
+                    <li>Cả hai Context cùng truy cập một biến.</li>
+                </ul>
+
+                <p>
+                    Đây là một trường hợp cần quan tâm đến tính nhất quán của dữ liệu.
+                </p>
+
+                <h3>8.2. Sử dụng Volatile với dữ liệu được cập nhật trong ISR</h3>
+
+                <p>
+                    Khi một biến có thể thay đổi ngoài luồng thực thi mà Compiler
+                    không thể nhận biết thông qua những câu lệnh thông thường,
+                    từ khóa <code>volatile</code> thường được sử dụng.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>volatile uint8_t data_ready = 0U;
+
+void UART_IRQHandler(void)
+{
+    data_ready = 1U;
+}
+
+int main(void)
+{
+    while (1)
+    {
+        if (data_ready != 0U)
+        {
+            data_ready = 0U;
+
+            ProcessReceivedData();
+        }
+    }
+}</code></pre>
+
+                <p>
+                    Khai báo <code>volatile</code> cho biết giá trị của biến có thể
+                    thay đổi ngoài những thao tác mà Compiler quan sát được trong
+                    luồng code hiện tại.
+                </p>
+
+                <p>
+                    Điều này giúp Compiler không tùy ý loại bỏ hoặc giữ lại những
+                    lần truy cập biến theo cách không phù hợp với mục đích của
+                    chương trình.
+                </p>
+
+                <h3>8.3. Volatile không bảo đảm Atomicity</h3>
+
+                <p>
+                    Một trong những hiểu lầm phổ biến khi lập trình Interrupt là
+                    cho rằng khai báo <code>volatile</code> sẽ làm cho mọi thao tác
+                    truy cập biến trở nên an toàn.
+                </p>
+
+                <p>
+                    Thực tế, <code>volatile</code> không bảo đảm:
+                </p>
+
+                <ul>
+                    <li>Thao tác đọc hoặc ghi luôn là Atomic.</li>
+                    <li>Chuỗi Read-Modify-Write được thực hiện nguyên tử.</li>
+                    <li>Dữ liệu được đồng bộ giữa mọi Context.</li>
+                    <li>Race Condition không thể xảy ra.</li>
+                    <li>Thứ tự truy cập bộ nhớ được đồng bộ theo mọi yêu cầu của hệ thống.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>volatile uint32_t counter = 0U;
+
+void TIMER_IRQHandler(void)
+{
+    counter++;
+}</code></pre>
+
+                <p>
+                    Biểu thức <code>counter++</code> không nhất thiết được thực hiện
+                    bằng một thao tác duy nhất. Nó có thể bao gồm:
+                </p>
+
+                <pre><code>1. Read counter
+2. Add 1
+3. Write counter</code></pre>
+
+                <p>
+                    Nếu Main Program cũng thực hiện một thao tác cập nhật biến tại
+                    thời điểm không phù hợp, dữ liệu có thể bị thay đổi ngoài
+                    mong muốn.
+                </p>
+
+                <p>
+                    Vì vậy, cần xem xét kích thước dữ liệu, khả năng Atomic của CPU,
+                    cách Compiler sinh mã và cơ chế đồng bộ của nền tảng.
+                </p>
+
+                <h3>8.4. Chia sẻ dữ liệu thông qua Event Flag</h3>
+
+                <p>
+                    Một phương pháp phổ biến là để ISR chỉ cập nhật một Event Flag,
+                    sau đó Main Loop thực hiện công việc xử lý.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+volatile uint8_t uart_event = 0U;
+
+void UART_IRQHandler(void)
+{
+    if (UART-&gt;STATUS &amp; UART_RX_FLAG)
+    {
+        /* Read data and acknowledge event */
+
+        uart_event = 1U;
+    }
+}
+
+int main(void)
+{
+    while (1)
+    {
+        if (uart_event != 0U)
+        {
+            uart_event = 0U;
+
+            UART_ProcessReceivedData();
+        }
+    }
+}</code></pre>
+
+                <p>
+                    Ưu điểm của phương pháp này:
+                </p>
+
+                <ul>
+                    <li>ISR có thể kết thúc nhanh.</li>
+                    <li>Main Loop đảm nhiệm công việc xử lý chính.</li>
+                    <li>Giảm số lượng thao tác phức tạp trong Interrupt Context.</li>
+                    <li>Dễ phân chia trách nhiệm giữa Interrupt Handler và Application Code.</li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, một Event Flag đơn giản chỉ biểu diễn trạng thái
+                    có hoặc không có sự kiện. Nếu nhiều sự kiện có thể xảy ra trước
+                    khi Main Loop xử lý, những sự kiện liên tiếp có thể bị gộp lại.
+                </p>
+
+                <p>
+                    Trong những trường hợp cần lưu từng sự kiện hoặc từng byte dữ liệu,
+                    cần sử dụng một cơ chế lưu trữ phù hợp. Nội dung về Ring Buffer
+                    và Queue sẽ được trình bày sâu hơn ở Bài 50.
+                </p>
+
+                <h3>8.5. Sử dụng Critical Section</h3>
+
+                <p>
+                    Critical Section là một đoạn chương trình cần được bảo vệ để
+                    hạn chế việc một Interrupt hoặc một Context khác truy cập vào
+                    dữ liệu trong thời điểm nhạy cảm.
+                </p>
+
+                <p>
+                    Trong một số hệ thống đơn giản, có thể tạm thời Mask những
+                    Interrupt liên quan trong khi thực hiện thao tác trên dữ liệu
+                    được chia sẻ.
+                </p>
+
+                <pre><code>volatile uint32_t shared_counter = 0U;
+
+uint32_t ReadSharedCounter(void)
+{
+    uint32_t value;
+
+    /* Enter critical section */
+    DisableRelevantInterrupts();
+
+    value = shared_counter;
+
+    /* Exit critical section */
+    EnableRelevantInterrupts();
+
+    return value;
+}</code></pre>
+
+                <p>
+                    Những hàm <code>DisableRelevantInterrupts()</code> và
+                    <code>EnableRelevantInterrupts()</code> trong ví dụ chỉ là
+                    tên minh họa. Cách thực hiện phụ thuộc vào MCU và Interrupt
+                    Controller.
+                </p>
+
+                <p>
+                    Trong chương trình thực tế, không nên tùy tiện bật lại toàn bộ
+                    Interrupt sau Critical Section nếu trước đó hệ thống đã có
+                    một số Interrupt bị Disable.
+                </p>
+
+                <p>
+                    Cách triển khai an toàn cần bảo toàn trạng thái Mask ban đầu
+                    hoặc sử dụng cơ chế đồng bộ phù hợp do nền tảng cung cấp.
+                </p>
+
+                <h3>8.6. Shared Data cần được thiết kế cẩn thận</h3>
+
+                <p>
+                    Khi ISR và Main Program cùng truy cập một biến, cần xem xét:
+                </p>
+
+                <ul>
+                    <li>Kích thước của biến và khả năng Atomic của CPU.</li>
+                    <li>Biến được đọc, ghi hay cập nhật bằng phép toán nhiều bước.</li>
+                    <li>ISR có thể xuất hiện tại những thời điểm nào.</li>
+                    <li>Main Program có thể bị ngắt giữa một thao tác hay không.</li>
+                    <li>Có cần Critical Section hoặc cơ chế đồng bộ khác hay không.</li>
+                    <li>Có nguy cơ mất sự kiện khi sử dụng một Event Flag đơn giản hay không.</li>
+                </ul>
+
+                <p>
+                    Những vấn đề về Reentrancy, Race Condition, Atomic Operation
+                    và Critical Section sẽ được phân tích chuyên sâu hơn trong
+                    Bài 43: Reentrancy, Concurrency &amp; Critical Sections.
+                </p>
+
+                <h2>9. Interrupt Latency và ISR Execution Time</h2>
+
+                <h3>9.1. Interrupt Latency là gì?</h3>
+
+                <p>
+                    Interrupt Latency là khoảng thời gian từ khi một sự kiện
+                    Interrupt xảy ra đến khi CPU bắt đầu thực thi Interrupt Handler.
+                </p>
+
+                <p>
+                    Khoảng thời gian này có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li>Thời gian phát hiện sự kiện và tạo Interrupt Request.</li>
+                    <li>Thời gian Interrupt Controller xác định yêu cầu cần xử lý.</li>
+                    <li>Thời gian chờ CPU chấp nhận Interrupt.</li>
+                    <li>Thời gian lưu Context.</li>
+                    <li>Thời gian chuyển đến địa chỉ ISR.</li>
+                </ul>
+
+                <p>
+                    Có thể mô tả đơn giản:
+                </p>
+
+                <pre><code>Interrupt Latency =
+    Time ISR Starts - Time Interrupt Event Occurs</code></pre>
+
+                <h3>9.2. Những yếu tố ảnh hưởng đến Interrupt Latency</h3>
+
+                <p>
+                    Interrupt Latency có thể thay đổi tùy theo trạng thái của hệ thống.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Yếu tố</th>
+                            <th>Ảnh hưởng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Interrupt Masking</td>
+                            <td>Interrupt có thể phải chờ đến khi được Unmask.</td>
+                        </tr>
+                        <tr>
+                            <td>Higher Priority ISR</td>
+                            <td>Interrupt có thể phải chờ ISR ưu tiên cao hơn hoàn thành.</td>
+                        </tr>
+                        <tr>
+                            <td>Nested Interrupt</td>
+                            <td>Ảnh hưởng đến thứ tự và thời điểm các ISR được thực thi.</td>
+                        </tr>
+                        <tr>
+                            <td>Context Saving</td>
+                            <td>Cần thời gian để bảo toàn trạng thái CPU.</td>
+                        </tr>
+                        <tr>
+                            <td>Memory Access</td>
+                            <td>Thời gian truy cập Flash, RAM và Bus có thể ảnh hưởng đến thời gian phản hồi.</td>
+                        </tr>
+                        <tr>
+                            <td>CPU Architecture</td>
+                            <td>Mỗi kiến trúc có cơ chế xử lý Interrupt khác nhau.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>9.3. ISR Execution Time</h3>
+
+                <p>
+                    ISR Execution Time là khoảng thời gian CPU cần để thực thi
+                    toàn bộ nội dung của một ISR.
+                </p>
+
+                <p>
+                    Có thể biểu diễn:
+                </p>
+
+                <pre><code>ISR Execution Time =
+    Time ISR Completes - Time ISR Starts</code></pre>
+
+                <p>
+                    Ví dụ, một ISR thực hiện:
+                </p>
+
+                <pre><code>void TIMER_IRQHandler(void)
+{
+    ClearTimerInterruptFlag();
+
+    timer_count++;
+
+    timer_event = 1U;
+}</code></pre>
+
+                <p>
+                    Thời gian thực thi phụ thuộc vào số lượng câu lệnh, tốc độ CPU,
+                    Memory Access, Compiler Optimization và những yếu tố khác
+                    của hệ thống.
+                </p>
+
+                <h3>9.4. Vì sao cần giới hạn thời gian thực thi ISR?</h3>
+
+                <p>
+                    ISR chiếm thời gian xử lý của CPU. Nếu một ISR chạy quá lâu,
+                    những công việc khác có thể bị trì hoãn.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>void UART_IRQHandler(void)
+{
+    while (UART_DataAvailable())
+    {
+        /* Process a large amount of data */
+        ProcessComplexData();
+    }
+}</code></pre>
+
+                <p>
+                    Nếu lượng dữ liệu lớn hoặc <code>ProcessComplexData()</code>
+                    mất nhiều thời gian, ISR có thể chiếm CPU trong một khoảng
+                    thời gian đáng kể.
+                </p>
+
+                <p>
+                    Điều này có thể ảnh hưởng đến:
+                </p>
+
+                <ul>
+                    <li>Những Interrupt khác.</li>
+                    <li>Main Loop.</li>
+                    <li>Những công việc có yêu cầu thời gian thực.</li>
+                    <li>Khả năng tiếp nhận sự kiện mới từ Peripheral.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, ISR nên thực hiện lượng công việc tối thiểu cần thiết
+                    để xử lý hoặc ghi nhận sự kiện.
+                </p>
+
+                <h2>10. Những nguyên tắc quan trọng khi viết ISR</h2>
+
+                <h3>10.1. Giữ ISR ngắn gọn</h3>
+
+                <p>
+                    ISR nên tập trung vào những thao tác cần thiết để xác nhận
+                    và xử lý sự kiện.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>volatile uint8_t timer_event = 0U;
+
+void TIMER_IRQHandler(void)
+{
+    ClearTimerInterruptFlag();
+
+    timer_event = 1U;
+}</code></pre>
+
+                <p>
+                    Thay vì thực hiện toàn bộ công việc trong ISR, Main Loop có thể
+                    xử lý sự kiện sau đó.
+                </p>
+
+                <h3>10.2. Xử lý Interrupt Flag đúng cách</h3>
+
+                <p>
+                    Nhiều Peripheral sử dụng Interrupt Flag để ghi nhận nguyên nhân
+                    phát sinh ngắt.
+                </p>
+
+                <p>
+                    ISR cần xác định và xác nhận cờ trạng thái theo đúng quy định
+                    của Hardware.
+                </p>
+
+                <pre><code>void TIMER_IRQHandler(void)
+{
+    if (TIMER-&gt;STATUS &amp; TIMER_UPDATE_FLAG)
+    {
+        /* Clear flag using the specified hardware mechanism */
+
+        TIMER-&gt;STATUS = TIMER_UPDATE_FLAG;
+
+        timer_event = 1U;
+    }
+}</code></pre>
+
+                <p>
+                    Nếu không xử lý Interrupt Flag đúng cách, Peripheral có thể
+                    tiếp tục phát sinh yêu cầu ngắt hoặc trạng thái Interrupt
+                    không được xác nhận như mong muốn.
+                </p>
+
+                <h3>10.3. Hạn chế sử dụng Dynamic Memory Allocation</h3>
+
+                <p>
+                    Không nên tùy tiện gọi những hàm cấp phát bộ nhớ động như
+                    <code>malloc()</code>, <code>calloc()</code> hoặc
+                    <code>realloc()</code> bên trong ISR.
+                </p>
+
+                <p>
+                    Những hàm này có thể cần thời gian xử lý không xác định,
+                    sử dụng cấu trúc quản lý Heap và có thể không an toàn khi
+                    được gọi từ những Context khác nhau.
+                </p>
+
+                <p>
+                    Trong ISR, nên ưu tiên sử dụng những biến có kích thước
+                    xác định trước hoặc những vùng nhớ đã được chuẩn bị sẵn.
+                </p>
+
+                <h3>10.4. Tránh những Function có thời gian thực thi không xác định</h3>
+
+                <p>
+                    Một số Function có thể mất thời gian rất dài hoặc phụ thuộc
+                    vào điều kiện bên ngoài.
+                </p>
+
+                <p>
+                    Những thao tác sau thường không phù hợp để thực hiện trực tiếp
+                    trong ISR:
+                </p>
+
+                <ul>
+                    <li>Delay bằng vòng lặp chờ lâu.</li>
+                    <li>Chờ một Peripheral hoàn thành công việc trong thời gian dài.</li>
+                    <li>Xử lý chuỗi hoặc dữ liệu lớn.</li>
+                    <li>Thực hiện những thuật toán phức tạp không cần thiết.</li>
+                    <li>Gọi những Function có thời gian thực thi khó dự đoán.</li>
+                </ul>
+
+                <h3>10.5. Tránh sử dụng Blocking Function</h3>
+
+                <p>
+                    Blocking Function là Function khiến chương trình phải chờ
+                    một điều kiện hoặc một hoạt động hoàn thành trước khi tiếp tục.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>void UART_IRQHandler(void)
+{
+    UART_SendDataBlocking(0x55U);
+}</code></pre>
+
+                <p>
+                    Nếu Function truyền dữ liệu phải chờ cho đến khi UART sẵn sàng
+                    hoặc hoàn tất truyền, ISR có thể bị kéo dài.
+                </p>
+
+                <p>
+                    Thay vào đó, ISR nên ghi nhận sự kiện và để Main Loop hoặc
+                    một cơ chế xử lý khác đảm nhiệm công việc truyền dữ liệu.
+                </p>
+
+                <h3>10.6. Hạn chế gọi Function không an toàn trong ISR</h3>
+
+                <p>
+                    Không phải Function C nào cũng có thể được gọi an toàn từ ISR.
+                </p>
+
+                <p>
+                    Một Function có thể không phù hợp nếu:
+                </p>
+
+                <ul>
+                    <li>Sử dụng Global State được nhiều Context cùng thay đổi.</li>
+                    <li>Không Reentrant.</li>
+                    <li>Sử dụng tài nguyên cần đồng bộ.</li>
+                    <li>Có thể Block hoặc chờ một sự kiện khác.</li>
+                    <li>Có thời gian thực thi không xác định.</li>
+                </ul>
+
+                <p>
+                    Trước khi gọi một Function từ ISR, cần kiểm tra cách Function
+                    quản lý dữ liệu và những tài nguyên mà nó sử dụng.
+                </p>
+
+                <h3>10.7. Quản lý Stack Usage</h3>
+
+                <p>
+                    ISR cũng sử dụng Stack để lưu những biến cục bộ, địa chỉ trả về
+                    và những thông tin cần thiết trong quá trình thực thi.
+                </p>
+
+                <p>
+                    Nếu có Nested Interrupt, nhiều Context có thể cùng sử dụng
+                    Stack tại những thời điểm liên tiếp.
+                </p>
+
+                <p>
+                    Vì vậy, cần chú ý:
+                </p>
+
+                <ul>
+                    <li>Không khai báo những mảng lớn không cần thiết trong ISR.</li>
+                    <li>Hạn chế Function Call lồng nhau quá sâu.</li>
+                    <li>Kiểm tra Stack Size của hệ thống.</li>
+                    <li>Đánh giá ảnh hưởng của Nested Interrupt.</li>
+                    <li>Tránh sử dụng đệ quy trong ISR.</li>
+                </ul>
+
+                <h3>10.8. Không giả định ISR chỉ chạy một lần</h3>
+
+                <p>
+                    Một nguồn Interrupt có thể phát sinh nhiều sự kiện trong suốt
+                    thời gian chương trình hoạt động.
+                </p>
+
+                <p>
+                    Do đó, ISR cần được thiết kế để có thể xử lý nhiều lần gọi
+                    và không phụ thuộc vào giả định rằng nó chỉ chạy một lần.
+                </p>
+
+                <pre><code>void GPIO_IRQHandler(void)
+{
+    if (GPIO-&gt;INTERRUPT_STATUS &amp; BUTTON_INTERRUPT_MASK)
+    {
+        ClearButtonInterruptFlag();
+
+        button_event_count++;
+    }
+}</code></pre>
+
+                <p>
+                    Cần chú ý rằng nếu nhiều sự kiện xảy ra quá nhanh, phần cứng
+                    có thể không lưu được tất cả những sự kiện đó. Khả năng này
+                    phụ thuộc vào thiết kế Interrupt Flag, FIFO hoặc Buffer
+                    của Peripheral.
+                </p>
+
+                <h2>11. Ví dụ tổng hợp: Xây dựng Timer Interrupt bằng C</h2>
+
+                <h3>11.1. Mô hình hoạt động</h3>
+
+                <p>
+                    Giả sử chúng ta có một Timer Peripheral được cấu hình để
+                    tạo Interrupt định kỳ.
+                </p>
+
+                <p>
+                    Mục tiêu của ví dụ:
+                </p>
+
+                <ul>
+                    <li>Timer phát sinh Interrupt theo chu kỳ cấu hình.</li>
+                    <li>ISR xác nhận Timer Interrupt Flag.</li>
+                    <li>ISR tăng bộ đếm thời gian.</li>
+                    <li>ISR thiết lập Event Flag khi đủ một khoảng thời gian.</li>
+                    <li>Main Loop kiểm tra Event Flag và xử lý công việc.</li>
+                </ul>
+
+                <pre><code>+-----------------------------+
+|        System Init          |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|       Timer Init            |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|   Enable Timer Interrupt    |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|        Main Loop            |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|   Timer Event Occurs        |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|       TIMER ISR             |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|   Clear Interrupt Flag      |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|   Update Timer Counter      |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|   Set Application Event     |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|   Return to Main Program    |
++-----------------------------+
+              |
+              v
++-----------------------------+
+|   Main Loop Handles Event   |
++-----------------------------+</code></pre>
+
+                <h3>11.2. Định nghĩa những biến trạng thái</h3>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+volatile uint32_t system_tick_count = 0U;
+
+volatile uint8_t application_event = 0U;</code></pre>
+
+                <p>
+                    Trong ví dụ:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>system_tick_count</code> lưu số lần Timer Interrupt
+                        đã được xử lý.
+                    </li>
+                    <li>
+                        <code>application_event</code> thông báo cho Main Loop
+                        rằng một sự kiện ứng dụng cần được xử lý.
+                    </li>
+                </ul>
+
+                <h3>11.3. Cấu hình Timer</h3>
+
+                <p>
+                    Hàm khởi tạo Timer có thể được tổ chức như sau:
+                </p>
+
+                <pre><code>void Timer_Init(void)
+{
+    /* Enable Timer Clock */
+    TIMER_EnableClock();
+
+    /* Configure Timer Prescaler */
+    TIMER_SetPrescaler(1000U);
+
+    /* Configure Timer Period */
+    TIMER_SetPeriod(1000U);
+
+    /* Clear pending interrupt flag */
+    TIMER_ClearUpdateFlag();
+
+    /* Enable Timer Update Interrupt */
+    TIMER_EnableUpdateInterrupt();
+
+    /* Enable Timer in Interrupt Controller */
+    TIMER_EnableIRQ();
+
+    /* Start Timer */
+    TIMER_Start();
+}</code></pre>
+
+                <p>
+                    Những Function trong ví dụ là API giả định nhằm minh họa
+                    trình tự cấu hình. Giá trị Prescaler và Period thực tế
+                    phụ thuộc vào Clock Frequency, Timer Architecture và
+                    yêu cầu thời gian của hệ thống.
+                </p>
+
+                <h3>11.4. Xây dựng Timer ISR</h3>
+
+                <pre><code>void TIMER_IRQHandler(void)
+{
+    if (TIMER_IsUpdateFlagSet())
+    {
+        /* Acknowledge the interrupt */
+        TIMER_ClearUpdateFlag();
+
+        /* Update system tick */
+        system_tick_count++;
+
+        /* Generate application event */
+        if ((system_tick_count % 1000U) == 0U)
+        {
+            application_event = 1U;
+        }
+    }
+}</code></pre>
+
+                <p>
+                    Khi Timer tạo Interrupt, ISR sẽ:
                 </p>
 
                 <ol>
-                    <li>Sender gửi First Frame chứa chiều dài tổng thể và phần dữ liệu đầu tiên.</li>
-                    <li>Receiver nhận First Frame và kiểm tra thông tin cần thiết.</li>
-                    <li>Receiver gửi Flow Control để điều khiển quá trình truyền tiếp theo.</li>
-                    <li>Sender gửi các Consecutive Frame theo Block Size và STmin.</li>
-                    <li>Nếu cần, receiver gửi Flow Control tiếp theo sau khi nhận đủ một block.</li>
-                    <li>Sender tiếp tục truyền các Consecutive Frame còn lại.</li>
-                    <li>Receiver ghép dữ liệu và chuyển thông điệp hoàn chỉnh lên tầng phía trên.</li>
+                    <li>Kiểm tra Timer Update Flag.</li>
+                    <li>Xác nhận hoặc xóa cờ Interrupt.</li>
+                    <li>Tăng bộ đếm <code>system_tick_count</code>.</li>
+                    <li>Kiểm tra xem đã đạt số lần ngắt cần thiết hay chưa.</li>
+                    <li>Thiết lập <code>application_event</code> nếu cần.</li>
                 </ol>
 
-                <h3>7.2. Sơ đồ trao đổi frame</h3>
-
-                <pre><code>Sender                              Receiver
-  |                                    |
-  |----------- First Frame ---------->|
-  |                                    |
-  |<---------- Flow Control -----------|
-  |                                    |
-  |-------- Consecutive Frame 1 ------>|
-  |                                    |
-  |-------- Consecutive Frame 2 ------>|
-  |                                    |
-  |-------- Consecutive Frame 3 ------>|
-  |                                    |
-  |<---------- Flow Control -----------|
-  |                                    |
-  |-------- Consecutive Frame 4 ------>|
-  |                                    |
-  |-------- Consecutive Frame 5 ------>|
-  |                                    |
-  |                                    |
-  |       Message Reassembly           |
-  |                                    |</code></pre>
-
                 <p>
-                    Sơ đồ trên minh họa trường hợp receiver yêu cầu
-                    sender truyền dữ liệu theo từng block.
-                    Số lượng frame trong mỗi block phụ thuộc vào BS
-                    được gửi trong Flow Control.
+                    Phép chia lấy dư trong ví dụ chỉ nhằm minh họa cách tạo sự kiện
+                    định kỳ. Trong hệ thống thực tế, có thể sử dụng bộ đếm riêng
+                    hoặc cơ chế lập lịch phù hợp để kiểm soát thời gian tốt hơn.
                 </p>
 
-                <h3>7.3. Vai trò của receiver</h3>
+                <h3>11.5. Xử lý sự kiện trong Main Loop</h3>
+
+                <pre><code>void Application_Process(void)
+{
+    /* Application processing */
+}
+
+int main(void)
+{
+    System_Init();
+
+    Timer_Init();
+
+    while (1)
+    {
+        if (application_event != 0U)
+        {
+            application_event = 0U;
+
+            Application_Process();
+        }
+
+        /* Other application tasks */
+    }
+
+    return 0;
+}</code></pre>
 
                 <p>
-                    Receiver không chỉ nhận các frame mà còn phải
-                    quản lý trạng thái của quá trình tiếp nhận dữ liệu.
+                    Main Loop không cần liên tục kiểm tra trực tiếp Timer Register.
+                    Thay vào đó, ISR đảm nhiệm việc nhận biết sự kiện và cập nhật
+                    trạng thái để Main Loop xử lý.
                 </p>
 
-                <p>
-                    Những công việc chính bao gồm:
-                </p>
-
-                <ul>
-                    <li>Nhận diện First Frame và xác định chiều dài thông điệp.</li>
-                    <li>Chuẩn bị vùng lưu trữ dữ liệu nhận được.</li>
-                    <li>Gửi Flow Control theo trạng thái tiếp nhận.</li>
-                    <li>Kiểm tra thứ tự Sequence Number của Consecutive Frame.</li>
-                    <li>Ghép dữ liệu theo đúng thứ tự.</li>
-                    <li>Thông báo kết quả lên tầng phía trên khi hoàn tất.</li>
-                </ul>
-
-                <h3>7.4. Vai trò của sender</h3>
+                <h3>11.6. Phân tích ưu điểm của thiết kế</h3>
 
                 <p>
-                    Sender có trách nhiệm chia thông điệp thành các phần
-                    phù hợp và truyền theo đúng quy tắc của giao thức.
-                </p>
-
-                <p>
-                    Những công việc chính bao gồm:
+                    Thiết kế trên có một số ưu điểm:
                 </p>
 
                 <ul>
-                    <li>Xác định thông điệp có cần phân đoạn hay không.</li>
-                    <li>Gửi First Frame khi thông điệp cần phân đoạn.</li>
-                    <li>Chờ Flow Control từ receiver.</li>
-                    <li>Kiểm tra Flow Status trước khi truyền tiếp.</li>
-                    <li>Tuân thủ Block Size và STmin.</li>
-                    <li>Tiếp tục truyền cho đến khi hoàn tất thông điệp.</li>
+                    <li>Phân chia rõ ràng công việc giữa ISR và Main Loop.</li>
+                    <li>ISR chỉ thực hiện những thao tác cần thiết.</li>
+                    <li>Application Code không cần trực tiếp xử lý Interrupt Register.</li>
+                    <li>Dễ thay đổi logic xử lý ứng dụng mà không cần thay đổi toàn bộ ISR.</li>
+                    <li>Phù hợp với mô hình Event Flag cơ bản.</li>
                 </ul>
 
-
-                <h2>8. Segmentation và Reassembly</h2>
-
-                <h3>8.1. Segmentation</h3>
-
                 <p>
-                    Segmentation là quá trình chia một thông điệp lớn
-                    thành nhiều phần dữ liệu nhỏ hơn để truyền qua mạng CAN.
+                    Tuy nhiên, đây vẫn là ví dụ đơn giản. Nếu Main Loop xử lý quá lâu
+                    hoặc nhiều sự kiện xảy ra trước khi Event Flag được xử lý,
+                    chương trình có thể mất thông tin về số lượng sự kiện.
                 </p>
 
                 <p>
-                    Phần dữ liệu đầu tiên được đặt trong First Frame.
-                    Những phần dữ liệu còn lại được truyền bằng
-                    Consecutive Frame.
+                    Ngoài ra, thao tác đọc và xóa Event Flag cần được xem xét về
+                    tính Atomic nếu ISR có thể cập nhật biến trong lúc Main Loop
+                    đang xử lý biến đó.
+                </p>
+
+                <h2>12. Các lỗi thường gặp khi lập trình ISR</h2>
+
+                <h3>12.1. Không xác nhận Interrupt Flag</h3>
+
+                <p>
+                    Nếu Peripheral yêu cầu phần mềm xác nhận hoặc xóa Interrupt Flag
+                    nhưng ISR không thực hiện, Interrupt có thể tiếp tục được yêu cầu.
+                </p>
+
+                <pre><code>/* Incorrect for a peripheral that requires flag clearing */
+
+void TIMER_IRQHandler(void)
+{
+    timer_count++;
+}</code></pre>
+
+                <p>
+                    Cách xử lý đúng cần kiểm tra và xác nhận cờ theo quy định của
+                    Hardware:
+                </p>
+
+                <pre><code>void TIMER_IRQHandler(void)
+{
+    if (TIMER_IsUpdateFlagSet())
+    {
+        TIMER_ClearUpdateFlag();
+
+        timer_count++;
+    }
+}</code></pre>
+
+                <h3>12.2. ISR thực hiện quá nhiều công việc</h3>
+
+                <p>
+                    Một ISR chứa quá nhiều xử lý có thể làm tăng thời gian chiếm CPU
+                    và ảnh hưởng đến những Interrupt khác.
                 </p>
 
                 <p>
-                    Mỗi frame đều có phần thông tin điều khiển riêng,
-                    giúp receiver xác định cách xử lý dữ liệu nhận được.
+                    Nên chuyển những công việc xử lý phức tạp sang Main Loop hoặc
+                    Task phù hợp.
                 </p>
 
-                <h3>8.2. Reassembly</h3>
+                <h3>12.3. Quên sử dụng Volatile khi phù hợp</h3>
 
                 <p>
-                    Reassembly là quá trình ghép những phần dữ liệu
-                    nhận được thành thông điệp ban đầu.
+                    Nếu một biến được cập nhật bởi ISR nhưng Main Program truy cập
+                    mà không sử dụng cơ chế phù hợp, Compiler có thể tối ưu hóa
+                    những lần truy cập theo cách không đáp ứng mục đích của chương trình.
                 </p>
 
+                <pre><code>/* Shared variable */
+volatile uint8_t event_flag = 0U;</code></pre>
+
                 <p>
-                    Receiver dựa trên chiều dài thông điệp được khai báo
-                    trong First Frame và dữ liệu nhận được từ các
-                    Consecutive Frame để xác định khi nào thông điệp
-                    đã được truyền đầy đủ.
+                    Tuy nhiên, cần nhớ rằng Volatile không thay thế Atomic Operation
+                    hoặc cơ chế đồng bộ.
                 </p>
 
+                <h3>12.4. Gọi Function Blocking trong ISR</h3>
+
                 <p>
-                    Sau khi quá trình ghép dữ liệu hoàn tất,
-                    thông điệp được chuyển lên tầng phía trên
-                    thông qua giao diện dịch vụ tương ứng.
+                    Nếu ISR gọi một Function phải chờ một điều kiện hoàn thành,
+                    thời gian thực thi ISR có thể tăng đáng kể.
                 </p>
 
-                <h3>8.3. Ví dụ minh họa</h3>
+                <pre><code>void UART_IRQHandler(void)
+{
+    /* Avoid long blocking operations */
+    Delay_ms(100U);
+}</code></pre>
 
                 <p>
-                    Giả sử sender cần truyền một thông điệp có 20 byte dữ liệu
-                    bằng CAN Classic với Normal Addressing.
-                    Trong ví dụ đơn giản này, First Frame chứa 6 byte dữ liệu
-                    và mỗi Consecutive Frame tiếp theo chứa tối đa 7 byte.
+                    Nên tránh Delay và những thao tác chờ lâu trong Interrupt Context.
                 </p>
 
-                <table>
-                    <tr>
-                        <th>Frame</th>
-                        <th>Dữ liệu được mang</th>
-                        <th>Số byte dữ liệu</th>
-                    </tr>
-                    <tr>
-                        <td>First Frame</td>
-                        <td>Byte 1 đến Byte 6</td>
-                        <td>6</td>
-                    </tr>
-                    <tr>
-                        <td>Consecutive Frame 1</td>
-                        <td>Byte 7 đến Byte 13</td>
-                        <td>7</td>
-                    </tr>
-                    <tr>
-                        <td>Consecutive Frame 2</td>
-                        <td>Byte 14 đến Byte 20</td>
-                        <td>7</td>
-                    </tr>
-                </table>
+                <h3>12.5. Khai báo sai Handler Name</h3>
 
                 <p>
-                    Như vậy, receiver cần nhận tổng cộng 3 frame dữ liệu
-                    để có thể ghép lại thông điệp 20 byte.
-                    Trong quá trình này, Flow Control được sử dụng
-                    để điều khiển việc gửi các Consecutive Frame.
+                    Nếu tên Handler không khớp với Vector Table hoặc quy định
+                    của Startup File, CPU có thể không gọi đến Function mà
+                    lập trình viên mong muốn.
                 </p>
 
-                <div class="note">
-                    <strong>Lưu ý:</strong>
-                    Đây là ví dụ minh họa với CAN Classic và Normal Addressing.
-                    Số byte dữ liệu thực tế trong từng frame phụ thuộc vào
-                    Addressing Format, CAN Data Length và các quy định
-                    của phiên bản giao thức được sử dụng.
-                </div>
+                <pre><code>/* Handler name may be incorrect for the target MCU */
 
-
-                <h2>9. Addressing Format</h2>
-
-                <h3>9.1. Vì sao cần Addressing Format?</h3>
+void MyTimerInterrupt(void)
+{
+    /* Timer processing */
+}</code></pre>
 
                 <p>
-                    Trong một mạng CAN có nhiều ECU, hệ thống cần xác định
-                    thông điệp đang được gửi từ đâu và hướng đến thiết bị nào.
+                    Cần kiểm tra chính xác tên Handler trong Device Header,
+                    Startup File hoặc tài liệu của nhà sản xuất.
+                </p>
+
+                <h3>12.6. Không cấu hình Enable Interrupt ở đúng cấp</h3>
+
+                <p>
+                    Một số hệ thống cần Enable Interrupt ở cả Peripheral và
+                    Interrupt Controller.
                 </p>
 
                 <p>
-                    ISO 15765-2 hỗ trợ các cách biểu diễn địa chỉ khác nhau
-                    để phù hợp với kiến trúc mạng và yêu cầu giao tiếp
-                    của từng hệ thống Automotive.
+                    Nếu chỉ bật một cấp mà bỏ qua cấp còn lại, Interrupt có thể
+                    không được xử lý như mong muốn.
                 </p>
 
-                <h3>9.2. Normal Addressing</h3>
+                <h3>12.7. Chia sẻ dữ liệu không có cơ chế đồng bộ</h3>
 
                 <p>
-                    Với <strong>Normal Addressing</strong>, thông tin địa chỉ
-                    được thể hiện thông qua CAN Identifier.
-                </p>
-
-                <p>
-                    Payload của CAN Frame bắt đầu bằng N_PCI,
-                    không cần thêm byte địa chỉ riêng ở đầu payload.
-                </p>
-
-                <pre><code>CAN Identifier
-      |
-      v
-+--------+----------------------+
-| N_PCI  |       N_Data         |
-+--------+----------------------+</code></pre>
-
-                <h3>9.3. Extended Addressing</h3>
-
-                <p>
-                    Với <strong>Extended Addressing</strong>,
-                    một byte địa chỉ được đặt trong phần dữ liệu
-                    của CAN Frame trước N_PCI.
-                </p>
-
-                <pre><code>CAN Identifier
-      |
-      v
-+-------------+--------+----------------+
-| Address Byte| N_PCI  |     N_Data     |
-+-------------+--------+----------------+</code></pre>
-
-                <p>
-                    Byte địa chỉ này được sử dụng để phân biệt
-                    thông tin đích trong quá trình truyền thông.
-                </p>
-
-                <h3>9.4. Mixed Addressing</h3>
-
-                <p>
-                    <strong>Mixed Addressing</strong> là một dạng địa chỉ
-                    kết hợp thông tin địa chỉ trong payload với
-                    thông tin được thể hiện thông qua CAN Identifier.
+                    Main Program và ISR có thể cùng truy cập một biến. Nếu thao tác
+                    cập nhật không được bảo vệ phù hợp, dữ liệu có thể không nhất quán.
                 </p>
 
                 <p>
-                    Cách tổ chức cụ thể phụ thuộc vào cấu hình địa chỉ
-                    và loại CAN Identifier được sử dụng.
+                    Cần đánh giá Atomicity, kích thước dữ liệu và thời điểm ISR
+                    có thể xuất hiện trước khi lựa chọn phương pháp đồng bộ.
                 </p>
 
-                <h3>9.5. Normal Fixed Addressing</h3>
+                <h3>12.8. Không tính đến Stack Usage</h3>
 
                 <p>
-                    <strong>Normal Fixed Addressing</strong> thường được
-                    sử dụng trong các hệ thống có quy ước địa chỉ
-                    nguồn và đích được mã hóa trong CAN Identifier.
-                </p>
-
-                <p>
-                    Đối với một số định dạng sử dụng 29-bit CAN Identifier,
-                    các trường địa chỉ như Source Address và Target Address
-                    có thể được biểu diễn trong Identifier.
-                </p>
-
-                <h3>9.6. So sánh các dạng địa chỉ</h3>
-
-                <table>
-                    <tr>
-                        <th>Addressing Format</th>
-                        <th>Đặc điểm</th>
-                    </tr>
-                    <tr>
-                        <td>Normal</td>
-                        <td>Địa chỉ được thể hiện thông qua CAN Identifier.</td>
-                    </tr>
-                    <tr>
-                        <td>Extended</td>
-                        <td>Có thêm byte địa chỉ trong payload trước N_PCI.</td>
-                    </tr>
-                    <tr>
-                        <td>Mixed</td>
-                        <td>Kết hợp thông tin địa chỉ trong CAN Identifier và payload.</td>
-                    </tr>
-                    <tr>
-                        <td>Normal Fixed</td>
-                        <td>Sử dụng quy ước địa chỉ cố định trong CAN Identifier.</td>
-                    </tr>
-                </table>
-
-                <p>
-                    Khi phân tích CAN Trace, cần biết Addressing Format
-                    đang được cấu hình. Nếu không, việc xác định vị trí
-                    N_PCI và dữ liệu thực tế trong payload có thể bị sai.
-                </p>
-
-
-                <h2>10. Physical Addressing và Functional Addressing</h2>
-
-                <h3>10.1. Physical Addressing</h3>
-
-                <p>
-                    <strong>Physical Addressing</strong> là hình thức giao tiếp
-                    hướng đến một ECU cụ thể.
+                    ISR sử dụng Stack giống như những Function khác, đồng thời
+                    một số kiến trúc còn cần lưu Context khi chuyển sang Interrupt.
                 </p>
 
                 <p>
-                    Khi Diagnostic Tester gửi request bằng Physical Addressing,
-                    request được gửi đến một ECU đích xác định.
-                    Đây là cách giao tiếp thường gặp khi thực hiện
-                    các thao tác chẩn đoán riêng cho một ECU.
+                    Nếu Stack không đủ lớn, hệ thống có thể gặp Stack Overflow,
+                    đặc biệt khi có Nested Interrupt hoặc nhiều Function Call
+                    trong ISR.
                 </p>
 
-                <h3>10.2. Functional Addressing</h3>
+                <h2>13. Các loại Interrupt thường gặp trong Embedded Systems</h2>
+
+                <h3>13.1. External Interrupt</h3>
 
                 <p>
-                    <strong>Functional Addressing</strong> là hình thức gửi
-                    request đến một nhóm ECU hoặc nhiều ECU có khả năng
-                    nhận cùng một loại yêu cầu.
-                </p>
-
-                <p>
-                    Trong hệ thống UDS trên CAN, Functional Addressing
-                    thường được sử dụng cho một số yêu cầu chẩn đoán
-                    có tính chất chung.
-                </p>
-
-                <h3>10.3. Sự khác nhau giữa hai loại địa chỉ</h3>
-
-                <table>
-                    <tr>
-                        <th>Tiêu chí</th>
-                        <th>Physical Addressing</th>
-                        <th>Functional Addressing</th>
-                    </tr>
-                    <tr>
-                        <td>Đối tượng nhận</td>
-                        <td>Một ECU cụ thể.</td>
-                        <td>Một nhóm ECU phù hợp.</td>
-                    </tr>
-                    <tr>
-                        <td>Mục đích</td>
-                        <td>Chẩn đoán riêng từng ECU.</td>
-                        <td>Gửi yêu cầu chung đến nhiều ECU.</td>
-                    </tr>
-                    <tr>
-                        <td>Phản hồi</td>
-                        <td>Thông thường từ ECU đích.</td>
-                        <td>Có thể có phản hồi từ nhiều ECU theo quy tắc dịch vụ.</td>
-                    </tr>
-                    <tr>
-                        <td>Phân đoạn</td>
-                        <td>Hỗ trợ truyền thông điệp nhiều frame.</td>
-                        <td>Không sử dụng cho quá trình truyền thông điệp phân đoạn theo quy tắc thông thường.</td>
-                    </tr>
-                </table>
-
-                <div class="note">
-                    <strong>Điểm cần nhớ:</strong>
-                    Physical và Functional Addressing không phải là
-                    hai loại N_PDU. Đây là các cách xác định đối tượng
-                    nhận thông điệp. Quy tắc sử dụng chúng cần tuân theo
-                    tiêu chuẩn và cấu hình của hệ thống chẩn đoán.
-                </div>
-
-
-                <h2>11. Timeout và xử lý lỗi trong Transport Protocol</h2>
-
-                <h3>11.1. Vì sao cần Timeout?</h3>
-
-                <p>
-                    Trong quá trình truyền dữ liệu, sender và receiver
-                    cần phối hợp với nhau thông qua các frame điều khiển.
+                    External Interrupt là Interrupt được kích hoạt bởi những sự kiện
+                    từ bên ngoài CPU hoặc từ các Peripheral bên trong MCU.
                 </p>
 
                 <p>
-                    Tuy nhiên, có thể xảy ra trường hợp sender không nhận được
-                    Flow Control hoặc receiver không nhận được Consecutive Frame
-                    trong khoảng thời gian mong đợi.
-                </p>
-
-                <p>
-                    Vì vậy, ISO 15765-2 định nghĩa các cơ chế giám sát thời gian
-                    để phát hiện quá trình truyền bị gián đoạn hoặc không
-                    diễn ra đúng như mong đợi.
-                </p>
-
-                <h3>11.2. Một số tình huống lỗi thường gặp</h3>
-
-                <table>
-                    <tr>
-                        <th>Tình huống</th>
-                        <th>Nguyên nhân có thể</th>
-                        <th>Ảnh hưởng</th>
-                    </tr>
-                    <tr>
-                        <td>Không nhận được Flow Control</td>
-                        <td>Receiver không phản hồi hoặc frame không được nhận.</td>
-                        <td>Sender không thể tiếp tục truyền theo quy trình.</td>
-                    </tr>
-                    <tr>
-                        <td>Sequence Number không đúng</td>
-                        <td>Frame bị mất, sai thứ tự hoặc dữ liệu bị lỗi.</td>
-                        <td>Receiver không thể ghép dữ liệu đúng cách.</td>
-                    </tr>
-                    <tr>
-                        <td>Receiver gửi Wait nhiều lần</td>
-                        <td>Receiver chưa sẵn sàng tiếp nhận dữ liệu.</td>
-                        <td>Quá trình truyền có thể bị kéo dài hoặc kết thúc do giới hạn Wait.</td>
-                    </tr>
-                    <tr>
-                        <td>Receiver báo Overflow</td>
-                        <td>Kích thước thông điệp vượt quá khả năng tiếp nhận.</td>
-                        <td>Quá trình truyền bị từ chối.</td>
-                    </tr>
-                    <tr>
-                        <td>Không nhận đủ Consecutive Frame</td>
-                        <td>Frame bị mất hoặc timeout xảy ra.</td>
-                        <td>Thông điệp không thể được ghép hoàn chỉnh.</td>
-                    </tr>
-                </table>
-
-                <h3>11.3. Một số timer thường gặp</h3>
-
-                <p>
-                    Trong quá trình triển khai Transport Protocol,
-                    một số timer được sử dụng để giám sát thời gian
-                    chờ và khoảng thời gian truyền nhận frame.
-                </p>
-
-                <table>
-                    <tr>
-                        <th>Timer</th>
-                        <th>Vai trò tổng quát</th>
-                    </tr>
-                    <tr>
-                        <td>N_As</td>
-                        <td>Giám sát thời gian gửi N_PDU ở phía sender.</td>
-                    </tr>
-                    <tr>
-                        <td>N_Ar</td>
-                        <td>Giám sát thời gian gửi N_PDU ở phía receiver.</td>
-                    </tr>
-                    <tr>
-                        <td>N_Bs</td>
-                        <td>Giám sát thời gian sender chờ Flow Control.</td>
-                    </tr>
-                    <tr>
-                        <td>N_Br</td>
-                        <td>Giám sát thời gian receiver chuẩn bị gửi Flow Control.</td>
-                    </tr>
-                    <tr>
-                        <td>N_Cs</td>
-                        <td>Giám sát thời gian sender chuẩn bị gửi Consecutive Frame.</td>
-                    </tr>
-                    <tr>
-                        <td>N_Cr</td>
-                        <td>Giám sát thời gian receiver chờ Consecutive Frame tiếp theo.</td>
-                    </tr>
-                </table>
-
-                <p>
-                    Các timer này thuộc cơ chế quản lý thời gian của
-                    Network Layer. Giá trị cấu hình cụ thể phải được
-                    xác định theo phiên bản tiêu chuẩn, yêu cầu OEM
-                    và cấu hình của dự án.
-                </p>
-
-
-                <h2>12. ISO 15765-2 trong AUTOSAR</h2>
-
-                <h3>12.1. CanTp là gì?</h3>
-
-                <p>
-                    Trong AUTOSAR Classic Platform, chức năng CAN Transport Protocol
-                    được triển khai bởi module
-                    <strong>CanTp (CAN Transport Protocol)</strong>.
-                </p>
-
-                <p>
-                    CanTp là một module thuộc Basic Software,
-                    chịu trách nhiệm cung cấp các chức năng Transport Protocol
-                    trên mạng CAN theo các yêu cầu tương ứng của ISO 15765-2.
-                </p>
-
-                <p>
-                    Những chức năng chính của CanTp bao gồm:
+                    Ví dụ:
                 </p>
 
                 <ul>
-                    <li>Segmentation: chia thông điệp lớn thành nhiều N_PDU.</li>
-                    <li>Reassembly: ghép các N_PDU thành thông điệp hoàn chỉnh.</li>
-                    <li>Flow Control: quản lý việc truyền nhận theo FC.</li>
-                    <li>Quản lý các trạng thái truyền và nhận.</li>
-                    <li>Quản lý timeout trong quá trình truyền thông.</li>
-                    <li>Cung cấp giao diện với các module phía trên và phía dưới.</li>
+                    <li>GPIO Input thay đổi trạng thái.</li>
+                    <li>UART nhận dữ liệu.</li>
+                    <li>SPI hoàn tất một giao dịch.</li>
+                    <li>Timer tạo Update Event.</li>
                 </ul>
 
-                <h3>12.2. Vị trí của CanTp trong AUTOSAR Communication Stack</h3>
-
-                <pre><code>              Application Software
-                      |
-                      v
-                     RTE
-                      |
-                      v
-                     DCM
-                      |
-                      v
-                    PduR
-                      |
-                      v
-                    CanTp
-                      |
-                      v
-                    CanIf
-                      |
-                      v
-                    CanDrv
-                      |
-                      v
-                 CAN Controller
-                      |
-                      v
-                    CAN Bus</code></pre>
+                <h3>13.2. Internal Interrupt / Exception</h3>
 
                 <p>
-                    Trong luồng giao tiếp chẩn đoán:
+                    Đây là những sự kiện đặc biệt liên quan đến hoạt động bên trong
+                    CPU hoặc hệ thống.
+                </p>
+
+                <p>
+                    Ví dụ trên ARM Cortex-M:
+                </p>
+
+                <ul>
+                    <li>NMI.</li>
+                    <li>HardFault.</li>
+                    <li>MemManage Fault.</li>
+                    <li>BusFault.</li>
+                    <li>UsageFault.</li>
+                    <li>SysTick Exception.</li>
+                </ul>
+
+                <p>
+                    Những Exception này có vai trò khác nhau trong việc xử lý
+                    lỗi, quản lý hệ thống và hỗ trợ hoạt động của CPU.
+                </p>
+
+                <h3>13.3. Maskable và Non-maskable Interrupt</h3>
+
+                <p>
+                    Interrupt có thể được phân loại dựa trên khả năng bị Mask:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại</th>
+                            <th>Đặc điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Maskable Interrupt</td>
+                            <td>Có thể bị vô hiệu hóa hoặc ngăn xử lý bằng cơ chế Mask tương ứng.</td>
+                        </tr>
+                        <tr>
+                            <td>Non-maskable Interrupt (NMI)</td>
+                            <td>Không bị ảnh hưởng bởi cơ chế Mask thông thường dành cho những Interrupt có thể Mask.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    NMI thường được dành cho những sự kiện quan trọng mà hệ thống
+                    cần có khả năng phản hồi ngay cả khi những Interrupt thông thường
+                    đang bị Mask.
+                </p>
+
+                <h3>13.4. Interrupt-driven Peripheral</h3>
+
+                <p>
+                    Nhiều Peripheral trong MCU hỗ trợ Interrupt để thông báo
+                    trạng thái hoạt động.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Peripheral</th>
+                            <th>Sự kiện Interrupt</th>
+                            <th>Ứng dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GPIO</td>
+                            <td>Rising Edge, Falling Edge.</td>
+                            <td>Phát hiện sự kiện từ nút nhấn hoặc tín hiệu bên ngoài.</td>
+                        </tr>
+                        <tr>
+                            <td>Timer</td>
+                            <td>Update, Compare Match.</td>
+                            <td>Tạo sự kiện định kỳ hoặc điều khiển thời gian.</td>
+                        </tr>
+                        <tr>
+                            <td>UART</td>
+                            <td>Receive, Transmit, Error.</td>
+                            <td>Xử lý dữ liệu truyền nhận.</td>
+                        </tr>
+                        <tr>
+                            <td>SPI</td>
+                            <td>Transfer Complete.</td>
+                            <td>Thông báo quá trình truyền nhận hoàn tất.</td>
+                        </tr>
+                        <tr>
+                            <td>ADC</td>
+                            <td>Conversion Complete.</td>
+                            <td>Thông báo dữ liệu chuyển đổi đã sẵn sàng.</td>
+                        </tr>
+                        <tr>
+                            <td>DMA</td>
+                            <td>Transfer Complete, Transfer Error.</td>
+                            <td>Thông báo trạng thái truyền dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Watchdog</td>
+                            <td>Warning hoặc sự kiện đặc biệt tùy phần cứng.</td>
+                            <td>Phát hiện tình trạng hoạt động bất thường.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>14. Best Practices khi triển khai ISR trong Embedded C</h2>
+
+                <h3>14.1. Thiết kế ISR có trách nhiệm rõ ràng</h3>
+
+                <p>
+                    Mỗi ISR nên tập trung vào việc xử lý một hoặc một nhóm sự kiện
+                    liên quan đến Peripheral tương ứng.
+                </p>
+
+                <p>
+                    Không nên đưa quá nhiều logic Application vào Interrupt Handler.
+                    Thay vào đó, ISR có thể thông báo sự kiện để Application Layer
+                    xử lý sau.
+                </p>
+
+                <h3>14.2. Ưu tiên sử dụng Event Flag hoặc cơ chế thông báo phù hợp</h3>
+
+                <p>
+                    Khi ISR không cần xử lý toàn bộ sự kiện ngay lập tức, có thể
+                    sử dụng Event Flag để thông báo cho Main Loop.
+                </p>
+
+                <p>
+                    Nếu cần lưu nhiều sự kiện hoặc dữ liệu, cần sử dụng Buffer,
+                    Queue hoặc cơ chế lưu trữ phù hợp với yêu cầu hệ thống.
+                </p>
+
+                <h3>14.3. Kiểm tra tài liệu MCU và Compiler</h3>
+
+                <p>
+                    Trước khi triển khai ISR, cần xác định:
+                </p>
+
+                <ul>
+                    <li>Tên Interrupt Handler được hỗ trợ.</li>
+                    <li>Vị trí và cách tổ chức Interrupt Vector Table.</li>
+                    <li>Cách Enable và Disable Interrupt.</li>
+                    <li>Cách thiết lập Priority.</li>
+                    <li>Cách kiểm tra và xóa Interrupt Flag.</li>
+                    <li>Quy định về Nested Interrupt.</li>
+                    <li>Cú pháp ISR mà Compiler hỗ trợ.</li>
+                    <li>Những giới hạn liên quan đến Stack và Interrupt Latency.</li>
+                </ul>
+
+                <h3>14.4. Sử dụng Volatile đúng mục đích</h3>
+
+                <p>
+                    Những biến được cập nhật bởi ISR và được truy cập từ Main Program
+                    thường cần được khai báo <code>volatile</code> khi phù hợp.
+                </p>
+
+                <p>
+                    Tuy nhiên, cần phân biệt Volatile với Atomicity và Synchronization.
+                    Không nên xem Volatile là giải pháp đầy đủ cho mọi vấn đề dữ liệu
+                    được chia sẻ.
+                </p>
+
+                <h3>14.5. Đánh giá thời gian thực thi ISR</h3>
+
+                <p>
+                    Trong hệ thống Embedded có yêu cầu thời gian thực, cần kiểm tra
+                    thời gian phản hồi và thời gian thực thi của ISR.
+                </p>
+
+                <p>
+                    Có thể sử dụng:
+                </p>
+
+                <ul>
+                    <li>Cycle Counter nếu CPU hỗ trợ.</li>
+                    <li>GPIO Toggle để quan sát thời gian bằng Logic Analyzer hoặc Oscilloscope.</li>
+                    <li>Debugger và những công cụ Trace.</li>
+                    <li>Timer hoặc bộ đếm hiệu năng của CPU.</li>
+                </ul>
+
+                <h3>14.6. Phân chia rõ Hardware Handling và Application Processing</h3>
+
+                <p>
+                    Một cấu trúc phần mềm tốt thường phân chia công việc như sau:
+                </p>
+
+                <pre><code>Hardware Peripheral
+        |
+        v
+Interrupt Controller
+        |
+        v
+Interrupt Service Routine
+        |
+        v
+Event / Data Notification
+        |
+        v
+Main Loop or Application Task
+        |
+        v
+Application Processing</code></pre>
+
+                <p>
+                    Trong mô hình này:
                 </p>
 
                 <ul>
                     <li>
-                        <strong>DCM:</strong>
-                        Xử lý các Diagnostic Request và Response.
+                        <strong>Hardware Peripheral:</strong> Phát sinh sự kiện.
                     </li>
                     <li>
-                        <strong>PduR:</strong>
-                        Định tuyến dữ liệu giữa các module giao tiếp.
+                        <strong>Interrupt Controller:</strong> Quản lý và chuyển yêu cầu ngắt.
                     </li>
                     <li>
-                        <strong>CanTp:</strong>
-                        Thực hiện Segmentation, Reassembly và Flow Control.
+                        <strong>ISR:</strong> Xác nhận sự kiện và thực hiện xử lý tối thiểu.
                     </li>
                     <li>
-                        <strong>CanIf:</strong>
-                        Cung cấp giao diện chuẩn hóa giữa các module
-                        phía trên và CAN Driver.
+                        <strong>Event / Data Notification:</strong> Chuyển thông tin đến phần mềm chính.
                     </li>
                     <li>
-                        <strong>CanDrv:</strong>
-                        Điều khiển CAN Controller thông qua các driver
-                        tương ứng với phần cứng.
+                        <strong>Application Task:</strong> Thực hiện logic xử lý của ứng dụng.
                     </li>
                 </ul>
 
-                <h3>12.3. Luồng truyền dữ liệu từ DCM đến CAN Bus</h3>
-
                 <p>
-                    Khi DCM cần gửi một Diagnostic Response có kích thước lớn,
-                    dữ liệu được chuyển qua PduR đến CanTp.
+                    Cách phân chia này giúp phần mềm dễ bảo trì, kiểm thử và mở rộng
+                    hơn khi số lượng Peripheral tăng lên.
                 </p>
 
-                <p>
-                    CanTp thực hiện chia dữ liệu thành các frame phù hợp,
-                    xử lý Flow Control và chuyển các N_PDU xuống CanIf.
-                    Sau đó, CanIf và CAN Driver thực hiện việc truyền
-                    CAN Frame lên CAN Bus.
-                </p>
-
-                <p>
-                    Ở phía nhận, CanTp tiếp nhận các frame từ tầng phía dưới,
-                    thực hiện ghép dữ liệu và chuyển thông điệp hoàn chỉnh
-                    lên module phía trên thông qua PduR.
-                </p>
-
-                <h3>12.4. Phân biệt CanTp và CanIf</h3>
-
-                <table>
-                    <tr>
-                        <th>Tiêu chí</th>
-                        <th>CanTp</th>
-                        <th>CanIf</th>
-                    </tr>
-                    <tr>
-                        <td>Vai trò</td>
-                        <td>Transport Protocol trên CAN.</td>
-                        <td>Giao diện chuẩn hóa cho CAN Driver.</td>
-                    </tr>
-                    <tr>
-                        <td>Segmentation</td>
-                        <td>Có.</td>
-                        <td>Không.</td>
-                    </tr>
-                    <tr>
-                        <td>Reassembly</td>
-                        <td>Có.</td>
-                        <td>Không.</td>
-                    </tr>
-                    <tr>
-                        <td>Flow Control</td>
-                        <td>Có.</td>
-                        <td>Không xử lý cơ chế Flow Control của ISO 15765-2.</td>
-                    </tr>
-                    <tr>
-                        <td>CAN Frame</td>
-                        <td>Quản lý N_PDU ở mức Transport Protocol.</td>
-                        <td>Chuyển tiếp thông tin truyền nhận CAN đến Driver.</td>
-                    </tr>
-                </table>
-
-
-                <h2>13. Phân tích CAN Trace</h2>
-
-                <h3>13.1. CAN Trace là gì?</h3>
-
-                <p>
-                    CAN Trace là dữ liệu ghi lại quá trình truyền thông
-                    trên CAN Bus, thường bao gồm CAN Identifier,
-                    DLC, Data Bytes và Timestamp.
-                </p>
-
-                <p>
-                    Khi phân tích Diagnostic Communication,
-                    kỹ sư Embedded có thể sử dụng CAN Trace để xác định
-                    loại frame, kiểm tra thứ tự truyền dữ liệu
-                    và phát hiện những vấn đề trong quá trình giao tiếp.
-                </p>
-
-                <h3>13.2. Nhận diện các loại frame</h3>
-
-                <p>
-                    Với Normal Addressing và cách biểu diễn N_PCI thông thường,
-                    có thể nhận diện loại frame thông qua 4 bit cao
-                    của byte PCI đầu tiên.
-                </p>
-
-                <table>
-                    <tr>
-                        <th>PCI Type</th>
-                        <th>Loại frame</th>
-                        <th>Chức năng</th>
-                    </tr>
-                    <tr>
-                        <td>0</td>
-                        <td>Single Frame</td>
-                        <td>Truyền thông điệp nhỏ.</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>First Frame</td>
-                        <td>Bắt đầu thông điệp nhiều frame.</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Consecutive Frame</td>
-                        <td>Truyền phần dữ liệu tiếp theo.</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Flow Control</td>
-                        <td>Điều khiển luồng truyền.</td>
-                    </tr>
-                </table>
-
-                <h3>13.3. Ví dụ phân tích chuỗi truyền</h3>
-
-                <p>
-                    Giả sử CAN Trace ghi nhận một chuỗi frame có dạng:
-                </p>
-
-                <pre><code>Frame 1: 10 14 62 F1 90 01 02 03
-Frame 2: 30 00 00 00 00 00 00 00
-Frame 3: 21 04 05 06 07 08 09 0A
-Frame 4: 22 0B 0C 0D 0E 0F 10 11</code></pre>
-
-                <p>
-                    Có thể phân tích theo trình tự:
-                </p>
+                <h3>14.7. Checklist trước khi hoàn thành một ISR</h3>
 
                 <ul>
-                    <li>
-                        <strong>Frame 1:</strong>
-                        Byte đầu tiên là 0x10, có PCI Type bằng 1,
-                        vì vậy đây là First Frame.
-                    </li>
-                    <li>
-                        <strong>Frame 2:</strong>
-                        Byte đầu tiên là 0x30, có PCI Type bằng 3,
-                        vì vậy đây là Flow Control.
-                    </li>
-                    <li>
-                        <strong>Frame 3:</strong>
-                        Byte đầu tiên là 0x21, có PCI Type bằng 2,
-                        Sequence Number bằng 1.
-                    </li>
-                    <li>
-                        <strong>Frame 4:</strong>
-                        Byte đầu tiên là 0x22, có PCI Type bằng 2,
-                        Sequence Number bằng 2.
-                    </li>
+                    <li>Đã xác định đúng nguồn Interrupt.</li>
+                    <li>Đã sử dụng đúng tên Handler theo Startup File hoặc Compiler.</li>
+                    <li>Đã cấu hình Enable Interrupt ở đúng cấp.</li>
+                    <li>Đã thiết lập Priority phù hợp.</li>
+                    <li>Đã kiểm tra đúng Interrupt Flag.</li>
+                    <li>Đã xác nhận hoặc xóa Interrupt Flag theo tài liệu phần cứng.</li>
+                    <li>ISR chỉ thực hiện những công việc cần thiết.</li>
+                    <li>Không thực hiện Delay hoặc Blocking Operation không cần thiết.</li>
+                    <li>Không sử dụng Dynamic Memory Allocation tùy tiện trong ISR.</li>
+                    <li>Đã xem xét Shared Data giữa ISR và Main Program.</li>
+                    <li>Đã đánh giá Volatile, Atomicity và Synchronization.</li>
+                    <li>Đã kiểm tra Stack Usage và Nested Interrupt nếu có.</li>
+                    <li>Đã đánh giá Interrupt Latency và ISR Execution Time.</li>
                 </ul>
-
-                <p>
-                    Chuỗi này minh họa quá trình receiver gửi Flow Control
-                    sau khi nhận First Frame, sau đó sender tiếp tục
-                    truyền Consecutive Frame.
-                </p>
-
-                <div class="note">
-                    <strong>Lưu ý:</strong>
-                    Đây là CAN Trace minh họa theo Normal Addressing.
-                    Khi phân tích trace thực tế, cần kiểm tra CAN Identifier,
-                    Addressing Format, chiều truyền, DLC và cấu hình padding.
-                    Không nên chỉ dựa vào một byte đầu tiên nếu chưa xác định
-                    được vị trí N_PCI.
-                </div>
-
-
-                <h2>14. Những lỗi thường gặp khi triển khai CAN Transport Protocol</h2>
-
-                <h3>14.1. Sai cấu hình Addressing Format</h3>
-
-                <p>
-                    Nếu sender và receiver sử dụng Addressing Format khác nhau,
-                    hai phía có thể hiểu sai vị trí của N_PCI hoặc byte địa chỉ.
-                    Điều này khiến frame không được xử lý đúng cách.
-                </p>
-
-                <h3>14.2. Sai Block Size</h3>
-
-                <p>
-                    Nếu cấu hình Block Size không phù hợp với yêu cầu
-                    của hệ thống, sender và receiver có thể không phối hợp
-                    đúng trong quá trình truyền từng block dữ liệu.
-                </p>
-
-                <h3>14.3. Sai STmin</h3>
-
-                <p>
-                    Nếu sender không tuân thủ STmin, các Consecutive Frame
-                    có thể được gửi với khoảng cách thời gian không phù hợp
-                    với yêu cầu của receiver.
-                </p>
-
-                <h3>14.4. Lỗi Sequence Number</h3>
-
-                <p>
-                    Sequence Number không đúng thứ tự có thể khiến receiver
-                    không thể xác nhận chuỗi dữ liệu đang nhận.
-                    Cần kiểm tra frame bị mất, frame sai thứ tự
-                    hoặc lỗi trong quá trình truyền nhận.
-                </p>
-
-                <h3>14.5. Sai cấu hình Buffer</h3>
-
-                <p>
-                    Receiver cần có khả năng lưu trữ dữ liệu của thông điệp
-                    đang được phân đoạn. Nếu buffer không đủ lớn,
-                    receiver có thể từ chối tiếp nhận thông điệp.
-                </p>
-
-                <h3>14.6. Sai cấu hình Timeout</h3>
-
-                <p>
-                    Timeout không phù hợp có thể khiến quá trình truyền
-                    bị kết thúc sớm hoặc phải chờ lâu hơn cần thiết.
-                    Cần kiểm tra cấu hình timer và thời gian thực tế
-                    được ghi nhận trong CAN Trace.
-                </p>
-
 
                 <h2>15. Checklist kiến thức cần nắm</h2>
 
                 <ul>
-                    <li>Hiểu ISO 15765-2 là gì và vai trò của nó trong Automotive.</li>
-                    <li>Hiểu vì sao CAN Transport Protocol cần thiết khi truyền dữ liệu lớn.</li>
-                    <li>Phân biệt N_SDU, N_PDU và N_PCI.</li>
-                    <li>Nhận biết bốn loại N_PDU: SF, FF, CF và FC.</li>
-                    <li>Hiểu cách Single Frame truyền một thông điệp nhỏ.</li>
-                    <li>Hiểu vai trò của First Frame trong quá trình Segmentation.</li>
-                    <li>Hiểu Sequence Number của Consecutive Frame.</li>
-                    <li>Phân biệt Flow Status CTS, Wait và Overflow.</li>
-                    <li>Hiểu Block Size và STmin.</li>
-                    <li>Mô tả được quá trình Segmentation và Reassembly.</li>
-                    <li>Phân biệt Normal, Extended, Mixed và Normal Fixed Addressing.</li>
-                    <li>Phân biệt Physical Addressing và Functional Addressing.</li>
-                    <li>Hiểu vai trò của Timeout trong Transport Protocol.</li>
-                    <li>Hiểu vai trò của AUTOSAR CanTp trong Communication Stack.</li>
-                    <li>Phân biệt CanTp với CanIf.</li>
-                    <li>Biết cách nhận diện SF, FF, CF và FC khi đọc CAN Trace.</li>
-                    <li>Nhận biết những lỗi phổ biến trong cấu hình và triển khai CAN Transport Protocol.</li>
+                    <li>Hiểu khái niệm Interrupt và Interrupt Handling.</li>
+                    <li>Phân biệt Polling và Interrupt.</li>
+                    <li>Phân biệt Interrupt và Exception.</li>
+                    <li>Hiểu vai trò của Interrupt Source và Interrupt Request.</li>
+                    <li>Hiểu vai trò của Interrupt Controller.</li>
+                    <li>Hiểu chức năng của Interrupt Service Routine.</li>
+                    <li>Hiểu vai trò của Interrupt Vector Table.</li>
+                    <li>Biết mối quan hệ giữa ISR, Startup File và Vector Table.</li>
+                    <li>Hiểu trình tự CPU xử lý Interrupt.</li>
+                    <li>Hiểu quá trình lưu và khôi phục Execution Context.</li>
+                    <li>Phân biệt ISR và Function thông thường.</li>
+                    <li>Biết cách khai báo ISR theo quy định của Compiler và MCU.</li>
+                    <li>Biết cách kiểm tra và xử lý Interrupt Flag.</li>
+                    <li>Hiểu Interrupt Enable, Disable và Masking.</li>
+                    <li>Hiểu trạng thái Pending và Active của Interrupt.</li>
+                    <li>Hiểu Interrupt Priority và Nested Interrupt.</li>
+                    <li>Phân biệt Main Program Context và Interrupt Context.</li>
+                    <li>Hiểu Shared Data giữa ISR và Main Program.</li>
+                    <li>Biết sử dụng Volatile với dữ liệu được cập nhật trong ISR khi phù hợp.</li>
+                    <li>Hiểu rằng Volatile không bảo đảm Atomicity hoặc Thread Safety.</li>
+                    <li>Hiểu cách sử dụng Event Flag để thông báo sự kiện.</li>
+                    <li>Hiểu mục đích của Critical Section.</li>
+                    <li>Phân biệt Interrupt Latency và ISR Execution Time.</li>
+                    <li>Biết những yếu tố ảnh hưởng đến thời gian phản hồi Interrupt.</li>
+                    <li>Biết những công việc nên và không nên thực hiện trong ISR.</li>
+                    <li>Hiểu những vấn đề liên quan đến Stack Usage và Nested Interrupt.</li>
+                    <li>Biết cách xây dựng một Timer ISR cơ bản.</li>
+                    <li>Biết cách phân chia Hardware Handling và Application Processing.</li>
+                    <li>Biết kiểm tra tài liệu MCU và Compiler trước khi triển khai ISR.</li>
                 </ul>
-
 
                 <h2>16. Bài học tiếp theo</h2>
 
                 <p>
-                    Ở bài tiếp theo, chúng ta sẽ tìm hiểu về
-                    <strong>ISO 14229-1 - UDS Application Layer</strong>.
+                    Ở bài tiếp theo, chúng ta sẽ chuyển sang Phần 6:
+                    <strong>Defensive Programming &amp; Reliable C</strong>,
+                    bắt đầu với <strong>Bài 38: Defensive Programming Fundamentals</strong>.
                 </p>
 
                 <p>
-                    Đây là phần tiêu chuẩn định nghĩa các Diagnostic Service
-                    được sử dụng trong giao tiếp chẩn đoán giữa Diagnostic Tester
-                    và ECU. Chúng ta sẽ tìm hiểu Client/Server Model,
-                    Diagnostic Request, Positive Response, Negative Response,
-                    Service Identifier (SID), Sub-function và các nhóm
-                    dịch vụ UDS quan trọng.
+                    Sau khi đã tìm hiểu về Bit Manipulation, Hardware Register,
+                    Memory-Mapped I/O và Interrupt Service Routine, chúng ta đã
+                    có những kiến thức quan trọng để tương tác trực tiếp với
+                    phần cứng và xây dựng những chương trình Embedded cơ bản.
                 </p>
 
                 <p>
-                    Sau khi hiểu ISO 15765-2, việc học ISO 14229-1 sẽ giúp
-                    chúng ta phân biệt rõ hai trách nhiệm:
-                    UDS định nghĩa nội dung và ý nghĩa của yêu cầu chẩn đoán,
-                    còn CAN Transport Protocol đảm nhiệm việc truyền thông điệp
-                    đó qua mạng CAN.
+                    Tuy nhiên, một chương trình Embedded không chỉ cần hoạt động
+                    đúng trong những điều kiện bình thường. Nó còn phải có khả năng
+                    phát hiện, kiểm tra và xử lý những tình huống bất thường có thể
+                    xảy ra trong quá trình vận hành.
+                </p>
+
+                <p>
+                    Defensive Programming là phương pháp xây dựng phần mềm với
+                    mục tiêu chủ động hạn chế lỗi, kiểm tra dữ liệu đầu vào và
+                    bảo vệ hệ thống trước những điều kiện không mong muốn.
+                </p>
+
+                <p>
+                    Trong bài học tiếp theo, chúng ta sẽ tìm hiểu về Input Validation,
+                    Precondition, Postcondition, Invariant và những nguyên tắc thiết kế
+                    mã nguồn có khả năng phát hiện và xử lý lỗi.
+                </p>
+
+                <p>
+                    Đây là nền tảng quan trọng để tiếp tục học về Pointer Protection,
+                    Buffer Overflow Prevention, Error Handling và những kỹ thuật
+                    xây dựng phần mềm C Embedded có độ tin cậy cao.
                 </p>
 
                 <div class="pager">
@@ -1713,5 +2768,4 @@ Frame 4: 22 0B 0C 0D 0E 0F 10 11</code></pre>
     </footer>
 
 </body>
-
 </html>
