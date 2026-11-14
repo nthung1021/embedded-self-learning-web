@@ -1,0 +1,2691 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 25: Function-like Macro | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html" class="active" aria-current="page">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 25: Function-like Macro</h1>
+
+                <p>
+                    Trong bài học trước, chúng ta đã tìm hiểu
+                    Conditional Compilation và cách sử dụng
+                    Preprocessor Directive để lựa chọn những
+                    phần mã nguồn được xử lý trong quá trình
+                    Preprocessing.
+                </p>
+
+                <p>
+                    Bên cạnh việc lựa chọn mã nguồn,
+                    C Preprocessor còn cung cấp một cách
+                    để tạo những Macro có tham số.
+                    Những Macro này có cách sử dụng
+                    tương tự như Function trong C.
+                </p>
+
+                <p>
+                    Ví dụ, thay vì phải viết lại một
+                    biểu thức tính bình phương ở nhiều
+                    vị trí, chúng ta có thể định nghĩa
+                    một Macro nhận đầu vào và thay thế
+                    bằng biểu thức tương ứng.
+                </p>
+
+                <pre><code>#define SQUARE(x) ((x) * (x))
+
+int result = SQUARE(5);</code></pre>
+
+                <p>
+                    Khi Preprocessor xử lý dòng
+                    <code>SQUARE(5)</code>, Macro sẽ được
+                    thay thế bằng biểu thức tương ứng.
+                </p>
+
+                <p>
+                    Tuy nhiên, Function-like Macro
+                    không hoạt động giống hoàn toàn
+                    với một Function thông thường.
+                    Vì Macro được xử lý bằng cách
+                    thay thế mã nguồn, việc sử dụng
+                    tham số không cẩn thận có thể
+                    dẫn đến những lỗi khó phát hiện.
+                </p>
+
+                <p>
+                    Trong bài học này, chúng ta sẽ tìm hiểu
+                    cách khai báo Function-like Macro,
+                    cách truyền tham số, sự khác biệt
+                    giữa Macro và Function, cũng như
+                    những vấn đề thường gặp khi sử dụng
+                    Macro trong Embedded C.
+                </p>
+
+                <h2>1. Tổng quan về Function-like Macro</h2>
+
+                <h3>1.1. Function-like Macro là gì?</h3>
+
+                <p>
+                    <strong>Function-like Macro</strong>
+                    là một loại Macro cho phép nhận
+                    một hoặc nhiều tham số.
+                    Khi Preprocessor gặp lời gọi Macro,
+                    những tham số được truyền vào
+                    sẽ được thay thế trực tiếp
+                    trong phần nội dung định nghĩa.
+                </p>
+
+                <p>
+                    Khác với Function thông thường,
+                    Function-like Macro không phải
+                    là một Function thực sự.
+                    Nó không có cơ chế gọi hàm
+                    và trả về kết quả tại Runtime.
+                </p>
+
+                <p>
+                    Thay vào đó, Preprocessor thực hiện
+                    việc thay thế các Token trong
+                    mã nguồn trước khi Compiler
+                    tiến hành biên dịch.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define ADD(a, b) ((a) + (b))
+
+int result = ADD(10, 20);</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>ADD</code> là tên Macro.
+                    </li>
+                    <li>
+                        <code>a</code> và <code>b</code>
+                        là những tham số của Macro.
+                    </li>
+                    <li>
+                        <code>((a) + (b))</code> là
+                        phần nội dung thay thế.
+                    </li>
+                    <li>
+                        <code>ADD(10, 20)</code> là
+                        một lời gọi Function-like Macro.
+                    </li>
+                </ul>
+
+                <p>
+                    Sau khi Preprocessing, đoạn mã
+                    tương ứng sẽ có dạng:
+                </p>
+
+                <pre><code>int result = ((10) + (20));</code></pre>
+
+                <p>
+                    Compiler chỉ nhìn thấy biểu thức
+                    sau khi Macro đã được thay thế.
+                    Compiler không cần biết rằng
+                    biểu thức ban đầu được tạo ra
+                    từ một Function-like Macro.
+                </p>
+
+                <h3>1.2. Cú pháp khai báo Function-like Macro</h3>
+
+                <p>
+                    Cú pháp cơ bản:
+                </p>
+
+                <pre><code>#define MACRO_NAME(parameter1, parameter2, ...) replacement_expression</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>#define</code> là
+                        Preprocessor Directive dùng
+                        để định nghĩa Macro.
+                    </li>
+                    <li>
+                        <code>MACRO_NAME</code> là
+                        tên của Macro.
+                    </li>
+                    <li>
+                        Những thành phần nằm trong
+                        dấu ngoặc đơn là danh sách
+                        tham số.
+                    </li>
+                    <li>
+                        <code>replacement_expression</code>
+                        là nội dung sẽ thay thế
+                        lời gọi Macro.
+                    </li>
+                </ul>
+
+                <p>
+                    Ví dụ với Macro có một tham số:
+                </p>
+
+                <pre><code>#define DOUBLE(x) ((x) * 2)
+
+int value = DOUBLE(5);</code></pre>
+
+                <p>
+                    Ví dụ với Macro có hai tham số:
+                </p>
+
+                <pre><code>#define ADD(a, b) ((a) + (b))
+
+int result = ADD(10, 20);</code></pre>
+
+                <p>
+                    Ví dụ với Macro có ba tham số:
+                </p>
+
+                <pre><code>#define CALCULATE(a, b, c) ((a) + (b) + (c))
+
+int result = CALCULATE(10, 20, 30);</code></pre>
+
+                <p>
+                    Số lượng tham số được khai báo
+                    trong Macro cần tương ứng với
+                    số lượng đối số được truyền
+                    khi sử dụng Macro.
+                </p>
+
+                <h3>1.3. Phân biệt Function-like Macro và Object-like Macro</h3>
+
+                <p>
+                    Trong C, Macro có thể được chia
+                    thành hai loại cơ bản:
+                </p>
+
+                <ul>
+                    <li>
+                        <strong>Object-like Macro:</strong>
+                        Macro không có danh sách
+                        tham số.
+                    </li>
+                    <li>
+                        <strong>Function-like Macro:</strong>
+                        Macro có danh sách tham số
+                        nằm trong dấu ngoặc đơn.
+                    </li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* Object-like Macro */
+#define SYSTEM_CLOCK 80000000U
+
+/* Function-like Macro */
+#define DOUBLE(x) ((x) * 2)</code></pre>
+
+                <p>
+                    Cả hai đều được định nghĩa
+                    bằng <code>#define</code>,
+                    nhưng cách hoạt động và
+                    cách sử dụng khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Object-like Macro</th>
+                            <th>Function-like Macro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cú pháp</td>
+                            <td>
+                                <code>#define NAME value</code>
+                            </td>
+                            <td>
+                                <code>#define NAME(x) expression</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tham số</td>
+                            <td>
+                                Không có danh sách
+                                tham số.
+                            </td>
+                            <td>
+                                Có một hoặc nhiều
+                                tham số.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Cách sử dụng</td>
+                            <td>
+                                Sử dụng tên Macro
+                                trực tiếp.
+                            </td>
+                            <td>
+                                Sử dụng tên Macro
+                                kèm đối số trong
+                                dấu ngoặc đơn.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>
+                                <code>SYSTEM_CLOCK</code>
+                            </td>
+                            <td>
+                                <code>DOUBLE(5)</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>
+                                Thay thế một giá trị
+                                hoặc đoạn Token cố định.
+                            </td>
+                            <td>
+                                Thay thế biểu thức
+                                có sử dụng tham số.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>1.4. Khoảng trắng giữa tên Macro và dấu ngoặc đơn</h3>
+
+                <p>
+                    Một quy tắc quan trọng khi khai báo
+                    Function-like Macro là dấu ngoặc đơn
+                    mở đầu danh sách tham số phải
+                    xuất hiện ngay sau tên Macro,
+                    không có khoảng trắng ở giữa.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* Function-like Macro */
+#define SQUARE(x) ((x) * (x))
+
+/* Object-like Macro */
+#define SQUARE (x)</code></pre>
+
+                <p>
+                    Hai cách khai báo trên có
+                    ý nghĩa khác nhau.
+                </p>
+
+                <p>
+                    Với:
+                </p>
+
+                <pre><code>#define SQUARE(x) ((x) * (x))</code></pre>
+
+                <p>
+                    Dấu ngoặc đơn xuất hiện ngay
+                    sau tên <code>SQUARE</code>,
+                    vì vậy đây là Function-like Macro.
+                </p>
+
+                <p>
+                    Ngược lại:
+                </p>
+
+                <pre><code>#define SQUARE (x)</code></pre>
+
+                <p>
+                    Có khoảng trắng giữa
+                    <code>SQUARE</code> và
+                    <code>(x)</code>, vì vậy đây
+                    là Object-like Macro.
+                    Nội dung thay thế của nó
+                    chỉ là biểu thức <code>(x)</code>.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Khi khai báo
+                    Function-like Macro, không đặt
+                    khoảng trắng giữa tên Macro
+                    và dấu ngoặc đơn mở đầu danh sách
+                    tham số.
+                </div>
+
+                <h3>1.5. Function-like Macro được xử lý như thế nào?</h3>
+
+                <p>
+                    Để hiểu rõ hơn cách hoạt động,
+                    chúng ta hãy xem quá trình
+                    thay thế một Function-like Macro.
+                </p>
+
+                <pre><code>#define MULTIPLY(a, b) ((a) * (b))
+
+int result = MULTIPLY(4, 5);</code></pre>
+
+                <p>
+                    Khi Preprocessor gặp lời gọi
+                    <code>MULTIPLY(4, 5)</code>,
+                    nó xác định hai đối số
+                    tương ứng với hai tham số.
+                </p>
+
+                <p>
+                    Sau đó, những tham số được thay thế
+                    vào phần nội dung Macro:
+                </p>
+
+                <pre><code>((a) * (b))
+
+        |
+
+        v
+
+((4) * (5))</code></pre>
+
+                <p>
+                    Kết quả sau Preprocessing:
+                </p>
+
+                <pre><code>int result = ((4) * (5));</code></pre>
+
+                <p>
+                    Tiếp theo, Compiler sẽ xử lý
+                    biểu thức này như một biểu thức C
+                    thông thường.
+                </p>
+
+                <svg viewBox="0 0 700 400" width="100%" role="img"
+                    aria-label="Sơ đồ quá trình mở rộng Function-like Macro">
+
+                    <rect x="145" y="15" width="410" height="55" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <text x="350" y="38" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#173d68">
+                        Source Code
+                    </text>
+                    <text x="350" y="56" text-anchor="middle"
+                        font-size="12" fill="#173d68">
+                        MULTIPLY(4, 5)
+                    </text>
+
+                    <path d="M350 70 V105"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="145" y="108" width="410" height="65" rx="6"
+                        fill="#fff0d9" stroke="#b7803e" stroke-width="1.5" />
+
+                    <text x="350" y="133" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#70451d">
+                        Preprocessor
+                    </text>
+                    <text x="350" y="153" text-anchor="middle"
+                        font-size="11" fill="#70451d">
+                        Nhận diện Macro và các đối số
+                    </text>
+
+                    <path d="M350 173 V207"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="145" y="210" width="410" height="65" rx="6"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+
+                    <text x="350" y="235" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#174d2e">
+                        Macro Expansion
+                    </text>
+                    <text x="350" y="255" text-anchor="middle"
+                        font-size="12" fill="#174d2e">
+                        ((4) * (5))
+                    </text>
+
+                    <path d="M350 275 V309"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="145" y="312" width="410" height="65" rx="6"
+                        fill="#e8e4fa" stroke="#7968b5" stroke-width="1.5" />
+
+                    <text x="350" y="337" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#40346f">
+                        Compiler
+                    </text>
+                    <text x="350" y="357" text-anchor="middle"
+                        font-size="12" fill="#40346f">
+                        Biên dịch biểu thức C thông thường
+                    </text>
+
+                </svg>
+
+                <p>
+                    Quá trình này cho thấy
+                    Function-like Macro chỉ tham gia
+                    vào giai đoạn Preprocessing.
+                    Nó không tạo ra một lời gọi
+                    Function thực sự tại Runtime.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Macro Expansion
+                    là quá trình thay thế Preprocessing Token.
+                    Đây không phải là quá trình thực thi
+                    biểu thức hoặc tính toán kết quả
+                    tại thời điểm Preprocessing.
+                </div>
+
+                <h2>2. Khai báo và sử dụng tham số Macro</h2>
+
+                <h3>2.1. Function-like Macro có một tham số</h3>
+
+                <p>
+                    Function-like Macro có thể nhận
+                    một tham số để tạo ra những
+                    biểu thức có thể tái sử dụng.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+#define INCREMENT(x) ((x) + 1)
+
+int main(void)
+{
+    int value = 10;
+
+    int result = INCREMENT(value);
+
+    printf("Result = %d\n", result);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Sau khi Macro được mở rộng:
+                </p>
+
+                <pre><code>int result = ((value) + 1);</code></pre>
+
+                <p>
+                    Kết quả chương trình:
+                </p>
+
+                <pre><code>Result = 11</code></pre>
+
+                <p>
+                    Trong ví dụ này, Macro
+                    <code>INCREMENT</code> có thể
+                    được sử dụng với nhiều biểu thức
+                    khác nhau.
+                </p>
+
+                <pre><code>int a = INCREMENT(5);
+int b = INCREMENT(10);
+int c = INCREMENT(100);</code></pre>
+
+                <p>
+                    Mỗi lời gọi sẽ được thay thế
+                    bằng biểu thức tương ứng.
+                </p>
+
+                <h3>2.2. Function-like Macro có nhiều tham số</h3>
+
+                <p>
+                    Một Macro có thể nhận nhiều
+                    tham số được phân cách
+                    bằng dấu phẩy.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define ADD(a, b) ((a) + (b))
+
+#define MULTIPLY(a, b) ((a) * (b))
+
+int sum = ADD(10, 20);
+
+int product = MULTIPLY(5, 6);</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>ADD</code> nhận hai tham số
+                        và tạo biểu thức cộng.
+                    </li>
+                    <li>
+                        <code>MULTIPLY</code> nhận hai
+                        tham số và tạo biểu thức nhân.
+                    </li>
+                </ul>
+
+                <p>
+                    Có thể truyền những biểu thức
+                    phức tạp hơn thay vì chỉ truyền
+                    những giá trị cố định.
+                </p>
+
+                <pre><code>int a = 10;
+int b = 20;
+int c = 30;
+
+int result = ADD(a * 2, b + c);</code></pre>
+
+                <p>
+                    Macro được mở rộng thành:
+                </p>
+
+                <pre><code>int result = ((a * 2) + (b + c));</code></pre>
+
+                <p>
+                    Những biểu thức được truyền vào
+                    Macro sẽ được thay thế tại
+                    những vị trí tương ứng.
+                </p>
+
+                <h3>2.3. Truyền biểu thức vào Function-like Macro</h3>
+
+                <p>
+                    Tham số của Function-like Macro
+                    không nhất thiết phải là một
+                    Variable hoặc một giá trị cố định.
+                    Chúng ta có thể truyền trực tiếp
+                    một biểu thức C.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define ADD(a, b) ((a) + (b))
+
+int result = ADD(5 + 3, 10 * 2);</code></pre>
+
+                <p>
+                    Sau Macro Expansion:
+                </p>
+
+                <pre><code>int result = ((5 + 3) + (10 * 2));</code></pre>
+
+                <p>
+                    Compiler sẽ đánh giá biểu thức
+                    sau khi Macro được mở rộng.
+                </p>
+
+                <p>
+                    Một số cách sử dụng khác:
+                </p>
+
+                <pre><code>int a = 5;
+int b = 10;
+
+int result1 = ADD(a, b);
+
+int result2 = ADD(a + 2, b * 3);
+
+int result3 = ADD(a + b, 100);</code></pre>
+
+                <p>
+                    Việc cho phép truyền biểu thức
+                    giúp Function-like Macro có
+                    tính linh hoạt cao.
+                    Tuy nhiên, đây cũng là nguyên nhân
+                    dẫn đến một số lỗi nếu Macro
+                    không được viết cẩn thận.
+                </p>
+
+                <h3>2.4. Tham số Macro không có kiểu dữ liệu cố định</h3>
+
+                <p>
+                    Một điểm khác biệt quan trọng
+                    giữa Function-like Macro và
+                    Function thông thường là
+                    tham số Macro không được
+                    khai báo kiểu dữ liệu.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define ADD(a, b) ((a) + (b))
+
+int result1 = ADD(10, 20);
+
+float result2 = ADD(1.5f, 2.5f);</code></pre>
+
+                <p>
+                    Cùng một Macro có thể được sử dụng
+                    với những kiểu dữ liệu khác nhau,
+                    miễn là biểu thức sau khi thay thế
+                    hợp lệ theo quy tắc của C.
+                </p>
+
+                <p>
+                    Tuy nhiên, điều này không có nghĩa
+                    là Macro có khả năng kiểm tra
+                    kiểu dữ liệu của tham số.
+                    Việc kiểm tra tính hợp lệ
+                    của biểu thức chủ yếu được
+                    thực hiện bởi Compiler sau
+                    khi Macro Expansion hoàn tất.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define ADD(a, b) ((a) + (b))
+
+int result = ADD(10, "Hello");</code></pre>
+
+                <p>
+                    Sau khi mở rộng:
+                </p>
+
+                <pre><code>int result = ((10) + ("Hello"));</code></pre>
+
+                <p>
+                    Biểu thức này không hợp lệ
+                    theo quy tắc kiểu dữ liệu
+                    của C và Compiler sẽ báo lỗi.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Function-like Macro
+                    không khai báo kiểu dữ liệu cho tham số.
+                    Compiler chỉ kiểm tra biểu thức
+                    sau khi Macro đã được mở rộng.
+                </div>
+
+                <h3>2.5. Sử dụng Function-like Macro với kiểu dữ liệu Embedded</h3>
+
+                <p>
+                    Trong Embedded C, chúng ta có thể
+                    sử dụng Function-like Macro
+                    để tạo những biểu thức xử lý
+                    dữ liệu có kiểu cụ thể.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define TO_UINT16(x) ((uint16_t)(x))
+
+uint16_t sensor_value = TO_UINT16(1023U);
+
+uint16_t adc_value = TO_UINT16(4095U);</code></pre>
+
+                <p>
+                    Trong ví dụ này, Macro
+                    <code>TO_UINT16</code> tạo ra
+                    một biểu thức ép kiểu sang
+                    <code>uint16_t</code>.
+                </p>
+
+                <p>
+                    Tuy nhiên, cần lưu ý rằng
+                    việc ép kiểu không tự động
+                    bảo đảm giá trị đầu vào
+                    nằm trong phạm vi biểu diễn
+                    của kiểu dữ liệu đích.
+                </p>
+
+                <p>
+                    Nếu giá trị đầu vào vượt quá
+                    phạm vi của <code>uint16_t</code>,
+                    kết quả chuyển đổi cần được
+                    xem xét theo quy tắc chuyển đổi
+                    kiểu dữ liệu của C.
+                </p>
+
+                <h2>3. Sử dụng Function-like Macro thay thế Function</h2>
+
+                <h3>3.1. Ví dụ sử dụng Function thông thường</h3>
+
+                <p>
+                    Giả sử chúng ta cần xây dựng
+                    một Function tính bình phương
+                    của một số nguyên.
+                </p>
+
+                <p>
+                    Có thể triển khai như sau:
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int Square(int value)
+{
+    return value * value;
+}
+
+int main(void)
+{
+    int result = Square(5);
+
+    printf("Result = %d\n", result);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Function <code>Square()</code>
+                    nhận một tham số kiểu
+                    <code>int</code> và trả về
+                    kết quả thông qua <code>return</code>.
+                </p>
+
+                <h3>3.2. Viết lại bằng Function-like Macro</h3>
+
+                <p>
+                    Chúng ta có thể tạo một
+                    Function-like Macro để thực hiện
+                    biểu thức tương tự:
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+#define SQUARE(x) ((x) * (x))
+
+int main(void)
+{
+    int result = SQUARE(5);
+
+    printf("Result = %d\n", result);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi Preprocessor xử lý:
+                </p>
+
+                <pre><code>int result = SQUARE(5);</code></pre>
+
+                <p>
+                    Mã nguồn được mở rộng thành:
+                </p>
+
+                <pre><code>int result = ((5) * (5));</code></pre>
+
+                <p>
+                    Cả hai cách đều có thể tạo ra
+                    kết quả bằng <code>25</code>,
+                    nhưng cơ chế hoạt động
+                    hoàn toàn khác nhau.
+                </p>
+
+                <h3>3.3. So sánh Function và Function-like Macro</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Function</th>
+                            <th>Function-like Macro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cơ chế hoạt động</td>
+                            <td>
+                                Được Compiler biên dịch
+                                thành Function.
+                            </td>
+                            <td>
+                                Được Preprocessor
+                                thay thế mã nguồn.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Thời điểm xử lý</td>
+                            <td>
+                                Được gọi khi chương trình
+                                thực thi.
+                            </td>
+                            <td>
+                                Được mở rộng trong
+                                giai đoạn Preprocessing.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Khai báo tham số</td>
+                            <td>
+                                Có kiểu dữ liệu cụ thể.
+                            </td>
+                            <td>
+                                Không khai báo
+                                kiểu dữ liệu.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Kiểm tra kiểu dữ liệu</td>
+                            <td>
+                                Compiler kiểm tra
+                                theo khai báo Function.
+                            </td>
+                            <td>
+                                Không có kiểm tra kiểu
+                                riêng ở cấp Macro.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Đánh giá đối số</td>
+                            <td>
+                                Mỗi đối số được đánh giá
+                                khi thực hiện lời gọi,
+                                theo quy tắc của C.
+                            </td>
+                            <td>
+                                Biểu thức đối số có thể
+                                xuất hiện nhiều lần
+                                sau Macro Expansion.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Debug</td>
+                            <td>
+                                Có thể đặt Breakpoint
+                                tại Function.
+                            </td>
+                            <td>
+                                Có thể khó theo dõi
+                                vì mã nguồn đã được
+                                thay thế.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Code Size</td>
+                            <td>
+                                Có thể sử dụng chung
+                                một phần triển khai,
+                                tùy theo Compiler.
+                            </td>
+                            <td>
+                                Có thể làm tăng kích thước
+                                mã nếu nội dung Macro
+                                được mở rộng ở nhiều nơi.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Kiểm soát phạm vi</td>
+                            <td>
+                                Có quy tắc Scope
+                                của Function và Block.
+                            </td>
+                            <td>
+                                Không tạo Scope mới
+                                chỉ vì Macro được sử dụng.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>3.4. Khi nào nên sử dụng Function-like Macro?</h3>
+
+                <p>
+                    Function-like Macro có thể phù hợp
+                    với những biểu thức đơn giản,
+                    có tính lặp lại và cần được
+                    sử dụng ở nhiều vị trí.
+                </p>
+
+                <p>
+                    Một số trường hợp thường gặp:
+                </p>
+
+                <ul>
+                    <li>
+                        Tạo những biểu thức tính toán
+                        đơn giản.
+                    </li>
+                    <li>
+                        Tạo những biểu thức chuyển đổi
+                        hoặc xử lý giá trị.
+                    </li>
+                    <li>
+                        Xây dựng những Helper Macro
+                        phục vụ thao tác dữ liệu.
+                    </li>
+                    <li>
+                        Tạo những biểu thức liên quan
+                        đến Hardware Register.
+                    </li>
+                    <li>
+                        Sử dụng trong những Header File
+                        cần cung cấp Macro cho nhiều Module.
+                    </li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, nếu logic xử lý có
+                    nhiều bước, cần kiểm tra dữ liệu,
+                    quản lý trạng thái hoặc có yêu cầu
+                    về kiểu dữ liệu rõ ràng,
+                    Function thông thường thường
+                    là lựa chọn dễ kiểm soát hơn.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Không nên mặc định
+                    rằng Function-like Macro luôn nhanh hơn
+                    Function. Compiler có thể tối ưu
+                    Function thông thường, bao gồm cả
+                    Inline Function, tùy theo cấu hình
+                    và khả năng tối ưu.
+                </div>
+
+                <h2>4. Vấn đề Side Effect khi truyền tham số</h2>
+
+                <h3>4.1. Side Effect là gì?</h3>
+
+                <p>
+                    Trong C, một biểu thức có thể
+                    tạo ra kết quả và đồng thời
+                    làm thay đổi trạng thái
+                    của chương trình.
+                </p>
+
+                <p>
+                    Những thay đổi trạng thái
+                    như cập nhật giá trị Variable,
+                    thay đổi dữ liệu hoặc thực hiện
+                    một thao tác có ảnh hưởng
+                    đến chương trình thường được
+                    gọi là <strong>Side Effect</strong>.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>int count = 0;
+
+count++;
+
+int value = count;</code></pre>
+
+                <p>
+                    Toán tử <code>++</code> làm thay đổi
+                    giá trị của Variable <code>count</code>.
+                    Đây là một biểu thức có Side Effect.
+                </p>
+
+                <p>
+                    Side Effect trở thành vấn đề
+                    đáng chú ý khi truyền những
+                    biểu thức như vậy vào
+                    Function-like Macro.
+                </p>
+
+                <h3>4.2. Macro sử dụng tham số nhiều lần</h3>
+
+                <p>
+                    Xét Macro tính bình phương:
+                </p>
+
+                <pre><code>#define SQUARE(x) ((x) * (x))</code></pre>
+
+                <p>
+                    Nếu truyền một giá trị thông thường:
+                </p>
+
+                <pre><code>int result = SQUARE(5);</code></pre>
+
+                <p>
+                    Macro được mở rộng thành:
+                </p>
+
+                <pre><code>int result = ((5) * (5));</code></pre>
+
+                <p>
+                    Không có vấn đề đáng chú ý
+                    trong trường hợp này.
+                </p>
+
+                <p>
+                    Tuy nhiên, nếu truyền một biểu thức
+                    có Side Effect:
+                </p>
+
+                <pre><code>int i = 5;
+
+int result = SQUARE(i++);</code></pre>
+
+                <p>
+                    Macro được mở rộng thành:
+                </p>
+
+                <pre><code>int result = ((i++) * (i++));</code></pre>
+
+                <p>
+                    Tham số <code>i++</code> đã xuất hiện
+                    hai lần trong biểu thức sau
+                    Macro Expansion.
+                </p>
+
+                <p>
+                    Điều này khiến chương trình
+                    có hành vi không được xác định
+                    theo quy tắc của C, bởi hai
+                    phép tăng trên cùng một
+                    Scalar Object không được
+                    sắp xếp thứ tự với nhau
+                    trong biểu thức này.
+                </p>
+
+                <div class="note">
+                    <strong>Cảnh báo:</strong> Không truyền
+                    những biểu thức có Side Effect
+                    như <code>i++</code>, <code>--i</code>
+                    hoặc những Function có khả năng
+                    thay đổi trạng thái vào Macro
+                    nếu tham số có thể được sử dụng
+                    nhiều lần.
+                </div>
+
+                <h3>4.3. So sánh với Function thông thường</h3>
+
+                <p>
+                    Nếu sử dụng Function:
+                </p>
+
+                <pre><code>int Square(int value)
+{
+    return value * value;
+}
+
+int i = 5;
+
+int result = Square(i++);</code></pre>
+
+                <p>
+                    Trong trường hợp này,
+                    biểu thức đối số <code>i++</code>
+                    được đánh giá để tạo giá trị
+                    truyền vào tham số <code>value</code>
+                    của Function.
+                </p>
+
+                <p>
+                    Sau đó, Function sử dụng
+                    giá trị tham số để tính toán.
+                    Biểu thức <code>i++</code>
+                    không bị thay thế và lặp lại
+                    nhiều lần như trong Macro.
+                </p>
+
+                <p>
+                    Với lời gọi Function này,
+                    <code>i++</code> chỉ được đánh giá
+                    một lần.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trường hợp</th>
+                            <th>Cách xử lý đối số</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <code>SQUARE(i++)</code>
+                            </td>
+                            <td>
+                                Macro thay thế tham số
+                                tại từng vị trí xuất hiện.
+                                Biểu thức <code>i++</code>
+                                xuất hiện hai lần.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>Square(i++)</code>
+                            </td>
+                            <td>
+                                Đối số được đánh giá
+                                một lần khi thực hiện
+                                lời gọi Function.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>4.4. Một ví dụ khác với Function-like Macro MIN</h3>
+
+                <p>
+                    Một Macro thường gặp khác
+                    là Macro tìm giá trị nhỏ hơn
+                    giữa hai đối số.
+                </p>
+
+                <pre><code>#define MIN(a, b) (((a) &lt; (b)) ? (a) : (b))</code></pre>
+
+                <p>
+                    Nếu sử dụng với những giá trị
+                    thông thường:
+                </p>
+
+                <pre><code>int result = MIN(10, 20);</code></pre>
+
+                <p>
+                    Macro được mở rộng thành:
+                </p>
+
+                <pre><code>int result = (((10) &lt; (20)) ? (10) : (20));</code></pre>
+
+                <p>
+                    Tuy nhiên, nếu một đối số
+                    có Side Effect:
+                </p>
+
+                <pre><code>int i = 10;
+int j = 20;
+
+int result = MIN(i++, j);</code></pre>
+
+                <p>
+                    Macro được mở rộng thành:
+                </p>
+
+                <pre><code>int result = (((i++) &lt; (j)) ? (i++) : (j));</code></pre>
+
+                <p>
+                    Trong biểu thức này,
+                    <code>i++</code> có thể xuất hiện
+                    trong cả phần điều kiện và
+                    phần kết quả được lựa chọn.
+                </p>
+
+                <p>
+                    Nếu nhánh thứ nhất được lựa chọn,
+                    Variable <code>i</code> có thể
+                    bị tăng thêm một lần nữa.
+                    Đây là một ví dụ cho thấy
+                    Function-like Macro có thể
+                    tạo ra những hành vi không
+                    mong muốn khi đối số có Side Effect.
+                </p>
+
+                <h3>4.5. Cách xử lý khi đối số có Side Effect</h3>
+
+                <p>
+                    Khi cần truyền một biểu thức
+                    có Side Effect, có thể cân nhắc
+                    sử dụng Function thông thường
+                    thay cho Function-like Macro.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>int Square(int value)
+{
+    return value * value;
+}
+
+int i = 5;
+
+int result = Square(i++);</code></pre>
+
+                <p>
+                    Hoặc nếu vẫn cần sử dụng Macro,
+                    có thể đánh giá biểu thức trước
+                    và lưu kết quả vào một Variable.
+                </p>
+
+                <pre><code>int i = 5;
+
+int temp = i++;
+
+int result = SQUARE(temp);</code></pre>
+
+                <p>
+                    Khi đó, Macro nhận một Variable
+                    đã có giá trị xác định và
+                    không phải thực hiện lại
+                    phép tăng.
+                </p>
+
+                <div class="note">
+                    <strong>Nguyên tắc quan trọng:</strong>
+                    Hãy kiểm tra số lần một tham số
+                    xuất hiện trong phần nội dung Macro.
+                    Nếu tham số được sử dụng nhiều lần,
+                    cần tránh truyền biểu thức có
+                    Side Effect vào Macro.
+                </div>
+
+                <h2>5. Parentheses trong Function-like Macro</h2>
+
+                <h3>5.1. Vì sao cần sử dụng Parentheses?</h3>
+
+                <p>
+                    Khi viết Function-like Macro,
+                    một lỗi phổ biến là không đặt
+                    dấu ngoặc đơn phù hợp xung quanh
+                    tham số và toàn bộ biểu thức
+                    thay thế.
+                </p>
+
+                <p>
+                    Điều này có thể làm thay đổi
+                    thứ tự ưu tiên toán tử sau
+                    khi Macro được mở rộng.
+                </p>
+
+                <p>
+                    Ví dụ Macro không an toàn:
+                </p>
+
+                <pre><code>#define SQUARE(x) x * x</code></pre>
+
+                <p>
+                    Nếu sử dụng:
+                </p>
+
+                <pre><code>int result = SQUARE(2 + 3);</code></pre>
+
+                <p>
+                    Macro được mở rộng thành:
+                </p>
+
+                <pre><code>int result = 2 + 3 * 2 + 3;</code></pre>
+
+                <p>
+                    Theo thứ tự ưu tiên toán tử,
+                    phép nhân được thực hiện trước
+                    phép cộng.
+                </p>
+
+                <p>
+                    Vì vậy, biểu thức trên không
+                    tương đương với phép tính
+                    bình phương của <code>2 + 3</code>.
+                </p>
+
+                <h3>5.2. Đặt Parentheses xung quanh từng tham số</h3>
+
+                <p>
+                    Để tránh vấn đề trên,
+                    mỗi tham số nên được đặt
+                    trong một cặp dấu ngoặc đơn.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define SQUARE(x) (x) * (x)</code></pre>
+
+                <p>
+                    Khi truyền:
+                </p>
+
+                <pre><code>int result = SQUARE(2 + 3);</code></pre>
+
+                <p>
+                    Macro được mở rộng thành:
+                </p>
+
+                <pre><code>int result = (2 + 3) * (2 + 3);</code></pre>
+
+                <p>
+                    Lúc này, những biểu thức
+                    được truyền vào tham số
+                    sẽ được nhóm lại đúng cách.
+                </p>
+
+                <h3>5.3. Đặt Parentheses xung quanh toàn bộ biểu thức</h3>
+
+                <p>
+                    Ngoài việc đặt dấu ngoặc đơn
+                    xung quanh từng tham số,
+                    chúng ta cũng nên đặt dấu ngoặc
+                    đơn xung quanh toàn bộ biểu thức
+                    thay thế.
+                </p>
+
+                <p>
+                    Cách viết an toàn hơn:
+                </p>
+
+                <pre><code>#define SQUARE(x) ((x) * (x))</code></pre>
+
+                <p>
+                    Hãy xem một ví dụ khác:
+                </p>
+
+                <pre><code>#define ADD(a, b) (a) + (b)</code></pre>
+
+                <p>
+                    Nếu sử dụng:
+                </p>
+
+                <pre><code>int result = ADD(10, 20) * 2;</code></pre>
+
+                <p>
+                    Macro được mở rộng thành:
+                </p>
+
+                <pre><code>int result = (10) + (20) * 2;</code></pre>
+
+                <p>
+                    Theo thứ tự ưu tiên toán tử,
+                    phép nhân được thực hiện
+                    trước phép cộng.
+                </p>
+
+                <p>
+                    Kết quả sẽ không tương đương
+                    với việc lấy tổng của hai
+                    đối số rồi nhân với hai.
+                </p>
+
+                <p>
+                    Cách viết phù hợp hơn:
+                </p>
+
+                <pre><code>#define ADD(a, b) ((a) + (b))</code></pre>
+
+                <p>
+                    Khi đó:
+                </p>
+
+                <pre><code>int result = ADD(10, 20) * 2;</code></pre>
+
+                <p>
+                    Sẽ được mở rộng thành:
+                </p>
+
+                <pre><code>int result = ((10) + (20)) * 2;</code></pre>
+
+                <p>
+                    Toàn bộ biểu thức cộng được
+                    nhóm lại trước khi kết hợp
+                    với phép nhân bên ngoài.
+                </p>
+
+                <h3>5.4. So sánh cách viết Macro an toàn và không an toàn</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Không an toàn</th>
+                            <th>An toàn hơn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <code>#define SQUARE(x) x * x</code>
+                            </td>
+                            <td>
+                                <code>#define SQUARE(x) ((x) * (x))</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>#define ADD(a,b) a + b</code>
+                            </td>
+                            <td>
+                                <code>#define ADD(a,b) ((a) + (b))</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>#define DOUBLE(x) x * 2</code>
+                            </td>
+                            <td>
+                                <code>#define DOUBLE(x) ((x) * 2)</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <code>#define SUB(a,b) a - b</code>
+                            </td>
+                            <td>
+                                <code>#define SUB(a,b) ((a) - (b))</code>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Có thể rút ra hai nguyên tắc
+                    cơ bản khi viết Function-like Macro:
+                </p>
+
+                <ol>
+                    <li>
+                        Đặt dấu ngoặc đơn xung quanh
+                        từng tham số.
+                    </li>
+                    <li>
+                        Đặt dấu ngoặc đơn xung quanh
+                        toàn bộ biểu thức thay thế.
+                    </li>
+                </ol>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Parentheses
+                    giúp hạn chế những lỗi liên quan
+                    đến Operator Precedence khi
+                    Macro được mở rộng trong
+                    những biểu thức phức tạp.
+                </div>
+
+                <h2>6. Ứng dụng Function-like Macro trong Embedded C</h2>
+
+                <h3>6.1. Tạo Macro chuyển đổi đơn vị dữ liệu</h3>
+
+                <p>
+                    Trong Embedded Software,
+                    chương trình thường xuyên
+                    phải chuyển đổi những đơn vị
+                    đo lường khác nhau.
+                </p>
+
+                <p>
+                    Ví dụ, chuyển đổi thời gian
+                    từ Millisecond sang Microsecond:
+                </p>
+
+                <pre><code>#define MS_TO_US(x) ((x) * 1000U)
+
+uint32_t timeout_us = MS_TO_US(10U);</code></pre>
+
+                <p>
+                    Macro được mở rộng thành:
+                </p>
+
+                <pre><code>uint32_t timeout_us = ((10U) * 1000U);</code></pre>
+
+                <p>
+                    Trong ví dụ này,
+                    <code>MS_TO_US</code> giúp
+                    biểu diễn ý nghĩa chuyển đổi
+                    đơn vị rõ ràng hơn trong mã nguồn.
+                </p>
+
+                <p>
+                    Có thể xây dựng thêm những Macro:
+                </p>
+
+                <pre><code>#define US_TO_MS(x) ((x) / 1000U)
+
+#define SEC_TO_MS(x) ((x) * 1000U)
+
+#define SEC_TO_US(x) ((x) * 1000000U)</code></pre>
+
+                <p>
+                    Tuy nhiên, cần kiểm tra
+                    kiểu dữ liệu và phạm vi giá trị
+                    khi thực hiện phép nhân.
+                    Nếu giá trị đầu vào quá lớn,
+                    kết quả có thể vượt quá
+                    phạm vi biểu diễn của kiểu dữ liệu.
+                </p>
+
+                <h3>6.2. Tạo Macro kiểm tra giá trị giới hạn</h3>
+
+                <p>
+                    Một ứng dụng khác là kiểm tra
+                    một giá trị có nằm trong
+                    một khoảng xác định hay không.
+                </p>
+
+                <pre><code>#define IS_IN_RANGE(x, min, max) \
+    (((x) >= (min)) &amp;&amp; ((x) <= (max)))
+
+uint16_t sensor_value = 500U;
+
+if (IS_IN_RANGE(sensor_value, 0U, 1000U))
+{
+    /* Sensor value is valid */
+}</code></pre>
+
+                <p>
+                    Macro này tạo ra một biểu thức
+                    kiểm tra giá trị đầu vào
+                    có nằm trong khoảng từ
+                    <code>min</code> đến
+                    <code>max</code> hay không.
+                </p>
+
+                <p>
+                    Trong ví dụ trên, giá trị
+                    <code>sensor_value</code>
+                    nằm trong khoảng từ
+                    <code>0</code> đến
+                    <code>1000</code>.
+                </p>
+
+                <p>
+                    Vì vậy, điều kiện
+                    <code>IS_IN_RANGE()</code>
+                    trả về giá trị đúng.
+                </p>
+
+                <p>
+                    Cần lưu ý rằng Macro trên
+                    sử dụng tham số <code>x</code>
+                    hai lần. Do đó, không nên
+                    truyền vào một biểu thức
+                    có Side Effect.
+                </p>
+
+                <h3>6.3. Tạo Macro lấy giá trị lớn hơn</h3>
+
+                <p>
+                    Chúng ta có thể sử dụng
+                    Function-like Macro để
+                    tạo biểu thức lựa chọn
+                    giá trị lớn hơn giữa
+                    hai đối số.
+                </p>
+
+                <pre><code>#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+
+uint16_t value1 = 100U;
+uint16_t value2 = 200U;
+
+uint16_t maximum = MAX(value1, value2);</code></pre>
+
+                <p>
+                    Macro sử dụng toán tử
+                    Conditional Operator
+                    <code>?:</code> để lựa chọn
+                    một trong hai giá trị.
+                </p>
+
+                <p>
+                    Trong ví dụ này,
+                    <code>value2</code> lớn hơn
+                    <code>value1</code>, vì vậy
+                    kết quả được chọn là
+                    <code>value2</code>.
+                </p>
+
+                <p>
+                    Tuy nhiên, tương tự Macro
+                    <code>MIN()</code>, tham số
+                    có thể được sử dụng nhiều lần.
+                    Vì vậy, không nên truyền
+                    những biểu thức có Side Effect.
+                </p>
+
+                <h3>6.4. Tạo Macro kiểm tra trạng thái Bit</h3>
+
+                <p>
+                    Trong Embedded C, chúng ta
+                    thường xuyên cần kiểm tra
+                    trạng thái của một Bit
+                    trong Register hoặc một
+                    Variable lưu trữ trạng thái.
+                </p>
+
+                <p>
+                    Có thể tạo một Function-like Macro:
+                </p>
+
+                <pre><code>#define IS_BIT_SET(reg, bit) \
+    (((reg) &amp; (1U << (bit))) != 0U)
+
+uint32_t status_register = 0x00000008U;
+
+if (IS_BIT_SET(status_register, 3U))
+{
+    /* Bit 3 is set */
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>reg</code> là giá trị
+                        cần kiểm tra.
+                    </li>
+                    <li>
+                        <code>bit</code> là vị trí
+                        Bit cần kiểm tra.
+                    </li>
+                    <li>
+                        <code>1U &lt;&lt; bit</code>
+                        tạo một Bit Mask tương ứng.
+                    </li>
+                    <li>
+                        Phép AND kiểm tra Bit
+                        tại vị trí được chỉ định.
+                    </li>
+                </ul>
+
+                <p>
+                    Nếu Bit được kiểm tra có
+                    giá trị bằng <code>1</code>,
+                    biểu thức trả về giá trị
+                    khác <code>0</code>.
+                </p>
+
+                <p>
+                    Khi sử dụng với Hardware Register,
+                    cần bảo đảm rằng kiểu dữ liệu,
+                    độ rộng Register và vị trí Bit
+                    đều phù hợp với MCU đang sử dụng.
+                </p>
+
+                <h3>6.5. Tạo Macro bật hoặc tắt Debug Logging</h3>
+
+                <p>
+                    Một ứng dụng khác của
+                    Function-like Macro là
+                    tạo những biểu thức hỗ trợ
+                    Debug.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+#define LOG_VALUE(name, value) \
+    printf(name " = %d\n", (value))
+
+int main(void)
+{
+    int temperature = 30;
+
+    LOG_VALUE("Temperature", temperature);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Macro <code>LOG_VALUE</code>
+                    nhận tên thông số và giá trị
+                    cần hiển thị.
+                </p>
+
+                <p>
+                    Kết quả chương trình:
+                </p>
+
+                <pre><code>Temperature = 30</code></pre>
+
+                <p>
+                    Đây là ví dụ đơn giản về cách
+                    Function-like Macro có thể
+                    hỗ trợ những thao tác Debug
+                    lặp lại trong quá trình
+                    phát triển Firmware.
+                </p>
+
+                <p>
+                    Trong Project thực tế,
+                    cần lựa chọn Format Specifier
+                    phù hợp với kiểu dữ liệu.
+                    Ví dụ, không nên sử dụng
+                    <code>%d</code> một cách tùy tiện
+                    cho mọi kiểu dữ liệu số.
+                </p>
+
+                <h3>6.6. Một số lưu ý khi sử dụng Macro với Hardware Register</h3>
+
+                <p>
+                    Function-like Macro có thể
+                    được sử dụng để tạo những
+                    biểu thức thao tác trên
+                    Hardware Register.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define SET_BIT(reg, bit) \
+    ((reg) |= (1U << (bit)))
+
+#define CLEAR_BIT(reg, bit) \
+    ((reg) &= ~(1U << (bit)))</code></pre>
+
+                <p>
+                    Hai Macro trên lần lượt
+                    hỗ trợ bật và xóa một Bit
+                    trong Variable hoặc Register
+                    phù hợp.
+                </p>
+
+                <p>
+                    Tuy nhiên, khi áp dụng trực tiếp
+                    với Hardware Register,
+                    cần đặc biệt chú ý:
+                </p>
+
+                <ul>
+                    <li>
+                        Register có thể yêu cầu
+                        kiểu truy cập cụ thể.
+                    </li>
+                    <li>
+                        Một số Register có cơ chế
+                        Write-one-to-clear hoặc
+                        những quy tắc ghi đặc biệt.
+                    </li>
+                    <li>
+                        Không phải mọi thao tác
+                        Read-Modify-Write đều an toàn
+                        trong môi trường có Interrupt
+                        hoặc nhiều tác nhân truy cập.
+                    </li>
+                    <li>
+                        Vị trí Bit phải nằm trong
+                        phạm vi hợp lệ của kiểu dữ liệu.
+                    </li>
+                </ul>
+
+                <p>
+                    Ngoài ra, những Macro thao tác
+                    Register cần được thiết kế
+                    phù hợp với đặc điểm Hardware.
+                    Không nên xem chúng là giải pháp
+                    thay thế cho việc đọc tài liệu
+                    kỹ thuật của MCU.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Các ví dụ
+                    thao tác Register trong bài học
+                    chỉ minh họa cách sử dụng
+                    Function-like Macro. Khi phát triển
+                    Firmware thực tế, cần kiểm tra
+                    Register Specification và
+                    Hardware Reference Manual.
+                </div>
+
+                <h2>7. Những lỗi thường gặp khi sử dụng Function-like Macro</h2>
+
+                <h3>7.1. Không đặt Parentheses cho tham số</h3>
+
+                <p>
+                    Đây là một trong những lỗi
+                    phổ biến nhất khi định nghĩa
+                    Function-like Macro.
+                </p>
+
+                <p>
+                    Ví dụ không an toàn:
+                </p>
+
+                <pre><code>#define DOUBLE(x) x * 2
+
+int result = DOUBLE(5 + 3);</code></pre>
+
+                <p>
+                    Sau Macro Expansion:
+                </p>
+
+                <pre><code>int result = 5 + 3 * 2;</code></pre>
+
+                <p>
+                    Kết quả không tương đương
+                    với việc nhân đôi toàn bộ
+                    biểu thức <code>5 + 3</code>.
+                </p>
+
+                <p>
+                    Cách viết phù hợp hơn:
+                </p>
+
+                <pre><code>#define DOUBLE(x) ((x) * 2)</code></pre>
+
+                <h3>7.2. Không đặt Parentheses cho toàn bộ biểu thức</h3>
+
+                <p>
+                    Ngay cả khi từng tham số
+                    đã được đặt trong dấu ngoặc đơn,
+                    việc không nhóm toàn bộ biểu thức
+                    vẫn có thể tạo ra lỗi.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define ADD(a, b) (a) + (b)
+
+int result = ADD(5, 10) * 2;</code></pre>
+
+                <p>
+                    Sau khi mở rộng:
+                </p>
+
+                <pre><code>int result = (5) + (10) * 2;</code></pre>
+
+                <p>
+                    Phép nhân vẫn được thực hiện
+                    trước phép cộng.
+                </p>
+
+                <p>
+                    Nên sử dụng:
+                </p>
+
+                <pre><code>#define ADD(a, b) ((a) + (b))</code></pre>
+
+                <h3>7.3. Truyền biểu thức có Side Effect</h3>
+
+                <p>
+                    Một lỗi khác là truyền
+                    những biểu thức có Side Effect
+                    vào Macro mà không kiểm tra
+                    số lần tham số được sử dụng.
+                </p>
+
+                <pre><code>#define SQUARE(x) ((x) * (x))
+
+int i = 5;
+
+int result = SQUARE(i++);</code></pre>
+
+                <p>
+                    Tham số được thay thế ở hai vị trí,
+                    dẫn đến biểu thức không có
+                    thứ tự đánh giá phù hợp.
+                </p>
+
+                <p>
+                    Cách xử lý là sử dụng
+                    Function thông thường hoặc
+                    đánh giá biểu thức trước
+                    khi truyền vào Macro.
+                </p>
+
+                <h3>7.4. Macro có thể tạo ra biểu thức không tương thích kiểu</h3>
+
+                <p>
+                    Vì Macro không có khai báo
+                    kiểu dữ liệu cho tham số,
+                    việc truyền những kiểu dữ liệu
+                    không phù hợp có thể tạo ra
+                    biểu thức không hợp lệ.
+                </p>
+
+                <pre><code>#define ADD(a, b) ((a) + (b))
+
+int result = ADD(10, "Text");</code></pre>
+
+                <p>
+                    Sau Macro Expansion,
+                    Compiler sẽ phải xử lý
+                    một biểu thức không hợp lệ.
+                </p>
+
+                <p>
+                    Vì vậy, cần kiểm soát kiểu dữ liệu
+                    của những đối số được truyền vào
+                    Macro.
+                </p>
+
+                <h3>7.5. Macro khó Debug hơn Function</h3>
+
+                <p>
+                    Một Function thông thường
+                    có thể được đặt Breakpoint
+                    và theo dõi quá trình thực thi
+                    trong Debugger.
+                </p>
+
+                <p>
+                    Với Function-like Macro,
+                    nội dung đã được thay thế
+                    trong giai đoạn Preprocessing.
+                </p>
+
+                <p>
+                    Vì vậy, khi Debug,
+                    lập trình viên có thể phải
+                    xem xét mã nguồn sau
+                    Preprocessing để hiểu
+                    biểu thức thực sự được Compiler
+                    xử lý.
+                </p>
+
+                <p>
+                    Điều này đặc biệt đáng chú ý
+                    khi một Macro được sử dụng
+                    ở nhiều vị trí hoặc lồng
+                    nhiều Macro khác nhau.
+                </p>
+
+                <h3>7.6. Đặt tên Macro không rõ ràng</h3>
+
+                <p>
+                    Macro thường được định nghĩa
+                    ở Header File và có thể được
+                    sử dụng trong nhiều Source File.
+                </p>
+
+                <p>
+                    Nếu tên Macro quá chung chung,
+                    nó có thể gây khó khăn khi
+                    đọc mã nguồn hoặc xung đột
+                    với những định nghĩa khác.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))</code></pre>
+
+                <p>
+                    Trong một Project lớn,
+                    có thể sử dụng quy ước đặt tên
+                    gắn với Module hoặc chức năng
+                    để giúp nhận diện Macro rõ ràng hơn.
+                </p>
+
+                <pre><code>#define SENSOR_MAX(a, b) \
+    (((a) > (b)) ? (a) : (b))
+
+#define SENSOR_MIN(a, b) \
+    (((a) < (b)) ? (a) : (b))</code></pre>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Function-like Macro
+                    cần được viết đơn giản, có tên
+                    rõ ràng và hạn chế những biểu thức
+                    có khả năng gây Side Effect.
+                </div>
+
+                <h2>8. Best Practices khi sử dụng Function-like Macro</h2>
+
+                <h3>8.1. Luôn đặt Parentheses phù hợp</h3>
+
+                <p>
+                    Đây là nguyên tắc cơ bản
+                    cần tuân thủ khi viết
+                    Function-like Macro.
+                </p>
+
+                <pre><code>/* Recommended */
+#define ADD(a, b) ((a) + (b))
+
+#define MULTIPLY(a, b) ((a) * (b))
+
+#define SQUARE(x) ((x) * (x))</code></pre>
+
+                <p>
+                    Việc sử dụng Parentheses
+                    giúp biểu thức sau Macro Expansion
+                    ít bị ảnh hưởng bởi những toán tử
+                    nằm bên ngoài lời gọi Macro.
+                </p>
+
+                <h3>8.2. Tránh tham số có Side Effect</h3>
+
+                <p>
+                    Không nên thiết kế Macro
+                    khiến người sử dụng dễ truyền
+                    những biểu thức có Side Effect
+                    vào tham số được sử dụng
+                    nhiều lần.
+                </p>
+
+                <p>
+                    Ví dụ, với:
+                </p>
+
+                <pre><code>#define SQUARE(x) ((x) * (x))</code></pre>
+
+                <p>
+                    Nên sử dụng:
+                </p>
+
+                <pre><code>int value = 5;
+
+int result = SQUARE(value);</code></pre>
+
+                <p>
+                    Thay vì:
+                </p>
+
+                <pre><code>int result = SQUARE(value++);</code></pre>
+
+                <h3>8.3. Ưu tiên Function khi cần xử lý phức tạp</h3>
+
+                <p>
+                    Nếu một thao tác cần nhiều
+                    bước xử lý, kiểm tra điều kiện
+                    hoặc có yêu cầu về kiểu dữ liệu,
+                    nên cân nhắc sử dụng Function.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>int CalculateAverage(int total, int count)
+{
+    if (count == 0)
+    {
+        return 0;
+    }
+
+    return total / count;
+}</code></pre>
+
+                <p>
+                    So với việc cố gắng xây dựng
+                    một Macro chứa nhiều biểu thức,
+                    Function giúp logic xử lý
+                    dễ đọc và dễ kiểm tra hơn.
+                </p>
+
+                <h3>8.4. Không sử dụng Macro chỉ vì muốn tránh Function Call</h3>
+
+                <p>
+                    Một quan niệm thường gặp là
+                    Function-like Macro luôn có
+                    hiệu năng tốt hơn Function
+                    vì không có chi phí gọi hàm.
+                </p>
+
+                <p>
+                    Tuy nhiên, những Compiler hiện đại
+                    có thể thực hiện nhiều kỹ thuật
+                    tối ưu như Inline Expansion
+                    và Function Inlining.
+                </p>
+
+                <p>
+                    Vì vậy, không nên lựa chọn Macro
+                    chỉ dựa trên giả định rằng
+                    nó luôn nhanh hơn Function.
+                </p>
+
+                <p>
+                    Trong Embedded Software,
+                    cần xem xét cả Code Size,
+                    Performance, khả năng Debug
+                    và yêu cầu bảo trì của Project.
+                </p>
+
+                <h3>8.5. Kiểm tra Macro sau Preprocessing</h3>
+
+                <p>
+                    Khi gặp lỗi liên quan đến
+                    Macro Expansion, có thể sử dụng
+                    Preprocessor Output để kiểm tra
+                    mã nguồn sau khi Macro
+                    đã được mở rộng.
+                </p>
+
+                <p>
+                    Với GCC, tùy chọn
+                    <code>-E</code> cho phép
+                    thực hiện Preprocessing
+                    và xuất kết quả ra màn hình
+                    hoặc File.
+                </p>
+
+                <pre><code>gcc -E main.c -o main.i</code></pre>
+
+                <p>
+                    File <code>main.i</code>
+                    chứa mã nguồn sau khi
+                    Preprocessor xử lý.
+                </p>
+
+                <p>
+                    Lập trình viên có thể sử dụng
+                    kết quả này để kiểm tra:
+                </p>
+
+                <ul>
+                    <li>
+                        Macro có được mở rộng
+                        đúng như mong muốn hay không.
+                    </li>
+                    <li>
+                        Tham số có được thay thế
+                        tại những vị trí phù hợp hay không.
+                    </li>
+                    <li>
+                        Biểu thức có bị thiếu
+                        Parentheses hay không.
+                    </li>
+                    <li>
+                        Có xảy ra việc thay thế
+                        Macro không mong muốn hay không.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Khi gặp lỗi
+                    khó hiểu liên quan đến Function-like Macro,
+                    kiểm tra Preprocessor Output
+                    là một cách hữu ích để hiểu
+                    mã nguồn thực sự được Compiler
+                    xử lý.
+                </div>
+
+                <h2>9. Function-like Macro trong Embedded Project thực tế</h2>
+
+                <h3>9.1. Sử dụng Macro trong Driver Module</h3>
+
+                <p>
+                    Trong một Embedded Project,
+                    Driver Module thường cung cấp
+                    những thao tác cơ bản để
+                    giao tiếp với Peripheral.
+                </p>
+
+                <p>
+                    Một số biểu thức có thể
+                    được tái sử dụng ở nhiều vị trí,
+                    chẳng hạn như tạo Bit Mask
+                    hoặc kiểm tra trạng thái Bit.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define DRIVER_BIT_MASK(bit) \
+    (1UL << (bit))
+
+#define DRIVER_IS_BIT_SET(value, bit) \
+    (((value) &amp; DRIVER_BIT_MASK(bit)) != 0UL)
+
+uint32_t status = 0x00000004UL;
+
+if (DRIVER_IS_BIT_SET(status, 2U))
+{
+    /* Handle active status */
+}</code></pre>
+
+                <p>
+                    Những Macro này giúp biểu diễn
+                    thao tác Bit rõ ràng hơn
+                    khi được sử dụng trong Driver.
+                </p>
+
+                <p>
+                    Tuy nhiên, cần bảo đảm
+                    tham số <code>bit</code>
+                    nằm trong phạm vi hợp lệ
+                    của kiểu dữ liệu được sử dụng.
+                </p>
+
+                <h3>9.2. Sử dụng Macro trong Sensor Module</h3>
+
+                <p>
+                    Giả sử một Sensor Module
+                    nhận giá trị ADC và cần
+                    chuyển đổi dữ liệu sang
+                    một đơn vị khác.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define ADC_TO_MILLIVOLT(adc, reference) \
+    (((uint32_t)(adc) * (reference)) / 4095U)
+
+uint16_t adc_raw = 2048U;
+
+uint32_t voltage_mv =
+    ADC_TO_MILLIVOLT(adc_raw, 3300U);</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>adc</code> là giá trị
+                        ADC đọc được.
+                    </li>
+                    <li>
+                        <code>reference</code> là
+                        điện áp tham chiếu tính bằng
+                        Millivolt.
+                    </li>
+                    <li>
+                        <code>4095U</code> là giá trị
+                        lớn nhất của ADC 12-bit.
+                    </li>
+                </ul>
+
+                <p>
+                    Macro giúp biểu diễn phép
+                    chuyển đổi theo một công thức
+                    có thể tái sử dụng.
+                </p>
+
+                <p>
+                    Trong ứng dụng thực tế,
+                    cần kiểm tra độ rộng kiểu dữ liệu,
+                    phạm vi đầu vào và khả năng
+                    tràn số khi thực hiện phép nhân.
+                </p>
+
+                <h3>9.3. Sử dụng Macro trong Communication Module</h3>
+
+                <p>
+                    Trong Communication Module,
+                    chúng ta thường cần truy xuất
+                    một trường dữ liệu nằm trong
+                    một Byte hoặc một giá trị
+                    nhiều Bit.
+                </p>
+
+                <p>
+                    Có thể tạo Macro để trích xuất
+                    một nhóm Bit:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define EXTRACT_FIELD(value, mask, shift) \
+    (((value) &amp; (mask)) >> (shift))
+
+uint8_t status_byte = 0x2CU;
+
+uint8_t field_value =
+    (uint8_t)EXTRACT_FIELD(status_byte, 0x0CU, 2U);</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>value</code> là dữ liệu
+                        ban đầu.
+                    </li>
+                    <li>
+                        <code>mask</code> xác định
+                        những Bit cần lấy.
+                    </li>
+                    <li>
+                        <code>shift</code> xác định
+                        số vị trí dịch phải.
+                    </li>
+                </ul>
+
+                <p>
+                    Đây là một cách sử dụng
+                    Function-like Macro để
+                    tạo biểu thức xử lý dữ liệu
+                    trong Communication Driver
+                    hoặc những Module liên quan
+                    đến Protocol.
+                </p>
+
+                <p>
+                    Tuy nhiên, khi xử lý dữ liệu
+                    CAN hoặc những Communication Protocol,
+                    cần bảo đảm Bit Position,
+                    Byte Order và Data Length
+                    phù hợp với đặc tả tín hiệu.
+                </p>
+
+                <h3>9.4. Những lưu ý khi sử dụng Macro trong Automotive Embedded Software</h3>
+
+                <p>
+                    Trong Automotive Embedded Software,
+                    Macro có thể xuất hiện trong
+                    những Module như:
+                </p>
+
+                <ul>
+                    <li>
+                        Hardware Abstraction Layer.
+                    </li>
+                    <li>
+                        MCU Driver.
+                    </li>
+                    <li>
+                        Communication Driver.
+                    </li>
+                    <li>
+                        Sensor và Actuator Module.
+                    </li>
+                    <li>
+                        Diagnostic và Utility Module.
+                    </li>
+                </ul>
+
+                <p>
+                    Tuy nhiên, đối với những Project
+                    có yêu cầu cao về độ tin cậy,
+                    việc sử dụng Macro cần được
+                    kiểm soát cẩn thận.
+                </p>
+
+                <p>
+                    Một số vấn đề cần chú ý:
+                </p>
+
+                <ul>
+                    <li>
+                        Tránh Macro có biểu thức
+                        quá phức tạp.
+                    </li>
+                    <li>
+                        Hạn chế những tham số
+                        có Side Effect.
+                    </li>
+                    <li>
+                        Sử dụng Parentheses phù hợp.
+                    </li>
+                    <li>
+                        Kiểm tra kiểu dữ liệu
+                        và phạm vi giá trị.
+                    </li>
+                    <li>
+                        Tuân thủ Coding Guidelines
+                        và những quy định của Project.
+                    </li>
+                    <li>
+                        Kiểm tra Macro bằng
+                        Code Review và Static Analysis
+                        khi cần thiết.
+                    </li>
+                </ul>
+
+                <p>
+                    Trong những Automotive Project,
+                    các tiêu chuẩn và Coding Guidelines
+                    như MISRA C có thể đặt ra
+                    những yêu cầu cụ thể đối với
+                    việc sử dụng Macro.
+                </p>
+
+                <p>
+                    Vì vậy, cần tham khảo phiên bản
+                    tiêu chuẩn và quy định được
+                    Project áp dụng thay vì
+                    mặc định rằng mọi cách viết
+                    Macro đều được chấp nhận.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Trong Embedded
+                    và Automotive Software, Macro
+                    nên được sử dụng có kiểm soát.
+                    Tính dễ đọc, khả năng kiểm thử
+                    và độ an toàn của mã nguồn
+                    quan trọng không kém sự ngắn gọn.
+                </div>
+
+                <h2>10. Tổng kết Function-like Macro</h2>
+
+                <p>
+                    Qua bài học này, chúng ta đã tìm hiểu
+                    Function-like Macro và cách sử dụng
+                    Macro có tham số trong ngôn ngữ C.
+                </p>
+
+                <p>
+                    Những nội dung quan trọng
+                    cần ghi nhớ:
+                </p>
+
+                <ul>
+                    <li>
+                        Function-like Macro là loại
+                        Macro có một hoặc nhiều
+                        tham số.
+                    </li>
+                    <li>
+                        Function-like Macro được
+                        xử lý trong giai đoạn
+                        Preprocessing.
+                    </li>
+                    <li>
+                        Macro hoạt động bằng cách
+                        thay thế Preprocessing Token,
+                        không phải bằng cơ chế
+                        gọi Function tại Runtime.
+                    </li>
+                    <li>
+                        Khi khai báo Function-like Macro,
+                        dấu ngoặc đơn mở đầu danh sách
+                        tham số phải nằm ngay sau
+                        tên Macro.
+                    </li>
+                    <li>
+                        Tham số Macro không có
+                        kiểu dữ liệu được khai báo
+                        như tham số Function.
+                    </li>
+                    <li>
+                        Function-like Macro có thể
+                        nhận những biểu thức làm
+                        đối số.
+                    </li>
+                    <li>
+                        Một tham số có thể xuất hiện
+                        nhiều lần sau Macro Expansion.
+                    </li>
+                    <li>
+                        Cần tránh truyền những biểu thức
+                        có Side Effect vào Macro
+                        nếu tham số được sử dụng
+                        nhiều lần.
+                    </li>
+                    <li>
+                        Function thông thường có
+                        cơ chế đánh giá đối số khác
+                        với Function-like Macro.
+                    </li>
+                    <li>
+                        Cần đặt Parentheses xung quanh
+                        từng tham số và toàn bộ
+                        biểu thức thay thế.
+                    </li>
+                    <li>
+                        Function-like Macro có thể
+                        được sử dụng trong những
+                        biểu thức xử lý dữ liệu,
+                        Bit Mask và Hardware Register.
+                    </li>
+                    <li>
+                        Không nên mặc định Macro
+                        luôn nhanh hơn Function.
+                    </li>
+                    <li>
+                        Khi gặp lỗi Macro Expansion,
+                        có thể kiểm tra kết quả
+                        Preprocessing bằng tùy chọn
+                        <code>-E</code> của GCC.
+                    </li>
+                    <li>
+                        Trong Embedded Project,
+                        cần sử dụng Macro có kiểm soát
+                        và tuân thủ Coding Guidelines.
+                    </li>
+                </ul>
+
+                <p>
+                    Function-like Macro là một công cụ
+                    hữu ích trong C, đặc biệt khi
+                    cần tạo những biểu thức ngắn
+                    có thể tái sử dụng trong nhiều
+                    Module của Embedded Software.
+                </p>
+
+                <p>
+                    Tuy nhiên, do Macro hoạt động
+                    bằng cách thay thế mã nguồn,
+                    lập trình viên cần hiểu rõ
+                    cách Macro Expansion diễn ra
+                    để tránh những lỗi liên quan
+                    đến thứ tự ưu tiên toán tử,
+                    Side Effect và kiểu dữ liệu.
+                </p>
+
+                <h3>Bài học tiếp theo</h3>
+
+                <p>
+                    Trong bài tiếp theo,
+                    chúng ta sẽ tìm hiểu
+                    <strong>Multi-line Macro &amp; Safe Macro Techniques</strong>.
+                </p>
+
+                <p>
+                    Nội dung sẽ tập trung vào cách
+                    viết Macro có nhiều câu lệnh,
+                    cách sử dụng dấu <code>\</code>
+                    để nối dòng và những kỹ thuật
+                    giúp Macro hoạt động an toàn
+                    trong các cấu trúc điều kiện.
+                </p>
+
+                <p>
+                    Đây là những kỹ thuật quan trọng
+                    khi xây dựng các Utility Macro
+                    và những thành phần dùng chung
+                    trong Embedded C Project.
+                </p>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-24.html">← Bài trước</a>
+                    <a class="btn" href="lesson-26.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>EmLearn - 2026</p>
+    </footer>
+
+</body>
+</html>

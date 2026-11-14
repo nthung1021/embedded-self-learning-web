@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 20: Bit-field in C | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html" class="active" aria-current="page">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 20: Bit-field in C</h1>
+
+                <p>
+                    Trong các bài học trước, chúng ta đã tìm hiểu cách tổ chức dữ liệu
+                    bằng Structure và Union. Structure cho phép nhóm nhiều member,
+                    trong khi Union cho phép các member chia sẻ cùng một vùng nhớ.
+                </p>
+
+                <p>
+                    Trong Embedded Systems, dữ liệu không phải lúc nào cũng cần
+                    sử dụng toàn bộ một byte hoặc một word. Nhiều thông tin chỉ
+                    cần một vài bit để biểu diễn.
+                </p>
+
+                <p>
+                    Ví dụ, trạng thái bật/tắt của một thiết bị chỉ cần hai giá trị:
+                    bật hoặc tắt. Một chế độ hoạt động có thể cần ba hoặc bốn trạng thái.
+                    Một số trường cấu hình khác chỉ cần một nhóm bit nhỏ để biểu diễn.
+                </p>
+
+                <p>
+                    Nếu sử dụng riêng một biến nguyên cho từng cờ trạng thái,
+                    chương trình có thể sử dụng nhiều bit hơn mức cần thiết.
+                    Để hỗ trợ việc khai báo những member có độ rộng bit xác định,
+                    C cung cấp một tính năng gọi là <strong>Bit-field</strong>.
+                </p>
+
+                <p>
+                    Bit-field cho phép xác định số bit dành cho từng member
+                    trong Structure hoặc Union. Kỹ thuật này thường được sử dụng
+                    để mô hình hóa các trường dữ liệu nhỏ, các cờ trạng thái và
+                    những nhóm thông tin có độ rộng bit giới hạn.
+                </p>
+
+                <h2>1. Tổng quan về Bit-field</h2>
+
+                <h3>1.1. Bit-field là gì?</h3>
+
+                <p>
+                    <strong>Bit-field</strong> là một member của Structure hoặc Union
+                    được khai báo với một độ rộng bit cụ thể (bit-width).
+                </p>
+
+                <p>
+                    Khác với member thông thường có kích thước theo byte của kiểu
+                    dữ liệu, Bit-field cho phép chỉ định số bit cần sử dụng để
+                    biểu diễn giá trị của member đó.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int enabled : 1;
+    unsigned int mode    : 2;
+    unsigned int status  : 3;
+} DeviceStatus_t;</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>enabled</code> có độ rộng 1 bit.</li>
+                    <li><code>mode</code> có độ rộng 2 bit.</li>
+                    <li><code>status</code> có độ rộng 3 bit.</li>
+                </ul>
+
+                <p>
+                    Dấu hai chấm <code>:</code> được sử dụng để chỉ định độ rộng
+                    bit của từng member.
+                </p>
+
+                <p>
+                    Thay vì khai báo ba biến nguyên thông thường, chúng ta có
+                    thể mô tả trực tiếp số bit cần thiết cho từng trường dữ liệu.
+                </p>
+
+                <h3>1.2. Bit-field được sử dụng để làm gì?</h3>
+
+                <p>
+                    Bit-field thường phù hợp với những dữ liệu có tập giá trị
+                    nhỏ hoặc các thông tin được biểu diễn bằng những trường bit.
+                </p>
+
+                <p>
+                    Một số ví dụ:
+                </p>
+
+                <ul>
+                    <li>Cờ bật/tắt một chức năng.</li>
+                    <li>Chế độ hoạt động của một thiết bị.</li>
+                    <li>Trạng thái lỗi của một module.</li>
+                    <li>Mức ưu tiên có một số lượng trạng thái giới hạn.</li>
+                    <li>Những trường dữ liệu nhỏ trong cấu trúc nội bộ của chương trình.</li>
+                </ul>
+
+                <p>
+                    Trong Embedded Software, các thiết bị thường có nhiều trạng thái
+                    và chế độ hoạt động khác nhau. Bit-field có thể giúp mô hình hóa
+                    những trường thông tin này một cách ngắn gọn.
+                </p>
+
+                <h3>1.3. Bit-field và kiểu dữ liệu thông thường</h3>
+
+                <p>
+                    Hãy so sánh cách khai báo cờ trạng thái bằng kiểu dữ liệu thông
+                    thường và bằng Bit-field.
+                </p>
+
+                <p>
+                    Sử dụng kiểu dữ liệu thông thường:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint8_t enabled;
+    uint8_t mode;
+    uint8_t status;
+} DeviceStatus_t;</code></pre>
+
+                <p>
+                    Sử dụng Bit-field:
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int enabled : 1;
+    unsigned int mode    : 2;
+    unsigned int status  : 3;
+} DeviceStatus_t;</code></pre>
+
+                <p>
+                    Trong cách khai báo thứ hai, chúng ta chỉ định rõ số bit
+                    cần thiết cho từng member.
+                </p>
+
+                <p>
+                    Tuy nhiên, cần lưu ý rằng Bit-field không bảo đảm Structure
+                    luôn có kích thước nhỏ hơn một cách tuyệt đối. Kích thước và
+                    cách bố trí thực tế còn phụ thuộc vào compiler, ABI và
+                    quy tắc Alignment.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Member thông thường</th>
+                            <th>Bit-field</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Khai báo</td>
+                            <td><code>uint8_t enabled;</code></td>
+                            <td><code>unsigned int enabled : 1;</code></td>
+                        </tr>
+                        <tr>
+                            <td>Kích thước Member</td>
+                            <td>Phụ thuộc kích thước kiểu dữ liệu.</td>
+                            <td>Được chỉ định bằng bit-width.</td>
+                        </tr>
+                        <tr>
+                            <td>Giá trị biểu diễn</td>
+                            <td>Theo miền giá trị của kiểu dữ liệu.</td>
+                            <td>Được giới hạn bởi độ rộng bit.</td>
+                        </tr>
+                        <tr>
+                            <td>Ứng dụng</td>
+                            <td>Dữ liệu số hoặc trạng thái có miền giá trị rộng.</td>
+                            <td>Cờ trạng thái và các trường dữ liệu nhỏ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>1.4. Bit-field thường được khai báo trong Structure</h3>
+
+                <p>
+                    Bit-field thường được sử dụng trong Structure để nhóm nhiều
+                    trường bit có liên quan vào cùng một đối tượng.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int power_on  : 1;
+    unsigned int error     : 1;
+    unsigned int mode      : 2;
+    unsigned int reserved  : 4;
+} PeripheralFlags_t;</code></pre>
+
+                <p>
+                    Cách khai báo trên mô tả một nhóm trường dữ liệu gồm cờ nguồn,
+                    cờ lỗi, chế độ hoạt động và các bit dự phòng.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Bit-field là một tính năng của
+                    Structure và Union trong C. Nó không phải là một kiểu dữ
+                    liệu độc lập như <code>int</code>, <code>char</code> hoặc
+                    <code>uint32_t</code>.
+                </div>
+
+                <h2>2. Khai báo Bit-field trong C</h2>
+
+                <h3>2.1. Cú pháp khai báo Bit-field</h3>
+
+                <p>
+                    Cú pháp tổng quát:
+                </p>
+
+                <pre><code>struct StructureName
+{
+    type member_name : bit_width;
+};</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>struct</code></td>
+                            <td>Từ khóa khai báo Structure.</td>
+                        </tr>
+                        <tr>
+                            <td><code>type</code></td>
+                            <td>Kiểu dữ liệu cơ sở được sử dụng cho Bit-field.</td>
+                        </tr>
+                        <tr>
+                            <td><code>member_name</code></td>
+                            <td>Tên của trường bit.</td>
+                        </tr>
+                        <tr>
+                            <td><code>bit_width</code></td>
+                            <td>Số bit được chỉ định cho member.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Một số kiểu khai báo phổ biến:
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int flag       : 1;
+    unsigned int mode       : 2;
+    unsigned int state      : 3;
+    unsigned int reserved   : 2;
+} Status_t;</code></pre>
+
+                <p>
+                    Bit-width phải được xác định bằng một biểu thức hằng số
+                    nguyên tại thời điểm biên dịch. Không thể sử dụng một
+                    biến runtime để quyết định độ rộng của Bit-field.
+                </p>
+
+                <h3>2.2. Sử dụng unsigned int cho Bit-field</h3>
+
+                <p>
+                    Trong các ví dụ về Bit-field, chúng ta thường sử dụng
+                    <code>unsigned int</code> để khai báo những member
+                    không cần biểu diễn giá trị âm.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int enabled : 1;
+    unsigned int mode    : 2;
+    unsigned int level   : 3;
+} DeviceConfig_t;</code></pre>
+
+                <p>
+                    Việc sử dụng kiểu không dấu giúp xác định miền giá trị
+                    một cách rõ ràng hơn khi làm việc với các cờ và trường
+                    trạng thái.
+                </p>
+
+                <p>
+                    Với Bit-field không dấu có độ rộng N bit, miền giá trị
+                    có thể biểu diễn là:
+                </p>
+
+                <p>
+                    <code>0 đến 2^N - 1</code>
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bit-width</th>
+                            <th>Số lượng giá trị</th>
+                            <th>Miền giá trị</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1 bit</td>
+                            <td>2</td>
+                            <td>0 đến 1</td>
+                        </tr>
+                        <tr>
+                            <td>2 bit</td>
+                            <td>4</td>
+                            <td>0 đến 3</td>
+                        </tr>
+                        <tr>
+                            <td>3 bit</td>
+                            <td>8</td>
+                            <td>0 đến 7</td>
+                        </tr>
+                        <tr>
+                            <td>4 bit</td>
+                            <td>16</td>
+                            <td>0 đến 15</td>
+                        </tr>
+                        <tr>
+                            <td>8 bit</td>
+                            <td>256</td>
+                            <td>0 đến 255</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>2.3. Ví dụ Bit-field 1 bit</h3>
+
+                <p>
+                    Một Bit-field có độ rộng 1 bit chỉ có thể biểu diễn hai
+                    trạng thái: 0 hoặc 1.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int led_on : 1;
+} LedStatus_t;</code></pre>
+
+                <p>
+                    Chúng ta có thể sử dụng member này để biểu diễn trạng thái
+                    bật/tắt của LED.
+                </p>
+
+                <pre><code>LedStatus_t led;
+
+led.led_on = 0U;  /* LED đang tắt */
+
+led.led_on = 1U;  /* LED đang bật */</code></pre>
+
+                <p>
+                    Với cách thiết kế này, Bit-field <code>led_on</code>
+                    không cần lưu những giá trị lớn hơn 1.
+                </p>
+
+                <h3>2.4. Ví dụ Bit-field 2 bit</h3>
+
+                <p>
+                    Nếu một thiết bị có bốn chế độ hoạt động, chúng ta có
+                    thể sử dụng hai bit để biểu diễn các trạng thái đó.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int mode : 2;
+} DeviceMode_t;</code></pre>
+
+                <p>
+                    Các giá trị có thể sử dụng:
+                </p>
+
+                <pre><code>mode = 0U;  /* Mode 0 */
+mode = 1U;  /* Mode 1 */
+mode = 2U;  /* Mode 2 */
+mode = 3U;  /* Mode 3 */</code></pre>
+
+                <p>
+                    Tuy nhiên, để code dễ đọc hơn, chúng ta nên định nghĩa
+                    những tên trạng thái có ý nghĩa.
+                </p>
+
+                <pre><code>#define DEVICE_MODE_OFF       0U
+#define DEVICE_MODE_IDLE      1U
+#define DEVICE_MODE_ACTIVE    2U
+#define DEVICE_MODE_ERROR     3U</code></pre>
+
+                <h3>2.5. Ví dụ nhiều Bit-field trong cùng Structure</h3>
+
+                <p>
+                    Chúng ta có thể kết hợp nhiều member có độ rộng bit
+                    khác nhau trong cùng một Structure.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int enabled       : 1;
+    unsigned int mode          : 2;
+    unsigned int error_code    : 3;
+    unsigned int reserved      : 2;
+} DeviceStatus_t;</code></pre>
+
+                <p>
+                    Cấu trúc này có tổng cộng 8 bit được chỉ định cho
+                    các member. Tuy nhiên, không nên kết luận rằng
+                    <code>sizeof(DeviceStatus_t)</code> chắc chắn bằng
+                    một byte.
+                </p>
+
+                <p>
+                    Kích thước thực tế còn phụ thuộc vào kiểu cơ sở,
+                    Allocation Unit, Alignment và quy tắc của compiler.
+                </p>
+
+                <h3>2.6. Kiểu dữ liệu cơ sở của Bit-field</h3>
+
+                <p>
+                    Trong C, các kiểu cơ sở được hỗ trợ phổ biến cho
+                    Bit-field là:
+                </p>
+
+                <ul>
+                    <li><code>unsigned int</code>.</li>
+                    <li><code>signed int</code>.</li>
+                    <li><code>_Bool</code> trong các chuẩn C hỗ trợ kiểu này.</li>
+                </ul>
+
+                <p>
+                    Ngoài ra, một số implementation có thể hỗ trợ thêm những
+                    kiểu nguyên khác. Tuy nhiên, việc hỗ trợ những kiểu mở rộng
+                    này phụ thuộc vào compiler.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>struct Status
+{
+    unsigned int ready : 1;
+    signed int temperature_state : 3;
+    _Bool active : 1;
+};</code></pre>
+
+                <p>
+                    Khi xây dựng code có tính portable, nên ưu tiên những
+                    kiểu Bit-field được chuẩn C hỗ trợ rõ ràng và kiểm tra
+                    tài liệu compiler nếu sử dụng kiểu mở rộng.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Không nên mặc định mọi kiểu
+                    <code>uint8_t</code>, <code>uint16_t</code> hoặc
+                    <code>uint32_t</code> đều được hỗ trợ làm kiểu cơ sở
+                    của Bit-field trong mọi compiler. Các kiểu có độ rộng
+                    chính xác này thường được dùng cho biến thông thường
+                    và Bit Masking; còn quy tắc Bit-field cần được kiểm tra
+                    theo chuẩn C và compiler cụ thể.
+                </div>
+
+                <h2>3. Bit-width và cách biểu diễn dữ liệu</h2>
+
+                <h3>3.1. Bit-width là gì?</h3>
+
+                <p>
+                    <strong>Bit-width</strong> là số lượng bit được chỉ định
+                    cho một Bit-field.
+                </p>
+
+                <p>
+                    Độ rộng bit quyết định số lượng giá trị mà member có
+                    thể biểu diễn theo kiểu dữ liệu cơ sở.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int flag    : 1;
+    unsigned int mode    : 2;
+    unsigned int level   : 3;
+} DeviceConfig_t;</code></pre>
+
+                <p>
+                    Với ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>flag</code> có thể biểu diễn 2 giá trị.</li>
+                    <li><code>mode</code> có thể biểu diễn 4 giá trị.</li>
+                    <li><code>level</code> có thể biểu diễn 8 giá trị.</li>
+                </ul>
+
+                <p>
+                    Công thức tổng quát cho số lượng trạng thái của một
+                    trường không dấu có độ rộng N bit:
+                </p>
+
+                <p>
+                    <code>Number of values = 2^N</code>
+                </p>
+
+                <h3>3.2. Ví dụ biểu diễn trạng thái bằng 3 bit</h3>
+
+                <p>
+                    Giả sử một thiết bị có 8 trạng thái hoạt động khác nhau.
+                    Chúng ta có thể sử dụng một Bit-field với độ rộng 3 bit.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int state : 3;
+} DeviceState_t;</code></pre>
+
+                <p>
+                    Các giá trị biểu diễn:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Binary</th>
+                            <th>Decimal</th>
+                            <th>Ý nghĩa minh họa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>000</code></td>
+                            <td>0</td>
+                            <td>Uninitialized</td>
+                        </tr>
+                        <tr>
+                            <td><code>001</code></td>
+                            <td>1</td>
+                            <td>Idle</td>
+                        </tr>
+                        <tr>
+                            <td><code>010</code></td>
+                            <td>2</td>
+                            <td>Starting</td>
+                        </tr>
+                        <tr>
+                            <td><code>011</code></td>
+                            <td>3</td>
+                            <td>Running</td>
+                        </tr>
+                        <tr>
+                            <td><code>100</code></td>
+                            <td>4</td>
+                            <td>Stopping</td>
+                        </tr>
+                        <tr>
+                            <td><code>101</code></td>
+                            <td>5</td>
+                            <td>Error</td>
+                        </tr>
+                        <tr>
+                            <td><code>110</code></td>
+                            <td>6</td>
+                            <td>Reserved</td>
+                        </tr>
+                        <tr>
+                            <td><code>111</code></td>
+                            <td>7</td>
+                            <td>Reserved</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Những tên trạng thái trên chỉ là ví dụ minh họa. Trong
+                    project thực tế, giá trị và ý nghĩa của từng trạng thái
+                    cần tuân theo yêu cầu hệ thống.
+                </p>
+
+                <h3>3.3. Phân biệt Bit-width và kích thước kiểu dữ liệu cơ sở</h3>
+
+                <p>
+                    Một điểm cần lưu ý là bit-width không nhất thiết bằng
+                    kích thước của kiểu dữ liệu cơ sở.
+                </p>
+
+                <pre><code>struct Example
+{
+    unsigned int flag : 1;
+};</code></pre>
+
+                <p>
+                    Ở đây, kiểu cơ sở là <code>unsigned int</code>,
+                    nhưng member <code>flag</code> chỉ được khai báo
+                    với độ rộng 1 bit.
+                </p>
+
+                <p>
+                    Compiler sẽ bố trí Bit-field theo các quy tắc
+                    của implementation. Không nên hiểu rằng một
+                    member có kiểu <code>unsigned int</code> luôn
+                    chiếm toàn bộ số bit của một biến
+                    <code>unsigned int</code> thông thường.
+                </p>
+
+                <h3>3.4. Giới hạn giá trị khi gán vào Bit-field</h3>
+
+                <p>
+                    Khi gán dữ liệu cho Bit-field, cần bảo đảm giá trị
+                    nằm trong miền có thể biểu diễn của member đó.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int mode : 2;
+} DeviceConfig_t;
+
+DeviceConfig_t config;
+
+config.mode = 0U;
+config.mode = 1U;
+config.mode = 2U;
+config.mode = 3U;</code></pre>
+
+                <p>
+                    Với Bit-field không dấu có độ rộng 2 bit, các giá trị
+                    từ 0 đến 3 đều biểu diễn được.
+                </p>
+
+                <p>
+                    Không nên gán một giá trị nằm ngoài miền này rồi dựa
+                    vào kết quả mà compiler tạo ra. Việc chuyển đổi một
+                    giá trị không biểu diễn được sang Bit-field có thể
+                    phụ thuộc implementation.
+                </p>
+
+                <p>
+                    Cách tốt hơn là kiểm tra miền giá trị trước khi gán:
+                </p>
+
+                <pre><code>#include &lt;stdbool.h&gt;
+
+bool Device_SetMode(DeviceConfig_t *config,
+                    unsigned int mode)
+{
+    if (config == NULL)
+    {
+        return false;
+    }
+
+    if (mode > 3U)
+    {
+        return false;
+    }
+
+    config->mode = mode;
+
+    return true;
+}</code></pre>
+
+                <p>
+                    Function trên chỉ chấp nhận những giá trị nằm
+                    trong miền biểu diễn của member <code>mode</code>.
+                </p>
+
+                <h3>3.5. Signed Bit-field và Unsigned Bit-field</h3>
+
+                <p>
+                    Bit-field có thể được khai báo với kiểu
+                    <code>signed int</code> hoặc <code>unsigned int</code>.
+                    Việc lựa chọn kiểu có ảnh hưởng đến cách biểu diễn
+                    giá trị của member.
+                </p>
+
+                <pre><code>struct SignedStatus
+{
+    signed int temperature_state : 4;
+};
+
+struct UnsignedStatus
+{
+    unsigned int error_code : 4;
+};</code></pre>
+
+                <p>
+                    Với kiểu <code>unsigned int</code>, miền giá trị
+                    không âm được xác định dựa trên số bit.
+                </p>
+
+                <p>
+                    Với kiểu <code>signed int</code>, cách biểu diễn
+                    và miền giá trị của Bit-field cần được xem xét
+                    theo chuẩn ngôn ngữ và implementation.
+                </p>
+
+                <p>
+                    Trong Embedded Software, khi trường dữ liệu chỉ
+                    biểu diễn cờ hoặc mã trạng thái không âm, sử dụng
+                    <code>unsigned int</code> thường giúp ý nghĩa
+                    của miền giá trị rõ ràng hơn.
+                </p>
+
+                <div class="note">
+                    <strong>Khuyến nghị:</strong> Chỉ sử dụng
+                    <code>signed int</code> cho Bit-field khi thực sự
+                    cần biểu diễn giá trị âm và đã xác nhận quy tắc
+                    của compiler đang sử dụng.
+                </div>
+
+                <h2>4. Memory Layout của Bit-field</h2>
+
+                <h3>4.1. Các Bit-field có thể được nhóm vào Allocation Unit</h3>
+
+                <p>
+                    Compiler có thể nhóm nhiều Bit-field vào cùng một
+                    Allocation Unit để bố trí dữ liệu.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int ready       : 1;
+    unsigned int error       : 1;
+    unsigned int mode        : 2;
+    unsigned int priority    : 3;
+    unsigned int reserved    : 1;
+} StatusRegister_t;</code></pre>
+
+                <p>
+                    Các member ở trên có tổng độ rộng được khai báo là
+                    8 bit. Tuy nhiên, cách compiler tổ chức chúng vào
+                    Allocation Unit phụ thuộc implementation.
+                </p>
+
+                <p>
+                    Một số compiler có thể nhóm những Bit-field tương
+                    thích vào cùng một đơn vị lưu trữ, trong khi cách
+                    phân bổ cụ thể và yêu cầu Alignment phụ thuộc ABI
+                    và target platform.
+                </p>
+
+                <h3>4.2. Sơ đồ minh họa các trường Bit-field</h3>
+
+                <p>
+                    Có thể hình dung các trường dữ liệu được khai báo
+                    trong ví dụ trên như sau:
+                </p>
+
+                <svg viewBox="0 0 700 300" width="100%" role="img"
+                    aria-label="Minh họa các trường dữ liệu Bit-field với độ rộng khác nhau">
+
+                    <text x="350" y="27" text-anchor="middle"
+                        font-size="15" font-weight="bold" fill="currentColor">
+                        Logical Bit-field Representation
+                    </text>
+
+                    <rect x="45" y="70" width="610" height="92" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <rect x="45" y="70" width="76" height="92"
+                        fill="#b8d5f8" stroke="#4b83c3" />
+                    <text x="83" y="105" text-anchor="middle"
+                        font-size="12" fill="#173d68">ready</text>
+                    <text x="83" y="128" text-anchor="middle"
+                        font-size="11" fill="#173d68">1 bit</text>
+
+                    <rect x="121" y="70" width="76" height="92"
+                        fill="#d4eddd" stroke="#34845a" />
+                    <text x="159" y="105" text-anchor="middle"
+                        font-size="12" fill="#174d2e">error</text>
+                    <text x="159" y="128" text-anchor="middle"
+                        font-size="11" fill="#174d2e">1 bit</text>
+
+                    <rect x="197" y="70" width="152" height="92"
+                        fill="#fff0d9" stroke="#b7803e" />
+                    <text x="273" y="105" text-anchor="middle"
+                        font-size="12" fill="#70451d">mode</text>
+                    <text x="273" y="128" text-anchor="middle"
+                        font-size="11" fill="#70451d">2 bits</text>
+
+                    <rect x="349" y="70" width="229" height="92"
+                        fill="#f2e5f7" stroke="#8a5ca8" />
+                    <text x="463" y="105" text-anchor="middle"
+                        font-size="12" fill="#55316c">priority</text>
+                    <text x="463" y="128" text-anchor="middle"
+                        font-size="11" fill="#55316c">3 bits</text>
+
+                    <rect x="578" y="70" width="77" height="92"
+                        fill="#eeeeee" stroke="#888888" />
+                    <text x="616" y="105" text-anchor="middle"
+                        font-size="12" fill="#333333">reserved</text>
+                    <text x="616" y="128" text-anchor="middle"
+                        font-size="11" fill="#333333">1 bit</text>
+
+                    <text x="350" y="196" text-anchor="middle"
+                        font-size="12" fill="currentColor">
+                        Tổng độ rộng được khai báo: 8 bit
+                    </text>
+
+                    <text x="350" y="226" text-anchor="middle"
+                        font-size="11" fill="currentColor">
+                        Đây là sơ đồ logic minh họa, không xác định vị trí bit vật lý.
+                    </text>
+
+                    <text x="350" y="248" text-anchor="middle"
+                        font-size="11" fill="currentColor">
+                        Thứ tự và cách phân bổ thực tế phụ thuộc compiler và ABI.
+                    </text>
+
+                </svg>
+
+                <p>
+                    Hình trên chỉ mô tả mối quan hệ giữa các trường dữ
+                    liệu và độ rộng của chúng. Nó không khẳng định
+                    member <code>ready</code> luôn nằm ở bit thấp nhất
+                    hoặc member <code>reserved</code> luôn nằm ở bit cao nhất.
+                </p>
+
+                <h3>4.3. Thứ tự phân bổ bit</h3>
+
+                <p>
+                    Một vấn đề quan trọng khi sử dụng Bit-field là
+                    thứ tự phân bổ các member trong Allocation Unit.
+                </p>
+
+                <p>
+                    Chuẩn C không bảo đảm mọi compiler đều đặt
+                    Bit-field theo cùng một thứ tự từ bit thấp lên
+                    bit cao hoặc từ bit cao xuống bit thấp.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int first  : 1;
+    unsigned int second : 2;
+    unsigned int third  : 3;
+} BitData_t;</code></pre>
+
+                <p>
+                    Khi compiler bố trí Structure này, cách xác định
+                    vị trí bit của từng member có thể khác nhau
+                    tùy implementation.
+                </p>
+
+                <p>
+                    Vì vậy, không nên dựa vào thứ tự khai báo để
+                    suy luận rằng một member luôn nằm tại một vị
+                    trí bit cố định trong bộ nhớ.
+                </p>
+
+                <h3>4.4. Alignment và Padding</h3>
+
+                <p>
+                    Tương tự Structure thông thường, Structure
+                    chứa Bit-field cũng có thể chịu ảnh hưởng
+                    của Alignment và Padding.
+                </p>
+
+                <p>
+                    Compiler có thể:
+                </p>
+
+                <ul>
+                    <li>Nhóm nhiều Bit-field vào cùng Allocation Unit.</li>
+                    <li>Bổ sung Padding giữa các nhóm dữ liệu.</li>
+                    <li>Sử dụng Allocation Unit có kích thước khác nhau tùy ABI.</li>
+                    <li>Điều chỉnh vị trí bắt đầu của nhóm Bit-field tiếp theo.</li>
+                </ul>
+
+                <p>
+                    Do đó, tổng số bit được khai báo không đủ để
+                    xác định chính xác kích thước Structure.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+typedef struct
+{
+    unsigned int flag_a : 1;
+    unsigned int flag_b : 1;
+    unsigned int mode   : 2;
+} BitData_t;
+
+int main(void)
+{
+    printf("BitData size: %zu bytes\n",
+           sizeof(BitData_t));
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Kết quả của <code>sizeof(BitData_t)</code>
+                    phụ thuộc compiler và target platform.
+                    Không nên mặc định kết quả sẽ bằng một byte
+                    chỉ vì các member có tổng độ rộng 4 bit.
+                </p>
+
+                <h3>4.5. Unnamed Bit-field</h3>
+
+                <p>
+                    C cho phép khai báo Bit-field không có tên.
+                    Loại member này thường được sử dụng để tạo
+                    khoảng trống hoặc điều chỉnh cách bố trí
+                    các trường bit.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int ready : 1;
+    unsigned int       : 2;
+    unsigned int mode  : 2;
+} DeviceStatus_t;</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>ready</code> là member có tên.</li>
+                    <li>Member không tên có độ rộng 2 bit.</li>
+                    <li><code>mode</code> là member tiếp theo.</li>
+                </ul>
+
+                <p>
+                    Unnamed Bit-field không thể được truy cập bằng tên
+                    vì nó không có định danh. Nó có thể được dùng để
+                    dành khoảng trống trong cách bố trí Bit-field
+                    theo quy tắc của compiler.
+                </p>
+
+                <h3>4.6. Zero-width Bit-field</h3>
+
+                <p>
+                    Một trường hợp đặc biệt là Unnamed Bit-field có
+                    độ rộng bằng zero.
+                </p>
+
+                <pre><code>struct Example
+{
+    unsigned int first  : 3;
+    unsigned int        : 0;
+    unsigned int second : 2;
+};</code></pre>
+
+                <p>
+                    Zero-width Bit-field phải là member không có tên.
+                    Nó có tác dụng yêu cầu Bit-field tiếp theo bắt đầu
+                    tại ranh giới Allocation Unit tiếp theo theo
+                    quy tắc của implementation.
+                </p>
+
+                <p>
+                    Kỹ thuật này có thể ảnh hưởng đến cách compiler
+                    bố trí các nhóm Bit-field trong bộ nhớ.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Unnamed Bit-field và
+                    Zero-width Bit-field là những kỹ thuật liên quan
+                    đến Memory Layout. Việc sử dụng chúng cần dựa
+                    trên hiểu biết về compiler và ABI của target.
+                </div>
+
+                <h2>5. Truy cập và khởi tạo Bit-field</h2>
+
+                <h3>5.1. Truy cập Bit-field Member</h3>
+
+                <p>
+                    Bit-field được truy cập tương tự những member
+                    thông thường của Structure bằng toán tử
+                    <code>.</code>.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int enabled : 1;
+    unsigned int mode    : 2;
+} DeviceStatus_t;
+
+int main(void)
+{
+    DeviceStatus_t device;
+
+    device.enabled = 1U;
+    device.mode = 2U;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Chúng ta không cần sử dụng Bitwise Operator
+                    để truy cập trực tiếp từng member của Bit-field.
+                    Compiler sẽ xử lý việc đọc và cập nhật trường
+                    dữ liệu theo cách bố trí của nó.
+                </p>
+
+                <h3>5.2. Khởi tạo Bit-field</h3>
+
+                <p>
+                    Bit-field có thể được khởi tạo khi khai báo
+                    Structure Variable.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int enabled : 1;
+    unsigned int mode    : 2;
+    unsigned int error   : 1;
+} DeviceStatus_t;
+
+int main(void)
+{
+    DeviceStatus_t device = {
+        .enabled = 1U,
+        .mode = 2U,
+        .error = 0U
+    };
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, Designated Initializers
+                    được sử dụng để khởi tạo từng Bit-field
+                    bằng tên member.
+                </p>
+
+                <h3>5.3. Khởi tạo toàn bộ Bit-field bằng zero</h3>
+
+                <p>
+                    Nếu muốn đặt toàn bộ dữ liệu về trạng thái
+                    ban đầu, chúng ta có thể sử dụng:
+                </p>
+
+                <pre><code>DeviceStatus_t device = {0};</code></pre>
+
+                <p>
+                    Đây là cách khởi tạo thường dùng khi muốn
+                    tất cả member của Structure bắt đầu từ
+                    giá trị zero.
+                </p>
+
+                <h3>5.4. Cập nhật Bit-field bằng Function</h3>
+
+                <p>
+                    Chúng ta có thể sử dụng Function để thay đổi
+                    các trường Bit-field, thay vì để nhiều vị trí
+                    trong chương trình cập nhật dữ liệu trực tiếp.
+                </p>
+
+                <pre><code>#include &lt;stdbool.h&gt;
+#include &lt;stddef.h&gt;
+
+typedef struct
+{
+    unsigned int enabled : 1;
+    unsigned int mode    : 2;
+} DeviceStatus_t;
+
+bool Device_SetMode(DeviceStatus_t *device,
+                    unsigned int mode)
+{
+    if (device == NULL)
+    {
+        return false;
+    }
+
+    if (mode > 3U)
+    {
+        return false;
+    }
+
+    device->mode = mode;
+
+    return true;
+}</code></pre>
+
+                <p>
+                    Function <code>Device_SetMode()</code> thực hiện
+                    kiểm tra Pointer và miền giá trị trước khi
+                    cập nhật Bit-field.
+                </p>
+
+                <p>
+                    Đây là cách tổ chức phù hợp khi muốn kiểm soát
+                    những giá trị được phép đưa vào các trường
+                    trạng thái của thiết bị.
+                </p>
+
+                <h3>5.5. Truy cập Bit-field thông qua Pointer</h3>
+
+                <p>
+                    Khi sử dụng Pointer to Structure, chúng ta
+                    có thể truy cập Bit-field bằng toán tử
+                    <code>-&gt;</code>.
+                </p>
+
+                <pre><code>DeviceStatus_t device;
+
+DeviceStatus_t *device_ptr = &amp;device;
+
+device_ptr->enabled = 1U;
+device_ptr->mode = 2U;</code></pre>
+
+                <p>
+                    Cú pháp này tương tự khi truy cập những member
+                    thông thường. Điểm khác biệt nằm ở cách compiler
+                    xử lý độ rộng bit và vị trí của member trong bộ nhớ.
+                </p>
+
+                <h3>5.6. Không thể lấy địa chỉ của Bit-field</h3>
+
+                <p>
+                    Một hạn chế quan trọng là không thể sử dụng
+                    toán tử lấy địa chỉ <code>&amp;</code> trực tiếp
+                    trên một Bit-field.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int ready : 1;
+} Status_t;
+
+Status_t status;
+
+/* Không hợp lệ */
+unsigned int *ptr = &amp;status.ready;</code></pre>
+
+                <p>
+                    Lý do là Bit-field không nhất thiết tương ứng
+                    với một đối tượng có địa chỉ riêng biệt như
+                    member thông thường. Nó có thể chỉ là một
+                    nhóm bit nằm trong Allocation Unit.
+                </p>
+
+                <p>
+                    Nếu muốn sử dụng dữ liệu của Bit-field trong
+                    một Function nhận Pointer, chúng ta có thể
+                    đọc giá trị trước rồi truyền địa chỉ của
+                    một biến thông thường.
+                </p>
+
+                <pre><code>unsigned int ready_value = status.ready;
+
+ProcessStatus(&amp;ready_value);</code></pre>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Không thể lấy địa chỉ
+                    trực tiếp của Bit-field. Đây là một khác biệt
+                    quan trọng so với member thông thường của Structure.
+                </div>
+
+                <h2>6. Bit-field cho các cờ trạng thái và trường dữ liệu nhỏ</h2>
+
+                <h3>6.1. Quản lý nhiều cờ trạng thái</h3>
+
+                <p>
+                    Một ứng dụng phổ biến của Bit-field là nhóm
+                    nhiều cờ trạng thái của một thiết bị vào cùng
+                    một Structure.
+                </p>
+
+                <p>
+                    Ví dụ, một module có thể cần quản lý những
+                    trạng thái sau:
+                </p>
+
+                <ul>
+                    <li>Module đã khởi tạo hay chưa.</li>
+                    <li>Module có đang hoạt động hay không.</li>
+                    <li>Module có phát hiện lỗi hay không.</li>
+                    <li>Module có đang trong quá trình xử lý hay không.</li>
+                </ul>
+
+                <pre><code>typedef struct
+{
+    unsigned int initialized : 1;
+    unsigned int active      : 1;
+    unsigned int error       : 1;
+    unsigned int busy        : 1;
+} ModuleFlags_t;</code></pre>
+
+                <p>
+                    Cách tổ chức trên giúp tập trung những cờ
+                    trạng thái có liên quan vào cùng một đối tượng.
+                </p>
+
+                <h3>6.2. Sử dụng Bit-field cho chế độ hoạt động</h3>
+
+                <p>
+                    Nếu thiết bị có nhiều chế độ hoạt động nhưng
+                    số lượng chế độ bị giới hạn, chúng ta có thể
+                    sử dụng một trường Bit-field để biểu diễn.
+                </p>
+
+                <pre><code>#define MODE_OFF       0U
+#define MODE_IDLE      1U
+#define MODE_ACTIVE    2U
+#define MODE_ERROR     3U
+
+typedef struct
+{
+    unsigned int mode : 2;
+} DeviceMode_t;</code></pre>
+
+                <p>
+                    Với Bit-field có độ rộng 2 bit, chúng ta
+                    có thể sử dụng bốn mã trạng thái từ
+                    <code>0</code> đến <code>3</code>.
+                </p>
+
+                <h3>6.3. Sử dụng Bit-field cho các nhóm trạng thái</h3>
+
+                <p>
+                    Một Structure có thể kết hợp nhiều nhóm
+                    Bit-field khác nhau để quản lý trạng thái
+                    của một thiết bị.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int power_state : 1;
+    unsigned int operation_mode : 2;
+    unsigned int fault_code : 3;
+    unsigned int communication_ready : 1;
+    unsigned int reserved : 1;
+} EcuStatus_t;</code></pre>
+
+                <p>
+                    Có thể mô tả ý nghĩa của từng member:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th>Bit-width</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>power_state</code></td>
+                            <td>1 bit</td>
+                            <td>Trạng thái nguồn.</td>
+                        </tr>
+                        <tr>
+                            <td><code>operation_mode</code></td>
+                            <td>2 bits</td>
+                            <td>Chế độ hoạt động.</td>
+                        </tr>
+                        <tr>
+                            <td><code>fault_code</code></td>
+                            <td>3 bits</td>
+                            <td>Mã lỗi nhỏ.</td>
+                        </tr>
+                        <tr>
+                            <td><code>communication_ready</code></td>
+                            <td>1 bit</td>
+                            <td>Trạng thái sẵn sàng giao tiếp.</td>
+                        </tr>
+                        <tr>
+                            <td><code>reserved</code></td>
+                            <td>1 bit</td>
+                            <td>Trường dự phòng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>6.4. Ví dụ quản lý trạng thái một ECU</h3>
+
+                <p>
+                    Trong một ECU, có thể sử dụng Bit-field để
+                    mô tả các trạng thái tổng quát của hệ thống.
+                </p>
+
+                <pre><code>#include &lt;stdbool.h&gt;
+#include &lt;stddef.h&gt;
+
+#define ECU_MODE_SLEEP      0U
+#define ECU_MODE_STANDBY    1U
+#define ECU_MODE_RUN        2U
+#define ECU_MODE_FAULT      3U
+
+typedef struct
+{
+    unsigned int initialized : 1;
+    unsigned int power_on : 1;
+    unsigned int mode : 2;
+    unsigned int communication_ready : 1;
+    unsigned int fault_detected : 1;
+} EcuStatus_t;
+
+void Ecu_SetRunning(EcuStatus_t *status)
+{
+    if (status == NULL)
+    {
+        return;
+    }
+
+    status->initialized = 1U;
+    status->power_on = 1U;
+    status->mode = ECU_MODE_RUN;
+    status->communication_ready = 1U;
+    status->fault_detected = 0U;
+}</code></pre>
+
+                <p>
+                    Function <code>Ecu_SetRunning()</code> cập nhật
+                    các trường trạng thái của ECU thông qua Pointer
+                    đến Structure.
+                </p>
+
+                <p>
+                    Cần lưu ý rằng các tên trạng thái và giá trị
+                    trên chỉ mang tính minh họa. Một dự án Automotive
+                    thực tế cần sử dụng trạng thái và quy tắc chuyển
+                    đổi theo yêu cầu hệ thống.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Bit-field phù hợp với
+                    các nhóm thông tin có miền giá trị nhỏ.
+                    Không nên sử dụng Bit-field để thay thế
+                    mọi biến trạng thái trong chương trình.
+                </div>
+
+                <h2>7. Bit-field và Bit Masking</h2>
+
+                <h3>7.1. Hai cách tổ chức trường bit</h3>
+
+                <p>
+                    Trong Embedded C, chúng ta có thể quản lý
+                    cờ trạng thái bằng Bit-field hoặc sử dụng
+                    một biến nguyên kết hợp với Bit Masking.
+                </p>
+
+                <p>
+                    Ví dụ, quản lý các cờ bằng Bit-field:
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int ready : 1;
+    unsigned int error : 1;
+    unsigned int busy  : 1;
+} StatusFlags_t;</code></pre>
+
+                <p>
+                    Quản lý các cờ bằng Bit Masking:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define STATUS_READY    (1U << 0U)
+#define STATUS_ERROR    (1U << 1U)
+#define STATUS_BUSY     (1U << 2U)
+
+uint32_t status_flags = 0U;
+
+status_flags |= STATUS_READY;
+status_flags |= STATUS_BUSY;</code></pre>
+
+                <p>
+                    Hai cách tiếp cận đều có thể được sử dụng
+                    để quản lý trạng thái theo bit, nhưng
+                    cơ chế hoạt động và mức độ kiểm soát
+                    Memory Layout của chúng khác nhau.
+                </p>
+
+                <h3>7.2. So sánh Bit-field và Bit Masking</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Bit-field</th>
+                            <th>Bit Masking</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cách khai báo</td>
+                            <td>Member có độ rộng bit trong Structure.</td>
+                            <td>Biến nguyên kết hợp với Bit Mask.</td>
+                        </tr>
+                        <tr>
+                            <td>Truy cập</td>
+                            <td>Dùng <code>.</code> hoặc <code>-&gt;</code>.</td>
+                            <td>Sử dụng toán tử Bitwise.</td>
+                        </tr>
+                        <tr>
+                            <td>Vị trí bit</td>
+                            <td>Không được bảo đảm đồng nhất giữa mọi compiler.</td>
+                            <td>Được xác định rõ bằng các phép dịch và Mask.</td>
+                        </tr>
+                        <tr>
+                            <td>Khả năng đọc hiểu</td>
+                            <td>Member có tên giúp code dễ đọc.</td>
+                            <td>Cần đặt tên Mask và Shift rõ ràng.</td>
+                        </tr>
+                        <tr>
+                            <td>Memory Layout</td>
+                            <td>Phụ thuộc compiler và ABI.</td>
+                            <td>Biến nguyên có biểu diễn theo kiểu dữ liệu xác định.</td>
+                        </tr>
+                        <tr>
+                            <td>Ứng dụng</td>
+                            <td>Mô hình hóa các trường dữ liệu nhỏ.</td>
+                            <td>Thao tác bit có vị trí xác định.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>7.3. Khi nào nên sử dụng Bit-field?</h3>
+
+                <p>
+                    Bit-field có thể phù hợp khi:
+                </p>
+
+                <ul>
+                    <li>Muốn mô hình hóa các cờ trạng thái bằng những member có tên rõ ràng.</li>
+                    <li>Các trường dữ liệu có miền giá trị nhỏ.</li>
+                    <li>Memory Layout không cần tương thích giữa nhiều compiler khác nhau.</li>
+                    <li>Compiler và coding standard của dự án cho phép sử dụng Bit-field.</li>
+                </ul>
+
+                <h3>7.4. Khi nào nên sử dụng Bit Masking?</h3>
+
+                <p>
+                    Bit Masking thường phù hợp hơn khi:
+                </p>
+
+                <ul>
+                    <li>Cần thao tác tại vị trí bit xác định trong một integer.</li>
+                    <li>Cần xử lý các trường bit theo đặc tả protocol.</li>
+                    <li>Cần tạo hoặc trích xuất một nhóm bit từ dữ liệu nhận được.</li>
+                    <li>Cần kiểm soát rõ ràng thứ tự và vị trí bit.</li>
+                    <li>Cần làm việc với Hardware Register theo tài liệu MCU.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define STATUS_READY_MASK    (1U << 0U)
+#define STATUS_ERROR_MASK    (1U << 1U)
+#define STATUS_BUSY_MASK     (1U << 2U)
+
+void SetReady(uint32_t *status)
+{
+    if (status == NULL)
+    {
+        return;
+    }
+
+    *status |= STATUS_READY_MASK;
+}</code></pre>
+
+                <p>
+                    Với cách này, vị trí bit được xác định
+                    rõ trong biểu thức. Đây là ưu điểm quan
+                    trọng khi xử lý dữ liệu có định dạng bit
+                    được quy định bởi tài liệu phần cứng
+                    hoặc giao thức.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Bit-field giúp mô tả
+                    trường dữ liệu bằng member có tên, trong khi
+                    Bit Masking giúp kiểm soát vị trí bit cụ thể.
+                    Không nên xem hai kỹ thuật này là hoàn toàn
+                    thay thế cho nhau.
+                </div>
+
+                <h2>8. Ứng dụng và giới hạn của Bit-field trong Embedded Systems</h2>
+
+                <h3>8.1. Quản lý các cờ trạng thái của Module</h3>
+
+                <p>
+                    Một module Embedded thường có nhiều cờ
+                    trạng thái như Initialized, Running,
+                    Error hoặc Busy.
+                </p>
+
+                <p>
+                    Bit-field có thể được sử dụng để nhóm
+                    những cờ trạng thái này thành một Structure.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int initialized : 1;
+    unsigned int running     : 1;
+    unsigned int error       : 1;
+    unsigned int busy        : 1;
+} ModuleStatus_t;
+
+void Module_Start(ModuleStatus_t *status)
+{
+    if (status == NULL)
+    {
+        return;
+    }
+
+    status->initialized = 1U;
+    status->running = 1U;
+    status->error = 0U;
+    status->busy = 0U;
+}</code></pre>
+
+                <p>
+                    Cách tổ chức này giúp các cờ trạng thái
+                    có liên quan được quản lý cùng nhau.
+                </p>
+
+                <h3>8.2. Biểu diễn trạng thái lỗi</h3>
+
+                <p>
+                    Một module có thể phân biệt một số trạng thái
+                    lỗi cơ bản. Nếu số lượng mã lỗi được giới hạn,
+                    chúng ta có thể sử dụng một Bit-field có
+                    độ rộng phù hợp.
+                </p>
+
+                <pre><code>#define ERROR_NONE          0U
+#define ERROR_SENSOR        1U
+#define ERROR_COMMUNICATION 2U
+#define ERROR_TIMEOUT       3U
+#define ERROR_INTERNAL      4U
+
+typedef struct
+{
+    unsigned int error_code : 3;
+    unsigned int error_active : 1;
+} ErrorStatus_t;</code></pre>
+
+                <p>
+                    Member <code>error_code</code> có độ rộng
+                    3 bit, đủ để biểu diễn các mã từ 0 đến 7.
+                    Member <code>error_active</code> dùng
+                    1 bit để biểu diễn trạng thái có lỗi
+                    hay không.
+                </p>
+
+                <h3>8.3. Mô hình hóa các trường cấu hình nhỏ</h3>
+
+                <p>
+                    Một thiết bị có thể có một số trường cấu hình
+                    với miền giá trị nhỏ, chẳng hạn:
+                </p>
+
+                <ul>
+                    <li>Operating Mode: 2 bit.</li>
+                    <li>Priority Level: 2 bit.</li>
+                    <li>Retry Count: 3 bit.</li>
+                    <li>Enable Flag: 1 bit.</li>
+                </ul>
+
+                <pre><code>typedef struct
+{
+    unsigned int operating_mode : 2;
+    unsigned int priority       : 2;
+    unsigned int retry_count    : 3;
+    unsigned int enabled        : 1;
+} CommunicationConfig_t;</code></pre>
+
+                <p>
+                    Đây là một ví dụ về cách mô tả cấu hình
+                    có nhiều trường dữ liệu nhỏ trong cùng
+                    một đối tượng.
+                </p>
+
+                <h3>8.4. Không mặc định sử dụng Bit-field cho Hardware Register</h3>
+
+                <p>
+                    Một câu hỏi thường gặp trong Embedded C
+                    là liệu chúng ta có thể sử dụng Bit-field
+                    để khai báo trực tiếp các trường của
+                    Hardware Register hay không.
+                </p>
+
+                <p>
+                    Ví dụ về ý tưởng thường được minh họa:
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int enable : 1;
+    unsigned int mode   : 2;
+    unsigned int status : 3;
+} PeripheralRegister_t;</code></pre>
+
+                <p>
+                    Nhìn qua, cách khai báo này có vẻ thuận tiện
+                    vì mỗi trường bit có tên riêng. Tuy nhiên,
+                    nó không bảo đảm rằng compiler sẽ bố trí
+                    các bit đúng với định nghĩa Hardware Register
+                    trong Reference Manual.
+                </p>
+
+                <p>
+                    Có một số vấn đề quan trọng:
+                </p>
+
+                <ul>
+                    <li>Thứ tự phân bổ Bit-field phụ thuộc implementation.</li>
+                    <li>Allocation Unit và Alignment có thể không phù hợp với thanh ghi.</li>
+                    <li>Compiler có thể tạo thao tác đọc-sửa-ghi thay vì thao tác ghi mong muốn.</li>
+                    <li>Độ rộng và kiểu truy cập có thể không tương ứng với Hardware Register.</li>
+                    <li>Truy cập một member có thể ảnh hưởng đến những bit khác trong cùng vùng lưu trữ.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, không nên mặc định dùng Bit-field để đại diện
+                    trực tiếp cho Hardware Register nếu chưa xác nhận
+                    đầy đủ hành vi của compiler và yêu cầu phần cứng.
+                </p>
+
+                <h3>8.5. Bit Masking thường phù hợp hơn với Hardware Register</h3>
+
+                <p>
+                    Khi làm việc với Hardware Register, Bit Masking
+                    thường giúp thể hiện rõ vị trí bit cần thao tác.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define PERIPHERAL_ENABLE_MASK    (1U << 0U)
+#define PERIPHERAL_MODE_MASK      (3U << 1U)
+
+uint32_t register_value = 0U;
+
+/* Enable Peripheral */
+register_value |= PERIPHERAL_ENABLE_MASK;
+
+/* Cập nhật Mode */
+register_value &= ~PERIPHERAL_MODE_MASK;
+register_value |= (2U << 1U);</code></pre>
+
+                <p>
+                    Với Bit Masking, chương trình xác định trực tiếp
+                    vị trí và độ rộng của trường bit thông qua các
+                    biểu thức Mask và Shift.
+                </p>
+
+                <p>
+                    Khi áp dụng vào thanh ghi thực tế, cần sử dụng
+                    đúng kiểu truy cập, thuộc tính volatile, các
+                    quy tắc read-modify-write và yêu cầu của
+                    Reference Manual.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý quan trọng:</strong> Không nên
+                    kết luận rằng Bit-field luôn an toàn hoặc
+                    portable khi truy cập Hardware Register.
+                    Chỉ sử dụng nếu tài liệu MCU, compiler và
+                    ABI xác nhận rõ cách bố trí cũng như hành vi
+                    truy cập. Với vị trí bit cố định, Bit Masking
+                    thường là cách thể hiện rõ ràng hơn.
+                </div>
+
+                <h3>8.6. Bit-field và dữ liệu truyền thông</h3>
+
+                <p>
+                    Một giao thức truyền thông có thể định nghĩa
+                    các trường dữ liệu nhỏ nằm trong cùng một byte.
+                    Ví dụ, một byte có thể chứa:
+                </p>
+
+                <ul>
+                    <li>1 bit biểu diễn trạng thái.</li>
+                    <li>2 bit biểu diễn chế độ.</li>
+                    <li>3 bit biểu diễn mã lỗi.</li>
+                    <li>2 bit còn lại dành cho mục đích khác.</li>
+                </ul>
+
+                <p>
+                    Mặc dù Bit-field có thể mô hình hóa các trường
+                    thông tin này về mặt logic, không nên mặc định
+                    rằng Memory Layout của Structure sẽ trùng
+                    với cách sắp xếp bit trong protocol.
+                </p>
+
+                <p>
+                    Với dữ liệu UART, CAN hoặc SPI, cần sử dụng
+                    các thao tác Masking và Shifting theo
+                    đặc tả truyền thông để đảm bảo thứ tự bit
+                    được kiểm soát chính xác.
+                </p>
+
+                <h2>9. Những hạn chế và lỗi thường gặp khi sử dụng Bit-field</h2>
+
+                <h3>9.1. Phụ thuộc vào Compiler và ABI</h3>
+
+                <p>
+                    Một trong những hạn chế lớn nhất của Bit-field
+                    là cách bố trí dữ liệu không được quy định
+                    hoàn toàn giống nhau giữa các implementation.
+                </p>
+
+                <p>
+                    Những đặc điểm có thể phụ thuộc compiler
+                    và ABI bao gồm:
+                </p>
+
+                <ul>
+                    <li>Allocation Unit được sử dụng để lưu Bit-field.</li>
+                    <li>Thứ tự phân bổ các member trong Allocation Unit.</li>
+                    <li>Cách xử lý Bit-field khi vượt qua ranh giới đơn vị lưu trữ.</li>
+                    <li>Alignment của nhóm Bit-field.</li>
+                    <li>Một số quy tắc với kiểu cơ sở mở rộng.</li>
+                </ul>
+
+                <p>
+                    Do đó, hai compiler khác nhau có thể tạo
+                    ra Memory Layout khác nhau dù sử dụng
+                    cùng một Structure Definition.
+                </p>
+
+                <h3>9.2. Không thể sử dụng sizeof trực tiếp trên Bit-field</h3>
+
+                <p>
+                    Toán tử <code>sizeof</code> không thể áp dụng
+                    trực tiếp cho một Bit-field.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int ready : 1;
+} Status_t;
+
+Status_t status;
+
+/* Không hợp lệ */
+size_t member_size = sizeof(status.ready);</code></pre>
+
+                <p>
+                    Lý do là Bit-field không phải một đối tượng
+                    có kích thước byte độc lập theo cách mà
+                    <code>sizeof</code> yêu cầu.
+                </p>
+
+                <p>
+                    Chúng ta có thể sử dụng <code>sizeof</code>
+                    trên toàn bộ Structure:
+                </p>
+
+                <pre><code>size_t structure_size = sizeof(Status_t);</code></pre>
+
+                <p>
+                    Tuy nhiên, kết quả là kích thước của
+                    toàn bộ Structure, không phải kích thước
+                    riêng của một Bit-field.
+                </p>
+
+                <h3>9.3. Không thể lấy Offset của Bit-field bằng offsetof</h3>
+
+                <p>
+                    Macro <code>offsetof</code> trong
+                    <code>&lt;stddef.h&gt;</code> được dùng
+                    để lấy vị trí byte của member trong Structure.
+                </p>
+
+                <p>
+                    Tuy nhiên, không thể sử dụng
+                    <code>offsetof</code> cho Bit-field vì
+                    một Bit-field không có địa chỉ riêng
+                    để xác định một byte offset tương ứng.
+                </p>
+
+                <pre><code>#include &lt;stddef.h&gt;
+
+typedef struct
+{
+    unsigned int ready : 1;
+    unsigned int error : 1;
+} Status_t;
+
+/* Không hợp lệ */
+size_t offset = offsetof(Status_t, ready);</code></pre>
+
+                <p>
+                    Nếu cần kiểm tra Offset của những member
+                    thông thường trong Structure, chúng ta
+                    vẫn có thể sử dụng <code>offsetof</code>.
+                </p>
+
+                <h3>9.4. Không thể khai báo Array của Bit-field</h3>
+
+                <p>
+                    Bit-field là member của Structure hoặc Union,
+                    không phải một kiểu đối tượng độc lập có
+                    thể được khai báo thành Array trực tiếp.
+                </p>
+
+                <p>
+                    Ví dụ sau không hợp lệ:
+                </p>
+
+                <pre><code>struct Example
+{
+    unsigned int flags[4] : 1;
+};</code></pre>
+
+                <p>
+                    Nếu cần một tập hợp nhiều cờ, chúng ta
+                    có thể khai báo nhiều Bit-field riêng biệt
+                    hoặc sử dụng một biến nguyên kết hợp
+                    với Bit Masking.
+                </p>
+
+                <h3>9.5. Gán giá trị vượt quá Bit-width</h3>
+
+                <p>
+                    Một lỗi khác là gán một giá trị lớn hơn
+                    miền có thể biểu diễn của Bit-field.
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int mode : 2;
+} DeviceConfig_t;
+
+DeviceConfig_t config;
+
+/* Giá trị không nằm trong miền 0 đến 3 */
+config.mode = 5U;</code></pre>
+
+                <p>
+                    Với member có độ rộng 2 bit, miền giá trị
+                    không dấu chỉ có thể biểu diễn từ 0 đến 3.
+                    Không nên dựa vào hành vi của compiler
+                    khi giá trị được gán vượt quá miền này.
+                </p>
+
+                <p>
+                    Cách khắc phục là kiểm tra giá trị trước
+                    khi cập nhật:
+                </p>
+
+                <pre><code>if (mode <= 3U)
+{
+    config.mode = mode;
+}</code></pre>
+
+                <h3>9.6. Không nên dựa vào thứ tự bit để trao đổi dữ liệu</h3>
+
+                <p>
+                    Một chương trình có thể chạy đúng trên
+                    một compiler nhưng cho kết quả khác khi
+                    được biên dịch bằng compiler hoặc ABI khác.
+                </p>
+
+                <p>
+                    Điều này đặc biệt quan trọng khi Structure
+                    chứa Bit-field được sử dụng làm dữ liệu:
+                </p>
+
+                <ul>
+                    <li>Gửi qua UART, CAN hoặc SPI.</li>
+                    <li>Lưu vào Flash hoặc EEPROM theo định dạng cố định.</li>
+                    <li>Trao đổi giữa các MCU khác nhau.</li>
+                    <li>Dùng làm dữ liệu giao tiếp giữa các phần mềm có ABI khác nhau.</li>
+                </ul>
+
+                <p>
+                    Nếu cần định dạng byte ổn định, hãy sử dụng
+                    cách đóng gói và giải mã dữ liệu có quy tắc
+                    rõ ràng thay vì phụ thuộc Memory Layout
+                    của Bit-field.
+                </p>
+
+                <h3>9.7. Chú ý khi sử dụng volatile Bit-field</h3>
+
+                <p>
+                    Trong Embedded Systems, từ khóa
+                    <code>volatile</code> thường xuất hiện
+                    khi làm việc với dữ liệu có thể thay đổi
+                    bởi phần cứng hoặc những ngữ cảnh thực thi
+                    khác.
+                </p>
+
+                <p>
+                    Tuy nhiên, việc khai báo Bit-field là
+                    <code>volatile</code> không tự động bảo
+                    đảm mỗi thao tác trên một member sẽ tạo
+                    ra đúng một thao tác đọc hoặc ghi duy nhất
+                    lên Hardware Register.
+                </p>
+
+                <pre><code>typedef struct
+{
+    volatile unsigned int ready : 1;
+    volatile unsigned int error : 1;
+} HardwareStatus_t;</code></pre>
+
+                <p>
+                    Khi cập nhật một Bit-field, compiler
+                    có thể cần đọc một Allocation Unit,
+                    thay đổi các bit tương ứng rồi ghi
+                    lại vùng lưu trữ đó.
+                </p>
+
+                <p>
+                    Đây là dạng thao tác Read-Modify-Write.
+                    Với Hardware Register, hành vi này có
+                    thể không phù hợp nếu thanh ghi có
+                    những bit chỉ đọc, bit tự xóa hoặc
+                    cơ chế Write-one-to-clear.
+                </p>
+
+                <p>
+                    Ngoài ra, <code>volatile</code> không
+                    làm cho thao tác trở thành Atomic và
+                    không tự giải quyết các vấn đề đồng
+                    bộ giữa Task và ISR.
+                </p>
+
+                <div class="note">
+                    <strong>Khuyến nghị:</strong> Không nên
+                    dùng Volatile Bit-field để thao tác
+                    trực tiếp Hardware Register nếu chưa
+                    hiểu rõ mã máy được compiler tạo ra
+                    và quy tắc truy cập của thiết bị.
+                    Với các thanh ghi phần cứng, hãy ưu
+                    tiên phương pháp truy cập được tài liệu
+                    MCU và dự án quy định.
+                </div>
+
+                <h2>10. Tổng kết bài học</h2>
+
+                <p>
+                    Bit-field là một tính năng trong C cho phép
+                    khai báo các member có độ rộng bit xác định.
+                    Kỹ thuật này hữu ích khi mô hình hóa những
+                    cờ trạng thái, chế độ hoạt động và các trường
+                    dữ liệu có miền giá trị nhỏ.
+                </p>
+
+                <p>
+                    Tuy nhiên, Bit-field có những giới hạn quan
+                    trọng về Memory Layout, Allocation Unit,
+                    Alignment và khả năng tương thích giữa
+                    compiler hoặc ABI khác nhau.
+                </p>
+
+                <p>
+                    Qua bài học này, chúng ta đã tìm hiểu
+                    những nội dung quan trọng sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kiến thức</th>
+                            <th>Nội dung cần ghi nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bit-field</td>
+                            <td>
+                                Member của Structure hoặc Union
+                                được khai báo với độ rộng bit
+                                xác định.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Bit-width</td>
+                            <td>
+                                Số bit được chỉ định cho một
+                                member và giới hạn miền giá trị
+                                mà member có thể biểu diễn.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Unsigned Bit-field</td>
+                            <td>
+                                Phù hợp với những trường dữ liệu
+                                không cần biểu diễn giá trị âm.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Signed Bit-field</td>
+                            <td>
+                                Có thể biểu diễn giá trị âm,
+                                nhưng cần chú ý quy tắc của
+                                implementation.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Allocation Unit</td>
+                            <td>
+                                Vùng lưu trữ mà compiler sử dụng
+                                để bố trí các Bit-field.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Unnamed Bit-field</td>
+                            <td>
+                                Member không có tên, thường
+                                dùng để dành khoảng trống.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Zero-width Bit-field</td>
+                            <td>
+                                Member không tên có độ rộng zero,
+                                ảnh hưởng đến ranh giới Allocation
+                                Unit tiếp theo.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Bit-field Access</td>
+                            <td>
+                                Sử dụng toán tử <code>.</code>
+                                hoặc <code>-&gt;</code> để truy cập.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Bit Masking</td>
+                            <td>
+                                Thao tác bit thông qua Mask và
+                                Shift, giúp kiểm soát vị trí
+                                bit cụ thể.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Compiler và ABI</td>
+                            <td>
+                                Ảnh hưởng đến Allocation Unit,
+                                thứ tự bit và Alignment của
+                                Bit-field.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Embedded Application</td>
+                            <td>
+                                Có thể sử dụng để mô hình hóa
+                                cờ trạng thái và các trường
+                                dữ liệu nhỏ.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Những điểm cần nhớ khi lập trình thực tế</h3>
+
+                <ul>
+                    <li>
+                        Sử dụng Bit-field khi cần mô tả những
+                        trường dữ liệu có độ rộng bit nhỏ
+                        và miền giá trị giới hạn.
+                    </li>
+                    <li>
+                        Ưu tiên <code>unsigned int</code>
+                        cho các trường dữ liệu không âm
+                        nếu phù hợp với coding standard
+                        của dự án.
+                    </li>
+                    <li>
+                        Kiểm tra miền giá trị trước khi
+                        gán dữ liệu cho Bit-field.
+                    </li>
+                    <li>
+                        Không giả định tổng số bit khai báo
+                        chính là kích thước thực tế của
+                        Structure.
+                    </li>
+                    <li>
+                        Không giả định mọi compiler đều
+                        phân bổ Bit-field theo cùng thứ tự.
+                    </li>
+                    <li>
+                        Không thể lấy địa chỉ trực tiếp
+                        của Bit-field hoặc sử dụng
+                        <code>sizeof</code> trên member đó.
+                    </li>
+                    <li>
+                        Sử dụng Bit Masking khi cần kiểm
+                        soát chính xác vị trí bit trong
+                        dữ liệu hoặc thanh ghi.
+                    </li>
+                    <li>
+                        Không mặc định sử dụng Bit-field
+                        làm định dạng dữ liệu truyền thông
+                        hoặc Hardware Register.
+                    </li>
+                    <li>
+                        Kiểm tra tài liệu compiler, ABI
+                        và quy định của dự án trước khi
+                        sử dụng Bit-field trong Embedded.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Kết luận:</strong> Bit-field giúp
+                    mô hình hóa những trường dữ liệu nhỏ và
+                    các cờ trạng thái một cách trực quan.
+                    Tuy nhiên, cách bố trí bit phụ thuộc
+                    implementation nên cần sử dụng thận
+                    trọng trong Embedded Systems. Khi
+                    yêu cầu vị trí bit phải xác định chính
+                    xác, Bit Masking thường là lựa chọn
+                    dễ kiểm soát và portable hơn.
+                </div>
+
+                <h3>Bài học tiếp theo</h3>
+
+                <p>
+                    Trong bài tiếp theo, chúng ta sẽ tìm hiểu
+                    về <strong>Flexible Array Member (FAM)</strong>.
+                    Nội dung sẽ tập trung vào cách khai báo
+                    mảng có kích thước linh hoạt ở cuối
+                    Structure, quy tắc sử dụng FAM, cách
+                    xác định kích thước bộ nhớ cần cấp phát
+                    và ứng dụng trong Packet Buffer cũng
+                    như các cấu trúc dữ liệu có kích thước
+                    thay đổi.
+                </p>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-19.html">← Bài trước</a>
+                    <a class="btn" href="lesson-21.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>EmLearn - 2026</p>
+    </footer>
+
+</body>
+</html>

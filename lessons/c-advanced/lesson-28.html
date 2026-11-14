@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 28: Separate Compilation &amp; Linking | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PART 1 -->
+                <p class="side-heading">Part 1. Advanced C Fundamentals &amp; Memory Management</p>
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PART 2 -->
+                <p class="side-heading">Part 2. Advanced Pointer Programming</p>
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PART 3 -->
+                <p class="side-heading">Part 3. Advanced C Data Types</p>
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PART 4 -->
+                <p class="side-heading">Part 4. Preprocessor &amp; Modular Programming</p>
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html" class="active" aria-current="page">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PART 5 -->
+                <p class="side-heading">Part 5. Bit Manipulation &amp; Embedded-Oriented Programming</p>
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PART 6 -->
+                <p class="side-heading">Part 6. Defensive Programming &amp; Reliable C</p>
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PART 7 -->
+                <p class="side-heading">Part 7. Programming Optimization &amp; Design Patterns in C</p>
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PART 8 -->
+                <p class="side-heading">Part 8. Code Quality, MISRA C &amp; Software Verification</p>
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 28: Separate Compilation &amp; Linking</h1>
+
+                <p>
+                    Trong các bài trước, chúng ta đã tìm hiểu về C Preprocessor, Header File,
+                    Macro và những kỹ thuật tổ chức code ở mức cơ bản.
+                    Tuy nhiên, khi một dự án C phát triển lớn hơn, việc đặt toàn bộ chương trình
+                    trong một file duy nhất sẽ khiến source code trở nên khó quản lý và bảo trì.
+                </p>
+
+                <p>
+                    Trong thực tế, một dự án Embedded thường được chia thành nhiều module.
+                    Ví dụ, chương trình có thể bao gồm Application, GPIO Driver, UART Driver,
+                    CAN Driver và các module xử lý dữ liệu riêng biệt.
+                </p>
+
+                <p>
+                    Để xây dựng một chương trình từ nhiều source file, C sử dụng cơ chế
+                    <strong>Separate Compilation</strong> và <strong>Linking</strong>.
+                    Mỗi source file có thể được biên dịch độc lập thành một object file.
+                    Sau đó, Linker kết hợp các object file và library cần thiết để tạo ra
+                    chương trình hoàn chỉnh.
+                </p>
+
+                <div class="note">
+                    <strong>Mục tiêu bài học:</strong>
+                    <ul>
+                        <li>Hiểu khái niệm Separate Compilation.</li>
+                        <li>Phân biệt Source File, Header File và Object File.</li>
+                        <li>Hiểu vai trò của Compiler và Linker trong quá trình build.</li>
+                        <li>Biết cách chia một chương trình C thành nhiều source file.</li>
+                        <li>Hiểu Symbol, External Linkage và Undefined Reference.</li>
+                        <li>Biết cách biên dịch và liên kết nhiều file bằng GCC.</li>
+                        <li>Hiểu cách Separate Compilation được áp dụng trong Embedded Project.</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 1 -->
+                <h2>1. Separate Compilation là gì?</h2>
+
+                <p>
+                    <strong>Separate Compilation</strong> là phương pháp biên dịch chương trình
+                    bằng cách chia source code thành nhiều translation unit và biên dịch
+                    từng translation unit độc lập.
+                </p>
+
+                <p>
+                    Trong C, một source file sau khi được xử lý cùng các header file được include
+                    sẽ tạo thành một translation unit.
+                    Compiler có thể xử lý translation unit này mà không cần biên dịch lại
+                    toàn bộ các source file khác trong dự án.
+                </p>
+
+                <p>
+                    Ví dụ, thay vì viết toàn bộ chương trình trong một file <code>main.c</code>,
+                    chúng ta có thể chia thành:
+                </p>
+
+                <pre><code>Project/
+│
+├── main.c
+├── uart.c
+├── gpio.c
+│
+├── uart.h
+└── gpio.h</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><code>main.c</code>: Chứa chương trình chính và gọi các module khác.</li>
+                    <li><code>uart.c</code>: Chứa phần implementation của UART module.</li>
+                    <li><code>gpio.c</code>: Chứa phần implementation của GPIO module.</li>
+                    <li><code>uart.h</code>: Khai báo interface mà module UART cung cấp.</li>
+                    <li><code>gpio.h</code>: Khai báo interface mà module GPIO cung cấp.</li>
+                </ul>
+
+                <p>
+                    Mỗi file <code>.c</code> sẽ được biên dịch riêng thành một object file:
+                </p>
+
+                <pre><code>main.c  → main.o
+uart.c  → uart.o
+gpio.c  → gpio.o</code></pre>
+
+                <p>
+                    Sau đó, Linker kết hợp các object file để tạo ra executable:
+                </p>
+
+                <pre><code>main.o + uart.o + gpio.o
+              |
+              v
+         Executable</code></pre>
+
+                <p>
+                    Đây chính là ý tưởng cơ bản của Separate Compilation.
+                </p>
+
+                <div class="note">
+                    <strong>Điểm cần nhớ:</strong>
+                    Separate Compilation cho phép mỗi source file được biên dịch độc lập.
+                    Khi một module thay đổi, thông thường chỉ cần biên dịch lại module đó
+                    và thực hiện linking lại chương trình.
+                </div>
+
+                <!-- SECTION 2 -->
+                <h2>2. Source File, Header File và Object File</h2>
+
+                <p>
+                    Để hiểu rõ Separate Compilation, trước tiên cần phân biệt vai trò
+                    của các loại file thường xuất hiện trong một dự án C.
+                </p>
+
+                <h3>2.1. Source File (.c)</h3>
+
+                <p>
+                    Source file là file chứa phần implementation của chương trình.
+                    Đây là nơi chúng ta định nghĩa function, variable và các logic xử lý.
+                </p>
+
+                <p>Ví dụ file <code>uart.c</code>:</p>
+
+                <pre><code>#include "uart.h"
+
+void UART_Init(void)
+{
+    /* UART initialization */
+}
+
+void UART_SendByte(unsigned char data)
+{
+    /* Send one byte through UART */
+}</code></pre>
+
+                <p>
+                    File này chứa phần triển khai hai function:
+                    <code>UART_Init()</code> và <code>UART_SendByte()</code>.
+                </p>
+
+                <h3>2.2. Header File (.h)</h3>
+
+                <p>
+                    Header file thường chứa những khai báo cần được chia sẻ giữa các source file.
+                    Ví dụ:
+                </p>
+
+                <pre><code>#ifndef UART_H
+#define UART_H
+
+void UART_Init(void);
+void UART_SendByte(unsigned char data);
+
+#endif</code></pre>
+
+                <p>
+                    Khi một source file muốn sử dụng function được cung cấp bởi UART module,
+                    nó chỉ cần include header file:
+                </p>
+
+                <pre><code>#include "uart.h"</code></pre>
+
+                <p>
+                    Header file giúp compiler biết được function tồn tại và cách gọi function đó,
+                    thông qua function prototype.
+                </p>
+
+                <p>
+                    Tuy nhiên, việc include header file không tự động cung cấp phần implementation
+                    của function. Phần implementation vẫn nằm trong <code>uart.c</code>
+                    và cần được liên kết trong quá trình build.
+                </p>
+
+                <h3>2.3. Object File (.o hoặc .obj)</h3>
+
+                <p>
+                    Object file là kết quả của quá trình compiler và assembler xử lý một
+                    translation unit.
+                </p>
+
+                <p>
+                    Object file thường chứa:
+                </p>
+
+                <ul>
+                    <li>Machine code được tạo từ source code.</li>
+                    <li>Thông tin về các symbol được định nghĩa.</li>
+                    <li>Thông tin về các symbol chưa được giải quyết.</li>
+                    <li>Relocation information phục vụ quá trình linking.</li>
+                    <li>Các section và metadata liên quan đến object file.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>gcc -c uart.c -o uart.o</code></pre>
+
+                <p>
+                    Lệnh này biên dịch <code>uart.c</code> thành <code>uart.o</code>
+                    nhưng chưa tạo executable hoàn chỉnh.
+                </p>
+
+                <h3>2.4. So sánh các loại file</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại file</th>
+                            <th>Vai trò</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Source File</td>
+                            <td>Chứa phần implementation của chương trình.</td>
+                            <td><code>main.c</code>, <code>uart.c</code></td>
+                        </tr>
+                        <tr>
+                            <td>Header File</td>
+                            <td>Chứa declaration và interface dùng chung.</td>
+                            <td><code>uart.h</code>, <code>gpio.h</code></td>
+                        </tr>
+                        <tr>
+                            <td>Object File</td>
+                            <td>Chứa code và thông tin cần thiết cho linking.</td>
+                            <td><code>main.o</code>, <code>uart.o</code></td>
+                        </tr>
+                        <tr>
+                            <td>Executable</td>
+                            <td>Chương trình đã được liên kết hoàn chỉnh.</td>
+                            <td><code>firmware.elf</code>, <code>app.exe</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- SECTION 3 -->
+                <h2>3. Quy trình Separate Compilation và Linking</h2>
+
+                <p>
+                    Một chương trình C được xây dựng từ nhiều source file thường trải qua
+                    các bước chính sau:
+                </p>
+
+                <ol>
+                    <li>Preprocessing.</li>
+                    <li>Compilation.</li>
+                    <li>Assembly.</li>
+                    <li>Linking.</li>
+                </ol>
+
+                <h3>3.1. Tổng quan luồng xử lý</h3>
+
+                <pre><code>             Source Files
+             ┌───────────┐
+             │  main.c   │
+             │  uart.c   │
+             │  gpio.c   │
+             └─────┬─────┘
+                   |
+                   v
+             Preprocessing
+                   |
+                   v
+              Compilation
+                   |
+                   v
+                Assembly
+                   |
+                   v
+             Object Files
+             ┌───────────┐
+             │  main.o   │
+             │  uart.o   │
+             │  gpio.o   │
+             └─────┬─────┘
+                   |
+                   v
+                Linking
+                   |
+                   v
+              Executable
+                firmware.elf</code></pre>
+
+                <h3>3.2. Preprocessing</h3>
+
+                <p>
+                    Ở bước đầu tiên, Preprocessor xử lý các chỉ thị như:
+                </p>
+
+                <ul>
+                    <li><code>#include</code></li>
+                    <li><code>#define</code></li>
+                    <li><code>#if</code>, <code>#ifdef</code>, <code>#ifndef</code></li>
+                    <li>Các macro expansion khác.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include "uart.h"
+
+#define BAUDRATE 9600U
+
+void UART_Init(void)
+{
+    /* Configuration */
+}</code></pre>
+
+                <p>
+                    Sau Preprocessing, nội dung header được đưa vào translation unit
+                    và macro được thay thế theo quy tắc của Preprocessor.
+                </p>
+
+                <p>
+                    Có thể sử dụng GCC để chỉ thực hiện bước này:
+                </p>
+
+                <pre><code>gcc -E uart.c -o uart.i</code></pre>
+
+                <h3>3.3. Compilation</h3>
+
+                <p>
+                    Sau Preprocessing, compiler phân tích source code đã được xử lý,
+                    kiểm tra cú pháp, kiểu dữ liệu và chuyển code thành dạng trung gian
+                    hoặc mã assembly tùy theo toolchain.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>gcc -S uart.i -o uart.s</code></pre>
+
+                <p>
+                    File <code>uart.s</code> chứa mã assembly được tạo ra từ translation unit.
+                </p>
+
+                <h3>3.4. Assembly</h3>
+
+                <p>
+                    Assembler chuyển mã assembly thành machine code và tạo object file.
+                </p>
+
+                <pre><code>gcc -c uart.c -o uart.o</code></pre>
+
+                <p>
+                    Lệnh trên thực hiện các bước cần thiết để tạo object file
+                    <code>uart.o</code>, nhưng không thực hiện linking.
+                </p>
+
+                <h3>3.5. Linking</h3>
+
+                <p>
+                    Sau khi các source file được biên dịch riêng thành object file,
+                    Linker sẽ kết hợp chúng lại.
+                </p>
+
+                <p>
+                    Trong quá trình này, Linker thực hiện các công việc như:
+                </p>
+
+                <ul>
+                    <li>Đọc symbol được định nghĩa trong các object file.</li>
+                    <li>Tìm definition tương ứng cho những symbol được tham chiếu.</li>
+                    <li>Giải quyết external references.</li>
+                    <li>Thực hiện relocation theo bố trí địa chỉ.</li>
+                    <li>Kết hợp các section theo quy tắc của linker và linker script.</li>
+                    <li>Tạo executable hoặc firmware image theo cấu hình build.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>gcc main.o uart.o gpio.o -o firmware</code></pre>
+
+                <p>
+                    Sau khi linking thành công, chương trình hoàn chỉnh sẽ được tạo ra
+                    với tên <code>firmware</code>.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Trong Embedded Development, output thường là file ELF như
+                    <code>firmware.elf</code>. Từ file này, toolchain có thể tiếp tục tạo
+                    file HEX hoặc BIN để nạp vào MCU.
+                </div>
+
+                <!-- SECTION 4 -->
+                <h2>4. Ví dụ thực tế: Chia chương trình thành nhiều file</h2>
+
+                <p>
+                    Để hiểu rõ hơn, chúng ta sẽ xây dựng một chương trình đơn giản
+                    gồm ba source file và hai header file.
+                </p>
+
+                <h3>4.1. Cấu trúc project</h3>
+
+                <pre><code>EmbeddedProject/
+│
+├── main.c
+│
+├── uart.c
+├── uart.h
+│
+├── gpio.c
+└── gpio.h</code></pre>
+
+                <p>
+                    Mỗi module chịu trách nhiệm cho một chức năng riêng:
+                </p>
+
+                <ul>
+                    <li><strong>Main:</strong> Điều phối hoạt động của chương trình.</li>
+                    <li><strong>UART:</strong> Cung cấp các function giao tiếp UART.</li>
+                    <li><strong>GPIO:</strong> Cung cấp các function điều khiển GPIO.</li>
+                </ul>
+
+                <h3>4.2. File uart.h</h3>
+
+                <pre><code>#ifndef UART_H
+#define UART_H
+
+void UART_Init(void);
+void UART_SendByte(unsigned char data);
+
+#endif</code></pre>
+
+                <p>
+                    Header file khai báo các function mà UART module cung cấp.
+                </p>
+
+                <h3>4.3. File uart.c</h3>
+
+                <pre><code>#include "uart.h"
+#include &lt;stdio.h&gt;
+
+void UART_Init(void)
+{
+    printf("UART Initialized\n");
+}
+
+void UART_SendByte(unsigned char data)
+{
+    printf("UART Send: %c\n", data);
+}</code></pre>
+
+                <p>
+                    File này chứa implementation của các function được khai báo trong
+                    <code>uart.h</code>.
+                </p>
+
+                <h3>4.4. File gpio.h</h3>
+
+                <pre><code>#ifndef GPIO_H
+#define GPIO_H
+
+void GPIO_Init(void);
+void GPIO_SetHigh(void);
+void GPIO_SetLow(void);
+
+#endif</code></pre>
+
+                <h3>4.5. File gpio.c</h3>
+
+                <pre><code>#include "gpio.h"
+#include &lt;stdio.h&gt;
+
+void GPIO_Init(void)
+{
+    printf("GPIO Initialized\n");
+}
+
+void GPIO_SetHigh(void)
+{
+    printf("GPIO Output: HIGH\n");
+}
+
+void GPIO_SetLow(void)
+{
+    printf("GPIO Output: LOW\n");
+}</code></pre>
+
+                <h3>4.6. File main.c</h3>
+
+                <pre><code>#include "uart.h"
+#include "gpio.h"
+
+int main(void)
+{
+    UART_Init();
+    GPIO_Init();
+
+    UART_SendByte('A');
+
+    GPIO_SetHigh();
+    GPIO_SetLow();
+
+    while (1)
+    {
+        /* Main loop */
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong <code>main.c</code>, chúng ta không cần biết chi tiết
+                    implementation của UART và GPIO.
+                    Chương trình chỉ cần include header file để sử dụng các function
+                    được module cung cấp.
+                </p>
+
+                <h3>4.7. Quá trình build</h3>
+
+                <p>
+                    Đầu tiên, biên dịch từng source file thành object file:
+                </p>
+
+                <pre><code>gcc -c main.c -o main.o
+gcc -c uart.c -o uart.o
+gcc -c gpio.c -o gpio.o</code></pre>
+
+                <p>
+                    Sau đó, liên kết các object file:
+                </p>
+
+                <pre><code>gcc main.o uart.o gpio.o -o firmware</code></pre>
+
+                <p>
+                    Cuối cùng, chạy chương trình:
+                </p>
+
+                <pre><code>./firmware</code></pre>
+
+                <p>
+                    Output minh họa:
+                </p>
+
+                <pre><code>UART Initialized
+GPIO Initialized
+UART Send: A
+GPIO Output: HIGH
+GPIO Output: LOW</code></pre>
+
+                <p>
+                    Như vậy, mặc dù chương trình được chia thành nhiều file,
+                    các function vẫn có thể gọi lẫn nhau thông qua declaration
+                    và linking.
+                </p>
+
+                <!-- SECTION 5 -->
+                <h2>5. Symbol và External Reference</h2>
+
+                <p>
+                    Để hiểu cách Linker kết nối các object file, chúng ta cần tìm hiểu
+                    khái niệm <strong>Symbol</strong>.
+                </p>
+
+                <p>
+                    Symbol là tên được sử dụng để đại diện cho một thực thể trong chương trình,
+                    chẳng hạn như function hoặc variable có thể được tham chiếu ở cấp độ object file.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>void UART_Init(void)
+{
+    /* Implementation */
+}
+
+int system_status = 0;</code></pre>
+
+                <p>
+                    Trong object file tương ứng, các symbol có thể bao gồm:
+                </p>
+
+                <ul>
+                    <li><code>UART_Init</code>: Symbol đại diện cho function.</li>
+                    <li><code>system_status</code>: Symbol đại diện cho variable global.</li>
+                </ul>
+
+                <h3>5.1. Defined Symbol</h3>
+
+                <p>
+                    Defined Symbol là symbol đã có definition trong object file.
+                </p>
+
+                <p>
+                    Ví dụ trong <code>uart.c</code>:
+                </p>
+
+                <pre><code>void UART_Init(void)
+{
+    /* Implementation */
+}</code></pre>
+
+                <p>
+                    Khi biên dịch thành <code>uart.o</code>, object file sẽ cung cấp
+                    symbol <code>UART_Init</code>.
+                </p>
+
+                <h3>5.2. Undefined Symbol</h3>
+
+                <p>
+                    Undefined Symbol là symbol được tham chiếu trong một object file
+                    nhưng chưa có definition tại object file đó.
+                </p>
+
+                <p>
+                    Ví dụ trong <code>main.c</code>:
+                </p>
+
+                <pre><code>int main(void)
+{
+    UART_Init();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi biên dịch <code>main.c</code> thành <code>main.o</code>,
+                    compiler biết rằng <code>UART_Init()</code> là function được gọi,
+                    nhưng phần implementation không nằm trong translation unit của
+                    <code>main.c</code>.
+                </p>
+
+                <p>
+                    Vì vậy, object file <code>main.o</code> sẽ chứa một external reference
+                    cần được giải quyết trong quá trình linking.
+                </p>
+
+                <h3>5.3. Linker giải quyết symbol như thế nào?</h3>
+
+                <p>
+                    Giả sử:
+                </p>
+
+                <ul>
+                    <li><code>main.o</code> tham chiếu đến symbol <code>UART_Init</code>.</li>
+                    <li><code>uart.o</code> định nghĩa symbol <code>UART_Init</code>.</li>
+                </ul>
+
+                <p>
+                    Khi Linker xử lý hai object file này, nó sẽ tìm definition tương ứng
+                    và kết nối lời gọi function trong <code>main.o</code> với implementation
+                    trong <code>uart.o</code>.
+                </p>
+
+                <pre><code>main.o                         uart.o
+┌─────────────────┐           ┌─────────────────┐
+│                 │           │                 │
+│ Call UART_Init  │ ────────&gt; │ UART_Init()     │
+│                 │           │ Implementation │
+│ Undefined       │           │ Defined         │
+│ Symbol          │           │ Symbol          │
+└─────────────────┘           └─────────────────┘
+                 \             /
+                  \           /
+                   v         v
+                      Linker
+                         |
+                         v
+                 Resolved Reference</code></pre>
+
+                <p>
+                    Đây là một trong những nhiệm vụ quan trọng nhất của Linker.
+                </p>
+
+                <!-- SECTION 6 -->
+                <h2>6. External Linkage và Internal Linkage</h2>
+
+                <p>
+                    Trong C, linkage xác định cách một tên có thể được liên kết
+                    với những khai báo khác trong các translation unit.
+                </p>
+
+                <p>
+                    Hai loại linkage quan trọng khi làm việc với Separate Compilation là:
+                </p>
+
+                <ul>
+                    <li>External Linkage.</li>
+                    <li>Internal Linkage.</li>
+                </ul>
+
+                <h3>6.1. External Linkage</h3>
+
+                <p>
+                    Một function hoặc variable có External Linkage có thể được tham chiếu
+                    từ các translation unit khác thông qua khai báo phù hợp.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>/* uart.c */
+
+int uart_status = 0;
+
+void UART_Init(void)
+{
+    uart_status = 1;
+}</code></pre>
+
+                <p>
+                    Trong một source file khác:
+                </p>
+
+                <pre><code>/* main.c */
+
+extern int uart_status;
+
+void UART_Init(void);
+
+int main(void)
+{
+    UART_Init();
+
+    if (uart_status == 1)
+    {
+        /* UART is initialized */
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Từ khóa <code>extern</code> ở đây khai báo rằng variable
+                    <code>uart_status</code> được định nghĩa ở nơi khác.
+                </p>
+
+                <p>
+                    Tương tự, function prototype <code>UART_Init()</code> cho phép
+                    translation unit của <code>main.c</code> tham chiếu đến function
+                    được định nghĩa trong <code>uart.c</code>.
+                </p>
+
+                <h3>6.2. Internal Linkage</h3>
+
+                <p>
+                    Khi sử dụng từ khóa <code>static</code> ở phạm vi file cho function
+                    hoặc variable, tên đó có Internal Linkage.
+                </p>
+
+                <pre><code>/* uart.c */
+
+static int uart_internal_status = 0;
+
+static void UART_ResetInternalState(void)
+{
+    uart_internal_status = 0;
+}
+
+void UART_Init(void)
+{
+    UART_ResetInternalState();
+}</code></pre>
+
+                <p>
+                    Trong trường hợp này:
+                </p>
+
+                <ul>
+                    <li><code>uart_internal_status</code> chỉ được truy cập thông qua tên này trong translation unit hiện tại.</li>
+                    <li><code>UART_ResetInternalState()</code> chỉ có thể được gọi bằng tên này trong translation unit hiện tại.</li>
+                    <li><code>UART_Init()</code> không được khai báo <code>static</code>, nên có thể được cung cấp cho module khác.</li>
+                </ul>
+
+                <p>
+                    Internal Linkage giúp giới hạn phạm vi sử dụng của các thành phần
+                    không cần công khai ra bên ngoài module.
+                </p>
+
+                <h3>6.3. So sánh External Linkage và Internal Linkage</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>External Linkage</th>
+                            <th>Internal Linkage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phạm vi liên kết</td>
+                            <td>Có thể được tham chiếu từ translation unit khác.</td>
+                            <td>Chỉ có ý nghĩa trong translation unit hiện tại.</td>
+                        </tr>
+                        <tr>
+                            <td>Từ khóa thường gặp</td>
+                            <td>Không khai báo <code>static</code> ở file scope.</td>
+                            <td><code>static</code>.</td>
+                        </tr>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Cung cấp interface cho module khác.</td>
+                            <td>Ẩn implementation nội bộ.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td><code>UART_Init()</code></td>
+                            <td><code>UART_ResetInternalState()</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Góc nhìn Embedded:</strong>
+                    Một driver thường chỉ cần cung cấp một số function public như
+                    <code>UART_Init()</code>, <code>UART_Send()</code> hoặc
+                    <code>UART_Receive()</code>.
+                    Các helper function phục vụ implementation nội bộ nên được khai báo
+                    <code>static</code> khi phù hợp để tránh làm lộ quá nhiều symbol ra bên ngoài.
+                </div>
+
+                <!-- SECTION 7 -->
+                <h2>7. Các lỗi thường gặp khi Linking</h2>
+
+                <p>
+                    Khi build một chương trình C gồm nhiều source file, một số lỗi có thể
+                    xuất hiện ở bước linking thay vì compilation.
+                    Đây là điểm cần phân biệt khi debug build error.
+                </p>
+
+                <h3>7.1. Undefined Reference</h3>
+
+                <p>
+                    Đây là lỗi xảy ra khi Linker không tìm thấy definition tương ứng
+                    cho một symbol được tham chiếu.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>/* main.c */
+
+void UART_Init(void);
+
+int main(void)
+{
+    UART_Init();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Nếu chỉ biên dịch và linking <code>main.c</code> mà không cung cấp
+                    object file chứa implementation của <code>UART_Init()</code>,
+                    Linker sẽ không tìm thấy function đó.
+                </p>
+
+                <p>
+                    Lệnh:
+                </p>
+
+                <pre><code>gcc main.c -o firmware</code></pre>
+
+                <p>
+                    Có thể dẫn đến lỗi tương tự:
+                </p>
+
+                <pre><code>undefined reference to `UART_Init'</code></pre>
+
+                <p>
+                    Cách khắc phục là bổ sung source file chứa implementation:
+                </p>
+
+                <pre><code>gcc main.c uart.c -o firmware</code></pre>
+
+                <h3>7.2. Multiple Definition</h3>
+
+                <p>
+                    Lỗi Multiple Definition xảy ra khi nhiều object file cùng cung cấp
+                    definition cho một symbol có External Linkage, trong khi chương trình
+                    không cho phép các definition đó tồn tại đồng thời.
+                </p>
+
+                <p>Ví dụ sai:</p>
+
+                <pre><code>/* main.c */
+
+int system_status = 0;</code></pre>
+
+                <pre><code>/* uart.c */
+
+int system_status = 1;</code></pre>
+
+                <p>
+                    Cả hai source file đều định nghĩa một global variable có cùng tên
+                    <code>system_status</code>.
+                    Khi linking, Linker có thể báo lỗi Multiple Definition.
+                </p>
+
+                <p>
+                    Cách tổ chức phù hợp hơn là chỉ định nghĩa variable ở một source file:
+                </p>
+
+                <pre><code>/* system.c */
+
+int system_status = 0;</code></pre>
+
+                <p>
+                    Các source file khác chỉ khai báo:
+                </p>
+
+                <pre><code>/* system.h */
+
+#ifndef SYSTEM_H
+#define SYSTEM_H
+
+extern int system_status;
+
+#endif</code></pre>
+
+                <p>
+                    Khi cần sử dụng:
+                </p>
+
+                <pre><code>/* main.c */
+
+#include "system.h"
+
+void update_system(void)
+{
+    system_status = 1;
+}</code></pre>
+
+                <h3>7.3. Function Declaration và Definition không khớp</h3>
+
+                <p>
+                    Một lỗi khác là khai báo function trong header file không khớp
+                    với implementation trong source file.
+                </p>
+
+                <p>Ví dụ:</p>
+
+                <pre><code>/* uart.h */
+
+void UART_SendByte(unsigned char data);</code></pre>
+
+                <pre><code>/* uart.c */
+
+void UART_SendByte(unsigned int data)
+{
+    /* Implementation */
+}</code></pre>
+
+                <p>
+                    Hai khai báo trên không có cùng function type.
+                    Điều này có thể gây ra diagnostic hoặc lỗi liên kết tùy trường hợp
+                    và toolchain.
+                </p>
+
+                <p>
+                    Vì vậy, cần bảo đảm function declaration và definition thống nhất
+                    về tên, kiểu trả về và danh sách tham số.
+                </p>
+
+                <h3>7.4. Quên thêm source file vào build system</h3>
+
+                <p>
+                    Trong một project thực tế, source file có thể đã tồn tại trong thư mục
+                    nhưng chưa được thêm vào cấu hình build.
+                </p>
+
+                <p>
+                    Ví dụ, project có:
+                </p>
+
+                <pre><code>main.c
+uart.c
+gpio.c</code></pre>
+
+                <p>
+                    Nhưng build command chỉ bao gồm:
+                </p>
+
+                <pre><code>gcc main.c uart.c -o firmware</code></pre>
+
+                <p>
+                    Nếu <code>main.c</code> gọi function trong <code>gpio.c</code>,
+                    Linker sẽ không tìm thấy implementation của function đó.
+                </p>
+
+                <p>
+                    Cần kiểm tra danh sách source file trong Makefile, CMake,
+                    IDE project hoặc build configuration tương ứng.
+                </p>
+
+                <!-- SECTION 8 -->
+                <h2>8. Separate Compilation với GCC</h2>
+
+                <p>
+                    Chúng ta có thể thực hành Separate Compilation bằng GCC thông qua
+                    một số lệnh cơ bản.
+                </p>
+
+                <h3>8.1. Biên dịch từng source file</h3>
+
+                <pre><code>gcc -c main.c -o main.o
+gcc -c uart.c -o uart.o
+gcc -c gpio.c -o gpio.o</code></pre>
+
+                <p>
+                    Tùy chọn <code>-c</code> yêu cầu GCC biên dịch source file thành
+                    object file mà không thực hiện bước linking.
+                </p>
+
+                <h3>8.2. Linking các object file</h3>
+
+                <pre><code>gcc main.o uart.o gpio.o -o firmware</code></pre>
+
+                <p>
+                    Lệnh này sử dụng Linker để kết hợp các object file thành executable.
+                </p>
+
+                <h3>8.3. Biên dịch và linking trong một lệnh</h3>
+
+                <p>
+                    Nếu muốn thực hiện toàn bộ quá trình bằng một lệnh, có thể viết:
+                </p>
+
+                <pre><code>gcc main.c uart.c gpio.c -o firmware</code></pre>
+
+                <p>
+                    GCC sẽ gọi các công cụ cần thiết để thực hiện Preprocessing,
+                    Compilation, Assembly và Linking.
+                </p>
+
+                <p>
+                    Mặc dù cách viết này ngắn gọn, việc biên dịch riêng từng source file
+                    giúp chúng ta dễ kiểm soát quá trình build và tận dụng lại những object file
+                    chưa thay đổi.
+                </p>
+
+                <h3>8.4. Kiểm tra symbol trong object file</h3>
+
+                <p>
+                    GCC toolchain cung cấp công cụ <code>nm</code> để xem symbol
+                    được định nghĩa hoặc được tham chiếu trong object file.
+                </p>
+
+                <pre><code>nm main.o
+nm uart.o</code></pre>
+
+                <p>
+                    Ví dụ, output có thể chứa các thông tin:
+                </p>
+
+                <pre><code>                 U UART_Init
+0000000000000000 T main</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <ul>
+                    <li><code>U</code>: Symbol được tham chiếu nhưng chưa được định nghĩa trong object file hiện tại.</li>
+                    <li><code>T</code>: Symbol được định nghĩa trong text section.</li>
+                </ul>
+
+                <p>
+                    Các ký hiệu cụ thể có thể khác nhau tùy loại symbol, object format
+                    và toolchain.
+                </p>
+
+                <h3>8.5. Xem các section trong object file</h3>
+
+                <p>
+                    Có thể sử dụng <code>objdump</code> để xem thông tin object file:
+                </p>
+
+                <pre><code>objdump -h uart.o</code></pre>
+
+                <p>
+                    Công cụ này có thể hiển thị những section như:
+                </p>
+
+                <ul>
+                    <li><code>.text</code>: Chứa mã lệnh.</li>
+                    <li><code>.data</code>: Chứa dữ liệu được khởi tạo.</li>
+                    <li><code>.bss</code>: Chứa dữ liệu chưa được khởi tạo tường minh.</li>
+                    <li><code>.rodata</code>: Thường chứa dữ liệu chỉ đọc.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong>
+                    Đây là các công cụ phổ biến trong GCC toolchain.
+                    Với Embedded Toolchain, tên công cụ có thể có tiền tố theo kiến trúc,
+                    ví dụ <code>arm-none-eabi-nm</code> hoặc <code>arm-none-eabi-objdump</code>.
+                </div>
+
+                <!-- SECTION 9 -->
+                <h2>9. Incremental Build – Chỉ biên dịch lại phần thay đổi</h2>
+
+                <p>
+                    Một ưu điểm quan trọng của Separate Compilation là khả năng hỗ trợ
+                    Incremental Build.
+                </p>
+
+                <p>
+                    Thay vì phải biên dịch lại toàn bộ source code mỗi khi có thay đổi,
+                    build system có thể xác định những file cần được biên dịch lại.
+                </p>
+
+                <h3>9.1. Ví dụ</h3>
+
+                <p>
+                    Giả sử project có:
+                </p>
+
+                <pre><code>main.c
+uart.c
+gpio.c</code></pre>
+
+                <p>
+                    Sau khi build lần đầu, chúng ta có:
+                </p>
+
+                <pre><code>main.o
+uart.o
+gpio.o</code></pre>
+
+                <p>
+                    Nếu chỉ thay đổi nội dung trong <code>uart.c</code>,
+                    build system có thể chỉ biên dịch lại:
+                </p>
+
+                <pre><code>uart.c → uart.o</code></pre>
+
+                <p>
+                    Sau đó thực hiện linking lại các object file:
+                </p>
+
+                <pre><code>main.o + uart.o + gpio.o
+              |
+              v
+          firmware</code></pre>
+
+                <p>
+                    Không cần biên dịch lại <code>main.c</code> và <code>gpio.c</code>
+                    nếu chúng không bị ảnh hưởng bởi thay đổi.
+                </p>
+
+                <h3>9.2. Vai trò của Build System</h3>
+
+                <p>
+                    Các công cụ như Make, CMake hoặc build system tích hợp trong IDE
+                    có thể quản lý quá trình này.
+                </p>
+
+                <p>
+                    Chúng theo dõi quan hệ phụ thuộc giữa source file, header file và
+                    object file để xác định những thành phần cần được cập nhật.
+                </p>
+
+                <p>
+                    Ví dụ một Makefile đơn giản:
+                </p>
+
+                <pre><code>CC = gcc
+CFLAGS = -Wall -Wextra
+
+TARGET = firmware
+
+OBJS = main.o uart.o gpio.o
+
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $(TARGET)
+
+main.o: main.c uart.h gpio.h
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
+uart.o: uart.c uart.h
+	$(CC) $(CFLAGS) -c uart.c -o uart.o
+
+gpio.o: gpio.c gpio.h
+	$(CC) $(CFLAGS) -c gpio.c -o gpio.o
+
+clean:
+	rm -f $(OBJS) $(TARGET)</code></pre>
+
+                <p>
+                    Trong Makefile trên:
+                </p>
+
+                <ul>
+                    <li><code>CC</code> xác định compiler được sử dụng.</li>
+                    <li><code>CFLAGS</code> chứa các compiler options.</li>
+                    <li><code>OBJS</code> liệt kê các object file.</li>
+                    <li><code>$(TARGET)</code> là executable được tạo ra.</li>
+                    <li>Các dependency giúp Make xác định file nào cần được build lại.</li>
+                    <li><code>clean</code> xóa các file được tạo trong quá trình build.</li>
+                </ul>
+
+                <p>
+                    Đây là ví dụ cơ bản để hiểu cách build system quản lý nhiều source file.
+                    Trong dự án lớn, Makefile hoặc CMake thường có cấu trúc phức tạp hơn
+                    với nhiều thư mục, compiler options và library dependencies.
+                </p>
+
+                <!-- SECTION 10 -->
+                <h2>10. Separate Compilation trong Embedded Project</h2>
+
+                <p>
+                    Trong dự án Embedded thực tế, Separate Compilation được sử dụng
+                    để tổ chức firmware thành các module độc lập.
+                </p>
+
+                <p>
+                    Ví dụ, một hệ thống điều khiển có thể được chia thành:
+                </p>
+
+                <pre><code>Firmware/
+│
+├── Application/
+│   ├── main.c
+│   ├── app.c
+│   └── app.h
+│
+├── Drivers/
+│   ├── UART/
+│   │   ├── uart.c
+│   │   └── uart.h
+│   │
+│   ├── GPIO/
+│   │   ├── gpio.c
+│   │   └── gpio.h
+│   │
+│   └── CAN/
+│       ├── can.c
+│       └── can.h
+│
+└── Config/
+    └── system_config.h</code></pre>
+
+                <p>
+                    Mỗi module có thể được biên dịch riêng và cung cấp các object file
+                    tương ứng cho quá trình linking.
+                </p>
+
+                <h3>10.1. Application Layer</h3>
+
+                <p>
+                    Application Layer chứa logic của ứng dụng.
+                    Module này thường sử dụng các interface do driver hoặc service module cung cấp.
+                </p>
+
+                <h3>10.2. Driver Layer</h3>
+
+                <p>
+                    Driver Layer chứa implementation liên quan đến việc giao tiếp với phần cứng.
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>UART Driver.</li>
+                    <li>GPIO Driver.</li>
+                    <li>CAN Driver.</li>
+                    <li>SPI Driver.</li>
+                    <li>I2C Driver.</li>
+                </ul>
+
+                <h3>10.3. Linking trong Firmware Build</h3>
+
+                <p>
+                    Sau khi các module được biên dịch thành object file,
+                    Linker kết hợp chúng cùng các thành phần cần thiết của toolchain
+                    để tạo firmware ELF.
+                </p>
+
+                <p>
+                    Trong Embedded Development, quá trình linking còn liên quan đến
+                    Linker Script để xác định vị trí các section trong bộ nhớ MCU.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li><code>.text</code> thường được đặt trong vùng Flash.</li>
+                    <li><code>.rodata</code> thường được đặt trong vùng Flash.</li>
+                    <li><code>.data</code> có vị trí lưu trữ ban đầu trong Flash và được khởi tạo vào RAM khi startup.</li>
+                    <li><code>.bss</code> thường được đặt trong RAM và được khởi tạo về 0 khi startup.</li>
+                </ul>
+
+                <p>
+                    Sau khi tạo ELF, toolchain có thể chuyển đổi firmware thành
+                    file HEX hoặc BIN để nạp vào vi điều khiển.
+                </p>
+
+                <div class="note">
+                    <strong>Liên hệ với AUTOSAR:</strong>
+                    Trong dự án AUTOSAR, các module như RTE, BSW và Application Software
+                    cũng được tổ chức thành nhiều source file và object file.
+                    Build system sẽ biên dịch và liên kết các thành phần này theo cấu hình
+                    của ECU và toolchain được sử dụng.
+                </div>
+
+                <!-- SECTION 11 -->
+                <h2>11. Checklist khi kiểm tra Separate Compilation và Linking</h2>
+
+                <p>
+                    Khi gặp lỗi build trong một dự án C hoặc Embedded C,
+                    có thể kiểm tra theo các bước sau:
+                </p>
+
+                <ul>
+                    <li>Source file cần thiết đã được thêm vào build configuration chưa?</li>
+                    <li>Header file đã được include đúng chưa?</li>
+                    <li>Function prototype có khớp với function definition không?</li>
+                    <li>Global variable có bị định nghĩa nhiều lần không?</li>
+                    <li>Symbol được tham chiếu đã có definition tương ứng chưa?</li>
+                    <li>Function hoặc variable có bị khai báo <code>static</code> ngoài dự kiến không?</li>
+                    <li>Object file cần thiết đã được đưa vào linker command chưa?</li>
+                    <li>Library dependency đã được cấu hình đúng chưa?</li>
+                    <li>Linker Script có được sử dụng đúng với kiến trúc MCU không?</li>
+                    <li>Địa chỉ và section trong linker output có phù hợp với memory layout không?</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Góc nhìn khi debug:</strong>
+                    Nếu compiler báo lỗi cú pháp hoặc kiểu dữ liệu, hãy kiểm tra source code,
+                    header file và compiler diagnostics.
+                    Nếu Linker báo <code>undefined reference</code> hoặc
+                    <code>multiple definition</code>, hãy kiểm tra symbol và danh sách
+                    object file được đưa vào quá trình linking.
+                </div>
+
+                <!-- SECTION 12 -->
+                <h2>12. Tổng kết</h2>
+
+                <p>
+                    Trong bài học này, chúng ta đã tìm hiểu cách xây dựng một chương trình C
+                    từ nhiều source file thông qua Separate Compilation và Linking.
+                </p>
+
+                <ul>
+                    <li><strong>Separate Compilation:</strong> Cho phép biên dịch từng translation unit độc lập.</li>
+                    <li><strong>Source File (.c):</strong> Chứa implementation của module.</li>
+                    <li><strong>Header File (.h):</strong> Chứa các declaration và interface dùng chung.</li>
+                    <li><strong>Object File (.o):</strong> Chứa machine code và thông tin cần thiết cho linking.</li>
+                    <li><strong>Linker:</strong> Kết hợp object file, giải quyết symbol và thực hiện relocation.</li>
+                    <li><strong>External Linkage:</strong> Cho phép symbol được tham chiếu từ translation unit khác.</li>
+                    <li><strong>Internal Linkage:</strong> Giới hạn symbol trong translation unit hiện tại.</li>
+                    <li><strong>Undefined Reference:</strong> Xảy ra khi Linker không tìm thấy definition tương ứng.</li>
+                    <li><strong>Multiple Definition:</strong> Xảy ra khi có nhiều definition xung đột cho cùng một symbol.</li>
+                    <li><strong>Incremental Build:</strong> Cho phép chỉ biên dịch lại những thành phần bị thay đổi.</li>
+                </ul>
+
+                <p>
+                    Có thể ghi nhớ quy trình cơ bản:
+                </p>
+
+                <blockquote>
+                    Source File → Preprocessing → Compilation → Assembly → Object File
+                    → Linking → Executable/Firmware.
+                </blockquote>
+
+                <h3>Bài học tiếp theo</h3>
+
+                <p>
+                    Ở bài tiếp theo, chúng ta sẽ tìm hiểu sâu hơn về cách tổ chức chương trình
+                    thành các module có cấu trúc rõ ràng thông qua
+                    <strong>Modular Programming – Interface vs Implementation</strong>.
+                    Chúng ta sẽ phân biệt phần interface mà module cung cấp với phần
+                    implementation nội bộ, từ đó xây dựng chương trình dễ mở rộng,
+                    tái sử dụng và bảo trì hơn.
+                </p>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-27.html">← Bài trước</a>
+                    <a class="btn" href="lesson-29.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>EmLearn - 2026</p>
+    </footer>
+
+</body>
+
+</html>

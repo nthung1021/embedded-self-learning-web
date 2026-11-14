@@ -1,0 +1,2386 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 22: C Preprocessor &amp; Macro Fundamentals | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html" class="active" aria-current="page">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 22: C Preprocessor &amp; Macro Fundamentals</h1>
+
+                <p>
+                    Trong các bài học trước, chúng ta đã tìm hiểu những thành phần
+                    quan trọng của ngôn ngữ C như Data Types, Pointer, Structure,
+                    Union và Flexible Array Member. Những thành phần này giúp
+                    chương trình tổ chức dữ liệu và quản lý bộ nhớ một cách
+                    hiệu quả.
+                </p>
+
+                <p>
+                    Tuy nhiên, trước khi Compiler thực hiện quá trình biên dịch
+                    mã nguồn C, chương trình còn trải qua một bước xử lý đặc biệt
+                    gọi là <strong>Preprocessing</strong>. Ở bước này, các chỉ thị
+                    như <code>#include</code>, <code>#define</code> và
+                    <code>#undef</code> được xử lý bởi C Preprocessor.
+                </p>
+
+                <p>
+                    Một trong những chức năng quan trọng nhất của Preprocessor
+                    là hỗ trợ <strong>Macro</strong>. Macro cho phép định nghĩa
+                    những đoạn nội dung thay thế để sử dụng nhiều lần trong
+                    chương trình. Điều này giúp quản lý các hằng số, cấu hình
+                    và những thành phần dùng chung dễ dàng hơn.
+                </p>
+
+                <p>
+                    Trong Embedded C, Macro xuất hiện rất thường xuyên trong
+                    những phần như cấu hình phần cứng, địa chỉ Register,
+                    Clock Frequency, kích thước Buffer và các thông số
+                    giao tiếp Peripheral.
+                </p>
+
+                <p>
+                    Trong bài học này, chúng ta sẽ tìm hiểu vai trò của
+                    C Preprocessor, cách hoạt động của quá trình Preprocessing,
+                    những Preprocessor Directive cơ bản và cách sử dụng
+                    Object-like Macro trong chương trình C.
+                </p>
+
+                <h2>1. Tổng quan về C Preprocessor</h2>
+
+                <h3>1.1. C Preprocessor là gì?</h3>
+
+                <p>
+                    <strong>C Preprocessor</strong> là một thành phần trong
+                    quá trình dịch chương trình C, chịu trách nhiệm xử lý
+                    các chỉ thị tiền xử lý trước khi mã nguồn được đưa
+                    đến Compiler để thực hiện những bước phân tích và
+                    biên dịch tiếp theo.
+                </p>
+
+                <p>
+                    Các chỉ thị dành cho Preprocessor thường bắt đầu
+                    bằng ký tự <code>#</code> và được viết trên một dòng
+                    riêng trong mã nguồn.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define BUFFER_SIZE 128U
+
+#define ECU_CLOCK_HZ 80000000UL</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>#include</code> yêu cầu Preprocessor đưa
+                        nội dung của một Header File vào vị trí tương ứng.
+                    </li>
+                    <li>
+                        <code>#define</code> tạo một Macro để sử dụng
+                        trong quá trình Preprocessing.
+                    </li>
+                    <li>
+                        <code>BUFFER_SIZE</code> và
+                        <code>ECU_CLOCK_HZ</code> là tên của những Macro
+                        được định nghĩa.
+                    </li>
+                </ul>
+
+                <p>
+                    Cần lưu ý rằng Preprocessor không thực hiện những phép
+                    tính hoặc xử lý chương trình giống như một Function
+                    trong C. Công việc chính của nó là xử lý các chỉ thị
+                    tiền xử lý và tạo ra phần mã nguồn sau Preprocessing.
+                </p>
+
+                <h3>1.2. Vì sao C cần Preprocessor?</h3>
+
+                <p>
+                    Trong một chương trình C có nhiều Source File,
+                    chúng ta thường cần sử dụng chung các khai báo,
+                    hằng số và cấu hình.
+                </p>
+
+                <p>
+                    Ví dụ, một Embedded Project có thể chứa:
+                </p>
+
+                <ul>
+                    <li>
+                        File quản lý UART cần sử dụng chung thông số
+                        Baud Rate.
+                    </li>
+                    <li>
+                        File quản lý CAN cần sử dụng những định nghĩa
+                        liên quan đến Message ID.
+                    </li>
+                    <li>
+                        File quản lý Timer cần sử dụng thông tin về
+                        Clock Frequency.
+                    </li>
+                    <li>
+                        Nhiều Module cần sử dụng chung một số
+                        Header File.
+                    </li>
+                </ul>
+
+                <p>
+                    Nếu không có cơ chế hỗ trợ từ Preprocessor,
+                    lập trình viên có thể phải sao chép nhiều đoạn
+                    khai báo hoặc cấu hình giống nhau vào từng
+                    Source File.
+                </p>
+
+                <p>
+                    Điều này làm tăng nguy cơ không đồng nhất dữ liệu
+                    khi cần thay đổi một thông số. Preprocessor giúp
+                    giải quyết vấn đề này bằng cách cung cấp những
+                    cơ chế như:
+                </p>
+
+                <ul>
+                    <li>
+                        Chèn nội dung từ Header File thông qua
+                        <code>#include</code>.
+                    </li>
+                    <li>
+                        Định nghĩa Macro thông qua <code>#define</code>.
+                    </li>
+                    <li>
+                        Hủy định nghĩa Macro thông qua <code>#undef</code>.
+                    </li>
+                    <li>
+                        Phát sinh thông báo lỗi tiền xử lý thông qua
+                        <code>#error</code>.
+                    </li>
+                </ul>
+
+                <h3>1.3. Preprocessor nằm ở đâu trong quá trình biên dịch?</h3>
+
+                <p>
+                    Khi một chương trình C được biên dịch, mã nguồn
+                    thường trải qua nhiều giai đoạn trước khi tạo
+                    thành chương trình thực thi.
+                </p>
+
+                <p>
+                    Có thể hình dung quy trình tổng quát như sau:
+                </p>
+
+                <svg viewBox="0 0 700 390" width="100%" role="img"
+                    aria-label="Sơ đồ các giai đoạn tiền xử lý, biên dịch, Assembly và Linking">
+
+                    <rect x="175" y="15" width="350" height="48" rx="7"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <text x="350" y="45" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#173d68">
+                        C Source File (.c)
+                    </text>
+
+                    <path d="M350 63 V91"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 84 L350 92 L356 84"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="175" y="93" width="350" height="55" rx="7"
+                        fill="#fff0d9" stroke="#b7803e" stroke-width="1.5" />
+
+                    <text x="350" y="116" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#70451d">
+                        Preprocessing
+                    </text>
+                    <text x="350" y="135" text-anchor="middle"
+                        font-size="11" fill="#70451d">
+                        #include, #define, Macro Expansion
+                    </text>
+
+                    <path d="M350 148 V177"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 170 L350 178 L356 170"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="175" y="179" width="350" height="48" rx="7"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+
+                    <text x="350" y="208" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#174d2e">
+                        Compilation
+                    </text>
+
+                    <path d="M350 227 V254"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 247 L350 255 L356 247"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="175" y="256" width="350" height="48" rx="7"
+                        fill="#e8e2f7" stroke="#7861a8" stroke-width="1.5" />
+
+                    <text x="350" y="285" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#44336d">
+                        Assembly
+                    </text>
+
+                    <path d="M350 304 V331"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 324 L350 332 L356 324"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="175" y="333" width="350" height="48" rx="7"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <text x="350" y="362" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#173d68">
+                        Linking → Executable
+                    </text>
+
+                </svg>
+
+                <p>
+                    Trong sơ đồ trên:
+                </p>
+
+                <ol>
+                    <li>
+                        <strong>Source File:</strong> chứa mã nguồn
+                        C ban đầu.
+                    </li>
+                    <li>
+                        <strong>Preprocessing:</strong> xử lý những
+                        Preprocessor Directive và mở rộng Macro.
+                    </li>
+                    <li>
+                        <strong>Compilation:</strong> Compiler phân tích
+                        và chuyển đổi mã nguồn đã qua Preprocessing.
+                    </li>
+                    <li>
+                        <strong>Assembly:</strong> tạo mã Assembly
+                        tương ứng với kiến trúc mục tiêu.
+                    </li>
+                    <li>
+                        <strong>Linking:</strong> kết hợp các Object File
+                        và thư viện cần thiết để tạo Executable.
+                    </li>
+                </ol>
+
+                <p>
+                    Ví dụ, khi sử dụng lệnh <code>gcc</code> trên
+                    một hệ thống hỗ trợ GCC, chúng ta có thể yêu cầu
+                    thực hiện riêng bước Preprocessing để quan sát
+                    kết quả.
+                </p>
+
+                <pre><code>gcc -E main.c -o main.i</code></pre>
+
+                <p>
+                    File <code>main.i</code> chứa nội dung mã nguồn
+                    sau khi thực hiện Preprocessing. Đây là một cách
+                    hữu ích để kiểm tra nội dung Header File được
+                    đưa vào và những Macro đã được mở rộng như thế nào.
+                </p>
+
+                <h3>1.4. Sự khác biệt giữa Preprocessor và Compiler</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Preprocessor</th>
+                            <th>Compiler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Vai trò</td>
+                            <td>
+                                Xử lý các chỉ thị tiền xử lý và
+                                Macro.
+                            </td>
+                            <td>
+                                Phân tích và biên dịch mã nguồn C.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Đầu vào</td>
+                            <td>
+                                Source File có chứa Preprocessor Directive.
+                            </td>
+                            <td>
+                                Mã nguồn sau Preprocessing.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ xử lý</td>
+                            <td>
+                                <code>#include</code>,
+                                <code>#define</code>.
+                            </td>
+                            <td>
+                                Type Checking, Syntax Analysis,
+                                Code Generation.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Kết quả</td>
+                            <td>
+                                Mã nguồn đã qua tiền xử lý.
+                            </td>
+                            <td>
+                                Thường tạo ra Assembly hoặc
+                                Object Code ở các giai đoạn tiếp theo.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Kiểm tra kiểu dữ liệu</td>
+                            <td>
+                                Không thực hiện Type Checking
+                                theo cách của Compiler.
+                            </td>
+                            <td>
+                                Thực hiện kiểm tra kiểu dữ liệu
+                                và các quy tắc của ngôn ngữ C.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Preprocessor xử lý
+                    các chỉ thị tiền xử lý trước khi Compiler
+                    phân tích mã nguồn C. Macro không phải là
+                    một Function đặc biệt được gọi trong
+                    Runtime.
+                </div>
+
+                <h2>2. Tổng quan về Preprocessor Directive</h2>
+
+                <h3>2.1. Preprocessor Directive là gì?</h3>
+
+                <p>
+                    <strong>Preprocessor Directive</strong> là một
+                    chỉ thị được sử dụng để yêu cầu Preprocessor
+                    thực hiện một công việc cụ thể trong quá trình
+                    tiền xử lý.
+                </p>
+
+                <p>
+                    Một Directive thông thường bắt đầu bằng ký tự
+                    <code>#</code>, theo sau là tên chỉ thị và
+                    những thành phần liên quan.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define MAX_RETRY_COUNT 3U
+
+#undef MAX_RETRY_COUNT</code></pre>
+
+                <p>
+                    Những Directive trong ví dụ trên không phải
+                    là câu lệnh C thông thường. Chúng được
+                    Preprocessor xử lý trước khi Compiler
+                    biên dịch chương trình.
+                </p>
+
+                <h3>2.2. Các Preprocessor Directive thường gặp</h3>
+
+                <p>
+                    C cung cấp nhiều loại Directive phục vụ
+                    những mục đích khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Directive</th>
+                            <th>Chức năng</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>#include</code></td>
+                            <td>
+                                Đưa nội dung của một Header File
+                                vào vị trí tương ứng.
+                            </td>
+                            <td>
+                                <code>#include &lt;stdint.h&gt;</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>#define</code></td>
+                            <td>
+                                Định nghĩa một Macro.
+                            </td>
+                            <td>
+                                <code>#define BUFFER_SIZE 128U</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>#undef</code></td>
+                            <td>
+                                Hủy định nghĩa một Macro.
+                            </td>
+                            <td>
+                                <code>#undef BUFFER_SIZE</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>#error</code></td>
+                            <td>
+                                Phát sinh lỗi trong quá trình
+                                tiền xử lý.
+                            </td>
+                            <td>
+                                <code>#error Unsupported target</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>#if</code>, <code>#ifdef</code></td>
+                            <td>
+                                Kiểm soát việc xử lý một phần
+                                mã nguồn dựa trên điều kiện.
+                            </td>
+                            <td>
+                                Kiểm tra cấu hình hoặc Macro.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>#pragma</code></td>
+                            <td>
+                                Gửi chỉ thị đặc biệt đến
+                                Compiler.
+                            </td>
+                            <td>
+                                Phụ thuộc Compiler.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong bài học này, chúng ta sẽ tập trung
+                    vào các Directive cơ bản như
+                    <code>#include</code>, <code>#define</code>,
+                    <code>#undef</code> và <code>#error</code>.
+                </p>
+
+                <p>
+                    Các Directive liên quan đến Conditional
+                    Compilation như <code>#if</code>,
+                    <code>#ifdef</code> và <code>#ifndef</code>
+                    sẽ được tìm hiểu chi tiết hơn trong
+                    Bài 24.
+                </p>
+
+                <h3>2.3. Quy tắc chung khi viết Directive</h3>
+
+                <p>
+                    Một số quy tắc cơ bản cần lưu ý khi viết
+                    Preprocessor Directive:
+                </p>
+
+                <ul>
+                    <li>
+                        Directive thường bắt đầu bằng ký tự
+                        <code>#</code>.
+                    </li>
+                    <li>
+                        Directive được xử lý trước khi Compiler
+                        thực hiện việc biên dịch.
+                    </li>
+                    <li>
+                        Không viết dấu chấm phẩy ở cuối Directive
+                        thông thường.
+                    </li>
+                    <li>
+                        Tên Directive không phân biệt chữ hoa
+                        và chữ thường theo quy ước ký hiệu
+                        của ngôn ngữ.
+                    </li>
+                    <li>
+                        Có thể sử dụng khoảng trắng giữa
+                        <code>#</code> và tên Directive.
+                    </li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define UART_BAUD_RATE 115200U
+
+#include &lt;stdint.h&gt;
+
+# define CAN_BUFFER_SIZE 64U</code></pre>
+
+                <p>
+                    Trong ví dụ trên, cả hai cách viết
+                    <code>#define</code> và <code># define</code>
+                    đều hợp lệ.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Directive không
+                    phải là câu lệnh C thông thường. Vì vậy,
+                    không sử dụng dấu chấm phẩy ở cuối
+                    <code>#include</code> hoặc
+                    <code>#define</code>.
+                </div>
+
+                <h2>3. #include – Đưa Header File vào chương trình</h2>
+
+                <h3>3.1. Chức năng của #include</h3>
+
+                <p>
+                    Directive <code>#include</code> được sử dụng
+                    để yêu cầu Preprocessor đưa nội dung của một
+                    Header File vào vị trí xuất hiện của
+                    Directive trong Source File.
+                </p>
+
+                <p>
+                    Header File thường có phần mở rộng
+                    <code>.h</code> và có thể chứa những nội dung
+                    như:
+                </p>
+
+                <ul>
+                    <li>Function Prototype.</li>
+                    <li>Macro Definition.</li>
+                    <li>Type Definition.</li>
+                    <li>Structure và Enum Declaration.</li>
+                    <li>Các khai báo cần được chia sẻ giữa nhiều Module.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;stddef.h&gt;
+#include &lt;stdio.h&gt;</code></pre>
+
+                <p>
+                    Trong ví dụ trên, chương trình yêu cầu
+                    đưa những khai báo cần thiết từ các
+                    Standard Header File vào quá trình
+                    tiền xử lý.
+                </p>
+
+                <h3>3.2. Hai cách sử dụng #include</h3>
+
+                <p>
+                    Thông thường, chúng ta gặp hai cách viết
+                    <code>#include</code>:
+                </p>
+
+                <pre><code>#include &lt;header_file.h&gt;
+
+#include "header_file.h"</code></pre>
+
+                <p>
+                    Hai cách viết này có sự khác biệt chủ yếu
+                    về cách Compiler tìm kiếm Header File.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cú pháp</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>#include &lt;file.h&gt;</code></td>
+                            <td>
+                                Thường được sử dụng cho Standard
+                                Header hoặc Header nằm trong
+                                những Include Directory được
+                                cấu hình.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>#include "file.h"</code></td>
+                            <td>
+                                Thường được sử dụng cho Header
+                                của Project. Compiler thường
+                                ưu tiên tìm ở thư mục liên quan
+                                đến Source File trước khi tìm
+                                trong những thư mục Include
+                                đã cấu hình.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Cách tìm kiếm cụ thể còn phụ thuộc vào
+                    Compiler và những tùy chọn cấu hình
+                    Include Path.
+                </p>
+
+                <h3>3.3. Ví dụ sử dụng Standard Header File</h3>
+
+                <p>
+                    Giả sử chúng ta cần sử dụng những kiểu dữ liệu
+                    có kích thước xác định như <code>uint8_t</code>
+                    và <code>uint16_t</code>.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    uint8_t status = 1U;
+    uint16_t sensor_value = 250U;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>&lt;stdint.h&gt;</code>
+                    cung cấp những kiểu dữ liệu Integer có độ rộng
+                    được xác định nếu kiểu tương ứng được
+                    Implementation hỗ trợ.
+                </p>
+
+                <h3>3.4. Ví dụ sử dụng Header File của Project</h3>
+
+                <p>
+                    Trong một Embedded Project, chúng ta có thể
+                    tạo một Header File để lưu những khai báo
+                    dùng chung cho Module UART.
+                </p>
+
+                <p>
+                    File <code>uart_config.h</code>:
+                </p>
+
+                <pre><code>#ifndef UART_CONFIG_H
+#define UART_CONFIG_H
+
+#define UART_BAUD_RATE 115200U
+#define UART_RX_BUFFER_SIZE 128U
+
+#endif</code></pre>
+
+                <p>
+                    File <code>uart_driver.c</code>:
+                </p>
+
+                <pre><code>#include "uart_config.h"
+
+void UART_Init(void)
+{
+    /* Initialize UART using configuration */
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>uart_driver.c</code>
+                    có thể sử dụng những Macro được định nghĩa
+                    trong <code>uart_config.h</code>.
+                </p>
+
+                <p>
+                    Các dòng <code>#ifndef</code>,
+                    <code>#define</code> và <code>#endif</code>
+                    trong ví dụ thuộc cơ chế Header Guard.
+                    Chúng ta sẽ tìm hiểu riêng về Header Guard
+                    và cách quản lý Header File trong Bài 23.
+                </p>
+
+                <h3>3.5. #include hoạt động như thế nào?</h3>
+
+                <p>
+                    Có thể hình dung hoạt động của
+                    <code>#include</code> thông qua một ví dụ
+                    đơn giản.
+                </p>
+
+                <p>
+                    Giả sử có hai File:
+                </p>
+
+                <p>
+                    File <code>sensor_types.h</code>:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint16_t temperature;
+    uint16_t humidity;
+} SensorData_t;</code></pre>
+
+                <p>
+                    File <code>main.c</code>:
+                </p>
+
+                <pre><code>#include "sensor_types.h"
+
+int main(void)
+{
+    SensorData_t sensor;
+
+    sensor.temperature = 280U;
+    sensor.humidity = 650U;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi Preprocessor xử lý <code>main.c</code>,
+                    nội dung liên quan từ
+                    <code>sensor_types.h</code> được đưa vào
+                    vị trí của Directive <code>#include</code>.
+                </p>
+
+                <svg viewBox="0 0 700 285" width="100%" role="img"
+                    aria-label="Minh họa nội dung Header File được đưa vào Source File">
+
+                    <rect x="35" y="30" width="250" height="105" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <text x="160" y="53" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#173d68">
+                        sensor_types.h
+                    </text>
+
+                    <text x="55" y="82" font-size="11" fill="#173d68">
+                        typedef struct
+                    </text>
+                    <text x="55" y="101" font-size="11" fill="#173d68">
+                        SensorData_t;
+                    </text>
+
+                    <rect x="415" y="30" width="250" height="105" rx="6"
+                        fill="#fff0d9" stroke="#b7803e" stroke-width="1.5" />
+
+                    <text x="540" y="53" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#70451d">
+                        main.c
+                    </text>
+
+                    <text x="435" y="82" font-size="11" fill="#70451d">
+                        #include "sensor_types.h"
+                    </text>
+                    <text x="435" y="101" font-size="11" fill="#70451d">
+                        int main(void) { ... }
+                    </text>
+
+                    <path d="M285 83 H415"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M407 77 L415 83 L407 89"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <text x="350" y="69" text-anchor="middle"
+                        font-size="10" fill="currentColor">
+                        Include
+                    </text>
+
+                    <path d="M540 135 V175 H350 V200"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 193 L350 201 L356 193"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="115" y="203" width="470" height="65" rx="6"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+
+                    <text x="350" y="228" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#174d2e">
+                        Preprocessed Source Code
+                    </text>
+                    <text x="350" y="249" text-anchor="middle"
+                        font-size="11" fill="#174d2e">
+                        Nội dung Header được đưa vào main.c
+                    </text>
+
+                </svg>
+
+                <p>
+                    Nhờ vậy, những khai báo trong Header File
+                    có thể được sử dụng tại Source File
+                    đang thực hiện Include.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> <code>#include</code>
+                    không phải là Function Call. Đây là một
+                    Preprocessor Directive thực hiện việc
+                    đưa nội dung Header File vào quá trình
+                    tiền xử lý.
+                </div>
+
+                <h2>4. #define – Định nghĩa Macro</h2>
+
+                <h3>4.1. Macro là gì?</h3>
+
+                <p>
+                    <strong>Macro</strong> là một tên được định
+                    nghĩa bởi Preprocessor. Trong quá trình
+                    Preprocessing, khi gặp tên Macro phù hợp,
+                    Preprocessor có thể thay thế tên đó bằng
+                    nội dung đã được định nghĩa.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define BUFFER_SIZE 128U</code></pre>
+
+                <p>
+                    Sau khi định nghĩa Macro trên, những vị trí
+                    sử dụng <code>BUFFER_SIZE</code> trong
+                    phạm vi Macro có hiệu lực sẽ được
+                    Preprocessor xử lý theo nội dung thay thế
+                    là <code>128U</code>.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define BUFFER_SIZE 128U
+
+int main(void)
+{
+    uint8_t buffer[BUFFER_SIZE];
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Sau Preprocessing, phần khai báo mảng
+                    có thể được nhìn thấy dưới dạng:
+                </p>
+
+                <pre><code>uint8_t buffer[128U];</code></pre>
+
+                <p>
+                    Điều này cho thấy Macro được thay thế
+                    trước khi Compiler thực hiện việc
+                    phân tích mã nguồn C.
+                </p>
+
+                <h3>4.2. Cú pháp #define cơ bản</h3>
+
+                <p>
+                    Cú pháp tổng quát của một Object-like Macro:
+                </p>
+
+                <pre><code>#define MACRO_NAME replacement_text</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>#define</code></td>
+                            <td>
+                                Directive yêu cầu tạo Macro.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>MACRO_NAME</code></td>
+                            <td>
+                                Tên của Macro.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>replacement_text</code></td>
+                            <td>
+                                Nội dung được sử dụng để
+                                thay thế Macro.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong phần này, chúng ta tập trung
+                    vào <strong>Object-like Macro</strong>,
+                    tức Macro được định nghĩa bằng một
+                    tên không có danh sách tham số ngay
+                    sau tên Macro.
+                </p>
+
+                <h3>4.3. Macro dùng để định nghĩa hằng số</h3>
+
+                <p>
+                    Một ứng dụng phổ biến của
+                    <code>#define</code> là định nghĩa
+                    những giá trị cố định được sử dụng
+                    nhiều lần trong chương trình.
+                </p>
+
+                <pre><code>#define MAX_RETRY_COUNT 3U
+#define UART_BAUD_RATE 115200U
+#define CAN_MAX_PAYLOAD_SIZE 64U
+#define ECU_CLOCK_HZ 80000000UL</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>MAX_RETRY_COUNT</code> định nghĩa
+                        số lần thử lại tối đa.
+                    </li>
+                    <li>
+                        <code>UART_BAUD_RATE</code> định nghĩa
+                        Baud Rate của UART.
+                    </li>
+                    <li>
+                        <code>CAN_MAX_PAYLOAD_SIZE</code> định nghĩa
+                        dung lượng Payload được sử dụng trong
+                        ví dụ.
+                    </li>
+                    <li>
+                        <code>ECU_CLOCK_HZ</code> định nghĩa
+                        giá trị Clock Frequency.
+                    </li>
+                </ul>
+
+                <p>
+                    Chúng ta có thể sử dụng những Macro
+                    này tại nhiều vị trí:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define MAX_RETRY_COUNT 3U
+#define UART_BAUD_RATE 115200U
+#define ECU_CLOCK_HZ 80000000UL
+
+int main(void)
+{
+    uint32_t retry_count = MAX_RETRY_COUNT;
+    uint32_t baud_rate = UART_BAUD_RATE;
+    uint32_t clock_hz = ECU_CLOCK_HZ;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi cần thay đổi một thông số,
+                    lập trình viên chỉ cần cập nhật
+                    giá trị trong phần định nghĩa
+                    Macro tương ứng.
+                </p>
+
+                <h3>4.4. Macro dùng để định nghĩa chuỗi</h3>
+
+                <p>
+                    Macro cũng có thể được sử dụng để
+                    định nghĩa một String Literal.
+                </p>
+
+                <pre><code>#define ECU_NAME "Body_ECU"
+#define SOFTWARE_VERSION "1.0.0"
+#define LOG_PREFIX "[ECU]"</code></pre>
+
+                <p>
+                    Ví dụ sử dụng:
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+#define ECU_NAME "Body_ECU"
+#define SOFTWARE_VERSION "1.0.0"
+
+int main(void)
+{
+    printf("ECU Name: %s\n", ECU_NAME);
+    printf("Software Version: %s\n", SOFTWARE_VERSION);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Sau khi Macro được mở rộng,
+                    Compiler sẽ xử lý những String
+                    Literal như trong mã nguồn C
+                    thông thường.
+                </p>
+
+                <h3>4.5. Macro dùng để định nghĩa biểu thức</h3>
+
+                <p>
+                    Macro không chỉ chứa một giá trị đơn
+                    giản. Phần nội dung thay thế cũng có
+                    thể là một biểu thức.
+                </p>
+
+                <pre><code>#define ECU_CLOCK_HZ 80000000UL
+#define TIMER_PRESCALER 80UL
+
+#define TIMER_TICK_HZ (ECU_CLOCK_HZ / TIMER_PRESCALER)</code></pre>
+
+                <p>
+                    Trong ví dụ trên,
+                    <code>TIMER_TICK_HZ</code> được
+                    định nghĩa bằng biểu thức tính
+                    tần số Timer sau khi chia
+                    Clock Frequency cho Prescaler.
+                </p>
+
+                <p>
+                    Có thể sử dụng Macro như sau:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define ECU_CLOCK_HZ 80000000UL
+#define TIMER_PRESCALER 80UL
+
+#define TIMER_TICK_HZ (ECU_CLOCK_HZ / TIMER_PRESCALER)
+
+int main(void)
+{
+    uint32_t timer_frequency = (uint32_t)TIMER_TICK_HZ;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Sau khi mở rộng Macro, biểu thức
+                    tương ứng có thể được biểu diễn như:
+                </p>
+
+                <pre><code>uint32_t timer_frequency =
+    (uint32_t)(80000000UL / 80UL);</code></pre>
+
+                <p>
+                    Compiler sẽ thực hiện việc kiểm tra
+                    và đánh giá biểu thức theo những
+                    quy tắc của ngôn ngữ C.
+                </p>
+
+                <h3>4.6. Macro có thể được sử dụng trong Array Declaration</h3>
+
+                <p>
+                    Một ứng dụng thường gặp khác là sử dụng
+                    Macro để định nghĩa kích thước mảng.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define UART_RX_BUFFER_SIZE 128U
+
+uint8_t uart_rx_buffer[UART_RX_BUFFER_SIZE];</code></pre>
+
+                <p>
+                    Khi cần thay đổi kích thước Buffer,
+                    chúng ta chỉ cần cập nhật giá trị
+                    <code>UART_RX_BUFFER_SIZE</code>.
+                </p>
+
+                <p>
+                    Điều này đặc biệt hữu ích khi một
+                    Embedded Project có nhiều Buffer
+                    hoặc những vùng dữ liệu cần sử dụng
+                    chung thông số cấu hình.
+                </p>
+
+                <h2>5. Quá trình Macro Expansion</h2>
+
+                <h3>5.1. Macro Expansion là gì?</h3>
+
+                <p>
+                    <strong>Macro Expansion</strong> là
+                    quá trình Preprocessor thay thế một
+                    Macro bằng nội dung được định nghĩa
+                    trong Macro đó.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define SENSOR_TIMEOUT_MS 100U
+
+uint32_t timeout = SENSOR_TIMEOUT_MS;</code></pre>
+
+                <p>
+                    Trong quá trình Preprocessing,
+                    tên <code>SENSOR_TIMEOUT_MS</code>
+                    được thay thế bằng <code>100U</code>.
+                </p>
+
+                <p>
+                    Kết quả tương ứng:
+                </p>
+
+                <pre><code>uint32_t timeout = 100U;</code></pre>
+
+                <h3>5.2. Macro Expansion với nhiều Macro</h3>
+
+                <p>
+                    Một Macro có thể chứa tên của
+                    Macro khác trong phần nội dung
+                    thay thế.
+                </p>
+
+                <pre><code>#define MCU_CLOCK_HZ 80000000UL
+
+#define TIMER_DIVIDER 80UL
+
+#define TIMER_FREQUENCY_HZ \
+    (MCU_CLOCK_HZ / TIMER_DIVIDER)</code></pre>
+
+                <p>
+                    Khi Preprocessor mở rộng
+                    <code>TIMER_FREQUENCY_HZ</code>,
+                    những Macro xuất hiện bên trong
+                    biểu thức cũng được tiếp tục
+                    xử lý theo quy tắc Macro Expansion.
+                </p>
+
+                <p>
+                    Biểu thức cuối cùng có dạng:
+                </p>
+
+                <pre><code>(80000000UL / 80UL)</code></pre>
+
+                <p>
+                    Cách tổ chức này giúp chúng ta
+                    chia những thông số cấu hình
+                    thành các thành phần riêng biệt,
+                    thay vì phải viết lại toàn bộ
+                    biểu thức tại nhiều vị trí.
+                </p>
+
+                <h3>5.3. Macro được thay thế trước Runtime</h3>
+
+                <p>
+                    Một đặc điểm rất quan trọng của
+                    Macro là quá trình thay thế diễn
+                    ra trong giai đoạn Preprocessing,
+                    không phải khi chương trình
+                    đang thực thi.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define MAX_SENSOR_COUNT 8U
+
+void Sensor_Init(void)
+{
+    uint8_t sensor_count = MAX_SENSOR_COUNT;
+
+    /* Initialize sensors */
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, Macro
+                    <code>MAX_SENSOR_COUNT</code>
+                    được thay thế bằng <code>8U</code>
+                    trước khi Compiler biên dịch
+                    Function <code>Sensor_Init()</code>.
+                </p>
+
+                <p>
+                    Khi chương trình chạy, không có
+                    hoạt động gọi một Macro tên
+                    <code>MAX_SENSOR_COUNT</code>.
+                </p>
+
+                <h3>5.4. Minh họa sự khác biệt giữa Macro và Runtime</h3>
+
+                <svg viewBox="0 0 700 300" width="100%" role="img"
+                    aria-label="So sánh Macro Expansion trong Preprocessing và hoạt động Runtime">
+
+                    <rect x="35" y="30" width="280" height="75" rx="6"
+                        fill="#fff0d9" stroke="#b7803e" stroke-width="1.5" />
+
+                    <text x="175" y="55" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#70451d">
+                        Source Code
+                    </text>
+                    <text x="175" y="80" text-anchor="middle"
+                        font-size="11" fill="#70451d">
+                        #define MAX_COUNT 8U
+                    </text>
+
+                    <path d="M175 105 V140"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M169 133 L175 141 L181 133"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="35" y="143" width="280" height="72" rx="6"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+
+                    <text x="175" y="168" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#174d2e">
+                        Preprocessing
+                    </text>
+                    <text x="175" y="190" text-anchor="middle"
+                        font-size="11" fill="#174d2e">
+                        MAX_COUNT → 8U
+                    </text>
+
+                    <path d="M315 179 H385"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M377 173 L385 179 L377 185"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="385" y="143" width="280" height="72" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <text x="525" y="168" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#173d68">
+                        Compiled Source
+                    </text>
+                    <text x="525" y="190" text-anchor="middle"
+                        font-size="11" fill="#173d68">
+                        uint8_t count = 8U;
+                    </text>
+
+                    <path d="M525 215 V245"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <text x="525" y="267" text-anchor="middle"
+                        font-size="12" fill="currentColor">
+                        Runtime
+                    </text>
+
+                    <text x="175" y="267" text-anchor="middle"
+                        font-size="11" fill="currentColor">
+                        Macro Expansion đã hoàn thành
+                    </text>
+
+                </svg>
+
+                <p>
+                    Qua sơ đồ trên, có thể thấy
+                    Macro được thay thế trước khi
+                    chương trình bước vào Runtime.
+                    Do đó, Macro không phải là một
+                    cơ chế gọi Function hoặc thực hiện
+                    tính toán động khi chương trình
+                    đang chạy.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Macro
+                    Expansion là quá trình xử lý
+                    mã nguồn. Khi chương trình chạy,
+                    những tên Macro đã được xử lý
+                    không còn tồn tại dưới dạng
+                    một đối tượng riêng trong
+                    chương trình.
+                </div>
+
+                <h2>6. Một số Preprocessor Directive khác</h2>
+
+                <h3>6.1. #undef – Hủy định nghĩa Macro</h3>
+
+                <p>
+                    Directive <code>#undef</code> được
+                    sử dụng để hủy định nghĩa một Macro
+                    đã được tạo trước đó.
+                </p>
+
+                <p>
+                    Cú pháp:
+                </p>
+
+                <pre><code>#undef MACRO_NAME</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define DEBUG_LEVEL 2U
+
+#undef DEBUG_LEVEL</code></pre>
+
+                <p>
+                    Trong ví dụ trên, Macro
+                    <code>DEBUG_LEVEL</code> được
+                    định nghĩa ban đầu bằng giá trị
+                    <code>2U</code>. Sau khi
+                    <code>#undef DEBUG_LEVEL</code>
+                    được xử lý, tên Macro này không
+                    còn được định nghĩa tại những
+                    vị trí tiếp theo.
+                </p>
+
+                <p>
+                    Có thể sử dụng <code>#undef</code>
+                    khi cần loại bỏ một Macro trước
+                    khi tạo định nghĩa khác có cùng tên
+                    trong phần mã nguồn tiếp theo.
+                </p>
+
+                <pre><code>#define DEVICE_MODE 1U
+
+#undef DEVICE_MODE
+
+#define DEVICE_MODE 2U</code></pre>
+
+                <p>
+                    Trong ví dụ này, định nghĩa
+                    đầu tiên của <code>DEVICE_MODE</code>
+                    được hủy trước khi Macro được
+                    định nghĩa lại.
+                </p>
+
+                <h3>6.2. #error – Phát sinh lỗi tiền xử lý</h3>
+
+                <p>
+                    Directive <code>#error</code> được sử dụng
+                    để yêu cầu Preprocessor phát sinh
+                    một thông báo lỗi trong quá trình
+                    tiền xử lý.
+                </p>
+
+                <p>
+                    Cú pháp:
+                </p>
+
+                <pre><code>#error error_message</code></pre>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#error Unsupported MCU configuration</code></pre>
+
+                <p>
+                    Khi Preprocessor gặp Directive trên,
+                    quá trình dịch sẽ phát sinh lỗi
+                    với thông báo tương ứng.
+                </p>
+
+                <p>
+                    Trong thực tế, <code>#error</code>
+                    thường được kết hợp với những
+                    điều kiện kiểm tra cấu hình.
+                    Ví dụ, một Project có thể cần
+                    dừng quá trình biên dịch nếu
+                    chưa chọn đúng cấu hình MCU
+                    mục tiêu.
+                </p>
+
+                <p>
+                    Việc sử dụng kết hợp
+                    <code>#error</code> với các
+                    Conditional Directive sẽ được
+                    tìm hiểu sâu hơn trong Bài 24.
+                </p>
+
+                <h3>6.3. Các Predefined Macro thường gặp</h3>
+
+                <p>
+                    Ngoài những Macro do lập trình viên
+                    tự định nghĩa, C còn cung cấp một
+                    số Macro được Compiler hoặc
+                    Implementation định nghĩa sẵn.
+                </p>
+
+                <p>
+                    Một số Predefined Macro thường gặp:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Predefined Macro</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>__FILE__</code></td>
+                            <td>
+                                Tên của Source File hiện tại
+                                dưới dạng String Literal.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>__LINE__</code></td>
+                            <td>
+                                Số thứ tự dòng hiện tại
+                                trong Source File.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>__DATE__</code></td>
+                            <td>
+                                Ngày biên dịch dưới dạng
+                                String Literal.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>__TIME__</code></td>
+                            <td>
+                                Thời gian bắt đầu biên dịch
+                                dưới dạng String Literal.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>__STDC__</code></td>
+                            <td>
+                                Macro liên quan đến mức độ
+                                tuân thủ chuẩn C của
+                                Implementation.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong đó, <code>__FILE__</code> và
+                    <code>__LINE__</code> thường hữu ích
+                    khi cần xác định vị trí phát sinh
+                    thông báo trong quá trình Debug.
+                </p>
+
+                <h3>6.4. Ví dụ sử dụng __FILE__ và __LINE__</h3>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("File: %s\n", __FILE__);
+    printf("Line: %d\n", __LINE__);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi chương trình được biên dịch
+                    và thực thi, kết quả sẽ hiển thị
+                    tên File và vị trí dòng tương ứng
+                    với vị trí sử dụng các Macro.
+                </p>
+
+                <p>
+                    Ví dụ kết quả có thể là:
+                </p>
+
+                <pre><code>File: main.c
+Line: 6</code></pre>
+
+                <p>
+                    Số dòng thực tế phụ thuộc vào
+                    vị trí khai báo và cách tổ chức
+                    Source File.
+                </p>
+
+                <h3>6.5. Ứng dụng Predefined Macro trong Embedded Debugging</h3>
+
+                <p>
+                    Trong quá trình phát triển Firmware,
+                    việc biết được vị trí phát sinh
+                    một thông báo hoặc một lỗi có thể
+                    giúp quá trình Debug dễ dàng hơn.
+                </p>
+
+                <pre><code>#include &lt;stdio.h&gt;
+
+void Sensor_Check(void)
+{
+    printf("Checking sensor at %s:%d\n",
+           __FILE__,
+           __LINE__);
+}</code></pre>
+
+                <p>
+                    Trong một Embedded Project,
+                    cách làm này có thể được sử dụng
+                    trong các cơ chế Logging hoặc
+                    Debug Message khi môi trường
+                    phát triển hỗ trợ đầu ra phù hợp.
+                </p>
+
+                <p>
+                    Tuy nhiên, với những hệ thống
+                    tài nguyên hạn chế, cần cân nhắc
+                    dung lượng String, thời gian xử lý
+                    và cấu hình Logging khi sử dụng
+                    những thông tin này trong
+                    Firmware thực tế.
+                </p>
+
+                <h2>7. Những lỗi thường gặp khi sử dụng Macro</h2>
+
+                <h3>7.1. Quên dấu ngoặc đơn trong biểu thức</h3>
+
+                <p>
+                    Một trong những lỗi thường gặp
+                    khi định nghĩa Macro là không
+                    sử dụng dấu ngoặc đơn phù hợp
+                    cho biểu thức thay thế.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define TIMER_PERIOD 100U + 20U
+
+uint32_t result = 2U * TIMER_PERIOD;</code></pre>
+
+                <p>
+                    Sau khi Macro được mở rộng,
+                    biểu thức có thể trở thành:
+                </p>
+
+                <pre><code>uint32_t result = 2U * 100U + 20U;</code></pre>
+
+                <p>
+                    Theo thứ tự ưu tiên toán tử,
+                    biểu thức trên được tính như:
+                </p>
+
+                <pre><code>(2U * 100U) + 20U</code></pre>
+
+                <p>
+                    Kết quả không giống với trường hợp
+                    chúng ta mong muốn nhân hai lần
+                    toàn bộ giá trị của
+                    <code>TIMER_PERIOD</code>.
+                </p>
+
+                <p>
+                    Cách khai báo an toàn hơn:
+                </p>
+
+                <pre><code>#define TIMER_PERIOD (100U + 20U)
+
+uint32_t result = 2U * TIMER_PERIOD;</code></pre>
+
+                <p>
+                    Khi đó, biểu thức được mở rộng thành:
+                </p>
+
+                <pre><code>uint32_t result = 2U * (100U + 20U);</code></pre>
+
+                <p>
+                    Dấu ngoặc đơn giúp bảo toàn
+                    ý nghĩa của biểu thức khi Macro
+                    được sử dụng ở những vị trí
+                    khác nhau.
+                </p>
+
+                <h3>7.2. Nhầm lẫn giữa Macro và biến</h3>
+
+                <p>
+                    Macro và Variable là hai khái niệm
+                    khác nhau trong C.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define MAX_SPEED 100U
+
+uint32_t current_speed = 50U;</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>MAX_SPEED</code> là Macro
+                        được xử lý trong Preprocessing.
+                    </li>
+                    <li>
+                        <code>current_speed</code> là
+                        một Variable được khai báo
+                        trong chương trình C.
+                    </li>
+                </ul>
+
+                <p>
+                    Macro không tự tạo ra một Variable
+                    có kiểu dữ liệu hoặc vùng nhớ riêng.
+                    Ngược lại, Variable được Compiler
+                    xử lý theo quy tắc khai báo
+                    biến của ngôn ngữ C.
+                </p>
+
+                <h3>7.3. Macro không có kiểu dữ liệu như Variable</h3>
+
+                <p>
+                    Một Macro thông thường chỉ là
+                    tên đại diện cho nội dung thay thế.
+                    Bản thân tên Macro không có kiểu
+                    dữ liệu C như <code>uint8_t</code>,
+                    <code>uint16_t</code> hoặc
+                    <code>float</code>.
+                </p>
+
+                <pre><code>#define SENSOR_THRESHOLD 500U</code></pre>
+
+                <p>
+                    Trong ví dụ trên,
+                    <code>SENSOR_THRESHOLD</code>
+                    được thay thế bằng Token
+                    <code>500U</code>. Compiler sẽ
+                    xử lý giá trị sau khi thay thế
+                    theo các quy tắc kiểu dữ liệu
+                    của C.
+                </p>
+
+                <p>
+                    Nếu cần một đối tượng có kiểu
+                    dữ liệu xác định, có thể sử dụng
+                    Variable hoặc Constant phù hợp.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+static const uint16_t sensor_threshold = 500U;</code></pre>
+
+                <p>
+                    Việc lựa chọn Macro hay
+                    <code>const</code> Variable
+                    phụ thuộc vào mục đích sử dụng,
+                    yêu cầu kiểu dữ liệu và
+                    đặc điểm của chương trình.
+                </p>
+
+                <h3>7.4. Đặt tên Macro không rõ ràng</h3>
+
+                <p>
+                    Nếu sử dụng quá nhiều Macro
+                    có tên ngắn hoặc không mô tả
+                    rõ mục đích, chương trình
+                    sẽ trở nên khó đọc và khó
+                    bảo trì.
+                </p>
+
+                <p>
+                    Ví dụ không nên sử dụng:
+                </p>
+
+                <pre><code>#define A 80U
+#define B 128U
+#define C 115200U</code></pre>
+
+                <p>
+                    Những tên trên không thể hiện
+                    rõ ý nghĩa của từng giá trị.
+                </p>
+
+                <p>
+                    Nên đặt tên có ý nghĩa hơn:
+                </p>
+
+                <pre><code>#define TIMER_PRESCALER 80U
+#define UART_RX_BUFFER_SIZE 128U
+#define UART_BAUD_RATE 115200U</code></pre>
+
+                <p>
+                    Trong Embedded Project, có thể
+                    sử dụng tiền tố tên Module hoặc
+                    thành phần để giảm nguy cơ
+                    trùng tên Macro giữa những
+                    phần khác nhau của hệ thống.
+                </p>
+
+                <pre><code>#define UART_RX_BUFFER_SIZE 128U
+#define CAN_TX_BUFFER_SIZE 64U
+#define SPI_TRANSFER_TIMEOUT_MS 100U</code></pre>
+
+                <h3>7.5. Sử dụng dấu chấm phẩy không đúng cách</h3>
+
+                <p>
+                    Một lỗi khác là đặt dấu chấm phẩy
+                    ở cuối định nghĩa Object-like Macro.
+                </p>
+
+                <p>
+                    Ví dụ không nên sử dụng:
+                </p>
+
+                <pre><code>#define BUFFER_SIZE 128U;</code></pre>
+
+                <p>
+                    Khi Macro được thay thế trong
+                    một biểu thức khai báo mảng:
+                </p>
+
+                <pre><code>uint8_t buffer[BUFFER_SIZE];</code></pre>
+
+                <p>
+                    Mã nguồn sau khi Preprocessing
+                    có thể trở thành:
+                </p>
+
+                <pre><code>uint8_t buffer[128U;];</code></pre>
+
+                <p>
+                    Đây là cú pháp không hợp lệ
+                    trong C.
+                </p>
+
+                <p>
+                    Cách viết đúng:
+                </p>
+
+                <pre><code>#define BUFFER_SIZE 128U</code></pre>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Không thêm
+                    dấu chấm phẩy vào cuối định nghĩa
+                    Macro nếu dấu chấm phẩy không
+                    phải là một phần có chủ đích
+                    của Replacement Text.
+                </div>
+
+                <h2>8. Ứng dụng C Preprocessor trong Embedded Software</h2>
+
+                <h3>8.1. Quản lý thông số cấu hình phần cứng</h3>
+
+                <p>
+                    Trong Embedded Software, nhiều
+                    thông số phần cứng cần được sử dụng
+                    tại nhiều Module khác nhau.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#define MCU_CLOCK_HZ 80000000UL
+
+#define UART_BAUD_RATE 115200U
+
+#define SPI_CLOCK_HZ 10000000UL
+
+#define I2C_CLOCK_HZ 400000UL</code></pre>
+
+                <p>
+                    Những Macro trên có thể được
+                    đặt trong một Header File
+                    cấu hình chung để các Module
+                    có thể sử dụng thống nhất.
+                </p>
+
+                <p>
+                    Cách tổ chức này giúp tránh
+                    việc phải khai báo lại những
+                    thông số giống nhau ở nhiều
+                    vị trí trong Project.
+                </p>
+
+                <h3>8.2. Quản lý địa chỉ và Register</h3>
+
+                <p>
+                    Trong những hệ thống sử dụng
+                    Memory-mapped I/O, Macro có thể
+                    được sử dụng để định nghĩa
+                    địa chỉ của một Hardware Register.
+                </p>
+
+                <p>
+                    Ví dụ minh họa:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define GPIO_PORT_ADDRESS 0x40020000UL
+
+#define GPIO_PORT_REG \
+    (*(volatile uint32_t *)GPIO_PORT_ADDRESS)</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>GPIO_PORT_ADDRESS</code>
+                        định nghĩa địa chỉ Register.
+                    </li>
+                    <li>
+                        <code>GPIO_PORT_REG</code>
+                        biểu diễn cách truy cập vùng
+                        nhớ được ánh xạ đến Register.
+                    </li>
+                    <li>
+                        <code>volatile</code> cho biết
+                        việc truy cập đối tượng có thể
+                        bị ảnh hưởng bởi những yếu tố
+                        bên ngoài luồng thực thi thông
+                        thường của chương trình.
+                    </li>
+                </ul>
+
+                <p>
+                    Đây chỉ là ví dụ minh họa về cách
+                    sử dụng Macro trong Register Access.
+                    Địa chỉ và kiểu truy cập thực tế
+                    phải tuân theo Reference Manual
+                    và tài liệu kỹ thuật của MCU
+                    đang sử dụng.
+                </p>
+
+                <h3>8.3. Quản lý kích thước Buffer</h3>
+
+                <p>
+                    Một ứng dụng phổ biến khác là
+                    định nghĩa kích thước Buffer
+                    phục vụ truyền nhận dữ liệu.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define UART_RX_BUFFER_SIZE 128U
+#define UART_TX_BUFFER_SIZE 128U
+
+#define CAN_RX_BUFFER_SIZE 64U
+#define CAN_TX_BUFFER_SIZE 64U
+
+uint8_t uart_rx_buffer[UART_RX_BUFFER_SIZE];
+uint8_t uart_tx_buffer[UART_TX_BUFFER_SIZE];
+
+uint8_t can_rx_buffer[CAN_RX_BUFFER_SIZE];
+uint8_t can_tx_buffer[CAN_TX_BUFFER_SIZE];</code></pre>
+
+                <p>
+                    Khi cần điều chỉnh dung lượng
+                    Buffer, chúng ta có thể cập nhật
+                    các Macro tương ứng mà không
+                    cần thay đổi từng khai báo mảng.
+                </p>
+
+                <h3>8.4. Quản lý cấu hình chung cho ECU</h3>
+
+                <p>
+                    Trong một ECU Project,
+                    có thể tồn tại nhiều thành phần
+                    phần mềm như:
+                </p>
+
+                <ul>
+                    <li>Sensor Management.</li>
+                    <li>Actuator Control.</li>
+                    <li>Communication Driver.</li>
+                    <li>Diagnostic Module.</li>
+                    <li>Timer Management.</li>
+                </ul>
+
+                <p>
+                    Một số thông số có thể được
+                    định nghĩa tập trung trong
+                    một Header File:
+                </p>
+
+                <pre><code>#ifndef ECU_CONFIG_H
+#define ECU_CONFIG_H
+
+#define ECU_CLOCK_HZ 80000000UL
+
+#define ECU_MAIN_LOOP_PERIOD_MS 10U
+
+#define ECU_MAX_RETRY_COUNT 3U
+
+#define ECU_UART_BAUD_RATE 115200U
+
+#define ECU_CAN_BITRATE 500000U
+
+#endif</code></pre>
+
+                <p>
+                    Khi các Module cần sử dụng
+                    những thông số trên, chúng
+                    có thể Include Header File
+                    cấu hình tương ứng.
+                </p>
+
+                <p>
+                    Cách làm này giúp những thông số
+                    cấu hình chung được quản lý
+                    tập trung và dễ dàng cập nhật
+                    trong quá trình phát triển
+                    Firmware.
+                </p>
+
+                <h3>8.5. Ví dụ tổ chức cấu hình trong Project</h3>
+
+                <p>
+                    Giả sử một Project có cấu trúc
+                    đơn giản như sau:
+                </p>
+
+                <pre><code>Embedded_Project/
+│
+├── config/
+│   └── ecu_config.h
+│
+├── drivers/
+│   ├── uart_driver.c
+│   └── can_driver.c
+│
+└── main.c</code></pre>
+
+                <p>
+                    File <code>ecu_config.h</code>:
+                </p>
+
+                <pre><code>#ifndef ECU_CONFIG_H
+#define ECU_CONFIG_H
+
+#define ECU_CLOCK_HZ 80000000UL
+
+#define UART_BAUD_RATE 115200U
+
+#define CAN_BITRATE 500000U
+
+#define UART_RX_BUFFER_SIZE 128U
+
+#endif</code></pre>
+
+                <p>
+                    File <code>uart_driver.c</code>:
+                </p>
+
+                <pre><code>#include "ecu_config.h"
+
+void UART_Init(void)
+{
+    /* Configure UART using UART_BAUD_RATE */
+}</code></pre>
+
+                <p>
+                    File <code>can_driver.c</code>:
+                </p>
+
+                <pre><code>#include "ecu_config.h"
+
+void CAN_Init(void)
+{
+    /* Configure CAN using CAN_BITRATE */
+}</code></pre>
+
+                <p>
+                    File <code>main.c</code>:
+                </p>
+
+                <pre><code>#include "ecu_config.h"
+
+int main(void)
+{
+    /* ECU application initialization */
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, các Module
+                    sử dụng cùng một nguồn cấu hình.
+                    Khi cần thay đổi Baud Rate hoặc
+                    CAN Bitrate, lập trình viên
+                    chỉ cần cập nhật giá trị
+                    tương ứng trong Header File.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Việc đặt
+                    tất cả Macro vào một Header File
+                    duy nhất không phải lúc nào cũng
+                    là lựa chọn tốt. Trong Project
+                    lớn, nên tổ chức cấu hình theo
+                    Module hoặc nhóm chức năng để
+                    giảm sự phụ thuộc không cần thiết
+                    giữa các thành phần.
+                </div>
+
+                <h2>9. Kiểm tra kết quả Preprocessing</h2>
+
+                <h3>9.1. Vì sao cần kiểm tra Preprocessed Output?</h3>
+
+                <p>
+                    Trong những chương trình có nhiều
+                    Header File và Macro, mã nguồn
+                    sau Preprocessing có thể khác
+                    đáng kể so với nội dung ban đầu.
+                </p>
+
+                <p>
+                    Vì vậy, việc kiểm tra
+                    <strong>Preprocessed Output</strong>
+                    giúp lập trình viên hiểu rõ hơn
+                    những gì Compiler thực sự nhận
+                    được sau giai đoạn tiền xử lý.
+                </p>
+
+                <p>
+                    Đây cũng là một cách hữu ích
+                    khi cần tìm hiểu những vấn đề
+                    liên quan đến:
+                </p>
+
+                <ul>
+                    <li>Macro được mở rộng không như mong đợi.</li>
+                    <li>Header File được Include như thế nào.</li>
+                    <li>Thông tin khai báo xuất hiện từ đâu.</li>
+                    <li>Nội dung mã nguồn sau khi xử lý Directive.</li>
+                </ul>
+
+                <h3>9.2. Ví dụ Source Code ban đầu</h3>
+
+                <p>
+                    File <code>main.c</code>:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+#define SENSOR_COUNT 4U
+
+#define SENSOR_BUFFER_SIZE 16U
+
+int main(void)
+{
+    uint8_t sensor_count = SENSOR_COUNT;
+
+    uint8_t sensor_buffer[SENSOR_BUFFER_SIZE];
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, chương trình
+                    sử dụng hai Macro:
+                </p>
+
+                <ul>
+                    <li><code>SENSOR_COUNT</code>.</li>
+                    <li><code>SENSOR_BUFFER_SIZE</code>.</li>
+                </ul>
+
+                <h3>9.3. Sử dụng GCC để xem kết quả</h3>
+
+                <p>
+                    Với GCC, chúng ta có thể sử dụng
+                    tùy chọn <code>-E</code> để chỉ
+                    thực hiện Preprocessing.
+                </p>
+
+                <pre><code>gcc -E main.c -o main.i</code></pre>
+
+                <p>
+                    Lệnh này tạo ra file
+                    <code>main.i</code> chứa nội dung
+                    mã nguồn sau Preprocessing.
+                </p>
+
+                <p>
+                    Có thể dùng tùy chọn <code>-P</code>
+                    để loại bỏ những dòng thông tin
+                    điều khiển dòng do Preprocessor
+                    tạo ra trong kết quả hiển thị.
+                </p>
+
+                <pre><code>gcc -E -P main.c -o main.i</code></pre>
+
+                <h3>9.4. Quan sát kết quả Macro Expansion</h3>
+
+                <p>
+                    Phần mã nguồn ban đầu:
+                </p>
+
+                <pre><code>uint8_t sensor_count = SENSOR_COUNT;
+
+uint8_t sensor_buffer[SENSOR_BUFFER_SIZE];</code></pre>
+
+                <p>
+                    Sau khi Macro được mở rộng,
+                    phần mã nguồn tương ứng sẽ
+                    có dạng:
+                </p>
+
+                <pre><code>uint8_t sensor_count = 4U;
+
+uint8_t sensor_buffer[16U];</code></pre>
+
+                <p>
+                    Chúng ta có thể thấy tên Macro
+                    đã được thay thế bằng nội dung
+                    được định nghĩa trước đó.
+                </p>
+
+                <p>
+                    Đây là cách trực quan để hiểu
+                    Preprocessor hoạt động như
+                    thế nào trước khi Compiler
+                    thực hiện việc biên dịch.
+                </p>
+
+                <h2>10. Tổng kết C Preprocessor &amp; Macro Fundamentals</h2>
+
+                <p>
+                    Qua bài học này, chúng ta đã
+                    tìm hiểu những kiến thức cơ bản
+                    về C Preprocessor và cách sử dụng
+                    Macro trong chương trình C.
+                </p>
+
+                <p>
+                    Những nội dung quan trọng cần
+                    ghi nhớ:
+                </p>
+
+                <ul>
+                    <li>
+                        C Preprocessor xử lý các
+                        Preprocessor Directive
+                        trước khi Compiler thực hiện
+                        những bước biên dịch tiếp theo.
+                    </li>
+                    <li>
+                        <code>#include</code> được sử dụng
+                        để đưa nội dung Header File
+                        vào quá trình tiền xử lý.
+                    </li>
+                    <li>
+                        <code>#define</code> được sử dụng
+                        để định nghĩa Macro.
+                    </li>
+                    <li>
+                        Object-like Macro có thể được
+                        sử dụng để định nghĩa hằng số,
+                        chuỗi và những biểu thức.
+                    </li>
+                    <li>
+                        Macro được thay thế trong
+                        Preprocessing, không phải
+                        một Function Call tại Runtime.
+                    </li>
+                    <li>
+                        <code>#undef</code> được sử dụng
+                        để hủy định nghĩa Macro.
+                    </li>
+                    <li>
+                        <code>#error</code> được sử dụng
+                        để phát sinh lỗi trong quá trình
+                        tiền xử lý.
+                    </li>
+                    <li>
+                        <code>__FILE__</code> và
+                        <code>__LINE__</code> là những
+                        Predefined Macro hữu ích
+                        trong Debugging.
+                    </li>
+                    <li>
+                        Nên đặt tên Macro rõ ràng,
+                        có ý nghĩa và phù hợp với
+                        Module đang sử dụng.
+                    </li>
+                    <li>
+                        Khi Macro chứa biểu thức,
+                        cần sử dụng dấu ngoặc đơn
+                        phù hợp để tránh sai lệch
+                        về thứ tự ưu tiên toán tử.
+                    </li>
+                    <li>
+                        Có thể sử dụng tùy chọn
+                        <code>-E</code> của GCC
+                        để kiểm tra Preprocessed
+                        Output.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Kết luận:</strong> C Preprocessor
+                    là một thành phần quan trọng trong
+                    quá trình phát triển chương trình C,
+                    đặc biệt đối với những Project có
+                    nhiều Source File, Header File
+                    và cấu hình dùng chung. Thông qua
+                    những Directive như
+                    <code>#include</code> và
+                    <code>#define</code>, lập trình viên
+                    có thể tổ chức mã nguồn và quản lý
+                    các thông số cấu hình một cách
+                    nhất quán hơn. Tuy nhiên, Macro
+                    chỉ là cơ chế xử lý văn bản trong
+                    quá trình Preprocessing, vì vậy
+                    cần hiểu rõ cách mở rộng và
+                    những giới hạn của Macro để
+                    tránh tạo ra mã nguồn khó đọc
+                    hoặc phát sinh lỗi.
+                </div>
+
+                <h3>Bài học tiếp theo</h3>
+
+                <p>
+                    Trong bài học tiếp theo, chúng ta
+                    sẽ tìm hiểu chi tiết hơn về
+                    <strong>Header File Management
+                    &amp; Header Guard</strong>.
+                    Đây là nội dung quan trọng khi
+                    xây dựng một Embedded Project
+                    có nhiều Module và Source File
+                    sử dụng chung các khai báo.
+                </p>
+
+                <p>
+                    Chúng ta sẽ tìm hiểu vai trò
+                    của Header File, cách tổ chức
+                    khai báo giữa Header và Source
+                    File, vấn đề Multiple Inclusion
+                    và cách sử dụng Header Guard
+                    để tránh việc một Header File
+                    bị xử lý lặp lại trong cùng
+                    một Translation Unit.
+                </p>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-21.html">← Bài trước</a>
+                    <a class="btn" href="lesson-23.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>EmLearn - 2026</p>
+    </footer>
+
+</body>
+</html>

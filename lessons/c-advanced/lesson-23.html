@@ -1,0 +1,3422 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 23: Header File Management &amp; Header Guard | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html" class="active" aria-current="page">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 23: Header File Management &amp; Header Guard</h1>
+
+                <p>
+                    Trong bài học trước, chúng ta đã tìm hiểu C Preprocessor,
+                    Macro và cách sử dụng Directive <code>#include</code>
+                    để đưa nội dung từ một Header File vào Source File.
+                    Đây là một cơ chế quan trọng giúp chương trình C
+                    có thể chia sẻ những khai báo giữa nhiều thành phần.
+                </p>
+
+                <p>
+                    Khi một chương trình nhỏ phát triển thành một Embedded
+                    Project lớn, số lượng Source File và Header File
+                    thường tăng lên đáng kể. Mỗi Module có thể cần
+                    cung cấp Function Prototype, Data Type, Constant
+                    hoặc những thông tin cần thiết cho Module khác.
+                </p>
+
+                <p>
+                    Nếu không tổ chức Header File hợp lý, Project có thể
+                    gặp nhiều vấn đề như khai báo bị lặp, phụ thuộc
+                    Header không cần thiết, xung đột định nghĩa
+                    hoặc khó quản lý Interface giữa các Module.
+                </p>
+
+                <p>
+                    Một vấn đề đặc biệt thường gặp là cùng một Header File
+                    bị Include nhiều lần trong quá trình Preprocessing.
+                    Nếu Header File chứa những khai báo không được bảo vệ,
+                    việc Include lặp lại có thể gây ra lỗi biên dịch.
+                </p>
+
+                <p>
+                    <strong>Header Guard</strong> là một kỹ thuật sử dụng
+                    Preprocessor Directive để bảo vệ nội dung Header File,
+                    tránh việc nội dung đó bị xử lý lặp lại trong cùng
+                    một Translation Unit.
+                </p>
+
+                <p>
+                    Trong bài học này, chúng ta sẽ tìm hiểu vai trò
+                    của Header File, cách tổ chức nội dung giữa
+                    Header và Source File, cách hoạt động của
+                    Header Guard, vấn đề Multiple Inclusion
+                    và những nguyên tắc quản lý Header File
+                    trong Embedded Software.
+                </p>
+
+                <h2>1. Tổng quan về Header File</h2>
+
+                <h3>1.1. Header File là gì?</h3>
+
+                <p>
+                    <strong>Header File</strong> là một loại File
+                    thường được sử dụng để chứa những khai báo
+                    có thể được chia sẻ giữa nhiều Source File
+                    trong một chương trình C.
+                </p>
+
+                <p>
+                    Header File thường sử dụng phần mở rộng
+                    <code>.h</code>.
+                </p>
+
+                <p>
+                    Một Header File có thể chứa những thành phần như:
+                </p>
+
+                <ul>
+                    <li>Function Prototype.</li>
+                    <li>Type Definition bằng <code>typedef</code>.</li>
+                    <li>Structure và Union Declaration.</li>
+                    <li>Enum Definition.</li>
+                    <li>Macro Definition.</li>
+                    <li>External Variable Declaration bằng <code>extern</code>.</li>
+                    <li>Forward Declaration của Structure hoặc những kiểu dữ liệu phù hợp.</li>
+                </ul>
+
+                <p>
+                    Ví dụ, chúng ta có thể tạo một Header File
+                    để lưu những khai báo liên quan đến Module Sensor.
+                </p>
+
+                <pre><code>/* sensor_driver.h */
+
+#ifndef SENSOR_DRIVER_H
+#define SENSOR_DRIVER_H
+
+#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint16_t temperature;
+    uint16_t humidity;
+} SensorData_t;
+
+void Sensor_Init(void);
+
+void Sensor_Read(SensorData_t *data);
+
+#endif</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>sensor_driver.h</code>
+                    chứa những khai báo cần thiết để một Source File
+                    khác có thể sử dụng Module Sensor.
+                </p>
+
+                <p>
+                    Header File không nhất thiết chứa phần
+                    triển khai đầy đủ của những Function.
+                    Thông thường, phần triển khai được đặt
+                    trong Source File tương ứng.
+                </p>
+
+                <h3>1.2. Source File là gì?</h3>
+
+                <p>
+                    <strong>Source File</strong> là File chứa
+                    phần triển khai chương trình C. File này
+                    thường sử dụng phần mở rộng <code>.c</code>.
+                </p>
+
+                <p>
+                    Source File có thể chứa:
+                </p>
+
+                <ul>
+                    <li>Function Definition.</li>
+                    <li>Variable Definition.</li>
+                    <li>Private Function.</li>
+                    <li>Private Variable.</li>
+                    <li>Phần triển khai các API được khai báo trong Header File.</li>
+                </ul>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* sensor_driver.c */
+
+#include "sensor_driver.h"
+
+void Sensor_Init(void)
+{
+    /* Initialize sensor hardware */
+}
+
+void Sensor_Read(SensorData_t *data)
+{
+    if (data == NULL)
+    {
+        return;
+    }
+
+    /* Read sensor data */
+    data->temperature = 280U;
+    data->humidity = 650U;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>sensor_driver.c</code>
+                    triển khai hai Function đã được khai báo
+                    trong <code>sensor_driver.h</code>.
+                </p>
+
+                <p>
+                    Khi một Module khác muốn sử dụng hai Function
+                    này, Module đó chỉ cần Include Header File
+                    tương ứng thay vì phải biết chi tiết
+                    phần triển khai bên trong.
+                </p>
+
+                <h3>1.3. Phân biệt Header File và Source File</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Header File (.h)</th>
+                            <th>Source File (.c)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>
+                                Cung cấp những khai báo
+                                được chia sẻ.
+                            </td>
+                            <td>
+                                Chứa phần triển khai
+                                chương trình.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Function</td>
+                            <td>
+                                Thường chứa Function Prototype.
+                            </td>
+                            <td>
+                                Thường chứa Function Definition.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Data Type</td>
+                            <td>
+                                Có thể chứa Type Definition,
+                                Structure, Enum và Union.
+                            </td>
+                            <td>
+                                Sử dụng những kiểu dữ liệu
+                                đã được khai báo.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Macro</td>
+                            <td>
+                                Thường chứa Macro dùng chung.
+                            </td>
+                            <td>
+                                Có thể sử dụng Macro
+                                sau khi Include Header.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Phạm vi sử dụng</td>
+                            <td>
+                                Có thể được Include bởi
+                                nhiều Source File.
+                            </td>
+                            <td>
+                                Được biên dịch thành
+                                Object File riêng.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Phần mở rộng</td>
+                            <td><code>.h</code></td>
+                            <td><code>.c</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Header File thường
+                    cung cấp Interface để những phần khác của
+                    chương trình biết cách sử dụng một Module.
+                    Source File thường chứa phần Implementation
+                    thực hiện những chức năng đó.
+                </div>
+
+                <h3>1.4. Header File được xử lý như thế nào?</h3>
+
+                <p>
+                    Khi một Source File sử dụng
+                    <code>#include</code> để đưa Header File
+                    vào chương trình, nội dung Header File
+                    sẽ được đưa vào quá trình Preprocessing.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <p>
+                    File <code>sensor_driver.h</code>:
+                </p>
+
+                <pre><code>#ifndef SENSOR_DRIVER_H
+#define SENSOR_DRIVER_H
+
+#include &lt;stdint.h&gt;
+
+void Sensor_Init(void);
+
+#endif</code></pre>
+
+                <p>
+                    File <code>main.c</code>:
+                </p>
+
+                <pre><code>#include "sensor_driver.h"
+
+int main(void)
+{
+    Sensor_Init();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi xử lý <code>main.c</code>,
+                    Preprocessor đưa những khai báo
+                    trong <code>sensor_driver.h</code>
+                    vào vị trí của Directive
+                    <code>#include</code>.
+                </p>
+
+                <svg viewBox="0 0 700 320" width="100%" role="img"
+                    aria-label="Minh họa quan hệ giữa Header File và Source File trong quá trình Preprocessing">
+
+                    <rect x="35" y="25" width="245" height="105" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <text x="157" y="49" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#173d68">
+                        sensor_driver.h
+                    </text>
+                    <text x="52" y="77" font-size="11" fill="#173d68">
+                        Function Prototype
+                    </text>
+                    <text x="52" y="98" font-size="11" fill="#173d68">
+                        Type Definition
+                    </text>
+                    <text x="52" y="117" font-size="11" fill="#173d68">
+                        Macro Definition
+                    </text>
+
+                    <rect x="420" y="25" width="245" height="105" rx="6"
+                        fill="#fff0d9" stroke="#b7803e" stroke-width="1.5" />
+
+                    <text x="542" y="49" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#70451d">
+                        main.c
+                    </text>
+                    <text x="438" y="77" font-size="11" fill="#70451d">
+                        #include "sensor_driver.h"
+                    </text>
+                    <text x="438" y="98" font-size="11" fill="#70451d">
+                        int main(void)
+                    </text>
+                    <text x="438" y="117" font-size="11" fill="#70451d">
+                        { Sensor_Init(); }
+                    </text>
+
+                    <path d="M280 78 H420"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M412 72 L420 78 L412 84"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <text x="350" y="63" text-anchor="middle"
+                        font-size="10" fill="currentColor">
+                        Include
+                    </text>
+
+                    <path d="M542 130 V169 H350 V196"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 188 L350 197 L356 188"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="105" y="199" width="490" height="88" rx="6"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+
+                    <text x="350" y="226" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#174d2e">
+                        Preprocessed Source Code
+                    </text>
+                    <text x="350" y="251" text-anchor="middle"
+                        font-size="11" fill="#174d2e">
+                        Nội dung Header được kết hợp với main.c
+                    </text>
+                    <text x="350" y="270" text-anchor="middle"
+                        font-size="10" fill="#174d2e">
+                        Sẵn sàng cho các bước biên dịch tiếp theo
+                    </text>
+
+                </svg>
+
+                <p>
+                    Kết quả là Compiler có thể nhìn thấy
+                    những khai báo cần thiết khi phân tích
+                    Source File.
+                </p>
+
+                <h2>2. Tổ chức nội dung trong Header File</h2>
+
+                <h3>2.1. Function Prototype</h3>
+
+                <p>
+                    Một trong những nội dung phổ biến nhất
+                    trong Header File là <strong>Function Prototype</strong>.
+                </p>
+
+                <p>
+                    Function Prototype khai báo tên Function,
+                    kiểu dữ liệu trả về và danh sách tham số.
+                    Nhờ đó, những Source File khác có thể
+                    gọi Function mà không cần đặt phần
+                    triển khai của Function vào cùng File.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* math_utils.h */
+
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int Math_Add(int a, int b);
+
+int Math_Subtract(int a, int b);
+
+#endif</code></pre>
+
+                <p>
+                    Phần triển khai được đặt trong
+                    <code>math_utils.c</code>:
+                </p>
+
+                <pre><code>/* math_utils.c */
+
+#include "math_utils.h"
+
+int Math_Add(int a, int b)
+{
+    return a + b;
+}
+
+int Math_Subtract(int a, int b)
+{
+    return a - b;
+}</code></pre>
+
+                <p>
+                    File <code>main.c</code> có thể sử dụng
+                    những Function này bằng cách Include
+                    <code>math_utils.h</code>.
+                </p>
+
+                <pre><code>/* main.c */
+
+#include "math_utils.h"
+
+int main(void)
+{
+    int result = Math_Add(10, 5);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Nhờ Function Prototype trong Header,
+                    Compiler biết được thông tin về
+                    <code>Math_Add()</code> khi biên dịch
+                    <code>main.c</code>.
+                </p>
+
+                <h3>2.2. Type Definition</h3>
+
+                <p>
+                    Header File cũng thường chứa những
+                    định nghĩa kiểu dữ liệu dùng chung.
+                    Điều này đặc biệt hữu ích khi nhiều
+                    Module cần trao đổi cùng một loại dữ liệu.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* sensor_types.h */
+
+#ifndef SENSOR_TYPES_H
+#define SENSOR_TYPES_H
+
+#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint16_t temperature;
+    uint16_t humidity;
+    uint8_t status;
+} SensorData_t;
+
+#endif</code></pre>
+
+                <p>
+                    Những Source File cần sử dụng
+                    <code>SensorData_t</code> có thể
+                    Include Header File này.
+                </p>
+
+                <pre><code>#include "sensor_types.h"
+
+void Sensor_Process(const SensorData_t *data)
+{
+    if (data == NULL)
+    {
+        return;
+    }
+
+    /* Process sensor data */
+}</code></pre>
+
+                <p>
+                    Một lợi ích quan trọng là toàn bộ
+                    Module có thể sử dụng chung một
+                    định nghĩa kiểu dữ liệu thay vì
+                    tự khai báo nhiều phiên bản khác nhau.
+                </p>
+
+                <h3>2.3. Macro Definition</h3>
+
+                <p>
+                    Header File thường chứa những Macro
+                    được chia sẻ giữa nhiều thành phần
+                    của chương trình.
+                </p>
+
+                <pre><code>/* uart_config.h */
+
+#ifndef UART_CONFIG_H
+#define UART_CONFIG_H
+
+#define UART_BAUD_RATE 115200U
+
+#define UART_RX_BUFFER_SIZE 128U
+
+#define UART_TX_BUFFER_SIZE 128U
+
+#endif</code></pre>
+
+                <p>
+                    Sau khi Include Header File này,
+                    những Source File có thể sử dụng
+                    các Macro tương ứng.
+                </p>
+
+                <pre><code>#include "uart_config.h"
+
+uint8_t uart_rx_buffer[UART_RX_BUFFER_SIZE];
+
+uint8_t uart_tx_buffer[UART_TX_BUFFER_SIZE];</code></pre>
+
+                <p>
+                    Cách tổ chức này giúp những thông số
+                    cấu hình dùng chung được quản lý
+                    tại một vị trí.
+                </p>
+
+                <h3>2.4. Enum, Structure và Union</h3>
+
+                <p>
+                    Những kiểu dữ liệu phức tạp cũng có thể
+                    được định nghĩa trong Header File.
+                </p>
+
+                <pre><code>/* ecu_types.h */
+
+#ifndef ECU_TYPES_H
+#define ECU_TYPES_H
+
+#include &lt;stdint.h&gt;
+
+typedef enum
+{
+    ECU_STATE_INIT = 0,
+    ECU_STATE_IDLE,
+    ECU_STATE_ACTIVE,
+    ECU_STATE_ERROR
+} ECU_State_t;
+
+typedef struct
+{
+    uint16_t voltage;
+    uint16_t current;
+    ECU_State_t state;
+} ECU_Status_t;
+
+typedef union
+{
+    uint32_t raw_value;
+
+    struct
+    {
+        uint8_t byte0;
+        uint8_t byte1;
+        uint8_t byte2;
+        uint8_t byte3;
+    } bytes;
+
+} ECU_RegisterData_t;
+
+#endif</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>ECU_State_t</code> là kiểu Enum
+                        dùng để biểu diễn trạng thái ECU.
+                    </li>
+                    <li>
+                        <code>ECU_Status_t</code> là Structure
+                        lưu những thông tin trạng thái.
+                    </li>
+                    <li>
+                        <code>ECU_RegisterData_t</code> là Union
+                        cho phép các member chia sẻ vùng nhớ.
+                    </li>
+                </ul>
+
+                <p>
+                    Khi nhiều Module cần sử dụng cùng những
+                    kiểu dữ liệu này, đặt định nghĩa trong
+                    Header File giúp tránh việc khai báo
+                    trùng lặp hoặc không đồng nhất.
+                </p>
+
+                <h3>2.5. External Variable Declaration</h3>
+
+                <p>
+                    Header File cũng có thể chứa khai báo
+                    một biến toàn cục được định nghĩa
+                    trong Source File khác.
+                </p>
+
+                <p>
+                    Trong C, từ khóa <code>extern</code>
+                    có thể được sử dụng để khai báo rằng
+                    một biến được định nghĩa ở nơi khác.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <p>
+                    File <code>system_state.h</code>:
+                </p>
+
+                <pre><code>#ifndef SYSTEM_STATE_H
+#define SYSTEM_STATE_H
+
+#include &lt;stdint.h&gt;
+
+extern uint32_t g_system_tick;
+
+#endif</code></pre>
+
+                <p>
+                    File <code>system_state.c</code>:
+                </p>
+
+                <pre><code>#include "system_state.h"
+
+uint32_t g_system_tick = 0U;</code></pre>
+
+                <p>
+                    File <code>main.c</code>:
+                </p>
+
+                <pre><code>#include "system_state.h"
+
+int main(void)
+{
+    uint32_t current_tick = g_system_tick;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>system_state.h</code> chỉ chứa
+                        khai báo <code>extern</code>.
+                    </li>
+                    <li>
+                        <code>system_state.c</code> chứa
+                        Definition thực tế của biến.
+                    </li>
+                    <li>
+                        <code>main.c</code> sử dụng biến
+                        thông qua khai báo trong Header File.
+                    </li>
+                </ul>
+
+                <p>
+                    Cách tổ chức này giúp tránh việc mỗi
+                    Source File vô tình tạo ra một
+                    Definition riêng của cùng một
+                    Global Variable.
+                </p>
+
+                <h3>2.6. Forward Declaration</h3>
+
+                <p>
+                    Trong một số trường hợp, Header File
+                    chỉ cần biết một kiểu Structure tồn tại
+                    mà không cần biết toàn bộ cấu trúc
+                    bên trong của nó.
+                </p>
+
+                <p>
+                    Khi đó, chúng ta có thể sử dụng
+                    <strong>Forward Declaration</strong>.
+                </p>
+
+                <pre><code>struct SensorContext;
+
+void Sensor_Process(struct SensorContext *context);</code></pre>
+
+                <p>
+                    Dòng:
+                </p>
+
+                <pre><code>struct SensorContext;</code></pre>
+
+                <p>
+                    khai báo rằng kiểu Structure
+                    <code>SensorContext</code> tồn tại,
+                    nhưng chưa định nghĩa các member
+                    bên trong Structure đó.
+                </p>
+
+                <p>
+                    Vì vậy, Function có thể nhận
+                    Pointer đến kiểu Structure này.
+                    Tuy nhiên, khi chưa có định nghĩa
+                    đầy đủ, chương trình không thể
+                    truy cập trực tiếp những member
+                    của Structure thông qua Pointer.
+                </p>
+
+                <p>
+                    Ví dụ triển khai:
+                </p>
+
+                <p>
+                    File <code>sensor_context.h</code>:
+                </p>
+
+                <pre><code>#ifndef SENSOR_CONTEXT_H
+#define SENSOR_CONTEXT_H
+
+struct SensorContext;
+
+void Sensor_Process(struct SensorContext *context);
+
+#endif</code></pre>
+
+                <p>
+                    File <code>sensor_context.c</code>:
+                </p>
+
+                <pre><code>#include "sensor_context.h"
+
+struct SensorContext
+{
+    unsigned int raw_value;
+};
+
+void Sensor_Process(struct SensorContext *context)
+{
+    if (context == 0)
+    {
+        return;
+    }
+
+    context->raw_value = 100U;
+}</code></pre>
+
+                <p>
+                    Header File chỉ cần khai báo kiểu
+                    Structure và Function Prototype.
+                    Phần định nghĩa chi tiết của
+                    Structure có thể được giữ trong
+                    Source File.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Forward Declaration
+                    có thể giúp giảm sự phụ thuộc giữa
+                    những Header File. Tuy nhiên,
+                    khi cần truy cập member của Structure,
+                    Compiler phải nhìn thấy định nghĩa
+                    đầy đủ của kiểu dữ liệu đó.
+                </div>
+
+                <h2>3. Header Guard là gì?</h2>
+
+                <h3>3.1. Vấn đề Multiple Inclusion</h3>
+
+                <p>
+                    Một Header File có thể được Include
+                    bởi nhiều Source File trong cùng
+                    một Project. Ngoài ra, một Source File
+                    có thể Include nhiều Header File,
+                    trong khi các Header File đó lại
+                    cùng Include một Header File khác.
+                </p>
+
+                <p>
+                    Điều này có thể khiến một Header File
+                    xuất hiện nhiều lần trong quá trình
+                    Preprocessing.
+                </p>
+
+                <p>
+                    Ví dụ, giả sử có ba File:
+                </p>
+
+                <p>
+                    File <code>common_types.h</code>:
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int value;
+} SensorData_t;</code></pre>
+
+                <p>
+                    File <code>sensor_a.h</code>:
+                </p>
+
+                <pre><code>#include "common_types.h"
+
+void SensorA_Init(void);</code></pre>
+
+                <p>
+                    File <code>sensor_b.h</code>:
+                </p>
+
+                <pre><code>#include "common_types.h"
+
+void SensorB_Init(void);</code></pre>
+
+                <p>
+                    File <code>main.c</code>:
+                </p>
+
+                <pre><code>#include "sensor_a.h"
+#include "sensor_b.h"
+
+int main(void)
+{
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi Preprocessor xử lý <code>main.c</code>,
+                    quá trình Include diễn ra theo sơ đồ:
+                </p>
+
+                <svg viewBox="0 0 700 340" width="100%" role="img"
+                    aria-label="Minh họa cùng một Header File được Include nhiều lần thông qua các Header khác nhau">
+
+                    <rect x="245" y="18" width="210" height="48" rx="6"
+                        fill="#fff0d9" stroke="#b7803e" stroke-width="1.5" />
+                    <text x="350" y="47" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#70451d">
+                        main.c
+                    </text>
+
+                    <path d="M300 66 L170 115"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M400 66 L530 115"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="65" y="117" width="210" height="48" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+                    <text x="170" y="146" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#173d68">
+                        sensor_a.h
+                    </text>
+
+                    <rect x="425" y="117" width="210" height="48" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+                    <text x="530" y="146" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#173d68">
+                        sensor_b.h
+                    </text>
+
+                    <path d="M170 165 L270 224"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M530 165 L430 224"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="190" y="226" width="320" height="65" rx="6"
+                        fill="#fce4e4" stroke="#bb5959" stroke-width="1.5" />
+
+                    <text x="350" y="251" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#7c2929">
+                        common_types.h
+                    </text>
+                    <text x="350" y="273" text-anchor="middle"
+                        font-size="11" fill="#7c2929">
+                        Included twice
+                    </text>
+
+                    <text x="350" y="320" text-anchor="middle"
+                        font-size="11" fill="currentColor">
+                        Hai đường Include cùng dẫn đến một Header File.
+                    </text>
+
+                </svg>
+
+                <p>
+                    Trong trường hợp này,
+                    <code>common_types.h</code> được đưa
+                    vào quá trình Preprocessing hai lần.
+                </p>
+
+                <p>
+                    Vì Header File chứa định nghĩa
+                    Structure <code>SensorData_t</code>,
+                    Compiler có thể gặp lỗi
+                    <strong>redefinition</strong>
+                    khi cùng một Structure được định
+                    nghĩa nhiều lần trong cùng
+                    một Translation Unit.
+                </p>
+
+                <h3>3.2. Multiple Inclusion có thể gây ra những vấn đề gì?</h3>
+
+                <p>
+                    Việc Include lặp lại một Header File
+                    có thể gây ra nhiều vấn đề tùy thuộc
+                    vào nội dung bên trong Header.
+                </p>
+
+                <ul>
+                    <li>
+                        Định nghĩa Structure, Union hoặc Enum
+                        có thể bị lặp lại trong cùng
+                        một Translation Unit.
+                    </li>
+                    <li>
+                        Một số khai báo hoặc định nghĩa
+                        kiểu dữ liệu có thể gây lỗi
+                        khi xuất hiện nhiều lần.
+                    </li>
+                    <li>
+                        Macro có thể được xử lý lặp lại
+                        hoặc tạo ra cảnh báo nếu định nghĩa
+                        không nhất quán.
+                    </li>
+                    <li>
+                        Nội dung Header lớn có thể làm
+                        tăng khối lượng công việc của
+                        quá trình Preprocessing.
+                    </li>
+                </ul>
+
+                <p>
+                    Trong những Project lớn, các Header File
+                    thường có nhiều quan hệ Include với nhau.
+                    Nếu không có cơ chế bảo vệ, vấn đề
+                    Multiple Inclusion có thể xuất hiện
+                    rất dễ dàng.
+                </p>
+
+                <h3>3.3. Header Guard là gì?</h3>
+
+                <p>
+                    <strong>Header Guard</strong> là một kỹ thuật
+                    sử dụng những Preprocessor Directive
+                    để bảo đảm nội dung chính của một
+                    Header File chỉ được xử lý một lần
+                    trong cùng một Translation Unit.
+                </p>
+
+                <p>
+                    Header Guard thường sử dụng ba Directive:
+                </p>
+
+                <ul>
+                    <li><code>#ifndef</code></li>
+                    <li><code>#define</code></li>
+                    <li><code>#endif</code></li>
+                </ul>
+
+                <p>
+                    Cú pháp tổng quát:
+                </p>
+
+                <pre><code>#ifndef HEADER_FILE_H
+#define HEADER_FILE_H
+
+/* Header File Content */
+
+#endif</code></pre>
+
+                <p>
+                    Trong đó:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Directive</th>
+                            <th>Ý nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>#ifndef</code></td>
+                            <td>
+                                Kiểm tra Macro có chưa được
+                                định nghĩa hay không.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>#define</code></td>
+                            <td>
+                                Định nghĩa Macro bảo vệ
+                                Header File.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>#endif</code></td>
+                            <td>
+                                Kết thúc vùng nội dung
+                                được bảo vệ bởi điều kiện.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong trường hợp Macro bảo vệ
+                    chưa được định nghĩa, Preprocessor
+                    xử lý phần nội dung bên trong.
+                    Sau đó, Macro được định nghĩa
+                    để những lần Include tiếp theo
+                    có thể nhận biết Header File
+                    đã được xử lý.
+                </p>
+
+                <h2>4. Cách hoạt động của Header Guard</h2>
+
+                <h3>4.1. Ví dụ Header File không có Header Guard</h3>
+
+                <p>
+                    Trước tiên, hãy xem một Header File
+                    không sử dụng Header Guard.
+                </p>
+
+                <p>
+                    File <code>common_types.h</code>:
+                </p>
+
+                <pre><code>typedef struct
+{
+    unsigned int value;
+} SensorData_t;</code></pre>
+
+                <p>
+                    Giả sử <code>main.c</code> Include
+                    Header File này thông qua hai Header
+                    khác nhau:
+                </p>
+
+                <pre><code>#include "sensor_a.h"
+#include "sensor_b.h"
+
+int main(void)
+{
+    SensorData_t data;
+
+    data.value = 100U;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Nếu cả <code>sensor_a.h</code>
+                    và <code>sensor_b.h</code> đều
+                    Include <code>common_types.h</code>,
+                    phần định nghĩa <code>SensorData_t</code>
+                    có thể xuất hiện hai lần trong
+                    cùng một Translation Unit.
+                </p>
+
+                <p>
+                    Điều này có thể dẫn đến lỗi
+                    redefinition của Structure.
+                </p>
+
+                <h3>4.2. Thêm Header Guard vào Header File</h3>
+
+                <p>
+                    Chúng ta có thể giải quyết vấn đề
+                    bằng cách bổ sung Header Guard
+                    vào <code>common_types.h</code>.
+                </p>
+
+                <pre><code>/* common_types.h */
+
+#ifndef COMMON_TYPES_H
+#define COMMON_TYPES_H
+
+typedef struct
+{
+    unsigned int value;
+} SensorData_t;
+
+#endif</code></pre>
+
+                <p>
+                    Khi đó, quá trình Include sẽ
+                    được bảo vệ bằng Macro
+                    <code>COMMON_TYPES_H</code>.
+                </p>
+
+                <p>
+                    Lần đầu tiên Preprocessor gặp
+                    Header File:
+                </p>
+
+                <ol>
+                    <li>
+                        Kiểm tra <code>COMMON_TYPES_H</code>
+                        bằng <code>#ifndef</code>.
+                    </li>
+                    <li>
+                        Vì Macro chưa được định nghĩa,
+                        Preprocessor tiếp tục xử lý
+                        nội dung bên trong.
+                    </li>
+                    <li>
+                        Directive <code>#define</code>
+                        định nghĩa Macro
+                        <code>COMMON_TYPES_H</code>.
+                    </li>
+                    <li>
+                        Phần định nghĩa Structure
+                        <code>SensorData_t</code>
+                        được xử lý.
+                    </li>
+                </ol>
+
+                <p>
+                    Khi Header File được Include
+                    lần thứ hai:
+                </p>
+
+                <ol>
+                    <li>
+                        Preprocessor kiểm tra
+                        <code>COMMON_TYPES_H</code>.
+                    </li>
+                    <li>
+                        Macro đã được định nghĩa
+                        từ lần Include trước.
+                    </li>
+                    <li>
+                        Nội dung bên trong vùng
+                        Header Guard sẽ bị bỏ qua.
+                    </li>
+                </ol>
+
+                <p>
+                    Nhờ vậy, Structure
+                    <code>SensorData_t</code>
+                    không bị định nghĩa lại
+                    trong cùng Translation Unit.
+                </p>
+
+                <h3>4.3. Minh họa hoạt động Header Guard</h3>
+
+                <svg viewBox="0 0 700 400" width="100%" role="img"
+                    aria-label="Sơ đồ hoạt động của Header Guard khi cùng một Header File được Include hai lần">
+
+                    <rect x="200" y="15" width="300" height="48" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+                    <text x="350" y="44" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#173d68">
+                        Include common_types.h
+                    </text>
+
+                    <path d="M350 63 V91"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 84 L350 92 L356 84"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="170" y="94" width="360" height="55" rx="6"
+                        fill="#fff0d9" stroke="#b7803e" stroke-width="1.5" />
+                    <text x="350" y="116" text-anchor="middle"
+                        font-size="12" font-weight="bold" fill="#70451d">
+                        #ifndef COMMON_TYPES_H
+                    </text>
+                    <text x="350" y="135" text-anchor="middle"
+                        font-size="10" fill="#70451d">
+                        Kiểm tra Macro bảo vệ
+                    </text>
+
+                    <path d="M350 149 V178"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 171 L350 179 L356 171"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="170" y="181" width="360" height="50" rx="6"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+                    <text x="350" y="211" text-anchor="middle"
+                        font-size="12" font-weight="bold" fill="#174d2e">
+                        #define COMMON_TYPES_H
+                    </text>
+
+                    <path d="M350 231 V260"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 253 L350 261 L356 253"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="170" y="263" width="360" height="55" rx="6"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+                    <text x="350" y="285" text-anchor="middle"
+                        font-size="12" font-weight="bold" fill="#174d2e">
+                        Process Header Content
+                    </text>
+                    <text x="350" y="303" text-anchor="middle"
+                        font-size="10" fill="#174d2e">
+                        Xử lý nội dung Header File
+                    </text>
+
+                    <path d="M350 318 V345"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="170" y="348" width="360" height="40" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+                    <text x="350" y="373" text-anchor="middle"
+                        font-size="12" font-weight="bold" fill="#173d68">
+                        #endif
+                    </text>
+
+                    <text x="560" y="120" font-size="10" fill="currentColor">
+                        Chưa định nghĩa
+                    </text>
+                    <text x="560" y="136" font-size="10" fill="currentColor">
+                        → Xử lý nội dung
+                    </text>
+
+                </svg>
+
+                <p>
+                    Ở lần Include tiếp theo,
+                    <code>COMMON_TYPES_H</code> đã
+                    được định nghĩa nên điều kiện
+                    <code>#ifndef</code> không còn
+                    thỏa mãn. Nội dung Header File
+                    được bỏ qua.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Header Guard
+                    không ngăn việc viết nhiều Directive
+                    <code>#include</code> trong Source File.
+                    Nó bảo đảm nội dung được bảo vệ
+                    trong Header File chỉ được xử lý
+                    một lần trong cùng Translation Unit.
+                </div>
+
+                <h3>4.4. Ví dụ hoàn chỉnh với nhiều Header File</h3>
+
+                <p>
+                    Chúng ta có thể xây dựng lại ví dụ
+                    ở phần trước bằng cách sử dụng
+                    Header Guard trong từng Header File.
+                </p>
+
+                <p>
+                    File <code>common_types.h</code>:
+                </p>
+
+                <pre><code>#ifndef COMMON_TYPES_H
+#define COMMON_TYPES_H
+
+typedef struct
+{
+    unsigned int value;
+} SensorData_t;
+
+#endif</code></pre>
+
+                <p>
+                    File <code>sensor_a.h</code>:
+                </p>
+
+                <pre><code>#ifndef SENSOR_A_H
+#define SENSOR_A_H
+
+#include "common_types.h"
+
+void SensorA_Init(void);
+
+#endif</code></pre>
+
+                <p>
+                    File <code>sensor_b.h</code>:
+                </p>
+
+                <pre><code>#ifndef SENSOR_B_H
+#define SENSOR_B_H
+
+#include "common_types.h"
+
+void SensorB_Init(void);
+
+#endif</code></pre>
+
+                <p>
+                    File <code>main.c</code>:
+                </p>
+
+                <pre><code>#include "sensor_a.h"
+#include "sensor_b.h"
+
+int main(void)
+{
+    SensorData_t data;
+
+    data.value = 100U;
+
+    SensorA_Init();
+    SensorB_Init();
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Với cách tổ chức này, dù
+                    <code>common_types.h</code>
+                    được Include thông qua nhiều
+                    Header File, nội dung của nó
+                    vẫn được bảo vệ trong
+                    <code>main.c</code>.
+                </p>
+
+                <h2>5. Đặt tên Header Guard đúng cách</h2>
+
+                <h3>5.1. Quy tắc đặt tên</h3>
+
+                <p>
+                    Mỗi Header File nên có một
+                    Header Guard với tên riêng biệt
+                    để tránh xung đột giữa các
+                    Macro bảo vệ.
+                </p>
+
+                <p>
+                    Tên Header Guard thường được
+                    viết bằng chữ in hoa và sử dụng
+                    dấu gạch dưới để phân tách
+                    các thành phần.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#ifndef SENSOR_DRIVER_H
+#define SENSOR_DRIVER_H
+
+/* Header content */
+
+#endif</code></pre>
+
+                <p>
+                    Một số ví dụ khác:
+                </p>
+
+                <pre><code>UART_DRIVER_H
+
+CAN_DRIVER_H
+
+GPIO_CONFIG_H
+
+ECU_TYPES_H
+
+SYSTEM_STATE_H</code></pre>
+
+                <h3>5.2. Đặt tên theo đường dẫn Header File</h3>
+
+                <p>
+                    Trong một Embedded Project lớn,
+                    có thể tồn tại nhiều Header File
+                    với tên tương tự nhưng nằm trong
+                    những thư mục khác nhau.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Project/
+│
+├── drivers/
+│   ├── sensor/
+│   │   └── config.h
+│   │
+│   └── uart/
+│       └── config.h
+│
+└── application/
+    └── config.h</code></pre>
+
+                <p>
+                    Nếu tất cả Header File đều sử dụng
+                    cùng một tên Header Guard:
+                </p>
+
+                <pre><code>#ifndef CONFIG_H
+#define CONFIG_H</code></pre>
+
+                <p>
+                    chúng có thể xung đột khi
+                    được Include trong cùng một
+                    Translation Unit.
+                </p>
+
+                <p>
+                    Ví dụ, sau khi Macro
+                    <code>CONFIG_H</code> được
+                    định nghĩa bởi Header File đầu tiên,
+                    những Header File khác có cùng
+                    tên Guard sẽ bị bỏ qua.
+                </p>
+
+                <p>
+                    Vì vậy, có thể sử dụng tên
+                    kết hợp với đường dẫn hoặc
+                    tên Module:
+                </p>
+
+                <pre><code>/* drivers/sensor/config.h */
+
+#ifndef DRIVERS_SENSOR_CONFIG_H
+#define DRIVERS_SENSOR_CONFIG_H
+
+#endif</code></pre>
+
+                <pre><code>/* drivers/uart/config.h */
+
+#ifndef DRIVERS_UART_CONFIG_H
+#define DRIVERS_UART_CONFIG_H
+
+#endif</code></pre>
+
+                <pre><code>/* application/config.h */
+
+#ifndef APPLICATION_CONFIG_H
+#define APPLICATION_CONFIG_H
+
+#endif</code></pre>
+
+                <p>
+                    Cách đặt tên này giúp giảm
+                    nguy cơ trùng lặp Macro
+                    giữa các Header File.
+                </p>
+
+                <h3>5.3. Tránh sử dụng tên dành riêng cho Implementation</h3>
+
+                <p>
+                    Khi đặt tên Macro, cần tránh
+                    những tên thuộc phạm vi dành riêng
+                    cho Implementation của C.
+                </p>
+
+                <p>
+                    Ví dụ, không nên tự đặt những
+                    Header Guard như:
+                </p>
+
+                <pre><code>__SENSOR_DRIVER_H
+_SYSTEM_CONFIG_H
+__UART_H__</code></pre>
+
+                <p>
+                    Những tên bắt đầu bằng hai dấu
+                    gạch dưới hoặc dấu gạch dưới
+                    theo sau là chữ in hoa thường
+                    thuộc phạm vi dành riêng cho
+                    Implementation.
+                </p>
+
+                <p>
+                    Nên sử dụng tên rõ ràng
+                    và không thuộc những phạm vi
+                    tên dành riêng:
+                </p>
+
+                <pre><code>SENSOR_DRIVER_H
+SYSTEM_CONFIG_H
+PROJECT_UART_H</code></pre>
+
+                <h3>5.4. Header Guard phải bao quanh toàn bộ nội dung cần bảo vệ</h3>
+
+                <p>
+                    Một Header File nên đặt
+                    Header Guard ở đầu File
+                    và kết thúc ở cuối File.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#ifndef SENSOR_DRIVER_H
+#define SENSOR_DRIVER_H
+
+#include &lt;stdint.h&gt;
+
+#define SENSOR_TIMEOUT_MS 100U
+
+typedef struct
+{
+    uint16_t value;
+} SensorData_t;
+
+void Sensor_Init(void);
+
+void Sensor_Read(SensorData_t *data);
+
+#endif /* SENSOR_DRIVER_H */</code></pre>
+
+                <p>
+                    Việc ghi chú tên Header Guard
+                    bên cạnh <code>#endif</code>
+                    không bắt buộc, nhưng giúp
+                    người đọc dễ xác định
+                    vùng được bảo vệ.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Mỗi Header File
+                    nên sử dụng một Header Guard riêng
+                    biệt. Tên Guard cần đủ đặc trưng
+                    để tránh xung đột với những
+                    Header File khác trong Project.
+                </div>
+
+                <h2>6. Header Guard và #pragma once</h2>
+
+                <h3>6.1. #pragma once là gì?</h3>
+
+                <p>
+                    Ngoài cách sử dụng
+                    <code>#ifndef</code>,
+                    <code>#define</code> và
+                    <code>#endif</code>, một số
+                    Compiler còn hỗ trợ Directive
+                    <code>#pragma once</code>.
+                </p>
+
+                <p>
+                    Directive này yêu cầu Compiler
+                    xử lý Header File tương ứng
+                    một lần trong một Translation Unit.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* sensor_driver.h */
+
+#pragma once
+
+#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint16_t value;
+} SensorData_t;
+
+void Sensor_Init(void);</code></pre>
+
+                <p>
+                    Với Compiler hỗ trợ
+                    <code>#pragma once</code>,
+                    Header File sẽ được bảo vệ
+                    khỏi việc xử lý lặp lại
+                    trong cùng Translation Unit.
+                </p>
+
+                <h3>6.2. So sánh Header Guard và #pragma once</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Header Guard</th>
+                            <th>#pragma once</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cú pháp</td>
+                            <td>
+                                Kết hợp <code>#ifndef</code>,
+                                <code>#define</code> và
+                                <code>#endif</code>.
+                            </td>
+                            <td>
+                                Sử dụng
+                                <code>#pragma once</code>.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Chuẩn ISO C</td>
+                            <td>
+                                Sử dụng những Directive
+                                chuẩn của C.
+                            </td>
+                            <td>
+                                Không phải Directive
+                                được ISO C chuẩn hóa.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Khả năng tương thích</td>
+                            <td>
+                                Có tính tương thích rộng
+                                giữa các Compiler C.
+                            </td>
+                            <td>
+                                Phụ thuộc vào sự hỗ trợ
+                                của Compiler.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Cách bảo vệ</td>
+                            <td>
+                                Kiểm tra Macro bảo vệ
+                                đã được định nghĩa hay chưa.
+                            </td>
+                            <td>
+                                Dựa trên cơ chế riêng
+                                của Compiler.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Cách sử dụng</td>
+                            <td>
+                                Phổ biến trong những
+                                Project yêu cầu tính
+                                tương thích cao.
+                            </td>
+                            <td>
+                                Có thể dùng trong
+                                Project kiểm soát được
+                                Compiler hỗ trợ.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>6.3. Nên sử dụng Header Guard hay #pragma once?</h3>
+
+                <p>
+                    Cả hai cách đều có thể được
+                    sử dụng để tránh việc một
+                    Header File bị xử lý nhiều lần
+                    trong cùng Translation Unit.
+                </p>
+
+                <p>
+                    Tuy nhiên, có một điểm khác biệt
+                    quan trọng:
+                </p>
+
+                <ul>
+                    <li>
+                        Header Guard sử dụng những
+                        Preprocessor Directive thuộc
+                        chuẩn C.
+                    </li>
+                    <li>
+                        <code>#pragma once</code>
+                        là một chỉ thị được hỗ trợ
+                        phổ biến bởi nhiều Compiler,
+                        nhưng không thuộc tập
+                        Directive chuẩn của ISO C.
+                    </li>
+                </ul>
+
+                <p>
+                    Đối với Embedded Project,
+                    đặc biệt khi cần hỗ trợ
+                    nhiều Compiler hoặc Toolchain,
+                    Header Guard là một lựa chọn
+                    có tính di động cao.
+                </p>
+
+                <p>
+                    Nếu Project sử dụng một Compiler
+                    cụ thể và quy định Coding
+                    Convention cho phép
+                    <code>#pragma once</code>,
+                    có thể cân nhắc sử dụng
+                    theo tiêu chuẩn của Project.
+                </p>
+
+                <div class="note">
+                    <strong>Khuyến nghị:</strong> Trong những
+                    ví dụ của khóa học này, chúng ta
+                    sử dụng Header Guard theo dạng
+                    <code>#ifndef</code>,
+                    <code>#define</code> và
+                    <code>#endif</code> để bảo đảm
+                    tính tương thích giữa các
+                    môi trường biên dịch C.
+                </div>
+
+                <h2>7. Những lỗi thường gặp khi quản lý Header File</h2>
+
+                <h3>7.1. Không sử dụng Header Guard</h3>
+
+                <p>
+                    Đây là một trong những lỗi
+                    phổ biến nhất khi tạo Header File.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* sensor_types.h */
+
+typedef struct
+{
+    unsigned int value;
+} SensorData_t;</code></pre>
+
+                <p>
+                    Nếu Header File này được Include
+                    nhiều lần trong cùng một
+                    Translation Unit, định nghĩa
+                    Structure có thể bị lặp lại
+                    và gây lỗi.
+                </p>
+
+                <p>
+                    Cách khắc phục là bổ sung
+                    Header Guard:
+                </p>
+
+                <pre><code>#ifndef SENSOR_TYPES_H
+#define SENSOR_TYPES_H
+
+typedef struct
+{
+    unsigned int value;
+} SensorData_t;
+
+#endif</code></pre>
+
+                <h3>7.2. Sử dụng trùng tên Header Guard</h3>
+
+                <p>
+                    Một vấn đề khác là nhiều
+                    Header File sử dụng cùng
+                    một tên Macro bảo vệ.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* sensor_config.h */
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define SENSOR_TIMEOUT_MS 100U
+
+#endif</code></pre>
+
+                <pre><code>/* uart_config.h */
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define UART_BAUD_RATE 115200U
+
+#endif</code></pre>
+
+                <p>
+                    Nếu <code>sensor_config.h</code>
+                    được Include trước, Macro
+                    <code>CONFIG_H</code> sẽ
+                    được định nghĩa.
+                </p>
+
+                <p>
+                    Khi Preprocessor gặp
+                    <code>uart_config.h</code>,
+                    điều kiện <code>#ifndef CONFIG_H</code>
+                    không còn thỏa mãn. Vì vậy,
+                    nội dung cấu hình UART
+                    có thể bị bỏ qua hoàn toàn.
+                </p>
+
+                <p>
+                    Cách khắc phục:
+                </p>
+
+                <pre><code>/* sensor_config.h */
+
+#ifndef SENSOR_CONFIG_H
+#define SENSOR_CONFIG_H
+
+#define SENSOR_TIMEOUT_MS 100U
+
+#endif</code></pre>
+
+                <pre><code>/* uart_config.h */
+
+#ifndef UART_CONFIG_H
+#define UART_CONFIG_H
+
+#define UART_BAUD_RATE 115200U
+
+#endif</code></pre>
+
+                <h3>7.3. Định nghĩa Function thông thường trong Header File</h3>
+
+                <p>
+                    Một lỗi thiết kế thường gặp
+                    là đặt phần triển khai của
+                    Function thông thường trong
+                    Header File được Include bởi
+                    nhiều Source File.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* math_utils.h */
+
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int Math_Add(int a, int b)
+{
+    return a + b;
+}
+
+#endif</code></pre>
+
+                <p>
+                    Giả sử cả <code>main.c</code>
+                    và <code>sensor.c</code> đều
+                    Include Header File này.
+                </p>
+
+                <p>
+                    Header Guard chỉ bảo vệ
+                    nội dung trong từng Translation
+                    Unit riêng biệt. Nó không
+                    ngăn việc Function Definition
+                    xuất hiện trong nhiều Translation
+                    Unit khác nhau.
+                </p>
+
+                <p>
+                    Do đó, sau khi biên dịch,
+                    nhiều Object File có thể
+                    cùng chứa một Definition
+                    của <code>Math_Add()</code>.
+                    Khi Linker kết hợp các Object
+                    File, chương trình có thể
+                    gặp lỗi Multiple Definition.
+                </p>
+
+                <p>
+                    Cách tổ chức thông thường:
+                </p>
+
+                <p>
+                    File <code>math_utils.h</code>:
+                </p>
+
+                <pre><code>#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int Math_Add(int a, int b);
+
+#endif</code></pre>
+
+                <p>
+                    File <code>math_utils.c</code>:
+                </p>
+
+                <pre><code>#include "math_utils.h"
+
+int Math_Add(int a, int b)
+{
+    return a + b;
+}</code></pre>
+
+                <p>
+                    Header File chỉ chứa Function
+                    Prototype, còn Function
+                    Definition được đặt trong
+                    một Source File riêng.
+                </p>
+
+                <p>
+                    Có một số trường hợp đặc biệt
+                    như <code>static inline</code>
+                    Function được triển khai
+                    trong Header File. Tuy nhiên,
+                    đây là một kỹ thuật cần
+                    được sử dụng có chủ đích
+                    và sẽ được cân nhắc trong
+                    thiết kế Module phù hợp.
+                </p>
+
+                <h3>7.4. Định nghĩa Global Variable trong Header File</h3>
+
+                <p>
+                    Không nên đặt Definition
+                    của một Global Variable
+                    thông thường trong Header File
+                    được Include bởi nhiều
+                    Source File.
+                </p>
+
+                <p>
+                    Ví dụ không nên sử dụng:
+                </p>
+
+                <pre><code>/* system_state.h */
+
+#ifndef SYSTEM_STATE_H
+#define SYSTEM_STATE_H
+
+unsigned int g_system_tick = 0U;
+
+#endif</code></pre>
+
+                <p>
+                    Nếu nhiều Source File Include
+                    Header này, mỗi Translation
+                    Unit có thể tạo ra một
+                    Definition của
+                    <code>g_system_tick</code>.
+                </p>
+
+                <p>
+                    Khi Linker kết hợp các
+                    Object File, việc có
+                    nhiều Definition của cùng
+                    một Global Variable có thể
+                    dẫn đến lỗi Multiple Definition.
+                </p>
+
+                <p>
+                    Cách tổ chức phù hợp hơn:
+                </p>
+
+                <p>
+                    File <code>system_state.h</code>:
+                </p>
+
+                <pre><code>#ifndef SYSTEM_STATE_H
+#define SYSTEM_STATE_H
+
+extern unsigned int g_system_tick;
+
+#endif</code></pre>
+
+                <p>
+                    File <code>system_state.c</code>:
+                </p>
+
+                <pre><code>#include "system_state.h"
+
+unsigned int g_system_tick = 0U;</code></pre>
+
+                <p>
+                    Như vậy, Header File chỉ
+                    khai báo biến thông qua
+                    <code>extern</code>, còn
+                    Source File chịu trách nhiệm
+                    Definition biến đó.
+                </p>
+
+                <h3>7.5. Include quá nhiều Header File không cần thiết</h3>
+
+                <p>
+                    Một Header File có thể Include
+                    nhiều Header File khác nhau.
+                    Tuy nhiên, việc Include
+                    không cần thiết có thể
+                    làm tăng sự phụ thuộc
+                    giữa các Module.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* sensor_types.h */
+
+#ifndef SENSOR_TYPES_H
+#define SENSOR_TYPES_H
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint16_t temperature;
+    uint16_t humidity;
+} SensorData_t;
+
+#endif</code></pre>
+
+                <p>
+                    Nếu Header File chỉ cần
+                    sử dụng <code>uint16_t</code>,
+                    việc Include thêm
+                    <code>stdio.h</code>,
+                    <code>stdlib.h</code> và
+                    <code>string.h</code> có thể
+                    không cần thiết.
+                </p>
+
+                <p>
+                    Nên giới hạn những Header File
+                    được Include ở mức thực sự
+                    cần thiết:
+                </p>
+
+                <pre><code>/* sensor_types.h */
+
+#ifndef SENSOR_TYPES_H
+#define SENSOR_TYPES_H
+
+#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint16_t temperature;
+    uint16_t humidity;
+} SensorData_t;
+
+#endif</code></pre>
+
+                <p>
+                    Việc giảm những Include
+                    không cần thiết giúp
+                    Header File có ít phụ thuộc
+                    hơn và dễ bảo trì hơn.
+                </p>
+
+                <h3>7.6. Header File phụ thuộc vào Include Order</h3>
+
+                <p>
+                    Một Header File nên tự Include
+                    những Header cần thiết cho
+                    các kiểu dữ liệu mà chính
+                    nó sử dụng.
+                </p>
+
+                <p>
+                    Ví dụ không tốt:
+                </p>
+
+                <p>
+                    File <code>sensor_driver.h</code>:
+                </p>
+
+                <pre><code>#ifndef SENSOR_DRIVER_H
+#define SENSOR_DRIVER_H
+
+void Sensor_Read(uint16_t *value);
+
+#endif</code></pre>
+
+                <p>
+                    Header File sử dụng
+                    <code>uint16_t</code> nhưng
+                    lại không Include
+                    <code>stdint.h</code>.
+                </p>
+
+                <p>
+                    Chương trình có thể hoạt động
+                    khi một Source File vô tình
+                    Include <code>stdint.h</code>
+                    trước <code>sensor_driver.h</code>.
+                    Tuy nhiên, Header File sẽ
+                    không tự đầy đủ khi được
+                    Include ở một vị trí khác.
+                </p>
+
+                <p>
+                    Cách viết tốt hơn:
+                </p>
+
+                <pre><code>#ifndef SENSOR_DRIVER_H
+#define SENSOR_DRIVER_H
+
+#include &lt;stdint.h&gt;
+
+void Sensor_Read(uint16_t *value);
+
+#endif</code></pre>
+
+                <p>
+                    Khi đó, Header File tự cung cấp
+                    những khai báo cần thiết
+                    cho nội dung của chính nó.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Một Header File
+                    nên có khả năng được Include
+                    một cách độc lập, thay vì
+                    phụ thuộc vào việc một Header
+                    File khác đã được Include trước đó.
+                </div>
+
+                <h2>8. Nguyên tắc quản lý Header File trong Embedded Project</h2>
+
+                <h3>8.1. Tổ chức Header File theo Module</h3>
+
+                <p>
+                    Trong Embedded Project,
+                    nên tổ chức Header File
+                    theo từng Module hoặc nhóm
+                    chức năng thay vì đặt toàn bộ
+                    khai báo vào một File chung.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>Embedded_Project/
+│
+├── include/
+│   ├── common/
+│   │   └── common_types.h
+│   │
+│   ├── drivers/
+│   │   ├── uart_driver.h
+│   │   ├── can_driver.h
+│   │   └── gpio_driver.h
+│   │
+│   ├── sensors/
+│   │   └── sensor_driver.h
+│   │
+│   └── application/
+│       └── application.h
+│
+├── src/
+│   ├── drivers/
+│   │   ├── uart_driver.c
+│   │   ├── can_driver.c
+│   │   └── gpio_driver.c
+│   │
+│   ├── sensors/
+│   │   └── sensor_driver.c
+│   │
+│   ├── application/
+│   │   └── application.c
+│   │
+│   └── main.c
+│
+└── build/</code></pre>
+
+                <p>
+                    Trong cấu trúc trên:
+                </p>
+
+                <ul>
+                    <li>
+                        Thư mục <code>include/</code>
+                        chứa những Header File
+                        được chia sẻ.
+                    </li>
+                    <li>
+                        Thư mục <code>src/</code>
+                        chứa phần triển khai
+                        của những Module.
+                    </li>
+                    <li>
+                        <code>common_types.h</code>
+                        chứa những kiểu dữ liệu
+                        thực sự dùng chung.
+                    </li>
+                    <li>
+                        Những Driver có Header
+                        và Source File riêng
+                        để quản lý Interface
+                        và Implementation.
+                    </li>
+                </ul>
+
+                <p>
+                    Việc tổ chức theo Module
+                    giúp lập trình viên dễ
+                    tìm kiếm và bảo trì
+                    các thành phần của Project.
+                </p>
+
+                <h3>8.2. Header File nên tập trung vào Interface</h3>
+
+                <p>
+                    Một Header File công khai
+                    nên tập trung vào những thông tin
+                    mà Module khác cần biết để
+                    sử dụng Module.
+                </p>
+
+                <p>
+                    Ví dụ, <code>uart_driver.h</code>
+                    có thể chứa:
+                </p>
+
+                <pre><code>#ifndef UART_DRIVER_H
+#define UART_DRIVER_H
+
+#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+typedef enum
+{
+    UART_STATUS_OK = 0,
+    UART_STATUS_ERROR,
+    UART_STATUS_BUSY
+} UART_Status_t;
+
+void UART_Init(void);
+
+UART_Status_t UART_Transmit(
+    const uint8_t *data,
+    uint16_t length
+);
+
+#endif</code></pre>
+
+                <p>
+                    Header File công khai
+                    không nhất thiết phải cho
+                    Module khác biết cách
+                    UART được cấu hình hoặc
+                    cách những Register nội bộ
+                    được truy cập.
+                </p>
+
+                <p>
+                    Những chi tiết triển khai
+                    đó có thể được đặt trong
+                    <code>uart_driver.c</code>.
+                </p>
+
+                <h3>8.3. Chỉ Include những gì thực sự cần thiết</h3>
+
+                <p>
+                    Mỗi Header File nên Include
+                    những Header trực tiếp cần
+                    thiết cho các khai báo
+                    của chính nó.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>/* can_driver.h */
+
+#ifndef CAN_DRIVER_H
+#define CAN_DRIVER_H
+
+#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+typedef struct
+{
+    uint32_t id;
+    uint8_t length;
+    uint8_t data[8];
+} CAN_Frame_t;
+
+bool CAN_Init(void);
+
+bool CAN_Transmit(const CAN_Frame_t *frame);
+
+#endif</code></pre>
+
+                <p>
+                    Trong ví dụ trên,
+                    <code>stdint.h</code>
+                    cần thiết để sử dụng những
+                    kiểu dữ liệu như
+                    <code>uint8_t</code> và
+                    <code>uint32_t</code>.
+                    <code>stdbool.h</code>
+                    cần thiết để sử dụng kiểu
+                    <code>bool</code>.
+                </p>
+
+                <p>
+                    Header File không nên
+                    phụ thuộc vào việc
+                    <code>main.c</code> hoặc
+                    một Header File khác đã
+                    Include những thư viện
+                    này trước đó.
+                </p>
+
+                <h3>8.4. Không Include trực tiếp Source File</h3>
+
+                <p>
+                    Một quy tắc quan trọng là
+                    thông thường không sử dụng
+                    <code>#include</code> để
+                    đưa một Source File
+                    <code>.c</code> vào
+                    Source File khác.
+                </p>
+
+                <p>
+                    Ví dụ không nên sử dụng:
+                </p>
+
+                <pre><code>#include "sensor_driver.c"</code></pre>
+
+                <p>
+                    Thay vào đó, chúng ta nên
+                    Include Header File chứa
+                    những khai báo cần thiết:
+                </p>
+
+                <pre><code>#include "sensor_driver.h"</code></pre>
+
+                <p>
+                    Source File nên được
+                    biên dịch thành Object File
+                    riêng, sau đó được Link
+                    với những Object File
+                    khác trong Project.
+                </p>
+
+                <p>
+                    Cách tổ chức này giúp
+                    từng Module có thể được
+                    biên dịch và quản lý
+                    độc lập hơn.
+                </p>
+
+                <p>
+                    Quá trình Separate Compilation
+                    và Linking sẽ được tìm hiểu
+                    chi tiết hơn ở Bài 28.
+                </p>
+
+                <h3>8.5. Header File nên có tên rõ ràng</h3>
+
+                <p>
+                    Tên Header File nên mô tả
+                    Module hoặc nhóm chức năng
+                    mà nó cung cấp.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>uart_driver.h
+can_driver.h
+sensor_manager.h
+gpio_config.h
+ecu_types.h
+diagnostic_service.h</code></pre>
+
+                <p>
+                    Tránh đặt tên quá chung
+                    chung như:
+                </p>
+
+                <pre><code>file.h
+common.h
+data.h
+test.h</code></pre>
+
+                <p>
+                    Những tên này có thể gây
+                    khó khăn khi Project
+                    phát triển và có nhiều
+                    Module khác nhau.
+                </p>
+
+                <h3>8.6. Quản lý phụ thuộc giữa các Header File</h3>
+
+                <p>
+                    Khi nhiều Header File Include
+                    lẫn nhau, Project có thể
+                    hình thành những quan hệ
+                    phụ thuộc phức tạp.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>sensor_driver.h
+    ↓
+sensor_manager.h
+    ↓
+application.h
+    ↓
+sensor_driver.h</code></pre>
+
+                <p>
+                    Đây là một dạng quan hệ
+                    Include vòng tròn
+                    (Circular Include).
+                </p>
+
+                <p>
+                    Header Guard có thể giúp
+                    tránh việc nội dung Header
+                    bị xử lý lặp lại vô hạn
+                    khi những Header Include
+                    lẫn nhau.
+                </p>
+
+                <p>
+                    Tuy nhiên, Header Guard
+                    không tự giải quyết được
+                    những phụ thuộc kiểu dữ liệu
+                    hoặc những vấn đề thiết kế
+                    do Circular Include tạo ra.
+                </p>
+
+                <p>
+                    Một số cách giảm sự phụ thuộc:
+                </p>
+
+                <ul>
+                    <li>
+                        Chỉ Include Header File
+                        thực sự cần thiết.
+                    </li>
+                    <li>
+                        Sử dụng Forward Declaration
+                        khi chỉ cần khai báo Pointer
+                        đến Structure.
+                    </li>
+                    <li>
+                        Tách những kiểu dữ liệu
+                        dùng chung vào một Header
+                        phù hợp.
+                    </li>
+                    <li>
+                        Tránh để những Module
+                        phụ thuộc trực tiếp vào
+                        quá nhiều chi tiết của
+                        nhau.
+                    </li>
+                </ul>
+
+                <h3>8.7. Self-contained Header</h3>
+
+                <p>
+                    Một khái niệm quan trọng
+                    khi quản lý Header File
+                    là <strong>Self-contained Header</strong>.
+                </p>
+
+                <p>
+                    Đây là Header File có thể
+                    được Include độc lập mà
+                    không cần dựa vào những
+                    Header File khác đã được
+                    Include trước đó.
+                </p>
+
+                <p>
+                    Ví dụ, nếu Header File
+                    sử dụng <code>uint16_t</code>,
+                    nó nên tự Include
+                    <code>stdint.h</code>.
+                </p>
+
+                <pre><code>/* sensor_types.h */
+
+#ifndef SENSOR_TYPES_H
+#define SENSOR_TYPES_H
+
+#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint16_t temperature;
+    uint16_t humidity;
+} SensorData_t;
+
+#endif</code></pre>
+
+                <p>
+                    Header File này có thể
+                    được Include trực tiếp
+                    trong một Source File:
+                </p>
+
+                <pre><code>#include "sensor_types.h"
+
+int main(void)
+{
+    SensorData_t sensor;
+
+    sensor.temperature = 280U;
+    sensor.humidity = 650U;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Chúng ta không cần phải
+                    Include <code>stdint.h</code>
+                    trước trong <code>main.c</code>
+                    vì Header File đã tự xử lý
+                    dependency cần thiết.
+                </p>
+
+                <div class="note">
+                    <strong>Khuyến nghị:</strong> Nên kiểm tra
+                    từng Header File bằng cách
+                    Include nó độc lập trong
+                    một Source File nhỏ.
+                    Điều này giúp phát hiện
+                    những Dependency bị thiếu
+                    hoặc sự phụ thuộc vào
+                    Include Order.
+                </div>
+
+                <h2>9. Xây dựng một Module Embedded hoàn chỉnh</h2>
+
+                <h3>9.1. Mục tiêu của ví dụ</h3>
+
+                <p>
+                    Trong phần này, chúng ta sẽ
+                    xây dựng một Module Sensor
+                    đơn giản để minh họa cách
+                    tổ chức Header File và
+                    Source File.
+                </p>
+
+                <p>
+                    Module sẽ cung cấp những
+                    chức năng:
+                </p>
+
+                <ul>
+                    <li>Khởi tạo Sensor.</li>
+                    <li>Đọc dữ liệu Sensor.</li>
+                    <li>Trả về dữ liệu theo một Structure chung.</li>
+                    <li>Bảo vệ Header File bằng Header Guard.</li>
+                </ul>
+
+                <p>
+                    Cấu trúc Project:
+                </p>
+
+                <pre><code>Sensor_Project/
+│
+├── include/
+│   ├── sensor_types.h
+│   └── sensor_driver.h
+│
+├── src/
+│   ├── sensor_driver.c
+│   └── main.c
+│
+└── build/</code></pre>
+
+                <h3>9.2. Tạo Header File chứa Data Type</h3>
+
+                <p>
+                    File <code>sensor_types.h</code>
+                    chứa kiểu dữ liệu được sử dụng
+                    bởi Module Sensor.
+                </p>
+
+                <pre><code>/* sensor_types.h */
+
+#ifndef SENSOR_TYPES_H
+#define SENSOR_TYPES_H
+
+#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint16_t temperature;
+    uint16_t humidity;
+
+} SensorData_t;
+
+#endif /* SENSOR_TYPES_H */</code></pre>
+
+                <p>
+                    Header File này chứa
+                    Structure <code>SensorData_t</code>
+                    để lưu dữ liệu Sensor.
+                </p>
+
+                <p>
+                    Việc tách Data Type ra
+                    một Header File riêng
+                    giúp những Module khác
+                    có thể sử dụng kiểu dữ liệu
+                    mà không cần phụ thuộc
+                    vào toàn bộ phần triển khai
+                    của Sensor Driver.
+                </p>
+
+                <h3>9.3. Tạo Header File cho Sensor Driver</h3>
+
+                <p>
+                    File <code>sensor_driver.h</code>
+                    cung cấp những Function Prototype
+                    mà Module khác có thể sử dụng.
+                </p>
+
+                <pre><code>/* sensor_driver.h */
+
+#ifndef SENSOR_DRIVER_H
+#define SENSOR_DRIVER_H
+
+#include &lt;stdbool.h&gt;
+
+#include "sensor_types.h"
+
+bool Sensor_Init(void);
+
+bool Sensor_Read(SensorData_t *data);
+
+#endif /* SENSOR_DRIVER_H */</code></pre>
+
+                <p>
+                    Trong Header File này:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>stdbool.h</code> cung cấp
+                        kiểu <code>bool</code>.
+                    </li>
+                    <li>
+                        <code>sensor_types.h</code>
+                        cung cấp Structure
+                        <code>SensorData_t</code>.
+                    </li>
+                    <li>
+                        <code>Sensor_Init()</code>
+                        là Function khởi tạo Sensor.
+                    </li>
+                    <li>
+                        <code>Sensor_Read()</code>
+                        là Function đọc dữ liệu Sensor.
+                    </li>
+                </ul>
+
+                <p>
+                    Header Guard giúp bảo vệ
+                    nội dung của cả hai Header File
+                    khi được Include nhiều lần.
+                </p>
+
+                <h3>9.4. Tạo Source File triển khai Sensor Driver</h3>
+
+                <p>
+                    File <code>sensor_driver.c</code>
+                    chứa phần triển khai của
+                    những Function được khai báo
+                    trong Header File.
+                </p>
+
+                <pre><code>/* sensor_driver.c */
+
+#include "sensor_driver.h"
+
+#include &lt;stddef.h&gt;
+
+static bool sensor_initialized = false;
+
+static uint16_t sensor_temperature = 280U;
+
+static uint16_t sensor_humidity = 650U;
+
+bool Sensor_Init(void)
+{
+    sensor_initialized = true;
+
+    return true;
+}
+
+bool Sensor_Read(SensorData_t *data)
+{
+    if ((data == NULL) || (sensor_initialized == false))
+    {
+        return false;
+    }
+
+    data->temperature = sensor_temperature;
+
+    data->humidity = sensor_humidity;
+
+    return true;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li>
+                        <code>sensor_initialized</code>
+                        là biến nội bộ dùng để theo dõi
+                        trạng thái khởi tạo.
+                    </li>
+                    <li>
+                        <code>sensor_temperature</code>
+                        và <code>sensor_humidity</code>
+                        là những biến nội bộ của Module.
+                    </li>
+                    <li>
+                        <code>static</code> được sử dụng
+                        để giới hạn Linkage của những
+                        biến này trong Source File.
+                    </li>
+                    <li>
+                        Những biến nội bộ không cần
+                        được khai báo trong Header File.
+                    </li>
+                </ul>
+
+                <p>
+                    Trong một Driver thực tế,
+                    phần triển khai có thể đọc
+                    Register hoặc giao tiếp
+                    với Peripheral thay vì
+                    sử dụng những giá trị
+                    mô phỏng như ví dụ trên.
+                </p>
+
+                <h3>9.5. Tạo Main Program sử dụng Sensor Driver</h3>
+
+                <p>
+                    File <code>main.c</code>
+                    sử dụng Module thông qua
+                    Header File công khai.
+                </p>
+
+                <pre><code>/* main.c */
+
+#include "sensor_driver.h"
+
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    SensorData_t sensor_data = {0U, 0U};
+
+    if (Sensor_Init() == false)
+    {
+        return -1;
+    }
+
+    if (Sensor_Read(&amp;sensor_data) == false)
+    {
+        return -1;
+    }
+
+    printf("Temperature: %u\n",
+           (unsigned int)sensor_data.temperature);
+
+    printf("Humidity: %u\n",
+           (unsigned int)sensor_data.humidity);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    File <code>main.c</code> không
+                    cần biết cách Sensor Driver
+                    thực hiện việc đọc dữ liệu.
+                    Nó chỉ cần biết những API
+                    được cung cấp trong
+                    <code>sensor_driver.h</code>.
+                </p>
+
+                <h3>9.6. Build Project</h3>
+
+                <p>
+                    Khi sử dụng GCC, chúng ta
+                    có thể biên dịch từng
+                    Source File thành Object File
+                    riêng biệt.
+                </p>
+
+                <pre><code>gcc -std=c11 -Wall -Wextra -Iinclude \
+    -c src/sensor_driver.c -o sensor_driver.o
+
+gcc -std=c11 -Wall -Wextra -Iinclude \
+    -c src/main.c -o main.o</code></pre>
+
+                <p>
+                    Sau đó, sử dụng Linker
+                    để kết hợp những Object File:
+                </p>
+
+                <pre><code>gcc main.o sensor_driver.o -o sensor_app</code></pre>
+
+                <p>
+                    Chạy chương trình trên
+                    môi trường hỗ trợ:
+                </p>
+
+                <pre><code>./sensor_app</code></pre>
+
+                <p>
+                    Kết quả mô phỏng:
+                </p>
+
+                <pre><code>Temperature: 280
+Humidity: 650</code></pre>
+
+                <p>
+                    Với Embedded Toolchain,
+                    các lệnh tương ứng sẽ sử dụng
+                    Compiler và Linker phù hợp
+                    với kiến trúc MCU mục tiêu.
+                </p>
+
+                <h3>9.7. Tổng kết cấu trúc Module</h3>
+
+                <svg viewBox="0 0 700 375" width="100%" role="img"
+                    aria-label="Sơ đồ tổ chức Sensor Module với Header File, Source File và Main Application">
+
+                    <rect x="225" y="18" width="250" height="48" rx="6"
+                        fill="#fff0d9" stroke="#b7803e" stroke-width="1.5" />
+                    <text x="350" y="47" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#70451d">
+                        main.c
+                    </text>
+
+                    <path d="M350 66 V98"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 91 L350 99 L356 91"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="175" y="101" width="350" height="70" rx="6"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+                    <text x="350" y="126" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#173d68">
+                        sensor_driver.h
+                    </text>
+                    <text x="350" y="147" text-anchor="middle"
+                        font-size="11" fill="#173d68">
+                        Public API: Sensor_Init(), Sensor_Read()
+                    </text>
+                    <text x="350" y="163" text-anchor="middle"
+                        font-size="10" fill="#173d68">
+                        Include sensor_types.h
+                    </text>
+
+                    <path d="M350 171 V203"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M344 196 L350 204 L356 196"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="175" y="206" width="350" height="70" rx="6"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+                    <text x="350" y="231" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#174d2e">
+                        sensor_driver.c
+                    </text>
+                    <text x="350" y="251" text-anchor="middle"
+                        font-size="11" fill="#174d2e">
+                        Function Implementation
+                    </text>
+                    <text x="350" y="267" text-anchor="middle"
+                        font-size="10" fill="#174d2e">
+                        Private Variables and Internal Logic
+                    </text>
+
+                    <path d="M350 276 V304"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                    <rect x="175" y="307" width="350" height="48" rx="6"
+                        fill="#e8e2f7" stroke="#7861a8" stroke-width="1.5" />
+                    <text x="350" y="336" text-anchor="middle"
+                        font-size="13" font-weight="bold" fill="#44336d">
+                        Sensor Module
+                    </text>
+
+                    <rect x="10" y="119" width="145" height="38" rx="5"
+                        fill="#e1f3e8" stroke="#34845a" />
+                    <text x="82" y="143" text-anchor="middle"
+                        font-size="10" fill="#174d2e">
+                        sensor_types.h
+                    </text>
+
+                    <path d="M155 138 H175"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <path d="M167 132 L175 138 L167 144"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+
+                </svg>
+
+                <p>
+                    Ví dụ trên thể hiện cách một
+                    Module có thể được tổ chức
+                    thành những thành phần riêng:
+                </p>
+
+                <ul>
+                    <li>
+                        Header File cung cấp
+                        Interface cho bên sử dụng.
+                    </li>
+                    <li>
+                        Source File chứa
+                        Implementation của Module.
+                    </li>
+                    <li>
+                        Header File dùng chung
+                        chứa những Data Type
+                        cần thiết.
+                    </li>
+                    <li>
+                        Header Guard bảo vệ
+                        các Header File khi
+                        được Include nhiều lần.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Ví dụ sử dụng
+                    những giá trị Sensor mô phỏng
+                    để tập trung vào cách tổ chức
+                    Header và Source File.
+                    Trong Firmware thực tế,
+                    phần Implementation sẽ thay
+                    đổi theo phần cứng và
+                    giao thức giao tiếp của Sensor.
+                </div>
+
+                <h2>10. Checklist quản lý Header File</h2>
+
+                <h3>10.1. Checklist cơ bản</h3>
+
+                <p>
+                    Khi tạo mới hoặc Review một
+                    Header File trong Embedded Project,
+                    chúng ta có thể sử dụng
+                    Checklist sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Review Point</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                Header File có tên rõ ràng không?
+                            </td>
+                            <td>
+                                Giúp nhận biết Module
+                                hoặc chức năng.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>
+                                Header Guard đã được khai báo chưa?
+                            </td>
+                            <td>
+                                Tránh Multiple Inclusion.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>
+                                Tên Header Guard có bị trùng không?
+                            </td>
+                            <td>
+                                Tránh xung đột Macro bảo vệ.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>
+                                Header có Include những Dependency cần thiết không?
+                            </td>
+                            <td>
+                                Giúp Header tự đầy đủ.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>
+                                Có Include Header không cần thiết không?
+                            </td>
+                            <td>
+                                Giảm Dependency giữa Module.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>
+                                Function Prototype được khai báo đúng không?
+                            </td>
+                            <td>
+                                Bảo đảm Interface nhất quán.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>
+                                Global Variable có được khai báo bằng extern phù hợp không?
+                            </td>
+                            <td>
+                                Tránh Multiple Definition.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>
+                                Có đặt Function Implementation không cần thiết trong Header không?
+                            </td>
+                            <td>
+                                Hạn chế lỗi định nghĩa lặp.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>
+                                Header có bị phụ thuộc vào Include Order không?
+                            </td>
+                            <td>
+                                Bảo đảm khả năng Include độc lập.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>
+                                Có Circular Include không?
+                            </td>
+                            <td>
+                                Giảm sự phụ thuộc phức tạp.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>10.2. Vì sao Header File Management quan trọng trong Automotive Embedded?</h3>
+
+                <p>
+                    Trong một Automotive Embedded Project,
+                    phần mềm có thể được chia thành
+                    nhiều Software Component và
+                    Driver khác nhau.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <ul>
+                    <li>CAN Driver.</li>
+                    <li>LIN Driver.</li>
+                    <li>UART Driver.</li>
+                    <li>GPIO Driver.</li>
+                    <li>Diagnostic Module.</li>
+                    <li>Sensor Processing Module.</li>
+                    <li>Application Control Module.</li>
+                </ul>
+
+                <p>
+                    Những Module này có thể cần
+                    sử dụng chung các Data Type,
+                    Function Interface hoặc
+                    thông số cấu hình.
+                </p>
+
+                <p>
+                    Nếu Header File không được
+                    quản lý tốt, sự phụ thuộc
+                    giữa những Module có thể
+                    trở nên phức tạp, khiến
+                    việc bảo trì và tích hợp
+                    phần mềm khó khăn hơn.
+                </p>
+
+                <p>
+                    Việc tổ chức Header File
+                    hợp lý giúp:
+                </p>
+
+                <ul>
+                    <li>
+                        Xác định rõ Interface
+                        giữa những Software Module.
+                    </li>
+                    <li>
+                        Giảm khai báo trùng lặp
+                        giữa những Source File.
+                    </li>
+                    <li>
+                        Tránh lỗi do Multiple
+                        Inclusion và Definition.
+                    </li>
+                    <li>
+                        Giảm sự phụ thuộc không
+                        cần thiết giữa các Module.
+                    </li>
+                    <li>
+                        Hỗ trợ quá trình
+                        Integration và Maintenance.
+                    </li>
+                </ul>
+
+                <p>
+                    Đây cũng là một trong những
+                    nguyên tắc cơ bản khi xây dựng
+                    một Embedded Software Project
+                    có nhiều thành phần phần mềm.
+                </p>
+
+                <h2>11. Tổng kết Header File Management &amp; Header Guard</h2>
+
+                <p>
+                    Qua bài học này, chúng ta đã
+                    tìm hiểu cách tổ chức Header File,
+                    vai trò của Header Guard và
+                    những nguyên tắc cơ bản để
+                    quản lý Header trong một
+                    C Project.
+                </p>
+
+                <p>
+                    Những nội dung quan trọng
+                    cần ghi nhớ:
+                </p>
+
+                <ul>
+                    <li>
+                        Header File thường có
+                        phần mở rộng <code>.h</code>
+                        và được sử dụng để chứa
+                        những khai báo dùng chung.
+                    </li>
+                    <li>
+                        Source File thường có
+                        phần mở rộng <code>.c</code>
+                        và chứa phần triển khai
+                        chương trình.
+                    </li>
+                    <li>
+                        Header File thường chứa
+                        Function Prototype,
+                        Type Definition, Macro
+                        và những khai báo cần
+                        được chia sẻ.
+                    </li>
+                    <li>
+                        Function Definition và
+                        Global Variable Definition
+                        thông thường nên được
+                        đặt trong một Source File
+                        phù hợp.
+                    </li>
+                    <li>
+                        <code>extern</code> có thể
+                        được sử dụng trong Header
+                        để khai báo một Global
+                        Variable được định nghĩa
+                        ở Source File khác.
+                    </li>
+                    <li>
+                        Forward Declaration cho
+                        phép khai báo trước một
+                        Structure khi chỉ cần
+                        sử dụng Pointer đến kiểu đó.
+                    </li>
+                    <li>
+                        Multiple Inclusion xảy ra
+                        khi cùng một Header File
+                        được xử lý nhiều lần
+                        trong cùng Translation Unit.
+                    </li>
+                    <li>
+                        Header Guard sử dụng
+                        <code>#ifndef</code>,
+                        <code>#define</code> và
+                        <code>#endif</code> để
+                        bảo vệ nội dung Header.
+                    </li>
+                    <li>
+                        Mỗi Header File nên có
+                        một tên Header Guard
+                        riêng biệt.
+                    </li>
+                    <li>
+                        <code>#pragma once</code>
+                        được hỗ trợ bởi nhiều
+                        Compiler nhưng không
+                        phải Directive chuẩn
+                        của ISO C.
+                    </li>
+                    <li>
+                        Header Guard không ngăn
+                        Multiple Definition giữa
+                        những Translation Unit
+                        khác nhau.
+                    </li>
+                    <li>
+                        Nên tổ chức Header File
+                        theo Module, giảm
+                        Dependency không cần thiết
+                        và bảo đảm Header có thể
+                        được Include độc lập.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Kết luận:</strong> Header File
+                    là một thành phần quan trọng
+                    giúp tổ chức và chia sẻ
+                    Interface trong chương trình C.
+                    Khi Project phát triển với
+                    nhiều Module, việc quản lý
+                    Header File và sử dụng
+                    Header Guard đúng cách
+                    giúp tránh những lỗi
+                    khai báo lặp, giảm sự
+                    phụ thuộc và duy trì
+                    cấu trúc mã nguồn rõ ràng.
+                    Đây là nền tảng cần thiết
+                    trước khi tìm hiểu sâu hơn
+                    về Conditional Compilation
+                    và Modular Programming.
+                </div>
+
+                <h3>Bài học tiếp theo</h3>
+
+                <p>
+                    Trong bài học tiếp theo,
+                    chúng ta sẽ tìm hiểu
+                    <strong>Conditional Compilation</strong>
+                    trong C.
+                </p>
+
+                <p>
+                    Đây là kỹ thuật cho phép
+                    Preprocessor lựa chọn
+                    những phần mã nguồn cần
+                    được xử lý dựa trên
+                    các điều kiện được định nghĩa.
+                    Những Directive như
+                    <code>#if</code>,
+                    <code>#ifdef</code>,
+                    <code>#ifndef</code>,
+                    <code>#elif</code>,
+                    <code>#else</code> và
+                    <code>#endif</code>
+                    thường được sử dụng để
+                    quản lý những cấu hình
+                    khác nhau của chương trình.
+                </p>
+
+                <p>
+                    Trong Embedded Software,
+                    Conditional Compilation
+                    đặc biệt hữu ích khi cần
+                    xây dựng Firmware hỗ trợ
+                    nhiều MCU, nhiều Hardware
+                    Configuration hoặc những
+                    phiên bản phần mềm khác nhau.
+                </p>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-22.html">← Bài trước</a>
+                    <a class="btn" href="lesson-24.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>EmLearn - 2026</p>
+    </footer>
+
+</body>
+</html>

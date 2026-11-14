@@ -1,0 +1,2365 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 19: Union &amp; Memory Sharing | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="logo" href="../../index.html">Em<span>Learn</span></a>
+            <nav aria-label="Chính">
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <h4>Danh sách bài học</h4>
+
+                <!-- PHẦN 1: ADVANCED C FUNDAMENTALS & MEMORY MANAGEMENT -->
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <!-- PHẦN 2: ADVANCED POINTER PROGRAMMING -->
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <!-- PHẦN 3: ADVANCED C DATA TYPES -->
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html" class="active" aria-current="page">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <!-- PHẦN 4: PREPROCESSOR & MODULAR PROGRAMMING -->
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <!-- PHẦN 5: BIT MANIPULATION & EMBEDDED-ORIENTED PROGRAMMING -->
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <!-- PHẦN 6: DEFENSIVE PROGRAMMING & RELIABLE C -->
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <!-- PHẦN 7: PROGRAMMING OPTIMIZATION & DESIGN PATTERNS -->
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <!-- PHẦN 8: CODE QUALITY, MISRA C & SOFTWARE VERIFICATION -->
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+
+                <a class="btn" href="index.html">← Tất cả bài học Advanced C Embedded</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 19: Union &amp; Memory Sharing</h1>
+
+                <p>
+                    Trong hai bài học trước, chúng ta đã tìm hiểu cách sử dụng
+                    <code>struct</code> để nhóm nhiều member có liên quan vào cùng
+                    một đối tượng. Với Structure, mỗi member có vùng nhớ riêng
+                    để lưu trữ giá trị của nó.
+                </p>
+
+                <p>
+                    Tuy nhiên, trong một số trường hợp, chương trình không cần
+                    lưu trữ tất cả những giá trị đó cùng một thời điểm. Một đối
+                    tượng có thể mang nhiều dạng dữ liệu khác nhau, nhưng tại
+                    một thời điểm chỉ có một dạng được sử dụng.
+                </p>
+
+                <p>
+                    Ví dụ, một module cảm biến có thể xử lý giá trị ADC dạng
+                    số nguyên, giá trị nhiệt độ dạng số thực hoặc một bộ đếm
+                    dạng số nguyên không dấu. Nếu các giá trị này không cần
+                    tồn tại đồng thời, việc cấp một vùng nhớ riêng cho từng
+                    member có thể không cần thiết.
+                </p>
+
+                <p>
+                    <strong>Union</strong> trong C cung cấp một cách tổ chức dữ
+                    liệu cho tình huống đó. Các member của Union chia sẻ cùng
+                    một vùng nhớ, thay vì mỗi member có một vùng lưu trữ độc lập.
+                </p>
+
+                <p>
+                    Trong bài học này, chúng ta sẽ tìm hiểu cách khai báo Union,
+                    cơ chế Memory Sharing, sự khác biệt giữa Structure và Union,
+                    cách quản lý member đang được sử dụng thông qua Tagged Union
+                    và những lưu ý quan trọng khi ứng dụng Union trong Embedded C.
+                </p>
+
+                <h2>1. Tổng quan về Union</h2>
+
+                <h3>1.1. Union là gì?</h3>
+
+                <p>
+                    <strong>Union</strong> là một kiểu dữ liệu do người lập trình
+                    định nghĩa bằng từ khóa <code>union</code>. Tương tự Structure,
+                    Union có thể chứa nhiều member với các kiểu dữ liệu khác nhau.
+                </p>
+
+                <p>
+                    Điểm khác biệt quan trọng là tất cả member của Union sử dụng
+                    chung một vùng nhớ. Vì vậy, tại một thời điểm, giá trị được
+                    lưu trữ và sử dụng hợp lệ theo cách thông thường thuộc về
+                    member được ghi gần nhất.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+union SensorValue
+{
+    uint16_t raw_value;
+    int16_t temperature;
+    uint32_t counter;
+};</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>union SensorValue</code> có ba member:
+                </p>
+
+                <ul>
+                    <li><code>raw_value</code>: lưu giá trị thô của cảm biến.</li>
+                    <li><code>temperature</code>: lưu giá trị nhiệt độ dạng số nguyên có dấu.</li>
+                    <li><code>counter</code>: lưu giá trị bộ đếm.</li>
+                </ul>
+
+                <p>
+                    Mỗi member có kiểu dữ liệu và kích thước riêng, nhưng chúng
+                    không có những vùng nhớ độc lập. Chúng cùng bắt đầu tại một
+                    vị trí bộ nhớ của Union.
+                </p>
+
+                <h3>1.2. Khai báo Union Variable</h3>
+
+                <p>
+                    Sau khi định nghĩa Union, chúng ta có thể khai báo biến
+                    thuộc kiểu Union tương tự cách khai báo Structure.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+union SensorValue
+{
+    uint16_t raw_value;
+    int16_t temperature;
+    uint32_t counter;
+};
+
+int main(void)
+{
+    union SensorValue sensor_value;
+
+    sensor_value.raw_value = 1200U;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>union</code> là từ khóa dùng để khai báo Union.</li>
+                    <li><code>SensorValue</code> là Union Tag.</li>
+                    <li><code>sensor_value</code> là một Union Variable.</li>
+                    <li><code>raw_value</code>, <code>temperature</code> và <code>counter</code> là các Union Member.</li>
+                </ul>
+
+                <p>
+                    Sau câu lệnh:
+                </p>
+
+                <pre><code>sensor_value.raw_value = 1200U;</code></pre>
+
+                <p>
+                    Chương trình ghi giá trị vào member <code>raw_value</code>.
+                    Nếu tiếp tục ghi một giá trị khác vào member
+                    <code>temperature</code>, vùng nhớ dùng chung sẽ được sử dụng
+                    để lưu giá trị mới đó.
+                </p>
+
+                <h3>1.3. Union kết hợp với typedef</h3>
+
+                <p>
+                    Tương tự Structure, chúng ta có thể sử dụng
+                    <code>typedef</code> để tạo tên kiểu dữ liệu thuận tiện hơn
+                    khi khai báo Union Variable.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef union
+{
+    uint16_t raw_value;
+    int16_t temperature;
+    uint32_t counter;
+} SensorValue_t;
+
+int main(void)
+{
+    SensorValue_t sensor_value;
+
+    sensor_value.raw_value = 1200U;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Khi sử dụng <code>typedef</code>, chúng ta có thể khai báo
+                    biến bằng <code>SensorValue_t</code> thay vì phải viết
+                    <code>union SensorValue</code>.
+                </p>
+
+                <p>
+                    Cũng có thể kết hợp Union Tag và Type Alias:
+                </p>
+
+                <pre><code>typedef union SensorValue
+{
+    uint16_t raw_value;
+    int16_t temperature;
+    uint32_t counter;
+} SensorValue_t;</code></pre>
+
+                <p>
+                    Với cách khai báo này, cả
+                    <code>union SensorValue</code> và
+                    <code>SensorValue_t</code> đều có thể được sử dụng làm
+                    tên kiểu dữ liệu.
+                </p>
+
+                <h3>1.4. Union có thể chứa nhiều kiểu dữ liệu khác nhau</h3>
+
+                <p>
+                    Union hỗ trợ các member thuộc những kiểu dữ liệu khác nhau,
+                    tương tự Structure.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef union
+{
+    uint32_t unsigned_value;
+    int32_t signed_value;
+    float float_value;
+    unsigned char bytes[sizeof(float)];
+} DataValue_t;</code></pre>
+
+                <p>
+                    Union <code>DataValue_t</code> có thể được sử dụng để lưu
+                    một trong các dạng dữ liệu:
+                </p>
+
+                <ul>
+                    <li>Số nguyên không dấu 32-bit.</li>
+                    <li>Số nguyên có dấu 32-bit.</li>
+                    <li>Số thực kiểu <code>float</code>.</li>
+                    <li>Mảng byte có kích thước đủ để chứa một giá trị <code>float</code>.</li>
+                </ul>
+
+                <p>
+                    Cần nhớ rằng Union không lưu đồng thời tất cả những giá trị
+                    trên. Các member chia sẻ cùng một vùng nhớ.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Structure và Union đều cho phép
+                    nhóm nhiều member vào một kiểu dữ liệu. Điểm khác biệt cốt
+                    lõi nằm ở cách sử dụng bộ nhớ: Structure dành vùng nhớ riêng
+                    cho từng member, còn Union cho các member chia sẻ cùng một
+                    vùng nhớ.
+                </div>
+
+                <h2>2. Memory Sharing trong Union</h2>
+
+                <h3>2.1. Cơ chế chia sẻ vùng nhớ</h3>
+
+                <p>
+                    Khi khai báo một Union Variable, compiler dành một vùng
+                    nhớ đủ để chứa member có yêu cầu dung lượng lớn nhất,
+                    đồng thời đáp ứng các yêu cầu Alignment của những member.
+                </p>
+
+                <p>
+                    Các member của Union đều bắt đầu tại cùng một địa chỉ.
+                    Vì vậy, khi ghi dữ liệu vào một member, nội dung vùng nhớ
+                    dùng chung được cập nhật theo kiểu dữ liệu của member đó.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef union
+{
+    uint8_t small_value;
+    uint16_t medium_value;
+    uint32_t large_value;
+} DataValue_t;
+
+int main(void)
+{
+    DataValue_t data;
+
+    data.large_value = 100000U;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, cả ba member đều bắt đầu tại cùng vị trí
+                    bộ nhớ. Union phải có đủ không gian để chứa member lớn nhất
+                    trong ba member.
+                </p>
+
+                <p>
+                    Có thể hình dung vùng nhớ của Union như sau:
+                </p>
+
+                <svg viewBox="0 0 700 350" width="100%" role="img"
+                    aria-label="Minh họa các member của Union dùng chung một vùng nhớ">
+
+                    <rect x="45" y="25" width="610" height="285" rx="8"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <text x="350" y="52" text-anchor="middle"
+                        font-size="15" font-weight="bold" fill="#173d68">
+                        DataValue_t
+                    </text>
+
+                    <text x="350" y="82" text-anchor="middle"
+                        font-size="12" fill="#173d68">
+                        Shared Memory Region
+                    </text>
+
+                    <rect x="125" y="105" width="450" height="45" rx="5"
+                        fill="#ffffff" stroke="#4b83c3" />
+                    <text x="350" y="133" text-anchor="middle"
+                        font-size="13" fill="#173d68">
+                        small_value : uint8_t
+                    </text>
+
+                    <rect x="125" y="165" width="450" height="45" rx="5"
+                        fill="#e1f3e8" stroke="#34845a" />
+                    <text x="350" y="193" text-anchor="middle"
+                        font-size="13" fill="#174d2e">
+                        medium_value : uint16_t
+                    </text>
+
+                    <rect x="125" y="225" width="450" height="45" rx="5"
+                        fill="#fff0d9" stroke="#b7803e" />
+                    <text x="350" y="253" text-anchor="middle"
+                        font-size="13" fill="#70451d">
+                        large_value : uint32_t
+                    </text>
+
+                    <text x="350" y="293" text-anchor="middle"
+                        font-size="11" fill="#173d68">
+                        Các member cùng bắt đầu tại một địa chỉ bộ nhớ.
+                    </text>
+
+                </svg>
+
+                <p>
+                    Hình minh họa cho thấy các member cùng sử dụng một vùng
+                    lưu trữ. Những hình chữ nhật không đại diện cho các vùng
+                    bộ nhớ độc lập, mà biểu diễn các cách diễn giải dữ liệu
+                    khác nhau trên cùng một vùng nhớ.
+                </p>
+
+                <h3>2.2. Kích thước của Union</h3>
+
+                <p>
+                    Một trong những đặc điểm quan trọng của Union là kích thước
+                    của nó thường phụ thuộc vào member có kích thước lớn nhất.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+
+typedef union
+{
+    uint8_t value_8;
+    uint16_t value_16;
+    uint32_t value_32;
+} DataValue_t;
+
+int main(void)
+{
+    printf("uint8_t: %zu bytes\n", sizeof(uint8_t));
+    printf("uint16_t: %zu bytes\n", sizeof(uint16_t));
+    printf("uint32_t: %zu bytes\n", sizeof(uint32_t));
+
+    printf("Union size: %zu bytes\n", sizeof(DataValue_t));
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Nếu các kiểu số nguyên có kích thước tương ứng như tên gọi
+                    trên, chúng ta có thể hình dung:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th>Kích thước</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>value_8</code></td>
+                            <td>1 byte</td>
+                        </tr>
+                        <tr>
+                            <td><code>value_16</code></td>
+                            <td>2 bytes</td>
+                        </tr>
+                        <tr>
+                            <td><code>value_32</code></td>
+                            <td>4 bytes</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Trong trường hợp này, Union cần đủ không gian để chứa
+                    <code>value_32</code>. Vì vậy, kích thước của Union ít nhất
+                    phải bằng kích thước của member lớn nhất.
+                </p>
+
+                <p>
+                    Tuy nhiên, không nên giả định rằng kích thước Union luôn
+                    chính xác bằng kích thước member lớn nhất trong mọi trường
+                    hợp. Compiler có thể cần bổ sung Padding để đáp ứng yêu
+                    cầu Alignment.
+                </p>
+
+                <h3>2.3. Union Alignment</h3>
+
+                <p>
+                    Ngoài kích thước, Alignment cũng là một yếu tố quan trọng
+                    khi compiler bố trí Union trong bộ nhớ.
+                </p>
+
+                <p>
+                    Vì các member dùng chung một địa chỉ bắt đầu, địa chỉ đó
+                    phải đáp ứng yêu cầu Alignment của các member tương ứng.
+                    Do đó, Union có yêu cầu Alignment đủ để đáp ứng member có
+                    yêu cầu Alignment nghiêm ngặt nhất.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stddef.h&gt;
+
+typedef union
+{
+    uint8_t byte_value;
+    uint32_t word_value;
+    double real_value;
+} DataValue_t;
+
+int main(void)
+{
+    size_t union_size = sizeof(DataValue_t);
+    size_t union_alignment = _Alignof(DataValue_t);
+
+    (void)union_size;
+    (void)union_alignment;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong C11, toán tử <code>_Alignof</code> có thể được sử
+                    dụng để kiểm tra yêu cầu Alignment của một kiểu dữ liệu.
+                    Kích thước và Alignment thực tế phụ thuộc vào compiler
+                    cùng target platform.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Kỹ thuật tiết kiệm bộ nhớ của Union
+                    không có nghĩa là compiler loại bỏ mọi Padding. Khi cần
+                    tính toán dung lượng RAM chính xác cho một MCU, cần kiểm
+                    tra <code>sizeof</code>, Alignment và cấu hình compiler
+                    trên target thực tế.
+                </div>
+
+                <h3>2.4. Các member có cùng địa chỉ bắt đầu</h3>
+
+                <p>
+                    Một đặc điểm quan trọng của Union là các member có cùng
+                    địa chỉ bắt đầu với Union Object. Vì vậy, chúng ta có thể
+                    kiểm tra địa chỉ của các member.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+
+typedef union
+{
+    uint8_t byte_value;
+    uint16_t word_value;
+    uint32_t long_value;
+} DataValue_t;
+
+int main(void)
+{
+    DataValue_t data;
+
+    printf("Union address:  %p\n", (void *)&amp;data);
+    printf("byte address:   %p\n", (void *)&amp;data.byte_value);
+    printf("word address:   %p\n", (void *)&amp;data.word_value);
+    printf("long address:   %p\n", (void *)&amp;data.long_value);
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Các địa chỉ bắt đầu được in ra sẽ giống nhau.
+                    Điều này phản ánh đặc điểm chia sẻ vùng nhớ của Union.
+                </p>
+
+                <p>
+                    Tuy nhiên, việc các member có cùng địa chỉ không có nghĩa
+                    là mọi member đều có cùng kích thước hoặc cùng cách biểu
+                    diễn dữ liệu.
+                </p>
+
+                <h2>3. So sánh Structure và Union</h2>
+
+                <h3>3.1. Sự khác biệt về cách tổ chức bộ nhớ</h3>
+
+                <p>
+                    Structure và Union có cú pháp khai báo khá giống nhau.
+                    Cả hai đều cho phép chứa nhiều member, nhưng cách tổ chức
+                    bộ nhớ của chúng hoàn toàn khác nhau.
+                </p>
+
+                <p>
+                    Ví dụ với Structure:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint8_t value_8;
+    uint16_t value_16;
+    uint32_t value_32;
+} DataStruct_t;</code></pre>
+
+                <p>
+                    Với Structure, mỗi member được bố trí trong vùng nhớ
+                    riêng của đối tượng. Chúng có thể được sử dụng đồng
+                    thời mà không ghi đè lên nhau.
+                </p>
+
+                <p>
+                    Ví dụ với Union:
+                </p>
+
+                <pre><code>typedef union
+{
+    uint8_t value_8;
+    uint16_t value_16;
+    uint32_t value_32;
+} DataUnion_t;</code></pre>
+
+                <p>
+                    Với Union, các member chia sẻ cùng một vùng nhớ. Khi
+                    ghi giá trị vào một member, dữ liệu của các member khác
+                    không được duy trì độc lập trong cùng đối tượng.
+                </p>
+
+                <h3>3.2. Sơ đồ so sánh Structure và Union</h3>
+
+                <svg viewBox="0 0 700 425" width="100%" role="img"
+                    aria-label="So sánh cách bố trí bộ nhớ của Structure và Union">
+
+                    <text x="170" y="30" text-anchor="middle"
+                        font-size="16" font-weight="bold" fill="currentColor">
+                        STRUCTURE
+                    </text>
+
+                    <rect x="30" y="48" width="280" height="330" rx="7"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <rect x="55" y="85" width="230" height="65" rx="5"
+                        fill="#ffffff" stroke="#4b83c3" />
+                    <text x="170" y="123" text-anchor="middle"
+                        font-size="13" fill="#173d68">
+                        value_8
+                    </text>
+
+                    <rect x="55" y="165" width="230" height="65" rx="5"
+                        fill="#e1f3e8" stroke="#34845a" />
+                    <text x="170" y="203" text-anchor="middle"
+                        font-size="13" fill="#174d2e">
+                        value_16
+                    </text>
+
+                    <rect x="55" y="245" width="230" height="90" rx="5"
+                        fill="#fff0d9" stroke="#b7803e" />
+                    <text x="170" y="295" text-anchor="middle"
+                        font-size="13" fill="#70451d">
+                        value_32
+                    </text>
+
+                    <text x="170" y="360" text-anchor="middle"
+                        font-size="11" fill="#173d68">
+                        Member có vùng nhớ riêng
+                    </text>
+
+                    <text x="530" y="30" text-anchor="middle"
+                        font-size="16" font-weight="bold" fill="currentColor">
+                        UNION
+                    </text>
+
+                    <rect x="390" y="48" width="280" height="330" rx="7"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+
+                    <rect x="420" y="85" width="220" height="250" rx="5"
+                        fill="#ffffff" stroke="#34845a" stroke-width="1.5" />
+
+                    <rect x="420" y="85" width="220" height="55"
+                        rx="5" fill="#dceaff" stroke="#4b83c3" />
+                    <text x="530" y="117" text-anchor="middle"
+                        font-size="13" fill="#173d68">
+                        value_8
+                    </text>
+
+                    <rect x="420" y="140" width="220" height="55"
+                        fill="#e1f3e8" stroke="#34845a" />
+                    <text x="530" y="172" text-anchor="middle"
+                        font-size="13" fill="#174d2e">
+                        value_16
+                    </text>
+
+                    <rect x="420" y="195" width="220" height="140"
+                        rx="5" fill="#fff0d9" stroke="#b7803e" />
+                    <text x="530" y="270" text-anchor="middle"
+                        font-size="13" fill="#70451d">
+                        value_32
+                    </text>
+
+                    <text x="530" y="360" text-anchor="middle"
+                        font-size="11" fill="#174d2e">
+                        Member chia sẻ cùng vùng nhớ
+                    </text>
+
+                </svg>
+
+                <p>
+                    Hình minh họa thể hiện rằng Structure sử dụng các vùng
+                    nhớ riêng cho từng member, trong khi Union sử dụng
+                    một vùng nhớ chung cho tất cả member.
+                </p>
+
+                <h3>3.3. Bảng so sánh Structure và Union</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Structure</th>
+                            <th>Union</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Từ khóa khai báo</td>
+                            <td><code>struct</code></td>
+                            <td><code>union</code></td>
+                        </tr>
+                        <tr>
+                            <td>Bộ nhớ Member</td>
+                            <td>Mỗi member có vùng lưu trữ riêng.</td>
+                            <td>Các member chia sẻ cùng vùng lưu trữ.</td>
+                        </tr>
+                        <tr>
+                            <td>Địa chỉ Member</td>
+                            <td>Các member có vị trí khác nhau tùy theo bố trí bộ nhớ.</td>
+                            <td>Các member có cùng địa chỉ bắt đầu.</td>
+                        </tr>
+                        <tr>
+                            <td>Giá trị được sử dụng</td>
+                            <td>Có thể lưu và sử dụng nhiều member đồng thời.</td>
+                            <td>Thường chỉ một member được quản lý như giá trị đang hoạt động tại một thời điểm.</td>
+                        </tr>
+                        <tr>
+                            <td>Kích thước</td>
+                            <td>Phụ thuộc tổng kích thước member và Padding.</td>
+                            <td>Đủ chứa member lớn nhất và đáp ứng Alignment.</td>
+                        </tr>
+                        <tr>
+                            <td>Ứng dụng</td>
+                            <td>Nhóm dữ liệu cần tồn tại đồng thời.</td>
+                            <td>Biểu diễn nhiều dạng dữ liệu thay thế nhau.</td>
+                        </tr>
+                        <tr>
+                            <td>Ví dụ</td>
+                            <td>Thông tin thiết bị gồm ID, trạng thái và cấu hình.</td>
+                            <td>Một giá trị có thể là số nguyên hoặc số thực.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>3.4. Ví dụ về sự khác biệt khi cập nhật dữ liệu</h3>
+
+                <p>
+                    Với Structure:
+                </p>
+
+                <pre><code>typedef struct
+{
+    uint8_t value_8;
+    uint16_t value_16;
+} DataStruct_t;
+
+DataStruct_t data;
+
+data.value_8 = 10U;
+data.value_16 = 1000U;</code></pre>
+
+                <p>
+                    Sau hai phép gán, cả <code>value_8</code> và
+                    <code>value_16</code> đều lưu giá trị độc lập.
+                </p>
+
+                <p>
+                    Với Union:
+                </p>
+
+                <pre><code>typedef union
+{
+    uint8_t value_8;
+    uint16_t value_16;
+} DataUnion_t;
+
+DataUnion_t data;
+
+data.value_8 = 10U;
+data.value_16 = 1000U;</code></pre>
+
+                <p>
+                    Sau phép gán thứ hai, member được ghi gần nhất là
+                    <code>value_16</code>. Chương trình không thể xem
+                    <code>value_8</code> là một giá trị độc lập vẫn được
+                    lưu giữ như trong Structure.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Nếu chương trình cần giữ nhiều
+                    giá trị cùng lúc, nên sử dụng Structure. Nếu những dạng
+                    dữ liệu chỉ thay thế nhau và không cần tồn tại đồng thời,
+                    Union có thể là lựa chọn phù hợp.
+                </div>
+
+                <h2>4. Truy cập và khởi tạo Union Member</h2>
+
+                <h3>4.1. Truy cập Member bằng Dot Operator</h3>
+
+                <p>
+                    Tương tự Structure, chúng ta sử dụng toán tử dấu chấm
+                    <code>.</code> để truy cập member thông qua Union Variable.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef union
+{
+    uint16_t raw_value;
+    int16_t temperature;
+    uint32_t counter;
+} SensorValue_t;
+
+int main(void)
+{
+    SensorValue_t sensor;
+
+    sensor.raw_value = 1500U;
+
+    uint16_t value = sensor.raw_value;
+
+    (void)value;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ này, <code>sensor.raw_value</code> được sử
+                    dụng để ghi và đọc member <code>raw_value</code>.
+                </p>
+
+                <h3>4.2. Khởi tạo Union khi khai báo</h3>
+
+                <p>
+                    Union có thể được khởi tạo ngay khi khai báo biến.
+                    Với cách khởi tạo không chỉ định member, giá trị đầu
+                    tiên trong danh sách sẽ khởi tạo member đầu tiên của Union.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef union
+{
+    uint16_t raw_value;
+    int16_t temperature;
+    uint32_t counter;
+} SensorValue_t;
+
+int main(void)
+{
+    SensorValue_t value = {1200U};
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, member đầu tiên của Union là
+                    <code>raw_value</code>. Do đó, giá trị
+                    <code>1200U</code> được sử dụng để khởi tạo member này.
+                </p>
+
+                <p>
+                    Để code dễ đọc và thể hiện rõ member cần khởi tạo,
+                    chúng ta có thể sử dụng Designated Initializer.
+                </p>
+
+                <h3>4.3. Sử dụng Designated Initializer</h3>
+
+                <p>
+                    Designated Initializer cho phép chỉ định trực tiếp member
+                    cần khởi tạo thông qua tên member.
+                </p>
+
+                <pre><code>SensorValue_t raw_data = {
+    .raw_value = 1200U
+};
+
+SensorValue_t temperature_data = {
+    .temperature = 250
+};
+
+SensorValue_t counter_data = {
+    .counter = 10000U
+};</code></pre>
+
+                <p>
+                    Mỗi biến Union ở trên được khởi tạo thông qua một member
+                    khác nhau. Đây là cách viết rõ ràng hơn khi Union có
+                    nhiều member.
+                </p>
+
+                <p>
+                    Designated Initializers được hỗ trợ từ chuẩn C99. Vì vậy,
+                    cần kiểm tra chuẩn C mà compiler của dự án đang sử dụng.
+                </p>
+
+                <h3>4.4. Khởi tạo Union bằng zero</h3>
+
+                <p>
+                    Chúng ta có thể sử dụng:
+                </p>
+
+                <pre><code>SensorValue_t sensor = {0};</code></pre>
+
+                <p>
+                    Cách khởi tạo này khởi tạo member đầu tiên của Union bằng
+                    zero. Không nên hiểu rằng tất cả member có những giá trị
+                    zero độc lập cùng tồn tại trong Union.
+                </p>
+
+                <p>
+                    Do các member chia sẻ vùng nhớ, việc khởi tạo Union cần
+                    được hiểu theo member được khởi tạo, thay vì cách tổ chức
+                    nhiều member riêng biệt như Structure.
+                </p>
+
+                <h3>4.5. Không thể lưu nhiều giá trị độc lập bằng các phép gán liên tiếp</h3>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>SensorValue_t sensor;
+
+sensor.raw_value = 1500U;
+sensor.temperature = 250;</code></pre>
+
+                <p>
+                    Hai câu lệnh trên không tạo ra hai vùng nhớ độc lập cho
+                    <code>raw_value</code> và <code>temperature</code>.
+                    Member được ghi sau cùng là <code>temperature</code>.
+                </p>
+
+                <p>
+                    Vì vậy, nếu chương trình cần lưu đồng thời giá trị thô và
+                    nhiệt độ đã chuyển đổi, nên sử dụng Structure:
+                </p>
+
+                <pre><code>typedef struct
+{
+    uint16_t raw_value;
+    int16_t temperature;
+} SensorData_t;
+
+SensorData_t sensor;
+
+sensor.raw_value = 1500U;
+sensor.temperature = 250;</code></pre>
+
+                <p>
+                    Đây là ví dụ thể hiện rõ mục đích sử dụng khác nhau
+                    giữa Structure và Union.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Union không phải một cách thay
+                    thế Structure trong mọi trường hợp. Chỉ sử dụng Union
+                    khi các dạng dữ liệu thực sự là những lựa chọn thay
+                    thế nhau và không cần được lưu đồng thời.
+                </div>
+
+                <h2>5. Union Pointer</h2>
+
+                <h3>5.1. Pointer to Union là gì?</h3>
+
+                <p>
+                    Tương tự Pointer to Structure, chúng ta có thể khai báo
+                    một con trỏ trỏ đến Union.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef union
+{
+    uint16_t raw_value;
+    int16_t temperature;
+    uint32_t counter;
+} SensorValue_t;
+
+int main(void)
+{
+    SensorValue_t sensor;
+
+    SensorValue_t *sensor_ptr = &amp;sensor;
+
+    sensor_ptr->raw_value = 1000U;
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên, <code>sensor_ptr</code> lưu địa chỉ
+                    của Union Variable <code>sensor</code>.
+                </p>
+
+                <h3>5.2. Arrow Operator với Union Pointer</h3>
+
+                <p>
+                    Khi truy cập member thông qua Pointer to Union,
+                    chúng ta sử dụng toán tử <code>-&gt;</code>.
+                </p>
+
+                <pre><code>sensor_ptr->raw_value = 1000U;
+
+/* Cách viết tương đương */
+
+(*sensor_ptr).raw_value = 1000U;</code></pre>
+
+                <p>
+                    Cách sử dụng <code>-&gt;</code> giúp code ngắn gọn hơn,
+                    đặc biệt khi Union được truyền vào Function thông qua
+                    Pointer.
+                </p>
+
+                <h3>5.3. Truyền Union Pointer vào Function</h3>
+
+                <p>
+                    Trong Embedded Software, Union có thể được truyền vào
+                    Function thông qua Pointer để Function cập nhật member
+                    đang được sử dụng.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stddef.h&gt;
+
+typedef union
+{
+    uint16_t raw_value;
+    int16_t temperature;
+    uint32_t counter;
+} SensorValue_t;
+
+void Sensor_SetRawValue(SensorValue_t *value,
+                        uint16_t raw_value)
+{
+    if (value == NULL)
+    {
+        return;
+    }
+
+    value->raw_value = raw_value;
+}</code></pre>
+
+                <p>
+                    Function <code>Sensor_SetRawValue()</code> nhận địa chỉ
+                    của một Union Variable và ghi dữ liệu vào member
+                    <code>raw_value</code>.
+                </p>
+
+                <h3>5.4. Function chỉ đọc Union</h3>
+
+                <p>
+                    Nếu Function chỉ cần đọc member đang được sử dụng,
+                    chúng ta có thể truyền Pointer có tính chất
+                    <code>const</code>.
+                </p>
+
+                <pre><code>void Sensor_Process(const SensorValue_t *value)
+{
+    if (value == NULL)
+    {
+        return;
+    }
+
+    /* Chỉ đọc dữ liệu theo member đã được quản lý */
+}</code></pre>
+
+                <p>
+                    Tuy nhiên, <code>const</code> chỉ ngăn việc sửa đổi
+                    Union thông qua con trỏ này. Nó không tự động cho
+                    Function biết member nào đang chứa dữ liệu hợp lệ.
+                </p>
+
+                <p>
+                    Để xử lý đúng member, chương trình vẫn cần một cơ chế
+                    quản lý trạng thái dữ liệu, chẳng hạn Tagged Union.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Pointer to Union hoạt động
+                    tương tự Pointer to Structure. Điểm cần chú ý thêm
+                    là Function phải biết member nào đang được sử dụng
+                    trước khi truy cập dữ liệu.
+                </div>
+
+                <h2>6. Tagged Union</h2>
+
+                <h3>6.1. Vấn đề khi sử dụng Union thông thường</h3>
+
+                <p>
+                    Union cho phép nhiều member chia sẻ vùng nhớ, nhưng
+                    bản thân Union không lưu thông tin cho biết member
+                    nào hiện đang chứa dữ liệu hợp lệ theo ý nghĩa
+                    của chương trình.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>typedef union
+{
+    uint32_t integer_value;
+    float float_value;
+} NumericValue_t;
+
+NumericValue_t value;
+
+value.integer_value = 100U;</code></pre>
+
+                <p>
+                    Sau khi ghi <code>integer_value</code>, chương trình
+                    cần biết rằng dữ liệu hiện tại được quản lý dưới
+                    dạng số nguyên không dấu.
+                </p>
+
+                <p>
+                    Nếu một đoạn code khác không biết trạng thái này
+                    và truy cập <code>float_value</code>, chương trình
+                    có thể diễn giải cùng vùng nhớ theo một kiểu dữ
+                    liệu khác.
+                </p>
+
+                <p>
+                    Cách diễn giải đó không phải là một phép chuyển đổi
+                    số nguyên sang số thực thông thường. Nó phụ thuộc
+                    vào cách biểu diễn dữ liệu và có thể không tạo ra
+                    giá trị có ý nghĩa mong muốn.
+                </p>
+
+                <p>
+                    Để giải quyết vấn đề này, chúng ta cần lưu thêm
+                    thông tin xác định member nào đang được sử dụng.
+                </p>
+
+                <h3>6.2. Tagged Union là gì?</h3>
+
+                <p>
+                    <strong>Tagged Union</strong> là cách kết hợp Union
+                    với một biến Tag (thẻ định danh) dùng để ghi nhận
+                    kiểu dữ liệu hoặc member đang được sử dụng.
+                </p>
+
+                <p>
+                    Tag thường được định nghĩa bằng <code>enum</code>.
+                    Union lưu dữ liệu, trong khi enum lưu thông tin cho
+                    biết dữ liệu đó thuộc loại nào.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef enum
+{
+    VALUE_TYPE_UINT32,
+    VALUE_TYPE_FLOAT
+} ValueType_t;
+
+typedef union
+{
+    uint32_t unsigned_value;
+    float float_value;
+} NumericValue_t;
+
+typedef struct
+{
+    ValueType_t type;
+    NumericValue_t value;
+} TaggedValue_t;</code></pre>
+
+                <p>
+                    Trong ví dụ này:
+                </p>
+
+                <ul>
+                    <li><code>ValueType_t</code> định nghĩa các loại dữ liệu được hỗ trợ.</li>
+                    <li><code>NumericValue_t</code> là Union dùng để lưu giá trị.</li>
+                    <li><code>TaggedValue_t</code> kết hợp Tag và Union thành một đối tượng.</li>
+                </ul>
+
+                <p>
+                    Với thiết kế này, chương trình có thể kiểm tra
+                    <code>type</code> trước khi truy cập member của Union.
+                </p>
+
+                <h3>6.3. Sơ đồ hoạt động của Tagged Union</h3>
+
+                <svg viewBox="0 0 700 355" width="100%" role="img"
+                    aria-label="Sơ đồ Tagged Union gồm tag và vùng nhớ union">
+
+                    <rect x="105" y="20" width="490" height="310" rx="8"
+                        fill="#dceaff" stroke="#4b83c3" stroke-width="1.5" />
+
+                    <text x="350" y="50" text-anchor="middle"
+                        font-size="16" font-weight="bold" fill="#173d68">
+                        TaggedValue_t
+                    </text>
+
+                    <rect x="150" y="75" width="400" height="75" rx="6"
+                        fill="#fff0d9" stroke="#b7803e" stroke-width="1.5" />
+
+                    <text x="350" y="103" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#70451d">
+                        Tag: ValueType_t
+                    </text>
+                    <text x="350" y="128" text-anchor="middle"
+                        font-size="12" fill="#70451d">
+                        VALUE_TYPE_UINT32 / VALUE_TYPE_FLOAT
+                    </text>
+
+                    <rect x="150" y="170" width="400" height="125" rx="6"
+                        fill="#e1f3e8" stroke="#34845a" stroke-width="1.5" />
+
+                    <text x="350" y="198" text-anchor="middle"
+                        font-size="14" font-weight="bold" fill="#174d2e">
+                        Union: NumericValue_t
+                    </text>
+
+                    <rect x="180" y="215" width="340" height="32" rx="4"
+                        fill="#ffffff" stroke="#34845a" />
+                    <text x="350" y="236" text-anchor="middle"
+                        font-size="12" fill="#174d2e">
+                        unsigned_value
+                    </text>
+
+                    <rect x="180" y="255" width="340" height="32" rx="4"
+                        fill="#ffffff" stroke="#34845a" />
+                    <text x="350" y="276" text-anchor="middle"
+                        font-size="12" fill="#174d2e">
+                        float_value
+                    </text>
+
+                    <text x="350" y="318" text-anchor="middle"
+                        font-size="11" fill="#173d68">
+                        Tag cho biết cách diễn giải dữ liệu trong Union.
+                    </text>
+
+                </svg>
+
+                <p>
+                    Tagged Union có hai thành phần chính:
+                </p>
+
+                <ul>
+                    <li><strong>Tag:</strong> xác định loại dữ liệu đang được sử dụng.</li>
+                    <li><strong>Union:</strong> lưu giá trị tương ứng với loại dữ liệu đó.</li>
+                </ul>
+
+                <h3>6.4. Khởi tạo Tagged Union</h3>
+
+                <p>
+                    Chúng ta có thể khởi tạo một Tagged Union bằng
+                    Designated Initializers.
+                </p>
+
+                <pre><code>TaggedValue_t integer_data = {
+    .type = VALUE_TYPE_UINT32,
+    .value = {
+        .unsigned_value = 100U
+    }
+};
+
+TaggedValue_t float_data = {
+    .type = VALUE_TYPE_FLOAT,
+    .value = {
+        .float_value = 25.5f
+    }
+};</code></pre>
+
+                <p>
+                    Trong ví dụ đầu tiên, Tag cho biết Union đang sử dụng
+                    member <code>unsigned_value</code>.
+                </p>
+
+                <p>
+                    Trong ví dụ thứ hai, Tag cho biết Union đang sử dụng
+                    member <code>float_value</code>.
+                </p>
+
+                <p>
+                    Việc khởi tạo đồng thời Tag và Union giúp đối tượng
+                    có trạng thái nhất quán ngay từ đầu.
+                </p>
+
+                <h3>6.5. Truy cập dữ liệu thông qua Tag</h3>
+
+                <p>
+                    Khi đọc dữ liệu, chương trình nên kiểm tra Tag trước
+                    khi truy cập member tương ứng.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+void Value_Process(const TaggedValue_t *data)
+{
+    if (data == NULL)
+    {
+        return;
+    }
+
+    switch (data->type)
+    {
+        case VALUE_TYPE_UINT32:
+        {
+            uint32_t value = data->value.unsigned_value;
+
+            (void)value;
+            break;
+        }
+
+        case VALUE_TYPE_FLOAT:
+        {
+            float value = data->value.float_value;
+
+            (void)value;
+            break;
+        }
+
+        default:
+        {
+            /* Tag không hợp lệ hoặc không được hỗ trợ */
+            break;
+        }
+    }
+}</code></pre>
+
+                <p>
+                    Cách hoạt động:
+                </p>
+
+                <ol>
+                    <li>Function nhận Pointer đến Tagged Union.</li>
+                    <li>Kiểm tra Pointer trước khi truy cập.</li>
+                    <li>Đọc Tag thông qua <code>data->type</code>.</li>
+                    <li>Sử dụng <code>switch</code> để xác định loại dữ liệu.</li>
+                    <li>Truy cập đúng Union Member tương ứng.</li>
+                </ol>
+
+                <p>
+                    Cách làm này giúp chương trình tránh việc truy cập
+                    member không phù hợp với trạng thái dữ liệu hiện tại.
+                </p>
+
+                <h3>6.6. Cập nhật Tagged Union an toàn</h3>
+
+                <p>
+                    Khi muốn thay đổi loại dữ liệu đang được lưu trữ,
+                    cần cập nhật cả Union Member và Tag.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stddef.h&gt;
+
+void Value_SetUInt32(TaggedValue_t *data, uint32_t value)
+{
+    if (data == NULL)
+    {
+        return;
+    }
+
+    data->value.unsigned_value = value;
+    data->type = VALUE_TYPE_UINT32;
+}
+
+void Value_SetFloat(TaggedValue_t *data, float value)
+{
+    if (data == NULL)
+    {
+        return;
+    }
+
+    data->value.float_value = value;
+    data->type = VALUE_TYPE_FLOAT;
+}</code></pre>
+
+                <p>
+                    Trong các Function trên, dữ liệu của Union được ghi
+                    trước, sau đó Tag được cập nhật để mô tả member mới
+                    đang được sử dụng.
+                </p>
+
+                <p>
+                    Nếu dữ liệu được chia sẻ với một Task, ISR hoặc một
+                    ngữ cảnh thực thi khác, cần có cơ chế đồng bộ phù hợp.
+                    Chỉ cập nhật Tag sau cùng không tự động bảo đảm thao
+                    tác này an toàn trong môi trường đa ngữ cảnh.
+                </p>
+
+                <h3>6.7. Ưu điểm của Tagged Union</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Union</td>
+                            <td>Lưu trữ một trong nhiều dạng dữ liệu thay thế nhau.</td>
+                        </tr>
+                        <tr>
+                            <td>Enum Tag</td>
+                            <td>Cho biết member nào đang được quản lý như dữ liệu hiện tại.</td>
+                        </tr>
+                        <tr>
+                            <td>Switch Statement</td>
+                            <td>Chọn cách xử lý phù hợp với loại dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td>Default Case</td>
+                            <td>Xử lý trường hợp Tag không hợp lệ hoặc chưa được hỗ trợ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Tagged Union giúp việc quản lý dữ liệu rõ ràng hơn,
+                    đặc biệt khi một biến có thể chứa nhiều loại thông tin
+                    khác nhau trong quá trình chương trình hoạt động.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Union không tự lưu thông tin
+                    member đang hoạt động. Nếu chương trình cần biết dữ liệu
+                    hiện tại thuộc kiểu nào, hãy sử dụng một Tag riêng và
+                    cập nhật Tag nhất quán với Union Member.
+                </div>
+
+                <h2>7. Ứng dụng Union trong Embedded Systems</h2>
+
+                <h3>7.1. Lưu trữ nhiều dạng dữ liệu thay thế nhau</h3>
+
+                <p>
+                    Một trong những ứng dụng phù hợp của Union là quản lý
+                    những loại dữ liệu khác nhau nhưng không cần tồn tại
+                    đồng thời.
+                </p>
+
+                <p>
+                    Ví dụ, một module đo lường có thể xử lý một trong
+                    những loại giá trị sau:
+                </p>
+
+                <ul>
+                    <li>Giá trị ADC thô.</li>
+                    <li>Nhiệt độ đã chuyển đổi.</li>
+                    <li>Giá trị bộ đếm sự kiện.</li>
+                </ul>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef enum
+{
+    SENSOR_DATA_ADC,
+    SENSOR_DATA_TEMPERATURE,
+    SENSOR_DATA_COUNTER
+} SensorDataType_t;
+
+typedef union
+{
+    uint16_t adc_value;
+    int16_t temperature;
+    uint32_t counter;
+} SensorDataValue_t;
+
+typedef struct
+{
+    SensorDataType_t type;
+    SensorDataValue_t value;
+} SensorData_t;</code></pre>
+
+                <p>
+                    Với thiết kế này, <code>SensorData_t</code> có thể
+                    đại diện cho một trong ba dạng dữ liệu. Tag
+                    <code>type</code> cho biết cách truy cập Union Member.
+                </p>
+
+                <h3>7.2. Xử lý dữ liệu cảm biến bằng Tagged Union</h3>
+
+                <p>
+                    Chúng ta có thể xây dựng một Function xử lý từng
+                    loại dữ liệu cảm biến theo Tag.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stddef.h&gt;
+
+void Sensor_ProcessData(const SensorData_t *sensor)
+{
+    if (sensor == NULL)
+    {
+        return;
+    }
+
+    switch (sensor->type)
+    {
+        case SENSOR_DATA_ADC:
+        {
+            uint16_t adc = sensor->value.adc_value;
+
+            (void)adc;
+            break;
+        }
+
+        case SENSOR_DATA_TEMPERATURE:
+        {
+            int16_t temperature =
+                sensor->value.temperature;
+
+            (void)temperature;
+            break;
+        }
+
+        case SENSOR_DATA_COUNTER:
+        {
+            uint32_t count = sensor->value.counter;
+
+            (void)count;
+            break;
+        }
+
+        default:
+        {
+            /* Xử lý loại dữ liệu không hợp lệ */
+            break;
+        }
+    }
+}</code></pre>
+
+                <p>
+                    Function <code>Sensor_ProcessData()</code> không cần
+                    sử dụng một Structure lớn chứa tất cả các dạng dữ
+                    liệu cảm biến. Thay vào đó, Union lưu dạng dữ liệu
+                    đang được xử lý và Tag giúp lựa chọn cách truy cập.
+                </p>
+
+                <h3>7.3. Tiết kiệm bộ nhớ trong MCU</h3>
+
+                <p>
+                    MCU thường có dung lượng RAM giới hạn. Vì vậy,
+                    cách tổ chức dữ liệu có thể ảnh hưởng đáng kể đến
+                    lượng bộ nhớ mà chương trình sử dụng.
+                </p>
+
+                <p>
+                    Giả sử một module có thể lưu một trong hai loại
+                    giá trị:
+                </p>
+
+                <ul>
+                    <li>Giá trị số nguyên 32-bit.</li>
+                    <li>Giá trị số thực kiểu <code>float</code>.</li>
+                </ul>
+
+                <p>
+                    Nếu sử dụng Structure:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint32_t integer_value;
+    float float_value;
+} NumericStruct_t;</code></pre>
+
+                <p>
+                    Cả hai member đều có vùng nhớ riêng, bất kể chương
+                    trình chỉ cần sử dụng một member tại một thời điểm.
+                </p>
+
+                <p>
+                    Nếu sử dụng Union:
+                </p>
+
+                <pre><code>typedef union
+{
+    uint32_t integer_value;
+    float float_value;
+} NumericUnion_t;</code></pre>
+
+                <p>
+                    Hai member chia sẻ cùng một vùng nhớ. Do đó, Union
+                    có thể giảm dung lượng lưu trữ so với Structure
+                    tương ứng trong trường hợp các member không cần
+                    tồn tại đồng thời.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Structure</th>
+                            <th>Union</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Số nguyên 32-bit</td>
+                            <td>Có vùng nhớ riêng.</td>
+                            <td>Chia sẻ vùng nhớ.</td>
+                        </tr>
+                        <tr>
+                            <td>Float</td>
+                            <td>Có vùng nhớ riêng.</td>
+                            <td>Chia sẻ vùng nhớ.</td>
+                        </tr>
+                        <tr>
+                            <td>Lưu đồng thời hai giá trị</td>
+                            <td>Có thể.</td>
+                            <td>Không theo cách lưu trữ độc lập.</td>
+                        </tr>
+                        <tr>
+                            <td>Khả năng tiết kiệm RAM</td>
+                            <td>Không tối ưu cho các lựa chọn thay thế nhau.</td>
+                            <td>Có thể tiết kiệm RAM khi chỉ cần một member.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Tuy nhiên, khi đánh giá hiệu quả bộ nhớ, cần tính thêm
+                    kích thước Tag nếu sử dụng Tagged Union và các yêu cầu
+                    Padding, Alignment của compiler.
+                </p>
+
+                <h3>7.4. Lưu trạng thái của một thiết bị</h3>
+
+                <p>
+                    Một thiết bị có thể hoạt động theo nhiều chế độ khác
+                    nhau. Mỗi chế độ có thể cần lưu một nhóm giá trị riêng.
+                </p>
+
+                <p>
+                    Ví dụ, một thiết bị có thể chạy ở:
+                </p>
+
+                <ul>
+                    <li>Measurement Mode: lưu kết quả đo.</li>
+                    <li>Diagnostic Mode: lưu mã lỗi.</li>
+                    <li>Calibration Mode: lưu giá trị hiệu chỉnh.</li>
+                </ul>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef enum
+{
+    DEVICE_MODE_MEASUREMENT,
+    DEVICE_MODE_DIAGNOSTIC,
+    DEVICE_MODE_CALIBRATION
+} DeviceMode_t;
+
+typedef union
+{
+    int16_t measurement_value;
+    uint32_t diagnostic_code;
+    float calibration_value;
+} DeviceModeData_t;
+
+typedef struct
+{
+    DeviceMode_t mode;
+    DeviceModeData_t data;
+} DeviceData_t;</code></pre>
+
+                <p>
+                    Mỗi chế độ sử dụng một member khác nhau trong Union.
+                    Tag <code>mode</code> quyết định cách xử lý dữ liệu.
+                </p>
+
+                <p>
+                    Ví dụ, khi thiết bị đang ở Diagnostic Mode, chương
+                    trình sẽ truy cập <code>diagnostic_code</code> thay
+                    vì truy cập <code>measurement_value</code>.
+                </p>
+
+                <h3>7.5. Sử dụng Union trong một số cấu trúc dữ liệu</h3>
+
+                <p>
+                    Union có thể được kết hợp với Structure để xây dựng
+                    các cấu trúc dữ liệu có nhiều dạng nội dung khác nhau.
+                </p>
+
+                <p>
+                    Một ví dụ phổ biến về mặt thiết kế là thông điệp
+                    sự kiện. Mỗi sự kiện có thể chứa một loại dữ liệu
+                    riêng, chẳng hạn:
+                </p>
+
+                <ul>
+                    <li>Sensor Event chứa giá trị cảm biến.</li>
+                    <li>Communication Event chứa mã trạng thái giao tiếp.</li>
+                    <li>System Event chứa mã sự kiện hệ thống.</li>
+                </ul>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef enum
+{
+    EVENT_SENSOR,
+    EVENT_COMMUNICATION,
+    EVENT_SYSTEM
+} EventType_t;
+
+typedef union
+{
+    int16_t sensor_value;
+    uint16_t communication_status;
+    uint32_t system_event_code;
+} EventData_t;
+
+typedef struct
+{
+    EventType_t type;
+    EventData_t data;
+} Event_t;</code></pre>
+
+                <p>
+                    Structure <code>Event_t</code> chứa Tag và Union.
+                    Nhờ đó, một Event có thể đại diện cho nhiều loại
+                    sự kiện khác nhau nhưng không cần cấp vùng nhớ
+                    riêng cho tất cả các loại dữ liệu.
+                </p>
+
+                <h2>8. Union trong xử lý dữ liệu và giao thức truyền thông</h2>
+
+                <h3>8.1. Union có thể được sử dụng để xem Object Representation</h3>
+
+                <p>
+                    Trong C, một đối tượng được lưu trữ dưới dạng
+                    Object Representation gồm các byte trong bộ nhớ.
+                    Union đôi khi được sử dụng trong những ví dụ minh
+                    họa về cách biểu diễn dữ liệu ở mức byte.
+                </p>
+
+                <p>
+                    Ví dụ:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+
+typedef union
+{
+    uint32_t value;
+    unsigned char bytes[sizeof(uint32_t)];
+} DataRepresentation_t;
+
+int main(void)
+{
+    DataRepresentation_t data;
+
+    data.value = 0x12345678U;
+
+    for (size_t i = 0U; i < sizeof(data.bytes); i++)
+    {
+        printf("Byte %zu: 0x%02X\n",
+               i,
+               (unsigned int)data.bytes[i]);
+    }
+
+    return 0;
+}</code></pre>
+
+                <p>
+                    Trong ví dụ trên:
+                </p>
+
+                <ul>
+                    <li><code>value</code> lưu một giá trị số nguyên 32-bit.</li>
+                    <li><code>bytes</code> là mảng <code>unsigned char</code> có thể truy cập Object Representation.</li>
+                    <li>Chương trình in từng byte trong vùng nhớ của Union.</li>
+                </ul>
+
+                <p>
+                    Việc sử dụng kiểu ký tự <code>unsigned char</code>
+                    để truy cập Object Representation là một cách hợp lệ
+                    trong C. Tuy nhiên, thứ tự các byte được quan sát
+                    còn phụ thuộc vào Endianness của hệ thống.
+                </p>
+
+                <h3>8.2. Liên hệ giữa Union và Endianness</h3>
+
+                <p>
+                    Endianness mô tả thứ tự lưu trữ các byte của một giá
+                    trị nhiều byte trong bộ nhớ.
+                </p>
+
+                <p>
+                    Với giá trị minh họa:
+                </p>
+
+                <pre><code>uint32_t value = 0x12345678U;</code></pre>
+
+                <p>
+                    Nếu hệ thống sử dụng Little-endian, thứ tự byte trong
+                    bộ nhớ thường là:
+                </p>
+
+                <pre><code>Address tăng dần:
+
+0x78 | 0x56 | 0x34 | 0x12</code></pre>
+
+                <p>
+                    Nếu hệ thống sử dụng Big-endian, thứ tự byte trong
+                    bộ nhớ thường là:
+                </p>
+
+                <pre><code>Address tăng dần:
+
+0x12 | 0x34 | 0x56 | 0x78</code></pre>
+
+                <p>
+                    Do đó, chương trình sử dụng Union để xem từng byte
+                    cần hiểu kiến trúc Endianness của target platform.
+                </p>
+
+                <div class="note">
+                    <strong>Lưu ý:</strong> Union không tự động chuyển
+                    Little-endian thành Big-endian hoặc ngược lại.
+                    Nó chỉ cho phép truy cập cùng một vùng nhớ thông qua
+                    những member khác nhau. Endianness vẫn là đặc điểm
+                    của cách hệ thống biểu diễn dữ liệu.
+                </div>
+
+                <h3>8.3. Union và xử lý CAN Data</h3>
+
+                <p>
+                    Trong các hệ thống Automotive, CAN thường truyền
+                    dữ liệu dưới dạng các byte trong Data Field.
+                    Một tín hiệu có thể được định nghĩa là số nguyên,
+                    số có dấu hoặc giá trị được scale theo quy ước
+                    của DBC hay tài liệu giao tiếp.
+                </p>
+
+                <p>
+                    Union đôi khi xuất hiện trong các ví dụ minh họa
+                    để giải thích mối quan hệ giữa dữ liệu nhiều byte
+                    và vùng nhớ của chương trình.
+                </p>
+
+                <p>
+                    Tuy nhiên, khi xử lý một CAN Frame thực tế, không
+                    nên mặc định rằng có thể đặt trực tiếp một Union
+                    lên các byte nhận được rồi truy cập member như
+                    một giá trị protocol đã giải mã.
+                </p>
+
+                <p>
+                    Ví dụ, giả sử CAN Data Field chứa bốn byte:
+                </p>
+
+                <pre><code>uint8_t rx_data[4] = {
+    0x78U,
+    0x56U,
+    0x34U,
+    0x12U
+};</code></pre>
+
+                <p>
+                    Nếu tín hiệu được định nghĩa là một giá trị
+                    32-bit Little-endian, việc giải mã cần tuân theo
+                    quy định byte order của protocol.
+                </p>
+
+                <p>
+                    Có thể thực hiện chuyển đổi một cách tường minh:
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+uint32_t Decode_U32_LittleEndian(const uint8_t data[4])
+{
+    return ((uint32_t)data[0]) |
+           ((uint32_t)data[1] << 8U) |
+           ((uint32_t)data[2] << 16U) |
+           ((uint32_t)data[3] << 24U);
+}</code></pre>
+
+                <p>
+                    Với cách này, chương trình thể hiện rõ thứ tự byte
+                    và không phụ thuộc trực tiếp vào Memory Layout
+                    của Union trên target.
+                </p>
+
+                <h3>8.4. Vì sao không nên dùng Union để giải mã mọi Protocol?</h3>
+
+                <p>
+                    Một số chương trình có thể sử dụng Union để kết hợp
+                    mảng byte và các kiểu dữ liệu lớn hơn. Tuy nhiên,
+                    cách tiếp cận này có những hạn chế:
+                </p>
+
+                <ul>
+                    <li>Thứ tự byte có thể phụ thuộc Endianness của MCU.</li>
+                    <li>Cách biểu diễn số thực có thể khác nhau giữa các nền tảng.</li>
+                    <li>Các kiểu dữ liệu có thể có Alignment khác nhau.</li>
+                    <li>Protocol có thể quy định thứ tự byte khác với target platform.</li>
+                    <li>Không phải mọi giá trị trong vùng nhớ đều có biểu diễn hợp lệ cho mọi kiểu dữ liệu.</li>
+                </ul>
+
+                <p>
+                    Vì vậy, khi xây dựng Protocol Parser, nên đọc từng
+                    trường dữ liệu theo định nghĩa protocol, sau đó
+                    chuyển đổi sang kiểu dữ liệu phù hợp.
+                </p>
+
+                <h3>8.5. Union không thay thế Serialization</h3>
+
+                <p>
+                    Serialization là quá trình chuyển đổi dữ liệu
+                    trong chương trình thành một chuỗi byte theo
+                    một định dạng xác định.
+                </p>
+
+                <p>
+                    Deserialization là quá trình ngược lại: chuyển
+                    chuỗi byte nhận được thành dữ liệu mà chương
+                    trình có thể sử dụng.
+                </p>
+
+                <p>
+                    Union chỉ hỗ trợ chia sẻ vùng nhớ giữa nhiều member.
+                    Nó không tự giải quyết những vấn đề liên quan đến
+                    byte order, protocol layout hoặc cách encode tín hiệu.
+                </p>
+
+                <p>
+                    Vì vậy, với dữ liệu truyền qua UART, CAN, SPI
+                    hoặc Ethernet, cần thực hiện Serialization và
+                    Deserialization theo đặc tả của giao thức.
+                </p>
+
+                <div class="note">
+                    <strong>Ghi nhớ:</strong> Union có thể hữu ích trong
+                    việc nghiên cứu Object Representation và tổ chức
+                    dữ liệu nội bộ. Tuy nhiên, không nên xem Union là
+                    một công cụ Serialization tự động hoặc một cách
+                    giải mã protocol có tính portable.
+                </div>
+
+                <h2>9. Những lỗi và lưu ý khi sử dụng Union</h2>
+
+                <h3>9.1. Truy cập sai Member</h3>
+
+                <p>
+                    Một lỗi thường gặp là ghi dữ liệu vào một member,
+                    sau đó đọc một member khác mà không có quy ước
+                    quản lý kiểu dữ liệu.
+                </p>
+
+                <pre><code>typedef union
+{
+    uint32_t integer_value;
+    float float_value;
+} NumericValue_t;
+
+NumericValue_t value;
+
+value.integer_value = 100U;
+
+/* Không phải phép chuyển đổi int sang float */
+float result = value.float_value;</code></pre>
+
+                <p>
+                    Câu lệnh cuối không thực hiện phép chuyển đổi
+                    số nguyên <code>100</code> thành số thực
+                    <code>100.0</code>. Nó diễn giải vùng nhớ
+                    đang chứa biểu diễn của member số nguyên
+                    theo kiểu <code>float</code>.
+                </p>
+
+                <p>
+                    Kết quả phụ thuộc vào cách biểu diễn dữ liệu
+                    và các quy tắc của implementation. Trong một
+                    số trường hợp, biểu diễn đó có thể không
+                    tương ứng với một giá trị hợp lệ của kiểu
+                    được đọc.
+                </p>
+
+                <p>
+                    Nếu mục tiêu là chuyển đổi số nguyên sang
+                    số thực, hãy sử dụng Type Conversion:
+                </p>
+
+                <pre><code>uint32_t integer_value = 100U;
+
+float float_value = (float)integer_value;</code></pre>
+
+                <h3>9.2. Ghi một Member rồi đọc Member khác</h3>
+
+                <p>
+                    Khi ghi dữ liệu vào một Union Member, chương
+                    trình cần xem member đó là member đang được
+                    sử dụng.
+                </p>
+
+                <pre><code>typedef union
+{
+    uint16_t raw_value;
+    uint32_t counter;
+} SensorValue_t;
+
+SensorValue_t sensor;
+
+sensor.raw_value = 1000U;
+
+/* Member đang được sử dụng là raw_value */</code></pre>
+
+                <p>
+                    Nếu sau đó ghi:
+                </p>
+
+                <pre><code>sensor.counter = 50000U;</code></pre>
+
+                <p>
+                    Member được ghi sau cùng là <code>counter</code>.
+                    Không nên tiếp tục xem <code>raw_value</code>
+                    là một giá trị độc lập vẫn được lưu giữ.
+                </p>
+
+                <p>
+                    C đọc một member khác với member được ghi gần
+                    nhất có thể dẫn đến việc diễn giải lại Object
+                    Representation. Kết quả không phải lúc nào
+                    cũng portable hoặc mang ý nghĩa mà chương
+                    trình mong đợi.
+                </p>
+
+                <h3>9.3. Union không tự quản lý Member đang hoạt động</h3>
+
+                <p>
+                    Union không có một trường trạng thái tích hợp
+                    để cho biết member nào đang chứa dữ liệu hiện
+                    tại.
+                </p>
+
+                <p>
+                    Nếu chương trình có nhiều loại dữ liệu thay
+                    thế nhau, việc quản lý trạng thái cần được
+                    thực hiện bằng một cơ chế riêng.
+                </p>
+
+                <pre><code>typedef enum
+{
+    DATA_TYPE_RAW,
+    DATA_TYPE_TEMPERATURE
+} DataType_t;
+
+typedef union
+{
+    uint16_t raw_value;
+    int16_t temperature;
+} DataValue_t;
+
+typedef struct
+{
+    DataType_t type;
+    DataValue_t value;
+} SensorData_t;</code></pre>
+
+                <p>
+                    Tag <code>type</code> giúp chương trình biết
+                    member nào cần được truy cập.
+                </p>
+
+                <h3>9.4. Không nhầm Union với Type Conversion</h3>
+
+                <p>
+                    Union và Type Conversion là hai cơ chế
+                    khác nhau.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Union Member Access</th>
+                            <th>Type Conversion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mục đích</td>
+                            <td>Truy cập các member chia sẻ vùng nhớ.</td>
+                            <td>Chuyển đổi giá trị sang kiểu dữ liệu khác.</td>
+                        </tr>
+                        <tr>
+                            <td>Vùng nhớ</td>
+                            <td>Các member dùng chung vùng nhớ.</td>
+                            <td>Kết quả chuyển đổi có kiểu dữ liệu đích.</td>
+                        </tr>
+                        <tr>
+                            <td>Cách thực hiện</td>
+                            <td><code>value.float_value</code></td>
+                            <td><code>(float)integer_value</code></td>
+                        </tr>
+                        <tr>
+                            <td>Ý nghĩa</td>
+                            <td>Diễn giải vùng nhớ theo member được truy cập.</td>
+                            <td>Chuyển đổi giá trị theo quy tắc của C.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>9.5. Chú ý khi sử dụng Union chứa Pointer</h3>
+
+                <p>
+                    Union có thể chứa Pointer như một member.
+                    Tuy nhiên, khi sử dụng Union có Pointer,
+                    cần đặc biệt chú ý đến vòng đời và tính hợp
+                    lệ của vùng nhớ được trỏ đến.
+                </p>
+
+                <pre><code>#include &lt;stdint.h&gt;
+
+typedef union
+{
+    uint32_t value;
+    uint8_t *buffer_ptr;
+} DataStorage_t;</code></pre>
+
+                <p>
+                    Trong ví dụ trên, Union có thể sử dụng
+                    <code>value</code> hoặc <code>buffer_ptr</code>.
+                    Nếu member đang được quản lý là
+                    <code>buffer_ptr</code>, chương trình cần
+                    bảo đảm Pointer tham chiếu đến một vùng
+                    nhớ hợp lệ trước khi sử dụng.
+                </p>
+
+                <p>
+                    Việc ghi một giá trị vào member <code>value</code>
+                    sẽ thay đổi vùng nhớ dùng chung và không còn
+                    giữ giá trị Pointer trước đó như một member
+                    độc lập.
+                </p>
+
+                <h3>9.6. Không sử dụng Union như cách tối ưu RAM một cách máy móc</h3>
+
+                <p>
+                    Union có thể tiết kiệm RAM, nhưng không phải
+                    mọi trường hợp đều nên chuyển Structure
+                    thành Union.
+                </p>
+
+                <p>
+                    Trước khi sử dụng Union, cần xác định:
+                </p>
+
+                <ul>
+                    <li>Những member có thực sự thay thế nhau hay không.</li>
+                    <li>Có cần lưu các giá trị đồng thời hay không.</li>
+                    <li>Chương trình quản lý member đang sử dụng bằng cách nào.</li>
+                    <li>Kích thước Union và Tag có phù hợp với yêu cầu bộ nhớ hay không.</li>
+                    <li>Có ảnh hưởng đến khả năng đọc hiểu và bảo trì code hay không.</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Khuyến nghị:</strong> Trong Embedded Software,
+                    chỉ nên sử dụng Union khi có lý do rõ ràng về mô hình
+                    dữ liệu hoặc yêu cầu bộ nhớ. Việc tiết kiệm một vài
+                    byte không nên đánh đổi bằng cách quản lý dữ liệu
+                    khó hiểu hoặc dễ gây lỗi.
+                </div>
+
+                <h2>10. Tổng kết bài học</h2>
+
+                <p>
+                    Union là một kiểu dữ liệu quan trọng trong C,
+                    cho phép nhiều member chia sẻ cùng một vùng nhớ.
+                    Nhờ đó, chương trình có thể biểu diễn nhiều dạng
+                    dữ liệu thay thế nhau mà không cần cấp một vùng
+                    nhớ riêng cho từng member.
+                </p>
+
+                <p>
+                    Qua bài học này, chúng ta đã tìm hiểu những
+                    nội dung quan trọng sau:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kiến thức</th>
+                            <th>Nội dung cần ghi nhớ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Union</td>
+                            <td>
+                                Kiểu dữ liệu do người lập trình định nghĩa
+                                bằng từ khóa <code>union</code>.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Memory Sharing</td>
+                            <td>
+                                Các member của Union chia sẻ cùng một vùng nhớ
+                                và có cùng địa chỉ bắt đầu.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Union Size</td>
+                            <td>
+                                Đủ lớn để chứa member có kích thước lớn nhất
+                                và đáp ứng yêu cầu Alignment.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Union Alignment</td>
+                            <td>
+                                Alignment phải đáp ứng yêu cầu của các member.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Structure vs Union</td>
+                            <td>
+                                Structure có vùng nhớ riêng cho từng member,
+                                còn Union sử dụng vùng nhớ chung.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Union Initialization</td>
+                            <td>
+                                Có thể sử dụng danh sách khởi tạo hoặc
+                                Designated Initializer để chọn member.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Union Pointer</td>
+                            <td>
+                                Sử dụng Pointer để truy cập Union thông qua
+                                địa chỉ và toán tử <code>-&gt;</code>.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tagged Union</td>
+                            <td>
+                                Kết hợp Union với Tag để xác định loại
+                                dữ liệu đang được quản lý.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Memory Optimization</td>
+                            <td>
+                                Có thể tiết kiệm RAM khi các dạng dữ liệu
+                                không cần tồn tại đồng thời.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Embedded Application</td>
+                            <td>
+                                Quản lý nhiều dạng dữ liệu cảm biến,
+                                trạng thái thiết bị và dữ liệu sự kiện.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Những điểm cần nhớ khi lập trình thực tế</h3>
+
+                <ul>
+                    <li>
+                        Sử dụng Union khi các member là những lựa chọn
+                        dữ liệu thay thế nhau.
+                    </li>
+                    <li>
+                        Không sử dụng Union nếu chương trình cần lưu
+                        nhiều member độc lập cùng một thời điểm.
+                    </li>
+                    <li>
+                        Hiểu rõ các member chia sẻ cùng một vùng nhớ,
+                        vì vậy ghi member này sẽ ảnh hưởng đến cách
+                        diễn giải member khác.
+                    </li>
+                    <li>
+                        Dùng <code>sizeof</code> và kiểm tra Alignment
+                        thay vì giả định kích thước Union.
+                    </li>
+                    <li>
+                        Sử dụng Designated Initializer để chỉ định
+                        member cần khởi tạo rõ ràng.
+                    </li>
+                    <li>
+                        Cân nhắc sử dụng Tagged Union khi chương trình
+                        cần quản lý nhiều loại dữ liệu khác nhau.
+                    </li>
+                    <li>
+                        Kiểm tra Tag trước khi truy cập Union Member.
+                    </li>
+                    <li>
+                        Không nhầm Union Member Access với Type Conversion.
+                    </li>
+                    <li>
+                        Không mặc định sử dụng Union để giải mã Protocol
+                        mà không xét đến Endianness và Data Representation.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <strong>Kết luận:</strong> Union là một công cụ hữu ích
+                    để tổ chức dữ liệu theo cơ chế Memory Sharing trong C.
+                    Khi được sử dụng đúng cách, Union có thể giảm nhu cầu
+                    bộ nhớ và giúp biểu diễn các loại dữ liệu thay thế nhau.
+                    Đặc biệt, Tagged Union giúp chương trình quản lý rõ ràng
+                    member đang được sử dụng, từ đó hạn chế những lỗi liên
+                    quan đến truy cập sai kiểu dữ liệu.
+                </div>
+
+                <h3>Bài học tiếp theo</h3>
+
+                <p>
+                    Trong bài tiếp theo, chúng ta sẽ tìm hiểu về
+                    <strong>Bit-field in C</strong>. Nội dung sẽ tập trung
+                    vào cách khai báo các member có độ rộng bit xác định
+                    trong Structure, cách biểu diễn các cờ trạng thái và
+                    những lưu ý về Compiler, ABI cũng như thứ tự bit khi
+                    sử dụng Bit-field trong Embedded Systems.
+                </p>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-18.html">← Bài trước</a>
+                    <a class="btn" href="lesson-20.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>EmLearn - 2026</p>
+    </footer>
+
+</body>
+</html>
