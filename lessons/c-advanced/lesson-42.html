@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 42: Error Handling Strategy in C | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a href="../../index.html" class="logo">Em<span>Learn</span></a>
+
+            <nav>
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <a href="index.html" class="btn">← Tất cả bài học Advanced C Embedded</a>
+
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html" class="active" aria-current="page">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 42: Error Handling Strategy in C</h1>
+
+                <section>
+                    <h2>1. Introduction</h2>
+
+                    <p>
+                        Trong quá trình thực thi chương trình C, một Function có thể
+                        gặp nhiều tình huống khiến nó không thể hoàn thành công việc
+                        như mong đợi. Ví dụ: tham số đầu vào không hợp lệ, dữ liệu
+                        nhận được sai định dạng, phần cứng không phản hồi, Buffer
+                        không đủ dung lượng hoặc một thao tác ngoại vi thất bại.
+                    </p>
+
+                    <p>
+                        Nếu chương trình không có cơ chế phát hiện và xử lý những
+                        tình huống này, lỗi có thể lan truyền sang các Module khác,
+                        làm sai lệch dữ liệu hoặc khiến toàn bộ hệ thống hoạt động
+                        không ổn định.
+                    </p>
+
+                    <p>
+                        Trong C, ngôn ngữ không cung cấp cơ chế Exception Handling
+                        như C++. Vì vậy, lập trình viên thường phải thiết kế Error
+                        Handling thông qua Return Value, Error Code, Status
+                        Enumeration, Error Flag hoặc các cơ chế quản lý lỗi riêng.
+                    </p>
+
+                    <p>
+                        Đối với Embedded Systems, Error Handling không chỉ là việc
+                        thông báo một Function thất bại. Chương trình còn cần xác
+                        định mức độ nghiêm trọng, trạng thái hệ thống sau lỗi và
+                        cách đưa thiết bị về trạng thái an toàn khi cần thiết.
+                    </p>
+
+                    <div class="note">
+                        <strong>Mục tiêu bài học:</strong>
+                        <ul>
+                            <li>Hiểu vai trò của Error Handling trong C.</li>
+                            <li>Phân biệt Return Value, Error Code và Status Enumeration.</li>
+                            <li>Biết cách thiết kế Error Handling cho Function và Module.</li>
+                            <li>Hiểu Error Propagation và Error Recovery.</li>
+                            <li>Phân biệt Error, Fault và Failure ở mức khái niệm.</li>
+                            <li>Áp dụng chiến lược xử lý lỗi trong Embedded Software.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>2. Core Concepts</h2>
+
+                    <h3>2.1. Error Handling là gì?</h3>
+
+                    <p>
+                        Error Handling là quá trình phát hiện, thông báo, ghi nhận
+                        và xử lý các tình huống bất thường xảy ra trong quá trình
+                        thực thi chương trình.
+                    </p>
+
+                    <p>Một quy trình xử lý lỗi cơ bản có thể bao gồm:</p>
+
+                    <ol>
+                        <li><strong>Error Detection:</strong> phát hiện điều kiện lỗi.</li>
+                        <li><strong>Error Reporting:</strong> thông báo lỗi cho thành phần gọi.</li>
+                        <li><strong>Error Handling:</strong> lựa chọn hành động phù hợp.</li>
+                        <li><strong>Error Recovery:</strong> khôi phục hoạt động nếu có thể.</li>
+                        <li><strong>Error Logging:</strong> ghi nhận thông tin phục vụ Debug.</li>
+                    </ol>
+
+                    <p>
+                        Không phải mọi lỗi đều cần được xử lý giống nhau. Một lỗi
+                        do tham số đầu vào không hợp lệ có thể chỉ cần trả về Error Code.
+                        Trong khi đó, lỗi nghiêm trọng liên quan đến Hardware hoặc
+                        trạng thái an toàn của hệ thống có thể cần kích hoạt cơ chế
+                        Fault Handling riêng.
+                    </p>
+
+                    <h3>2.2. Return Value</h3>
+
+                    <p>
+                        Return Value là cách đơn giản nhất để một Function thông báo
+                        kết quả thực thi cho Function gọi nó.
+                    </p>
+
+                    <p>
+                        Ví dụ, Function trả về <code>true</code> nếu thao tác thành công
+                        và <code>false</code> nếu thao tác thất bại:
+                    </p>
+
+                    <pre><code>#include &lt;stdbool.h&gt;
+
+bool Sensor_Init(void)
+{
+    /* Perform initialization */
+
+    return true;
+}
+
+int main(void)
+{
+    if (Sensor_Init() == false)
+    {
+        /* Handle initialization error */
+        return -1;
+    }
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Cách tiếp cận này dễ hiểu và phù hợp với Function chỉ cần
+                        thông báo hai trạng thái: Success hoặc Failure.
+                    </p>
+
+                    <p>
+                        Tuy nhiên, nếu có nhiều nguyên nhân lỗi khác nhau,
+                        kiểu <code>bool</code> không cung cấp đủ thông tin để
+                        Function gọi xác định chính xác vấn đề.
+                    </p>
+
+                    <h3>2.3. Error Code</h3>
+
+                    <p>
+                        Error Code là một giá trị được sử dụng để biểu diễn trạng thái
+                        hoặc nguyên nhân khiến một thao tác thất bại.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+#define ERROR_NONE             0U
+#define ERROR_INVALID_PARAM    1U
+#define ERROR_TIMEOUT          2U
+#define ERROR_HARDWARE         3U
+#define ERROR_BUFFER_FULL      4U
+
+uint8_t Sensor_Read(void)
+{
+    /* Example error condition */
+
+    return ERROR_TIMEOUT;
+}</code></pre>
+
+                    <p>
+                        Function có thể trả về một Error Code để Function gọi
+                        biết được nguyên nhân thất bại.
+                    </p>
+
+                    <p>
+                        Ưu điểm của phương pháp này là đơn giản, dễ triển khai và
+                        có thể sử dụng trong các API có nhiều trạng thái kết quả.
+                    </p>
+
+                    <h3>2.4. Status Enumeration</h3>
+
+                    <p>
+                        Thay vì sử dụng các con số hoặc Macro rời rạc, có thể định
+                        nghĩa một Enumeration để biểu diễn trạng thái của Function.
+                    </p>
+
+                    <pre><code>typedef enum
+{
+    STATUS_OK = 0,
+    STATUS_ERROR_INVALID_PARAM,
+    STATUS_ERROR_TIMEOUT,
+    STATUS_ERROR_HARDWARE,
+    STATUS_ERROR_BUFFER_FULL
+} Status_t;</code></pre>
+
+                    <p>
+                        Khi sử dụng Enumeration, tên trạng thái có ý nghĩa rõ ràng
+                        hơn so với các giá trị số nguyên.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>Status_t Sensor_Init(void)
+{
+    /* Initialization logic */
+
+    return STATUS_OK;
+}
+
+int main(void)
+{
+    Status_t status;
+
+    status = Sensor_Init();
+
+    if (status != STATUS_OK)
+    {
+        /* Handle error */
+    }
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Đây là một cách tổ chức Error Handling phổ biến trong
+                        Embedded C vì có thể mở rộng nhiều trạng thái mà vẫn giữ
+                        được tính dễ đọc của chương trình.
+                    </p>
+
+                    <h3>2.5. Error Flag</h3>
+
+                    <p>
+                        Error Flag là một biến được sử dụng để ghi nhận trạng thái
+                        lỗi của một Module hoặc một thành phần trong hệ thống.
+                    </p>
+
+                    <pre><code>#include &lt;stdbool.h&gt;
+
+static bool sensorErrorFlag = false;
+
+void Sensor_SetError(void)
+{
+    sensorErrorFlag = true;
+}
+
+bool Sensor_HasError(void)
+{
+    return sensorErrorFlag;
+}</code></pre>
+
+                    <p>
+                        Error Flag có thể hữu ích khi một Module cần ghi nhận trạng thái
+                        lỗi để thành phần khác kiểm tra sau đó.
+                    </p>
+
+                    <p>
+                        Tuy nhiên, nếu sử dụng Global Error Flag không có quy tắc quản lý,
+                        chương trình có thể gặp khó khăn trong việc xác định lỗi xuất
+                        phát từ đâu và khi nào trạng thái lỗi được xóa.
+                    </p>
+
+                    <h3>2.6. Phân biệt Error, Fault và Failure</h3>
+
+                    <p>
+                        Trong lĩnh vực Software và Embedded Systems, các thuật ngữ
+                        Error, Fault và Failure có thể được sử dụng trong những
+                        ngữ cảnh khác nhau.
+                    </p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Thuật ngữ</th>
+                                <th>Ý nghĩa khái quát</th>
+                                <th>Ví dụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Error</td>
+                                <td>Trạng thái hoặc kết quả xử lý không đúng mong đợi.</td>
+                                <td>Giá trị Sensor được tính toán sai.</td>
+                            </tr>
+                            <tr>
+                                <td>Fault</td>
+                                <td>Nguyên nhân hoặc điều kiện bất thường có thể dẫn đến lỗi hệ thống.</td>
+                                <td>Sensor mất kết nối.</td>
+                            </tr>
+                            <tr>
+                                <td>Failure</td>
+                                <td>Hệ thống hoặc chức năng không thực hiện được yêu cầu.</td>
+                                <td>ECU không thể cung cấp chức năng mong muốn.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>
+                        Trong thực tế, cách sử dụng các thuật ngữ này có thể khác nhau
+                        tùy theo tiêu chuẩn và quy trình của từng dự án. Điều quan trọng
+                        là cần thống nhất định nghĩa trong tài liệu kỹ thuật của hệ thống.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>3. Detailed Explanation</h2>
+
+                    <h3>3.1. Thiết kế Error Handling cho Function</h3>
+
+                    <p>
+                        Một Function được thiết kế tốt cần xác định rõ những điều kiện
+                        khiến nó thất bại và cách thông báo trạng thái đó cho Function gọi.
+                    </p>
+
+                    <p>
+                        Ví dụ, một Function đọc dữ liệu Sensor có thể gặp các trường hợp:
+                    </p>
+
+                    <ul>
+                        <li>Con trỏ đầu ra không hợp lệ.</li>
+                        <li>Sensor chưa được khởi tạo.</li>
+                        <li>Hardware không phản hồi.</li>
+                        <li>Dữ liệu nhận được không hợp lệ.</li>
+                        <li>Thao tác đọc thành công.</li>
+                    </ul>
+
+                    <p>
+                        Có thể biểu diễn những trạng thái này bằng Enumeration:
+                    </p>
+
+                    <pre><code>typedef enum
+{
+    SENSOR_OK = 0,
+    SENSOR_ERROR_INVALID_PARAM,
+    SENSOR_ERROR_NOT_INITIALIZED,
+    SENSOR_ERROR_TIMEOUT,
+    SENSOR_ERROR_INVALID_DATA
+} SensorStatus_t;</code></pre>
+
+                    <p>
+                        Sau đó, Function sử dụng kiểu trả về này để thông báo kết quả:
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+typedef enum
+{
+    SENSOR_OK = 0,
+    SENSOR_ERROR_INVALID_PARAM,
+    SENSOR_ERROR_NOT_INITIALIZED,
+    SENSOR_ERROR_TIMEOUT,
+    SENSOR_ERROR_INVALID_DATA
+} SensorStatus_t;
+
+static bool sensorInitialized = false;
+
+SensorStatus_t Sensor_Read(uint16_t *value)
+{
+    if (value == NULL)
+    {
+        return SENSOR_ERROR_INVALID_PARAM;
+    }
+
+    if (sensorInitialized == false)
+    {
+        return SENSOR_ERROR_NOT_INITIALIZED;
+    }
+
+    /*
+     * Hardware reading would be performed here.
+     */
+
+    *value = 250U;
+
+    return SENSOR_OK;
+}</code></pre>
+
+                    <p>
+                        Function kiểm tra các điều kiện cần thiết trước khi thực hiện
+                        thao tác. Nếu có lỗi, Function trả về trạng thái tương ứng
+                        thay vì tiếp tục xử lý với dữ liệu không hợp lệ.
+                    </p>
+
+                    <h3>3.2. Error Propagation</h3>
+
+                    <p>
+                        Error Propagation là quá trình truyền thông tin lỗi từ
+                        Function cấp thấp lên các Function hoặc Module cấp cao hơn.
+                    </p>
+
+                    <p>
+                        Ví dụ, một ứng dụng có thể gọi nhiều tầng Function:
+                    </p>
+
+                    <pre><code>Application
+     |
+     v
+Sensor_Service
+     |
+     v
+Sensor_Driver
+     |
+     v
+Hardware Interface</code></pre>
+
+                    <p>
+                        Nếu Hardware Interface gặp lỗi, Sensor Driver cần thông báo
+                        trạng thái đó cho Sensor Service. Sau đó, Sensor Service
+                        tiếp tục truyền trạng thái lên Application.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>typedef enum
+{
+    STATUS_OK = 0,
+    STATUS_ERROR_TIMEOUT,
+    STATUS_ERROR_HARDWARE
+} Status_t;
+
+Status_t Hardware_Read(uint16_t *value)
+{
+    if (value == NULL)
+    {
+        return STATUS_ERROR_HARDWARE;
+    }
+
+    /*
+     * Simulate hardware timeout.
+     */
+
+    return STATUS_ERROR_TIMEOUT;
+}
+
+Status_t Sensor_Read(uint16_t *value)
+{
+    Status_t status;
+
+    status = Hardware_Read(value);
+
+    if (status != STATUS_OK)
+    {
+        return status;
+    }
+
+    return STATUS_OK;
+}
+
+Status_t Application_ReadSensor(void)
+{
+    uint16_t sensorValue;
+    Status_t status;
+
+    status = Sensor_Read(&amp;sensorValue);
+
+    if (status != STATUS_OK)
+    {
+        return status;
+    }
+
+    /* Process sensorValue */
+
+    return STATUS_OK;
+}</code></pre>
+
+                    <p>
+                        Trong ví dụ trên, mỗi tầng chịu trách nhiệm truyền trạng thái
+                        lỗi lên tầng gọi nó. Nhờ đó, Application có thể biết thao tác
+                        đọc Sensor đã thất bại mà không cần truy cập trực tiếp vào
+                        chi tiết triển khai của Hardware Interface.
+                    </p>
+
+                    <h3>3.3. Không bỏ qua Return Value</h3>
+
+                    <p>
+                        Một lỗi phổ biến là gọi Function có thể thất bại nhưng không
+                        kiểm tra giá trị trả về.
+                    </p>
+
+                    <p>Ví dụ không nên sử dụng:</p>
+
+                    <pre><code>void Application_Task(void)
+{
+    Sensor_Init();
+
+    Sensor_ReadData();
+}</code></pre>
+
+                    <p>
+                        Nếu <code>Sensor_Init()</code> thất bại, chương trình vẫn tiếp tục
+                        gọi <code>Sensor_ReadData()</code>. Điều này có thể khiến
+                        Module hoạt động trong trạng thái chưa được khởi tạo.
+                    </p>
+
+                    <p>Cách xử lý tốt hơn:</p>
+
+                    <pre><code>void Application_Task(void)
+{
+    Status_t status;
+
+    status = Sensor_Init();
+
+    if (status != STATUS_OK)
+    {
+        /* Handle initialization failure */
+        return;
+    }
+
+    status = Sensor_ReadData();
+
+    if (status != STATUS_OK)
+    {
+        /* Handle read failure */
+        return;
+    }
+}</code></pre>
+
+                    <p>
+                        Mỗi Function quan trọng cần có quy tắc kiểm tra kết quả trả về.
+                        Không nên mặc định rằng mọi thao tác đều thành công.
+                    </p>
+
+                    <h3>3.4. Error Recovery</h3>
+
+                    <p>
+                        Error Recovery là quá trình đưa chương trình hoặc Module trở
+                        lại trạng thái có thể hoạt động sau khi xảy ra lỗi.
+                    </p>
+
+                    <p>Một số chiến lược thường gặp:</p>
+
+                    <ul>
+                        <li>
+                            <strong>Retry:</strong> thử thực hiện lại thao tác nếu
+                            lỗi có khả năng chỉ xảy ra tạm thời.
+                        </li>
+                        <li>
+                            <strong>Re-initialization:</strong> khởi tạo lại Module
+                            nếu trạng thái hiện tại không còn hợp lệ.
+                        </li>
+                        <li>
+                            <strong>Fallback:</strong> sử dụng một giá trị hoặc chế độ
+                            hoạt động dự phòng đã được thiết kế.
+                        </li>
+                        <li>
+                            <strong>Safe State:</strong> chuyển hệ thống về trạng thái
+                            an toàn được xác định trước.
+                        </li>
+                        <li>
+                            <strong>Shutdown:</strong> dừng chức năng khi không thể
+                            tiếp tục hoạt động an toàn.
+                        </li>
+                    </ul>
+
+                    <p>
+                        Không phải lỗi nào cũng nên được Retry. Nếu nguyên nhân lỗi
+                        là dữ liệu đầu vào không hợp lệ hoặc cấu hình sai, việc thử
+                        lại cùng một thao tác thường không giải quyết được vấn đề.
+                    </p>
+
+                    <h3>3.5. Retry Strategy</h3>
+
+                    <p>
+                        Retry có thể được sử dụng khi thao tác thất bại do những
+                        nguyên nhân tạm thời, chẳng hạn thiết bị chưa phản hồi trong
+                        khoảng thời gian mong đợi.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define MAX_RETRY_COUNT 3U
+
+typedef enum
+{
+    STATUS_OK = 0,
+    STATUS_ERROR_TIMEOUT
+} Status_t;
+
+Status_t Sensor_ReadWithRetry(uint16_t *value)
+{
+    Status_t status = STATUS_ERROR_TIMEOUT;
+
+    if (value == NULL)
+    {
+        return STATUS_ERROR_TIMEOUT;
+    }
+
+    for (uint32_t retry = 0U;
+         retry &lt; MAX_RETRY_COUNT;
+         retry++)
+    {
+        status = Sensor_Read(value);
+
+        if (status == STATUS_OK)
+        {
+            return STATUS_OK;
+        }
+    }
+
+    return status;
+}</code></pre>
+
+                    <p>
+                        Ví dụ trên minh họa giới hạn số lần thử lại. Trong ứng dụng
+                        thực tế, cần xác định rõ loại lỗi nào được phép Retry,
+                        thời gian chờ giữa các lần thử và tổng thời gian tối đa
+                        dành cho thao tác.
+                    </p>
+
+                    <div class="note">
+                        <strong>Lưu ý:</strong>
+                        Retry không phù hợp với mọi Function. Nếu Function thực hiện
+                        một thao tác không thể lặp lại an toàn, chẳng hạn gửi một
+                        lệnh làm thay đổi trạng thái thiết bị, việc Retry có thể
+                        tạo ra tác động ngoài dự kiến.
+                    </div>
+
+                    <h3>3.6. Safe State và Fail-safe Behavior</h3>
+
+                    <p>
+                        Trong Embedded Systems, một số lỗi có thể ảnh hưởng đến
+                        trạng thái hoạt động của thiết bị. Khi đó, hệ thống cần có
+                        một hành vi được xác định trước để giảm thiểu rủi ro.
+                    </p>
+
+                    <p>
+                        Ví dụ, nếu một chức năng điều khiển không nhận được dữ liệu
+                        Sensor hợp lệ, hệ thống có thể:
+                    </p>
+
+                    <ul>
+                        <li>Đánh dấu dữ liệu Sensor là không hợp lệ.</li>
+                        <li>Không sử dụng giá trị mới để cập nhật trạng thái điều khiển.</li>
+                        <li>Chuyển sang chế độ hoạt động dự phòng đã được thiết kế.</li>
+                        <li>Thông báo lỗi cho thành phần quản lý hệ thống.</li>
+                    </ul>
+
+                    <p>
+                        Safe State cần được xác định dựa trên yêu cầu của từng hệ thống.
+                        Không có một giá trị mặc định chung phù hợp cho mọi thiết bị.
+                    </p>
+
+                    <h3>3.7. Error Logging</h3>
+
+                    <p>
+                        Error Logging là quá trình lưu lại thông tin về những lỗi
+                        xảy ra trong quá trình vận hành.
+                    </p>
+
+                    <p>Một bản ghi lỗi có thể bao gồm:</p>
+
+                    <ul>
+                        <li>Error Code.</li>
+                        <li>Module phát sinh lỗi.</li>
+                        <li>Thời điểm xảy ra lỗi.</li>
+                        <li>Trạng thái hệ thống tại thời điểm lỗi.</li>
+                        <li>Số lần lỗi xuất hiện.</li>
+                    </ul>
+
+                    <p>
+                        Ví dụ về một cấu trúc lưu thông tin lỗi:
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+typedef struct
+{
+    uint32_t errorCode;
+    uint32_t timestamp;
+    uint16_t moduleId;
+    uint16_t occurrenceCount;
+} ErrorLog_t;</code></pre>
+
+                    <p>
+                        Trong Embedded Systems, Error Log có thể được lưu trong RAM,
+                        Flash hoặc một vùng nhớ được thiết kế riêng. Việc lựa chọn
+                        vị trí lưu cần xem xét dung lượng bộ nhớ, tuổi thọ Flash
+                        và yêu cầu lưu trữ sau khi mất nguồn.
+                    </p>
+
+                    <h3>3.8. Error Handling trong Interrupt Service Routine</h3>
+
+                    <p>
+                        Khi lỗi xảy ra trong ISR, việc xử lý cần được thiết kế cẩn thận
+                        vì ISR thường có yêu cầu về thời gian thực thi và tính xác định.
+                    </p>
+
+                    <p>
+                        Thay vì thực hiện những thao tác phức tạp trong ISR, có thể
+                        ghi nhận trạng thái lỗi hoặc thiết lập Event Flag để Main Loop
+                        hoặc Task xử lý sau.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+static volatile bool uartErrorPending = false;
+
+void UART_Error_IRQHandler(void)
+{
+    /*
+     * Clear or acknowledge the hardware interrupt
+     * according to the MCU specification.
+     */
+
+    uartErrorPending = true;
+}
+
+void Application_Task(void)
+{
+    if (uartErrorPending == true)
+    {
+        uartErrorPending = false;
+
+        /* Handle UART error outside ISR */
+    }
+}</code></pre>
+
+                    <p>
+                        Ví dụ này chỉ minh họa việc chuyển thông tin lỗi từ ISR
+                        sang Main Loop. Trong hệ thống thực tế, cần sử dụng cơ chế
+                        đồng bộ phù hợp với MCU, Compiler và RTOS nếu có.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>4. C Code Examples</h2>
+
+                    <h3>4.1. Xây dựng Error Code cho một Module</h3>
+
+                    <p>
+                        Một Module có thể định nghĩa các trạng thái riêng để biểu diễn
+                        những lỗi liên quan đến chức năng của nó.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+typedef enum
+{
+    MOTOR_STATUS_OK = 0,
+    MOTOR_ERROR_INVALID_PARAM,
+    MOTOR_ERROR_NOT_INITIALIZED,
+    MOTOR_ERROR_OVERCURRENT,
+    MOTOR_ERROR_TIMEOUT
+} MotorStatus_t;
+
+static bool motorInitialized = false;
+
+MotorStatus_t Motor_Init(void)
+{
+    motorInitialized = true;
+
+    return MOTOR_STATUS_OK;
+}
+
+MotorStatus_t Motor_SetSpeed(uint16_t speed)
+{
+    if (motorInitialized == false)
+    {
+        return MOTOR_ERROR_NOT_INITIALIZED;
+    }
+
+    if (speed &gt; 1000U)
+    {
+        return MOTOR_ERROR_INVALID_PARAM;
+    }
+
+    /*
+     * Apply speed configuration.
+     */
+
+    return MOTOR_STATUS_OK;
+}
+
+int main(void)
+{
+    MotorStatus_t status;
+
+    status = Motor_Init();
+
+    if (status != MOTOR_STATUS_OK)
+    {
+        return -1;
+    }
+
+    status = Motor_SetSpeed(500U);
+
+    if (status != MOTOR_STATUS_OK)
+    {
+        /* Handle motor configuration error */
+        return -1;
+    }
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Ví dụ này cho thấy cách một Module quản lý trạng thái
+                        khởi tạo và trả về Error Code khi một thao tác không
+                        đáp ứng điều kiện cần thiết.
+                    </p>
+
+                    <h3>4.2. Xây dựng Error Handler tập trung</h3>
+
+                    <p>
+                        Trong một ứng dụng có nhiều Module, có thể xây dựng một
+                        thành phần Error Handler để tiếp nhận và quản lý các
+                        thông tin lỗi.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+typedef enum
+{
+    ERROR_MODULE_SENSOR = 1,
+    ERROR_MODULE_UART,
+    ERROR_MODULE_CAN,
+    ERROR_MODULE_MOTOR
+} ErrorModule_t;
+
+typedef enum
+{
+    ERROR_LEVEL_INFO = 0,
+    ERROR_LEVEL_WARNING,
+    ERROR_LEVEL_CRITICAL
+} ErrorLevel_t;
+
+typedef struct
+{
+    ErrorModule_t module;
+    ErrorLevel_t level;
+    uint32_t errorCode;
+} SystemError_t;
+
+static SystemError_t lastError;
+
+void ErrorHandler_Report(ErrorModule_t module,
+                         ErrorLevel_t level,
+                         uint32_t errorCode)
+{
+    lastError.module = module;
+    lastError.level = level;
+    lastError.errorCode = errorCode;
+}
+
+SystemError_t ErrorHandler_GetLastError(void)
+{
+    return lastError;
+}</code></pre>
+
+                    <p>
+                        Error Handler tập trung giúp chương trình có một nơi thống
+                        nhất để tiếp nhận và truy xuất thông tin lỗi.
+                    </p>
+
+                    <p>
+                        Tuy nhiên, ví dụ trên chỉ lưu lỗi gần nhất. Nếu nhiều Task
+                        hoặc ISR cùng gọi Error Handler, cần bổ sung cơ chế đồng bộ
+                        và quản lý nhiều bản ghi phù hợp.
+                    </p>
+
+                    <h3>4.3. Phân biệt lỗi có thể khôi phục và lỗi nghiêm trọng</h3>
+
+                    <p>
+                        Không phải mọi lỗi đều cần dẫn đến việc dừng toàn bộ hệ thống.
+                        Có thể phân loại lỗi theo mức độ ảnh hưởng để lựa chọn
+                        hành động phù hợp.
+                    </p>
+
+                    <pre><code>typedef enum
+{
+    ERROR_SEVERITY_INFO = 0,
+    ERROR_SEVERITY_WARNING,
+    ERROR_SEVERITY_CRITICAL
+} ErrorSeverity_t;
+
+void System_HandleError(ErrorSeverity_t severity)
+{
+    switch (severity)
+    {
+        case ERROR_SEVERITY_INFO:
+            /* Record information */
+            break;
+
+        case ERROR_SEVERITY_WARNING:
+            /* Notify and continue if safe */
+            break;
+
+        case ERROR_SEVERITY_CRITICAL:
+            /* Execute defined safe-state strategy */
+            break;
+
+        default:
+            /* Handle invalid severity */
+            break;
+    }
+}</code></pre>
+
+                    <p>
+                        Cách phân loại này giúp tách biệt những lỗi chỉ cần ghi nhận
+                        với những lỗi cần hành động ngay. Việc lựa chọn hành động
+                        cụ thể phải dựa trên yêu cầu và phân tích an toàn của hệ thống.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>5. Embedded Applications</h2>
+
+                    <h3>5.1. Error Handling trong Sensor Driver</h3>
+
+                    <p>
+                        Sensor Driver có thể gặp lỗi khi khởi tạo, đọc dữ liệu hoặc
+                        giao tiếp với Sensor.
+                    </p>
+
+                    <p>Một số lỗi thường gặp:</p>
+
+                    <ul>
+                        <li>Sensor không phản hồi.</li>
+                        <li>Giao tiếp I2C hoặc SPI thất bại.</li>
+                        <li>Timeout khi chờ dữ liệu.</li>
+                        <li>Dữ liệu nhận được không đúng định dạng.</li>
+                        <li>Giá trị Sensor nằm ngoài phạm vi được hỗ trợ.</li>
+                    </ul>
+
+                    <p>
+                        Driver cần trả về trạng thái rõ ràng để Application quyết định
+                        tiếp tục xử lý, thử lại hoặc chuyển sang chế độ dự phòng.
+                    </p>
+
+                    <h3>5.2. Error Handling trong UART Driver</h3>
+
+                    <p>
+                        UART Driver có thể gặp các lỗi như:
+                    </p>
+
+                    <ul>
+                        <li>Receive Buffer đầy.</li>
+                        <li>UART Overrun.</li>
+                        <li>Framing Error.</li>
+                        <li>Parity Error.</li>
+                        <li>Timeout khi nhận dữ liệu.</li>
+                    </ul>
+
+                    <p>
+                        Khi phát hiện lỗi, Driver cần ghi nhận trạng thái và cung cấp
+                        thông tin cho thành phần quản lý phía trên. Một số lỗi có thể
+                        được xử lý bằng cách xóa trạng thái Hardware Error và tiếp tục
+                        nhận dữ liệu theo quy trình của MCU.
+                    </p>
+
+                    <h3>5.3. Error Handling trong CAN Communication</h3>
+
+                    <p>
+                        Trong CAN Communication, lỗi có thể xuất hiện ở nhiều tầng
+                        khác nhau, từ Controller đến Communication Stack.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <ul>
+                        <li>CAN Controller báo lỗi truyền hoặc nhận.</li>
+                        <li>Message không được nhận đúng thời gian.</li>
+                        <li>Communication Timeout.</li>
+                        <li>Message có định dạng hoặc nội dung không hợp lệ.</li>
+                        <li>Communication Module chưa được khởi tạo.</li>
+                    </ul>
+
+                    <p>
+                        CAN Driver có thể thông báo trạng thái cho CAN Interface,
+                        trong khi Application hoặc Diagnostic Module thực hiện
+                        xử lý ở mức cao hơn.
+                    </p>
+
+                    <h3>5.4. Error Handling trong AUTOSAR</h3>
+
+                    <p>
+                        Trong AUTOSAR Classic Platform, việc xử lý lỗi có thể được
+                        phân chia giữa nhiều thành phần tùy theo loại lỗi và yêu cầu
+                        của hệ thống.
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>DET (Default Error Tracer):</strong> hỗ trợ ghi
+                            nhận các lỗi phát triển và lỗi sử dụng API của BSW Module.
+                        </li>
+                        <li>
+                            <strong>DEM (Diagnostic Event Manager):</strong> quản lý
+                            Diagnostic Event và trạng thái lỗi liên quan đến chẩn đoán.
+                        </li>
+                        <li>
+                            <strong>Application Software:</strong> xử lý trạng thái
+                            trả về từ các Service hoặc SWC theo yêu cầu chức năng.
+                        </li>
+                        <li>
+                            <strong>ECU State Management:</strong> tham gia quản lý
+                            trạng thái hoạt động của ECU và các yêu cầu chuyển trạng thái.
+                        </li>
+                    </ul>
+
+                    <p>
+                        DET và DEM có mục đích khác nhau. Không nên xem mọi lỗi trong
+                        chương trình đều cần được chuyển trực tiếp thành Diagnostic Event.
+                    </p>
+
+                    <h3>5.5. Error Handling trong Automotive Embedded Software</h3>
+
+                    <p>
+                        Trong Automotive Embedded Software, Error Handling cần được
+                        thiết kế dựa trên yêu cầu chức năng và mức độ ảnh hưởng của lỗi.
+                    </p>
+
+                    <p>
+                        Ví dụ, nếu một ECU không nhận được tín hiệu cần thiết từ một
+                        ECU khác trong khoảng thời gian quy định, hệ thống có thể:
+                    </p>
+
+                    <ul>
+                        <li>Đánh dấu tín hiệu là Timeout hoặc Invalid.</li>
+                        <li>Không tiếp tục sử dụng dữ liệu cũ như dữ liệu mới hợp lệ.</li>
+                        <li>Thông báo trạng thái lỗi cho thành phần liên quan.</li>
+                        <li>Thực hiện hành vi dự phòng theo System Requirement.</li>
+                        <li>Ghi nhận Diagnostic Event nếu đáp ứng điều kiện chẩn đoán.</li>
+                    </ul>
+
+                    <p>
+                        Hành vi cụ thể cần được định nghĩa trong yêu cầu hệ thống,
+                        không nên tự ý lựa chọn một giá trị thay thế mà chưa có
+                        cơ sở thiết kế.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>6. Common Mistakes</h2>
+
+                    <h3>6.1. Không kiểm tra giá trị trả về</h3>
+
+                    <p>
+                        Gọi Function có thể thất bại nhưng bỏ qua Return Value sẽ
+                        khiến chương trình không phát hiện được lỗi.
+                    </p>
+
+                    <h3>6.2. Sử dụng một Error Code cho mọi loại lỗi</h3>
+
+                    <p>
+                        Nếu tất cả lỗi đều trả về cùng một giá trị, Function gọi
+                        sẽ khó xác định nguyên nhân và lựa chọn cách xử lý phù hợp.
+                    </p>
+
+                    <h3>6.3. Tiếp tục sử dụng dữ liệu không hợp lệ</h3>
+
+                    <p>
+                        Sau khi một thao tác đọc dữ liệu thất bại, chương trình
+                        không nên mặc định rằng biến đầu ra đã chứa dữ liệu hợp lệ.
+                    </p>
+
+                    <p>
+                        Cần xác định rõ Function có thay đổi Output Parameter khi
+                        thất bại hay không và thông báo trạng thái tương ứng.
+                    </p>
+
+                    <h3>6.4. Sử dụng Global Error Flag không có quy tắc</h3>
+
+                    <p>
+                        Một Global Error Flag có thể bị nhiều Module thay đổi,
+                        khiến việc xác định nguồn gốc lỗi và trạng thái hiện tại
+                        trở nên khó khăn.
+                    </p>
+
+                    <h3>6.5. Retry vô hạn</h3>
+
+                    <p>
+                        Nếu một thao tác luôn thất bại nhưng chương trình liên tục
+                        Retry mà không có giới hạn, hệ thống có thể bị mắc kẹt
+                        và không thực hiện được những công việc khác.
+                    </p>
+
+                    <h3>6.6. Xử lý quá nhiều công việc trong ISR</h3>
+
+                    <p>
+                        Thực hiện Logging phức tạp, chờ đợi lâu hoặc khởi tạo lại
+                        nhiều Module ngay trong ISR có thể làm tăng thời gian
+                        Interrupt Latency và ảnh hưởng đến các hoạt động thời gian thực.
+                    </p>
+
+                    <h3>6.7. Không phân biệt Error Reporting và Error Recovery</h3>
+
+                    <p>
+                        Ghi nhận lỗi không đồng nghĩa với việc hệ thống đã khôi phục.
+                        Chương trình cần xác định riêng cách thông báo lỗi và cách
+                        đưa Module về trạng thái hoạt động phù hợp.
+                    </p>
+
+                    <h3>6.8. Không xác định trạng thái hệ thống sau khi lỗi</h3>
+
+                    <p>
+                        Sau khi Function thất bại, cần xác định dữ liệu đầu ra,
+                        trạng thái Module và các tài nguyên đang sử dụng có còn
+                        hợp lệ hay không.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>7. Best Practices</h2>
+
+                    <h3>7.1. Thiết kế Error Code thống nhất</h3>
+
+                    <p>
+                        Mỗi Module nên có quy ước trạng thái rõ ràng, bao gồm
+                        Success và các loại lỗi có thể xảy ra.
+                    </p>
+
+                    <h3>7.2. Quy định rõ Function Contract</h3>
+
+                    <p>
+                        Tài liệu của Function nên mô tả:
+                    </p>
+
+                    <ul>
+                        <li>Điều kiện đầu vào hợp lệ.</li>
+                        <li>Giá trị trả về khi thành công.</li>
+                        <li>Các Error Code có thể xuất hiện.</li>
+                        <li>Output Parameter có thay đổi khi thất bại hay không.</li>
+                        <li>Trạng thái của Module sau khi Function thất bại.</li>
+                    </ul>
+
+                    <h3>7.3. Không bỏ qua lỗi từ Function cấp thấp</h3>
+
+                    <p>
+                        Khi một Function gọi Function khác, cần kiểm tra trạng thái
+                        trả về và quyết định tiếp tục, truyền lỗi lên trên hoặc
+                        thực hiện Recovery.
+                    </p>
+
+                    <h3>7.4. Giới hạn số lần Retry</h3>
+
+                    <p>
+                        Retry cần có giới hạn về số lần thử, thời gian chờ và
+                        tổng thời gian thực hiện để tránh làm ảnh hưởng đến
+                        các hoạt động khác của hệ thống.
+                    </p>
+
+                    <h3>7.5. Xác định Safe State theo yêu cầu</h3>
+
+                    <p>
+                        Đối với các chức năng quan trọng, cần xác định trước hành vi
+                        của hệ thống khi xảy ra lỗi. Không nên tự ý sử dụng một
+                        giá trị mặc định nếu chưa được quy định trong thiết kế.
+                    </p>
+
+                    <h3>7.6. Tách biệt Error Logging và Error Handling</h3>
+
+                    <p>
+                        Error Logging phục vụ ghi nhận và phân tích lỗi, trong khi
+                        Error Handling quyết định chương trình cần thực hiện hành động gì.
+                        Hai thành phần này có thể phối hợp nhưng không nên phụ thuộc
+                        hoàn toàn vào nhau.
+                    </p>
+
+                    <h3>7.7. Tránh sử dụng Dynamic Memory trong Error Path nếu không cần thiết</h3>
+
+                    <p>
+                        Trong Embedded Systems, Error Handling nên có hành vi dễ dự đoán.
+                        Việc cấp phát bộ nhớ động khi đang xử lý lỗi có thể tạo thêm
+                        rủi ro nếu Heap đã cạn hoặc bị phân mảnh.
+                    </p>
+
+                    <p>
+                        Có thể ưu tiên sử dụng Error Buffer có kích thước cố định
+                        hoặc cơ chế Logging được thiết kế trước.
+                    </p>
+
+                    <h3>7.8. Kiểm thử các tình huống lỗi</h3>
+
+                    <p>
+                        Không chỉ kiểm thử trường hợp Function hoạt động thành công.
+                        Cần kiểm thử cả những tình huống như:
+                    </p>
+
+                    <ul>
+                        <li>Tham số đầu vào không hợp lệ.</li>
+                        <li>Hardware không phản hồi.</li>
+                        <li>Communication Timeout.</li>
+                        <li>Buffer đầy.</li>
+                        <li>Module chưa được khởi tạo.</li>
+                        <li>Function cấp thấp trả về Error Code.</li>
+                        <li>Retry vượt quá giới hạn.</li>
+                        <li>Recovery không thành công.</li>
+                    </ul>
+
+                    <h3>7.9. Sử dụng Static Analysis và Code Review</h3>
+
+                    <p>
+                        Static Analysis và Code Review có thể giúp phát hiện:
+                    </p>
+
+                    <ul>
+                        <li>Function trả về lỗi nhưng kết quả không được kiểm tra.</li>
+                        <li>Nhánh Error Handling bị thiếu.</li>
+                        <li>Output Parameter được sử dụng sau khi thao tác thất bại.</li>
+                        <li>Retry không có giới hạn.</li>
+                        <li>Global Error State không được quản lý rõ ràng.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>8. Summary</h2>
+
+                    <p>
+                        Error Handling là một phần quan trọng trong việc xây dựng
+                        phần mềm C đáng tin cậy. Một chương trình không chỉ cần
+                        xử lý trường hợp thành công mà còn phải có khả năng phát hiện,
+                        thông báo và xử lý các tình huống bất thường.
+                    </p>
+
+                    <p>Những kiến thức trọng tâm cần ghi nhớ:</p>
+
+                    <ul>
+                        <li>
+                            Error Handling bao gồm phát hiện, thông báo, xử lý,
+                            khôi phục và ghi nhận lỗi.
+                        </li>
+                        <li>
+                            Return Value phù hợp với những Function có ít trạng thái kết quả.
+                        </li>
+                        <li>
+                            Error Code và Status Enumeration giúp biểu diễn nhiều
+                            nguyên nhân lỗi khác nhau.
+                        </li>
+                        <li>
+                            Error Propagation cho phép truyền thông tin lỗi giữa
+                            các tầng Function và Module.
+                        </li>
+                        <li>
+                            Error Recovery có thể sử dụng Retry, Re-initialization,
+                            Fallback hoặc Safe State tùy theo yêu cầu.
+                        </li>
+                        <li>
+                            Error Logging giúp lưu lại thông tin phục vụ Debug
+                            và Fault Diagnosis.
+                        </li>
+                        <li>
+                            ISR cần xử lý lỗi theo cách phù hợp với yêu cầu thời gian thực.
+                        </li>
+                        <li>
+                            Trong AUTOSAR, DET và DEM có vai trò khác nhau trong
+                            việc ghi nhận lỗi phát triển và quản lý Diagnostic Event.
+                        </li>
+                    </ul>
+
+                    <div class="note">
+                        <strong>Key Takeaway:</strong>
+                        Một Function đáng tin cậy không chỉ thực hiện đúng công việc
+                        khi mọi thứ thuận lợi mà còn phải thông báo rõ ràng khi
+                        không thể hoàn thành công việc. Hãy thiết kế Error Handling
+                        ngay từ đầu, kiểm tra Return Value, truyền lỗi đúng cách
+                        và xác định hành vi của hệ thống khi xảy ra lỗi.
+                    </div>
+                </section>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-41.html">← Bài trước</a>
+                    <a class="btn" href="lesson-43.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>EmLearn - 2026</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

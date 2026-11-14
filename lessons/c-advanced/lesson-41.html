@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 41: Integer Overflow &amp; Type Conversion Safety | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a href="../../index.html" class="logo">Em<span>Learn</span></a>
+
+            <nav>
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <a href="index.html" class="btn">← Tất cả bài học Advanced C Embedded</a>
+
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html" class="active" aria-current="page">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 41: Integer Overflow &amp; Type Conversion Safety</h1>
+
+                <section>
+                    <h2>1. Introduction</h2>
+
+                    <p>
+                        Trong C, Integer là kiểu dữ liệu được sử dụng để lưu trữ các giá trị
+                        số nguyên. Integer xuất hiện trong hầu hết các thao tác của Embedded
+                        Software, chẳng hạn như đếm số lần xảy ra Interrupt, tính toán
+                        thời gian, quản lý kích thước Buffer, xử lý dữ liệu Sensor và
+                        cấu hình Hardware Register.
+                    </p>
+
+                    <p>
+                        Tuy nhiên, mỗi kiểu Integer chỉ có thể biểu diễn một phạm vi giá trị
+                        nhất định. Nếu chương trình thực hiện phép tính vượt quá phạm vi
+                        biểu diễn của kiểu dữ liệu, hoặc chuyển đổi giữa các kiểu dữ liệu
+                        không phù hợp, kết quả có thể không như mong đợi.
+                    </p>
+
+                    <p>
+                        Hai vấn đề quan trọng cần kiểm soát là
+                        <strong>Integer Overflow</strong> và
+                        <strong>Unsafe Type Conversion</strong>.
+                    </p>
+
+                    <p>
+                        Trong Embedded Systems, những lỗi này có thể ảnh hưởng đến
+                        việc tính toán thời gian, xử lý tín hiệu, quản lý bộ nhớ,
+                        điều khiển thiết bị và giao tiếp giữa các Module.
+                    </p>
+
+                    <div class="note">
+                        <strong>Mục tiêu bài học:</strong>
+                        <ul>
+                            <li>Hiểu phạm vi biểu diễn của các kiểu Integer trong C.</li>
+                            <li>Phân biệt Signed Integer Overflow và Unsigned Integer Wraparound.</li>
+                            <li>Hiểu Integer Promotion và Usual Arithmetic Conversions.</li>
+                            <li>Nhận biết rủi ro khi chuyển đổi giữa các kiểu dữ liệu.</li>
+                            <li>Biết cách kiểm tra phép toán trước khi thực hiện.</li>
+                            <li>Áp dụng Integer Safety trong các ứng dụng Embedded C.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>2. Core Concepts</h2>
+
+                    <h3>2.1. Integer Data Types trong C</h3>
+
+                    <p>
+                        C cung cấp nhiều kiểu dữ liệu số nguyên khác nhau. Chúng có thể
+                        khác nhau về kích thước bộ nhớ và phạm vi giá trị biểu diễn.
+                    </p>
+
+                    <p>Một số kiểu Integer thường gặp:</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Kiểu dữ liệu</th>
+                                <th>Ý nghĩa</th>
+                                <th>Phạm vi biểu diễn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>int8_t</code></td>
+                                <td>Số nguyên có dấu 8 bit</td>
+                                <td>-128 đến 127</td>
+                            </tr>
+                            <tr>
+                                <td><code>uint8_t</code></td>
+                                <td>Số nguyên không dấu 8 bit</td>
+                                <td>0 đến 255</td>
+                            </tr>
+                            <tr>
+                                <td><code>int16_t</code></td>
+                                <td>Số nguyên có dấu 16 bit</td>
+                                <td>-32768 đến 32767</td>
+                            </tr>
+                            <tr>
+                                <td><code>uint16_t</code></td>
+                                <td>Số nguyên không dấu 16 bit</td>
+                                <td>0 đến 65535</td>
+                            </tr>
+                            <tr>
+                                <td><code>int32_t</code></td>
+                                <td>Số nguyên có dấu 32 bit</td>
+                                <td>-2147483648 đến 2147483647</td>
+                            </tr>
+                            <tr>
+                                <td><code>uint32_t</code></td>
+                                <td>Số nguyên không dấu 32 bit</td>
+                                <td>0 đến 4294967295</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>
+                        Các kiểu như <code>int8_t</code>, <code>uint16_t</code> và
+                        <code>uint32_t</code> được định nghĩa trong Header
+                        <code>&lt;stdint.h&gt;</code>. Đây là các kiểu có độ rộng
+                        được xác định rõ nếu Implementation hỗ trợ chúng.
+                    </p>
+
+                    <p>
+                        Trong Embedded C, các kiểu có độ rộng xác định thường được
+                        sử dụng khi cần kiểm soát chính xác số bit của dữ liệu,
+                        đặc biệt khi giao tiếp với Hardware Register hoặc Communication Protocol.
+                    </p>
+
+                    <h3>2.2. Integer Range</h3>
+
+                    <p>
+                        Với kiểu số nguyên không dấu có N bit, phạm vi giá trị là:
+                    </p>
+
+                    <pre><code>0 đến (2^N - 1)</code></pre>
+
+                    <p>
+                        Với kiểu số nguyên có dấu sử dụng biểu diễn bù hai phổ biến
+                        hiện nay, phạm vi giá trị là:
+                    </p>
+
+                    <pre><code>-2^(N - 1) đến (2^(N - 1) - 1)</code></pre>
+
+                    <p>Ví dụ với kiểu 8 bit:</p>
+
+                    <ul>
+                        <li><code>uint8_t</code>: 0 đến 255.</li>
+                        <li><code>int8_t</code>: -128 đến 127.</li>
+                    </ul>
+
+                    <p>
+                        Điều này có nghĩa là nếu một biến <code>uint8_t</code> đang
+                        lưu giá trị 255 và tiếp tục tăng thêm 1, kết quả sẽ quay về 0.
+                    </p>
+
+                    <h3>2.3. Integer Overflow là gì?</h3>
+
+                    <p>
+                        Integer Overflow là tình trạng kết quả của một phép toán số nguyên
+                        vượt quá phạm vi biểu diễn của kiểu dữ liệu được sử dụng.
+                    </p>
+
+                    <p>
+                        Tuy nhiên, cần phân biệt cách xử lý giữa Signed Integer và
+                        Unsigned Integer trong ngôn ngữ C.
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>Unsigned Integer:</strong> phép toán được thực hiện
+                            theo modulo \(2^N\), vì vậy giá trị có thể quay vòng.
+                        </li>
+                        <li>
+                            <strong>Signed Integer:</strong> nếu kết quả toán học không
+                            biểu diễn được bằng kiểu signed tương ứng, hành vi là
+                            Undefined Behavior.
+                        </li>
+                    </ul>
+
+                    <div class="note">
+                        <strong>Điểm cần nhớ:</strong>
+                        Unsigned wraparound được định nghĩa bởi chuẩn C, nhưng điều đó
+                        không có nghĩa mọi trường hợp wraparound đều an toàn về mặt
+                        logic chương trình. Signed Integer Overflow là Undefined Behavior,
+                        không nên dựa vào việc giá trị tự quay vòng.
+                    </div>
+
+                    <h3>2.4. Type Conversion là gì?</h3>
+
+                    <p>
+                        Type Conversion là quá trình chuyển đổi giá trị từ kiểu dữ liệu
+                        này sang kiểu dữ liệu khác.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>uint32_t value32 = 1000U;
+uint8_t value8 = (uint8_t)value32;</code></pre>
+
+                    <p>
+                        Trong ví dụ trên, giá trị từ kiểu 32 bit được chuyển sang
+                        kiểu 8 bit. Nếu giá trị không nằm trong phạm vi biểu diễn
+                        của kiểu đích, kết quả chuyển đổi cần được xem xét cẩn thận.
+                    </p>
+
+                    <p>
+                        Type Conversion có thể xảy ra theo hai cách:
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>Implicit Conversion:</strong> Compiler tự động
+                            chuyển đổi kiểu dữ liệu.
+                        </li>
+                        <li>
+                            <strong>Explicit Conversion:</strong> Lập trình viên chủ
+                            động sử dụng Type Cast để chuyển đổi.
+                        </li>
+                    </ul>
+
+                    <h3>2.5. Integer Promotion</h3>
+
+                    <p>
+                        Trong C, các kiểu Integer có Rank thấp hơn hoặc bằng Rank
+                        của <code>int</code> và <code>unsigned int</code> có thể được
+                        chuyển đổi trước khi tham gia vào một số phép toán.
+                        Quá trình này được gọi là Integer Promotion.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    uint8_t a = 100U;
+    uint8_t b = 50U;
+
+    int result = a + b;
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Trong biểu thức <code>a + b</code>, hai biến
+                        <code>uint8_t</code> thường được Integer Promotion thành
+                        <code>int</code> trước khi thực hiện phép cộng.
+                    </p>
+
+                    <p>
+                        Vì vậy, kết quả phép cộng không nhất thiết được tính trực tiếp
+                        trong phạm vi 8 bit.
+                    </p>
+
+                    <h3>2.6. Signed và Unsigned Conversion</h3>
+
+                    <p>
+                        Một vấn đề dễ gây lỗi trong C là việc kết hợp Signed Integer
+                        và Unsigned Integer trong cùng một biểu thức.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    int32_t value = -1;
+    uint32_t limit = 10U;
+
+    if (value &lt; limit)
+    {
+        /* May not execute as expected */
+    }
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Khi thực hiện phép so sánh, các quy tắc chuyển đổi số học
+                        thông thường có thể khiến giá trị signed được chuyển sang
+                        kiểu unsigned.
+                    </p>
+
+                    <p>
+                        Trên hệ thống sử dụng kiểu 32 bit tương ứng, giá trị
+                        <code>-1</code> sau khi chuyển sang <code>uint32_t</code>
+                        sẽ trở thành <code>4294967295</code>.
+                    </p>
+
+                    <p>
+                        Vì vậy, điều kiện so sánh có thể cho kết quả khác với suy nghĩ
+                        ban đầu của lập trình viên.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>3. Detailed Explanation</h2>
+
+                    <h3>3.1. Unsigned Integer Wraparound</h3>
+
+                    <p>
+                        Với Unsigned Integer, nếu phép toán tạo ra giá trị vượt quá
+                        giới hạn tối đa, kết quả sẽ được tính theo modulo \(2^N\).
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    uint8_t counter = 255U;
+
+    counter++;
+
+    /* counter becomes 0 */
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Vì <code>uint8_t</code> có phạm vi từ 0 đến 255, khi tăng
+                        giá trị 255 thêm 1, kết quả là 0.
+                    </p>
+
+                    <p>
+                        Đây là hành vi được định nghĩa đối với phép toán Unsigned Integer.
+                        Tuy nhiên, trong các ứng dụng như Counter, Timeout hoặc
+                        Buffer Length, wraparound ngoài dự kiến có thể gây ra lỗi logic.
+                    </p>
+
+                    <h3>3.2. Signed Integer Overflow</h3>
+
+                    <p>
+                        Khác với Unsigned Integer, Signed Integer không được phép
+                        dựa vào cơ chế wraparound khi kết quả vượt quá phạm vi biểu diễn.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;limits.h&gt;
+
+int main(void)
+{
+    int32_t value = INT32_MAX;
+
+    value++;
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        <code>INT32_MAX</code> là giá trị lớn nhất có thể biểu diễn
+                        bằng <code>int32_t</code>. Việc tăng giá trị này thêm 1 gây
+                        Signed Integer Overflow và dẫn đến Undefined Behavior.
+                    </p>
+
+                    <p>
+                        Compiler có thể thực hiện tối ưu hóa dựa trên giả định rằng
+                        Signed Integer Overflow không xảy ra. Vì vậy, không nên dựa
+                        vào kết quả quan sát được khi chạy chương trình để xem đây
+                        là một hành vi có thể sử dụng.
+                    </p>
+
+                    <h3>3.3. Kiểm tra trước khi thực hiện phép cộng</h3>
+
+                    <p>
+                        Một cách phòng tránh Signed Integer Overflow là kiểm tra
+                        giá trị trước khi thực hiện phép cộng.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;limits.h&gt;
+
+bool Safe_Add_Int32(int32_t a,
+                    int32_t b,
+                    int32_t *result)
+{
+    if (result == NULL)
+    {
+        return false;
+    }
+
+    if ((b &gt; 0) &amp;&amp; (a &gt; INT32_MAX - b))
+    {
+        return false;
+    }
+
+    if ((b &lt; 0) &amp;&amp; (a &lt; INT32_MIN - b))
+    {
+        return false;
+    }
+
+    *result = a + b;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Function trên kiểm tra hai trường hợp:
+                    </p>
+
+                    <ul>
+                        <li>
+                            Nếu <code>b</code> dương, kiểm tra xem <code>a</code>
+                            có vượt quá <code>INT32_MAX - b</code> hay không.
+                        </li>
+                        <li>
+                            Nếu <code>b</code> âm, kiểm tra xem <code>a</code>
+                            có nhỏ hơn <code>INT32_MIN - b</code> hay không.
+                        </li>
+                    </ul>
+
+                    <p>
+                        Chỉ khi phép cộng được xác định là an toàn, chương trình
+                        mới thực hiện <code>a + b</code>.
+                    </p>
+
+                    <h3>3.4. Kiểm tra trước khi thực hiện phép nhân</h3>
+
+                    <p>
+                        Phép nhân cũng có thể tạo ra Integer Overflow nếu kết quả
+                        vượt quá giới hạn của kiểu dữ liệu.
+                    </p>
+
+                    <p>
+                        Đối với hai số nguyên không âm, có thể kiểm tra trước phép nhân
+                        bằng cách so sánh một toán hạng với giới hạn tối đa chia cho
+                        toán hạng còn lại.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+
+bool Safe_Multiply_U32(uint32_t a,
+                       uint32_t b,
+                       uint32_t *result)
+{
+    if (result == NULL)
+    {
+        return false;
+    }
+
+    if ((a != 0U) &amp;&amp; (b &gt; (UINT32_MAX / a)))
+    {
+        return false;
+    }
+
+    *result = a * b;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Nếu <code>a</code> khác 0, chương trình kiểm tra:
+                    </p>
+
+                    <pre><code>b &lt;= UINT32_MAX / a</code></pre>
+
+                    <p>
+                        Nếu điều kiện không thỏa mãn, phép nhân có nguy cơ vượt quá
+                        phạm vi của <code>uint32_t</code>.
+                    </p>
+
+                    <p>
+                        Ví dụ này áp dụng cho hai toán hạng unsigned. Với số nguyên
+                        có dấu, cần kiểm tra riêng các trường hợp dấu và giới hạn
+                        trước khi nhân.
+                    </p>
+
+                    <h3>3.5. Unsafe Type Conversion</h3>
+
+                    <p>
+                        Khi chuyển đổi từ kiểu dữ liệu có phạm vi lớn sang kiểu có
+                        phạm vi nhỏ hơn, giá trị có thể không còn được biểu diễn đầy đủ.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    uint32_t originalValue = 300U;
+
+    uint8_t convertedValue = (uint8_t)originalValue;
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Giá trị 300 không nằm trong phạm vi của <code>uint8_t</code>.
+                        Khi chuyển đổi sang kiểu unsigned 8 bit, kết quả được lấy
+                        theo modulo 256 và trở thành 44.
+                    </p>
+
+                    <p>
+                        Điều này có thể làm mất dữ liệu nếu chương trình không kiểm
+                        tra phạm vi trước khi chuyển đổi.
+                    </p>
+
+                    <h3>3.6. Kiểm tra Range trước khi Type Casting</h3>
+
+                    <p>
+                        Một nguyên tắc quan trọng là kiểm tra giá trị có nằm trong
+                        phạm vi biểu diễn của kiểu đích hay không trước khi chuyển đổi.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;limits.h&gt;
+
+bool Convert_U32_To_U8(uint32_t input,
+                       uint8_t *output)
+{
+    if (output == NULL)
+    {
+        return false;
+    }
+
+    if (input &gt; UINT8_MAX)
+    {
+        return false;
+    }
+
+    *output = (uint8_t)input;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Function chỉ thực hiện Type Casting khi giá trị đầu vào
+                        không vượt quá <code>UINT8_MAX</code>.
+                    </p>
+
+                    <p>
+                        Cách tiếp cận này giúp tránh việc mất dữ liệu khi chuyển
+                        từ kiểu có phạm vi lớn sang kiểu có phạm vi nhỏ.
+                    </p>
+
+                    <h3>3.7. Kiểm soát Signed và Unsigned trong vòng lặp</h3>
+
+                    <p>
+                        Một lỗi thường gặp là sử dụng biến vòng lặp kiểu signed
+                        nhưng so sánh với kích thước kiểu unsigned.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    int32_t i;
+    uint32_t length = 10U;
+
+    for (i = 0; i &lt; length; i++)
+    {
+        /* Process data */
+    }
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Trong biểu thức <code>i &lt; length</code>, các quy tắc
+                        chuyển đổi kiểu số học có thể khiến biến <code>i</code>
+                        được chuyển sang kiểu unsigned.
+                    </p>
+
+                    <p>
+                        Nếu <code>i</code> có giá trị âm, kết quả so sánh có thể
+                        không giống với mong đợi.
+                    </p>
+
+                    <p>Cách viết phù hợp hơn khi duyệt một mảng có kích thước unsigned:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    uint32_t i;
+    uint32_t length = 10U;
+
+    for (i = 0U; i &lt; length; i++)
+    {
+        /* Process data */
+    }
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Cần lựa chọn kiểu dữ liệu nhất quán cho biến đếm và kích thước.
+                        Nếu cần hỗ trợ giá trị âm, nên thiết kế phép kiểm tra riêng
+                        thay vì trộn Signed và Unsigned một cách tùy tiện.
+                    </p>
+
+                    <h3>3.8. Integer Overflow khi tính toán kích thước Buffer</h3>
+
+                    <p>
+                        Một tình huống đáng chú ý trong Embedded C là tính toán kích
+                        thước Buffer dựa trên số phần tử và kích thước mỗi phần tử.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+uint32_t elementCount = 1000U;
+uint32_t elementSize = 4U;
+
+uint32_t totalSize = elementCount * elementSize;</code></pre>
+
+                    <p>
+                        Nếu phép nhân vượt quá phạm vi của kiểu dữ liệu được sử dụng,
+                        <code>totalSize</code> có thể nhận kết quả không đúng.
+                        Điều này đặc biệt nguy hiểm nếu kết quả được sử dụng để
+                        cấp phát hoặc truy cập bộ nhớ.
+                    </p>
+
+                    <p>
+                        Với hai toán hạng unsigned, cần kiểm tra trước phép nhân:
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+bool Calculate_Buffer_Size(uint32_t count,
+                           uint32_t elementSize,
+                           uint32_t *totalSize)
+{
+    if (totalSize == NULL)
+    {
+        return false;
+    }
+
+    if ((elementSize != 0U) &amp;&amp;
+        (count &gt; (UINT32_MAX / elementSize)))
+    {
+        return false;
+    }
+
+    *totalSize = count * elementSize;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Cách kiểm tra này giúp bảo đảm phép nhân không vượt quá
+                        phạm vi của <code>uint32_t</code>.
+                    </p>
+
+                    <h3>3.9. Sử dụng các giới hạn từ &lt;limits.h&gt; và &lt;stdint.h&gt;</h3>
+
+                    <p>
+                        Không nên tự viết các giá trị giới hạn của kiểu dữ liệu
+                        bằng những con số tùy ý. C cung cấp các Macro giúp truy
+                        cập giới hạn của từng kiểu.
+                    </p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Macro</th>
+                                <th>Ý nghĩa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>INT8_MIN</code></td>
+                                <td>Giá trị nhỏ nhất của <code>int8_t</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>INT8_MAX</code></td>
+                                <td>Giá trị lớn nhất của <code>int8_t</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>UINT8_MAX</code></td>
+                                <td>Giá trị lớn nhất của <code>uint8_t</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>INT16_MAX</code></td>
+                                <td>Giá trị lớn nhất của <code>int16_t</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>UINT16_MAX</code></td>
+                                <td>Giá trị lớn nhất của <code>uint16_t</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>INT32_MAX</code></td>
+                                <td>Giá trị lớn nhất của <code>int32_t</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>UINT32_MAX</code></td>
+                                <td>Giá trị lớn nhất của <code>uint32_t</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>INT_MAX</code></td>
+                                <td>Giá trị lớn nhất của kiểu <code>int</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>UINT_MAX</code></td>
+                                <td>Giá trị lớn nhất của kiểu <code>unsigned int</code>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>
+                        Các Macro <code>INT8_MIN</code>, <code>UINT32_MAX</code> và
+                        những Macro có độ rộng cố định được cung cấp qua
+                        <code>&lt;stdint.h&gt;</code>. Các Macro như
+                        <code>INT_MAX</code> và <code>UINT_MAX</code> được cung cấp
+                        qua <code>&lt;limits.h&gt;</code>.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>4. C Code Examples</h2>
+
+                    <h3>4.1. Safe Counter</h3>
+
+                    <p>
+                        Counter là thành phần thường xuất hiện trong Embedded Systems,
+                        chẳng hạn như đếm số lần nhận dữ liệu hoặc số lần xảy ra Event.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+
+bool Counter_Increment(uint32_t *counter)
+{
+    if (counter == NULL)
+    {
+        return false;
+    }
+
+    if (*counter == UINT32_MAX)
+    {
+        return false;
+    }
+
+    (*counter)++;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Function kiểm tra con trỏ và giá trị Counter trước khi tăng.
+                        Nếu Counter đã đạt giới hạn lớn nhất, Function không thực hiện
+                        phép tăng.
+                    </p>
+
+                    <h3>4.2. Safe Subtraction</h3>
+
+                    <p>
+                        Phép trừ cũng có thể gây lỗi khi giá trị kết quả vượt quá
+                        phạm vi kiểu dữ liệu.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+bool Safe_Subtract_U32(uint32_t a,
+                       uint32_t b,
+                       uint32_t *result)
+{
+    if (result == NULL)
+    {
+        return false;
+    }
+
+    if (a &lt; b)
+    {
+        return false;
+    }
+
+    *result = a - b;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Với Unsigned Integer, nếu <code>a</code> nhỏ hơn
+                        <code>b</code>, phép trừ sẽ wraparound. Vì vậy,
+                        Function cần kiểm tra <code>a &gt;= b</code> trước khi
+                        thực hiện phép trừ nếu mục tiêu là kết quả không âm.
+                    </p>
+
+                    <h3>4.3. Safe Conversion từ Signed sang Unsigned</h3>
+
+                    <p>
+                        Khi chuyển một giá trị Signed sang Unsigned, cần kiểm tra
+                        giá trị không âm trước khi thực hiện chuyển đổi nếu
+                        chương trình chỉ chấp nhận giá trị không âm.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+bool Convert_Int32_To_U32(int32_t input,
+                          uint32_t *output)
+{
+    if (output == NULL)
+    {
+        return false;
+    }
+
+    if (input &lt; 0)
+    {
+        return false;
+    }
+
+    *output = (uint32_t)input;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Function từ chối giá trị âm trước khi chuyển đổi.
+                        Điều này tránh việc một giá trị âm được chuyển thành
+                        một giá trị Unsigned rất lớn.
+                    </p>
+
+                    <h3>4.4. Safe Calculation cho Sensor Value</h3>
+
+                    <p>
+                        Trong Embedded Systems, dữ liệu Sensor thường được xử lý
+                        thông qua các phép nhân, chia và chuyển đổi kiểu dữ liệu.
+                    </p>
+
+                    <p>
+                        Ví dụ, một hệ thống đọc giá trị ADC và tính toán giá trị
+                        điện áp theo công thức:
+                    </p>
+
+                    <pre><code>Voltage = ADC_Value * ReferenceVoltage / ADC_Max</code></pre>
+
+                    <p>
+                        Khi triển khai, cần lựa chọn kiểu dữ liệu đủ lớn cho phép
+                        nhân trung gian để tránh tràn số trước khi thực hiện phép chia.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define ADC_MAX_VALUE       4095U
+#define REFERENCE_MV        3300U
+
+bool ADC_Convert_To_mV(uint16_t adcValue,
+                       uint32_t *voltage)
+{
+    uint32_t calculation;
+
+    if (voltage == NULL)
+    {
+        return false;
+    }
+
+    if (adcValue &gt; ADC_MAX_VALUE)
+    {
+        return false;
+    }
+
+    calculation = (uint32_t)adcValue * REFERENCE_MV;
+
+    *voltage = calculation / ADC_MAX_VALUE;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Trong ví dụ này, phép nhân được thực hiện bằng kiểu
+                        <code>uint32_t</code> sau khi chuyển đổi <code>adcValue</code>.
+                        Điều này giúp bảo đảm kiểu trung gian có đủ phạm vi cho
+                        các giá trị được sử dụng trong ví dụ.
+                    </p>
+
+                    <p>
+                        Với các phép tính phức tạp hơn, cần tính toán giới hạn tối đa
+                        của kết quả trung gian thay vì chỉ dựa vào kiểu dữ liệu đầu vào
+                        và đầu ra.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>5. Embedded Applications</h2>
+
+                    <h3>5.1. Counter và Timer</h3>
+
+                    <p>
+                        Counter và Timer thường được sử dụng để quản lý thời gian,
+                        đếm Event hoặc xác định Timeout trong Embedded Software.
+                    </p>
+
+                    <p>
+                        Nếu Counter bị wraparound ngoài dự kiến, chương trình có thể
+                        xác định sai thời điểm xảy ra Timeout hoặc xử lý Event.
+                    </p>
+
+                    <p>
+                        Một số nội dung cần kiểm soát:
+                    </p>
+
+                    <ul>
+                        <li>Giới hạn lớn nhất của Counter.</li>
+                        <li>Đơn vị thời gian đang sử dụng.</li>
+                        <li>Kiểu dữ liệu của Timer và giá trị so sánh.</li>
+                        <li>Khả năng wraparound có được thiết kế và xử lý rõ ràng hay không.</li>
+                    </ul>
+
+                    <h3>5.2. ADC và Sensor Data Processing</h3>
+
+                    <p>
+                        Khi đọc dữ liệu ADC, chương trình có thể cần chuyển đổi
+                        giá trị thô sang điện áp, nhiệt độ hoặc một đơn vị vật lý khác.
+                    </p>
+
+                    <p>
+                        Trong quá trình tính toán, cần chú ý:
+                    </p>
+
+                    <ul>
+                        <li>Kiểu dữ liệu của ADC Raw Value.</li>
+                        <li>Kiểu dữ liệu của hệ số chuyển đổi.</li>
+                        <li>Độ rộng của kiểu dữ liệu trung gian.</li>
+                        <li>Phạm vi giá trị sau khi tính toán.</li>
+                        <li>Việc làm tròn và chuyển đổi sang kiểu dữ liệu đầu ra.</li>
+                    </ul>
+
+                    <h3>5.3. Communication Protocol</h3>
+
+                    <p>
+                        Khi xử lý CAN, UART, SPI hoặc Ethernet, dữ liệu thường được
+                        lấy từ nhiều byte và kết hợp thành một giá trị lớn hơn.
+                    </p>
+
+                    <p>
+                        Ví dụ, khi kết hợp hai byte thành một giá trị 16 bit:
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+uint8_t highByte = 0x12U;
+uint8_t lowByte  = 0x34U;
+
+uint16_t value =
+    ((uint16_t)highByte &lt;&lt; 8U) |
+    (uint16_t)lowByte;</code></pre>
+
+                    <p>
+                        Việc chuyển đổi sang <code>uint16_t</code> trước khi dịch bit
+                        giúp thể hiện rõ ý định xử lý dữ liệu 16 bit.
+                    </p>
+
+                    <p>
+                        Khi triển khai thực tế, cần kiểm tra độ dài Payload trước khi
+                        đọc các byte và xác định đúng Endianness của giao thức.
+                    </p>
+
+                    <h3>5.4. Buffer Size Calculation</h3>
+
+                    <p>
+                        Trong Driver hoặc Communication Module, kích thước Buffer
+                        có thể được tính từ số phần tử và kích thước mỗi phần tử.
+                    </p>
+
+                    <p>
+                        Nếu phép nhân kích thước bị Overflow, chương trình có thể
+                        tính ra một dung lượng nhỏ hơn dự kiến. Khi dữ liệu được ghi
+                        vào Buffer dựa trên kích thước sai này, lỗi Buffer Overflow
+                        có thể xuất hiện.
+                    </p>
+
+                    <p>
+                        Do đó, Integer Safety và Buffer Overflow Prevention có mối
+                        liên hệ trực tiếp với nhau.
+                    </p>
+
+                    <h3>5.5. Hardware Register và Bit Manipulation</h3>
+
+                    <p>
+                        Khi thao tác với Hardware Register, cần lựa chọn kiểu dữ liệu
+                        phù hợp với độ rộng Register và kiểm soát các phép dịch bit.
+                    </p>
+
+                    <p>
+                        Ví dụ, không nên dịch một giá trị bằng số bit lớn hơn hoặc
+                        bằng độ rộng của kiểu Integer sau khi đã thực hiện các
+                        phép chuyển đổi liên quan.
+                    </p>
+
+                    <p>
+                        Ngoài ra, cần kiểm tra giá trị đầu vào trước khi đưa vào
+                        các trường Bit-field hoặc Register Field để tránh làm sai
+                        cấu hình Hardware.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>6. Common Mistakes</h2>
+
+                    <h3>6.1. Cho rằng Signed Integer tự động Wraparound</h3>
+
+                    <p>
+                        Một số lập trình viên cho rằng khi Signed Integer vượt quá
+                        giới hạn, giá trị sẽ tự động quay về giá trị nhỏ nhất.
+                    </p>
+
+                    <p>
+                        Đây không phải là hành vi được bảo đảm bởi chuẩn C.
+                        Signed Integer Overflow dẫn đến Undefined Behavior.
+                    </p>
+
+                    <h3>6.2. Không kiểm tra trước khi chuyển sang kiểu nhỏ hơn</h3>
+
+                    <pre><code>uint32_t input = 1000U;
+uint8_t output = (uint8_t)input;</code></pre>
+
+                    <p>
+                        Giá trị đầu vào lớn hơn giới hạn của <code>uint8_t</code>.
+                        Việc chuyển đổi làm mất thông tin.
+                    </p>
+
+                    <h3>6.3. Trộn Signed và Unsigned trong biểu thức</h3>
+
+                    <pre><code>int32_t value = -5;
+uint32_t limit = 10U;
+
+if (value &lt; limit)
+{
+    /* Unexpected comparison result */
+}</code></pre>
+
+                    <p>
+                        Các phép chuyển đổi số học có thể làm thay đổi cách so sánh
+                        giữa hai giá trị. Cần kiểm tra kiểu dữ liệu của cả hai toán hạng.
+                    </p>
+
+                    <h3>6.4. Không kiểm tra phép nhân kích thước</h3>
+
+                    <pre><code>uint32_t size = count * elementSize;</code></pre>
+
+                    <p>
+                        Nếu phép nhân vượt quá giới hạn kiểu dữ liệu, kết quả có thể
+                        không còn phản ánh kích thước thực tế cần thiết.
+                    </p>
+
+                    <h3>6.5. Type Cast không đồng nghĩa với Safe Conversion</h3>
+
+                    <p>
+                        Việc sử dụng Type Cast chỉ yêu cầu Compiler thực hiện chuyển đổi
+                        theo quy tắc của C. Nó không tự động kiểm tra giá trị đầu vào
+                        có nằm trong phạm vi kiểu đích hay không.
+                    </p>
+
+                    <h3>6.6. Không chú ý đến Integer Promotion</h3>
+
+                    <p>
+                        Các kiểu nhỏ như <code>uint8_t</code> có thể được chuyển thành
+                        <code>int</code> trước khi thực hiện phép toán. Vì vậy,
+                        kiểu của biểu thức trung gian có thể khác kiểu của biến ban đầu.
+                    </p>
+
+                    <h3>6.7. Sử dụng sai kiểu dữ liệu cho kích thước và chỉ số</h3>
+
+                    <p>
+                        Khi quản lý kích thước mảng hoặc Buffer, cần lựa chọn kiểu
+                        phù hợp và tránh so sánh trực tiếp các giá trị signed và
+                        unsigned mà không kiểm soát.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>7. Best Practices</h2>
+
+                    <h3>7.1. Lựa chọn kiểu Integer phù hợp</h3>
+
+                    <p>
+                        Sử dụng kiểu dữ liệu có phạm vi phù hợp với giá trị thực tế.
+                        Trong Embedded C, có thể sử dụng các kiểu như
+                        <code>uint8_t</code>, <code>uint16_t</code>,
+                        <code>uint32_t</code> khi cần kiểm soát độ rộng dữ liệu.
+                    </p>
+
+                    <h3>7.2. Kiểm tra giới hạn trước phép toán</h3>
+
+                    <p>
+                        Trước khi thực hiện phép cộng, trừ hoặc nhân, cần xác định
+                        liệu kết quả có thể vượt quá phạm vi kiểu dữ liệu hay không.
+                    </p>
+
+                    <h3>7.3. Kiểm tra Range trước Type Casting</h3>
+
+                    <p>
+                        Khi chuyển đổi sang kiểu có phạm vi nhỏ hơn, cần kiểm tra
+                        giá trị đầu vào nằm trong phạm vi biểu diễn của kiểu đích.
+                    </p>
+
+                    <h3>7.4. Hạn chế trộn Signed và Unsigned</h3>
+
+                    <p>
+                        Nên sử dụng kiểu dữ liệu nhất quán trong cùng một phép toán
+                        hoặc phép so sánh. Nếu cần chuyển đổi, hãy thực hiện rõ ràng
+                        sau khi kiểm tra giá trị.
+                    </p>
+
+                    <h3>7.5. Kiểm soát kiểu dữ liệu trung gian</h3>
+
+                    <p>
+                        Không chỉ quan tâm đến kiểu dữ liệu đầu vào và đầu ra.
+                        Cần xác định kiểu dữ liệu được sử dụng trong các phép tính
+                        trung gian, đặc biệt với phép nhân và phép dịch bit.
+                    </p>
+
+                    <h3>7.6. Sử dụng các Macro giới hạn</h3>
+
+                    <p>
+                        Sử dụng <code>INT32_MAX</code>, <code>UINT32_MAX</code>,
+                        <code>UINT8_MAX</code> và những Macro phù hợp để kiểm tra
+                        phạm vi thay vì tự viết các con số giới hạn.
+                    </p>
+
+                    <h3>7.7. Bật Compiler Warning</h3>
+
+                    <p>
+                        Compiler Warning có thể giúp phát hiện một số vấn đề về
+                        chuyển đổi kiểu dữ liệu và phép toán số nguyên.
+                    </p>
+
+                    <p>Ví dụ với GCC:</p>
+
+                    <pre><code>gcc -Wall -Wextra -Wconversion -Wsign-conversion \
+    -Woverflow -Wtype-limits -c main.c</code></pre>
+
+                    <p>
+                        Các Warning này hỗ trợ phát hiện những trường hợp chuyển đổi
+                        kiểu đáng chú ý. Tuy nhiên, chúng không thay thế việc phân tích
+                        logic và kiểm tra giới hạn trong chương trình.
+                    </p>
+
+                    <h3>7.8. Sử dụng Static Analysis và Unit Testing</h3>
+
+                    <p>
+                        Có thể sử dụng Static Analysis để phát hiện những phép toán
+                        có nguy cơ Overflow hoặc Type Conversion không an toàn.
+                    </p>
+
+                    <p>
+                        Khi Unit Test, nên kiểm tra các trường hợp:
+                    </p>
+
+                    <ul>
+                        <li>Giá trị bằng 0.</li>
+                        <li>Giá trị nhỏ nhất.</li>
+                        <li>Giá trị lớn nhất.</li>
+                        <li>Giá trị nằm ngay dưới giới hạn.</li>
+                        <li>Giá trị nằm đúng tại giới hạn.</li>
+                        <li>Giá trị vượt quá giới hạn.</li>
+                        <li>Giá trị âm khi chuyển sang kiểu unsigned.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>8. Summary</h2>
+
+                    <p>
+                        Integer Overflow và Unsafe Type Conversion là những vấn đề
+                        quan trọng cần kiểm soát khi lập trình C. Mỗi kiểu Integer
+                        có phạm vi biểu diễn riêng, và các phép toán hoặc chuyển đổi
+                        không phù hợp có thể làm sai lệch kết quả xử lý.
+                    </p>
+
+                    <p>Những kiến thức trọng tâm cần ghi nhớ:</p>
+
+                    <ul>
+                        <li>
+                            Mỗi kiểu Integer có phạm vi giá trị biểu diễn nhất định.
+                        </li>
+                        <li>
+                            Unsigned Integer có thể wraparound theo modulo \(2^N\).
+                        </li>
+                        <li>
+                            Signed Integer Overflow dẫn đến Undefined Behavior.
+                        </li>
+                        <li>
+                            Integer Promotion có thể làm thay đổi kiểu của biểu thức
+                            trước khi thực hiện phép toán.
+                        </li>
+                        <li>
+                            Việc trộn Signed và Unsigned có thể gây ra kết quả so sánh
+                            không như mong đợi.
+                        </li>
+                        <li>
+                            Type Cast không tự động bảo đảm giá trị nằm trong phạm vi
+                            của kiểu dữ liệu đích.
+                        </li>
+                        <li>
+                            Cần kiểm tra giới hạn trước các phép toán có nguy cơ Overflow.
+                        </li>
+                        <li>
+                            Cần chú ý đến kiểu dữ liệu trung gian khi tính toán kích thước
+                            Buffer và xử lý dữ liệu Sensor.
+                        </li>
+                    </ul>
+
+                    <div class="note">
+                        <strong>Key Takeaway:</strong>
+                        Trong Embedded C, hãy luôn hiểu rõ phạm vi của kiểu dữ liệu,
+                        kiểm tra giá trị trước khi thực hiện phép toán và kiểm soát
+                        mọi chuyển đổi kiểu. Một phép tính số nguyên tưởng chừng đơn giản
+                        cũng có thể ảnh hưởng đến Memory Safety, Buffer Management
+                        và độ tin cậy của toàn bộ hệ thống.
+                    </div>
+                </section>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-40.html">← Bài trước</a>
+                    <a class="btn" href="lesson-42.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>EmLearn - 2026</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

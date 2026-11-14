@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 43: Reentrancy, Concurrency &amp; Critical Sections | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a href="../../index.html" class="logo">Em<span>Learn</span></a>
+
+            <nav>
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <a href="index.html" class="btn">← Tất cả bài học Advanced C Embedded</a>
+
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html" class="active" aria-current="page">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 43: Reentrancy, Concurrency &amp; Critical Sections</h1>
+
+                <section>
+                    <h2>1. Introduction</h2>
+
+                    <p>
+                        Trong Embedded Systems, một chương trình thường không chỉ thực hiện các
+                        tác vụ theo một luồng tuần tự duy nhất. Hệ thống có thể sử dụng nhiều Task,
+                        Thread hoặc Interrupt Service Routine (ISR) để xử lý các sự kiện khác nhau.
+                    </p>
+
+                    <p>
+                        Ví dụ, một ECU có thể đồng thời xử lý dữ liệu CAN, đọc cảm biến, cập nhật
+                        trạng thái hệ thống và điều khiển các actuator. Những hoạt động này đôi khi
+                        cùng truy cập vào một biến, một vùng nhớ hoặc một peripheral.
+                    </p>
+
+                    <p>
+                        Nếu không kiểm soát việc truy cập tài nguyên dùng chung, chương trình có
+                        thể gặp các vấn đề như Race Condition, dữ liệu không nhất quán, lỗi khó tái
+                        hiện hoặc hành vi không xác định.
+                    </p>
+
+                    <p>
+                        Bài học này giới thiệu ba khái niệm quan trọng:
+                    </p>
+
+                    <ul>
+                        <li><strong>Reentrancy:</strong> Khả năng một function được gọi lại khi lần gọi trước chưa hoàn thành mà không làm hỏng trạng thái dữ liệu.</li>
+                        <li><strong>Concurrency:</strong> Nhiều hoạt động có thể tiến triển đan xen hoặc đồng thời trong hệ thống.</li>
+                        <li><strong>Critical Section:</strong> Đoạn code truy cập tài nguyên dùng chung cần được bảo vệ khỏi những truy cập không an toàn.</li>
+                    </ul>
+
+                    <div class="note-box">
+                        <strong>Embedded C Perspective:</strong>
+                        Reentrancy và concurrency đặc biệt quan trọng trong hệ thống sử dụng RTOS,
+                        interrupt, communication driver và các module cùng chia sẻ dữ liệu.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>2. Core Concepts</h2>
+
+                    <h3>2.1. Reentrancy là gì?</h3>
+
+                    <p>
+                        Reentrant Function là function có thể được gọi lại trước khi lần gọi trước
+                        hoàn thành mà vẫn hoạt động đúng, không làm hỏng dữ liệu hoặc trạng thái
+                        của các lần gọi khác.
+                    </p>
+
+                    <p>
+                        Một function có tính reentrant thường không phụ thuộc vào trạng thái thay
+                        đổi dùng chung giữa nhiều lần gọi. Thay vào đó, function sử dụng biến local,
+                        tham số đầu vào và vùng dữ liệu riêng cho từng lần thực thi.
+                    </p>
+
+                    <p>Các đặc điểm thường thấy của một reentrant function:</p>
+
+                    <ul>
+                        <li>Không sử dụng mutable global variable làm trạng thái nội bộ nếu không có cơ chế bảo vệ.</li>
+                        <li>Hạn chế sử dụng static local variable có thể bị thay đổi trong lúc thực thi.</li>
+                        <li>Không ghi vào một vùng buffer dùng chung mà không có cơ chế đồng bộ.</li>
+                        <li>Ưu tiên nhận dữ liệu thông qua parameter và trả kết quả thông qua return value hoặc output parameter.</li>
+                        <li>Không phụ thuộc vào một trạng thái dùng chung có thể bị thay đổi bởi context khác.</li>
+                    </ul>
+
+                    <h3>2.2. Non-Reentrant Function</h3>
+
+                    <p>
+                        Non-Reentrant Function là function không an toàn khi nhiều context gọi
+                        cùng lúc hoặc khi một context khác gọi lại function trước khi lần gọi trước
+                        hoàn thành.
+                    </p>
+
+                    <p>
+                        Nguyên nhân phổ biến là function sử dụng biến global, static local variable
+                        hoặc shared buffer để lưu trạng thái trong quá trình xử lý.
+                    </p>
+
+                    <h3>2.3. Concurrency là gì?</h3>
+
+                    <p>
+                        Concurrency là khả năng nhiều hoạt động cùng tiến triển trong một khoảng
+                        thời gian. Các hoạt động này có thể được thực thi xen kẽ trên một CPU hoặc
+                        thực thi thực sự song song trên nhiều CPU/Core.
+                    </p>
+
+                    <p>Trong Embedded Systems, concurrency có thể xuất hiện giữa:</p>
+
+                    <ul>
+                        <li>Task và Task trong RTOS.</li>
+                        <li>Thread và Thread.</li>
+                        <li>Main loop và ISR.</li>
+                        <li>Hai ISR có mức ưu tiên khác nhau.</li>
+                        <li>Nhiều software module cùng truy cập một peripheral hoặc vùng nhớ.</li>
+                    </ul>
+
+                    <h3>2.4. Shared Resource</h3>
+
+                    <p>
+                        Shared Resource là tài nguyên được nhiều execution context sử dụng.
+                        Tài nguyên này có thể là:
+                    </p>
+
+                    <ul>
+                        <li>Global variable hoặc shared data structure.</li>
+                        <li>Buffer nhận dữ liệu UART, CAN hoặc SPI.</li>
+                        <li>Hardware peripheral như UART, SPI, ADC.</li>
+                        <li>Driver state hoặc communication state.</li>
+                        <li>Vùng nhớ dùng chung giữa các Task.</li>
+                    </ul>
+
+                    <h3>2.5. Race Condition</h3>
+
+                    <p>
+                        Race Condition xảy ra khi kết quả chương trình phụ thuộc vào thứ tự hoặc
+                        thời điểm các execution context truy cập và thay đổi dữ liệu dùng chung.
+                    </p>
+
+                    <p>
+                        Ví dụ, hai Task cùng tăng một biến counter. Thao tác tăng biến không nhất
+                        thiết được thực hiện như một thao tác nguyên tử duy nhất. Nếu hai Task
+                        đọc và ghi xen kẽ, một lần cập nhật có thể bị mất.
+                    </p>
+
+                    <h3>2.6. Critical Section</h3>
+
+                    <p>
+                        Critical Section là đoạn code truy cập hoặc cập nhật tài nguyên dùng chung
+                        mà không được phép bị một context khác truy cập theo cách gây xung đột.
+                    </p>
+
+                    <p>
+                        Critical Section cần được bảo vệ bằng một cơ chế phù hợp với kiến trúc
+                        hệ thống, chẳng hạn:
+                    </p>
+
+                    <ul>
+                        <li>Mutex trong RTOS.</li>
+                        <li>Semaphore hoặc synchronization primitive phù hợp.</li>
+                        <li>Atomic operation.</li>
+                        <li>Interrupt masking trong những trường hợp phù hợp với MCU và interrupt model.</li>
+                    </ul>
+
+                    <div class="note-box">
+                        <strong>Important:</strong>
+                        Critical Section không có nghĩa là phải tắt toàn bộ interrupt trong mọi
+                        trường hợp. Cần chọn cơ chế bảo vệ phù hợp với loại tài nguyên và các
+                        execution context có thể truy cập tài nguyên đó.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>3. Reentrancy vs Thread-Safety vs Interrupt-Safety</h2>
+
+                    <p>
+                        Ba khái niệm này có liên quan nhưng không hoàn toàn giống nhau.
+                    </p>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Concept</th>
+                                    <th>Meaning</th>
+                                    <th>Main Concern</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Reentrancy</td>
+                                    <td>Function có thể được gọi lại khi lần gọi trước chưa hoàn thành.</td>
+                                    <td>Trạng thái dữ liệu giữa các lần gọi.</td>
+                                </tr>
+                                <tr>
+                                    <td>Thread-Safety</td>
+                                    <td>Code hoạt động đúng khi được nhiều Thread hoặc Task sử dụng.</td>
+                                    <td>Truy cập dữ liệu dùng chung và đồng bộ.</td>
+                                </tr>
+                                <tr>
+                                    <td>Interrupt-Safety</td>
+                                    <td>Code hoạt động đúng khi có thể bị interrupt hoặc được gọi từ ISR.</td>
+                                    <td>Truy cập dữ liệu giữa ISR và context khác.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Một function có thể thread-safe nhờ sử dụng mutex nhưng không reentrant
+                        trong một số tình huống. Ví dụ, nếu function giữ mutex rồi gọi lại chính nó,
+                        nó có thể bị deadlock nếu mutex không hỗ trợ recursive locking.
+                    </p>
+
+                    <p>
+                        Ngược lại, một function sử dụng hoàn toàn biến local có thể reentrant,
+                        nhưng nếu function gọi một driver không thread-safe thì toàn bộ chuỗi xử lý
+                        vẫn chưa chắc thread-safe.
+                    </p>
+
+                    <div class="note-box">
+                        <strong>Key Takeaway:</strong>
+                        Reentrancy tập trung vào khả năng gọi lại function an toàn. Thread-Safety
+                        tập trung vào tính đúng đắn khi nhiều thread truy cập. Interrupt-Safety
+                        tập trung vào tương tác giữa code thông thường và interrupt context.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>4. Detailed Explanation</h2>
+
+                    <h3>4.1. Ví dụ về Non-Reentrant Function</h3>
+
+                    <p>
+                        Xét function sử dụng static local buffer để lưu kết quả:
+                    </p>
+
+                    <pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+char* GetMessage(void)
+{
+    static char buffer[32];
+
+    strcpy(buffer, "System Ready");
+
+    return buffer;
+}</code></pre>
+
+                    <p>
+                        Biến <code>buffer</code> có static storage duration nên được dùng chung
+                        giữa các lần gọi function.
+                    </p>
+
+                    <p>
+                        Nếu một context gọi function và đang sử dụng kết quả, một context khác
+                        gọi lại function có thể ghi đè nội dung buffer trước khi context đầu tiên
+                        xử lý xong.
+                    </p>
+
+                    <p>
+                        Do đó, function này không phù hợp để nhiều context sử dụng đồng thời
+                        nếu không có cơ chế bảo vệ.
+                    </p>
+
+                    <h3>4.2. Reentrant Function sử dụng Local Data</h3>
+
+                    <p>
+                        Có thể thiết kế lại function để caller cung cấp buffer riêng:
+                    </p>
+
+                    <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stddef.h&gt;
+
+int GetMessage(char *buffer, size_t bufferSize)
+{
+    const char message[] = "System Ready";
+
+    if (buffer == NULL)
+    {
+        return -1;
+    }
+
+    if (bufferSize &lt; sizeof(message))
+    {
+        return -2;
+    }
+
+    for (size_t i = 0; i &lt; sizeof(message); i++)
+    {
+        buffer[i] = message[i];
+    }
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Mỗi caller có thể truyền vào một buffer riêng. Function không sử dụng
+                        static mutable buffer nên tránh được xung đột giữa các lần gọi thông qua
+                        vùng dữ liệu nội bộ.
+                    </p>
+
+                    <p>
+                        Tuy nhiên, tính reentrant của một function còn phụ thuộc vào những
+                        function mà nó gọi và các tài nguyên bên ngoài mà nó truy cập.
+                    </p>
+
+                    <h3>4.3. Race Condition khi cập nhật Shared Variable</h3>
+
+                    <p>
+                        Ví dụ dưới đây minh họa thao tác tăng biến global:
+                    </p>
+
+                    <pre><code>volatile unsigned int g_counter = 0;
+
+void IncrementCounter(void)
+{
+    g_counter++;
+}</code></pre>
+
+                    <p>
+                        Có thể nhiều người cho rằng sử dụng <code>volatile</code> đã đủ để bảo vệ
+                        biến khỏi lỗi concurrency. Tuy nhiên, điều này không chính xác.
+                    </p>
+
+                    <p>
+                        Thao tác <code>g_counter++</code> thường bao gồm nhiều bước:
+                    </p>
+
+                    <ol>
+                        <li>Đọc giá trị hiện tại của biến.</li>
+                        <li>Tăng giá trị lên một đơn vị.</li>
+                        <li>Ghi giá trị mới trở lại bộ nhớ.</li>
+                    </ol>
+
+                    <p>
+                        Nếu hai execution context thực hiện các bước này xen kẽ, một lần cập nhật
+                        có thể bị mất.
+                    </p>
+
+                    <h3>4.4. Vì sao volatile không giải quyết Race Condition?</h3>
+
+                    <p>
+                        Từ khóa <code>volatile</code> yêu cầu compiler không loại bỏ hoặc tối ưu
+                        hóa các lần truy cập volatile theo cách làm thay đổi hành vi quan sát được
+                        của các truy cập đó theo quy tắc của C.
+                    </p>
+
+                    <p>
+                        Tuy nhiên, <code>volatile</code> không đảm bảo:
+                    </p>
+
+                    <ul>
+                        <li>Thao tác đọc và ghi là atomic.</li>
+                        <li>Nhiều Task không truy cập biến cùng lúc.</li>
+                        <li>Thứ tự truy cập giữa các thread được đồng bộ.</li>
+                        <li>Không xảy ra Race Condition.</li>
+                    </ul>
+
+                    <p>
+                        Vì vậy, <code>volatile</code> thường được sử dụng trong một số trường hợp
+                        liên quan đến memory-mapped register hoặc dữ liệu thay đổi bởi hardware,
+                        nhưng không thể thay thế mutex, atomic operation hoặc critical section.
+                    </p>
+
+                    <h3>4.5. Atomic Operation</h3>
+
+                    <p>
+                        Atomic Operation là thao tác được thực hiện như một đơn vị không thể bị
+                        quan sát ở trạng thái thực hiện dở dang bởi các context khác theo cơ chế
+                        atomic tương ứng.
+                    </p>
+
+                    <p>
+                        C11 cung cấp thư viện <code>&lt;stdatomic.h&gt;</code> để hỗ trợ atomic
+                        types và atomic operations.
+                    </p>
+
+                    <pre><code>#include &lt;stdatomic.h&gt;
+
+static atomic_uint g_counter = 0;
+
+void IncrementCounter(void)
+{
+    atomic_fetch_add(&amp;g_counter, 1);
+}
+
+unsigned int GetCounter(void)
+{
+    return atomic_load(&amp;g_counter);
+}</code></pre>
+
+                    <p>
+                        Trong ví dụ này, <code>atomic_fetch_add()</code> thực hiện thao tác tăng
+                        counter theo cơ chế atomic được cung cấp bởi C11.
+                    </p>
+
+                    <p>
+                        Tuy nhiên, không phải mọi atomic operation đều lock-free trên mọi MCU.
+                        Một số toolchain có thể triển khai atomic operation bằng cơ chế hỗ trợ
+                        khác. Vì vậy, cần kiểm tra compiler, architecture và yêu cầu thời gian
+                        thực của hệ thống.
+                    </p>
+
+                    <h3>4.6. Critical Section với Shared Resource</h3>
+
+                    <p>
+                        Khi cần bảo vệ một đoạn code truy cập dữ liệu dùng chung, hệ thống có thể
+                        cung cấp API để vào và thoát Critical Section.
+                    </p>
+
+                    <pre><code>unsigned int g_counter = 0;
+
+void IncrementCounter(void)
+{
+    CriticalSection_Enter();
+
+    g_counter++;
+
+    CriticalSection_Exit();
+}</code></pre>
+
+                    <p>
+                        <code>CriticalSection_Enter()</code> và
+                        <code>CriticalSection_Exit()</code> là các API minh họa. Đây không phải
+                        function chuẩn của C. Cách triển khai thực tế phụ thuộc vào MCU, RTOS
+                        hoặc platform.
+                    </p>
+
+                    <p>
+                        Khi sử dụng cơ chế này, cần đảm bảo:
+                    </p>
+
+                    <ul>
+                        <li>Critical Section được thoát ở mọi đường thực thi phù hợp.</li>
+                        <li>Không giữ Critical Section lâu hơn mức cần thiết.</li>
+                        <li>Không thực hiện các thao tác blocking bên trong Critical Section.</li>
+                        <li>Cơ chế bảo vệ phải phù hợp với tất cả context có thể truy cập tài nguyên.</li>
+                    </ul>
+
+                    <h3>4.7. Mutex trong RTOS</h3>
+
+                    <p>
+                        Trong hệ thống sử dụng RTOS, Mutex thường được sử dụng để bảo vệ shared
+                        resource giữa các Task.
+                    </p>
+
+                    <pre><code>void TaskA(void *argument)
+{
+    for (;;)
+    {
+        Mutex_Lock();
+
+        UpdateSharedData();
+
+        Mutex_Unlock();
+
+        Delay(10);
+    }
+}
+
+void TaskB(void *argument)
+{
+    for (;;)
+    {
+        Mutex_Lock();
+
+        ReadSharedData();
+
+        Mutex_Unlock();
+
+        Delay(10);
+    }
+}</code></pre>
+
+                    <p>
+                        Trong ví dụ trên, hai Task sử dụng cùng một mutex trước khi truy cập
+                        shared data. Điều này giúp tránh việc hai Task cùng thực hiện các thao
+                        tác xung đột trên tài nguyên được bảo vệ.
+                    </p>
+
+                    <p>
+                        Đây là pseudocode. Trong dự án thực tế, cần sử dụng API mutex của RTOS
+                        đang được triển khai.
+                    </p>
+
+                    <div class="note-box">
+                        <strong>Important:</strong>
+                        Mutex thông thường không được sử dụng để khóa tài nguyên trong ISR vì
+                        ISR không nên chờ một Task nhả mutex. Hãy sử dụng cơ chế đồng bộ phù hợp
+                        với interrupt context, chẳng hạn atomic operation, interrupt-safe API
+                        hoặc cơ chế handoff giữa ISR và Task.
+                    </div>
+
+                    <h3>4.8. Deadlock và Priority Inversion</h3>
+
+                    <p>
+                        Khi sử dụng synchronization mechanism, chương trình còn có thể gặp các
+                        vấn đề khác.
+                    </p>
+
+                    <p><strong>Deadlock:</strong> Hai hoặc nhiều Task chờ tài nguyên do nhau nắm
+                        giữ, khiến không Task nào tiếp tục được.</p>
+
+                    <p><strong>Priority Inversion:</strong> Task có mức ưu tiên cao phải chờ
+                        tài nguyên đang được giữ bởi Task có mức ưu tiên thấp. Một số RTOS hỗ trợ
+                        Priority Inheritance để giảm vấn đề này.</p>
+
+                    <p>
+                        Một số biện pháp hạn chế:
+                    </p>
+
+                    <ul>
+                        <li>Thiết kế thứ tự lock thống nhất giữa các module.</li>
+                        <li>Tránh giữ mutex trong thời gian dài.</li>
+                        <li>Không gọi function có thể block khi đang giữ lock nếu không cần thiết.</li>
+                        <li>Sử dụng timeout khi phù hợp.</li>
+                        <li>Kiểm tra chính sách priority inheritance của RTOS.</li>
+                    </ul>
+
+                </section>
+
+                <section>
+                    <h2>5. C Code Examples</h2>
+
+                    <h3>5.1. Ví dụ function có trạng thái dùng chung</h3>
+
+                    <pre><code>#include &lt;stdio.h&gt;
+
+int GetNextValue(void)
+{
+    static int value = 0;
+
+    value++;
+
+    return value;
+}
+
+int main(void)
+{
+    printf("%d\n", GetNextValue());
+    printf("%d\n", GetNextValue());
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Function sử dụng static local variable để lưu trạng thái giữa các lần gọi.
+                        Đây là cách triển khai có thể phù hợp trong một số trường hợp tuần tự,
+                        nhưng không an toàn nếu nhiều context cùng gọi function và cập nhật
+                        <code>value</code> mà không có cơ chế đồng bộ.
+                    </p>
+
+                    <h3>5.2. Ví dụ function sử dụng dữ liệu riêng của caller</h3>
+
+                    <pre><code>#include &lt;stdio.h&gt;
+
+void CalculateValue(int input, int *output)
+{
+    int localValue = input * 2;
+
+    if (output != NULL)
+    {
+        *output = localValue;
+    }
+}
+
+int main(void)
+{
+    int resultA = 0;
+    int resultB = 0;
+
+    CalculateValue(10, &amp;resultA);
+    CalculateValue(20, &amp;resultB);
+
+    printf("Result A: %d\n", resultA);
+    printf("Result B: %d\n", resultB);
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Function sử dụng biến local và output parameter do caller cung cấp.
+                        Các lần gọi độc lập có thể sử dụng các vùng output riêng, giúp giảm
+                        phụ thuộc vào shared mutable state.
+                    </p>
+
+                    <h3>5.3. Ví dụ bảo vệ shared counter bằng Atomic</h3>
+
+                    <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdatomic.h&gt;
+
+static atomic_uint g_eventCount = 0;
+
+void RecordEvent(void)
+{
+    atomic_fetch_add(&amp;g_eventCount, 1);
+}
+
+unsigned int GetEventCount(void)
+{
+    return atomic_load(&amp;g_eventCount);
+}
+
+int main(void)
+{
+    RecordEvent();
+    RecordEvent();
+    RecordEvent();
+
+    printf("Event count: %u\n", GetEventCount());
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Atomic operation phù hợp với các biến dùng chung có thao tác đơn giản
+                        như counter hoặc flag, nếu implementation và yêu cầu hệ thống cho phép.
+                    </p>
+
+                    <h3>5.4. Ví dụ bảo vệ shared data bằng Critical Section</h3>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+static uint32_t g_sensorValue = 0;
+
+void Sensor_Update(uint32_t newValue)
+{
+    CriticalSection_Enter();
+
+    g_sensorValue = newValue;
+
+    CriticalSection_Exit();
+}
+
+uint32_t Sensor_GetValue(void)
+{
+    uint32_t value;
+
+    CriticalSection_Enter();
+
+    value = g_sensorValue;
+
+    CriticalSection_Exit();
+
+    return value;
+}</code></pre>
+
+                    <p>
+                        Cả thao tác ghi và đọc đều sử dụng cùng một cơ chế bảo vệ. Điều này
+                        quan trọng vì chỉ bảo vệ phía ghi nhưng không bảo vệ phía đọc vẫn có
+                        thể tạo ra vấn đề trong những tình huống truy cập phức tạp hơn.
+                    </p>
+
+                    <p>
+                        Cần lưu ý rằng API Critical Section phải được thiết kế phù hợp với
+                        context sử dụng. Nếu có nhiều Task, ISR hoặc nhiều CPU Core cùng truy
+                        cập, việc chỉ disable interrupt trên một core có thể không đủ.
+                    </p>
+
+                    <h3>5.5. Ví dụ ISR và Task chia sẻ Event Flag</h3>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+static volatile uint8_t g_dataReady = 0;
+
+void UART_IRQHandler(void)
+{
+    /* Read received data from UART hardware */
+
+    g_dataReady = 1;
+}
+
+void MainTask(void)
+{
+    for (;;)
+    {
+        if (g_dataReady != 0)
+        {
+            /*
+             * Process received data.
+             * Synchronization details depend on platform.
+             */
+
+            g_dataReady = 0;
+        }
+    }
+}</code></pre>
+
+                    <p>
+                        Ví dụ này minh họa cách ISR thông báo cho Task rằng đã có dữ liệu mới.
+                        Tuy nhiên, <code>volatile</code> trong ví dụ chỉ thể hiện ý định rằng
+                        biến có thể thay đổi ngoài luồng thực thi thông thường.
+                    </p>
+
+                    <p>
+                        Nó không tự đảm bảo thao tác đọc-ghi atomic, không giải quyết mọi race
+                        condition và không thay thế cơ chế đồng bộ giữa ISR và Task.
+                    </p>
+
+                    <p>
+                        Trong hệ thống thực tế, nên ưu tiên ISR-safe notification, semaphore,
+                        event flag hoặc atomic operation được platform hỗ trợ. Nếu dùng một flag
+                        đơn giản, cần xác nhận kích thước truy cập, atomicity và cách đồng bộ
+                        theo kiến trúc MCU.
+                    </p>
+
+                </section>
+
+                <section>
+                    <h2>6. Embedded Applications</h2>
+
+                    <h3>6.1. UART Receive Buffer</h3>
+
+                    <p>
+                        UART driver thường nhận dữ liệu thông qua interrupt. ISR có thể ghi dữ
+                        liệu vào receive buffer trong khi Task đọc dữ liệu từ buffer đó.
+                    </p>
+
+                    <p>
+                        Nếu ISR và Task cùng cập nhật những thông tin như read index, write index
+                        hoặc buffer state mà không có thiết kế đồng bộ phù hợp, dữ liệu có thể bị
+                        mất hoặc đọc sai thứ tự.
+                    </p>
+
+                    <p>
+                        Một giải pháp phổ biến là Circular Buffer với quy ước rõ ràng về quyền
+                        cập nhật read index và write index, kết hợp cơ chế đồng bộ phù hợp với
+                        MCU và RTOS.
+                    </p>
+
+                    <h3>6.2. CAN Communication Driver</h3>
+
+                    <p>
+                        Trong CAN communication, một CAN receive callback có thể được gọi khi
+                        nhận được message. Trong khi đó, một Task khác cũng có thể truy cập
+                        receive buffer hoặc trạng thái communication.
+                    </p>
+
+                    <p>
+                        Nếu nhiều context cùng sử dụng một buffer mà không có cơ chế bảo vệ,
+                        dữ liệu message có thể bị ghi đè hoặc xử lý không nhất quán.
+                    </p>
+
+                    <p>
+                        Vì vậy, driver cần xác định rõ:
+                    </p>
+
+                    <ul>
+                        <li>Context nào có quyền ghi vào buffer.</li>
+                        <li>Context nào có quyền đọc dữ liệu.</li>
+                        <li>Callback có thể được gọi đồng thời hay không.</li>
+                        <li>API có hỗ trợ reentrant hay không.</li>
+                        <li>Cơ chế đồng bộ giữa ISR, driver và application Task.</li>
+                    </ul>
+
+                    <h3>6.3. Sensor Data Sharing</h3>
+
+                    <p>
+                        Một Task có thể đọc dữ liệu từ cảm biến và cập nhật trạng thái hiện tại.
+                        Các Task khác sử dụng dữ liệu đó để thực hiện control logic hoặc gửi
+                        communication message.
+                    </p>
+
+                    <p>
+                        Nếu dữ liệu gồm nhiều field liên quan, việc chỉ bảo vệ từng field riêng
+                        lẻ có thể khiến một Task đọc được trạng thái kết hợp không nhất quán.
+                        Khi đó, cần bảo vệ toàn bộ thao tác cập nhật hoặc sử dụng một cơ chế
+                        truyền dữ liệu phù hợp.
+                    </p>
+
+                    <h3>6.4. AUTOSAR Software Components</h3>
+
+                    <p>
+                        Trong AUTOSAR Classic Platform, một Runnable có thể được kích hoạt bởi
+                        nhiều event hoặc được cấu hình với các cơ chế thực thi khác nhau.
+                        Việc truy cập dữ liệu dùng chung giữa các Runnable cần tuân theo cấu hình
+                        và cơ chế đồng bộ của hệ thống.
+                    </p>
+
+                    <p>
+                        Khi thiết kế SWC, cần chú ý:
+                    </p>
+
+                    <ul>
+                        <li>Runnable có thể được thực thi trong những context nào.</li>
+                        <li>Dữ liệu nào được chia sẻ giữa các Runnable.</li>
+                        <li>Timing và activation behavior của Runnable.</li>
+                        <li>Cơ chế Exclusive Area hoặc synchronization được cấu hình.</li>
+                        <li>Quyền truy cập dữ liệu giữa Application Software và Basic Software.</li>
+                    </ul>
+
+                    <p>
+                        Trong AUTOSAR, Exclusive Area là một khái niệm cấu hình dùng để bảo vệ
+                        vùng truy cập tài nguyên chung. Cách triển khai cụ thể phụ thuộc vào
+                        cấu hình OS và platform.
+                    </p>
+
+                    <h3>6.5. Hardware Peripheral Access</h3>
+
+                    <p>
+                        Nhiều module có thể cùng muốn sử dụng một peripheral như UART, SPI hoặc
+                        I2C. Nếu hai module cùng thay đổi cấu hình hoặc thực hiện transaction
+                        trên peripheral mà không có cơ chế quản lý, hoạt động giao tiếp có thể
+                        bị xung đột.
+                    </p>
+
+                    <p>
+                        Driver thường cần cung cấp một interface quản lý quyền truy cập, hoặc
+                        thiết kế một Task chuyên trách để xử lý các request đến peripheral.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>7. Common Mistakes</h2>
+
+                    <h3>7.1. Cho rằng volatile có thể giải quyết mọi Race Condition</h3>
+
+                    <p>
+                        <code>volatile</code> không cung cấp mutual exclusion và không đảm bảo
+                        atomicity. Cần sử dụng cơ chế đồng bộ phù hợp.
+                    </p>
+
+                    <h3>7.2. Sử dụng Global Variable mà không kiểm soát truy cập</h3>
+
+                    <p>
+                        Global variable có thể được truy cập từ nhiều module hoặc execution
+                        context. Nếu dữ liệu có thể thay đổi đồng thời, cần xác định rõ quyền
+                        truy cập và cơ chế bảo vệ.
+                    </p>
+
+                    <h3>7.3. Giữ Critical Section quá lâu</h3>
+
+                    <p>
+                        Critical Section dài có thể làm tăng latency, ảnh hưởng đến khả năng
+                        phản hồi của interrupt và làm giảm hiệu năng hệ thống.
+                    </p>
+
+                    <h3>7.4. Gọi Blocking Function bên trong ISR</h3>
+
+                    <p>
+                        ISR cần thực hiện nhanh và không nên chờ mutex, delay hoặc thực hiện
+                        các thao tác blocking. Nên chuyển công việc xử lý phức tạp sang Task.
+                    </p>
+
+                    <h3>7.5. Nhầm lẫn giữa Reentrant và Thread-Safe</h3>
+
+                    <p>
+                        Một function reentrant không có nghĩa toàn bộ module mà nó sử dụng
+                        đều thread-safe. Cần đánh giá cả các function được gọi và tài nguyên
+                        bên ngoài.
+                    </p>
+
+                    <h3>7.6. Không đảm bảo thoát Critical Section</h3>
+
+                    <p>
+                        Nếu một đường thực thi không gọi hàm thoát Critical Section, hệ thống
+                        có thể bị khóa hoặc duy trì trạng thái bảo vệ không mong muốn.
+                    </p>
+
+                    <h3>7.7. Sử dụng Mutex trong ISR</h3>
+
+                    <p>
+                        Mutex thông thường có thể khiến ISR phải chờ, điều không phù hợp với
+                        interrupt context. Hãy sử dụng API và cơ chế synchronization được
+                        thiết kế riêng cho ISR.
+                    </p>
+
+                </section>
+
+                <section>
+                    <h2>8. Best Practices</h2>
+
+                    <ul>
+                        <li>Ưu tiên function sử dụng local data và parameter thay vì mutable global state.</li>
+                        <li>Thiết kế rõ ràng quyền đọc và ghi đối với shared resource.</li>
+                        <li>Sử dụng atomic operation cho những thao tác đơn giản khi platform hỗ trợ phù hợp.</li>
+                        <li>Sử dụng mutex để bảo vệ shared resource giữa các Task.</li>
+                        <li>Sử dụng interrupt-safe synchronization mechanism khi làm việc với ISR.</li>
+                        <li>Giữ Critical Section ngắn và có thời gian thực thi dự đoán được.</li>
+                        <li>Không sử dụng volatile như một giải pháp thay thế cho synchronization.</li>
+                        <li>Không gọi blocking function trong ISR.</li>
+                        <li>Thiết kế thứ tự lock nhất quán để giảm nguy cơ deadlock.</li>
+                        <li>Kiểm tra reentrancy và thread-safety của các driver hoặc library được sử dụng.</li>
+                        <li>Kiểm tra khả năng atomic và lock-free của atomic operation trên target MCU.</li>
+                        <li>Document rõ API nào được phép gọi từ Task, ISR hoặc nhiều context.</li>
+                    </ul>
+
+                    <div class="note-box">
+                        <strong>Embedded Design Principle:</strong>
+                        Một module tốt không chỉ cần thực hiện đúng chức năng mà còn phải xác định
+                        rõ cách nó hoạt động khi được nhiều Task, ISR hoặc module khác truy cập.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>9. Summary</h2>
+
+                    <p>
+                        Reentrancy, Concurrency và Critical Section là những khái niệm quan trọng
+                        khi phát triển phần mềm Embedded có nhiều execution context.
+                    </p>
+
+                    <ul>
+                        <li><strong>Reentrancy:</strong> Function có thể được gọi lại trước khi lần gọi trước hoàn thành mà không làm hỏng trạng thái dữ liệu.</li>
+                        <li><strong>Concurrency:</strong> Nhiều hoạt động cùng tiến triển và có thể truy cập tài nguyên dùng chung.</li>
+                        <li><strong>Race Condition:</strong> Kết quả phụ thuộc vào thứ tự hoặc thời điểm các context truy cập dữ liệu.</li>
+                        <li><strong>Critical Section:</strong> Đoạn code cần được bảo vệ khi truy cập shared resource.</li>
+                        <li><strong>Atomic Operation:</strong> Thao tác được thực hiện theo cơ chế atomic do platform cung cấp.</li>
+                        <li><strong>Mutex:</strong> Cơ chế đồng bộ thường dùng để bảo vệ tài nguyên giữa các Task.</li>
+                        <li><strong>volatile:</strong> Không thay thế atomic operation hoặc synchronization mechanism.</li>
+                    </ul>
+
+                    <p>
+                        Khi phát triển Embedded Software, lập trình viên cần hiểu rõ những context
+                        có thể thực thi function, cách dữ liệu được chia sẻ và cơ chế đồng bộ phù
+                        hợp. Đây là nền tảng để xây dựng hệ thống ổn định, dễ kiểm thử và đáng tin cậy.
+                    </p>
+                </section>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-42.html">← Bài trước</a>
+                    <a class="btn" href="lesson-44.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>EmLearn - 2026</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="../../assets/icon.svg">
+    <title>Bài 40: Buffer Overflow Prevention | Advanced C Embedded</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="bar">
+            <a href="../../index.html" class="logo">Em<span>Learn</span></a>
+
+            <nav>
+                <a href="../../index.html">Trang chủ</a>
+                <a href="../../lessons/index.html" class="active" aria-current="page">Bài học</a>
+                <a href="../../quizzes/index.html">Kiểm tra</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side">
+                <a href="index.html" class="btn">← Tất cả bài học Advanced C Embedded</a>
+
+                <a href="lesson-1.html">Bài 1: Introduction to Advanced C Embedded</a>
+                <a href="lesson-2.html">Bài 2: C Compilation Process &amp; Embedded Toolchain</a>
+                <a href="lesson-3.html">Bài 3: Memory Layout of a C Program</a>
+                <a href="lesson-4.html">Bài 4: Stack vs Heap vs Data vs BSS Segments</a>
+                <a href="lesson-5.html">Bài 5: Variable Scope, Lifetime &amp; Storage Duration</a>
+                <a href="lesson-6.html">Bài 6: Dynamic Memory Allocation</a>
+                <a href="lesson-7.html">Bài 7: Memory Leakage, Dangling Pointer &amp; Memory Safety</a>
+                <a href="lesson-8.html">Bài 8: Memory Alignment, Padding &amp; Structure Packing</a>
+                <a href="lesson-9.html">Bài 9: Linker Script, Memory Map &amp; Startup Code</a>
+
+                <a href="lesson-10.html">Bài 10: Advanced Pointer Fundamentals</a>
+                <a href="lesson-11.html">Bài 11: Pointer Arithmetic</a>
+                <a href="lesson-12.html">Bài 12: Pointer to Array vs Array of Pointers</a>
+                <a href="lesson-13.html">Bài 13: Double Pointer &amp; Multiple-level Pointer</a>
+                <a href="lesson-14.html">Bài 14: Function Pointer &amp; Callback Function</a>
+                <a href="lesson-15.html">Bài 15: Pointer Aliasing &amp; Restrict Qualifier</a>
+
+                <a href="lesson-16.html">Bài 16: Advanced C Data Types &amp; Integer Representation</a>
+                <a href="lesson-17.html">Bài 17: Advanced Structure in C</a>
+                <a href="lesson-18.html">Bài 18: Nested Structure &amp; Complex Data Organization</a>
+                <a href="lesson-19.html">Bài 19: Union &amp; Memory Sharing</a>
+                <a href="lesson-20.html">Bài 20: Bit-field in C</a>
+                <a href="lesson-21.html">Bài 21: Flexible Array Member (FAM)</a>
+
+                <a href="lesson-22.html">Bài 22: C Preprocessor &amp; Macro Fundamentals</a>
+                <a href="lesson-23.html">Bài 23: Header File Management &amp; Header Guard</a>
+                <a href="lesson-24.html">Bài 24: Conditional Compilation</a>
+                <a href="lesson-25.html">Bài 25: Function-like Macro</a>
+                <a href="lesson-26.html">Bài 26: Multi-line Macro &amp; Safe Macro Techniques</a>
+                <a href="lesson-27.html">Bài 27: Stringification (#) &amp; Token Pasting (##)</a>
+                <a href="lesson-28.html">Bài 28: Separate Compilation &amp; Linking</a>
+                <a href="lesson-29.html">Bài 29: Modular Programming – Interface vs Implementation</a>
+                <a href="lesson-30.html">Bài 30: Encapsulation, Static Function &amp; Global Variable Management</a>
+
+                <a href="lesson-31.html">Bài 31: Bitwise Operators in C</a>
+                <a href="lesson-32.html">Bài 32: Bit Masking Techniques</a>
+                <a href="lesson-33.html">Bài 33: Endianness &amp; Data Representation</a>
+                <a href="lesson-34.html">Bài 34: Volatile Keyword in C</a>
+                <a href="lesson-35.html">Bài 35: Memory-Mapped I/O &amp; Register Access</a>
+                <a href="lesson-36.html">Bài 36: Hardware Register Configuration Techniques</a>
+                <a href="lesson-37.html">Bài 37: Interrupt Service Routine (ISR) in C</a>
+
+                <a href="lesson-38.html">Bài 38: Defensive Programming Fundamentals</a>
+                <a href="lesson-39.html">Bài 39: Null Pointer Protection &amp; Pointer Validation</a>
+                <a href="lesson-40.html" class="active" aria-current="page">Bài 40: Buffer Overflow Prevention</a>
+                <a href="lesson-41.html">Bài 41: Integer Overflow &amp; Type Conversion Safety</a>
+                <a href="lesson-42.html">Bài 42: Error Handling Strategy in C</a>
+                <a href="lesson-43.html">Bài 43: Reentrancy, Concurrency &amp; Critical Sections</a>
+
+                <a href="lesson-44.html">Bài 44: Compiler Optimization in C</a>
+                <a href="lesson-45.html">Bài 45: Inline Function vs Macro vs Normal Function</a>
+                <a href="lesson-46.html">Bài 46: Memory Optimization in Embedded C</a>
+                <a href="lesson-47.html">Bài 47: Performance Optimization &amp; Profiling</a>
+                <a href="lesson-48.html">Bài 48: State Machine Design in C</a>
+                <a href="lesson-49.html">Bài 49: Event-driven Programming in C</a>
+                <a href="lesson-50.html">Bài 50: Ring Buffer, Queue &amp; Producer-consumer Model</a>
+                <a href="lesson-51.html">Bài 51: Common Design Patterns &amp; Software Architecture in C</a>
+
+                <a href="lesson-52.html">Bài 52: MISRA C Overview</a>
+                <a href="lesson-53.html">Bài 53: Common C Programming Defects</a>
+                <a href="lesson-54.html">Bài 54: Static Code Analysis</a>
+                <a href="lesson-55.html">Bài 55: Unit Testing &amp; Embedded C Test Techniques</a>
+                <a href="lesson-56.html">Bài 56: Debugging, Logging &amp; Fault Diagnosis</a>
+                <a href="lesson-57.html">Bài 57: Coding Convention &amp; Code Review Checklist</a>
+            </aside>
+
+            <article>
+
+                <h1>Bài 40: Buffer Overflow Prevention</h1>
+
+                <section>
+                    <h2>1. Introduction</h2>
+
+                    <p>
+                        Trong ngôn ngữ C, Buffer là một vùng nhớ được sử dụng để lưu trữ
+                        một nhóm dữ liệu có cùng kiểu hoặc một chuỗi byte liên tiếp.
+                        Buffer thường được sử dụng để lưu dữ liệu nhận từ UART, SPI, I2C,
+                        CAN, Ethernet hoặc dữ liệu được xử lý trong chương trình.
+                    </p>
+
+                    <p>
+                        Một trong những lỗi nguy hiểm khi thao tác với Buffer là
+                        <strong>Buffer Overflow</strong>. Lỗi này xảy ra khi chương trình
+                        ghi dữ liệu vượt quá giới hạn vùng nhớ đã được cấp phát.
+                        Ngoài ra, việc đọc dữ liệu vượt quá giới hạn Buffer cũng có thể
+                        gây ra những hành vi không xác định và làm chương trình hoạt động
+                        không ổn định.
+                    </p>
+
+                    <p>
+                        Trong Embedded Systems, Buffer Overflow có thể ảnh hưởng trực tiếp
+                        đến dữ liệu của Driver, trạng thái của Peripheral hoặc các thành
+                        phần khác trong hệ thống. Vì vậy, lập trình viên cần kiểm soát
+                        kích thước Buffer và giới hạn truy cập trong mọi thao tác đọc,
+                        ghi và sao chép dữ liệu.
+                    </p>
+
+                    <div class="note">
+                        <strong>Mục tiêu bài học:</strong>
+                        <ul>
+                            <li>Hiểu Buffer và Buffer Overflow.</li>
+                            <li>Phân biệt Out-of-bounds Read và Out-of-bounds Write.</li>
+                            <li>Biết cách kiểm tra giới hạn kích thước Buffer.</li>
+                            <li>Hiểu rủi ro của các hàm xử lý chuỗi trong C.</li>
+                            <li>Áp dụng Safe Buffer Handling trong Embedded Software.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>2. Core Concepts</h2>
+
+                    <h3>2.1. Buffer là gì?</h3>
+
+                    <p>
+                        Buffer là một vùng nhớ liên tục được sử dụng để lưu trữ dữ liệu
+                        tạm thời trong quá trình chương trình thực hiện xử lý.
+                        Trong C, Buffer thường được triển khai bằng Array hoặc vùng nhớ
+                        được cấp phát động.
+                    </p>
+
+                    <p>Ví dụ khai báo một Buffer có kích thước 10 byte:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+#define BUFFER_SIZE 10U
+
+uint8_t dataBuffer[BUFFER_SIZE];</code></pre>
+
+                    <p>
+                        Trong ví dụ trên, <code>dataBuffer</code> là một mảng gồm 10 phần tử
+                        kiểu <code>uint8_t</code>. Mỗi phần tử có thể lưu trữ một byte dữ liệu.
+                    </p>
+
+                    <p>
+                        Chỉ số hợp lệ của mảng bắt đầu từ 0 và kết thúc tại
+                        <code>BUFFER_SIZE - 1</code>. Với Buffer có kích thước 10 byte,
+                        các chỉ số hợp lệ là từ 0 đến 9.
+                    </p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Thuộc tính</th>
+                                <th>Giá trị</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Tên Buffer</td>
+                                <td><code>dataBuffer</code></td>
+                            </tr>
+                            <tr>
+                                <td>Kích thước</td>
+                                <td>10 byte</td>
+                            </tr>
+                            <tr>
+                                <td>Chỉ số nhỏ nhất</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>Chỉ số lớn nhất</td>
+                                <td>9</td>
+                            </tr>
+                            <tr>
+                                <td>Số phần tử</td>
+                                <td>10</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>2.2. Buffer Overflow là gì?</h3>
+
+                    <p>
+                        Buffer Overflow xảy ra khi chương trình ghi dữ liệu ra ngoài
+                        phạm vi vùng nhớ của Buffer. Điều này có thể làm ghi đè lên
+                        những vùng nhớ khác, gây sai lệch dữ liệu hoặc khiến chương trình
+                        hoạt động không đúng.
+                    </p>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    uint8_t buffer[5];
+
+    buffer[0] = 10U;
+    buffer[1] = 20U;
+    buffer[2] = 30U;
+    buffer[3] = 40U;
+    buffer[4] = 50U;
+
+    /* Truy cập ngoài phạm vi mảng */
+    buffer[5] = 60U;
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Mảng <code>buffer</code> chỉ có 5 phần tử, vì vậy chỉ số hợp lệ
+                        là từ 0 đến 4. Câu lệnh <code>buffer[5] = 60U;</code> cố gắng
+                        ghi vào phần tử nằm ngoài phạm vi của mảng.
+                    </p>
+
+                    <div class="note">
+                        <strong>Lưu ý:</strong>
+                        Trong C, việc truy cập mảng vượt quá giới hạn là Undefined Behavior.
+                        Không thể dự đoán chính xác chương trình sẽ xảy ra điều gì.
+                        Chương trình có thể hoạt động sai, dữ liệu có thể bị thay đổi
+                        hoặc lỗi chỉ xuất hiện trong một số điều kiện nhất định.
+                    </div>
+
+                    <h3>2.3. Out-of-bounds Read và Out-of-bounds Write</h3>
+
+                    <p>
+                        Những thao tác truy cập vượt quá phạm vi Buffer thường được
+                        chia thành hai nhóm chính:
+                    </p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Loại lỗi</th>
+                                <th>Mô tả</th>
+                                <th>Hậu quả có thể xảy ra</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Out-of-bounds Read</td>
+                                <td>Đọc dữ liệu nằm ngoài phạm vi Buffer.</td>
+                                <td>Đọc phải dữ liệu không hợp lệ, làm sai kết quả xử lý.</td>
+                            </tr>
+                            <tr>
+                                <td>Out-of-bounds Write</td>
+                                <td>Ghi dữ liệu nằm ngoài phạm vi Buffer.</td>
+                                <td>Ghi đè vùng nhớ khác và làm hỏng dữ liệu.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>Ví dụ về Out-of-bounds Read:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    uint8_t buffer[4] = {10U, 20U, 30U, 40U};
+
+    uint8_t value = buffer[4];
+
+    (void)value;
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Mảng chỉ có các phần tử từ <code>buffer[0]</code> đến
+                        <code>buffer[3]</code>. Việc đọc <code>buffer[4]</code> vượt
+                        quá phạm vi hợp lệ.
+                    </p>
+
+                    <p>Ví dụ về Out-of-bounds Write:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+int main(void)
+{
+    uint8_t buffer[4] = {0U};
+
+    buffer[4] = 100U;
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Câu lệnh ghi vào <code>buffer[4]</code> không hợp lệ vì Buffer
+                        chỉ có 4 phần tử, với chỉ số từ 0 đến 3.
+                    </p>
+
+                    <h3>2.4. Những nguyên nhân thường gây Buffer Overflow</h3>
+
+                    <ul>
+                        <li>
+                            Không kiểm tra kích thước dữ liệu trước khi sao chép vào Buffer.
+                        </li>
+                        <li>
+                            Sử dụng sai giới hạn trong vòng lặp, chẳng hạn sử dụng
+                            <code>i &lt;= size</code> thay vì <code>i &lt; size</code>.
+                        </li>
+                        <li>
+                            Truyền kích thước lớn hơn khả năng lưu trữ thực tế của Buffer.
+                        </li>
+                        <li>
+                            Sử dụng các hàm xử lý chuỗi mà không kiểm soát giới hạn.
+                        </li>
+                        <li>
+                            Không kiểm tra độ dài dữ liệu nhận từ Communication Interface.
+                        </li>
+                        <li>
+                            Tính toán kích thước Buffer không chính xác.
+                        </li>
+                        <li>
+                            Không phân biệt Capacity của Buffer và Length của dữ liệu hiện có.
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>3. Detailed Explanation</h2>
+
+                    <h3>3.1. Kiểm tra giới hạn Buffer trước khi truy cập</h3>
+
+                    <p>
+                        Một nguyên tắc quan trọng khi làm việc với Buffer là luôn kiểm tra
+                        chỉ số truy cập trước khi đọc hoặc ghi dữ liệu.
+                    </p>
+
+                    <p>
+                        Với một Buffer có kích thước <code>bufferSize</code>, chỉ số
+                        truy cập hợp lệ phải thỏa mãn:
+                    </p>
+
+                    <pre><code>index &lt; bufferSize</code></pre>
+
+                    <p>
+                        Ví dụ triển khai một Function kiểm tra chỉ số trước khi ghi dữ liệu:
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define BUFFER_SIZE 10U
+
+bool Buffer_Write(uint8_t *buffer,
+                  uint32_t bufferSize,
+                  uint32_t index,
+                  uint8_t value)
+{
+    if ((buffer == NULL) || (index &gt;= bufferSize))
+    {
+        return false;
+    }
+
+    buffer[index] = value;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Function <code>Buffer_Write()</code> kiểm tra hai điều kiện trước
+                        khi thực hiện thao tác ghi:
+                    </p>
+
+                    <ul>
+                        <li><code>buffer == NULL</code>: kiểm tra con trỏ Buffer có hợp lệ hay không.</li>
+                        <li><code>index &gt;= bufferSize</code>: kiểm tra chỉ số có nằm ngoài phạm vi hay không.</li>
+                    </ul>
+
+                    <p>
+                        Nếu một trong hai điều kiện không thỏa mãn, Function trả về
+                        <code>false</code> và không thực hiện thao tác ghi.
+                    </p>
+
+                    <p>
+                        Cách thiết kế này giúp giới hạn việc truy cập Buffer trong một
+                        Function riêng biệt, thay vì để từng phần của chương trình tự
+                        thực hiện thao tác truy cập mà không có kiểm tra.
+                    </p>
+
+                    <h3>3.2. Phân biệt Buffer Capacity và Data Length</h3>
+
+                    <p>
+                        Khi quản lý Buffer, cần phân biệt hai khái niệm:
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>Capacity:</strong> tổng số byte tối đa mà Buffer có thể lưu trữ.
+                        </li>
+                        <li>
+                            <strong>Length:</strong> số byte dữ liệu hiện đang được lưu trong Buffer.
+                        </li>
+                    </ul>
+
+                    <p>
+                        Ví dụ Buffer có Capacity là 16 byte nhưng hiện tại chỉ chứa
+                        6 byte dữ liệu:
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+
+#define BUFFER_CAPACITY 16U
+
+uint8_t rxBuffer[BUFFER_CAPACITY];
+
+uint32_t rxLength = 6U;</code></pre>
+
+                    <p>
+                        Trong trường hợp này:
+                    </p>
+
+                    <ul>
+                        <li>Capacity = 16 byte.</li>
+                        <li>Length = 6 byte.</li>
+                        <li>Dữ liệu hợp lệ hiện tại nằm trong khoảng chỉ số từ 0 đến 5.</li>
+                        <li>Vùng còn lại có thể được sử dụng để tiếp nhận thêm dữ liệu.</li>
+                    </ul>
+
+                    <p>
+                        Khi xử lý dữ liệu, chương trình cần kiểm tra cả Capacity và Length.
+                        Không nên mặc định rằng toàn bộ Buffer đều chứa dữ liệu hợp lệ.
+                    </p>
+
+                    <h3>3.3. Kiểm tra kích thước trước khi sao chép dữ liệu</h3>
+
+                    <p>
+                        Một thao tác thường gặp trong C là sao chép dữ liệu từ Buffer
+                        nguồn sang Buffer đích. Khi thực hiện thao tác này, cần bảo đảm
+                        rằng kích thước dữ liệu được sao chép không vượt quá vùng nhớ
+                        có thể sử dụng của Buffer đích.
+                    </p>
+
+                    <p>Ví dụ Function sao chép dữ liệu có kiểm tra giới hạn:</p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;string.h&gt;
+
+bool Buffer_Copy(uint8_t *destination,
+                 uint32_t destinationCapacity,
+                 const uint8_t *source,
+                 uint32_t sourceLength)
+{
+    if ((destination == NULL) || (source == NULL))
+    {
+        return false;
+    }
+
+    if (sourceLength &gt; destinationCapacity)
+    {
+        return false;
+    }
+
+    if (sourceLength &gt; 0U)
+    {
+        memcpy(destination, source, sourceLength);
+    }
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Function trên kiểm tra con trỏ và kích thước trước khi gọi
+                        <code>memcpy()</code>.
+                    </p>
+
+                    <p>
+                        Nếu <code>sourceLength</code> lớn hơn
+                        <code>destinationCapacity</code>, thao tác sao chép sẽ bị từ chối.
+                        Nhờ đó, chương trình tránh ghi dữ liệu vượt quá vùng nhớ của
+                        Buffer đích.
+                    </p>
+
+                    <div class="note">
+                        <strong>Lưu ý về memcpy():</strong>
+                        <code>memcpy()</code> không tự kiểm tra kích thước Buffer.
+                        Lập trình viên phải bảo đảm vùng nhớ nguồn và vùng nhớ đích hợp lệ,
+                        đồng thời không bị chồng lấn. Nếu hai vùng nhớ có thể chồng lấn,
+                        cần xem xét sử dụng <code>memmove()</code>.
+                    </div>
+
+                    <h3>3.4. Những rủi ro khi sử dụng các hàm xử lý chuỗi</h3>
+
+                    <p>
+                        Trong C, chuỗi ký tự thường được lưu trữ dưới dạng mảng
+                        <code>char</code> kết thúc bằng ký tự null <code>'\0'</code>.
+                        Vì vậy, khi xử lý chuỗi cần dành đủ dung lượng cho cả các ký tự
+                        nội dung và ký tự kết thúc chuỗi.
+                    </p>
+
+                    <p>
+                        Một số hàm xử lý chuỗi có thể gây ra Buffer Overflow nếu
+                        không kiểm soát kích thước đầu vào:
+                    </p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Function</th>
+                                <th>Chức năng</th>
+                                <th>Rủi ro cần chú ý</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>strcpy()</code></td>
+                                <td>Sao chép chuỗi.</td>
+                                <td>Không nhận kích thước Buffer đích.</td>
+                            </tr>
+                            <tr>
+                                <td><code>strcat()</code></td>
+                                <td>Nối chuỗi.</td>
+                                <td>Không kiểm tra dung lượng còn lại của Buffer đích.</td>
+                            </tr>
+                            <tr>
+                                <td><code>sprintf()</code></td>
+                                <td>Định dạng chuỗi.</td>
+                                <td>Không giới hạn số ký tự được ghi vào Buffer.</td>
+                            </tr>
+                            <tr>
+                                <td><code>gets()</code></td>
+                                <td>Đọc chuỗi từ input.</td>
+                                <td>Không có cơ chế giới hạn kích thước; đã bị loại bỏ khỏi C11.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>
+                        Thay vì sử dụng các Function không kiểm soát được kích thước đầu ra,
+                        có thể lựa chọn những Function cho phép giới hạn số byte được ghi.
+                    </p>
+
+                    <h3>3.5. Sử dụng snprintf() để định dạng chuỗi an toàn hơn</h3>
+
+                    <p>
+                        Function <code>snprintf()</code> cho phép giới hạn số ký tự được
+                        ghi vào Buffer thông qua tham số kích thước.
+                    </p>
+
+                    <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+#define MESSAGE_SIZE 32U
+
+int main(void)
+{
+    char message[MESSAGE_SIZE];
+
+    int result = snprintf(message,
+                          sizeof(message),
+                          "Temperature: %d C",
+                          25);
+
+    if ((result &lt; 0) || ((size_t)result &gt;= sizeof(message)))
+    {
+        /* Formatting error or output was truncated */
+        return -1;
+    }
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Các tham số chính của <code>snprintf()</code> gồm:
+                    </p>
+
+                    <ul>
+                        <li><code>message</code>: Buffer đích.</li>
+                        <li><code>sizeof(message)</code>: kích thước tối đa của Buffer.</li>
+                        <li><code>"Temperature: %d C"</code>: chuỗi định dạng.</li>
+                        <li><code>25</code>: giá trị được đưa vào chuỗi.</li>
+                    </ul>
+
+                    <p>
+                        Giá trị trả về của <code>snprintf()</code> là số ký tự cần thiết
+                        để tạo chuỗi, không bao gồm ký tự null kết thúc chuỗi.
+                        Nếu giá trị trả về lớn hơn hoặc bằng kích thước Buffer,
+                        nội dung đã bị cắt ngắn.
+                    </p>
+
+                    <div class="note">
+                        <strong>Lưu ý:</strong>
+                        <code>snprintf()</code> giới hạn số byte được ghi vào Buffer đích,
+                        nhưng không thay thế việc kiểm tra giá trị trả về. Nếu chuỗi bị
+                        cắt ngắn, chương trình cần quyết định có chấp nhận kết quả đó
+                        hay phải báo lỗi.
+                    </div>
+
+                    <h3>3.6. Cẩn thận khi sử dụng strncpy()</h3>
+
+                    <p>
+                        <code>strncpy()</code> thường được sử dụng để giới hạn số ký tự
+                        sao chép. Tuy nhiên, Function này có một đặc điểm quan trọng:
+                        nếu chuỗi nguồn có độ dài bằng hoặc lớn hơn giới hạn sao chép,
+                        Buffer đích có thể không được kết thúc bằng <code>'\0'</code>.
+                    </p>
+
+                    <p>Ví dụ cách sử dụng cần chú ý:</p>
+
+                    <pre><code>#include &lt;string.h&gt;
+#include &lt;stdint.h&gt;
+
+#define DEST_SIZE 8U
+
+int main(void)
+{
+    char destination[DEST_SIZE];
+    const char *source = "Embedded";
+
+    strncpy(destination, source, sizeof(destination));
+
+    /* destination may not contain '\0' */
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Trong ví dụ trên, chuỗi nguồn có thể chiếm toàn bộ 8 byte.
+                        Khi đó, <code>strncpy()</code> không bảo đảm tự thêm ký tự
+                        <code>'\0'</code> vào cuối Buffer.
+                    </p>
+
+                    <p>
+                        Nếu cần lưu trữ một chuỗi C hợp lệ, có thể dành riêng một byte
+                        cho ký tự kết thúc:
+                    </p>
+
+                    <pre><code>#include &lt;string.h&gt;
+#include &lt;stdint.h&gt;
+
+#define DEST_SIZE 8U
+
+int main(void)
+{
+    char destination[DEST_SIZE];
+    const char *source = "Embedded";
+
+    strncpy(destination, source, DEST_SIZE - 1U);
+    destination[DEST_SIZE - 1U] = '\0';
+
+    return 0;
+}</code></pre>
+
+                    <p>
+                        Cách làm này bảo đảm Buffer đích có ký tự kết thúc chuỗi.
+                        Tuy nhiên, cần lưu ý rằng <code>strncpy()</code> có thể điền
+                        thêm các byte null vào phần còn lại của Buffer nếu chuỗi nguồn
+                        ngắn hơn giới hạn sao chép.
+                    </p>
+
+                    <h3>3.7. Kiểm tra độ dài dữ liệu trước khi xử lý</h3>
+
+                    <p>
+                        Khi dữ liệu được nhận từ một nguồn bên ngoài, chương trình không
+                        nên mặc định rằng độ dài dữ liệu luôn hợp lệ. Dữ liệu có thể đến
+                        từ UART, CAN, SPI hoặc một Communication Interface khác.
+                    </p>
+
+                    <p>
+                        Ví dụ, một Function xử lý dữ liệu nhận vào cần kiểm tra Length
+                        trước khi truy cập từng phần tử:
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define RX_BUFFER_SIZE 64U
+
+bool Process_Data(const uint8_t *data, uint32_t length)
+{
+    if (data == NULL)
+    {
+        return false;
+    }
+
+    if ((length == 0U) || (length &gt; RX_BUFFER_SIZE))
+    {
+        return false;
+    }
+
+    for (uint32_t i = 0U; i &lt; length; i++)
+    {
+        /* Process data[i] */
+    }
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Function kiểm tra con trỏ và giới hạn Length trước khi bắt đầu
+                        xử lý dữ liệu. Vòng lặp chỉ truy cập các phần tử từ 0 đến
+                        <code>length - 1</code>.
+                    </p>
+
+                    <p>
+                        Trong một thiết kế thực tế, ngoài việc kiểm tra giới hạn tối đa,
+                        cần bảo đảm Length được truyền vào phản ánh đúng số byte dữ liệu
+                        thực sự đã nhận.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>4. C Code Examples</h2>
+
+                    <h3>4.1. Xây dựng Buffer Management Function</h3>
+
+                    <p>
+                        Trong Embedded Software, thay vì truy cập Buffer trực tiếp ở
+                        nhiều vị trí trong chương trình, có thể xây dựng các Function
+                        quản lý Buffer như Read, Write và Append.
+                    </p>
+
+                    <p>
+                        Ví dụ dưới đây triển khai một Buffer đơn giản với Capacity và Length:
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define BUFFER_CAPACITY 16U
+
+typedef struct
+{
+    uint8_t data[BUFFER_CAPACITY];
+    uint32_t length;
+} Buffer_t;
+
+bool Buffer_Init(Buffer_t *buffer)
+{
+    if (buffer == NULL)
+    {
+        return false;
+    }
+
+    buffer-&gt;length = 0U;
+
+    return true;
+}
+
+bool Buffer_Append(Buffer_t *buffer,
+                   const uint8_t *data,
+                   uint32_t dataLength)
+{
+    if ((buffer == NULL) || (data == NULL))
+    {
+        return false;
+    }
+
+    if (buffer-&gt;length &gt; BUFFER_CAPACITY)
+    {
+        return false;
+    }
+
+    if (dataLength &gt; (BUFFER_CAPACITY - buffer-&gt;length))
+    {
+        return false;
+    }
+
+    for (uint32_t i = 0U; i &lt; dataLength; i++)
+    {
+        buffer-&gt;data[buffer-&gt;length + i] = data[i];
+    }
+
+    buffer-&gt;length += dataLength;
+
+    return true;
+}
+
+int main(void)
+{
+    Buffer_t rxBuffer;
+    uint8_t inputData[] = {0x10U, 0x20U, 0x30U};
+
+    if (Buffer_Init(&amp;rxBuffer))
+    {
+        if (Buffer_Append(&amp;rxBuffer,
+                          inputData,
+                          sizeof(inputData)))
+        {
+            /* Data appended successfully */
+        }
+    }
+
+    return 0;
+}</code></pre>
+
+                    <p>Phân tích các thành phần chính:</p>
+
+                    <ul>
+                        <li>
+                            <code>data[]</code>: vùng nhớ dùng để lưu trữ dữ liệu.
+                        </li>
+                        <li>
+                            <code>length</code>: số byte dữ liệu hiện có trong Buffer.
+                        </li>
+                        <li>
+                            <code>Buffer_Init()</code>: khởi tạo trạng thái Buffer.
+                        </li>
+                        <li>
+                            <code>Buffer_Append()</code>: thêm dữ liệu vào phần dung lượng còn lại.
+                        </li>
+                    </ul>
+
+                    <p>
+                        Điểm quan trọng trong Function <code>Buffer_Append()</code> là
+                        điều kiện:
+                    </p>
+
+                    <pre><code>if (dataLength &gt; (BUFFER_CAPACITY - buffer-&gt;length))
+{
+    return false;
+}</code></pre>
+
+                    <p>
+                        Thay vì cộng trực tiếp <code>buffer-&gt;length</code> và
+                        <code>dataLength</code> rồi so sánh với Capacity, chương trình
+                        kiểm tra số byte cần thêm có lớn hơn dung lượng còn lại hay không.
+                        Cách kiểm tra này cũng giúp tránh một số vấn đề do phép cộng
+                        kích thước bị tràn số nguyên.
+                    </p>
+
+                    <div class="note">
+                        <strong>Phạm vi ví dụ:</strong>
+                        Đây là Buffer đơn giản dành cho mục đích minh họa.
+                        Khi triển khai thực tế, cần bổ sung quy định về quyền sở hữu
+                        dữ liệu, trường hợp nguồn và đích chồng lấn, cũng như đồng bộ
+                        nếu Buffer được truy cập từ nhiều ngữ cảnh.
+                    </div>
+
+                    <h3>4.2. Kiểm tra kích thước khi đọc dữ liệu từ Buffer</h3>
+
+                    <p>
+                        Một Function đọc dữ liệu từ Buffer cần kiểm tra Offset và Length
+                        để bảo đảm vùng dữ liệu được yêu cầu nằm hoàn toàn trong phạm vi
+                        dữ liệu hợp lệ.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define BUFFER_CAPACITY 32U
+
+bool Buffer_Read(const uint8_t *buffer,
+                 uint32_t bufferLength,
+                 uint32_t offset,
+                 uint8_t *output,
+                 uint32_t readLength)
+{
+    if ((buffer == NULL) || (output == NULL))
+    {
+        return false;
+    }
+
+    if (bufferLength &gt; BUFFER_CAPACITY)
+    {
+        return false;
+    }
+
+    if (offset &gt; bufferLength)
+    {
+        return false;
+    }
+
+    if (readLength &gt; (bufferLength - offset))
+    {
+        return false;
+    }
+
+    for (uint32_t i = 0U; i &lt; readLength; i++)
+    {
+        output[i] = buffer[offset + i];
+    }
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Function này sử dụng hai điều kiện quan trọng:
+                    </p>
+
+                    <ul>
+                        <li>
+                            <code>offset &gt; bufferLength</code>: kiểm tra vị trí bắt đầu
+                            có vượt quá độ dài dữ liệu hợp lệ hay không.
+                        </li>
+                        <li>
+                            <code>readLength &gt; (bufferLength - offset)</code>:
+                            kiểm tra số byte cần đọc có vượt quá phần dữ liệu còn lại hay không.
+                        </li>
+                    </ul>
+
+                    <p>
+                        Cách kiểm tra này tránh việc sử dụng trực tiếp biểu thức
+                        <code>offset + readLength</code> mà không kiểm soát nguy cơ
+                        tràn số nguyên.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>5. Embedded Applications</h2>
+
+                    <h3>5.1. Buffer Management trong UART Driver</h3>
+
+                    <p>
+                        UART thường được sử dụng để trao đổi dữ liệu giữa MCU và các
+                        thiết bị bên ngoài. Dữ liệu nhận được thường được lưu vào
+                        Receive Buffer trước khi được xử lý.
+                    </p>
+
+                    <p>
+                        Ví dụ, một UART Driver có Buffer 64 byte:
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define UART_RX_BUFFER_SIZE 64U
+
+static uint8_t uartRxBuffer[UART_RX_BUFFER_SIZE];
+static uint32_t uartRxLength = 0U;
+
+bool UART_ReceiveByte(uint8_t receivedByte)
+{
+    if (uartRxLength &gt;= UART_RX_BUFFER_SIZE)
+    {
+        return false;
+    }
+
+    uartRxBuffer[uartRxLength] = receivedByte;
+    uartRxLength++;
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Mỗi khi nhận được một byte, chương trình kiểm tra xem Buffer
+                        còn dung lượng hay không. Nếu Buffer đã đầy, Function từ chối
+                        ghi thêm dữ liệu.
+                    </p>
+
+                    <p>
+                        Trong Driver thực tế, cần xác định rõ cách xử lý khi Buffer đầy,
+                        chẳng hạn báo lỗi, bỏ dữ liệu mới, hoặc sử dụng cơ chế Queue
+                        hay Ring Buffer phù hợp.
+                    </p>
+
+                    <div class="note">
+                        <strong>Lưu ý về ISR:</strong>
+                        Nếu <code>UART_ReceiveByte()</code> được gọi từ Interrupt Service
+                        Routine, cần xem xét thêm vấn đề đồng bộ giữa ISR và Main Loop.
+                        Kiểm tra kích thước Buffer không tự giải quyết được Race Condition
+                        hoặc các vấn đề truy cập đồng thời.
+                    </div>
+
+                    <h3>5.2. Buffer Management trong CAN Driver</h3>
+
+                    <p>
+                        Trong CAN Communication, dữ liệu nhận được thường được chuyển
+                        đến các thành phần xử lý cao hơn thông qua Driver hoặc
+                        Communication Stack.
+                    </p>
+
+                    <p>
+                        Với CAN Classic, Data Field của một CAN Frame có tối đa 8 byte.
+                        Với CAN FD, Data Field có thể lớn hơn và đạt tối đa 64 byte.
+                    </p>
+
+                    <p>
+                        Khi xử lý dữ liệu nhận được, chương trình cần kiểm tra độ dài
+                        dữ liệu trước khi sao chép vào Buffer nội bộ.
+                    </p>
+
+                    <pre><code>#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define CAN_MAX_DATA_LENGTH 64U
+#define CAN_RX_BUFFER_SIZE  64U
+
+bool CAN_CopyPayload(uint8_t *destination,
+                     uint32_t destinationCapacity,
+                     const uint8_t *payload,
+                     uint32_t payloadLength)
+{
+    if ((destination == NULL) || (payload == NULL))
+    {
+        return false;
+    }
+
+    if (payloadLength &gt; CAN_MAX_DATA_LENGTH)
+    {
+        return false;
+    }
+
+    if (payloadLength &gt; destinationCapacity)
+    {
+        return false;
+    }
+
+    for (uint32_t i = 0U; i &lt; payloadLength; i++)
+    {
+        destination[i] = payload[i];
+    }
+
+    return true;
+}</code></pre>
+
+                    <p>
+                        Trong ví dụ này, Function kiểm tra:
+                    </p>
+
+                    <ul>
+                        <li>Con trỏ nguồn và đích không phải NULL.</li>
+                        <li>Độ dài Payload không vượt quá giới hạn được hỗ trợ.</li>
+                        <li>Buffer đích có đủ dung lượng để lưu dữ liệu.</li>
+                    </ul>
+
+                    <p>
+                        Đối với các giao thức sử dụng cơ chế phân mảnh dữ liệu như
+                        ISO-TP, cần kiểm soát thêm tổng độ dài Message, số byte đã nhận,
+                        vị trí ghi hiện tại và dung lượng còn lại của Buffer.
+                    </p>
+
+                    <h3>5.3. Buffer Management trong Communication Driver</h3>
+
+                    <p>
+                        Các Communication Driver thường nhận dữ liệu từ phần cứng
+                        rồi chuyển tiếp đến những Module khác. Quá trình này có thể
+                        bao gồm nhiều lần sao chép và thay đổi định dạng dữ liệu.
+                    </p>
+
+                    <p>
+                        Vì vậy, mỗi Module cần xác định rõ:
+                    </p>
+
+                    <ul>
+                        <li>Buffer được cấp phát ở đâu.</li>
+                        <li>Capacity tối đa của Buffer.</li>
+                        <li>Length hiện tại của dữ liệu.</li>
+                        <li>Module nào chịu trách nhiệm cập nhật Length.</li>
+                        <li>Module nào có quyền đọc hoặc ghi dữ liệu.</li>
+                        <li>Cách xử lý khi dữ liệu vượt quá giới hạn.</li>
+                    </ul>
+
+                    <p>
+                        Việc xác định rõ những thông tin này giúp hạn chế lỗi khi nhiều
+                        Module cùng tham gia xử lý một luồng dữ liệu.
+                    </p>
+
+                    <h3>5.4. Kiểm soát dữ liệu nhận từ bên ngoài</h3>
+
+                    <p>
+                        Dữ liệu nhận từ thiết bị bên ngoài không nên được xem là luôn
+                        hợp lệ. Chương trình cần kiểm tra các thông tin như:
+                    </p>
+
+                    <ul>
+                        <li>Độ dài dữ liệu có nằm trong giới hạn cho phép hay không.</li>
+                        <li>Giá trị Length có phù hợp với định dạng Message hay không.</li>
+                        <li>Vị trí các trường dữ liệu có nằm trong phạm vi Buffer hay không.</li>
+                        <li>Payload có đủ dữ liệu để thực hiện thao tác xử lý hay không.</li>
+                        <li>Giá trị của các trường có thỏa mãn điều kiện của giao thức hay không.</li>
+                    </ul>
+
+                    <p>
+                        Ví dụ, nếu một Message yêu cầu đọc trường dữ liệu bắt đầu tại
+                        Offset 4 với độ dài 6 byte, chương trình phải bảo đảm rằng
+                        Buffer có ít nhất 10 byte dữ liệu hợp lệ trước khi thực hiện
+                        thao tác đọc.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>6. Common Mistakes</h2>
+
+                    <h3>6.1. Sử dụng sai điều kiện trong vòng lặp</h3>
+
+                    <p>Ví dụ:</p>
+
+                    <pre><code>#define BUFFER_SIZE 10U
+
+uint8_t buffer[BUFFER_SIZE];
+
+for (uint32_t i = 0U; i &lt;= BUFFER_SIZE; i++)
+{
+    buffer[i] = 0U;
+}</code></pre>
+
+                    <p>
+                        Điều kiện <code>i &lt;= BUFFER_SIZE</code> khiến vòng lặp chạy
+                        từ 0 đến 10, tức là 11 lần. Phần tử <code>buffer[10]</code>
+                        nằm ngoài phạm vi hợp lệ.
+                    </p>
+
+                    <p>Cách viết đúng:</p>
+
+                    <pre><code>for (uint32_t i = 0U; i &lt; BUFFER_SIZE; i++)
+{
+    buffer[i] = 0U;
+}</code></pre>
+
+                    <h3>6.2. Không dành chỗ cho ký tự kết thúc chuỗi</h3>
+
+                    <p>
+                        Khi lưu một chuỗi có N ký tự nội dung, Buffer cần có ít nhất
+                        N + 1 byte để chứa thêm ký tự <code>'\0'</code>.
+                    </p>
+
+                    <pre><code>char text[5] = "Hello";</code></pre>
+
+                    <p>
+                        Khai báo trên không đủ dung lượng cho chuỗi "Hello" cùng ký tự
+                        kết thúc. Cần sử dụng Buffer có ít nhất 6 byte.
+                    </p>
+
+                    <h3>6.3. Không kiểm tra Length trước khi sao chép</h3>
+
+                    <p>
+                        Khi sử dụng <code>memcpy()</code>, cần kiểm tra số byte sao chép
+                        không vượt quá dung lượng của vùng nhớ đích.
+                    </p>
+
+                    <pre><code>/* Không nên */
+memcpy(destination, source, receivedLength);
+
+/* Cần kiểm tra trước */
+if (receivedLength &lt;= destinationCapacity)
+{
+    memcpy(destination, source, receivedLength);
+}</code></pre>
+
+                    <h3>6.4. Nhầm lẫn giữa Capacity và Length</h3>
+
+                    <p>
+                        Capacity biểu thị tổng dung lượng Buffer, trong khi Length
+                        biểu thị số byte dữ liệu hiện có. Nếu chương trình sử dụng
+                        Capacity thay cho Length khi đọc dữ liệu, có thể truy cập
+                        những byte chưa được ghi dữ liệu hợp lệ.
+                    </p>
+
+                    <h3>6.5. Tin tưởng dữ liệu nhận được từ bên ngoài</h3>
+
+                    <p>
+                        Một lỗi thường gặp là sử dụng trực tiếp Length được nhận từ
+                        một Message mà không kiểm tra giới hạn. Điều này có thể dẫn
+                        đến việc đọc hoặc ghi vượt quá phạm vi Buffer.
+                    </p>
+
+                    <p>
+                        Luôn cần xác thực dữ liệu trước khi sử dụng Length để tính
+                        Offset, truy cập mảng hoặc sao chép dữ liệu.
+                    </p>
+
+                    <h3>6.6. Cho rằng các hàm có hậu tố n luôn an toàn</h3>
+
+                    <p>
+                        Các Function như <code>strncpy()</code> và <code>snprintf()</code>
+                        có thể giới hạn số byte được ghi, nhưng không tự động giải quyết
+                        mọi vấn đề liên quan đến Buffer.
+                    </p>
+
+                    <ul>
+                        <li><code>strncpy()</code> có thể không thêm ký tự kết thúc chuỗi.</li>
+                        <li><code>snprintf()</code> có thể tạo ra chuỗi bị cắt ngắn.</li>
+                        <li><code>memcpy()</code> vẫn yêu cầu vùng nhớ nguồn và đích hợp lệ.</li>
+                        <li>Tham số kích thước truyền vào vẫn phải phản ánh đúng Capacity thực tế.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>7. Best Practices</h2>
+
+                    <h3>7.1. Luôn kiểm tra giới hạn trước khi truy cập</h3>
+
+                    <p>
+                        Trước khi đọc, ghi hoặc sao chép dữ liệu, cần kiểm tra chỉ số,
+                        Offset và Length để bảo đảm thao tác nằm trong phạm vi vùng nhớ
+                        hợp lệ.
+                    </p>
+
+                    <h3>7.2. Sử dụng kiểu dữ liệu phù hợp cho kích thước</h3>
+
+                    <p>
+                        Khi quản lý kích thước Buffer, nên sử dụng các kiểu dữ liệu
+                        phù hợp như <code>size_t</code> cho kích thước vùng nhớ và
+                        <code>uint32_t</code> khi cần một kiểu số nguyên có độ rộng
+                        xác định.
+                    </p>
+
+                    <p>
+                        Cần chú ý đến việc chuyển đổi giữa kiểu có dấu và không dấu,
+                        đặc biệt khi nhận Length từ các nguồn dữ liệu khác nhau.
+                    </p>
+
+                    <h3>7.3. Phân biệt rõ Capacity và Length</h3>
+
+                    <p>
+                        Mỗi Buffer nên có thông tin thể hiện rõ tổng dung lượng và
+                        số byte dữ liệu hợp lệ hiện tại. Không nên sử dụng một biến
+                        duy nhất cho cả hai mục đích.
+                    </p>
+
+                    <h3>7.4. Ưu tiên Function quản lý Buffer tập trung</h3>
+
+                    <p>
+                        Có thể xây dựng các Function như <code>Buffer_Read()</code>,
+                        <code>Buffer_Write()</code> và <code>Buffer_Append()</code>
+                        để kiểm soát thao tác truy cập bộ nhớ tại một nơi.
+                    </p>
+
+                    <h3>7.5. Kiểm tra dữ liệu từ các nguồn bên ngoài</h3>
+
+                    <p>
+                        Dữ liệu từ UART, CAN, SPI, Ethernet hoặc các Communication
+                        Interface khác cần được kiểm tra trước khi xử lý. Không nên
+                        tin tưởng hoàn toàn vào độ dài hoặc nội dung của Message.
+                    </p>
+
+                    <h3>7.6. Sử dụng Compiler Warning và Static Analysis</h3>
+
+                    <p>
+                        Các công cụ phân tích mã nguồn có thể giúp phát hiện một số
+                        vấn đề liên quan đến truy cập mảng, sử dụng chuỗi và quản lý
+                        kích thước Buffer.
+                    </p>
+
+                    <p>
+                        Một số công cụ có thể sử dụng:
+                    </p>
+
+                    <ul>
+                        <li>GCC Warning và Clang Warning.</li>
+                        <li>Cppcheck.</li>
+                        <li>Clang Static Analyzer.</li>
+                        <li>AddressSanitizer trong môi trường hỗ trợ.</li>
+                    </ul>
+
+                    <h3>7.7. Kiểm thử các trường hợp biên</h3>
+
+                    <p>
+                        Khi kiểm thử Buffer Management, cần chú ý đến các trường hợp:
+                    </p>
+
+                    <ul>
+                        <li>Buffer có kích thước bằng 0.</li>
+                        <li>Length bằng 1 byte.</li>
+                        <li>Length bằng đúng Capacity.</li>
+                        <li>Length lớn hơn Capacity.</li>
+                        <li>Offset bằng 0.</li>
+                        <li>Offset nằm tại vị trí cuối cùng hợp lệ.</li>
+                        <li>Offset vượt quá Length.</li>
+                        <li>Con trỏ Buffer bằng NULL.</li>
+                    </ul>
+
+                    <p>
+                        Những trường hợp này giúp kiểm tra khả năng xử lý dữ liệu
+                        ở các giới hạn khác nhau và hạn chế các lỗi chỉ xuất hiện
+                        trong một số điều kiện đặc biệt.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>8. Summary</h2>
+
+                    <p>
+                        Buffer Overflow là một lỗi quan trọng trong lập trình C,
+                        xảy ra khi chương trình truy cập vùng nhớ vượt quá giới hạn
+                        của Buffer. Lỗi này có thể làm sai lệch dữ liệu, gây mất ổn định
+                        hoặc dẫn đến những hành vi không xác định.
+                    </p>
+
+                    <p>Những kiến thức trọng tâm cần ghi nhớ:</p>
+
+                    <ul>
+                        <li>
+                            Buffer là vùng nhớ được sử dụng để lưu trữ dữ liệu.
+                        </li>
+                        <li>
+                            Buffer Overflow thường liên quan đến thao tác ghi vượt
+                            quá giới hạn vùng nhớ.
+                        </li>
+                        <li>
+                            Out-of-bounds Read và Out-of-bounds Write đều là những
+                            lỗi truy cập bộ nhớ cần tránh.
+                        </li>
+                        <li>
+                            Luôn kiểm tra Capacity, Length, Offset và Index trước
+                            khi truy cập Buffer.
+                        </li>
+                        <li>
+                            Cần cẩn thận khi sử dụng các Function xử lý chuỗi như
+                            <code>strcpy()</code>, <code>strcat()</code> và
+                            <code>sprintf()</code>.
+                        </li>
+                        <li>
+                            <code>snprintf()</code> giúp giới hạn kích thước đầu ra
+                            khi định dạng chuỗi, nhưng vẫn cần kiểm tra giá trị trả về.
+                        </li>
+                        <li>
+                            Buffer Management là một phần quan trọng trong UART Driver,
+                            CAN Driver và các Communication Module.
+                        </li>
+                    </ul>
+
+                    <div class="note">
+                        <strong>Key Takeaway:</strong>
+                        Khi lập trình Embedded C, không nên giả định rằng dữ liệu
+                        luôn nằm trong giới hạn mong muốn. Hãy kiểm tra kích thước
+                        và phạm vi truy cập trước mỗi thao tác đọc, ghi hoặc sao chép
+                        dữ liệu để xây dựng phần mềm ổn định và đáng tin cậy.
+                    </div>
+                </section>
+
+                <div class="pager">
+                    <a class="btn" href="lesson-39.html">← Bài trước</a>
+                    <a class="btn" href="lesson-41.html">Bài tiếp theo →</a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>EmLearn - 2026</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>
